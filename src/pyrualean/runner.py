@@ -38,6 +38,7 @@ from typing import Any
 
 from ._backend import EpisodeFinished
 from .libero import LiberoRobot
+from .recovery import failure_details
 
 
 class PolicyLoadError(ValueError):
@@ -77,7 +78,7 @@ def load_policy(
         sys.path.insert(0, parent)
     try:
         spec.loader.exec_module(module)
-    except Exception as exc:
+    except (Exception, SystemExit) as exc:
         sys.modules.pop(module_name, None)
         raise PolicyLoadError(f"importing {location} failed: {exc}") from exc
     policy = getattr(module, entrypoint, None)
@@ -96,6 +97,7 @@ class PolicyOutcome:
     error_message: str | None = None
     traceback: str | None = None
     elapsed_s: float = 0.0
+    failure: dict[str, Any] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -137,14 +139,17 @@ def run_policy(
         outcome = PolicyOutcome(status="completed")
     except EpisodeFinished as exc:
         outcome = PolicyOutcome(status="finished", reason=exc.reason)
-    except KeyboardInterrupt:
-        outcome = PolicyOutcome(status="error", reason="interrupted")
-    except Exception as exc:  # noqa: BLE001 - the outcome records the failure
+    except (Exception, SystemExit, KeyboardInterrupt) as exc:
         outcome = PolicyOutcome(
             status="error",
+            reason="interrupted" if isinstance(exc, KeyboardInterrupt) else None,
             error_type=type(exc).__name__,
             error_message=str(exc),
             traceback=traceback.format_exc(),
+            failure=failure_details(
+                exc, stage="execution",
+                filename=getattr(getattr(policy, "__code__", None), "co_filename", None),
+            ),
         )
     finally:
         if timer is not None:

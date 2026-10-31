@@ -30,6 +30,7 @@ from __future__ import annotations
 import ast
 import base64
 import contextlib
+import hashlib
 import io
 import json
 import math
@@ -42,8 +43,11 @@ from typing import Any
 
 from ._backend import EpisodeFinished
 from ._robot import RobotBase
+from .recovery import failure_details, result_is_error
 from .runner import PolicyLoadError, load_policy, run_policy
 from .sandbox import audit_source, blocked_names, make_builtins
+from .stuck_recovery import StuckRecoveryConfig
+from .supervision import SupervisionPause, VisualSupervisor
 
 ARMS = ("cells", "program")
 #: When camera images are attached to a tool result: after every turn that
@@ -52,8 +56,8 @@ ARMS = ("cells", "program")
 IMAGE_POLICIES = ("on-motion", "on-demand", "none")
 #: What a tool result contains besides the program's own output.  ``pure`` is
 #: python-tool semantics: stdout, stderr, the exception, the trailing value and
-#: whatever ``robo.show()`` asked for, nothing else.  ``rich`` adds the robot
-#: state, the ledger of primitive calls and step counts.
+#: whatever ``robo.show()`` asked for. Failures also include recovery evidence.
+#: ``rich`` adds the robot state, the ledger of primitive calls and step counts.
 FEEDBACK_MODES = ("pure", "rich")
 MAX_TEXT_CHARS = 20_000
 
@@ -66,8 +70,59 @@ class ArmResult:
     images: list[bytes] = field(default_factory=list)
 
     @property
+    def is_error(self) -> bool:
+        return result_is_error(self.result)
+
+    @property
     def content_blocks(self) -> list[dict[str, Any]]:
         text = json.dumps(self.result, indent=2, ensure_ascii=False, default=str)
+        if (len(text) > MAX_TEXT_CHARS
+                and self.result.get("status") == "stuck_confirmed"):
+            compact = dict(self.result)
+            recovery = dict(compact["recovery"])
+            recovery["state"] = {"note": "Inspect current state with robo.state()."}
+            recovery["confirmed_stuck"] = {
+                "status": "stuck",
+                "summary": str(recovery["confirmed_stuck"].get("summary", ""))[:1000],
+            }
+            compact.update(recovery=recovery, output_truncated=True)
+            text = json.dumps(compact, ensure_ascii=False, default=str)
+        if len(text) > MAX_TEXT_CHARS and any(
+            key in self.result for key in ("supervision", "failure")
+        ):
+            # Long prints must not hide execution failures or a supervisor
+            # interruption. Keep valid JSON and the reason for replanning.
+            compact = dict(self.result)
+            compact["output_truncated"] = True
+            for key in ("stdout", "stderr", "value", "exception"):
+                if key in compact:
+                    compact[key] = _trim(str(compact[key]), 1000)
+            text = json.dumps(compact, indent=2, ensure_ascii=False, default=str)
+            if len(text) > MAX_TEXT_CHARS:
+                report = self.result.get("supervision", {})
+                compact = {
+                    "cell": self.result.get("cell"),
+                    "program": self.result.get("program"),
+                    "execution_paused": bool(report.get("paused")),
+                    "output_truncated": True,
+                    "details": (
+                        "Full report saved in the host audit; inspect with robo.state()/show() "
+                        "before replanning if the remaining evidence is insufficient."
+                    ),
+                }
+                if report:
+                    compact["supervision"] = {
+                        key: report.get(key)
+                        for key in ("mode", "paused", "reason", "actions", "audit_dir",
+                                    "evidence_cameras")
+                    }
+                if "failure" in self.result:
+                    compact["failure"] = self.result["failure"]
+                    compact["recovery"] = {
+                        k: v for k, v in self.result["recovery"].items()
+                        if k not in ("last_motion", "state")
+                    }
+                text = json.dumps(compact, indent=2, ensure_ascii=False, default=str)
         if len(text) > MAX_TEXT_CHARS:
             text = text[:MAX_TEXT_CHARS] + "\n[truncated]"
         blocks: list[dict[str, Any]] = [{"type": "text", "text": text}]
@@ -145,9 +200,20 @@ class ArmToolkit:
         images: bool | str = True,
         feedback: str = "rich",
         max_turns: int | None = None,
+        supervisor: VisualSupervisor | None = None,
+        stuck_recovery: StuckRecoveryConfig | None = None,
     ) -> None:
         if arm not in ARMS:
             raise ValueError(f"arm must be one of {ARMS}, got {arm!r}")
+        if supervisor is not None and arm != "cells":
+            raise ValueError("Visual supervision currently supports only the cells arm")
+        if stuck_recovery is not None and arm != "cells":
+            raise ValueError("Stuck recovery currently supports only the cells arm")
+        self.stuck_recovery = stuck_recovery
+        self.stuck_recovery_events: list[dict[str, Any]] = []
+        self._recovery_started = time.perf_counter()
+        self.supervisor = supervisor
+        robo._supervisor = supervisor
         if images is True:
             images = "on-motion"
         elif images is False:
@@ -184,6 +250,8 @@ class ArmToolkit:
             "display": self._display,
             "log": print,
         }
+        if supervisor is not None:
+            self._globals["watch"] = supervisor.watch
         try:
             import numpy as np
 
@@ -193,6 +261,7 @@ class ArmToolkit:
             pass
         self._cell_index = 0
         self._program_index = 0
+        self._failure_counts: dict[str, int] = {}
 
     def _display(self, image: Any) -> None:
         """Attach an image (numpy array, PIL image or PNG bytes) to this turn's result."""
@@ -217,6 +286,8 @@ class ArmToolkit:
                 "required": ["status", "summary"],
             },
         }
+        if self.stuck_recovery is not None:
+            finish["description"] = self.stuck_recovery.prompt()
         if self.arm == "cells":
             main = {
                 "name": "python",
@@ -289,11 +360,12 @@ class ArmToolkit:
                     "index": len(self.turns),
                     "tool": name,
                     "elapsed_s": round(time.perf_counter() - started, 3),
-                    "ok": "error" not in result.result,
+                    "ok": not result.is_error,
                     "moved": bool(result.result.get("moved", moved_flag)),
                     "env_steps": result.result.get("env_steps", steps_delta),
                     "terminated": self.robo._reported_success(),
                     "sandbox_flags": flags,
+                    **{k: result.result[k] for k in ("failure", "recovery") if k in result.result},
                 }
             )
             if flags:
@@ -303,13 +375,73 @@ class ArmToolkit:
     # -- tools ----------------------------------------------------------------
 
     def _finish(self, args: dict[str, Any]) -> ArmResult:
+        if self.finish is not None:
+            return ArmResult({"ok": True, **self.finish,
+                              **({"episode_finished": True} if self.stuck_recovery else {})})
+        if self.stuck_recovery is not None and args.get("status") == "stuck":
+            if not str(args.get("summary", "")).strip():
+                return ArmResult({"error": "Describe the confirmed blockage in summary."})
+            stopped = self.robo._stop_reason or (
+                "truncated" if self.robo._truncated else None
+            )
+            if self.robo._reported_success():
+                stopped = "terminated"
+            calls_left = (
+                max(0, self.max_turns - self._cell_index)
+                if self.max_turns is not None else None
+            )
+            if self.turn_budget_exhausted or calls_left == 0:
+                stopped = stopped or "call_budget"
+            if (self.program_timeout_s is not None
+                    and time.perf_counter() - self._recovery_started >= self.program_timeout_s):
+                stopped = stopped or "wall_budget"
+            rounds = sum(e["event"] == "recovery_dispatched" for e in self.stuck_recovery_events)
+            if rounds >= self.stuck_recovery.max_rounds:
+                stopped = stopped or "recovery_round_limit"
+            event = {
+                "event": "stuck_finalized" if stopped else "recovery_dispatched",
+                "confirmed_stuck": dict(args),
+                "round": rounds if stopped else rounds + 1,
+                "step": self.robo._backend.env_steps(),
+                "calls_left": calls_left,
+                "stop_reason": stopped,
+            }
+            self.stuck_recovery_events.append(event)
+            with (self.workspace.parent / "stuck_recovery.jsonl").open("a") as stream:
+                stream.write(json.dumps(event, ensure_ascii=False) + "\n")
+            if not stopped:
+                images, cameras = [], []
+                for camera in self.robo.CAMERAS:
+                    try:
+                        images.append(self.robo._backend.artifact(
+                            self.robo._image_name(camera, self.robo.SHOW_RESOLUTION)))
+                        cameras.append(camera)
+                    except Exception:
+                        pass  # Missing views must not make a stuck declaration terminal.
+                return ArmResult({
+                    "ok": True,
+                    "episode_finished": False,
+                    "execution_paused": True,
+                    "status": "stuck_confirmed",
+                    "recovery": {
+                        **event,
+                        "next_action": "apply_stuck_recovery_skill",
+                        "retry_allowed": True,
+                        "scene_rolled_back": False,
+                        "automatic_replay": False,
+                        "instruction": self.stuck_recovery.instructions,
+                        "state": _state_dict(self.robo),
+                    },
+                    "images": cameras,
+                }, images)
         self.finish = {
             "status": str(args.get("status", "")),
             "summary": str(args.get("summary", "")),
         }
         if self._live_success():
             self.finish["environment_terminated"] = self.robo._reported_success()
-        return ArmResult({"ok": True, **self.finish})
+        return ArmResult({"ok": True, **self.finish,
+                          **({"episode_finished": True} if self.stuck_recovery else {})})
 
     def _live_success(self) -> bool:
         """Whether the robot reports task success during the episode (it has ``done``).
@@ -322,12 +454,84 @@ class ArmToolkit:
     def _snapshot(self) -> tuple[int, int | None]:
         return len(self.robo._ledger), self.robo._backend.env_steps()
 
+    def _failure_feedback(
+        self,
+        before: tuple[int, int | None],
+        extra: dict[str, Any],
+        failure: dict[str, Any],
+        code: str,
+    ) -> ArmResult:
+        """Return enough evidence to repair from the current scene, never replay it."""
+        motions = [r for r in self.robo._ledger.records[before[0]:] if r.stateful]
+        used = self._cell_index if self.arm == "cells" else self._program_index
+        limits = [self.max_turns]
+        if self.arm == "program":
+            limits.append(self.max_programs)
+        remaining = [max(0, limit - used) for limit in limits if limit is not None]
+        calls_left = min(remaining) if remaining else None
+        stopped = self.robo._stop_reason or ("truncated" if self.robo._truncated else None)
+        if self._live_success() and self.robo._reported_success():
+            stopped = "terminated"
+        retry_allowed = not stopped and calls_left != 0
+        fingerprint = hashlib.sha256(
+            (code + repr((failure["kind"], failure["type"],
+                          (failure.get("location") or {}).get("line")))).encode()
+        ).hexdigest()
+        count = self._failure_counts.get(fingerprint, 0) + 1
+        self._failure_counts[fingerprint] = count
+        next_action = "inspect_and_replan" if motions else "repair_code"
+        if count >= 3:
+            next_action = "change_approach_or_finish"
+        if not retry_allowed:
+            next_action = "finish"
+        extra["failure"] = failure
+        steps_after = self.robo._backend.env_steps()
+        extra["recovery"] = {
+            "next_action": next_action,
+            "retry_allowed": bool(retry_allowed),
+            "calls_left": calls_left,
+            "stop_reason": stopped,
+            "same_failure_count": count,
+            "automatic_replay": False,
+            "scene_rolled_back": False,
+            "namespace_may_have_changed": failure["stage"] != "validation",
+            "motion_attempts": len(motions),
+            "env_steps": (
+                steps_after - before[1]
+                if steps_after is not None and before[1] is not None else None
+            ),
+            "completed_motion_calls": sum(r.ok for r in motions),
+            "last_motion": motions[-1].to_dict() if motions else None,
+            "instruction": (
+                "Read the error and current state. Earlier actions and assignments are not "
+                "undone; an interrupted assignment may still hold an older value. Inspect "
+                "images with robo.show() when available, then submit only the repaired "
+                "remaining work. Check primitive outcomes and verify the resulting scene. "
+                "Do not blindly replay this code; if the budget is exhausted, call finish."
+            ),
+        }
+        result = self._feedback(before, extra)
+        # Capture state after _feedback has collected policy-issued calls, so
+        # this host observation does not masquerade as the last policy action.
+        result.result["recovery"]["state"] = (
+            result.result["state"] if "state" in result.result else _state_dict(self.robo)
+        )
+        return result
+
     def _feedback(self, before: tuple[int, int | None], extra: dict[str, Any]) -> ArmResult:
         calls_before, steps_before = before
         records = self.robo._ledger.records[calls_before:]
         moved = any(r.stateful for r in records)
         steps_after = self.robo._backend.env_steps()
         result: dict[str, Any] = dict(extra)
+        if self.supervisor is not None:
+            result["supervision"] = self.supervisor.feedback()
+            if self.supervisor.paused:
+                executed = [record for record in records if record.stateful]
+                result["supervision"]["last_action"] = (
+                    executed[-1].to_dict() if executed else None
+                )
+                result["supervision"]["state"] = _state_dict(self.robo)
         if self.feedback == "pure":
             return self._attach_images(result, moved, {})
         result["primitive_calls"] = [
@@ -377,6 +581,12 @@ class ArmToolkit:
                 attached.append(f"display_{index}")
             except Exception as exc:  # noqa: BLE001 - reported, not fatal
                 result.setdefault("display_errors", []).append(f"{type(exc).__name__}: {exc}")
+        if self.supervisor is not None and self.supervisor.paused:
+            # Return the exact evidence inspected by Valen, even if show() was
+            # never called or the normal image policy is disabled.
+            for index, data in enumerate(self.supervisor.evidence):
+                images.append(data)
+                attached.append(f"supervision_{self.supervisor.evidence_cameras[index]}")
         if attached:
             result["images"] = attached
         return ArmResult(result, images)
@@ -400,7 +610,12 @@ class ArmToolkit:
             )
         self._cell_index += 1
         index = self._cell_index
-        (self.workspace / f"cell_{index:03d}.py").write_text(code, encoding="utf-8")
+        if self.supervisor is not None:
+            self.supervisor.begin_cell(index)
+            self._globals["watch"] = self.supervisor.watch
+        source_path = self.workspace / f"cell_{index:03d}.py"
+        source_path.write_text(code, encoding="utf-8")
+        filename = str(source_path.resolve())
         self._last_flags = audit_source(code, workspace=self.workspace)
         before = self._snapshot()
         stdout, stderr = io.StringIO(), io.StringIO()
@@ -408,37 +623,48 @@ class ArmToolkit:
         blocked = blocked_names(code)
         if blocked:
             extra["exception"] = _blocked_message(blocked, "cell")
-            return self._feedback(before, extra)
+            return self._failure_feedback(before, extra, {
+                "kind": "sandbox", "stage": "validation", "type": "SandboxError",
+                "message": extra["exception"], "location": None,
+            }, code)
         started = time.perf_counter()
         try:
-            tree = ast.parse(code, filename=f"<cell {index}>")
+            tree = ast.parse(code, filename=filename)
+            # Compile the complete cell before executing any prefix. ast.parse
+            # alone accepts e.g. a top-level return/yield that compile rejects.
+            compile(tree, filename, "exec")
+            tail: ast.Expr | None = None
+            if tree.body and isinstance(tree.body[-1], ast.Expr):
+                tail = tree.body.pop()  # type: ignore[assignment]
+            body_code = compile(tree, filename, "exec")
+            tail_code = compile(ast.Expression(tail.value), filename, "eval") if tail else None
         except SyntaxError as exc:
             extra["exception"] = f"SyntaxError: {exc}"
-            return self._feedback(before, extra)
-        tail: ast.Expr | None = None
-        if tree.body and isinstance(tree.body[-1], ast.Expr):
-            tail = tree.body.pop()  # type: ignore[assignment]
+            return self._failure_feedback(
+                before, extra, failure_details(exc, stage="validation", filename=filename), code
+            )
+        failure = None
         try:
             with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
-                exec(  # noqa: S102 - the whole point of this arm
-                    compile(tree, f"<cell {index}>", "exec"), self._globals
-                )
-                if tail is not None:
+                exec(body_code, self._globals)  # noqa: S102 - code arm
+                if tail_code is not None:
                     value = eval(  # noqa: S307 - trailing expression echo
-                        compile(ast.Expression(tail.value), f"<cell {index}>", "eval"),
-                        self._globals,
+                        tail_code, self._globals,
                     )
                     if value is not None:
                         extra["value"] = _trim(repr(value), 4000)
+        except SupervisionPause:
+            extra["execution_paused"] = True
         except EpisodeFinished as exc:
             extra["episode_finished"] = exc.reason
-        except SystemExit as exc:  # exit()/quit() are removed, sys is not importable
-            extra["exception"] = f"SystemExit: {exc}"
-        except Exception:  # noqa: BLE001 - reported to the agent
+        except (Exception, SystemExit) as exc:
             extra["exception"] = _trim(traceback.format_exc(), 4000)
+            failure = failure_details(exc, stage="execution", filename=filename)
         extra["stdout"] = _trim(stdout.getvalue())
         extra["stderr"] = _trim(stderr.getvalue())
         extra["elapsed_s"] = round(time.perf_counter() - started, 2)
+        if failure is not None:
+            return self._failure_feedback(before, extra, failure, code)
         return self._feedback(before, extra)
 
     def _run_program(self, args: dict[str, Any]) -> ArmResult:
@@ -479,13 +705,30 @@ class ArmToolkit:
         blocked = blocked_names(source)
         if blocked:  # before load_policy: importing the file runs its module code
             extra["exception"] = _blocked_message(blocked, "program")
-            return self._feedback(before, extra)
+            return self._failure_feedback(before, extra, {
+                "kind": "sandbox", "stage": "validation", "type": "SandboxError",
+                "message": extra["exception"], "location": None,
+            }, source)
         stdout, stderr = io.StringIO(), io.StringIO()
         try:
-            policy = load_policy(target, builtins=self._builtins)
+            compile(source, str(target.resolve()), "exec")
+        except SyntaxError as exc:
+            extra["exception"] = f"SyntaxError: {exc}"
+            return self._failure_feedback(
+                before, extra, failure_details(exc, stage="validation"), source
+            )
+        try:
+            with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+                policy = load_policy(target, builtins=self._builtins)
         except PolicyLoadError as exc:
             extra["exception"] = str(exc)
-            return self._feedback(before, extra)
+            extra["stdout"], extra["stderr"] = _trim(stdout.getvalue()), _trim(stderr.getvalue())
+            return self._failure_feedback(
+                before, extra, failure_details(
+                    exc.__cause__ or exc, stage="load", filename=str(target.resolve())
+                ),
+                source,
+            )
         with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
             outcome = run_policy(policy, self.robo, timeout_s=self.program_timeout_s)
         extra["status"] = outcome.status
@@ -501,6 +744,12 @@ class ArmToolkit:
         extra["programs_left"] = (
             None if self.max_programs is None else self.max_programs - self._program_index
         )
+        if outcome.failure is not None or outcome.status == "timeout":
+            failure = {
+                "kind": "timeout", "stage": "execution", "type": "TimeoutError",
+                "message": "Program execution deadline expired", "location": None,
+            } if outcome.status == "timeout" else outcome.failure
+            return self._failure_feedback(before, extra, failure, source)
         return self._feedback(before, extra)
 
 
@@ -589,8 +838,9 @@ FEEDBACK_NOTES = {
         "pure": (
             "The tool returns exactly what your code produced: stdout, stderr, "
             "the exception if any, and the value of a trailing expression.  "
-            "Nothing else is added: print what you want to know (for example "
-            "`print(robo.state())` or the result of a motion call)."
+            "On a successful call, print what you want to know (for example "
+            "`print(robo.state())` or the result of a motion call). Execution "
+            "failures also include the host's failure and recovery report."
         ),
         "rich": (
             "The tool returns stdout, stderr, the exception if any, the value of "
@@ -601,8 +851,9 @@ FEEDBACK_NOTES = {
     "program": {
         "pure": (
             "The tool returns exactly what the program produced: stdout, stderr "
-            "and the exception if any.  Nothing else is added: print what you "
-            "want to know."
+            "and the exception if any. On a successful call, print what you "
+            "want to know. Execution failures also include the host's failure "
+            "and recovery report."
         ),
         "rich": (
             "The tool returns the program's stdout, stderr, the exception if any, "
@@ -669,6 +920,34 @@ ENDING_NOTES = {
     ),
 }
 BUDGET_MODES = tuple(ENDING_NOTES)
+
+RECOVERY_NOTE = """\
+# Execution, verification and recovery
+
+Work in short phases: observe, act, check the returned outcome, then decide
+whether to continue. A primitive returning normally does not prove its goal
+was achieved: check fields such as `reached`, `found` or `success`. Use an
+assertion with a descriptive message before a dependent action when a required
+condition is false. Verify the scene before declaring task success.
+
+When code fails, `failure` identifies its kind, stage, exception and source
+location; `recovery` reports the motion attempts, last action, current state,
+remaining calls and suggested next step. These reports also appear with pure
+feedback. Syntax and blocked-introspection checks reject the cell before it
+runs; runtime failures can occur after earlier actions already executed.
+
+The scene is never rolled back. In cells, earlier assignments persist; an
+interrupted assignment may still contain an old value. Inspect state and, when
+available, images before repairing the remaining work. Do not replay the whole
+failed cell/program blindly. Submit one code-tool call at a time when later
+actions depend on its result; wait for feedback before generating the repair.
+Supervisor pauses likewise require inspection and replanning, not a success
+claim. Three occurrences of the same code failure suggest changing approach
+or finishing stuck. This is guidance, not an extra retry allowance: every failed
+attempt consumes the existing call/program budget and the wall clock continues.
+If `retry_allowed` is false, call `finish`; a single-shot program gets no repair
+attempt. A clean tool execution is not the benchmark's success verdict.
+"""
 #: The same notes for a robot whose benchmark judges the final scene: a limit
 #: ends the episode, and what the scene shows then is what counts.
 ENDING_NOTES_FINAL = {
@@ -743,6 +1022,7 @@ def arm_contract(
         budget_mode=budget_mode,
         robot=robot,
     )
+    text = text.rstrip() + "\n\n" + RECOVERY_NOTE
     if guides:
         text = text.rstrip() + "\n\n" + GUIDES_NOTE + "\n"
     return text

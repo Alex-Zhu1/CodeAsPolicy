@@ -147,6 +147,7 @@ class Model(ModelTemplate):
 
     def _play(self, bridge: Bridge, info: dict[str, Any], robot: str) -> None:
         from pyrualean.play import play_episode
+        from pyrualean.supervision import MonitorConfig
 
         task = str(info.get("task_name") or self.cfg.get("task_name"))
         layout = int(info.get("layout", 0))
@@ -175,6 +176,7 @@ class Model(ModelTemplate):
                 api_key_env=os.environ.get("PYRUALEAN_API_KEY_ENV"),
                 boot_options={"bridge": bridge},
                 openai_options=dict(self.cfg.get("openai_options") or {}),
+                monitor=MonitorConfig(**dict(self.cfg.get("monitor") or {})),
             )
             self.results.append(
                 {k: result.get(k) for k in ("status", "environment_success", "task", "robot")}

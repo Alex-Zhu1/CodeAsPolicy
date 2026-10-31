@@ -100,6 +100,18 @@ pyrualean summarize runs/demo
 The run directory keeps the episode video, every cell the agent ran with its output, the ledger of primitive
 calls, the token usage and the benchmark's own verdict.
 
+Optional [Valen visual supervision](docs/visual-supervision.md) checks motion endpoints
+and can pause a code cell for Astra to replan. Add `--monitor-mode shadow` (record only)
+or `--monitor-mode pause`, plus `--valen-url http://127.0.0.1:18001/predict`, to a `cells`
+run with an existing local Valen service. Monitoring is disabled by default.
+
+The repository skill [Astra–Valen supervision](skills/astra-valen-supervision/SKILL.md)
+guides task decomposition, visual questions, uncertainty recovery, and completion
+reporting. Enable [Astra stuck recovery](skills/astra-stuck-recovery/SKILL.md) with
+`--stuck-recovery-skill skills/astra-stuck-recovery/SKILL.md`: after Astra explicitly
+declares stuck, the host supplies recovery instructions and preserves the live
+episode within the existing budgets. Skill files are not discovered automatically.
+
 ## 🦾 Robots
 
 | Robot | Benchmark | Runs on | Robot and skills |

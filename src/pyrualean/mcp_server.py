@@ -22,6 +22,8 @@ import socket
 import threading
 from typing import Any
 
+from .recovery import result_is_error
+
 SERVER_NAME = "pyrualean"
 
 
@@ -45,7 +47,7 @@ def _result_to_mcp(result: Any) -> tuple[list[Any], bool]:
                 )
             )
     payload = getattr(result, "result", None)
-    is_error = isinstance(payload, dict) and bool(payload.get("error"))
+    is_error = isinstance(payload, dict) and result_is_error(payload)
     return out, is_error
 
 

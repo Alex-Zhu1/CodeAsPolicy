@@ -65,6 +65,7 @@ Extra `deploy.yml` keys beyond the shared set:
 | `poll_s` | the longest the policy server holds one `get_action` before answering "wait" |
 | `wrap_up_s` | the longest the verdict's acknowledgement waits for the episode's record to be written |
 | `result_dir` | where each episode's record is written, relative to this directory |
+| `monitor` | optional Valen configuration (`mode`, `url`, `timeout_s`, `threshold`, `unknown_limit`, `max_actions`); disabled by default; see [visual supervision](../../../docs/visual-supervision.md) |
 
 Environment variables: `OPENAI_BASE_URL`, `OPENAI_API_KEY`, `PYRUALEAN_MODEL` (above); `SAM3_CHECKPOINT_PATH` (default `./checkpoints/sam3.pt`); `PYRUALEAN_RESULT_DIR` overrides `result_dir`.
 

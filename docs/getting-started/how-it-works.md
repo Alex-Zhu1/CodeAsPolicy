@@ -54,6 +54,12 @@ calling, the same step took four LLM calls, and every move returned three camera
 
 Each [robot page](../robots/index.md) lists that robot's primitives and the full API reference.
 
+When generated code fails, the host returns a structured error and recovery
+report with the source location, attempted actions, current state and remaining
+call budget. The model repairs the remaining work from that state. Earlier
+actions and assignments are not undone. See [Closed-loop recovery](../guide/recovery.md)
+for the execution, verification and replanning contract.
+
 ## What the model reads
 
 1. The contract: what to do, how the code is run, how the episode is judged.

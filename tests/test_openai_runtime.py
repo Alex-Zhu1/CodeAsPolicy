@@ -433,6 +433,57 @@ def test_two_tool_calls_in_one_reply_keep_the_message_order_legal(robo, tmp_path
     assert generation["tool_calls"]["python"] == 2
 
 
+def test_failure_skips_queued_actions_then_model_repairs(robo, backend, tmp_path, card_images):
+    toolkit = _toolkit(robo, tmp_path, images="none", feedback="pure")
+    transport = ScriptedTransport([
+        _reply([
+            ("bad", "python", {"code": "robo.move_to([0.05, -0.1, 0.6])\nmissing"}),
+            ("queued", "python", {"code": "robo.release()"}),
+            ("premature", "finish", {"status": "success", "summary": "unverified"}),
+        ]),
+        _reply([("repair", "python", {"code": "missing = 42\nmissing"})]),
+        _reply([("end", "finish", {"status": "stuck", "summary": "not solved"})]),
+    ])
+    generation = _run(toolkit, transport, tmp_path, card_images)
+    assert generation["requests"] == 3 and toolkit.finish["status"] == "stuck"
+    assert [turn["ok"] for turn in toolkit.turns] == [False, True, True]
+    assert not any(name == "release" for name, _ in backend.calls)
+    messages = transport.requests[1]["body"]["messages"]
+    replies = [m for m in messages if m["role"] == "tool"]
+    assert [m["tool_call_id"] for m in replies] == ["bad", "queued", "premature"]
+    assert json.loads(replies[0]["content"])["recovery"]["motion_attempts"] == 1
+    assert all(json.loads(m["content"])["skipped"] for m in replies[1:])
+    events = [json.loads(line) for line in
+              (tmp_path / "out" / "openai_events.jsonl").read_text().splitlines()]
+    tool_events = [e for e in events if e["type"] == "tool"]
+    assert [e["ok"] for e in tool_events] == [False, False, False, True, True]
+
+
+def test_supervisor_pause_also_skips_queued_calls(robo, tmp_path, card_images):
+    from pyrualean.supervision import MonitorConfig, VisualSupervisor
+
+    supervisor = VisualSupervisor(
+        MonitorConfig(mode="pause", url="http://localhost:1/predict"),
+        tmp_path / "supervision", client=object(),
+    )
+    # Missing watch() pauses before motion and needs no visual-service request.
+    toolkit = _toolkit(robo, tmp_path, supervisor=supervisor, images="none")
+    transport = ScriptedTransport([
+        _reply([
+            ("pause", "python", {"code": "robo.move_to([0.05, -0.1, 0.6])"}),
+            ("queued", "python", {"code": "print('must wait for review')"}),
+            ("premature", "finish", {"status": "success", "summary": "unverified"}),
+        ]),
+        _reply([("end", "finish", {"status": "stuck", "summary": "need a phase contract"})]),
+    ])
+    _run(toolkit, transport, tmp_path, card_images)
+    replies = [m for m in transport.requests[1]["body"]["messages"] if m["role"] == "tool"]
+    assert json.loads(replies[0]["content"])["execution_paused"]
+    assert all(json.loads(m["content"])["skipped"] for m in replies[1:])
+    assert [t["tool"] for t in toolkit.turns] == ["python", "finish"]
+    assert toolkit.finish["status"] == "stuck" and not robo._ledger.stateful_calls()
+
+
 def test_provider_without_tool_call_ids_still_answers_the_right_call(robo, tmp_path, card_images):
     toolkit = _toolkit(robo, tmp_path)
     reply = _reply([("", "python", {"code": "print(1)"})])
@@ -525,3 +576,24 @@ def test_a_long_tool_call_is_cut_off_at_the_wall_clock(robo, tmp_path, card_imag
     # The cell needs ~2 s for its 40 moves; the stop cuts it at the first move past 0.4 s.
     assert generation["elapsed_s"] < 1.5, generation["elapsed_s"]
     assert toolkit.turns[-1]["tool"] == "python"
+
+
+def test_confirmed_stuck_dispatch_waits_for_new_decision(robo, tmp_path, card_images):
+    from pyrualean.stuck_recovery import StuckRecoveryConfig
+
+    toolkit = _toolkit(robo, tmp_path, stuck_recovery=StuckRecoveryConfig("Replan dependencies."))
+    transport = ScriptedTransport([
+        _reply([
+            ("blocked", "finish", {"status": "stuck", "summary": "No grasp after retries"}),
+            ("stale", "python", {"code": "print('must not run')"}),
+        ]),
+        _reply([("repair", "python", {"code": "saved = 42\nprint(saved)"})]),
+        _reply([("end", "finish", {"status": "failure", "summary": "Review complete"})]),
+    ])
+    result = _run(toolkit, transport, tmp_path, card_images)
+    assert result["requests"] == 3
+    replies = [m for m in transport.requests[1]["body"]["messages"] if m["role"] == "tool"]
+    assert json.loads(replies[0]["content"])["episode_finished"] is False
+    assert json.loads(replies[1]["content"])["skipped"]
+    assert [t["tool"] for t in toolkit.turns] == ["finish", "python", "finish"]
+    assert toolkit.finish["status"] == "failure" and len(toolkit.stuck_recovery_events) == 1

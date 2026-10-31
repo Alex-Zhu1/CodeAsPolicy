@@ -31,6 +31,8 @@ from .evaluation.metrics import load_episode_result, summarize
 from .evaluation.rpent import parse_rpent_run
 from .prompt import TaskCard, api_reference, render_prompt
 from .runner import run_host
+from .stuck_recovery import add_stuck_recovery_arguments
+from .supervision import add_monitor_arguments, monitor_config
 
 HOST_MODULE = "pyrualean.hosts.rpent_{robot}"
 #: Extra wall-clock allowed for RPent's servers to start before the policy
@@ -219,6 +221,21 @@ def cmd_play(args: argparse.Namespace) -> int:
     if args.api_key_env:
         argv += ["--api-key-env", args.api_key_env]
     argv += ["--images", args.images, "--feedback", args.feedback]
+    if args.stuck_recovery_skill is not None:
+        argv += ["--stuck-recovery-skill", str(args.stuck_recovery_skill.resolve()),
+                 "--stuck-recovery-rounds", str(args.stuck_recovery_rounds)]
+    config = monitor_config(args)
+    if config.mode != "off":
+        if args.arm != "cells":
+            raise ValueError("Visual supervision currently supports only --arm cells")
+        argv += [
+            "--monitor-mode", config.mode,
+            "--valen-url", config.url,
+            "--monitor-timeout-s", str(config.timeout_s),
+            "--monitor-threshold", str(config.threshold),
+            "--monitor-unknown-limit", str(config.unknown_limit),
+            "--monitor-max-actions", str(config.max_actions),
+        ]
     if args.codex_home:
         argv += ["--codex-home", args.codex_home]
     if args.guides:
@@ -361,6 +378,8 @@ def main(argv: list[str] | None = None) -> int:
     summ.add_argument("--json", action="store_true")
 
     play = sub.add_parser("play", help="run one code-arm episode with Codex (RPent host)")
+    add_monitor_arguments(play)
+    add_stuck_recovery_arguments(play)
     play.add_argument("--arm", choices=("cells", "program"), required=True)
     play.add_argument("--model", default="gpt-6-astra")
     play.add_argument("--reasoning", default="xhigh")

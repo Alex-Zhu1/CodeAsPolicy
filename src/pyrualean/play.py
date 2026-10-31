@@ -48,6 +48,19 @@ from .openai_runtime import run_openai_agent
 from .prompt import api_reference, knowledge_text
 from .robots import ROBOTS, RobotAdapter, get_adapter
 from .sandbox import DESCRIPTION as SANDBOX_DESCRIPTION
+from .stuck_recovery import (
+    StuckRecoveryConfig,
+    add_stuck_recovery_arguments,
+    stuck_recovery_config,
+)
+from .supervision import (
+    MonitorConfig,
+    VisualSupervisor,
+    add_monitor_arguments,
+    config_record,
+    monitor_config,
+    monitor_prompt,
+)
 
 #: RPent's LIBERO guides (the default set for ``--guides`` on that robot).
 GUIDE_NAMES = ("strict_hybrid_guide.md", "pro_hybrid_guide.md", "env_calibration.md")
@@ -128,6 +141,8 @@ def build_prompt(
     budget_mode: str = "wall",
     adapter: RobotAdapter | None = None,
     primitives: str = "full",
+    monitor: MonitorConfig | None = None,
+    stuck_recovery: StuckRecoveryConfig | None = None,
 ) -> str:
     """The code arm's prompt: contract, API reference, knowledge, task card.
 
@@ -148,6 +163,10 @@ def build_prompt(
         robot=robot_words(adapter, primitives),
     )
     reference = api_reference(adapter.robot_cls, primitives=primitives)
+    if monitor is not None and monitor.mode != "off":
+        contract += "\n\n" + monitor_prompt(monitor)
+    if stuck_recovery is not None:
+        contract += "\n\n" + stuck_recovery.prompt()
     return "\n\n".join(
         [
             contract.rstrip(),
@@ -471,6 +490,8 @@ def play_episode(
     claude_cli: str | None = None,
     primitives: str = "full",
     openai_options: dict[str, Any] | None = None,
+    monitor: MonitorConfig | None = None,
+    stuck_recovery: StuckRecoveryConfig | None = None,
 ) -> dict[str, Any]:
     """Run one episode of ``arm`` on ``cell`` and write ``result.json``.
 
@@ -506,6 +527,11 @@ def play_episode(
 
     if arm not in ARMS:
         raise ValueError(f"arm must be one of {ARMS}")
+    monitor = monitor or MonitorConfig()
+    if monitor.mode != "off" and arm != "cells":
+        raise ValueError("Visual supervision currently supports only --arm cells")
+    if stuck_recovery is not None and arm != "cells":
+        raise ValueError("Stuck recovery currently supports only --arm cells")
     if runtime not in RUNTIMES:
         raise ValueError(f"runtime must be one of {RUNTIMES}")
     if primitives not in PRIMITIVE_SETS:
@@ -518,6 +544,10 @@ def play_episode(
     if workspace.exists():
         shutil.rmtree(workspace)
     workspace.mkdir()
+    if stuck_recovery is not None:
+        (out_dir / "stuck_recovery_skill.md").write_text(
+            stuck_recovery.instructions, encoding="utf-8"
+        )
     guide_record: dict[str, Any] | bool = False
     if guides:
         if guides_dir:
@@ -577,6 +607,8 @@ def play_episode(
     }
     if runtime != "codex":
         result["host"]["runtime"] = runtime
+    result["monitor"] = config_record(monitor)
+    result["stuck_recovery"] = stuck_recovery.record() if stuck_recovery else None
     toolkit = None
     daemons: list[Any] = []
     server = None
@@ -609,6 +641,11 @@ def play_episode(
             images=images,
             feedback=feedback,
             max_turns=max_turns,
+            stuck_recovery=stuck_recovery,
+            supervisor=(
+                VisualSupervisor(monitor, out_dir / "supervision")
+                if monitor.mode != "off" else None
+            ),
         )
         from .mcp_server import ArmMcpServer
 
@@ -630,6 +667,8 @@ def play_episode(
             budget_mode="calls" if max_turns else "wall",
             adapter=adapter,
             primitives=primitives,
+            monitor=monitor,
+            stuck_recovery=stuck_recovery,
         )
         (out_dir / "prompt.txt").write_text(prompt, encoding="utf-8")
         result["prompt"] = {
@@ -795,6 +834,8 @@ def play_episode(
                 "tool_calls": {},
             }
         result["finish"] = arm_toolkit.finish
+        if stuck_recovery is not None:
+            result["stuck_recovery"]["events"] = arm_toolkit.stuck_recovery_events
         result["generation"]["sandbox_flags"] = arm_toolkit.sandbox_flags
         if arm_toolkit.sandbox_flags:
             result["notes"].append(
@@ -898,6 +939,8 @@ def main(argv: list[str] | None = None) -> int:
     adapter = get_adapter(known.robot)
     host = adapter.host_module()
     parser = argparse.ArgumentParser(prog="python -m pyrualean.play", description=__doc__)
+    add_monitor_arguments(parser)
+    add_stuck_recovery_arguments(parser)
     parser.add_argument("--robot", default="libero", help="libero | robocasa | robotwin | robodojo")
     parser.add_argument("--arm", choices=ARMS, required=True)
     host.add_cell_args(parser)
@@ -1035,6 +1078,8 @@ def main(argv: list[str] | None = None) -> int:
         claude_cli=args.claude_cli,
         primitives=args.primitives,
         openai_options=_openai_options(args) if args.runtime == "openai" else None,
+        monitor=monitor_config(args),
+        stuck_recovery=stuck_recovery_config(args),
     )
     print(
         json.dumps(

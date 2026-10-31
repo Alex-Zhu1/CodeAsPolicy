@@ -106,6 +106,7 @@ class RobotBase:
         self._hidden: frozenset[str] = (
             frozenset(self.VLA_PRIMITIVES) if primitives == "no-vla" else frozenset()
         )
+        self._supervisor: Any = None
         # Instance attributes shadow the class methods, so a hidden primitive
         # is refused before any argument validation, whatever it was called with.
         for name in self._hidden:
@@ -320,6 +321,8 @@ class RobotBase:
         build: Callable[[dict[str, Any]], Any],
     ) -> Any:
         self._guard()
+        if self._supervisor is not None:
+            self._supervisor.before_action(tool)
         record = self._ledger.open(tool, kwargs, stateful=True)
         steps_before = self._backend.env_steps()
         started = time.perf_counter()
@@ -332,15 +335,21 @@ class RobotBase:
             result = build(payload)
             record.ok = True
             record.summary = self._summary(tool, payload)
-            return result
         except BaseException as exc:
             record.error = f"{type(exc).__name__}: {exc}"
+            if self._supervisor is not None and isinstance(exc, Exception):
+                self._supervisor.action_error(self, tool, exc)
             raise
         finally:
             record.elapsed_s = time.perf_counter() - started
             steps_after = self._backend.env_steps()
             if steps_before is not None and steps_after is not None:
                 record.env_steps = max(0, steps_after - steps_before)
+        # The action has completed and its ledger entry is committed. A visual
+        # interruption must not relabel an executed motion as a failed call.
+        if self._supervisor is not None:
+            self._supervisor.after_action(self, tool, steps_before)
+        return result
 
 
 __all__ = ["NO_VLA_MESSAGE", "PRIMITIVE_SETS", "RobotBase", "ToolError"]

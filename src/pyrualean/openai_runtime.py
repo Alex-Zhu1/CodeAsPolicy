@@ -532,6 +532,7 @@ def run_openai_agent(
             pending_images: list[tuple[str, bytes]] = []
             image_sources: list[str] = []
             malformed = 0
+            review_after: str | None = None
             for index, call in enumerate(calls):
                 function = call.get("function") or {}
                 name = function.get("name") or ""
@@ -539,14 +540,31 @@ def run_openai_agent(
                 call["id"] = call_id  # the replayed assistant message must carry the id we answer
                 tool_calls[name] = tool_calls.get(name, 0) + 1
                 arguments, problem = _parse_arguments(function.get("arguments"))
-                t0 = time.perf_counter()
                 if problem:
                     malformed += 1
+                t0 = time.perf_counter()
+                if review_after is not None:
+                    result = ArmResult({
+                        "error": f"Not executed: inspect the result of {review_after} and replan.",
+                        "skipped": True,
+                        "review_after": review_after,
+                    })
+                elif problem:
                     result = ArmResult({"error": problem})
                 else:
                     result = _execute_with_deadline(
                         arm_toolkit, name, arguments or {}, remaining(), stop_once
                     )
+                # A later action in this reply was planned without seeing the
+                # failure/pause. Answer its call ID but wait for a new model
+                # decision before executing more code (or a queued finish).
+                if review_after is None and (
+                    result.is_error
+                    or result.result.get("execution_paused")
+                    or (result.result.get("supervision") or {}).get("paused")
+                    or arm_toolkit.finish is not None
+                ):
+                    review_after = call_id
                 elapsed = time.perf_counter() - t0
                 tool_requests.append(
                     {"request": requests, "tool": name, "elapsed_s": round(elapsed, 3)}
@@ -572,7 +590,8 @@ def run_openai_agent(
                     tool=name,
                     call_id=call_id,
                     elapsed_s=round(elapsed, 3),
-                    ok="error" not in result.result,
+                    ok=not result.is_error,
+                    skipped=bool(result.result.get("skipped")),
                     images=len(call_images),
                     terminated=arm_toolkit.robo._reported_success(),
                 )

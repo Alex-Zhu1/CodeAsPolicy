@@ -39,11 +39,13 @@ from typing import Any
 
 from ._backend import Ledger
 from ._env import setting
-from ._robot import PRIMITIVE_SETS
+from ._robot import PRIMITIVE_SETS, effective_primitives
 from .arms import ARMS, ArmToolkit, arm_contract, robot_words
 from .claude_runtime import resolve_cli, run_claude_agent, sdk_max_turns
+from .execution import ExecutionLimits, add_execution_arguments, execution_limits
 from .generate import codex_catalog_flags, provider_overrides
 from .hosts.common import RESULT_SCHEMA, RpentBackend, resolve_rpent_root, stop_all
+from .interaction_trace import InteractionTrace
 from .openai_runtime import run_openai_agent
 from .prompt import api_reference, knowledge_text
 from .robots import ROBOTS, RobotAdapter, get_adapter
@@ -60,6 +62,7 @@ from .supervision import (
     config_record,
     monitor_config,
     monitor_prompt,
+    planning_instructions,
 )
 
 #: RPent's LIBERO guides (the default set for ``--guides`` on that robot).
@@ -67,6 +70,47 @@ GUIDE_NAMES = ("strict_hybrid_guide.md", "pro_hybrid_guide.md", "env_calibration
 #: Agent runtimes: the Codex CLI (``codex exec``), Claude Code (Claude Agent SDK) or
 #: the in-process OpenAI chat-completions loop (any OpenAI-compatible endpoint).
 RUNTIMES = ("codex", "claude", "openai")
+
+
+def _interaction_config(
+    runtime: str, model: str, reasoning_effort: str,
+    openai_options: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Record submitted settings, without claiming provider confirmation.
+
+    Only named scalar settings are retained: extra_body may contain credentials,
+    messages, or arbitrary provider payloads and must never be copied wholesale.
+    """
+    options = openai_options or {}
+    extra = options.get("extra_body") or {}
+    extra = extra if isinstance(extra, dict) else {}
+    submitted_model = extra.get("model", model) if runtime == "openai" else model
+    if runtime == "openai":
+        effort = extra.get("reasoning_effort")
+        source = (
+            "openai_options.extra_body.reasoning_effort"
+            if effort is not None else "provider_default"
+        )
+    elif runtime == "codex":
+        effort, source = reasoning_effort, "codex.model_reasoning_effort"
+    else:
+        # The SDK's mapped options are recorded by claude_runtime after launch.
+        effort, source = None, "generation.options.effort"
+    # run_openai_agent omits a false-valued option, then merges extra_body.
+    max_tokens = extra.get("max_tokens", options.get("max_tokens", 4096) or None)
+    return {
+        "runtime": runtime,
+        "requested_model": model,
+        "submitted_model": submitted_model if isinstance(submitted_model, str) else None,
+        "requested_reasoning_effort": reasoning_effort,
+        "submitted_reasoning_effort": effort if isinstance(effort, str) else None,
+        "reasoning_source": source,
+        "provider_confirmed": False,
+        "protocol": "chat_completions" if runtime == "openai" else "external_client_mcp",
+        "max_tokens": (
+            max_tokens if runtime == "openai" and isinstance(max_tokens, (int, float)) else None
+        ),
+    }
 
 
 def _recordable(options: dict[str, Any]) -> dict[str, Any]:
@@ -143,6 +187,8 @@ def build_prompt(
     primitives: str = "full",
     monitor: MonitorConfig | None = None,
     stuck_recovery: StuckRecoveryConfig | None = None,
+    code_limits: ExecutionLimits | None = None,
+    supervision_instructions: str | None = None,
 ) -> str:
     """The code arm's prompt: contract, API reference, knowledge, task card.
 
@@ -151,6 +197,7 @@ def build_prompt(
     """
 
     adapter = adapter or get_adapter(getattr(card, "robot", "libero"))
+    primitives = effective_primitives(adapter.robot_cls, primitives)
     contract = arm_contract(
         arm,
         budget_s=budget_s,
@@ -163,8 +210,9 @@ def build_prompt(
         robot=robot_words(adapter, primitives),
     )
     reference = api_reference(adapter.robot_cls, primitives=primitives)
+    contract += "\n\n# Code execution limits\n\n" + (code_limits or ExecutionLimits()).prompt()
     if monitor is not None and monitor.mode != "off":
-        contract += "\n\n" + monitor_prompt(monitor)
+        contract += "\n\n" + monitor_prompt(monitor, instructions=supervision_instructions)
     if stuck_recovery is not None:
         contract += "\n\n" + stuck_recovery.prompt()
     return "\n\n".join(
@@ -492,6 +540,7 @@ def play_episode(
     openai_options: dict[str, Any] | None = None,
     monitor: MonitorConfig | None = None,
     stuck_recovery: StuckRecoveryConfig | None = None,
+    code_limits: ExecutionLimits | None = None,
 ) -> dict[str, Any]:
     """Run one episode of ``arm`` on ``cell`` and write ``result.json``.
 
@@ -528,6 +577,8 @@ def play_episode(
     if arm not in ARMS:
         raise ValueError(f"arm must be one of {ARMS}")
     monitor = monitor or MonitorConfig()
+    supervision_instructions = planning_instructions() if monitor.mode != "off" else None
+    code_limits = code_limits or ExecutionLimits()
     if monitor.mode != "off" and arm != "cells":
         raise ValueError("Visual supervision currently supports only --arm cells")
     if stuck_recovery is not None and arm != "cells":
@@ -537,6 +588,7 @@ def play_episode(
     if primitives not in PRIMITIVE_SETS:
         raise ValueError(f"primitives must be one of {PRIMITIVE_SETS}")
     adapter = get_adapter(robot)
+    primitives = effective_primitives(adapter.robot_cls, primitives)
     host = adapter.host_module()
     boot_options = dict(boot_options or {})
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -548,6 +600,8 @@ def play_episode(
         (out_dir / "stuck_recovery_skill.md").write_text(
             stuck_recovery.instructions, encoding="utf-8"
         )
+    if monitor.mode != "off":
+        (out_dir / "supervision_skill.md").write_text(supervision_instructions, encoding="utf-8")
     guide_record: dict[str, Any] | bool = False
     if guides:
         if guides_dir:
@@ -563,6 +617,10 @@ def play_episode(
             "files": copy_guides(source, workspace / "guides", names),
         }
     started = time.perf_counter()
+    trace = InteractionTrace(out_dir / "interaction_events.jsonl")
+    interaction_config = _interaction_config(runtime, model, reasoning_effort, openai_options)
+    trace.emit("episode_started", runtime=runtime, arm=arm, robot=adapter.name)
+    trace.emit("runtime_configuration", configuration=interaction_config)
     result: dict[str, Any] = {
         "schema": RESULT_SCHEMA,
         "system": "pyrualean",
@@ -604,10 +662,12 @@ def play_episode(
         },
         "created_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
         "notes": [],
+        "interaction": {"configuration": interaction_config},
     }
     if runtime != "codex":
         result["host"]["runtime"] = runtime
-    result["monitor"] = config_record(monitor)
+    result["monitor"] = config_record(monitor, instructions=supervision_instructions)
+    result["host"]["code_execution"] = code_limits.record()
     result["stuck_recovery"] = stuck_recovery.record() if stuck_recovery else None
     toolkit = None
     daemons: list[Any] = []
@@ -642,6 +702,8 @@ def play_episode(
             feedback=feedback,
             max_turns=max_turns,
             stuck_recovery=stuck_recovery,
+            execution_limits=code_limits,
+            trace=trace,
             supervisor=(
                 VisualSupervisor(monitor, out_dir / "supervision")
                 if monitor.mode != "off" else None
@@ -669,6 +731,8 @@ def play_episode(
             primitives=primitives,
             monitor=monitor,
             stuck_recovery=stuck_recovery,
+            code_limits=code_limits,
+            supervision_instructions=supervision_instructions,
         )
         (out_dir / "prompt.txt").write_text(prompt, encoding="utf-8")
         result["prompt"] = {
@@ -676,6 +740,10 @@ def play_episode(
             "sha256": hashlib.sha256(prompt.encode("utf-8")).hexdigest(),
             "images": list(card.images.values()),
         }
+        trace.emit(
+            "context_ready", prompt_chars=len(prompt),
+            prompt_sha256=result["prompt"]["sha256"], images=len(card.images),
+        )
         events_path = out_dir / f"{runtime}_events.jsonl"
         stderr_path = out_dir / f"{runtime}_stderr.txt"
         # Fresh event/stderr logs for this episode; retries below append.
@@ -716,6 +784,9 @@ def play_episode(
             if remaining <= 0:
                 status, returncode = "timeout", None
                 break
+            agent_attempt_id = trace.new_id("agent_attempt")
+            arm_toolkit.agent_attempt_id = agent_attempt_id
+            trace.emit("agent_attempt_started", agent_attempt_id=agent_attempt_id, runtime=runtime)
             if runtime == "openai":
                 generation = run_openai_agent(
                     prompt,
@@ -736,6 +807,7 @@ def play_episode(
                     # a backend whose environment somebody else owns says when that owner
                     # has ended the episode
                     should_stop=getattr(backend, "episode_over", None),
+                    trace=trace,
                     **(openai_options or {}),
                 )
                 status, returncode = generation["status"], generation["returncode"]
@@ -799,6 +871,10 @@ def play_episode(
                             returncode = proc.wait()
                         status = "timeout"
                 audit = _audit_events(events_path)
+            trace.emit(
+                "agent_attempt_finished", agent_attempt_id=agent_attempt_id,
+                runtime=runtime, status=status, returncode=returncode,
+            )
             # A planner that died before touching the robot (provider overload,
             # 429, transport error) is retried; the episode state is untouched.
             if (
@@ -906,6 +982,15 @@ def play_episode(
                 server.stop()
         stop_all(toolkit, daemons)
         result["total_wall_s"] = time.perf_counter() - started
+        trace.emit("episode_finished", status=result["status"])
+        result["interaction"].update(trace.summary())
+        result["interaction"]["capabilities"] = {
+            "host_tool_timing": True,
+            "cell_validation_timing": arm == "cells",
+            "provider_request_timing": runtime == "openai",
+            "provider_first_token": False,
+            "decision_admission": False,
+        }
         (out_dir / "result.json").write_text(
             json.dumps(result, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
         )
@@ -941,8 +1026,10 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="python -m pyrualean.play", description=__doc__)
     add_monitor_arguments(parser)
     add_stuck_recovery_arguments(parser)
+    add_execution_arguments(parser)
     parser.add_argument("--robot", default="libero", help="libero | robocasa | robotwin | robodojo")
-    parser.add_argument("--arm", choices=ARMS, required=True)
+    parser.add_argument("--arm", choices=ARMS, default="cells",
+                        help="code execution mode (default: cells)")
     host.add_cell_args(parser)
     host.add_boot_args(parser)
     parser.add_argument("--out", type=Path, required=True)
@@ -1080,6 +1167,7 @@ def main(argv: list[str] | None = None) -> int:
         openai_options=_openai_options(args) if args.runtime == "openai" else None,
         monitor=monitor_config(args),
         stuck_recovery=stuck_recovery_config(args),
+        code_limits=execution_limits(args),
     )
     print(
         json.dumps(

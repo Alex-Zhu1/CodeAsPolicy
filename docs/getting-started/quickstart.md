@@ -72,6 +72,12 @@ The Codex CLI speaks the OpenAI Responses API; a server that only serves chat co
 
 ## 5. Run Your First Episode
 
+Start a [Valen service](../visual-supervision.md#run) at
+`http://127.0.0.1:18001/predict`, or set `PYRUALEAN_VALEN_URL` to your service.
+CLI cells runs now enable visual supervision and the two bundled skill cores by
+default; recovery text is supplied only after confirmed stuck. If running without
+Valen, add `--monitor-mode off --no-stuck-recovery` to the command below.
+
 Task 7 of `libero_spatial_swap` at seed 2, with at most 40 code cells and two hours:
 
 ```bash

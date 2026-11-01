@@ -52,7 +52,9 @@ def test_failed_primitive_is_an_attempt_not_a_completed_action(robo, backend, tm
     assert failed.result["recovery"]["motion_attempts"] == 1
     assert failed.result["recovery"]["completed_motion_calls"] == 0
     assert failed.result["recovery"]["last_motion"]["error"]
-    assert failed.result["recovery"]["next_action"] == "inspect_and_replan"
+    assert failed.result["recovery"]["next_action"] == "observe_and_reconcile"
+    assert failed.result["recovery"]["new_motion_allowed"] is False
+    assert failed.result["handoff"]["unresolved_actions"][0]["status"] == "unknown"
 
 
 def test_failed_postcondition_stops_following_action(robo, backend, tmp_path):

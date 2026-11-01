@@ -4,10 +4,19 @@ A tool-calling agent spends a full LLM call on every small step of a task and re
 time. A PyRUA-Lean agent writes code against a robot object, `robo`, instead: one call can find an object, move
 above it, grasp, check the gripper and try again.
 
+The robot manual specifies frames, units, interfaces and capability limits. The
+model chooses targets, arm roles, action ordering and bounded corrections in Python.
+For supported RoboDojo hosts, `move_both` provides genuine simultaneous movement;
+sequential cooperation remains ordinary code combining `move_to` and gripper calls.
+Skills contribute guidance and Valen contributes visual evidence. The host enforces
+execution limits and declared checks without supplying a fixed task workflow.
+See [dual-arm code and feedback](../guide/coordination.md).
+
 ## What the agent gets
 
 One tool, `python(code)`, over a persistent namespace that holds `robo` (and `np`, `math`, `time`). Variables,
-functions and files the agent made stay there from one cell to the next. A second tool, `finish`, ends the episode.
+functions and files the agent made stay there from one cell to the next. A second tool, `finish`, normally ends
+the episode; configured stuck recovery can return a recovery skill with `episode_finished=false` instead.
 The code runs in a sandbox: a fixed set of imports, file access confined to its workspace, and no handle to the
 simulator behind `robo`.
 
@@ -45,8 +54,10 @@ calling, the same step took four LLM calls, and every move returned three camera
 
 ## What `robo` returns
 
-- **Results, not exceptions.** A motion blocks until it is done and returns what actually happened
-  (`Move.reached`, `Pick.success`, ...); a mask that was not found is a result too. Only misuse raises.
+- **Feedback for code and for the model.** Expected outcomes return as values
+  (`Move.reached`, `DualMove.recoverable`, `Pick.success`, ...), so Python can branch and make bounded
+  corrections. Code errors, critical execution faults, exhausted budgets and visual review requests stop
+  the current block and return the actual scene to the model. A missing mask is an ordinary result.
 - **A finished episode stops everything.** Once the benchmark's success check fires, `robo.done` is true and every
   further motion is refused. RoboDojo judges only the final scene: its robot has no `done`, and RoboDojo's client
   ends the episode itself when the task is solved.
@@ -59,6 +70,12 @@ report with the source location, attempted actions, current state and remaining
 call budget. The model repairs the remaining work from that state. Earlier
 actions and assignments are not undone. See [Closed-loop recovery](../guide/recovery.md)
 for the execution, verification and replanning contract.
+
+Each code call has a configurable execution deadline and bounded output.
+Feedback includes an observation ID, motion-attempt revision and image
+provenance. Final `finish` closes the shared execution entry point. Generated
+code can use the predefined `strategy` helpers for [relocalization and bounded
+correction](../guide/strategies.md), then hand uncertain evidence back to the model.
 
 ## What the model reads
 

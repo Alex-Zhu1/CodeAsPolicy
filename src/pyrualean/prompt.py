@@ -26,7 +26,7 @@ from importlib import resources
 from pathlib import Path
 from typing import Any
 
-from ._robot import PRIMITIVE_SETS, RobotBase
+from ._robot import PRIMITIVE_SETS, RobotBase, effective_primitives
 from .libero import RESULT_TYPES, LiberoRobot
 
 _HOST_ONLY = frozenset({"ledger", "backend"})
@@ -140,11 +140,10 @@ def vla_hidden(robot_cls: type, primitives: str = "full") -> tuple[frozenset[str
 
     The members are ``robot_cls.VLA_PRIMITIVES`` (methods, or constants of
     that name); the result types are those returned by a hidden method and
-    by no remaining public member.  ``full`` hides nothing.
+    by no remaining public member. ``full`` is intersected with host capabilities.
     """
 
-    if primitives not in PRIMITIVE_SETS:
-        raise ValueError(f"primitives must be one of {PRIMITIVE_SETS}, got {primitives!r}")
+    primitives = effective_primitives(robot_cls, primitives)
     if primitives == "full":
         return frozenset(), frozenset()
     names = frozenset(getattr(robot_cls, "VLA_PRIMITIVES", ()))
@@ -173,6 +172,7 @@ def api_reference(
     sentences of the other docstrings that describe the VLA.
     """
 
+    primitives = effective_primitives(robot_cls, primitives)
     vla_members, vla_types = vla_hidden(robot_cls, primitives)
     sections: list[str] = []
     class_doc = inspect.getdoc(robot_cls) or ""
@@ -217,6 +217,25 @@ def api_reference(
     sections.append(
         "Result types (frozen dataclasses; access fields as attributes):\n\n" + "\n\n".join(results)
     )
+    if getattr(robot_cls, "COORDINATION_API", False):
+        from .coordination import RESULT_TYPES as MOTION_TYPES
+        from .coordination import Pose
+
+        sections.append("Coordination types:\n\n" + "\n\n".join(
+            _render_result_type(cls) for cls in MOTION_TYPES
+        ))
+        sections.append(_render_callable("pose", "shifted", Pose.shifted))
+        sections.append(
+            "Write cooperation strategy in Python: choose arm roles, targets, release timing, "
+            "conditions and bounded repairs from current observations. Use move_both for true "
+            "simultaneous movement; compose it freely with move_to and set_gripper. Test "
+            "DualMove.reached and inspect recoverable failures before dependent actions. "
+            "CoordinationPause(BaseException) stops code on critical execution faults/limits; "
+            "SupervisionPause stops code when declared visual checks require review. Do not "
+            "catch these interruptions. Already executed actions remain done. Call watch "
+            "when monitoring is enabled; only declared prerequisites are enforced. Skills "
+            "provide guidance, not a prescribed task sequence or object-support verdict."
+        )
     # A robot without ``done`` never ends an episode as "terminated".
     absent = frozenset(getattr(robot_cls, "ABSENT_MEMBERS", ()))
     reasons = "truncated | timeout | cancelled"
@@ -471,6 +490,7 @@ def render_prompt(
     from .robots import get_adapter
 
     adapter = get_adapter(card.robot if card is not None else "libero")
+    primitives = effective_primitives(robot_cls or adapter.robot_cls, primitives)
     max_env_steps = card.max_env_steps if card is not None else 10000
     services = adapter.services if primitives == "full" else adapter.services_novla
     scoring_head, scoring_limits, scoring_tail = SCORING_NOTES[bool(adapter.live_success)]

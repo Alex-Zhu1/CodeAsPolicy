@@ -26,21 +26,13 @@ solved or a source of reusable grasp coordinates.
 
 ## Example contracts: transport now, alignment later
 
-Assume a new grasp has already been verified and the chosen transport path does
-not contact the lock. The deferred alignment remains a required prerequisite for
-insertion. Do not execute these declarations consecutively without the indicated
-state changes and evidence reviews.
+Assume Astra has assessed the new grasp using images, object motion and gripper
+state, and the chosen transport path does not contact the lock. This example
+deliberately makes a fresh visual alignment answer a hard prerequisite for
+insertion; it is not a default for every task. Do not execute these declarations
+consecutively without the indicated state changes and evidence reviews.
 
 ```python
-# Planner record, not a new host API.
-deferred = {
-    "aligned": {
-        "status": "unresolved",
-        "reason": "free-space transport does not require blade/keyhole alignment",
-        "reactivate_before": "insertion",
-        "next_evidence": "visible blade and keyhole at the alignment endpoint",
-    },
-}
 facts = {
     "held": "Is the key held between the right gripper fingers?",
     "aligned": "Is the key blade aligned with the keyhole opening?",
@@ -49,10 +41,12 @@ watch(
     "transport verified key grasp toward pre-insertion pose",
     facts,
     alerts=[{"name": "key lost", "when": {"held": "no"}}],
-    critical=["held"],
 )
+defer_fact("aligned", until="insert", expected="yes",
+           reason="Free-space transport does not require blade/keyhole alignment")
 # An aligned=no/unknown result is recorded without blocking transport.
-# held=no still alerts; sustained held=unknown still requires review.
+# held=no requests review. Ordinary held=unknown is information for Astra;
+# it does not veto the following transport action or prove that the grasp failed.
 ```
 
 At the endpoint intended to establish alignment, change the contract before the
@@ -67,16 +61,22 @@ watch(
         {"name": "key lost", "when": {"held": "no"}},
         {"name": "blade not aligned", "when": {"aligned": "no"}},
     ],
-    critical=["held", "aligned"],
+    critical=["aligned"],
 )
 # Perform the intended alignment action, then end the cell for review.
-# Require held=yes and aligned=yes (or explicitly identified permitted evidence
-# establishing those prerequisites) before insertion; clear alone is insufficient.
-# Update deferred['aligned'] with the confirming observation/step only then.
+# Astra assesses possession using all permitted evidence. This example separately
+# requires a fresh aligned=yes Valen answer before insertion; clear is insufficient.
+# Inspect evidence()['facts']['aligned'] for the confirming observation/step.
+# Only after that verification, in the next cell:
+watch("insert", facts, requires={"aligned": "yes"},
+      alerts=[{"name": "key lost", "when": {"held": "no"}}])
+# An unresolved or stale aligned fact stops insertion before its first action.
 ```
 
 The host still uses its configured probability threshold and unknown window.
-Deferral changes when a condition blocks work, not the definition of truth.
+Deferral changes when an explicit hard condition blocks work, not the definition
+of truth. A normal critical review can return to Astra and a subsequent cell;
+that handoff cannot clear the separate registered alignment prerequisite.
 
 ## Other cases
 
@@ -104,5 +104,6 @@ If no progress: revisit grasp geometry or another feasible candidate; do not
 repeat unchanged code or convert unknown into success.
 ```
 
-Keep these records concise enough to use during execution. They are auditable
-planner decisions; this repository currently has no host-enforced deferral table.
+Keep these causal records concise. The host audits registered deferrals and checks
+their evidence before motions in the named phase; it cannot infer omitted
+dependencies or recognize an incorrectly named phase from Python or geometry.

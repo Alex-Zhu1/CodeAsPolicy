@@ -72,8 +72,9 @@
   or fixture an arm bumps moves, and most tasks check where it ended up.
 - `blocked` set means the arm stopped short of its waypoints: something is in
   the way (an object, the other arm).  Look before trying again.
-- The other arm holds its joints during a motion.  Move one arm at a time and
-  keep the idle arm out of the working arm's way.
+- During a single-arm move the other arm holds its joints. Choose sequential
+  calls or `move_both` according to the required cooperation; plan clearance for
+  both arms, including the one that is holding still.
 - To twist something held (a key, a cap, a knob), `move_to` the same point
   with another `roll` (straight down: another `yaw`); the last joint turns
   and the grasp point stays.  The wrist joint stops at about +-178 degrees.
@@ -104,6 +105,30 @@
   counts against the episode's budget (the task card states it; `Gripper.step`
   / `Gripper.step_limit` tell you where you stand).  When it is spent the
   state reports `truncated` and no motion is possible.
+
+## Composing dual-arm code
+- Astra chooses arm roles, target geometry, ordering, release timing and bounded
+  corrections in Python. The API performs motions and reports their outcomes;
+  these notes are guidance, not a prescribed task sequence.
+- `move_both(left=..., right=...)` moves both on one native clock. Each target is
+  world TCP xyz (retain current orientation), a `robo.pose(xyz, quat)` with unit
+  quaternion [w,x,y,z], or None (hold that arm). `robo.observe()` returns both
+  poses; `obs.left.shifted(dx,dy,dz)` is a world offset from that fixed snapshot.
+- Compose `move_both` freely with `move_to`, `set_gripper` and Python branches.
+  Two sequential calls are not simultaneous movement. `keep_relative=True` checks
+  a fixed relative TCP transform; synchronizing alone does not preserve it.
+- `move_both` grippers use strings `keep/open/close`, taking effect from the first
+  native step. KEEP retains the last commanded squeeze. Choose whether release
+  occurs during travel or at a separately verified endpoint based on actual support.
+- Inspect DualMove.reached, left/right errors, status, recoverable, steps_used and
+  observation before dependent work. Expected rejections and recoverable partial
+  endpoints may select a bounded local correction. With Valen enabled, a partial
+  endpoint is visually checked before that code continues. Critical faults and
+  review requests hand the live scene back to Astra; actions are never rolled back.
+- max_steps/timeout_s limit one call. Preserve planner retry/phase allocations
+  across cells; the native episode counter remains cumulative. The host checks
+  sampled arm/table geometry, not full arm-arm or object collision volumes. Read
+  motion_capabilities before relying on a check; unsupported requests reject.
 
 ## Gripper
 - Two conventions.  Commands are signed: `robo.CLOSE` (1) closes / holds,
@@ -150,6 +175,22 @@
   lift straight up before moving sideways.
 
 ## Perception
+- On a native/XPL snapshot backend, first take `view = robo.snapshot()`
+  (latest record) or `robo.snapshot(refresh=True)` (explicit read-only capture).
+  Use `robo.image(camera, step=view['step'])` and pass
+  `observation_id=view['observation_id']` to `locate`, `segment`,
+  `back_project`, and `camera_meta` to keep image, depth and calibration together.
+  Historical snapshots may be analysed; their coordinates are not current targets.
+- Perception results carry `provenance`: capture/session, image/calibration
+  sources, geometry method and assumptions. First check `found`, nonempty
+  coordinates, `note` and geometric plausibility. Keep the result and use
+  `robo.require_current(result)` before depending on it: this checks its source,
+  not identity, grasp quality or task completion. Motion, a new capture or
+  unresolved execution invalidates currentness; `current_at_return` is historical.
+  Initial measurements can inform planning, but do not certify later targets.
+  Plain xyz tuples carry no automatic dependency; full details remain in provenance.
+- These bindings require backend support. Legacy adapters retain unverified
+  perception and refuse an explicit observation ID instead of silently ignoring it.
 - Three cameras, 640x480.  `cam_head` is the authority for identity and coarse
   geometry: which object, which destination, the overall layout.  The wrist
   cameras show what an arm is about to grasp or is holding.
@@ -170,8 +211,9 @@
 - `segment` + `back_project` give one mask and one surface point (pass the
   mask's `centroid` with the SAME camera); use them for a pixel that `locate`
   does not cover, e.g. a spot on the table.
-- All of them read the CURRENT observation: localise, act, then localise
-  again.  Positions from before a contact are stale.
+- By default snapshot-capable calls read the latest recorded observation;
+  request a new capture explicitly when needed. Localise, act, then localise
+  again. Positions from before a contact are stale.
 - A mask is the best match for the text, not proof of identity.  Describe one
   object by colour, shape and position; check `score` and where `centroid`
   falls in the image before acting on it.  If a name finds nothing, try what
@@ -216,11 +258,11 @@
   started in (within 0.15 m and 20 degrees) with BOTH grippers open (an
   opening above 0.8, for a few tasks 0.9), the scene being as the instruction
   wants it at that moment - whether or not the instruction says to reset the
-  arms.  So release what you hold, `set_gripper(arm, robo.OPEN)` on both arms,
-  lift clear and end with `home("both")`.  Keep about 20 native actions for
-  it; nothing is lost where a task does not ask for it.
-- Finish when the scene shows that the instruction is satisfied and the arms
-  are back and open.
+  arms. Account for this convention in the task acceptance conditions and
+  reserve steps for required cleanup (about 20 is a useful estimate). First
+  establish where held objects can be supported; choose release and retreat
+  order from the scene. Homing/releasing is not harmless in every configuration.
+- Finish when the required task state and applicable cleanup conditions hold.
 
 ## Safety and recovery
 - Inspect the scene after motion.  Stop the current plan if an object is

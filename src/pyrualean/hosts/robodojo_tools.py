@@ -26,8 +26,8 @@ the episode's budget; a tool stops at the step limit.
 
 from __future__ import annotations
 
+import hashlib
 import math
-import zlib
 from collections.abc import Sequence
 from functools import partial
 from typing import Any
@@ -197,6 +197,7 @@ def _act(
             g = _keep(primitives, state, arm)
         _remember(primitives, arm, g)
         action[f"{arm}_ee_joint_state"] = [float(g)]
+    primitives._motion_revision = getattr(primitives, "_motion_revision", 0) + 1
     _obs_step, _reward, _done, info = primitives.env.step(action)
     obs = _obs(primitives)
     return obs["state"], (info.get("status") or {}) if isinstance(info, dict) else {}
@@ -732,6 +733,10 @@ def world_points(
         raise KeyError("no depth image in the observation")
     k = np.asarray(cam["intrinsic_matrix"], dtype=np.float64)
     t = np.asarray(extrinsic_of(cam), dtype=np.float64)
+    if not _valid_calibration(k, t):
+        raise ValueError(
+            "camera calibration must be finite 3x3 K / 4x4 T with positive focal lengths"
+        )
     d = depth[rows, cols]
     valid = np.isfinite(d) & (d > 0)
     r, c, d = rows[valid], cols[valid], d[valid]
@@ -910,15 +915,132 @@ def _view(camera: str, state: dict[str, Any]) -> sight.View | None:
     return sight.wrist_view([float(v) for v in np.ravel(pose)[:7]])
 
 
+def _snapshot_bound(primitives: Any) -> bool:
+    return isinstance(getattr(primitives, "_snapshot_context", None), dict)
+
+
+def _valid_calibration(k: np.ndarray, t: np.ndarray) -> bool:
+    return bool(
+        k.shape == (3, 3)
+        and t.shape == (4, 4)
+        and np.isfinite(k).all()
+        and np.isfinite(t).all()
+        and k[0, 0] > 0
+        and k[1, 1] > 0
+    )
+
+
+def _perception_view(
+    primitives: Any, obs: dict[str, Any], camera: str
+) -> sight.View | None:
+    """Use the frozen camera calibration; legacy callers retain their model calibration."""
+
+    cam = _camera(obs, camera) or {}
+    if _snapshot_bound(primitives):
+        intrinsic, extrinsic = cam.get("intrinsic_matrix"), extrinsic_of(cam)
+        if intrinsic is not None or extrinsic is not None:
+            try:
+                k, t = np.asarray(intrinsic, dtype=float), np.asarray(extrinsic, dtype=float)
+            except (TypeError, ValueError):
+                return None
+            color = cam.get("color")
+            shape = np.asarray(color).shape[:2] if color is not None else sight.IMAGE_SHAPE
+            if len(shape) != 2 or not _valid_calibration(k, t):
+                return None  # present but invalid calibration must not silently become a model
+            return sight.View(k, t, shape)
+    return _view(camera, _shown(obs))
+
+
+def _geometry_provenance(
+    primitives: Any,
+    obs: dict[str, Any],
+    camera: str,
+    method: str,
+    seen: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Describe the actual numerical basis, independently of the host's source references."""
+
+    seen = seen or {}
+    cameras = list(dict.fromkeys([camera, *seen.get("used_cameras", [])]))
+    depth = method.startswith("depth_")
+    calibration = {}
+    for name in cameras:
+        cam = _camera(obs, name) or {}
+        packet_calibration = (
+            cam.get("intrinsic_matrix") is not None or extrinsic_of(cam) is not None
+        )
+        calibration[name] = (
+            "observation_camera_matrices"
+            if depth or (_snapshot_bound(primitives) and packet_calibration)
+            else "robodojo_camera_model_from_image_state"
+        )
+    out: dict[str, Any] = {
+        "method": method,
+        "basis": "depth_image" if depth else "inferred_rgb",
+        "world_frame": "robodojo_world",
+        "length_unit": "metre",
+        "used_cameras": cameras,
+        "calibration_basis": calibration,
+        "assumptions": ["pinhole_camera_optical_axis_minus_z"],
+    }
+    if method != "depth_back_projection":
+        out["table_z_m"] = kin.TABLE_Z
+        out["assumptions"].append("support_plane_at_table_z")
+    if not depth:
+        out["depth_is_measured"] = False
+        out["prior_scope"] = "same_snapshot" if _snapshot_bound(primitives) else "legacy_history"
+        out["agreement_view_count"] = int(seen.get("views", 1))
+        out["height_prior_used"] = bool(seen.get("remembered", False))
+        if method != "ray_table_intersection":
+            out["assumptions"].append("mask_fitted_to_upright_prism_or_hanging_solid")
+        else:
+            out["assumptions"].append("pixel_surface_assumed_to_be_table")
+        if "kind" in seen:
+            out["shape_model"] = seen["kind"]
+        if "match" in seen:
+            out["multiview_match"] = seen["match"]
+        if seen.get("guess") or seen.get("hidden"):
+            out["uncertainty_note"] = seen.get("guess") or seen["hidden"]
+    return out
+
+
+def _scene_key(primitives: Any, obs: dict[str, Any]) -> str:
+    """Identity includes every pixel, calibration and image-time state, not just arm motion."""
+
+    digest = hashlib.sha256()
+
+    def add(value: Any) -> None:
+        if isinstance(value, dict):
+            digest.update(b"{")
+            for name in sorted(value):
+                add(str(name))
+                add(value[name])
+            digest.update(b"}")
+        elif isinstance(value, (list, tuple)):
+            digest.update(b"[")
+            for item in value:
+                add(item)
+            digest.update(b"]")
+        elif isinstance(value, np.ndarray):
+            array = np.ascontiguousarray(value)
+            add((str(array.dtype), array.shape))
+            digest.update(array.tobytes())
+        else:
+            digest.update(repr(value).encode("utf-8"))
+            digest.update(b";")
+
+    context = getattr(primitives, "_snapshot_context", None) or {}
+    add({name: context.get(name) for name in ("session_id", "observation_id", "source_id")})
+    add(obs.get("pyrualean_observation"))
+    add(_shown(obs))
+    add(obs.get("vision") or {})
+    return digest.hexdigest()
+
+
 def _scene(primitives: Any, obs: dict[str, Any]) -> dict[str, Any]:
     """What has been measured in the images of this observation (kept until they change)."""
 
-    marks = []
-    for name in sorted(obs.get("vision") or {}):
-        color = (obs["vision"][name] or {}).get("color")
-        if color is not None:
-            marks.append(zlib.crc32(np.ascontiguousarray(np.asarray(color)[::8, ::8]).tobytes()))
-    key = tuple(marks)
+    key = _scene_key(primitives, obs)
     scene = getattr(primitives, "_scene", None)
     if not isinstance(scene, dict) or scene.get("key") != key:
         scene = {"key": key, "regions": []}
@@ -938,6 +1060,16 @@ def _heights(primitives: Any) -> dict[str, tuple[float, str, float | None]]:
         except AttributeError:
             pass
     return known
+
+
+def _height_prior(
+    primitives: Any, obs: dict[str, Any]
+) -> dict[str, tuple[float, str, float | None]]:
+    # A frozen historical lookup must neither consume nor overwrite measurements from another
+    # capture. Within one snapshot repeated tools may reuse the same measured geometry.
+    if _snapshot_bound(primitives):
+        return _scene(primitives, obs).setdefault("heights", {})
+    return _heights(primitives)
 
 
 def _behind_robot(mask: np.ndarray, outline: np.ndarray) -> bool:
@@ -973,8 +1105,8 @@ def _measure_in_colour(
 
     state = _shown(obs)
     vision = obs.get("vision") or {}
-    seen: dict[str, Any] = {"views": 1}
-    view = _view(camera, state)
+    seen: dict[str, Any] = {"views": 1, "used_cameras": [camera]}
+    view = _perception_view(primitives, obs, camera)
     if view is None:
         return None, seen
     first = sight.Sight(view, mask)
@@ -984,10 +1116,11 @@ def _measure_in_colour(
     for name in vision:
         if name == camera or sam3 is None:
             continue
-        other = _view(name, state)
+        other = _perception_view(primitives, obs, name)
         color = (vision[name] or {}).get("color")
         if other is None or color is None:
             continue
+        seen["used_cameras"].append(name)
         robot = sight.robot_pixels(other, state, own=_WRISTS.get(name))
         masks = []
         if text_prompt:
@@ -1013,11 +1146,12 @@ def _measure_in_colour(
         if masks:
             others.append([sight.Sight(other, m, robot) for m in masks])
     key = " ".join(str(text_prompt or "").lower().split())
-    known = _heights(primitives).get(key) if key else None
+    known = _height_prior(primitives, obs).get(key) if key else None
     res = sight.measure(first, others, known=known)
     if res is None:
         return None, seen
     seen["views"] = int(res["views"])
+    seen.update({name: res.get(name) for name in ("remembered", "kind", "match")})
     if res["views"] == 1 and not res.get("remembered"):
         # one camera, nothing to check it against: has the robot got in front of the object?
         outline = sight.robot_pixels(view, state, own=_WRISTS.get(camera), scale=1.0, between=False)
@@ -1032,14 +1166,14 @@ def _measure_in_colour(
                 "one camera sees it and the robot's arm is in front of part of it: its size and "
                 "place may be off (move the arm away and locate again)"
             )
-            points = np.asarray(res["points"], dtype=np.float64)
-            return object_geometry(points), seen
     if res["views"] >= 2:
         rough = res["match"] is not None and res["match"] < ROUGH_MATCH
         if key and not rough:
             # only what the cameras agreed on well is kept: a rough reading (an object in the
             # gripper read as a column down to the table) would spoil every later one
-            _heights(primitives)[key] = (float(res["height_m"]), str(res["kind"]), res["match"])
+            _height_prior(primitives, obs)[key] = (
+                float(res["height_m"]), str(res["kind"]), res["match"]
+            )
         if rough:
             seen["guess"] = (
                 "the cameras agree only roughly: its height may be centimetres off "
@@ -1047,13 +1181,19 @@ def _measure_in_colour(
             )
     elif res.get("remembered"):
         seen["guess"] = "its height as measured before"
-    else:
+    elif not seen.get("guess"):
         seen["guess"] = (
             "one camera sees it: its height is a guess (locate it again from above before a grasp)"
         )
     points = np.asarray(res["points"], dtype=np.float64)
     _scene(primitives, obs)["regions"].append(
-        {"camera": camera, "rows": res["rows"], "cols": res["cols"], "points": points}
+        {
+            "camera": camera,
+            "rows": res["rows"],
+            "cols": res["cols"],
+            "points": points,
+            "seen": seen,
+        }
     )
     return object_geometry(points), seen
 
@@ -1066,41 +1206,58 @@ def probe(primitives: Any, row: int, col: int, camera: str = "cam_head") -> dict
     (the table, or something too flat to measure) is where its ray meets the table.
     """
 
-    obs = _obs(primitives)
+    return _probe_at_observation(primitives, _obs(primitives), row, col, camera)
+
+
+def _probe_at_observation(
+    primitives: Any, obs: dict[str, Any], row: int, col: int, camera: str
+) -> dict[str, Any]:
+    """Resolve every mask and ray against the same packet selected by the caller."""
+
     cam = _camera(obs, camera)
     if cam is None:
         return {"error": f"camera {camera!r} not in observation"}
     color = cam.get("color")
     if color is None:
         return {"error": "camera color image missing"}
-    state = _shown(obs)
-    view = _view(camera, state)
+    view = _perception_view(primitives, obs, camera)
     if view is None:
-        return {"error": f"no pose for camera {camera!r} in the state"}
+        return {"error": f"no valid calibration or camera pose for {camera!r}"}
     row, col = int(row), int(col)
     if not (0 <= row < view.shape[0] and 0 <= col < view.shape[1]):
         return {
             "error": f"pixel [{row}, {col}] is outside the {view.shape[0]} x {view.shape[1]} image"
         }
 
-    def answer(xyz: np.ndarray, surface: str) -> dict[str, Any]:
+    def answer(
+        xyz: np.ndarray, surface: str, seen: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
         depth = float(-((xyz - view.pos) @ view.rot)[2])
-        return {
+        out = {
             "camera": camera,
             "pixel": [row, col],
             "world_xyz": [round(float(v), 4) for v in xyz],
             "depth_m": round(depth, 4),
             "surface": surface,
         }
+        if _snapshot_bound(primitives):
+            out["geometry_provenance"] = _geometry_provenance(
+                primitives,
+                obs,
+                camera,
+                "ray_table_intersection" if surface == "table" else "rgb_inferred_surface",
+                seen,
+            )
+        return out
 
-    def on_table() -> dict[str, Any]:
+    def on_table(seen: dict[str, Any] | None = None) -> dict[str, Any]:
         xy, ok = view.on_plane(np.array([row]), np.array([col]), kin.TABLE_Z)
         x, y = float(xy[0, 0]), float(xy[0, 1])
         on = kin.TABLE_X[0] - 0.01 <= x <= kin.TABLE_X[1] + 0.01
         on = on and kin.TABLE_Y[0] - 0.01 <= y <= kin.TABLE_Y[1] + 0.01
         if not ok[0] or not on:
             return {"error": "the pixel looks past the table: there is no depth image to say where"}
-        return answer(np.array([x, y, kin.TABLE_Z]), "table")
+        return answer(np.array([x, y, kin.TABLE_Z]), "table", seen)
 
     def in_region(region: dict[str, Any]) -> dict[str, Any] | None:
         if region["camera"] != camera or len(region["rows"]) == 0:
@@ -1110,11 +1267,11 @@ def probe(primitives: Any, row: int, col: int, camera: str = "cam_head") -> dict
         if gap[i] > PROBE_REACH_PX**2:
             return None
         if gap[i] == 0:
-            return answer(region["points"][i], "object")
+            return answer(region["points"][i], "object", region.get("seen"))
         # between measured pixels: this pixel's own ray, as far out as its neighbour's point
         d = view.rays(np.array([row]), np.array([col]))[0]
         depth = float(-((region["points"][i] - view.pos) @ view.rot)[2])
-        return answer(view.pos + d * depth, "object")
+        return answer(view.pos + d * depth, "object", region.get("seen"))
 
     scene = _scene(primitives, obs)
     for region in scene["regions"]:
@@ -1123,7 +1280,7 @@ def probe(primitives: Any, row: int, col: int, camera: str = "cam_head") -> dict
             return hit
     for flat in scene.get("flat", ()):
         if flat["camera"] == camera and flat["mask"][row, col]:
-            return on_table()
+            return on_table(flat.get("seen"))
     sam3 = getattr(primitives, "sam3_client", None)
     if sam3 is None:
         return on_table()
@@ -1133,13 +1290,13 @@ def probe(primitives: Any, row: int, col: int, camera: str = "cam_head") -> dict
         if mask is not None and mask[row, col]:
             scene.setdefault("flat", []).append({"camera": camera, "mask": mask})
         return on_table()
-    geo, _seen = _measure_in_colour(primitives, obs, camera, mask, None, 0.0)
+    geo, seen = _measure_in_colour(primitives, obs, camera, mask, None, 0.0)
     if geo is not None:
         hit = in_region(scene["regions"][-1])
         if hit is not None:
             return hit
-    scene.setdefault("flat", []).append({"camera": camera, "mask": mask})
-    return on_table()
+    scene.setdefault("flat", []).append({"camera": camera, "mask": mask, "seen": seen})
+    return on_table(seen)
 
 
 probe._readonly = True  # type: ignore[attr-defined]
@@ -1157,11 +1314,14 @@ def back_project(primitives: Any, row: int, col: int, camera: str = "cam_head") 
     if cam is None:
         return {"error": f"camera {camera!r} not in observation"}
     if colour_only(primitives, cam):
-        return probe(primitives, row, col, camera)
+        return _probe_at_observation(primitives, obs, row, col, camera)
     depth = depth_image(cam)
-    k = np.asarray(cam.get("intrinsic_matrix"), dtype=np.float64)
-    t = np.asarray(extrinsic_of(cam), dtype=np.float64)
-    if k.shape != (3, 3) or t.shape != (4, 4):
+    try:
+        k = np.asarray(cam.get("intrinsic_matrix"), dtype=np.float64)
+        t = np.asarray(extrinsic_of(cam), dtype=np.float64)
+    except (TypeError, ValueError):
+        return {"error": "calibration missing/invalid"}
+    if not _valid_calibration(k, t):
         return {"error": f"calibration missing/invalid: K={k.shape} T={t.shape}"}
     h, w = int(depth.shape[0]), int(depth.shape[1])
     row, col = int(row), int(col)
@@ -1171,12 +1331,17 @@ def back_project(primitives: Any, row: int, col: int, camera: str = "cam_head") 
     if not math.isfinite(d) or d <= 0:
         return {"error": f"invalid depth at pixel: {d}"}
     points, _valid = world_points(cam, np.array([row]), np.array([col]))
-    return {
+    out = {
         "camera": camera,
         "pixel": [row, col],
         "depth_m": round(d, 4),
         "world_xyz": [round(float(v), 4) for v in points[0]],
     }
+    if _snapshot_bound(primitives):
+        out["geometry_provenance"] = _geometry_provenance(
+            primitives, obs, camera, "depth_back_projection"
+        )
+    return out
 
 
 back_project._readonly = True  # type: ignore[attr-defined]
@@ -1215,8 +1380,15 @@ def locate(
         "area_px": int(mask.sum()),
         "centroid_rc": [int(rows.mean()), int(cols.mean())] if len(rows) else None,
     }
+    if _snapshot_bound(primitives):
+        out["geometry_provenance"] = _geometry_provenance(
+            primitives,
+            obs,
+            camera,
+            "rgb_shape_inference" if colour_only(primitives, cam) else "depth_mask_geometry",
+        )
     if colour_only(primitives, cam):
-        view = _view(camera, _shown(obs))
+        view = _perception_view(primitives, obs, camera)
         if view is not None:
             outline = sight.robot_pixels(
                 view, _shown(obs), own=_WRISTS.get(camera), scale=1.0, between=False
@@ -1229,6 +1401,10 @@ def locate(
                 out["geometry_error"] = "the mask lies on the robot's own arm or gripper"
                 return out
         geo, seen = _measure_in_colour(primitives, obs, camera, mask, text_prompt, float(min_score))
+        if _snapshot_bound(primitives):
+            out["geometry_provenance"] = _geometry_provenance(
+                primitives, obs, camera, "rgb_shape_inference", seen
+            )
         out["views"] = seen["views"]
         if seen.get("guess"):
             out["height_guess"] = seen["guess"]
@@ -1366,6 +1542,9 @@ def register(toolkit: Any) -> None:
     }
     for name, handler in handlers.items():
         toolkit.add_tool(name, SPECS[name], handler)
+    from .robodojo_coordination import register as register_coordination
+
+    register_coordination(toolkit)
 
 
 __all__ = [

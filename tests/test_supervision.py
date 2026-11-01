@@ -21,6 +21,7 @@ WATCH = (
     "watch('transport', {'held': 'Is the black bowl held by the gripper?'}, "
     "alerts=[{'name': 'dropped', 'when': {'held': 'no'}}])\n"
 )
+CRITICAL_WATCH = WATCH.replace("alerts=", "critical=['held'], alerts=")
 
 
 def answer(value="yes"):
@@ -62,6 +63,39 @@ def setup(robo, tmp_path, outputs, **options):
     return toolkit, supervisor, client
 
 
+@pytest.fixture
+def snapshot_robo(backend, monkeypatch):
+    """A test sensor protocol: new read-only captures do not advance physics."""
+    from pyrualean import LiberoRobot
+
+    original_view = backend._view
+
+    def metadata(step=-1):
+        index = backend.steps[step]["step_idx"]
+        source = f"test-sensor-frame-{index}"
+        return dict(
+            schema="pyrualean.observation.v1", session_id="test-sensor-session",
+            observation_id=source, source_id=source, step=index,
+            native_steps=backend.frames, captured_at=1000.0 + index,
+            recorded_at=2000.0 + index, source_freshness="captured", aligned=True,
+            images={camera: dict(source_id=source, artifact=f"{camera}_high.png", aligned=True)
+                    for camera in LiberoRobot.CAMERAS},
+        )
+
+    def refresh():
+        backend._record(command=None, result=None)
+        return backend._view(-1)
+
+    def view(step):
+        return dict(original_view(step), observation=metadata(step))
+
+    monkeypatch.setattr(backend, "session_id", "test-sensor-session", raising=False)
+    monkeypatch.setattr(backend, "_view", view)
+    monkeypatch.setattr(backend, "observation_metadata", metadata, raising=False)
+    monkeypatch.setattr(backend, "refresh_observation", refresh, raising=False)
+    return LiberoRobot(backend)
+
+
 def test_alert_stops_remainder_preserves_episode_and_can_replan(robo, backend, tmp_path):
     tk, monitor, _ = setup(robo, tmp_path, [answer("no"), answer()])
     result = tk.execute_tool("python", {"code": WATCH + "saved = 42\n" + MOVE + "\n" + MOVE})
@@ -80,6 +114,18 @@ def test_alert_stops_remainder_preserves_episode_and_can_replan(robo, backend, t
         json.loads(line) for line in (monitor.directory / "events.jsonl").read_text().splitlines()
     ]
     assert [row["event"] for row in events] == ["review", "clear"]
+
+
+def test_normal_approach_needs_no_extra_pre_action_verification(snapshot_robo, backend, tmp_path):
+    tk, monitor, client = setup(snapshot_robo, tmp_path, [answer()])
+    result = tk.execute_tool("python", {"code": "obs = robo.snapshot()\n" + WATCH + MOVE})
+    assert not result.result.get("execution_paused")
+    assert not result.result.get("error")
+    assert backend.frames > 0
+    assert snapshot_robo._ledger.stateful_calls() == 1
+    assert monitor.feedback()["verification_calls"] == 0
+    assert len(client.packets) == 1  # Automatic endpoint review remains active.
+    assert monitor.reports[-1]["action_id"] == snapshot_robo.action_receipt()["action_id"]
 
 
 def test_plain_exception_handler_cannot_swallow_pause(robo, tmp_path):
@@ -139,13 +185,133 @@ def test_phase_changes_do_not_reuse_old_evidence(robo, tmp_path):
 
 def test_critical_unknowns_pause_and_noncritical_unknowns_do_not(robo, tmp_path):
     tk, _, _ = setup(robo, tmp_path, [answer("unknown")] * 3)
-    result = tk.execute_tool("python", {"code": WATCH + "\n".join([MOVE] * 3)})
+    result = tk.execute_tool("python", {"code": CRITICAL_WATCH + "\n".join([MOVE] * 3)})
     assert result.result["supervision"]["actions"] == 2
     assert result.result["supervision"]["reports"][-1]["triggers"] == ["unknown:held"]
     result = tk.execute_tool(
         "python", {"code": "watch('approach', {'held': 'Is the bowl held?'}, critical=[])\n" + MOVE}
     )
     assert not result.result["supervision"]["paused"]
+
+
+def test_critical_unknown_review_hands_back_without_forging_evidence(robo, tmp_path):
+    tk, monitor, client = setup(robo, tmp_path, [answer("unknown")] * 4)
+    first = tk.execute_tool("python", {"code": CRITICAL_WATCH + MOVE})
+    assert not first.result["supervision"]["paused"]
+    changed_phase = CRITICAL_WATCH.replace("'transport'", "'transport retry'")
+    second = tk.execute_tool("python", {"code": changed_phase + MOVE + "\n" + MOVE})
+    assert second.result["execution_paused"]
+    assert second.result["supervision"]["reports"][-1]["triggers"] == ["unknown:held"]
+    assert monitor.unknowns["held"] == 2
+    assert robo._ledger.stateful_calls() == 2
+    resumed = tk.execute_tool("python", {"code": CRITICAL_WATCH + MOVE + "\n" + MOVE})
+    assert not resumed.result.get("execution_paused")
+    assert len(client.packets) == robo._ledger.stateful_calls() == 4
+    fact = monitor.read_evidence()["facts"]["held"]
+    assert fact["value"] == "unknown" and fact["unknown_streak"] == 4
+    assert fact["fresh"] and fact["observation"] is not None
+    assert not monitor.reports[-1]["blocked"]
+
+
+def test_ordinary_visual_questions_do_not_implicitly_make_unknown_critical(robo, tmp_path):
+    tk, monitor, _ = setup(robo, tmp_path, [answer("unknown")] * 3)
+    result = tk.execute_tool("python", {"code": WATCH + "\n".join([MOVE] * 3)})
+    assert not result.result.get("execution_paused")
+    assert monitor.contract["critical"] == []
+    assert monitor.read_evidence()["facts"]["held"]["unknown_streak"] == 3
+    assert robo._ledger.stateful_calls() == 3
+
+
+@pytest.mark.parametrize("watch,value,trigger", [
+    (CRITICAL_WATCH, "unknown", "unknown:held"),
+    (WATCH, "no", "alert:dropped"),
+    ("watch('inspect', {'held': 'Is the black bowl held by the gripper?'}, "
+     "completion={'name': 'grasp', 'when': {'held': 'yes'}})\n",
+     "yes", "completion_review:grasp"),
+])
+def test_new_question_version_does_not_inherit_review_notification(
+    robo, tmp_path, watch, value, trigger
+):
+    tk, monitor, _ = setup(robo, tmp_path, [answer(value)] * 2, unknown_limit=1)
+    first = tk.execute_tool("python", {"code": watch + MOVE})
+    assert first.result["execution_paused"]
+    revised = watch.replace("black bowl", "red cup")
+    second = tk.execute_tool("python", {"code": revised + MOVE})
+    assert second.result["execution_paused"]
+    assert monitor.reports[-1]["triggers"] == [trigger]
+    assert monitor.read_evidence()["facts"]["held"]["version"] == 2
+    assert robo._ledger.stateful_calls() == 2
+
+
+def test_matching_confirmation_window_survives_new_cell(robo, tmp_path):
+    tk, monitor, _ = setup(robo, tmp_path, [answer(), answer()])
+    watch = (
+        "watch('verify', {'held': 'Is the bowl held?'}, completion="
+        "{'name': 'grasp', 'when': {'held': 'yes'}, 'confirmations': 2})\n"
+    )
+    assert not tk.execute_tool("python", {"code": watch + MOVE}).result["supervision"]["paused"]
+    result = tk.execute_tool("python", {"code": watch + MOVE})
+    assert result.result["execution_paused"]
+    assert monitor.reports[-1]["triggers"] == ["completion_review:grasp"]
+
+
+@pytest.mark.parametrize("kind,trigger_value,opposite,trigger", [
+    ("alerts", "no", "yes", "alert:condition"),
+    ("completion", "yes", "no", "completion_review:condition"),
+])
+def test_review_rule_rearms_only_after_known_counterevidence(
+    robo, tmp_path, kind, trigger_value, opposite, trigger
+):
+    rule = "{'name': 'condition', 'when': {'held': '" + trigger_value + "'}}"
+    declaration = "[" + rule + "]" if kind == "alerts" else rule
+    watch = (
+        "watch('carry', {'held': 'Is the black bowl held by the gripper?'}, "
+        + kind + "=" + declaration + ")\n"
+    )
+    tk, monitor, _ = setup(robo, tmp_path, [answer(value) for value in (
+        trigger_value, "unknown", trigger_value, trigger_value, opposite, trigger_value,
+    )])
+    first = tk.execute_tool("python", {"code": watch + MOVE + "\n" + MOVE})
+    assert first.result["execution_paused"]
+    assert monitor.reports[-1]["triggers"] == [trigger]
+    assert robo._ledger.stateful_calls() == 1
+
+    resumed = tk.execute_tool("python", {"code": watch + "\n".join([MOVE] * 3)})
+    assert not resumed.result.get("execution_paused")
+    assert [report["event"] for report in monitor.reports] == ["clear"] * 3
+    assert robo._ledger.stateful_calls() == 4
+
+    recurred = tk.execute_tool("python", {"code": watch + "\n".join([MOVE] * 3)})
+    assert recurred.result["execution_paused"]
+    assert monitor.reports[-1]["triggers"] == [trigger]
+    assert robo._ledger.stateful_calls() == 6
+
+
+@pytest.mark.parametrize("kind,value,trigger", [
+    ("alerts", "no", "alert:condition"),
+    ("completion", "yes", "completion_review:condition"),
+])
+def test_repeated_source_and_new_matching_capture_do_not_repeat_review(
+    snapshot_robo, backend, tmp_path, kind, value, trigger
+):
+    rule = "{'name': 'condition', 'when': {'held': '" + value + "'}}"
+    declaration = "[" + rule + "]" if kind == "alerts" else rule
+    watch = (
+        "watch('inspect', {'held': 'Is the black bowl held by the gripper?'}, "
+        + kind + "=" + declaration + ")\n"
+    )
+    tk, monitor, _ = setup(snapshot_robo, tmp_path, [answer(value)] * 3)
+    first = tk.execute_tool("python", {"code": watch + "verify()"})
+    assert first.result["execution_paused"]
+    assert monitor.reports[-1]["triggers"] == [trigger]
+    resumed = tk.execute_tool("python", {"code": watch +
+        "verify()\nrobo.snapshot(refresh=True)\nverify()"})
+    assert not resumed.result.get("execution_paused")
+    assert [report["new_evidence"] for report in monitor.reports] == [
+        {"held": False}, {"held": True},
+    ]
+    assert [report["event"] for report in monitor.reports] == ["clear", "clear"]
+    assert backend.frames == 0 and snapshot_robo._ledger.stateful_calls() == 0
 
 
 def test_completion_is_a_review_not_episode_success(robo, backend, tmp_path):
@@ -226,6 +392,98 @@ def test_diffuse_prediction_is_unknown():
     raw = answer()
     raw["answers"]["held"]["probabilities"] = dict(yes=0.6, no=0.3, unknown=0.1)
     assert decode_answers(raw, {"held": "question"}, 0.8)[0] == {"held": "unknown"}
+
+
+@pytest.mark.parametrize("steps,event", [(0, "motion_rejected"), (3, "motion_incomplete")])
+def test_controller_refusal_can_return_locally_but_unclassified_partial_pauses(
+    robo, backend, tmp_path, monkeypatch, steps, event
+):
+    tk, _, client = setup(robo, tmp_path, [])
+    original = backend.execute_tool
+
+    def reject(tool, args):
+        if tool == "move_to":
+            backend.frames += steps
+            return {"reached": False, "ik_error": "arm intersects table", "steps_used": steps}
+        return original(tool, args)
+
+    # Exercise the common dispatch boundary, independent of adapter result parsers.
+    monkeypatch.setattr(backend, "execute_tool", reject)
+    monkeypatch.setattr(robo, "SUMMARY_KEYS", (*robo.SUMMARY_KEYS, "reached", "ik_error"))
+    tk._globals["attempt"] = lambda: robo._stateful("move_to", {}, lambda p: p)
+    result = tk.execute_tool("python", {"code": WATCH + "attempt()\nattempt()"})
+    report = result.result["supervision"]
+    assert not client.packets
+    if steps:
+        assert result.result["execution_paused"]
+        assert event in report["reason"] and "arm intersects table" in report["reason"]
+    else:
+        assert not result.result.get("execution_paused")
+        assert "arm intersects table" in report["reports"][-1]["error"]
+    assert report["reports"][-1]["event"] == event
+    assert report["reports"][-1]["executed_steps"] == steps
+    assert robo._ledger.stateful_calls() == (1 if steps else 2)
+    assert result.result["observation"]["actions"]["attempted"] == (1 if steps else 2)
+
+
+def test_derived_arrival_failure_stops_before_more_actions(robo, backend, tmp_path, monkeypatch):
+    tk, _, client = setup(robo, tmp_path, [])
+    original = backend._do_move_to
+
+    def incomplete(**kwargs):
+        payload = original(**kwargs)
+        payload["final_dist_m"] = 0.05
+        assert "reached" not in payload
+        return payload
+
+    monkeypatch.setattr(backend, "_do_move_to", incomplete)
+    result = tk.execute_tool("python", {"code": WATCH + MOVE + "\n" + MOVE})
+    assert result.result["execution_paused"] and not client.packets
+    report = result.result["supervision"]["reports"][-1]
+    assert report["event"] == "motion_incomplete"
+    assert report["primitive_outcome"]["reached"] is False
+    assert report["primitive_outcome"]["final_dist_m"] == 0.05
+    assert report["executed_steps"] > 0
+    assert robo._ledger.stateful_calls() == 1
+    assert [r for r in robo._ledger if r.stateful][0].ok
+
+
+def test_monitor_timeout_reports_original_cause(robo, tmp_path):
+    tk, _, _ = setup(robo, tmp_path, [TimeoutError("Valen took too long")])
+    result = tk.execute_tool("python", {"code": WATCH + MOVE})
+    assert "TimeoutError: Valen took too long" in result.result["supervision"]["reason"]
+
+
+def test_feedback_distinguishes_model_abstention_from_threshold(robo, tmp_path):
+    raw = answer()
+    raw["answers"]["held"]["probabilities"] = dict(yes=0.6, no=0.3, unknown=0.1)
+    tk, _, _ = setup(robo, tmp_path, [raw, answer("unknown")])
+    result = tk.execute_tool("python", {"code": WATCH + MOVE + "\n" + MOVE})
+    reports = result.result["supervision"]["reports"]
+    assert reports[0]["values"]["held"] == "unknown"
+    assert reports[0]["decisions"]["held"]["raw_winner"] == "yes"
+    assert reports[0]["decisions"]["held"]["abstention_reason"] == "below_threshold"
+    assert reports[1]["decisions"]["held"]["abstention_reason"] == "model_unknown"
+
+
+def test_injected_grasp_helper_stops_transport_on_unknown_support(robo, tmp_path):
+    tk, _, client = setup(robo, tmp_path, [answer(), answer("unknown")])
+    code = WATCH + """
+def observe_grasp():
+    return strategy.GraspObservation.from_evidence(evidence(), 'held', holding=True)
+r = strategy.verify_grasp(
+    observe_grasp,
+    lambda attempt: robo.move_to([0.05, -0.10, 0.6]),
+    lambda before, attempt: robo.move_to([0.05, -0.10, 0.61]),
+    lambda before, after: True,
+)
+print(r.status)
+if r.status == 'verified':
+    robo.move_to([0.05, 0.2, 0.7])
+"""
+    result = tk.execute_tool("python", {"code": code})
+    assert not result.is_error and result.result["stdout"] == "uncertain\n"
+    assert len(client.packets) == 2 and robo._ledger.stateful_calls() == 2
 
 
 def test_large_policy_output_cannot_hide_review_reason(robo, tmp_path):
@@ -394,6 +652,10 @@ def test_supervision_prompt_is_opt_in():
     )
     assert original == disabled and "watch(phase" not in original
     assert "watch(phase" in enabled and "interrupted assignment" in enabled
+    from pyrualean.supervision import planning_instructions
+
+    assert planning_instructions() in enabled
+    assert "Astra–Valen planning skill" not in original
 
 
 def test_missing_camera_pauses_with_partial_evidence(robo, backend, tmp_path, monkeypatch):
@@ -469,3 +731,422 @@ def test_replay_is_read_only_and_uses_native_control_steps(tmp_path, monkeypatch
     assert [row["step"] for row in result["reports"]] == [21, 26]
     with pytest.raises(ValueError, match="increasing"):
         replay.RecordedRobot([{"step": 1, "images": {"head": str(image)}}] * 2)
+
+
+FACTS = "{'held': 'Is the black bowl held by the gripper?'}"
+OBSERVE = f"watch('grasp', {FACTS})\n"
+CRITICAL_OBSERVE = f"watch('grasp', {FACTS}, critical=['held'])\n"
+REQUIRE = f"watch('transport', {FACTS}, requires={{'held': 'yes'}})\n"
+DEFER = "defer_fact('held', until='transport', reason='Grasp must precede transport')\n"
+
+
+def test_visual_review_handoff_does_not_clear_explicit_requirement(robo, tmp_path):
+    tk, monitor, client = setup(robo, tmp_path, [answer("unknown")] * 2)
+    first = tk.execute_tool("python", {"code": CRITICAL_OBSERVE + MOVE + "\n" + MOVE})
+    assert first.result["execution_paused"]
+    blocked = tk.execute_tool("python", {"code": REQUIRE + MOVE})
+    assert blocked.result["execution_paused"]
+    assert monitor.reports[-1]["event"] == "prerequisite_review"
+    assert monitor.reports[-1]["blocked"]["held"]["expected"] == "yes"
+    assert monitor.reports[-1]["blocked"]["held"]["value"] == "unknown"
+    assert len(client.packets) == robo._ledger.stateful_calls() == 2
+
+
+def test_visual_review_handoff_cannot_clear_unknown_execution(tmp_path):
+    from pyrualean import LiberoRobot
+    from tests.test_interaction_contracts import ProtocolBackend
+
+    backend = ProtocolBackend()
+    robo = LiberoRobot(backend)
+    tk, monitor, client = setup(robo, tmp_path, [answer("unknown")] * 2)
+    first = tk.execute_tool("python", {"code": CRITICAL_WATCH + MOVE + "\n" + MOVE})
+    assert first.result["execution_paused"] and len(client.packets) == 2
+    backend.next_status = "unknown"
+    uncertain = tk.execute_tool("python", {"code": CRITICAL_WATCH + MOVE})
+    assert uncertain.result["execution_paused"]
+    action_id = uncertain.result["handoff"]["unresolved_actions"][0]["action_id"]
+    assert robo.action_receipt(action_id)["status"] == "unknown"
+    assert len(backend.contexts) == 3
+
+    blocked = tk.execute_tool("python", {"code": CRITICAL_WATCH + MOVE})
+    assert blocked.result["execution_paused"]
+    assert blocked.result["handoff"]["unresolved_actions"][0]["action_id"] == action_id
+    assert len(backend.contexts) == 3 and len(client.packets) == 2
+    assert monitor.read_evidence()["facts"]["held"]["value"] == "unknown"
+
+
+@pytest.mark.parametrize("value", ["unknown", "no"])
+def test_single_unresolved_fact_blocks_dependency_before_motion(robo, tmp_path, value):
+    tk, monitor, client = setup(robo, tmp_path, [answer(value)])
+    first = tk.execute_tool("python", {"code": OBSERVE + MOVE})
+    assert first.result["supervision"]["reports"][-1]["event"] == "clear"
+    result = tk.execute_tool("python", {"code": REQUIRE + MOVE})
+    assert result.result["execution_paused"] and len(client.packets) == 1
+    assert robo._ledger.stateful_calls() == 1
+    assert monitor.feedback()["blocked"]["held"]["value"] == value
+    assert len(result.images) == len(robo.CAMERAS)
+    assert result.result["supervision"]["observation"]["source"] == "host_review"
+
+
+def test_unobserved_dependency_blocks_first_motion(robo, tmp_path):
+    tk, monitor, _ = setup(robo, tmp_path, [])
+    result = tk.execute_tool("python", {"code": REQUIRE + MOVE})
+    assert result.result["execution_paused"] and not robo._ledger.stateful_calls()
+    assert monitor.feedback()["blocked"]["held"]["invalidated_by"] == "not_observed"
+
+
+def test_deferred_gate_survives_cells_contract_reset_and_then_recovers(robo, tmp_path):
+    tk, monitor, client = setup(robo, tmp_path, [answer("unknown"), answer(), answer()])
+    tk.execute_tool("python", {"code": OBSERVE + DEFER + MOVE})
+    recorded = monitor.read_evidence()
+    fact = recorded["facts"]["held"]
+    assert fact["value"] == "unknown" and fact["fresh"]
+    assert fact["observation"]["state_version"] == robo._action_revision == 1
+    # Neither a new cell nor an empty requires argument can forget this gate.
+    blocked = tk.execute_tool("python", {"code": WATCH + MOVE})
+    assert blocked.result["execution_paused"] and len(client.packets) == 1
+    blocked = tk.execute_tool("python", {"code": WATCH.replace(
+        "alerts=", "requires={}, alerts=") + MOVE})
+    assert blocked.result["execution_paused"] and len(client.packets) == 1
+    repaired = tk.execute_tool("python", {"code": OBSERVE + MOVE})
+    assert not repaired.result["supervision"]["paused"]
+    resumed = tk.execute_tool("python", {"code": WATCH + MOVE})
+    assert not resumed.result["supervision"]["paused"]
+    assert robo._ledger.stateful_calls() == 3
+    latest = monitor.read_evidence()
+    assert latest["facts"]["held"]["observation"] != fact["observation"]
+    assert latest["phase_requirements"] == recorded["phase_requirements"]
+    assert json.loads((monitor.directory / "evidence.json").read_text()) == latest
+
+
+def test_each_motion_requires_evidence_even_after_clear_unknown(robo, tmp_path):
+    tk, _, client = setup(robo, tmp_path, [answer(), answer("unknown")])
+    tk.execute_tool("python", {"code": OBSERVE + MOVE})
+    result = tk.execute_tool("python", {"code": REQUIRE + MOVE + "\n" + MOVE})
+    assert result.result["execution_paused"] and len(client.packets) == 2
+    assert result.result["supervision"]["reports"][-2]["event"] == "clear"
+    assert result.result["supervision"]["reports"][-1]["event"] == "prerequisite_review"
+
+
+def test_stale_evidence_cannot_pass_even_when_last_value_was_yes(robo, tmp_path):
+    other = {"answers": {"visible": answer()["answers"]["held"]}}
+    tk, monitor, _ = setup(robo, tmp_path, [answer(), other])
+    tk.execute_tool("python", {"code": OBSERVE + DEFER + MOVE})
+    tk.execute_tool("python", {"code":
+        "watch('adjust', {'visible': 'Is the plate visible?'})\n" + MOVE})
+    stale = monitor.read_evidence()["facts"]["held"]
+    assert stale["value"] == "yes" and not stale["fresh"]
+    result = tk.execute_tool("python", {"code": WATCH + MOVE})
+    assert result.result["execution_paused"] and robo._ledger.stateful_calls() == 2
+
+
+def test_explicit_invalidators_preserve_only_unaffected_evidence(robo, tmp_path):
+    other = {"answers": {"visible": answer()["answers"]["held"]}}
+    tk, monitor, _ = setup(robo, tmp_path, [answer(), other, answer()])
+    tk.execute_tool("python", {"code": OBSERVE + DEFER + MOVE})
+    before = monitor.read_evidence()["facts"]["held"]
+    tk.execute_tool("python", {"code":
+        "watch('independent', {'visible': 'Is the plate visible?'}, "
+        "invalidates=['visible'])\n" + MOVE})
+    assert monitor.read_evidence()["facts"]["held"] == before
+    result = tk.execute_tool("python", {"code": WATCH + MOVE})
+    assert not result.result["supervision"]["paused"]
+
+
+@pytest.mark.parametrize("kind", ["action", "monitor", "external"])
+def test_failures_and_unobserved_state_changes_invalidate_preserved_facts(
+    robo, backend, tmp_path, kind
+):
+    tk, monitor, _ = setup(robo, tmp_path, [answer(), TimeoutError("no evidence")])
+    tk.execute_tool("python", {"code": OBSERVE + DEFER + MOVE})
+    if kind == "external":
+        backend.frames += 1
+    else:
+        if kind == "action":
+            backend.error_next = {"error": "partially moved"}
+        tk.execute_tool("python", {"code": OBSERVE.replace(
+            ")\n", ", invalidates=[])\n") + MOVE})
+    result = tk.execute_tool("python", {"code": WATCH + MOVE})
+    assert result.result["execution_paused"]
+    assert not monitor.read_evidence()["facts"]["held"]["fresh"]
+    assert robo._ledger.stateful_calls() == (1 if kind == "external" else 2)
+
+
+def test_question_change_invalidates_evidence_and_pinned_question_is_stable(robo, tmp_path):
+    tk, monitor, _ = setup(robo, tmp_path, [answer()])
+    tk.execute_tool("python", {"code": OBSERVE + MOVE})
+    tk.execute_tool("python", {"code": OBSERVE.replace("black bowl", "red cup")})
+    fact = monitor.read_evidence()["facts"]["held"]
+    assert fact["version"] == 2 and not fact["fresh"] and fact["observation"] is None
+    tk.execute_tool("python", {"code": DEFER})
+    result = tk.execute_tool("python", {"code": OBSERVE + MOVE})
+    assert "keep its question" in result.result["exception"]
+    assert monitor.read_evidence()["facts"]["held"] == fact
+    assert robo._ledger.stateful_calls() == 1
+
+
+def test_evidence_snapshot_cannot_forge_a_gate_and_helpers_are_rebound(robo, tmp_path):
+    tk, monitor, _ = setup(robo, tmp_path, [])
+    tk.execute_tool("python", {"code": REQUIRE +
+        "copy = evidence()\ncopy['facts']['held'].update(value='yes', fresh=True)\n"
+        "copy['phase_requirements'].clear()\nevidence = None\ndefer_fact = None"})
+    result = tk.execute_tool("python", {"code": WATCH + "assert callable(evidence)\n"
+        "assert callable(defer_fact)\n" + MOVE})
+    assert result.result["execution_paused"] and not robo._ledger.stateful_calls()
+    assert monitor.read_evidence()["facts"]["held"]["value"] == "unknown"
+
+
+def test_shadow_records_prerequisite_but_does_not_block(robo, tmp_path):
+    tk, monitor, client = setup(robo, tmp_path, [answer()], mode="shadow")
+    result = tk.execute_tool("python", {"code": REQUIRE + MOVE})
+    assert not result.result["supervision"]["paused"]
+    assert [r["event"] for r in monitor.reports] == ["prerequisite_review", "clear"]
+    assert len(client.packets) == 1
+
+
+def test_declared_negative_prerequisite_accepts_only_fresh_no(robo, tmp_path):
+    tk, _, _ = setup(robo, tmp_path, [answer("no"), answer("no")])
+    tk.execute_tool("python", {"code": OBSERVE + MOVE})
+    result = tk.execute_tool("python", {"code": REQUIRE.replace("'yes'", "'no'") + MOVE})
+    assert not result.result["supervision"]["paused"]
+
+
+def test_scene_changes_during_prediction_do_not_establish_evidence(
+    robo, backend, tmp_path, monkeypatch
+):
+    tk, monitor, client = setup(robo, tmp_path, [])
+
+    def predict(packet):
+        backend.frames += 1
+        return answer()
+
+    monkeypatch.setattr(client, "predict", predict)
+    result = tk.execute_tool("python", {"code": OBSERVE + MOVE})
+    assert result.result["execution_paused"]
+    assert "evidence is stale" in monitor.reports[-1]["error"]
+    assert not monitor.read_evidence()["facts"]["held"]["fresh"]
+
+
+def test_large_output_retains_prerequisite_blockers(robo, tmp_path):
+    tk, _, _ = setup(robo, tmp_path, [])
+    result = tk.execute_tool("python", {"code": REQUIRE +
+        "print(chr(1) * 8000)\n" + MOVE})
+    text = result.content_blocks[0]["text"]
+    payload = json.loads(text)
+    assert len(text) <= 20000
+    assert payload["supervision"]["paused"]
+    assert payload["supervision"]["blocked"]["held"]["value"] == "unknown"
+
+
+@pytest.mark.parametrize("where", ["action", "monitor"])
+def test_interruption_invalidates_preservation_claims(robo, backend, tmp_path, monkeypatch, where):
+    tk, monitor, client = setup(robo, tmp_path, [answer()])
+    tk.execute_tool("python", {"code": OBSERVE + DEFER + MOVE})
+    original = backend.execute_tool
+
+    def interrupted_action(name, arguments):
+        if name in robo.STATEFUL_TOOLS:
+            raise SystemExit("interrupted")
+        return original(name, arguments)
+
+    def interrupted_monitor(packet):
+        raise SystemExit("interrupted")
+
+    if where == "action":
+        monkeypatch.setattr(backend, "execute_tool", interrupted_action)
+    else:
+        monkeypatch.setattr(client, "predict", interrupted_monitor)
+    tk.execute_tool("python", {"code": OBSERVE.replace(
+        ")\n", ", invalidates=[])\n") + MOVE})
+    assert not monitor.read_evidence()["facts"]["held"]["fresh"]
+    result = tk.execute_tool("python", {"code": WATCH + MOVE})
+    assert result.result["execution_paused"] and robo._ledger.stateful_calls() == 2
+
+
+def test_supervision_skill_is_frozen_and_hashed_even_if_boot_fails(tmp_path, monkeypatch):
+    import hashlib
+    from types import SimpleNamespace
+
+    from pyrualean import play, supervision
+    from pyrualean.robots import get_adapter
+    from pyrualean.supervision import planning_instructions
+
+    frozen_core = planning_instructions()
+
+    def boot(*args, **kwargs):
+        # A source edit during boot must not change the frozen run's metadata/prompt.
+        monkeypatch.setattr(supervision, "planning_instructions", lambda: "new revision")
+        raise RuntimeError("no simulator")
+
+    adapter = SimpleNamespace(name="libero", robot_cls=get_adapter("libero").robot_cls,
+                              host_module=lambda: SimpleNamespace(boot=boot))
+    monkeypatch.setattr(play, "get_adapter", lambda name: adapter)
+    cell = SimpleNamespace(suite="test", task=0, seed=0, cuda_device=0, max_episode_steps=100)
+    out = tmp_path / "run"
+    result = play.play_episode(cell, out, arm="cells", model="m",
+                              monitor=MonitorConfig(mode="pause", url="http://localhost:1"))
+    assert result["status"] == "boot_error"
+    frozen = (out / "supervision_skill.md").read_text()
+    assert frozen == frozen_core
+    assert result["monitor"]["planning_skill"]["sha256"] == hashlib.sha256(
+        frozen.encode()).hexdigest()
+    card = SimpleNamespace(max_env_steps=100, render=lambda: "TASK")
+    prompt = play.build_prompt("cells", card, budget_s=100, max_programs=None,
+                               adapter=get_adapter("libero"),
+                               monitor=MonitorConfig(mode="pause", url="http://localhost:1"),
+                               supervision_instructions=frozen)
+    assert frozen in prompt and "new revision" not in prompt
+
+
+def test_verify_establishes_first_motion_prerequisite_without_moving(
+    snapshot_robo, backend, tmp_path
+):
+    tk, monitor, client = setup(snapshot_robo, tmp_path, [answer(), answer()])
+    observed = tk.execute_tool("python", {"code": REQUIRE + "checked = verify()"})
+    assert not observed.is_error and not observed.result.get("execution_paused")
+    assert backend.frames == 0 and snapshot_robo._ledger.stateful_calls() == 0
+    assert monitor.read_evidence()["facts"]["held"]["fresh"]
+    assert monitor.feedback()["verification_calls"] == 1
+    assert len(client.packets) == 1
+    resumed = tk.execute_tool("python", {"code": REQUIRE + MOVE})
+    assert not resumed.result.get("execution_paused")
+    assert snapshot_robo._ledger.stateful_calls() == 1
+    assert monitor.reports[-1]["action_id"] == snapshot_robo.action_receipt()["action_id"]
+
+
+def test_verify_repeated_source_cannot_clear_unknown_or_add_confirmation(
+    snapshot_robo, backend, tmp_path
+):
+    tk, monitor, _ = setup(snapshot_robo, tmp_path, [answer("unknown"), answer(),
+                                                    answer("unknown")])
+    first = tk.execute_tool("python", {"code": CRITICAL_OBSERVE + "verify()\nverify()"})
+    assert not first.result.get("execution_paused")
+    assert monitor.unknowns["held"] == 1
+    assert monitor.reports[-1]["values"]["held"] == "unknown"
+    assert monitor.reports[-1]["new_evidence"] == {"held": False}
+    second = tk.execute_tool("python", {"code": CRITICAL_OBSERVE +
+        "new_view = robo.snapshot(refresh=True)\nverify(new_view['observation_id'])"})
+    assert second.result["execution_paused"]
+    assert monitor.unknowns["held"] == 2
+    assert backend.frames == 0 and snapshot_robo._ledger.stateful_calls() == 0
+
+
+def test_verify_completion_needs_two_distinct_captures(snapshot_robo, backend, tmp_path):
+    tk, monitor, _ = setup(snapshot_robo, tmp_path, [answer()] * 3)
+    watch = (
+        "watch('verify', {'held': 'Is the bowl held?'}, completion="
+        "{'name': 'grasp', 'when': {'held': 'yes'}, 'confirmations': 2})\n"
+    )
+    first = tk.execute_tool("python", {"code": watch + "verify()\nverify()"})
+    assert not first.result.get("execution_paused")
+    assert monitor.counts["completion"] == 1
+    second = tk.execute_tool("python", {"code": watch + "robo.snapshot(refresh=True)\nverify()"})
+    assert second.result["execution_paused"]
+    assert monitor.reports[-1]["triggers"] == ["completion_review:grasp"]
+    assert tk.finish is None and backend.frames == 0
+
+
+def test_verify_rejects_expired_observation_before_predicting(snapshot_robo, tmp_path):
+    tk, monitor, client = setup(snapshot_robo, tmp_path, [answer(), answer()])
+    tk.execute_tool("python", {"code": OBSERVE + "old = robo.snapshot()\nverify()\n" + MOVE})
+    result = tk.execute_tool("python", {"code": OBSERVE + "verify(old['observation_id'])"})
+    assert result.result["execution_paused"]
+    assert monitor.reports[-1]["event"] == "monitor_error"
+    assert len(client.packets) == 2 and snapshot_robo._ledger.stateful_calls() == 1
+    assert not monitor.read_evidence()["facts"]["held"]["fresh"]
+
+
+def test_verify_unknown_id_cannot_establish_evidence(snapshot_robo, tmp_path):
+    tk, monitor, client = setup(snapshot_robo, tmp_path, [])
+    result = tk.execute_tool("python", {"code": REQUIRE + "verify('not-a-host-observation')"})
+    assert result.result["execution_paused"] and not client.packets
+    assert monitor.ledger.blockers("transport")
+    assert snapshot_robo._ledger.stateful_calls() == 0
+
+
+def test_verify_scope_rejects_motion_from_verifier_callback(
+    snapshot_robo, backend, tmp_path, monkeypatch
+):
+    tk, monitor, client = setup(snapshot_robo, tmp_path, [])
+
+    def bad_predict(packet):
+        snapshot_robo.move_to([0.05, -0.1, 0.6])
+        return answer()
+
+    monkeypatch.setattr(client, "predict", bad_predict)
+    result = tk.execute_tool("python", {"code": OBSERVE + "verify()"})
+    assert result.result["execution_paused"]
+    assert monitor.reports[-1]["event"] == "monitor_error"
+    assert snapshot_robo._ledger.stateful_calls() == 0 and backend.frames == 0
+    assert not monitor.read_evidence()["facts"]["held"]["fresh"]
+
+
+def test_verification_failures_consume_separate_budget(snapshot_robo, tmp_path):
+    tk, monitor, client = setup(snapshot_robo, tmp_path, [TimeoutError("no answer")],
+                               max_actions=1, mode="shadow")
+    result = tk.execute_tool("python", {"code": OBSERVE + "verify()\nverify()"})
+    assert not result.is_error
+    assert len(client.packets) == 1
+    assert [report["event"] for report in monitor.reports] == [
+        "monitor_error", "verification_budget_review",
+    ]
+    assert monitor.feedback()["verification_calls"] == 2
+    assert monitor.actions == 0
+
+
+def test_verify_unsupported_backend_is_explicitly_rejected(robo, tmp_path):
+    tk, monitor, client = setup(robo, tmp_path, [])
+    result = tk.execute_tool("python", {"code": OBSERVE + "verify()"})
+    assert result.result["execution_paused"] and not client.packets
+    assert "host-owned observation" in monitor.reports[-1]["error"]
+    assert robo._ledger.stateful_calls() == 0
+
+
+def test_source_refresh_without_verification_invalidates_previous_prerequisite(
+    snapshot_robo, tmp_path
+):
+    tk, monitor, client = setup(snapshot_robo, tmp_path, [answer()])
+    tk.execute_tool("python", {"code": REQUIRE + "verify()"})
+    result = tk.execute_tool("python", {"code": REQUIRE +
+        "robo.snapshot(refresh=True)\n" + MOVE})
+    assert result.result["execution_paused"]
+    assert monitor.ledger.blockers("transport")["held"]["invalidated_by"] == (
+        "observation_source_changed"
+    )
+    assert len(client.packets) == 1 and snapshot_robo._ledger.stateful_calls() == 0
+
+
+def test_unknown_review_rearms_after_new_known_capture(snapshot_robo, tmp_path):
+    tk, monitor, _ = setup(snapshot_robo, tmp_path, [answer(value) for value in (
+        "unknown", "unknown", "yes", "unknown", "unknown",
+    )])
+    paused = tk.execute_tool("python", {"code": CRITICAL_OBSERVE +
+        "verify()\nrobo.snapshot(refresh=True)\nverify()"})
+    assert paused.result["execution_paused"]
+    known = tk.execute_tool("python", {"code": CRITICAL_OBSERVE +
+        "robo.snapshot(refresh=True)\nverify()"})
+    assert not known.result.get("execution_paused")
+    assert monitor.unknowns["held"] == 0
+    recurred = tk.execute_tool("python", {"code": CRITICAL_OBSERVE +
+        "robo.snapshot(refresh=True)\nverify()\n"
+        "robo.snapshot(refresh=True)\nverify()"})
+    assert recurred.result["execution_paused"]
+    assert monitor.reports[-1]["triggers"] == ["unknown:held"]
+    assert monitor.unknowns["held"] == 2
+    assert snapshot_robo._ledger.stateful_calls() == 0
+
+
+def test_same_source_cannot_rearm_or_repeat_unknown_review(snapshot_robo, tmp_path):
+    tk, monitor, _ = setup(snapshot_robo, tmp_path, [answer(value) for value in (
+        "unknown", "unknown", "yes", "unknown",
+    )])
+    paused = tk.execute_tool("python", {"code": CRITICAL_OBSERVE +
+        "verify()\nrobo.snapshot(refresh=True)\nverify()"})
+    assert paused.result["execution_paused"]
+    resumed = tk.execute_tool("python", {"code": CRITICAL_OBSERVE +
+        "verify()\nrobo.snapshot(refresh=True)\nverify()"})
+    assert not resumed.result.get("execution_paused")
+    assert monitor.reports[0]["new_evidence"] == {"held": False}
+    assert monitor.reports[0]["values"]["held"] == "unknown"
+    assert monitor.unknowns["held"] == 3
+    assert snapshot_robo._ledger.stateful_calls() == 0

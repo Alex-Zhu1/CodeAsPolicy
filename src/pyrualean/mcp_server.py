@@ -18,6 +18,7 @@ reviewer model in the loop.
 from __future__ import annotations
 
 import asyncio
+import functools
 import socket
 import threading
 from typing import Any
@@ -76,11 +77,32 @@ def _build_asgi_app(toolkit: Any, *, annotations: dict[str, Any] | None) -> Any:
     @app.call_tool()
     async def _call_tool(name: str, arguments: dict[str, Any]) -> types.CallToolResult:
         lookup = name.split("__")[-1] if name.startswith("mcp__") else name
-        async with lock:
-            result = await asyncio.get_running_loop().run_in_executor(
-                None, toolkit.execute_tool, lookup, arguments or {}
+        trace = getattr(toolkit, "trace", None)
+        context = None
+        if trace is not None:
+            # This is a host invocation ID, not the provider's tool-call ID.
+            context = {
+                "local_call_id": trace.new_id("tool"), "transport": "mcp",
+                "agent_attempt_id": getattr(toolkit, "agent_attempt_id", None),
+            }
+            trace.emit("tool_received", tool=lookup, **context)
+        try:
+            async with lock:
+                execute = functools.partial(toolkit.execute_tool, lookup, arguments or {})
+                if context is not None:
+                    execute = functools.partial(execute, trace_context=context)
+                result = await asyncio.get_running_loop().run_in_executor(None, execute)
+            content, is_error = _result_to_mcp(result)
+        except BaseException as exc:
+            if trace is not None:
+                trace.emit("feedback_failed", tool=lookup, error_type=type(exc).__name__, **context)
+            raise
+        if trace is not None:
+            observation = (getattr(result, "result", {}).get("observation") or {})
+            trace.emit(
+                "feedback_ready", tool=lookup, outcome="error" if is_error else "returned",
+                observation_id=observation.get("observation_id"), **context,
             )
-        content, is_error = _result_to_mcp(result)
         return types.CallToolResult(content=content, isError=is_error)
 
     manager = StreamableHTTPSessionManager(app=app, stateless=True, json_response=True)

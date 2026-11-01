@@ -16,6 +16,7 @@ import pytest
 
 from pyrualean import openai_runtime as orun
 from pyrualean.arms import ArmToolkit
+from pyrualean.interaction_trace import InteractionTrace
 
 
 def _reply(
@@ -433,11 +434,17 @@ def test_two_tool_calls_in_one_reply_keep_the_message_order_legal(robo, tmp_path
     assert generation["tool_calls"]["python"] == 2
 
 
-def test_failure_skips_queued_actions_then_model_repairs(robo, backend, tmp_path, card_images):
-    toolkit = _toolkit(robo, tmp_path, images="none", feedback="pure")
+@pytest.mark.parametrize("tail,kind", [("missing", "runtime"), ("robo.release()", "action_limit")])
+def test_failure_skips_queued_actions_then_model_repairs(
+    robo, backend, tmp_path, card_images, tail, kind
+):
+    from pyrualean.execution import ExecutionLimits
+
+    toolkit = _toolkit(robo, tmp_path, images="none", feedback="pure",
+                       execution_limits=ExecutionLimits(max_actions=1))
     transport = ScriptedTransport([
         _reply([
-            ("bad", "python", {"code": "robo.move_to([0.05, -0.1, 0.6])\nmissing"}),
+            ("bad", "python", {"code": "robo.move_to([0.05, -0.1, 0.6])\n" + tail}),
             ("queued", "python", {"code": "robo.release()"}),
             ("premature", "finish", {"status": "success", "summary": "unverified"}),
         ]),
@@ -452,6 +459,7 @@ def test_failure_skips_queued_actions_then_model_repairs(robo, backend, tmp_path
     replies = [m for m in messages if m["role"] == "tool"]
     assert [m["tool_call_id"] for m in replies] == ["bad", "queued", "premature"]
     assert json.loads(replies[0]["content"])["recovery"]["motion_attempts"] == 1
+    assert json.loads(replies[0]["content"])["failure"]["kind"] == kind
     assert all(json.loads(m["content"])["skipped"] for m in replies[1:])
     events = [json.loads(line) for line in
               (tmp_path / "out" / "openai_events.jsonl").read_text().splitlines()]
@@ -597,3 +605,154 @@ def test_confirmed_stuck_dispatch_waits_for_new_decision(robo, tmp_path, card_im
     assert json.loads(replies[1]["content"])["skipped"]
     assert [t["tool"] for t in toolkit.turns] == ["finish", "python", "finish"]
     assert toolkit.finish["status"] == "failure" and len(toolkit.stuck_recovery_events) == 1
+
+
+def _trace_events(trace):
+    return [json.loads(line) for line in trace.path.read_text().splitlines()]
+
+
+def test_trace_records_text_only_response_without_inventing_tool_execution(
+    robo, tmp_path, card_images
+):
+    trace = InteractionTrace(tmp_path / "trace.jsonl")
+    toolkit = _toolkit(robo, tmp_path, trace=trace)
+    private_text = "PRIVATE_ASSISTANT_RESPONSE"
+    transport = ScriptedTransport([
+        _reply(text=private_text),
+        _reply([("end", "finish", {"status": "failure", "summary": "done"})]),
+    ])
+    generation = _run(toolkit, transport, tmp_path, card_images, trace=trace)
+    rows = _trace_events(trace)
+    parsed = [row for row in rows if row["event"] == "response_parsed"]
+    assert [row["tool_calls"] for row in parsed] == [0, 1]
+    assert parsed[0]["decision_id"] != parsed[1]["decision_id"]
+    assert parsed[0]["attempt_id"] != parsed[1]["attempt_id"]
+    first_decision = [row for row in rows if row.get("decision_id") == parsed[0]["decision_id"]]
+    assert [row["event"] for row in first_decision] == [
+        "request_started", "request_finished", "response_received", "response_parsed",
+    ]
+    complete = next(row for row in rows if row["event"] == "tool_arguments_complete")
+    assert rows.index(parsed[1]) < rows.index(complete)
+    assert complete["decision_id"] == parsed[1]["decision_id"]
+    assert complete["attempt_id"] == parsed[1]["attempt_id"]
+    assert private_text not in trace.path.read_text()
+    assert generation["status"] == "completed" and generation["requests"] == 2
+
+
+def test_trace_records_complete_batch_before_execution_and_feedback_after_images(
+    robo, tmp_path, card_images, monkeypatch
+):
+    trace = InteractionTrace(tmp_path / "trace.jsonl")
+    toolkit = _toolkit(robo, tmp_path, trace=trace, images="on-demand", feedback="pure")
+    original_add = orun._Transcript.add
+    image_boundaries = []
+
+    def add(transcript, message, images=None):
+        original_add(transcript, message, images)
+        if images and str(message.get("content", "")).startswith("Images returned by tool"):
+            rows = _trace_events(trace)
+            assert not any(row["event"] == "feedback_ready" for row in rows)
+            image_boundaries.append(len(rows))
+
+    monkeypatch.setattr(orun._Transcript, "add", add)
+    end = _reply([("", "finish", {"status": "failure", "summary": "done"})])
+    end["choices"][0]["message"]["tool_calls"][0].pop("id")
+    transport = ScriptedTransport([
+        _reply([("provider-one", "python", {"code": "robo.show('agentview')"}),
+                ("provider-two", "python", {"code": "answer = 42"})]),
+        end,
+    ])
+    generation = _run(toolkit, transport, tmp_path, card_images, trace=trace)
+    rows = _trace_events(trace)
+    complete = [row for row in rows if row["event"] == "tool_arguments_complete"]
+    assert len(complete) == 3 and all(row["arguments_valid"] for row in complete)
+    assert complete[-1]["provider_call_id"] is None
+    assert len({row["local_call_id"] for row in complete}) == 3
+    first_execution = next(i for i, row in enumerate(rows) if row["event"] == "execution_started")
+    assert all(rows.index(row) < first_execution for row in complete[:2])
+    for complete_row in complete:
+        received = next(row for row in rows if row["event"] == "tool_received"
+                        and row["local_call_id"] == complete_row["local_call_id"])
+        assert all(received[key] == complete_row[key] for key in
+                   ("decision_id", "attempt_id", "provider_call_id"))
+    feedback = [row for row in rows if row["event"] == "feedback_ready"]
+    assert [row["images"] for row in feedback] == [1, 0, 0]
+    assert len(image_boundaries) == 1
+    assert all(rows.index(row) >= image_boundaries[0] for row in feedback[:2])
+    assert {row["decision_id"] for row in feedback[:2]} == {complete[0]["decision_id"]}
+    assert feedback[-1]["decision_id"] != feedback[0]["decision_id"]
+    assert not any("token" in row["event"] or row["event"] == "code_ready" for row in rows)
+    assert generation["status"] == "completed" and trace.summary()["write_errors"] == 0
+
+
+def test_trace_links_retry_and_rate_limit_attempts_without_logging_payloads(
+    robo, tmp_path, card_images
+):
+    trace = InteractionTrace(tmp_path / "trace.jsonl")
+    toolkit = _toolkit(robo, tmp_path, trace=trace)
+    secret = "SECRET_MUST_NOT_BE_TIMING_METADATA"
+    transport = ScriptedTransport([
+        (503, {"error": secret}), (429, secret), RuntimeError(secret),
+        _reply([("finish-one", "finish", {"status": "failure", "summary": secret})]),
+    ])
+    result = _run(toolkit, transport, tmp_path, card_images, trace=trace, retries=3,
+                  extra_body={"private_provider_option": secret})
+    rows = _trace_events(trace)
+    starts = [row for row in rows if row["event"] == "request_started"]
+    finishes = [row for row in rows if row["event"] == "request_finished"]
+    assert len(starts) == len(finishes) == 4
+    assert len({row["decision_id"] for row in starts}) == 1
+    assert len({row["attempt_id"] for row in starts}) == 4
+    assert [row["attempt_id"] for row in starts] == [row["attempt_id"] for row in finishes]
+    assert [row["success"] for row in finishes] == [False, False, False, True]
+    assert [row["status_code"] for row in finishes] == [503, 429, 0, 200]
+    assert len([row for row in rows if row["event"] == "response_received"]) == 3
+    waits = [row for row in rows if row["event"] == "retry_wait_started"]
+    assert [row["reason"] for row in waits] == ["provider_retry", "rate_limit", "provider_retry"]
+    assert len([row for row in rows if row["event"] == "retry_wait_finished"]) == 3
+    assert all(row["planned_s"] > 0 for row in waits)
+    call = next(row for row in rows if row["event"] == "tool_arguments_complete")
+    assert call["attempt_id"] == starts[-1]["attempt_id"]
+    assert secret not in trace.path.read_text()
+    assert "private_provider_option" not in trace.path.read_text()
+    assert result["status"] == "completed"
+
+
+@pytest.mark.parametrize("arguments", [{"code": "1 / 0"}, "{not json"])
+def test_trace_skipped_calls_have_feedback_but_no_execution(
+    robo, backend, tmp_path, card_images, arguments
+):
+    trace = InteractionTrace(tmp_path / "trace.jsonl")
+    toolkit = _toolkit(robo, tmp_path, trace=trace, images="none")
+    transport = ScriptedTransport([
+        _reply([("reused-id", "python", arguments),
+                ("queued", "python", {"code": "robo.release()"})]),
+        _reply([("reused-id", "finish", {"status": "failure", "summary": "done"})]),
+    ])
+    _run(toolkit, transport, tmp_path, card_images, trace=trace)
+    rows = _trace_events(trace)
+    complete = [row for row in rows if row["event"] == "tool_arguments_complete"]
+    assert complete[0]["provider_call_id"] == complete[2]["provider_call_id"]
+    assert complete[0]["local_call_id"] != complete[2]["local_call_id"]
+    skipped = [row for row in rows if row.get("local_call_id") == complete[1]["local_call_id"]]
+    assert [row["event"] for row in skipped] == ["tool_arguments_complete", "feedback_ready"]
+    assert skipped[-1]["outcome"] == "skipped"
+    if isinstance(arguments, str):
+        malformed = [row for row in rows
+                     if row.get("local_call_id") == complete[0]["local_call_id"]]
+        assert [row["event"] for row in malformed] == ["tool_arguments_complete", "feedback_ready"]
+        assert not malformed[0]["arguments_valid"] and malformed[-1]["outcome"] == "error"
+    assert not any(name == "release" for name, _ in backend.calls)
+
+
+def test_trace_write_failure_does_not_change_runtime_execution(robo, tmp_path, card_images):
+    trace = InteractionTrace(tmp_path)  # A directory cannot be opened as a JSONL file.
+    toolkit = _toolkit(robo, tmp_path, trace=trace)
+    transport = ScriptedTransport([
+        _reply([("one", "python", {"code": "answer = 42"})]),
+        _reply([("two", "finish", {"status": "failure", "summary": "done"})]),
+    ])
+    result = _run(toolkit, transport, tmp_path, card_images, trace=trace)
+    assert result["status"] == "completed" and result["requests"] == 2
+    assert toolkit._globals["answer"] == 42 and toolkit.finish["summary"] == "done"
+    assert trace.summary()["write_errors"] > 0

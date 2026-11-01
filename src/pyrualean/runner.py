@@ -37,6 +37,9 @@ from pathlib import Path
 from typing import Any
 
 from ._backend import EpisodeFinished
+from .coordination import CoordinationPause
+from .interaction import InteractionPause
+from .execution import ExecutionLimit
 from .libero import LiberoRobot
 from .recovery import failure_details
 
@@ -54,6 +57,7 @@ def load_policy(
     *,
     entrypoint: str = "run",
     builtins: dict[str, Any] | None = None,
+    bindings: dict[str, Any] | None = None,
 ) -> Callable[..., Any]:
     """Import ``path`` as a fresh module and return its ``entrypoint`` callable.
 
@@ -72,12 +76,17 @@ def load_policy(
     module = importlib.util.module_from_spec(spec)
     if builtins is not None:
         module.__dict__["__builtins__"] = builtins
+    if bindings:
+        module.__dict__.update(bindings)
     sys.modules[module_name] = module
     parent = str(location.parent)
     if parent not in sys.path:
         sys.path.insert(0, parent)
     try:
         spec.loader.exec_module(module)
+    except (ExecutionLimit, EpisodeFinished):
+        sys.modules.pop(module_name, None)
+        raise
     except (Exception, SystemExit) as exc:
         sys.modules.pop(module_name, None)
         raise PolicyLoadError(f"importing {location} failed: {exc}") from exc
@@ -91,7 +100,7 @@ def load_policy(
 class PolicyOutcome:
     """How one ``run(robo)`` call ended (independent of task success)."""
 
-    status: str  # completed | finished | error | timeout
+    status: str  # completed | paused | finished | error | timeout
     reason: str | None = None
     error_type: str | None = None
     error_message: str | None = None
@@ -139,6 +148,8 @@ def run_policy(
         outcome = PolicyOutcome(status="completed")
     except EpisodeFinished as exc:
         outcome = PolicyOutcome(status="finished", reason=exc.reason)
+    except (CoordinationPause, InteractionPause) as exc:
+        outcome = PolicyOutcome(status="paused", reason=str(exc))
     except (Exception, SystemExit, KeyboardInterrupt) as exc:
         outcome = PolicyOutcome(
             status="error",

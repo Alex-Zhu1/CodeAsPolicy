@@ -701,7 +701,7 @@ def test_points_on_the_open_fingers_and_their_rail_are_the_robots_too():
     assert closed.tolist() == [False, False, True, False, False]  # the fingers are at the axis
 
 
-def test_register_adds_the_four_tools_and_only_locate_is_read_only(sim):
+def test_register_adds_motion_and_coordination_tools_with_readonly_planning(sim):
     env, prims, _start = sim
     env.joints["left"] = [0.0, 0.3, 0.0, 0.0, 0.0, 0.0]  # where boot left it
     added: dict[str, Any] = {}
@@ -713,11 +713,17 @@ def test_register_adds_the_four_tools_and_only_locate_is_read_only(sim):
             added[name] = (spec, handler)
 
     tools.register(_Toolkit())
-    assert set(added) == {"move_pose", "grip", "locate", "home"}
+    coordination = {f"motion_{n}" for n in (
+        "capabilities", "observe", "plan", "execute", "stop", "discard"
+    )}
+    assert set(added) == {"move_pose", "grip", "locate", "home"} | coordination
     for name, (spec, handler) in added.items():
-        assert spec is tools.SPECS[name] and spec["name"] == name
+        if name not in coordination:
+            assert spec is tools.SPECS[name]
+        assert spec["name"] == name and "input_schema" in spec
         # RPent's own test of read-only handlers: unwrap partials, read ``_readonly``
-        assert getattr(handler.func, "_readonly", False) is (name == "locate")
+        readonly = name == "locate" or (name in coordination and name != "motion_execute")
+        assert getattr(handler.func, "_readonly", False) is readonly
     env.joints["left"] = [0.5, 0.5, 0.0, 0.0, 0.0, 0.0]
     assert added["home"][1](arm="left")["reached"]
     assert env.joints["left"] == pytest.approx([0.0, 0.3, 0.0, 0.0, 0.0, 0.0], abs=0.01)

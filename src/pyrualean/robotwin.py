@@ -510,7 +510,7 @@ class RobotwinRobot(RobotBase):
     def show(self, camera: str = "head") -> None:
         """Attach the current image of ``camera`` to the feedback of this turn.
 
-        Images are not returned automatically; call ``show("head")``,
+        For normal on-demand feedback, call ``show("head")``,
         ``show("left_wrist")`` or ``show("right_wrist")`` when *you* (the
         author) need to look at the scene before writing the next turn.  Costs
         tokens: look only when a decision depends on it.

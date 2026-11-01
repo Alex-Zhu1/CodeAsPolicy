@@ -100,17 +100,25 @@ pyrualean summarize runs/demo
 The run directory keeps the episode video, every cell the agent ran with its output, the ledger of primitive
 calls, the token usage and the benchmark's own verdict.
 
-Optional [Valen visual supervision](docs/visual-supervision.md) checks motion endpoints
-and can pause a code cell for Astra to replan. Add `--monitor-mode shadow` (record only)
-or `--monitor-mode pause`, plus `--valen-url http://127.0.0.1:18001/predict`, to a `cells`
-run with an existing local Valen service. Monitoring is disabled by default.
+The `play` CLI defaults to `--arm cells`, monitoring `off`, and bundled stuck
+recovery. Normal runs do not require a Valen service. To enable optional
+[Valen supervision](docs/visual-supervision.md), start a service at
+`http://127.0.0.1:18001/predict` (override with `--valen-url` or `PYRUALEAN_VALEN_URL`)
+and pass `--monitor-mode pause` for review interruptions or `--monitor-mode shadow`
+for reports only. The CLI connects to the service; it does not launch model weights.
+Use `--no-stuck-recovery` to disable recovery. The `program` arm keeps both features off.
 
 The repository skill [Astra–Valen supervision](skills/astra-valen-supervision/SKILL.md)
 guides task decomposition, visual questions, uncertainty recovery, and completion
-reporting. Enable [Astra stuck recovery](skills/astra-stuck-recovery/SKILL.md) with
-`--stuck-recovery-skill skills/astra-stuck-recovery/SKILL.md`: after Astra explicitly
-declares stuck, the host supplies recovery instructions and preserves the live
-episode within the existing budgets. Skill files are not discovered automatically.
+reporting. Its packaged core is automatically included when monitoring is enabled;
+the run saves the exact text and hash. Persistent evidence and declared phase
+prerequisites connect checks across code cells. The bundled
+[Astra stuck recovery](skills/astra-stuck-recovery/SKILL.md) core is configured by
+default for CLI cells runs: only after Astra explicitly declares stuck does the
+host supply its body, preserving the live episode and existing budgets. Override it
+with `--stuck-recovery-skill FILE`; `--stuck-recovery-rounds` defaults to two.
+Other skill files are not discovered automatically. Direct Python API and XPolicyLab
+adapter configuration remain explicit; these defaults apply to the two `play` CLIs.
 
 ## 🦾 Robots
 

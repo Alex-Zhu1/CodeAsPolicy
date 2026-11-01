@@ -22,7 +22,7 @@ they have to be on there (``observation.vision.depth`` or ``approximate_depth``,
 ``distance_to_image_plane`` capture in its camera file); where they are not,
 ``pyrualean.robodojo_xpl_rgb`` is the robot that needs none of it.
 
-There is no VLA in this host: run the robot with ``--primitives no-vla``.
+There is no VLA in this host; capability filtering selects ``no-vla`` automatically.
 """
 
 from __future__ import annotations
@@ -38,6 +38,7 @@ class RobodojoOfficialRobot(RobodojoRobot):
     __doc__ = RobodojoRobot.__doc__
 
     NAME: ClassVar[str] = "robodojo_xpl"
+    SUPPORTS_VLA: ClassVar[bool] = False
 
     def _reported_success(self) -> bool:
         # RoboDojo's client ends the episode itself the moment the task is solved, and reports
@@ -50,6 +51,7 @@ ADAPTER = replace(
     name="robodojo_xpl",
     robot_cls=RobodojoOfficialRobot,
     host="pyrualean.hosts.xpolicylab_robodojo",
+    services=_base.ADAPTER.services_novla,
 )
 
 

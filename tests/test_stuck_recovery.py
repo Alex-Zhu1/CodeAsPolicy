@@ -59,6 +59,24 @@ def test_supervisor_pause_does_not_dispatch_skill_or_reset_supervisor(robo, tmp_
     assert len(kit.stuck_recovery_events) == 1
 
 
+def test_recovery_dispatch_keeps_unresolved_dependencies(robo, tmp_path):
+    supervisor = VisualSupervisor(
+        MonitorConfig(mode="pause", url="http://localhost:1"), tmp_path / "monitor"
+    )
+    kit = toolkit(robo, tmp_path, supervisor=supervisor)
+    kit.execute_tool("python", {"code":
+        "watch('align', {'aligned': 'Is the key aligned with the opening?'})\n"
+        "defer_fact('aligned', until='insert', reason='Insertion requires alignment')"})
+    ledger = supervisor.read_evidence()
+    assert not stuck(kit).result["episode_finished"]
+    assert supervisor.read_evidence() == ledger
+    result = kit.execute_tool("python", {"code":
+        "watch('insert', {'aligned': 'Is the key aligned with the opening?'})\n"
+        "robo.move_to([0.05, -0.1, 0.6])"})
+    assert result.result["execution_paused"] and not robo._ledger.stateful_calls()
+    assert result.result["supervision"]["blocked"]["aligned"]["value"] == "unknown"
+
+
 def test_round_limit_ends_episode_and_is_audited(robo, tmp_path):
     kit = toolkit(robo, tmp_path)
     assert not stuck(kit).result["episode_finished"]

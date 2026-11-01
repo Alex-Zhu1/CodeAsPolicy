@@ -244,7 +244,8 @@ def test_the_colour_robot_reads_the_same_api_without_depth(world, tmp_path):
     point = robo.back_project(300, 320)
     assert isinstance(point, SeenPoint) and point.surface == "table"
     meta = robo.camera_meta("cam_left_wrist")
-    assert sorted(meta) == ["extrinsic_matrix", "intrinsic_matrix", "shape"]
+    assert sorted(meta) == ["extrinsic_matrix", "intrinsic_matrix", "provenance", "shape"]
+    assert meta["provenance"]["calibration_method"] == "robot_model"
     assert np.allclose(
         np.array(meta["extrinsic_matrix"])[:3, 3], sight.wrist_view(HOME["left"]).pos, atol=2e-3
     )
@@ -342,7 +343,6 @@ def test_the_tools_step_roboDojos_client_through_the_bridge(tmp_path):
     bridge, client, thread = _episode(task_env)
     env = xb.BridgeEnv(bridge)
     assert env.get_status() == {
-        "pictures_behind": 1,
         "step": 0,
         "step_limit": 200,
         "task_name": "stack_blocks",
@@ -785,14 +785,16 @@ def test_the_bridge_says_which_state_the_pictures_show():
     assert tools._shown({"state": second}) is second  # a host that says nothing
 
 
-def test_deploy_tells_an_older_client_from_one_that_renders_before_it_captures(monkeypatch):
+def test_deploy_does_not_infer_capture_alignment_from_module_presence(monkeypatch):
     import sys
     import types
 
     deploy = _deploy()
     for name in [n for n in sys.modules if n == "env" or n.startswith("env.")]:
         monkeypatch.delitem(sys.modules, name)
-    assert deploy._pictures_behind() == 1  # no RoboDojo render_sync module: the older client
+    env = TaskEnv(Scene([CUBE]), step_lim=10)
+    _, without_module = deploy._capture_observation(env)
+    assert without_module["status"] == "unknown"
     packages = {}
     for name in ("env", "env.camera_manager", "env.camera_manager.capture"):
         packages[name] = types.ModuleType(name)
@@ -801,8 +803,9 @@ def test_deploy_tells_an_older_client_from_one_that_renders_before_it_captures(m
     sync = types.ModuleType("env.camera_manager.capture.render_sync")
     monkeypatch.setitem(sys.modules, sync.__name__, sync)
     packages["env.camera_manager.capture"].render_sync = sync
-    assert deploy._pictures_behind() == 0
-    assert deploy._status(TaskEnv(Scene([CUBE]), step_lim=10))["pictures_behind"] == 0
+    _, with_module = deploy._capture_observation(env)
+    assert with_module == without_module
+    assert "pictures_behind" not in deploy._status(env)
 
 
 class Told(Segmenter):

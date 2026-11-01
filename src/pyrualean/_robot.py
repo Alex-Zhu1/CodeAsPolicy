@@ -33,6 +33,8 @@ from collections.abc import Callable
 from typing import Any, ClassVar
 
 from ._backend import Backend, EpisodeFinished, Ledger, ToolError, raise_for_error, unwrap
+from .interaction import InteractionMixin, InteractionPause
+from .perception import PerceptionMixin
 
 #: Primitive sets a run can expose to the policy: ``full`` (every public
 #: method) or ``no-vla`` (the learned VLA primitives named by
@@ -43,7 +45,14 @@ PRIMITIVE_SETS = ("full", "no-vla")
 NO_VLA_MESSAGE = "{name} is not available in this run (no-VLA primitive set)"
 
 
-class RobotBase:
+def effective_primitives(robot_cls: type, requested: str) -> str:
+    """Intersect the requested primitive set with this adapter's capabilities."""
+    if requested not in PRIMITIVE_SETS:
+        raise ValueError(f"primitives must be one of {PRIMITIVE_SETS}, got {requested!r}")
+    return requested if getattr(robot_cls, "SUPPORTS_VLA", True) else "no-vla"
+
+
+class RobotBase(InteractionMixin, PerceptionMixin):
     """Shared machinery of every robot class (see the module docstring)."""
 
     #: RPent robot name (``rpent --robot <NAME>``) and the knowledge file stem.
@@ -52,6 +61,8 @@ class RobotBase:
     #: primitive set they are left out of the API reference (with the result
     #: types only they return) and every call raises :data:`NO_VLA_MESSAGE`.
     VLA_PRIMITIVES: ClassVar[tuple[str, ...]] = ()
+    #: Some hosts share an API class but have no learned-policy service.
+    SUPPORTS_VLA: ClassVar[bool] = True
     #: ``(old, new)`` edits applied to the rendered API reference under
     #: ``no-vla``: the sentences of the *remaining* docstrings that describe
     #: the VLA.  Each ``old`` must occur exactly once, so a docstring change
@@ -93,8 +104,7 @@ class RobotBase:
     ABSENT_MEMBERS: ClassVar[frozenset[str]] = frozenset()
 
     def __init__(self, backend: Backend, *, ledger: Ledger | None = None, primitives: str = "full"):
-        if primitives not in PRIMITIVE_SETS:
-            raise ValueError(f"primitives must be one of {PRIMITIVE_SETS}, got {primitives!r}")
+        primitives = effective_primitives(type(self), primitives)
         self._backend = backend
         self._ledger = ledger if ledger is not None else Ledger()
         self._last_state: Any = None
@@ -107,6 +117,13 @@ class RobotBase:
             frozenset(self.VLA_PRIMITIVES) if primitives == "no-vla" else frozenset()
         )
         self._supervisor: Any = None
+        self._execution_budget: Any = None
+        # Increases on every attempted motion, even when a controller fails.
+        # Failed calls may have changed the scene without reporting steps.
+        self._action_revision = 0
+        self._coordination_feedback: dict | None = None
+        self._init_interaction()
+        self._init_perception()
         # Instance attributes shadow the class methods, so a hidden primitive
         # is refused before any argument validation, whatever it was called with.
         for name in self._hidden:
@@ -221,7 +238,7 @@ class RobotBase:
     def show(self, camera: str) -> None:
         """Attach the current image of ``camera`` to the feedback of this turn.
 
-        Images are not returned automatically: call ``show(<camera>)`` when
+        For normal on-demand feedback, call ``show(<camera>)`` when
         *you* (the author) need to look at the scene before writing the next
         turn.  Costs tokens: look only when a decision depends on it.
         """
@@ -289,19 +306,26 @@ class RobotBase:
             self._truncated = True
 
     def _summary(self, tool: str, payload: dict[str, Any]) -> dict[str, Any]:
+        if tool == "motion_execute":
+            return dict(payload)
         return {key: payload[key] for key in self.SUMMARY_KEYS if key in payload}
 
     def _readonly(
         self, tool: str, kwargs: dict[str, Any], *, allow_error_key: str | None = None
     ) -> dict[str, Any]:
         record = self._ledger.open(tool, kwargs, stateful=False)
+        record.session_id = kwargs.get("session_id")
+        record.observation_id = kwargs.get("observation_id")
         started = time.perf_counter()
         try:
             payload, envelope = unwrap(self._backend.execute_tool(tool, kwargs), tool)
             if envelope is not None:
                 # The state tool returns the observation envelope itself; for a
                 # read-only tool that envelope *is* the payload.
-                self._absorb(envelope)
+                historical = kwargs.get("step", -1) != -1
+                self._remember_observation(envelope, current=not historical)
+                if not historical:
+                    self._absorb(envelope)
                 payload = envelope
             if allow_error_key is None or allow_error_key not in payload:
                 raise_for_error(tool, payload)
@@ -320,27 +344,63 @@ class RobotBase:
         kwargs: dict[str, Any],
         build: Callable[[dict[str, Any]], Any],
     ) -> Any:
+        self._interaction_guard()
         self._guard()
         if self._supervisor is not None:
-            self._supervisor.before_action(tool)
+            self._supervisor.before_action(tool, self)
+        if self._execution_budget is not None:
+            self._execution_budget.before_action()
+        if self._supports_observation_snapshots and self._latest_observation_id is None:
+            self.snapshot()
         record = self._ledger.open(tool, kwargs, stateful=True)
+        context = self._new_action(tool, record)
+        self._action_revision += 1
         steps_before = self._backend.env_steps()
         started = time.perf_counter()
+        dispatched = False
         try:
-            payload, envelope = unwrap(self._backend.execute_tool(tool, kwargs), tool)
+            if self._supervisor is not None:
+                self._supervisor.begin_action(tool, action_id=context["action_id"])
+            dispatch = getattr(self._backend, "execute_tool_with_context", None)
+            dispatched = True
+            raw = (dispatch(tool, kwargs, context) if callable(dispatch)
+                   else self._backend.execute_tool(tool, kwargs))
+            payload, envelope = unwrap(raw, tool)
+            receipt = (envelope or payload).get("action_receipt")
+            if callable(dispatch):
+                self._store_receipt(receipt, context["action_id"])
+            self._remember_observation(envelope)
             self._absorb(envelope)
+            if context["action_id"] in self._pending_actions:
+                raise InteractionPause("Action result is unknown; reconcile before continuing")
             if payload.get("interrupted") or payload.get("code") == "tool_cancelled":
                 raise EpisodeFinished(self._stop_reason or "cancelled")
             raise_for_error(tool, payload)
             result = build(payload)
+            if not callable(dispatch):
+                # Legacy synchronous return is an acknowledgement, without claiming
+                # the source/remote receipt guarantees of the new backend protocol.
+                self._receipts[context["action_id"]].update(
+                    status="acknowledged", effect_known=None, execution_complete=True,
+                    receipt_supported=False,
+                )
             record.ok = True
             record.summary = self._summary(tool, payload)
         except BaseException as exc:
             record.error = f"{type(exc).__name__}: {exc}"
+            action = self._receipts[context["action_id"]]
+            if not dispatched:
+                self._store_receipt(dict(action, status="rejected", effect_known=True,
+                                         execution_complete=True), context["action_id"])
+            elif action.get("execution_complete") is not True:
+                self._unknown_action(context["action_id"], exc)
             if self._supervisor is not None and isinstance(exc, Exception):
                 self._supervisor.action_error(self, tool, exc)
+            elif self._supervisor is not None:
+                self._supervisor.action_interrupted(tool, action_id=context["action_id"])
             raise
         finally:
+            record.receipt = self.action_receipt(context["action_id"])
             record.elapsed_s = time.perf_counter() - started
             steps_after = self._backend.env_steps()
             if steps_before is not None and steps_after is not None:
@@ -348,7 +408,14 @@ class RobotBase:
         # The action has completed and its ledger entry is committed. A visual
         # interruption must not relabel an executed motion as a failed call.
         if self._supervisor is not None:
-            self._supervisor.after_action(self, tool, steps_before)
+            outcome = dict(record.summary, action_id=context["action_id"],
+                           observation_id=self._latest_observation_id)
+            # Some adapters derive arrival from distance/tolerance instead of
+            # receiving a raw ``reached`` field from their controller.
+            for name in ("reached", "ik_error", "note", "blocked"):
+                if hasattr(result, name):
+                    outcome[name] = getattr(result, name)
+            self._supervisor.after_action(self, tool, steps_before, outcome=outcome)
         return result
 
 

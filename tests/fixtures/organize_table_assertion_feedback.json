@@ -1,0 +1,416 @@
+{
+  "source": "runs/organize-table-handoff-rerun-20261101-093121/episode/codex_events.jsonl",
+  "cell": 30,
+  "original_text_chars": 14106,
+  "result": {
+    "cell": 30,
+    "exception": "Traceback (most recent call last):\n  File \"/mnt/data_hdd/mhzhu/GPTCode/PyRUA-Lean/runs/organize-table-handoff-rerun-20261101-093121/frozen/src/pyrualean/arms.py\", line 960, in _python\n    exec(body_code, self._globals)  # noqa: S102 - code arm\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/data_hdd/mhzhu/GPTCode/PyRUA-Lean/runs/organize-table-handoff-rerun-20261101-093121/episode/workspace/cell_030.py\", line 2, in <module>\n    result=robo.move_to([-0.40,0.17,1.10],arm='left',gripper=robo.CLOSE,path='line');print(result);assert result.reached\n                                                                                                          ^^^^^^^^^^^^^^\nAssertionError\n",
+    "stdout": "Move(arm='left', target_xyz=(-0.36, -0.07, 1.1), start_xyz=(-0.3649, -0.0929, 0.9193), final_xyz=(-0.3601, -0.07, 1.0994), dist_to_target_m=0.0006, orientation_error_deg=0.2, pitch=30.1, yaw=0.1, roll=-0.1, reached=True, path='line', ik_error=None, note=None, blocked=False, steps_used=11, truncated=False)\nMove(arm='left', target_xyz=(-0.4, 0.17, 1.1), start_xyz=(-0.3601, -0.07, 1.0994), final_xyz=(-0.3984, 0.1628, 1.0919), dist_to_target_m=0.011, orientation_error_deg=3.0, pitch=27.2, yaw=0.6, roll=0.2, reached=False, path='line', ik_error=None, note='the exact pose is out of reach; went to the closest one, 0.010 m and 3 deg from it', blocked=False, steps_used=16, truncated=False)\n",
+    "stderr": "",
+    "elapsed_s": 9.94,
+    "failure": {
+      "kind": "verification",
+      "stage": "execution",
+      "type": "AssertionError",
+      "message": "",
+      "location": {
+        "file": "/mnt/data_hdd/mhzhu/GPTCode/PyRUA-Lean/runs/organize-table-handoff-rerun-20261101-093121/episode/workspace/cell_030.py",
+        "line": 2
+      }
+    },
+    "recovery": {
+      "next_action": "inspect_and_replan",
+      "retry_allowed": true,
+      "new_motion_allowed": true,
+      "calls_left": 70,
+      "stop_reason": null,
+      "same_failure_count": 1,
+      "automatic_replay": false,
+      "scene_rolled_back": false,
+      "namespace_may_have_changed": true,
+      "motion_attempts": 2,
+      "env_steps": 27,
+      "completed_motion_calls": 2,
+      "last_motion": {
+        "index": 208,
+        "tool": "move_pose",
+        "kwargs": {
+          "xyz": [
+            -0.4,
+            0.17,
+            1.1
+          ],
+          "arm": "left",
+          "gripper": 1,
+          "path": "line"
+        },
+        "started_at": 1793526459.1212652,
+        "elapsed_s": 6.10312569513917,
+        "ok": true,
+        "stateful": true,
+        "env_steps": 16,
+        "error": null,
+        "summary": {
+          "reached": false,
+          "dist_to_target_m": 0.011,
+          "orientation_error_deg": 3.0,
+          "final_xyz": [
+            -0.3984,
+            0.1628,
+            1.0919
+          ],
+          "path": "line",
+          "steps_used": 16,
+          "ik_error": null
+        },
+        "session_id": "ae216480453b42d8b278e03d3ccef55f",
+        "action_id": "ae216480453b42d8b278e03d3ccef55f:action:b724e86abb4c46228e7df370a1f6110c",
+        "observation_id": "7a17b146aa634567a7954776e265de27:646",
+        "receipt": {
+          "local_call_id": "tool_207ea59fc5bd40f884ae1444c1f991c5_296",
+          "transport": "mcp",
+          "agent_attempt_id": "agent_attempt_207ea59fc5bd40f884ae1444c1f991c5_4",
+          "tool": "move_pose",
+          "host_session_id": "54823d0af26d4bd2b9c6b3ddd3ed0411",
+          "turn": 30,
+          "session_id": "ae216480453b42d8b278e03d3ccef55f",
+          "action_id": "ae216480453b42d8b278e03d3ccef55f:action:b724e86abb4c46228e7df370a1f6110c",
+          "observation_id": "7a17b146aa634567a7954776e265de27:662",
+          "source_id": "7a17b146aa634567a7954776e265de27:646",
+          "source_native_steps": 645,
+          "schema": "pyrualean.action.v1",
+          "status": "partial",
+          "effect_known": true,
+          "execution_complete": true,
+          "native_action_ids": [
+            "49b595097c1e46c6b04ab6fb7ab544f2",
+            "27b2979b05ec41da8f1c8056cf346ad5",
+            "720d70f9982b4901babcdbe4cc75c3c6",
+            "351c46dac9324913b854b84138fa73e8",
+            "41badcda971e4b2eac1e279d1725cff4",
+            "f33e961937fb4c2c8460601d85d4c5f3",
+            "12f010a4a87b4652b45c7d62053911e4",
+            "e1f0b7798f0c445f91b81db4fb390fa8",
+            "b7de24d9ba8b47a7aef7be8e5eb794ee",
+            "7e852a54e5014f3496abb818a7dff4d0",
+            "52d4a04f698149f2bc4614f4f4e44bcb",
+            "2849157d9cff44409706f29f908cf04a",
+            "9bfed12de1234cb6bbc7355770627f96",
+            "415f9b7c3e8c49218df69aaec259bcbc",
+            "8d8bd79af2804ee3806cb96c42d098e4",
+            "143a6ba5b2be468f91e863eda5432413"
+          ],
+          "stop_confirmed": null,
+          "native_receipts": [
+            {
+              "session_id": "ae216480453b42d8b278e03d3ccef55f",
+              "native_action_id": "49b595097c1e46c6b04ab6fb7ab544f2",
+              "action_id": "ae216480453b42d8b278e03d3ccef55f:action:b724e86abb4c46228e7df370a1f6110c",
+              "based_on_observation_id": "7a17b146aa634567a7954776e265de27:646",
+              "based_on_source_id": "7a17b146aa634567a7954776e265de27:646",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "7a17b146aa634567a7954776e265de27:647"
+            },
+            {
+              "session_id": "ae216480453b42d8b278e03d3ccef55f",
+              "native_action_id": "27b2979b05ec41da8f1c8056cf346ad5",
+              "action_id": "ae216480453b42d8b278e03d3ccef55f:action:b724e86abb4c46228e7df370a1f6110c",
+              "based_on_observation_id": "7a17b146aa634567a7954776e265de27:646",
+              "based_on_source_id": "7a17b146aa634567a7954776e265de27:647",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "7a17b146aa634567a7954776e265de27:648"
+            },
+            {
+              "session_id": "ae216480453b42d8b278e03d3ccef55f",
+              "native_action_id": "720d70f9982b4901babcdbe4cc75c3c6",
+              "action_id": "ae216480453b42d8b278e03d3ccef55f:action:b724e86abb4c46228e7df370a1f6110c",
+              "based_on_observation_id": "7a17b146aa634567a7954776e265de27:646",
+              "based_on_source_id": "7a17b146aa634567a7954776e265de27:648",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "7a17b146aa634567a7954776e265de27:649"
+            },
+            {
+              "session_id": "ae216480453b42d8b278e03d3ccef55f",
+              "native_action_id": "351c46dac9324913b854b84138fa73e8",
+              "action_id": "ae216480453b42d8b278e03d3ccef55f:action:b724e86abb4c46228e7df370a1f6110c",
+              "based_on_observation_id": "7a17b146aa634567a7954776e265de27:646",
+              "based_on_source_id": "7a17b146aa634567a7954776e265de27:649",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "7a17b146aa634567a7954776e265de27:650"
+            },
+            {
+              "session_id": "ae216480453b42d8b278e03d3ccef55f",
+              "native_action_id": "41badcda971e4b2eac1e279d1725cff4",
+              "action_id": "ae216480453b42d8b278e03d3ccef55f:action:b724e86abb4c46228e7df370a1f6110c",
+              "based_on_observation_id": "7a17b146aa634567a7954776e265de27:646",
+              "based_on_source_id": "7a17b146aa634567a7954776e265de27:650",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "7a17b146aa634567a7954776e265de27:651"
+            },
+            {
+              "session_id": "ae216480453b42d8b278e03d3ccef55f",
+              "native_action_id": "f33e961937fb4c2c8460601d85d4c5f3",
+              "action_id": "ae216480453b42d8b278e03d3ccef55f:action:b724e86abb4c46228e7df370a1f6110c",
+              "based_on_observation_id": "7a17b146aa634567a7954776e265de27:646",
+              "based_on_source_id": "7a17b146aa634567a7954776e265de27:651",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "7a17b146aa634567a7954776e265de27:652"
+            },
+            {
+              "session_id": "ae216480453b42d8b278e03d3ccef55f",
+              "native_action_id": "12f010a4a87b4652b45c7d62053911e4",
+              "action_id": "ae216480453b42d8b278e03d3ccef55f:action:b724e86abb4c46228e7df370a1f6110c",
+              "based_on_observation_id": "7a17b146aa634567a7954776e265de27:646",
+              "based_on_source_id": "7a17b146aa634567a7954776e265de27:652",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "7a17b146aa634567a7954776e265de27:653"
+            },
+            {
+              "session_id": "ae216480453b42d8b278e03d3ccef55f",
+              "native_action_id": "e1f0b7798f0c445f91b81db4fb390fa8",
+              "action_id": "ae216480453b42d8b278e03d3ccef55f:action:b724e86abb4c46228e7df370a1f6110c",
+              "based_on_observation_id": "7a17b146aa634567a7954776e265de27:646",
+              "based_on_source_id": "7a17b146aa634567a7954776e265de27:653",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "7a17b146aa634567a7954776e265de27:654"
+            },
+            {
+              "session_id": "ae216480453b42d8b278e03d3ccef55f",
+              "native_action_id": "b7de24d9ba8b47a7aef7be8e5eb794ee",
+              "action_id": "ae216480453b42d8b278e03d3ccef55f:action:b724e86abb4c46228e7df370a1f6110c",
+              "based_on_observation_id": "7a17b146aa634567a7954776e265de27:646",
+              "based_on_source_id": "7a17b146aa634567a7954776e265de27:654",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "7a17b146aa634567a7954776e265de27:655"
+            },
+            {
+              "session_id": "ae216480453b42d8b278e03d3ccef55f",
+              "native_action_id": "7e852a54e5014f3496abb818a7dff4d0",
+              "action_id": "ae216480453b42d8b278e03d3ccef55f:action:b724e86abb4c46228e7df370a1f6110c",
+              "based_on_observation_id": "7a17b146aa634567a7954776e265de27:646",
+              "based_on_source_id": "7a17b146aa634567a7954776e265de27:655",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "7a17b146aa634567a7954776e265de27:656"
+            },
+            {
+              "session_id": "ae216480453b42d8b278e03d3ccef55f",
+              "native_action_id": "52d4a04f698149f2bc4614f4f4e44bcb",
+              "action_id": "ae216480453b42d8b278e03d3ccef55f:action:b724e86abb4c46228e7df370a1f6110c",
+              "based_on_observation_id": "7a17b146aa634567a7954776e265de27:646",
+              "based_on_source_id": "7a17b146aa634567a7954776e265de27:656",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "7a17b146aa634567a7954776e265de27:657"
+            },
+            {
+              "session_id": "ae216480453b42d8b278e03d3ccef55f",
+              "native_action_id": "2849157d9cff44409706f29f908cf04a",
+              "action_id": "ae216480453b42d8b278e03d3ccef55f:action:b724e86abb4c46228e7df370a1f6110c",
+              "based_on_observation_id": "7a17b146aa634567a7954776e265de27:646",
+              "based_on_source_id": "7a17b146aa634567a7954776e265de27:657",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "7a17b146aa634567a7954776e265de27:658"
+            },
+            {
+              "session_id": "ae216480453b42d8b278e03d3ccef55f",
+              "native_action_id": "9bfed12de1234cb6bbc7355770627f96",
+              "action_id": "ae216480453b42d8b278e03d3ccef55f:action:b724e86abb4c46228e7df370a1f6110c",
+              "based_on_observation_id": "7a17b146aa634567a7954776e265de27:646",
+              "based_on_source_id": "7a17b146aa634567a7954776e265de27:658",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "7a17b146aa634567a7954776e265de27:659"
+            },
+            {
+              "session_id": "ae216480453b42d8b278e03d3ccef55f",
+              "native_action_id": "415f9b7c3e8c49218df69aaec259bcbc",
+              "action_id": "ae216480453b42d8b278e03d3ccef55f:action:b724e86abb4c46228e7df370a1f6110c",
+              "based_on_observation_id": "7a17b146aa634567a7954776e265de27:646",
+              "based_on_source_id": "7a17b146aa634567a7954776e265de27:659",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "7a17b146aa634567a7954776e265de27:660"
+            },
+            {
+              "session_id": "ae216480453b42d8b278e03d3ccef55f",
+              "native_action_id": "8d8bd79af2804ee3806cb96c42d098e4",
+              "action_id": "ae216480453b42d8b278e03d3ccef55f:action:b724e86abb4c46228e7df370a1f6110c",
+              "based_on_observation_id": "7a17b146aa634567a7954776e265de27:646",
+              "based_on_source_id": "7a17b146aa634567a7954776e265de27:660",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "7a17b146aa634567a7954776e265de27:661"
+            },
+            {
+              "session_id": "ae216480453b42d8b278e03d3ccef55f",
+              "native_action_id": "143a6ba5b2be468f91e863eda5432413",
+              "action_id": "ae216480453b42d8b278e03d3ccef55f:action:b724e86abb4c46228e7df370a1f6110c",
+              "based_on_observation_id": "7a17b146aa634567a7954776e265de27:646",
+              "based_on_source_id": "7a17b146aa634567a7954776e265de27:661",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "7a17b146aa634567a7954776e265de27:662"
+            }
+          ],
+          "payload_status": null
+        }
+      },
+      "instruction": "Read the error and current state. Earlier actions and assignments are not undone; an interrupted assignment may still hold an older value. Inspect images with robo.show() when available, then submit only the repaired remaining work. Check primitive outcomes and verify the resulting scene. Do not blindly replay this code; if the budget is exhausted, call finish.",
+      "state": {
+        "step": 69,
+        "left_tcp": [
+          -0.3984,
+          0.1628,
+          1.0919
+        ],
+        "left_pitch_yaw_roll": [
+          27.2,
+          0.6,
+          0.1
+        ],
+        "left_gripper": 0.369,
+        "right_tcp": [
+          0.3004,
+          -0.2077,
+          0.925
+        ],
+        "right_pitch_yaw_roll": [
+          -0.4,
+          0.0,
+          0.0
+        ],
+        "right_gripper": 1.0,
+        "truncated": false
+      }
+    },
+    "handoff": {
+      "schema": "pyrualean.handoff.v1",
+      "session_id": "ae216480453b42d8b278e03d3ccef55f",
+      "observation_id": "7a17b146aa634567a7954776e265de27:662",
+      "last_action": {
+        "session_id": "ae216480453b42d8b278e03d3ccef55f",
+        "action_id": "ae216480453b42d8b278e03d3ccef55f:action:b724e86abb4c46228e7df370a1f6110c",
+        "tool": "move_pose",
+        "status": "partial",
+        "effect_known": true,
+        "execution_complete": true,
+        "observation_id": "7a17b146aa634567a7954776e265de27:662",
+        "stop_confirmed": null,
+        "turn": 30,
+        "native_action_count": 16,
+        "last_native_action_ids": [
+          "415f9b7c3e8c49218df69aaec259bcbc",
+          "8d8bd79af2804ee3806cb96c42d098e4",
+          "143a6ba5b2be468f91e863eda5432413"
+        ]
+      },
+      "unresolved_actions": [],
+      "next_owner": "program_or_planner",
+      "allowed_next": "check_prerequisites",
+      "new_motion_allowed": null,
+      "stop_reason": null,
+      "automatic_replay": false,
+      "scene_rolled_back": false
+    },
+    "action_receipts": [
+      {
+        "session_id": "ae216480453b42d8b278e03d3ccef55f",
+        "action_id": "ae216480453b42d8b278e03d3ccef55f:action:e84a240c520e4d36ba87065c700939cd",
+        "tool": "move_pose",
+        "status": "completed",
+        "effect_known": true,
+        "execution_complete": true,
+        "observation_id": "7a17b146aa634567a7954776e265de27:646",
+        "stop_confirmed": null,
+        "turn": 30,
+        "native_action_count": 11,
+        "last_native_action_ids": [
+          "6e44bb2011e14ed08a9a0de43afc28fe",
+          "3f59f7e6737045ba9feef2b1fadbcee2",
+          "df7d2aa6df1544d4872b39a5d7ef15ed"
+        ]
+      },
+      {
+        "session_id": "ae216480453b42d8b278e03d3ccef55f",
+        "action_id": "ae216480453b42d8b278e03d3ccef55f:action:b724e86abb4c46228e7df370a1f6110c",
+        "tool": "move_pose",
+        "status": "partial",
+        "effect_known": true,
+        "execution_complete": true,
+        "observation_id": "7a17b146aa634567a7954776e265de27:662",
+        "stop_confirmed": null,
+        "turn": 30,
+        "native_action_count": 16,
+        "last_native_action_ids": [
+          "415f9b7c3e8c49218df69aaec259bcbc",
+          "8d8bd79af2804ee3806cb96c42d098e4",
+          "143a6ba5b2be468f91e863eda5432413"
+        ]
+      }
+    ],
+    "observation": {
+      "observation_id": "54823d0af26d4bd2b9c6b3ddd3ed0411-30",
+      "observed_at": 1793526465.2265658,
+      "source_session_id": "ae216480453b42d8b278e03d3ccef55f",
+      "source_observation_id": "7a17b146aa634567a7954776e265de27:662",
+      "step_id": 661,
+      "state_version": 69,
+      "state_included": true,
+      "actions": {
+        "attempted": 2,
+        "acknowledged": 2,
+        "first_ledger_index": 207,
+        "last_ledger_index": 208,
+        "action_ids": [
+          "ae216480453b42d8b278e03d3ccef55f:action:e84a240c520e4d36ba87065c700939cd",
+          "ae216480453b42d8b278e03d3ccef55f:action:b724e86abb4c46228e7df370a1f6110c"
+        ]
+      },
+      "prior_targets_may_be_stale": true,
+      "images": []
+    }
+  }
+}

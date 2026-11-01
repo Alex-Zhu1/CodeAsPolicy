@@ -11,8 +11,14 @@
 | `pyrualean generate` | Ask the model for a whole program from a task card (single shot). |
 | `pyrualean run` | Run a program file for one episode. |
 | `pyrualean summarize` | Tabulate run directories ([Output Files](outputs.md)). |
+| `pyrualean valen-eval` | Compare saved visual checks, export human labels, or replay question/crop variants without a robot ([Valen Evaluation](valen-evaluation.md)). |
 
 ## The task instance
+
+`full` exposes the primitives supported by the chosen adapter. Official
+`robodojo_xpl` and `robodojo_xpl_rgb` have no VLA service and automatically use
+the effective `no-vla` set in both prompts and execution. An explicit `full`
+cannot enable missing capabilities; `result.json` records the effective set.
 
 `play`, `card` and `run` take the same options:
 
@@ -31,12 +37,22 @@
 
 | Option | Meaning (default) |
 |---|---|
-| `--arm` | `cells` or `program` |
+| `--arm` | `cells` (default) or `program` |
 | `--runtime` | `codex`, `claude` or `openai` (`codex`; [Agent Configuration](agents.md)) |
 | `--model`, `--reasoning` | the model (`gpt-6-astra`) and its reasoning effort (`xhigh`) |
 | `--base-url`, `--api-key-env` | an OpenAI-compatible endpoint, and the variable holding its key |
 | `--max-turns` | the decision budget, in code cells |
 | `--budget-s` | the wall-clock budget, in seconds (`1200`) |
+| `--code-timeout-s` | execution deadline per cell/program, including loading (`120` seconds) |
+| `--code-max-actions` | optional maximum motion attempts per code call |
+| `--code-output-chars` | maximum retained characters per stdout/stderr stream (`8000`) |
+| `--monitor-mode` | `pause` (cells default), `shadow` or `off` (program default) |
+| `--valen-url` | existing Valen service (`$PYRUALEAN_VALEN_URL` or `http://127.0.0.1:18001/predict`) |
+| `--monitor-timeout-s`, `--monitor-threshold` | visual request budget (`30` seconds) and choice threshold (`0.8`) |
+| `--monitor-unknown-limit`, `--monitor-max-actions` | consecutive critical unknowns (`2`) and per-cell successful actions before review (`8`) |
+| `--stuck-recovery-skill` | optional file overriding the bundled recovery core; configured by default for cells, delivered only after confirmed stuck |
+| `--stuck-recovery-rounds` | maximum recovery dispatches within the episode (`2`) |
+| `--no-stuck-recovery` | explicitly disable stuck recovery; cannot be combined with a custom skill file |
 | `--images` | `on-motion`, `on-demand` or `none` (`on-motion`) |
 | `--feedback` | `rich` or `pure` (`rich`) |
 | `--primitives` | `full` or `no-vla` (`full`) |
@@ -44,6 +60,19 @@
 | `--guides`, `--guides-dir` | operating guides in the agent's workspace |
 | `--vla-endpoint`, `--sam3-endpoint` | running model servers to attach to |
 | `--codex-home`, `--codex-bin`, `--claude-cli` | the runtimes' homes and executables |
+
+Both `pyrualean play` and `python -m pyrualean.play` default to the supervised cells
+loop. The supervision core is in the initial prompt; the recovery body is delivered
+only after `finish(status="stuck")` when the host permits continuation. Both skill
+cores ship in the package. A running Valen service sharing the image filesystem is
+required; the CLI does not start a model server or fall back to unsupervised actions
+on a monitor error. See [visual supervision](../visual-supervision.md).
+
+Use `--monitor-mode off --no-stuck-recovery` to disable both features. These are
+independent switches: turning off Valen alone leaves confirmed-stuck recovery
+configured. `program` supports neither feature and defaults both off; explicitly
+enabling either for that arm is rejected. Direct Python calls to `play_episode`
+and XPolicyLab's deployment configuration keep their explicit opt-in semantics.
 
 ## Environment variables
 
@@ -55,6 +84,7 @@
 | `PYRUALEAN_CODEX_BIN`, `PYRUALEAN_CODEX_HOME` | defaults of `--codex-bin`, `--codex-home` |
 | `PYRUALEAN_CLAUDE_CLI` | default of `--claude-cli` |
 | `PYRUALEAN_OPENAI_EXTRA_BODY` | default of `--openai-extra-body` |
+| `PYRUALEAN_VALEN_URL` | default Valen `/predict` address; explicit `--valen-url` takes precedence |
 | `PYRUALEAN_CODEX_RETRIES` | retries of a request from Codex (`play`, `generate`) to a `--base-url` endpoint (`10`) |
 | `OPENAI_BASE_URL`, `OPENAI_API_KEY` | the endpoint and key of `--runtime openai` when `--base-url` / `--api-key-env` are not given |
 | `PYRUALEAN_OPENAI_RETRIES`, `PYRUALEAN_OPENAI_TIMEOUT_S` | retries (`10`) and request timeout in seconds (`900`) of `--runtime openai` |

@@ -52,6 +52,7 @@ from pathlib import Path
 from typing import Any
 
 from .arms import ArmResult, ArmToolkit
+from .interaction_trace import InteractionTrace
 
 #: Retries of one chat request on transport / 5xx / 429 errors (env override).
 DEFAULT_RETRIES = int(os.environ.get("PYRUALEAN_OPENAI_RETRIES", "10"))
@@ -220,6 +221,8 @@ def _execute_with_deadline(
     arguments: dict[str, Any],
     remaining_s: float,
     on_timeout: Callable[[], None] | None,
+    *,
+    trace_context: dict[str, Any] | None = None,
 ) -> ArmResult:
     """Run one tool call, stopping the episode if it is still running at the deadline.
 
@@ -229,18 +232,23 @@ def _execute_with_deadline(
     timer fires ``on_timeout``, which makes the next primitive raise ``EpisodeFinished``.
     """
 
-    if on_timeout is None:
+    def execute() -> ArmResult:
+        if trace_context is not None:
+            return arm_toolkit.execute_tool(name, arguments, trace_context=trace_context)
         return arm_toolkit.execute_tool(name, arguments)
+
+    if on_timeout is None:
+        return execute()
     if remaining_s <= 0:
         # Already out of budget: stop first, so the cell's very first primitive raises instead of
         # running unbounded (a timer with a non-positive delay is the same as none at all).
         on_timeout()
-        return arm_toolkit.execute_tool(name, arguments)
+        return execute()
     timer = threading.Timer(remaining_s, on_timeout)
     timer.daemon = True
     timer.start()
     try:
-        return arm_toolkit.execute_tool(name, arguments)
+        return execute()
     finally:
         timer.cancel()
 
@@ -283,6 +291,7 @@ def run_openai_agent(
     on_timeout: Callable[[], None] | None = None,
     sleep: Callable[[float], None] = time.sleep,
     should_stop: Callable[[], bool] | None = None,
+    trace: InteractionTrace | None = None,
 ) -> dict[str, Any]:
     """Run one episode's agent loop; returns the ``generation`` record.
 
@@ -371,6 +380,8 @@ def run_openai_agent(
     #: Replies allowed after the decision budget ended the episode on the robot
     #: (the refused call told the model to call ``finish``; give it one reply to do so).
     post_budget_replies = 1
+    decision_id: str | None = None
+    attempt_id: str | None = None
 
     def remaining() -> float:
         return budget_s - (time.perf_counter() - started)
@@ -391,10 +402,25 @@ def run_openai_agent(
                 break
             sleep(min(1.0, left))
 
+    def retry_wait(seconds: float, reason: str) -> None:
+        if trace is None:
+            wait(seconds)
+            return
+        context = dict(decision_id=decision_id, attempt_id=attempt_id, reason=reason)
+        trace.emit("retry_wait_started", **context, planned_s=seconds)
+        started_wait = time.perf_counter()
+        try:
+            wait(seconds)
+        finally:
+            trace.emit("retry_wait_finished", **context,
+                       elapsed_s=time.perf_counter() - started_wait)
+
     def chat() -> dict[str, Any] | None:
         """One chat request with retries; ``None`` when the provider is down for good."""
 
-        nonlocal requests
+        nonlocal requests, decision_id, attempt_id
+        if trace is not None:
+            decision_id = trace.new_id("decision")
         body: dict[str, Any] = {
             "model": model,
             "messages": transcript.messages,
@@ -414,14 +440,26 @@ def run_openai_agent(
             left = remaining()
             if left <= 0 or over():
                 return None
+            if trace is not None:
+                attempt_id = trace.new_id("attempt")
+                trace.emit("request_started", decision_id=decision_id, attempt_id=attempt_id,
+                           runtime="openai", timeout_s=min(request_timeout_s, left))
             t0 = time.perf_counter()
+            received = False
             try:
                 code, payload = post(url, body, min(request_timeout_s, left))
+                received = True
             except Exception as exc:  # noqa: BLE001 - transport errors are retried
                 code, payload = 0, f"{type(exc).__name__}: {exc}"
             latency = time.perf_counter() - t0
             requests += 1
             ok = code == 200 and isinstance(payload, dict) and payload.get("choices")
+            if trace is not None:
+                context = dict(decision_id=decision_id, attempt_id=attempt_id,
+                               status_code=code, success=bool(ok))
+                trace.emit("request_finished", **context, elapsed_s=latency)
+                if received:
+                    trace.emit("response_received", **context)
             event(
                 "request",
                 attempt=attempt,
@@ -442,7 +480,8 @@ def run_openai_agent(
                 limited += 1
                 attempt -= 1
                 pause = min(RATE_LIMIT_MAX_WAIT_S, 5.0 * 2.0 ** min(limited - 1, 5))
-                wait(max(0.0, min(pause * (0.5 + random.random()), remaining())))
+                retry_wait(max(0.0, min(pause * (0.5 + random.random()), remaining())),
+                           "rate_limit")
                 continue
             # 4xx other than 408/429 is our fault (bad request, context overflow): no retry.
             retryable = code in (0, 408, 409, 425) or code >= 500
@@ -453,7 +492,7 @@ def run_openai_agent(
                 return None
             # Recovered by a retry: recorded, but not held against the episode.
             warnings.append(message)
-            wait(max(0.0, min(60.0, 2.0 * attempt, remaining())))
+            retry_wait(max(0.0, min(60.0, 2.0 * attempt, remaining())), "provider_retry")
 
     try:
         while True:
@@ -483,6 +522,22 @@ def run_openai_agent(
             finish_reasons.append(choice.get("finish_reason"))
             message = choice.get("message") or {}
             calls = message.get("tool_calls") or []
+            trace_contexts: list[dict[str, Any]] = []
+            if trace is not None:
+                trace.emit("response_parsed", decision_id=decision_id, attempt_id=attempt_id,
+                           tool_calls=len(calls))
+                # The transport returned the whole reply. All its tool arguments
+                # arrived before the first tool runs; do not time later items
+                # after earlier execution. Completion is not code validation.
+                for call in calls:
+                    context = dict(local_call_id=trace.new_id("tool"), decision_id=decision_id,
+                                   attempt_id=attempt_id, provider_call_id=call.get("id"))
+                    trace_contexts.append(context)
+                    function = call.get("function") or {}
+                    _, problem = _parse_arguments(function.get("arguments"))
+                    trace.emit("tool_arguments_complete", **context,
+                               tool=function.get("name") or "", arguments_valid=problem is None,
+                               completion_source="nonstreaming_response")
             content = message.get("content")
             # A reply with no tool calls must replay with a string content: providers reject
             # {"role": "assistant", "content": null} without tool_calls (a thinking model that
@@ -533,6 +588,7 @@ def run_openai_agent(
             image_sources: list[str] = []
             malformed = 0
             review_after: str | None = None
+            ready_feedback: list[dict[str, Any]] = []
             for index, call in enumerate(calls):
                 function = call.get("function") or {}
                 name = function.get("name") or ""
@@ -553,7 +609,8 @@ def run_openai_agent(
                     result = ArmResult({"error": problem})
                 else:
                     result = _execute_with_deadline(
-                        arm_toolkit, name, arguments or {}, remaining(), stop_once
+                        arm_toolkit, name, arguments or {}, remaining(), stop_once,
+                        trace_context=trace_contexts[index] if trace is not None else None,
                     )
                 # A later action in this reply was planned without seeing the
                 # failure/pause. Answer its call ID but wait for a new model
@@ -595,6 +652,17 @@ def run_openai_agent(
                     images=len(call_images),
                     terminated=arm_toolkit.robo._reported_success(),
                 )
+                if trace is not None:
+                    outcome = (
+                        "skipped" if result.result.get("skipped") else
+                        "error" if result.is_error else
+                        "paused" if (result.result.get("execution_paused") or
+                                     (result.result.get("supervision") or {}).get("paused")) else
+                        "finished" if (result.result.get("episode_finished") or
+                                       arm_toolkit.finish is not None) else "completed"
+                    )
+                    ready_feedback.append(dict(**trace_contexts[index], tool=name,
+                                               outcome=outcome, images=len(call_images)))
             if pending_images:
                 transcript.add(
                     {
@@ -603,6 +671,10 @@ def run_openai_agent(
                     },
                     pending_images,
                 )
+            if trace is not None:
+                # Tool text and all associated images are now in the transcript.
+                for fields in ready_feedback:
+                    trace.emit("feedback_ready", **fields)
             # `finish` only ends the episode when the toolkit actually recorded it: a call whose
             # arguments did not parse never reached the tool, and the agent must see the error.
             if arm_toolkit.finish is not None:

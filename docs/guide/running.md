@@ -3,6 +3,14 @@
 `pyrualean play` runs one episode: it boots the robot, gives the agent the task and serves its code until the
 episode is over.
 
+The default arm is `cells`, with Valen monitoring `off` and bundled stuck recovery.
+A normal run does not require a Valen service. To opt in, start the
+[Valen service](../visual-supervision.md#run) and pass `--monitor-mode pause` for
+review interruptions or `--monitor-mode shadow` for reports only. The service
+address is `http://127.0.0.1:18001/predict` (`--valen-url` overrides it). Supervision
+instructions load only when monitoring is enabled; recovery instructions are
+supplied only after confirmed stuck. Use `--no-stuck-recovery` to disable recovery.
+
 ```bash
 pyrualean play --arm cells --suite libero_spatial_swap --task 7 --seed 2 \
     --model gpt-6-astra --max-turns 40 --budget-s 7200 --out runs/demo --cuda-device 0

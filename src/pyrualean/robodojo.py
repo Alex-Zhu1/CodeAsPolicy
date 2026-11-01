@@ -43,10 +43,13 @@ from __future__ import annotations
 
 import math
 from collections.abc import Sequence
-from dataclasses import dataclass
+from copy import deepcopy
+from dataclasses import dataclass, field
 from typing import Any, ClassVar
 
 from ._robot import RobotBase
+from .coordination import CoordinationMixin
+from .perception import PerceptionResult
 from .robots import RobotAdapter
 
 #: Native actions one Pi0.5 chunk can execute (the policy's prediction horizon).
@@ -254,8 +257,8 @@ class Pick:
     truncated: bool
 
 
-@dataclass(frozen=True)
-class Segment:
+@dataclass(frozen=True, repr=False)
+class Segment(PerceptionResult):
     """Outcome of ``segment``.
 
     found: SAM3 produced a mask scoring at least ``min_score``.
@@ -265,6 +268,11 @@ class Segment:
     area_px: number of mask pixels (0 when not found).
     score: SAM3 confidence in [0, 1], None when not found.
     box: mask bounding box as reported by SAM3, or None.
+    provenance: observation, image and calibration sources; backends without
+        snapshot support report unverified provenance.  Reuse its
+        ``observation_id`` when back-projecting
+        ``centroid``; check ``robo.perception_is_current(result)`` before
+        using the result for a new action.
     """
 
     found: bool
@@ -273,25 +281,30 @@ class Segment:
     score: float | None
     box: Any
     camera: str
+    provenance: dict[str, Any] | None = field(default=None, kw_only=True)
 
 
-@dataclass(frozen=True)
-class WorldPoint:
+@dataclass(frozen=True, repr=False)
+class WorldPoint(PerceptionResult):
     """Outcome of ``back_project``: the surface point seen at one pixel.
 
     xyz: world [x, y, z], metres.  It is a visible SURFACE point (the top of
         an object as the camera sees it), not the object's centre.
     depth_m: distance of that point along the camera's optical axis.
+    provenance: observation, image and calibration sources.  A historical
+        result keeps its original coordinates; ``robo.require_current(result)``
+        rejects it after the scene or observation changes.
     """
 
     pixel: tuple[int, int]
     xyz: tuple[float, float, float]
     depth_m: float
     camera: str
+    provenance: dict[str, Any] | None = field(default=None, kw_only=True)
 
 
-@dataclass(frozen=True)
-class ObjectPose:
+@dataclass(frozen=True, repr=False)
+class ObjectPose(PerceptionResult):
     """Outcome of ``locate``: an object measured from its mask and the depth image.
 
     found: SAM3 produced a mask scoring at least ``min_score``.
@@ -314,6 +327,9 @@ class ObjectPose:
     area_px: mask pixels.
     camera: the camera measured from.
     note: why there is no 3D measurement (a flat object, no depth), else None.
+    provenance: observation, image and calibration sources.  Inspect historical
+        measurements freely; use ``robo.require_current(result)`` before
+        depending on their coordinates for a new action.
 
     The camera sees the top and the near side.  The far side of an object that
     is round about an upright axis (a bottle, a cup) is filled in from the arc
@@ -336,9 +352,10 @@ class ObjectPose:
     area_px: int
     camera: str
     note: str | None
+    provenance: dict[str, Any] | None = field(default=None, kw_only=True)
 
 
-STATEFUL_TOOLS = frozenset({"move_pose", "grip", "home", "pi0_pick"})
+STATEFUL_TOOLS = frozenset({"move_pose", "grip", "home", "pi0_pick", "motion_execute"})
 
 
 def _floats(value: Any, n: int, name: str) -> tuple[float, ...]:
@@ -359,6 +376,26 @@ def _tuple3(value: Any) -> tuple[float, float, float]:
     if len(vals) != 3:
         return (math.nan, math.nan, math.nan)
     return vals  # type: ignore[return-value]
+
+
+def _calibration_provenance(snapshot: dict[str, Any], camera: str) -> dict[str, Any]:
+    """Describe the capture used for a camera matrix without asserting currency."""
+    image = (snapshot.get("images") or {}).get(camera) or {}
+    out = {
+        key: deepcopy(snapshot.get(key))
+        for key in (
+            "session_id", "observation_id", "source_id", "step", "native_steps",
+            "source_freshness", "aligned",
+        )
+    }
+    out.update(
+        schema="pyrualean.calibration.v1",
+        camera=camera,
+        image_source_id=image.get("source_id"),
+        calibration_source_id=image.get("calibration_source_id"),
+        calibration_method=image.get("calibration_method"),
+    )
+    return out
 
 
 def _arm(name: Any) -> str:
@@ -503,15 +540,16 @@ def _pick_arm(raw: Any) -> dict[str, float]:
 # ---------------------------------------------------------------------------
 
 
-class RobodojoRobot(RobotBase):
+class RobodojoRobot(CoordinationMixin, RobotBase):
     """The RoboDojo dual-arm station: two 6-DoF ARX-X5 arms with parallel grippers at a table.
 
     World frame: x runs across the table (the LEFT arm is at negative x and
     appears on the LEFT of the head image), y points away from the robot
     towards the far edge of the table, z is up; metres.  Orientations are unit
     quaternions ordered [w, x, y, z].  The arms are ``"left"`` and ``"right"``
-    (``robo.LEFT`` / ``robo.RIGHT``); a motion call names one arm and holds
-    the other where it is.
+    (``robo.LEFT`` / ``robo.RIGHT``). ``move_to`` names one arm and
+    holds the other; ``move_both`` moves both on one native action clock.
+    Choose roles, ordering and recovery in your Python program.
 
     ``move_to`` drives an arm's GRASP POINT, the middle of the finger pads
     (``state().left.tcp_pos``), to a world position, with an orientation given
@@ -578,7 +616,7 @@ class RobodojoRobot(RobotBase):
         ("cam_right_wrist", "high"): "cam_right_wrist.png",
     }
     # RoboDojo records no depth or world-map artifacts: depth is only reachable
-    # through ``back_project`` on the current observation.
+    # through ``back_project`` on a pinned observation.
     WORLD_MAP_ARTIFACTS: ClassVar[dict[tuple[str, str], str]] = {}
     # RPent embeds all three views in every ``view_env_state``; keep parity.
     ON_MOTION_IMAGES: ClassVar[tuple[str, ...]] = (
@@ -676,9 +714,9 @@ class RobodojoRobot(RobotBase):
             resolution: there is one resolution per camera, ``"high"``.  Pixel
                 coordinates are (row, col) with row 0 at the top and col 0 at
                 the left.
-            step: recorded step, ``-1`` = latest.  ``segment`` and
-                ``back_project`` always read the CURRENT observation, which is
-                the latest recorded step.
+            step: recorded step, ``-1`` = latest.  For pixels from a snapshot,
+                use its ``step`` here and its ``observation_id`` with
+                ``segment`` / ``back_project`` so both read the same capture.
         """
         return super().image(camera, resolution=resolution, step=step)
 
@@ -690,23 +728,64 @@ class RobodojoRobot(RobotBase):
             "RoboDojo records no world maps; use back_project(row, col, camera) per pixel"
         )
 
-    def camera_meta(self, camera: str = "cam_head", *, step: int = -1) -> dict[str, Any]:
+    def _camera_snapshot(
+        self, step: int, observation_id: str | None,
+    ) -> tuple[dict[str, Any] | None, int]:
+        """Resolve a source capture while retaining legacy recorded-step reads."""
+        step = int(step)
+        if not self._supports_observation_snapshots:
+            if observation_id is not None:
+                raise NotImplementedError(
+                    "This backend cannot bind calibration to an observation_id"
+                )
+            return None, step
+        if step != -1:
+            recorded = self._readonly(self.STATE_TOOL, {"step": step})
+            snapshot = deepcopy(recorded.get("observation") or {})
+            if not snapshot.get("observation_id"):
+                raise ValueError("Recorded step has no observation identity")
+            if observation_id is not None and observation_id != snapshot["observation_id"]:
+                raise ValueError("step and observation_id refer to different observations")
+            # A source can appear in multiple records. Preserve the requested record's
+            # state/calibration instead of resolving the ID through the latest cache entry.
+            snapshot["state"] = deepcopy(recorded.get("state") or {})
+            snapshot["image_state"] = deepcopy(snapshot["state"].get("image_state") or {})
+            snapshot["cameras"] = deepcopy(snapshot["state"].get("cameras") or {})
+            return snapshot, int(snapshot["step"])
+        if observation_id is not None:
+            snapshot = self._perception_snapshot(observation_id)
+            return snapshot, int(snapshot["step"])
+        snapshot = self._perception_snapshot(observation_id)
+        return snapshot, int(snapshot["step"])
+
+    def camera_meta(
+        self, camera: str = "cam_head", *, step: int = -1,
+        observation_id: str | None = None,
+    ) -> dict[str, Any]:
         """Return the calibration of one camera at a recorded step as a dict.
 
         Keys: ``shape`` (image shape), ``intrinsic_matrix`` (3x3),
         ``extrinsic_matrix`` (4x4 camera-to-world; the camera looks down its
         own -z axis with +y up) and ``has_depth``.  The wrist cameras move
-        with their arm.
+        with their arm.  ``observation_id`` pins the same calibration as a
+        snapshot's image and perception result; it can name a historical
+        capture.  With both ``step`` and ``observation_id``, they must agree.
+        ``provenance`` records the capture and calibration source when the
+        backend supports snapshots; it does not assert that a capture is current.
         """
         camera = _camera(camera, self.CAMERAS)
-        payload = self._readonly(self.STATE_TOOL, {"step": int(step)})
+        snapshot, step = self._camera_snapshot(step, observation_id)
+        payload = self._readonly(self.STATE_TOOL, {"step": step})
         cameras = (payload.get("state") or {}).get("cameras") or {}
-        return dict(cameras.get(camera) or {})
+        result = deepcopy(cameras.get(camera) or {})
+        if snapshot is not None:
+            result["provenance"] = _calibration_provenance(snapshot, camera)
+        return result
 
     def show(self, camera: str = "cam_head") -> None:
         """Attach the current image of ``camera`` to the feedback of this turn.
 
-        Images are not returned automatically; call ``show("cam_head")``,
+        For normal on-demand feedback, call ``show("cam_head")``,
         ``show("cam_left_wrist")`` or ``show("cam_right_wrist")`` when *you*
         (the author) need to look at the scene before writing the next turn.
         Costs tokens: look only when a decision depends on it.
@@ -724,9 +803,14 @@ class RobodojoRobot(RobotBase):
     # -- perception ---------------------------------------------------------
 
     def segment(
-        self, text_prompt: str, camera: str = "cam_head", min_score: float = 0.2
+        self,
+        text_prompt: str,
+        camera: str = "cam_head",
+        min_score: float = 0.2,
+        *,
+        observation_id: str | None = None,
     ) -> Segment:
-        """Segment an object in the current image of ``camera`` by a text prompt (SAM3).
+        """Segment an object in one observation of ``camera`` by a text prompt (SAM3).
 
         Args:
             text_prompt: what to find, e.g. ``"the green bottle"``.  Name one
@@ -734,9 +818,14 @@ class RobodojoRobot(RobotBase):
             camera: ``"cam_head"`` (default), ``"cam_left_wrist"`` or
                 ``"cam_right_wrist"``.
             min_score: masks scoring below this are reported as not found.
+            observation_id: snapshot to measure; None pins the latest recorded
+                observation.  An explicit historical snapshot uses its saved
+                image and returns a historical result; it never reads a newer
+                image instead.
         Returns:
             Segment; when ``found``, pass ``centroid`` (row, col) to
-            ``back_project`` with the same camera to get a world point.  The
+            ``back_project`` with the same camera and the result's
+            ``provenance["observation_id"]`` to get a world point.  The
             mask is the best match for the text, not a guarantee of identity:
             check where it is against the image.
         Raises:
@@ -751,9 +840,13 @@ class RobodojoRobot(RobotBase):
             "camera": camera,
             "min_score": float(min_score),
         }
-        p = self._readonly("segment", kwargs)
+        p = self._perception_call("segment", kwargs, observation_id=observation_id)
+        provenance = deepcopy(p.get("provenance"))
         if not p.get("found"):
-            return Segment(False, None, 0, None, None, str(p.get("camera", camera)))
+            return Segment(
+                False, None, 0, None, None, str(p.get("camera", camera)),
+                provenance=provenance,
+            )
         centroid = p.get("centroid_rc") or ()
         moments = p.get("mask_moments") or ()
         return Segment(
@@ -763,40 +856,55 @@ class RobodojoRobot(RobotBase):
             score=float(p["score"]) if p.get("score") is not None else None,
             box=p.get("box_px"),
             camera=str(p.get("camera", camera)),
+            provenance=provenance,
         )
 
-    def back_project(self, row: int, col: int, camera: str = "cam_head") -> WorldPoint:
-        """Return the world point seen at one pixel of the current image of ``camera``.
+    def back_project(
+        self, row: int, col: int, camera: str = "cam_head", *,
+        observation_id: str | None = None,
+    ) -> WorldPoint:
+        """Return the world point at one pixel, using one snapshot's image and calibration.
 
         Args:
             row / col: pixel, row 0 at the top, col 0 at the left (images are
                 480 rows x 640 cols).
             camera: the camera the pixel was read from (default ``"cam_head"``).
+            observation_id: the snapshot from which the pixel was read.  None
+                pins the latest recorded observation.  Pass the source ID
+                explicitly for an older image or ``Segment.centroid``.
         Returns:
             WorldPoint; ``xyz`` is where the camera ray meets the first
             surface.  A pixel on an object's edge or a thin part can land on
             the table or the background behind it: prefer ``Segment.centroid``.
+            ``provenance`` records the source; use ``robo.require_current(result)``
+            before depending on its coordinates for a new action.
         Raises:
             ToolError: pixel out of range, no valid depth there, or the
             camera calibration is missing.
         """
         camera = _camera(camera, self.CAMERAS)
         kwargs: dict[str, Any] = {"row": int(row), "col": int(col), "camera": camera}
-        p = self._readonly("back_project", kwargs)
+        p = self._perception_call("back_project", kwargs, observation_id=observation_id)
         pixel = p.get("pixel") or (int(row), int(col))
         return WorldPoint(
             pixel=(int(pixel[0]), int(pixel[1])),
             xyz=_tuple3(p.get("world_xyz")),
             depth_m=float(p.get("depth_m", math.nan)),
             camera=str(p.get("camera", camera)),
+            provenance=deepcopy(p.get("provenance")),
         )
 
     def locate(
-        self, text_prompt: str, camera: str = "cam_head", min_score: float = 0.2
+        self,
+        text_prompt: str,
+        camera: str = "cam_head",
+        min_score: float = 0.2,
+        *,
+        observation_id: str | None = None,
     ) -> ObjectPose:
         """Find an object by a text prompt and measure it in 3D.
 
-        SAM3 segments the current image of ``camera`` (as ``segment``); every
+        SAM3 segments one snapshot's image of ``camera`` (as ``segment``); every
         pixel of the mask is then projected into the world through the depth
         image, and the points above the table give the object's centre, top,
         footprint and heading.  Nothing moves.
@@ -808,11 +916,17 @@ class RobodojoRobot(RobotBase):
                 ``"cam_left_wrist"`` or ``"cam_right_wrist"`` (close up, from
                 the gripper: re-measure before a precise grasp).
             min_score: masks scoring below this are reported as not found.
+            observation_id: snapshot to measure; None pins the latest recorded
+                observation.  Historical IDs use the recorded images, depth
+                and calibration from that capture.
         Returns:
             ObjectPose.  For a top grasp: ``move_to([x, y, top_z + 0.08],
             pitch=90, yaw=grasp_yaw)`` above it, then down to the height to
             hold it at.  The mask is the best match for the text, not proof of
             identity: check it against the image.
+            ``provenance`` links the measurement to its capture.  Use
+            ``robo.require_current(result)`` before depending on coordinates;
+            an old result does not become current when read again.
         Raises:
             ToolError: the camera image or the SAM3 service is unavailable.
         """
@@ -825,7 +939,7 @@ class RobodojoRobot(RobotBase):
             "camera": camera,
             "min_score": float(min_score),
         }
-        p = self._readonly("locate", kwargs)
+        p = self._perception_call("locate", kwargs, observation_id=observation_id)
         centroid = p.get("centroid_rc") or ()
 
         def num(key: str) -> float | None:
@@ -846,6 +960,7 @@ class RobodojoRobot(RobotBase):
             area_px=int(p.get("area_px") or 0),
             camera=str(p.get("camera", camera)),
             note=str(p["geometry_error"]) if p.get("geometry_error") else None,
+            provenance=deepcopy(p.get("provenance")),
         )
 
     # -- the VLA ------------------------------------------------------------

@@ -1,9 +1,10 @@
-"""Opt-in recovery instructions delivered only after a planner declares stuck."""
+"""Recovery instructions delivered only after a planner declares stuck."""
 
 from __future__ import annotations
 
 import hashlib
 from dataclasses import dataclass
+from importlib.resources import files
 from pathlib import Path
 
 
@@ -42,11 +43,16 @@ class StuckRecoveryConfig:
 
 
 def add_stuck_recovery_arguments(parser):
-    parser.add_argument(
+    selection = parser.add_mutually_exclusive_group()
+    selection.add_argument(
         "--stuck-recovery-skill",
         type=Path,
         default=None,
-        help="skill text delivered after a confirmed stuck declaration (cells)",
+        help="override the bundled recovery skill delivered after confirmed stuck (cells)",
+    )
+    selection.add_argument(
+        "--no-stuck-recovery", action="store_true",
+        help="disable confirmed-stuck recovery (enabled by default for cells)",
     )
     parser.add_argument(
         "--stuck-recovery-rounds",
@@ -57,8 +63,21 @@ def add_stuck_recovery_arguments(parser):
 
 
 def stuck_recovery_config(args):
-    if args.stuck_recovery_skill is None:
+    if args.no_stuck_recovery:
         return None
-    return StuckRecoveryConfig(
-        args.stuck_recovery_skill.read_text(encoding="utf-8"), args.stuck_recovery_rounds
+    if args.stuck_recovery_skill is not None:
+        if args.arm != "cells":
+            raise ValueError("Stuck recovery currently supports only --arm cells")
+        instructions = args.stuck_recovery_skill.read_text(encoding="utf-8")
+    elif args.arm == "cells":
+        instructions = recovery_instructions()
+    else:
+        return None
+    return StuckRecoveryConfig(instructions, args.stuck_recovery_rounds)
+
+
+def recovery_instructions() -> str:
+    """Packaged core of astra-stuck-recovery, available without a repository checkout."""
+    return files("pyrualean").joinpath("knowledge/astra_stuck_recovery.md").read_text(
+        encoding="utf-8"
     )

@@ -590,7 +590,9 @@ def test_segment_then_back_project_localises_the_object(rd, rd_backend):
     )
     assert rd_backend.calls[-1] == ("back_project", {"row": 200, "col": 300, "camera": "cam_head"})
     missing = rd.segment("the red mug")
-    assert missing == Segment(False, None, 0, None, None, "cam_head")
+    assert missing == Segment(False, None, 0, None, None, "cam_head",
+                              provenance=missing.provenance)
+    assert missing.provenance["binding"] == "unsupported"
     assert not rd.segment("the green bottle", min_score=0.95).found
 
 
@@ -866,7 +868,10 @@ def test_ledger_marks_stateful_calls_and_counts_native_actions(rd, rd_backend):
     records = [r for r in rd._ledger.records if r.tool != "view_env_state"]
     assert [r.tool for r in records] == ["segment", "locate", "move_pose", "pi0_pick"]
     assert [r.stateful for r in records] == [False, False, True, True]
-    assert records[0].summary == {"found": True, "score": 0.83, "centroid_rc": [200, 300]}
+    assert {k: v for k, v in records[0].summary.items() if k != "provenance"} == {
+        "found": True, "score": 0.83, "centroid_rc": [200, 300],
+    }
+    assert records[0].summary["provenance"]["source_freshness"] == "unverified"
     assert records[1].summary["center_xyz"] == rd_backend.BOTTLE
     assert records[1].summary["grasp_yaw"] == 90.0
     assert records[2].env_steps == 4 and records[3].env_steps == 50
@@ -877,6 +882,7 @@ def test_ledger_marks_stateful_calls_and_counts_native_actions(rd, rd_backend):
         "grip",
         "home",
         "pi0_pick",
+        "motion_execute",
     }
 
 
@@ -1034,7 +1040,11 @@ def test_arm_toolkit_attaches_the_three_views_and_never_terminates(rd_backend, t
     assert "there is no robo.done" in after.result["exception"]
     assert "episode_done" not in after.result and after.result["moved"] is False
     finished = kit.execute_tool("finish", {"status": "success", "summary": "bottle is in the bin"})
-    assert finished.result == {"ok": True, "status": "success", "summary": "bottle is in the bin"}
+    assert {k: v for k, v in finished.result.items()
+            if k not in ("observation", "handoff", "action_receipts")} == {
+        "ok": True, "status": "success", "summary": "bottle is in the bin",
+    }
+    assert "environment_terminated" not in finished.result
     assert "environment_terminated" not in kit.finish and kit.turns[-1]["terminated"] is False
     demand = ArmToolkit(
         RobodojoRobot(rd_backend),

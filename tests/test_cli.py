@@ -49,3 +49,21 @@ def test_provider_overrides_shape():
     assert 'model_providers.pyrualean.base_url="https://gw.example.com/v1"' in joined
     assert 'model_providers.pyrualean.wire_api="responses"' in joined
     assert 'model_providers.pyrualean.env_key="MY_KEY"' in joined
+
+
+def test_execution_options_reach_the_host(tmp_path, monkeypatch):
+    from pyrualean import cli
+
+    captured = []
+
+    def run_host(argv, **kwargs):
+        captured.extend(argv)
+        (tmp_path / "result.json").write_text(json.dumps({"status": "completed"}))
+        return 0
+
+    monkeypatch.setattr(cli, "run_host", run_host)
+    main(["play", "--arm", "cells", "--task", "0", "--out", str(tmp_path),
+          "--code-timeout-s", "7.5", "--code-max-actions", "4", "--code-output-chars", "300"])
+    for key, value in (("--code-timeout-s", "7.5"), ("--code-max-actions", "4"),
+                       ("--code-output-chars", "300")):
+        assert captured[captured.index(key) + 1] == value

@@ -1,199 +1,150 @@
 ---
 name: astra-valen-supervision
-description: Plan and execute robot tasks with Astra and Valen visual supervision. Use when decomposing manipulation tasks, writing phase-specific watch contracts, diagnosing uncertain visual judgments, or reconciling completion evidence in PyRUA-Lean.
+description: Write robot-control Python with Astra and Valen visual evidence in PyRUA-Lean. Use when choosing manipulation checks, composing single-arm or dual-arm actions, handling uncertain observations, or reconciling completion evidence.
 ---
 
 # Astra–Valen supervision
 
-Turn the user's goal into observable, dependency-aware milestones. Astra plans
-and interprets evidence; Valen answers visual questions; the host applies pause
-rules; the environment supplies its own verdict when available. Keep these roles
-and their evidence separate.
+Astra receives a robot manual, callable `robo` methods and current observations,
+then writes the task strategy in Python. Choose roles, targets, ordering, release
+timing, checks and bounded corrections from the task and scene. This skill provides
+reasoning guidance and reusable patterns; it does not prescribe a task state machine.
+Valen answers local visual questions and can trigger review. Astra combines that
+fallible evidence with images, measurements and action results to choose the next
+program. The host executes actions and enforces explicit dependencies and resource
+limits. Ordinary grasp and transport do not require a Valen approval by default.
 
-This skill supplies planning instructions, not a runtime enforcement mechanism.
-Read [contracts and examples](references/contracts.md) when writing a task brief
-or Python contracts. Read the repository's [supervision API](../../docs/visual-supervision.md)
-for current limits and execution semantics. Repository links assume this skill
-remains in `skills/astra-valen-supervision/`.
-When you confirm that the current plan is stuck, call `finish(status="stuck")`
-with the blockage and attempts made. If confirmed-stuck recovery is enabled, the
-host dispatches [Astra stuck recovery](../astra-stuck-recovery/SKILL.md) afterward.
-Read `episode_finished`: false means apply the returned skill and continue in the
-same episode; true means stop. Do not pre-activate recovery on every Valen pause.
+The packaged [runtime core](../../src/pyrualean/knowledge/astra_valen_supervision.md)
+is injected when monitoring is enabled and frozen with its hash for the run.
+Changing this repository skill alone does not update that core. Read
+[contracts and examples](references/contracts.md) for `watch`/evidence semantics,
+[dual-arm code](../../docs/guide/coordination.md) when composing coordinated moves,
+and the [supervision reference](../../docs/visual-supervision.md) for host limits.
+Repository links assume this skill remains in its repository location.
 
-## 1. Establish the acceptance contract
+## Plan the program from the actual task
 
-Before moving, extract from the task instruction, permitted documentation, and
-available observations:
+Extract acceptance conditions and constraints from the task instruction and
+permitted documentation. Identify what is observable, what requires a quantitative
+measurement, and who provides the final verdict. Do not invent cleanup, symmetry,
+ordering or stability-vote requirements. Keep hidden evaluator truth and object
+poses out of policy inputs and Valen evidence in restricted benchmark runs.
 
-- Required objects, relationships, final states, and any ordering constraints.
-- Constraints to preserve while manipulating other objects.
-- Observable evidence for each requirement, including which view can show it.
-- Quantitative requirements needing permitted measurements rather than RGB guesses.
-- Required cleanup: release, gripper state, arm pose, or other task-specific state.
-- Available acceptance authority, action/step/time limits, and unresolved ambiguity.
+A phase is a useful planner grouping when dependencies or expected facts change,
+not a mandatory sequence of approach/grasp/transport/release. A short program may
+contain several actions and conditional branches. Select model-return boundaries
+where new judgment is needed; avoid requiring another model turn for every small
+step or known numerical correction.
 
-Do not substitute a plausible-looking arrangement for an unspecified target.
-Resolve consequential ambiguity from permitted context; ask only if it blocks a
-meaningful choice. Continue independent observation while clarification is pending.
-Do not impose home/open, symmetry, or a particular construction order unless the
-task or execution constraints require it.
+For two arms, decide which acts, supports or observes, and when those roles change.
+Use `move_to`/`set_gripper` for sequential actions and `move_both` for genuine
+simultaneous motion. They compose directly. Simultaneity alone does not maintain
+relative pose; request `keep_relative` only when needed. Read actual capabilities:
+this RoboDojo executor does not certify full arm-arm or object collision clearance.
+Targets and corrections must come from current observations, not a copied task recipe.
 
-If benchmark rules are explicitly supplied or their use is authorized, translate
-them into target constraints and record their source. Do not silently consult a
-hidden evaluator or hidden object poses in a restricted benchmark run. Disclose
-extra task knowledge in experiment records; a clarified run is a different prompt
-condition. Never feed the benchmark verdict to Valen as visual evidence.
+## Select the evidence that this action needs
 
-## 2. Plan phases around dependencies and evidence
+Use controller state for arrival and numerical error. A gripper's `holding` or
+opening is not proof of intended-object support. Use current images, permitted
+measurements and suitable probes to establish the relevant relationship. The
+optional `strategy.verify_grasp` helper is useful when its callbacks can supply
+that evidence; other justified verification code is valid. During a supported
+handover, verify receiver support before giving up donor support, then inspect
+what happened after release. A release onto a surface may need different checks.
 
-Describe each milestone with: prerequisites, intended change, preserved facts,
-exit evidence, expected visibility, and recovery scope. Order milestones by their
-dependencies; use a simple sequence when sufficient. Separate approach, grasp,
-transport, release, and inspection when the facts expected to hold change.
+Ask Valen atomic questions about visible relationships with clear object/arm
+identities. Do not ask it to certify hidden contact, force, millimetres or broad
+"safety/success". `unknown` is unresolved evidence; probabilities are not calibrated
+accuracy. Preserve raw winners and host threshold abstention reasons.
 
-Maintain a compact evidence ledger in the plan or persistent cell variables:
-`fact ID -> question, source, status, observation/step, dependencies, invalidators`.
-These are planner records, not additional host API fields. A movement that can
-change a fact invalidates its old evidence. Recheck affected dependents after a
-repair; do not infer current truth from an earlier yes.
+When monitoring is enabled, call `watch` before motion in each cell:
 
-Carry still-required, established facts into later phase contracts. Enter a
-repair phase explicitly when changing a previously established relationship;
-retain unaffected constraints and re-arm the repaired relationship at the
-appropriate endpoint. Do not require a future postcondition throughout approach
-or transport. Arm a release postcondition before the release action, then inspect
-the returned evidence before starting dependent work.
+- `facts` names visual questions; `alerts` handles explicit contradictions.
+- `critical` defaults to `[]`; opt in to a review for sustained unknown on selected facts.
+- `requires` explicitly demands fresh matching Valen evidence before every motion in that named phase. Use it only for a necessary hard visual dependency, not as the default transport pattern.
+- `completion` requests planner review of candidate completion, not an automatic task verdict.
 
-Use short cells ending at evidence boundaries. In this host, `clear` means no
-pause rule fired, NOT that all facts are yes. A single critical unknown can yield
-`clear`. Astra must gate milestone advancement on the required evidence itself.
+`clear` only means no pause rule fired. Inspect `evidence()` for freshness,
+question versions and observation IDs before dependent actions. Motion invalidates
+old evidence by default; narrow `invalidates` only with a causal reason. Registered
+gates persist across cells/watch calls, and editing an evidence snapshot changes
+no host fact. Defer a later prerequisite with `defer_fact(..., until=..., reason=...)`
+and establish it before that boundary. Do not change phase names to bypass it.
 
-## 3. Ask Valen about visible facts
+Use explicit verification for an explicit missing prerequisite or a
+support/release decision that needs evidence. A normal approach without these
+dependencies needs no extra pre-action visual call; automatic endpoint monitoring
+already updates facts. Reuse current results rather than rechecking every primitive.
+On a backend with source-aware snapshots, call `view = robo.snapshot()` and then
+`checked = verify(view["observation_id"])` when needed. Request
+`snapshot(refresh=True)` only when a new read-only capture is necessary.
+`verify()` evaluates the recorded snapshot without refreshing it or moving. Inspect `values`,
+`blocked` and the observation reference. An unsupported backend, stale ID or
+misaligned image/state source cannot establish current evidence through this API.
+Use the snapshot's recorded `step` when reading its images or camera calibration.
 
-Use one concrete relationship or state per question, identified by visible object
-attributes and a clear reference object or arm. Split contact, orientation,
-centering, and identity when they can fail independently. Examples:
+Unknown streaks and explicit phase gates survive cells and phase changes.
+A continuous critical unknown episode requests review only once. In the next cell,
+Astra inspects the report and scene, records the reasoning for its next action,
+then continues, corrects or seeks useful evidence. This handoff does not change
+Valen's unknown to yes and does not require Valen to approve the new program.
+A new known source ends the unknown episode; a later unknown episode may trigger
+again. Alert/completion conditions also notify once while continuously matching;
+new explicit counterevidence rearms them, and unknown alone does not. Re-reading
+one source cannot supply another confirmation, change its accepted vote or clear
+uncertainty. Explicit `requires`/`defer_fact` gates remain enforced across reviews.
+A deliberately changed observation may help, but avoid spending actions solely to
+obtain another vote. Explicit verification has
+its own per-cell allowance (`verification_calls` / `verification_limit`), counting
+failures separately from the motion count.
 
-- "Is the red cup inside the blue tray?"
-- "Is the red cup upright?"
-- "Is the drawer front flush with the cabinet?"
+## Keep both feedback loops
 
-Avoid historical references such as "the other two" unless identities are clear
-in the supplied images. Avoid "correct", "safe", "done", broad scene quality,
-future intentions, and asking RGB images to certify precise millimeters, force,
-or hidden contact. If a required fact cannot be observed, mark the evidence gap
-and choose a supported observation or measurement; do not invent confidence.
+Inspect `reached`, error, actual endpoint and consumed native steps. A recoverable
+`DualMove` rejection/partial result may select a bounded branch in the generated
+program. A zero-step IK refusal can likewise return without producing a visual
+vote. A recoverable partial dual-arm move is visually checked at its actual
+endpoint before returning; Valen can still pause that correction loop. Other
+unclassified partial failures require outer review. Returning normally does not
+establish grasp or task success.
 
-Choose a small set of relevant checks for each phase. Explicitly define:
+Choose a retry bound, a progress measure and a concrete correction hypothesis.
+Preserve planner phase allocations across cells; `move_both(max_steps=...)` bounds
+one call, while episode limits remain cumulative. Prefer a changed hypothesis
+when observations or attempts stop adding useful information. Optional strategy
+helpers factor out loops; they do not choose task geometry or enforce a fixed recipe.
 
-- `facts`: questions Valen answers.
-- `alerts`: which confident contradictions require review, with the correct
-  polarity. For a required invariant, typically alert on `no`.
-- `critical`: facts whose sustained uncertainty blocks dependent progress.
-- `completion`, if useful: a candidate for Astra review, never automatic success.
+Code errors, critical execution faults, expired budgets and visual reviews return
+the live scene to Astra. Do not catch control interruptions. Determine which calls
+executed and which assignments never completed before generating follow-up code;
+never replay a failed cell as if it were rolled back. Distinguish controller
+outcomes from `monitor_error` (image/protocol/service failure). Do not lower a
+threshold or manufacture no-op votes to get past uncertainty. Review the actual
+evidence need: ordinary Valen abstention is not an unknown execution outcome.
 
-`critical` does not alert on a confident no; `alerts` does not catch unknown.
-Use both where both matter. Match rules to expected phase behavior: "object held"
-is appropriate for verified transport, not after intentional release.
+Persistent capture-capability, source or service failures belong to the host.
+After a relevant bounded recovery such as one explicit refresh, report an unchanged
+blocker with `finish(status="failure")`; do not spend manipulation retries, repeated
+localization or robot motions trying to fix the protocol.
 
-Inspect actual evidence views. A home-position wrist camera may show no target;
-multiple views can add occlusion and irrelevant context. The current host sends
-all declared cameras and at most one previous endpoint: `watch()` has no camera
-selection argument. Camera filtering or extra Valen-only replay requires an
-explicit harness/offline change, not an invented helper option. For development,
-compare camera subsets on saved evidence before changing live supervision.
+Inspect `robo.action_receipt()` and `handoff.unresolved_actions` after an incomplete
+or uncertain execution. A known stopped partial result can support a bounded
+correction; an unknown/still-running action first needs `robo.reconcile(action_id)`.
+That query never replays the action. Only a matching receipt establishing execution
+completion and effect certainty clears the execution blocker. Images, visual yes,
+an edited receipt copy or a new cell cannot clear it. After reconciliation, capture
+the current scene, verify the remaining prerequisites, and write the remaining work
+in a new cell. Receipt reconciliation and visual verification discharge different
+obligations; neither means the task is complete.
 
-## 4. Execute and recover without erasing uncertainty
+Only after confirming stuck call `finish(status="stuck")` with attempts and blockers.
+If the enabled dispatcher returns `episode_finished=false`, apply the returned
+[recovery skill](../astra-stuck-recovery/SKILL.md) in the same episode. A local
+rejection, pause or unknown alone does not load recovery. `episode_finished=true`
+is terminal. Preserve native/task verdict, visual verification, Astra assessment
+and execution status separately when reporting completion.
 
-Declare `watch()` before motion in every cell. Read the returned action result,
-step IDs, supervision report, and relevant images before continuing after a pause.
-The action that triggered a review already executed; an errored action may have
-partially executed. Replan from the actual state instead of replaying a whole cell.
-Do not catch or bypass supervision interruptions.
-
-Diagnose uncertainty in this order:
-
-1. **Evidence/transport failure:** missing images, stale endpoint, malformed
-   response, timeout, or `monitor_error`. Check artifacts and state before retrying.
-2. **Explicit model uncertainty:** raw highest-probability choice is `unknown`.
-3. **Host abstention:** raw highest choice is yes/no, but its probability is below
-   the configured threshold. Inspect all probabilities; a weak no is not agreement.
-4. **Perceptual/question ambiguity:** inspect visibility and object identity;
-   split compound questions or replace ambiguous references without weakening the
-   acceptance condition. Compare equivalent variants on the same saved frame.
-
-The current decoder uses the maximum candidate probability, not the response's
-separate `confidence` field. Preserve the raw result and decoded result when
-reporting uncertainty. Probabilities are not calibrated accuracy estimates.
-
-For each retry, state what evidence will improve: e.g. a meaningful retreat that
-exposes contact, a supported view change, or a clearer identity description. Use
-the run's recovery budget. If none is specified, two unproductive local attempts
-prompt a progress review. If the current plan is stuck, explicitly declare it
-with `finish(status="stuck")`; the enabled host then dispatches recovery rather
-than finalizing. Apply that returned procedure to reclassify dependencies and
-consider alternative strategies. A local retry count alone does not prove the
-whole task impossible. An unresolved current prerequisite still blocks actions
-that depend on it.
-
-Do not lower thresholds, empty `critical`, redeclare phases, or start new cells
-merely to avoid pauses. A documented dependency review may narrow `critical` and
-remove alerts on future goals for an independent phase: keep deferred facts
-unresolved in the ledger, name the action boundary that needs them, and restore
-and establish them before crossing it. This reschedules checks without weakening
-task acceptance. New cells and every `watch()` call reset evidence streaks;
-carry unresolved facts in the planner ledger across these resets. Read-only
-`show()` does not invoke Valen, and an unchanged/no-op action is not a new vote.
-Do not spend robot actions just to manufacture confirmations.
-
-If tuning supervision is part of the task, keep it separate from execution:
-freeze evidence, label failures and successes, vary one factor at a time, and
-compare misses, false alarms, and abstentions. A higher yes rate alone is not an
-improvement. Record threshold, camera, and question changes as new configurations.
-
-## 5. Close with distinct verdicts
-
-Declare confirmed stuck before invoking the recovery procedure. With the opt-in
-host dispatcher, `finish(stuck)` can return `episode_finished=false` and the skill
-instructions; continue from that response. Without the dispatcher, or when it
-returns `episode_finished=true`, finish is terminal. A local pause alone is not
-a confirmed stuck declaration.
-
-When the scene appears complete, inspect every required final relationship and
-required cleanup state using sufficiently recent, uninvalidated evidence. Observe
-stability over distinct relevant endpoints only when the task requires it; do not
-invent a universal number of votes. Stop issuing actions once the environment
-has ended. A primitive ending early can reflect task success as well as limits or
-failure: inspect the actual termination reason if exposed.
-
-Report separately:
-
-| Field | Meaning |
-|---|---|
-| Native/task verdict | Authoritative evaluator result, if available and permitted; otherwise pending/unavailable |
-| Visual verification | Confirmed, contradicted, or unresolved; name remaining facts |
-| Astra assessment | Planner judgment with its evidence and limitations |
-| Execution status | Running, ended, error, or budget exhausted; not task success by itself |
-
-In this repository, `result.json.status`, `environment_success`, and
-`finish.status` answer different questions. `finish` records Astra's self-report;
-it does not override the native verdict. Native true plus visual unknown means
-"environment passed; visual verification incomplete", not environment failure.
-Native false plus a convincing image is still an evaluator failure. If no native
-verdict is exposed before `finish`, report the available visual evidence honestly
-and reconcile after finalization; do not assume the planner can read that file live.
-
-Do not rewrite original result fields to make them agree. Keep contradictory
-reports and explain their sources. For user tasks without an evaluator, report
-which agreed acceptance conditions are verified and which remain unresolved.
-
-## Deliverables when preparing a run
-
-Produce a task-specific brief and phase contracts using the linked template,
-with evidence/repair budgets and completion authority. Record the actual prompt,
-model/monitor configuration, question versions, and evidence artifacts. Include
-the supervision instructions and trigger protocol in the initial prompt. Configure
-`--stuck-recovery-skill` so the recovery procedure is supplied only after confirmed
-stuck. Verify the saved prompt and dispatch audit. Merely storing skill files in
-the repository does not enable this behavior.
+For supervision tuning, use saved and labelled evidence with the
+[offline evaluator](../../docs/guide/valen-evaluation.md). A lower unknown rate alone
+is not an accuracy gain; don't change the live task's acceptance criteria to improve it.

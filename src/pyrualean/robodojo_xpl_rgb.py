@@ -15,19 +15,22 @@ the client's configuration (``env_cfg/arx_x5.yml``: ``approximate_depth``, ``dep
 from its side, and no adapter on the leaderboard reads them.  The robot here is the same
 robot with perception that needs no more than that default: ``locate`` measures an object
 from its masks in the cameras that see it (:mod:`pyrualean.hosts.robodojo_sight`),
-``back_project`` answers for the object under a pixel, ``camera_meta`` is worked out from the
-robot's state.  Motion and the gripper are unchanged.
+``back_project`` answers for the object under a pixel, ``camera_meta`` uses recorded camera
+matrices when available or derives them from the state captured with the image.  Motion and
+the gripper are unchanged.
 
 The host is :mod:`pyrualean.hosts.xpolicylab_robodojo_rgb`.  There is no VLA in that host:
-run the robot with ``--primitives no-vla``.
+capability filtering selects ``no-vla`` automatically.
 """
 
 from __future__ import annotations
 
 import math
+from copy import deepcopy
 from dataclasses import dataclass
 from typing import Any, ClassVar
 
+from ._backend import ToolError
 from .robodojo import (
     ArmState,
     Gripper,
@@ -39,13 +42,16 @@ from .robodojo import (
     Segment,
     State,
     WorldPoint,
+    _arm_state,
+    _calibration_provenance,
     _camera,
+    _floats,
     _tuple3,
 )
 from .robots import RobotAdapter
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, repr=False)
 class ObjectSight(ObjectPose):
     """Outcome of ``locate``: an object measured from its masks in the colour cameras.
 
@@ -74,6 +80,9 @@ class ObjectSight(ObjectPose):
     note: what limits the measurement (one camera only; two that agree only
         roughly; the mask is the robot's own arm, or not on the table; too
         flat or too far to measure), else None.
+    provenance: observation, images and calibration used for this measurement.
+        Use ``robo.require_current(result)`` before depending on coordinates
+        for a new action; reading a historical result does not refresh it.
 
     The object is taken to stand on the table.  What other things or the
     robot's own arm hide of it is not measured, so a partly hidden object
@@ -84,7 +93,7 @@ class ObjectSight(ObjectPose):
     views: int = 1
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, repr=False)
 class SeenPoint(WorldPoint):
     """Outcome of ``back_project``: the point seen at one pixel.
 
@@ -94,6 +103,8 @@ class SeenPoint(WorldPoint):
     surface: ``"object"`` when the pixel lies on something that could be
         measured, ``"table"`` when the point is on the table top (z = 0.765):
         the pixel shows the table, or something too flat or too far to measure.
+    provenance: observation, image and calibration sources.  Use
+        ``robo.require_current(result)`` before depending on coordinates.
     """
 
     surface: str = "table"
@@ -106,8 +117,9 @@ class RobodojoOfficialColourRobot(RobodojoRobot):
     appears on the LEFT of the head image), y points away from the robot
     towards the far edge of the table, z is up; metres.  Orientations are unit
     quaternions ordered [w, x, y, z].  The arms are ``"left"`` and ``"right"``
-    (``robo.LEFT`` / ``robo.RIGHT``); a motion call names one arm and holds
-    the other where it is.
+    (``robo.LEFT`` / ``robo.RIGHT``). ``move_to`` names one arm and
+    holds the other; ``move_both`` moves both on one native action clock.
+    Choose roles, ordering and recovery in your Python program.
 
     ``move_to`` drives an arm's GRASP POINT, the middle of the finger pads
     (``state().left.tcp_pos``), to a world position, with an orientation given
@@ -147,6 +159,7 @@ class RobodojoOfficialColourRobot(RobodojoRobot):
     """
 
     NAME: ClassVar[str] = "robodojo_xpl_rgb"
+    SUPPORTS_VLA: ClassVar[bool] = False
     RESULT_TYPES: ClassVar[tuple[type, ...]] = (
         State,
         ArmState,
@@ -165,31 +178,95 @@ class RobodojoOfficialColourRobot(RobodojoRobot):
         # that verdict; by then no action is taken any more, so the hosts may stop there too
         return bool(self._backend.solved())
 
-    def camera_meta(self, camera: str = "cam_head", *, step: int = -1) -> dict[str, Any]:
+    def camera_meta(
+        self, camera: str = "cam_head", *, step: int = -1,
+        observation_id: str | None = None,
+    ) -> dict[str, Any]:
         """Return the calibration of one camera at a recorded step as a dict.
 
         Keys: ``shape`` (image shape), ``intrinsic_matrix`` (3x3) and
         ``extrinsic_matrix`` (4x4 camera-to-world; the camera looks down its
-        own -z axis with +y up).  The head camera is fixed; a wrist camera
-        moves with its arm, and its pose is worked out from that arm's state.
+        own -z axis with +y up).  Recorded camera matrices are used when supplied.
+        Otherwise, the head camera is fixed and a wrist camera's pose is
+        derived from the state captured with the image.
+        ``observation_id`` pins that capture, including a
+        historical one.  If ``step`` is also specified it must agree.
+        ``provenance`` identifies the image and calibration source when the
+        backend supports snapshots; it does not assert the capture is current.
         """
+        import numpy as np
+
         from .hosts import robodojo_sight as sight
 
         camera = _camera(camera, self.CAMERAS)
+        snapshot, step = self._camera_snapshot(step, observation_id)
+        if snapshot is not None:
+            cameras = snapshot.get("cameras") or (snapshot.get("state") or {}).get("cameras") or {}
+            calibration = cameras.get(camera) or {}
+            intrinsic, extrinsic = (calibration.get("intrinsic_matrix"),
+                                    calibration.get("extrinsic_matrix"))
+            if intrinsic is not None or extrinsic is not None:
+                try:
+                    k, t = np.asarray(intrinsic, dtype=float), np.asarray(extrinsic, dtype=float)
+                    valid = (k.shape == (3, 3) and t.shape == (4, 4)
+                             and np.isfinite(k).all() and np.isfinite(t).all()
+                             and k[0, 0] > 0 and k[1, 1] > 0)
+                except (TypeError, ValueError):
+                    valid = False
+                if not valid:
+                    raise ToolError("camera_meta", "Snapshot has incomplete or invalid calibration")
+                result = {
+                    key: deepcopy(calibration[key])
+                    for key in ("shape", "intrinsic_matrix", "extrinsic_matrix")
+                    if key in calibration
+                }
+                result["provenance"] = _calibration_provenance(snapshot, camera)
+                return result
         if camera == "cam_head":
             view = sight.head_view()
         else:
-            arm = self.state(step).arm("left" if camera == "cam_left_wrist" else "right")
+            name = "left" if camera == "cam_left_wrist" else "right"
+            if snapshot is None:
+                arm = self.state(step).arm(name)
+            else:
+                state = snapshot.get("state") or {}
+                image_state = snapshot.get("image_state")
+                if image_state is None:
+                    image_state = state.get("image_state")
+                if not isinstance(image_state, dict):
+                    raise ToolError("camera_meta", "Snapshot has no image-time arm pose")
+                try:
+                    _floats(image_state.get(f"{name}_ee_pose"), 7, "image-time arm pose")
+                except ValueError as exc:
+                    raise ToolError(
+                        "camera_meta", "Snapshot has no valid image-time arm pose"
+                    ) from exc
+                arm = _arm_state(image_state, name)
             view = sight.wrist_view([*arm.eef_pos, *arm.eef_quat])
         k = [[view.fx, 0.0, view.cx], [0.0, view.fy, view.cy], [0.0, 0.0, 1.0]]
-        return {
+        result = {
             "shape": [view.shape[0], view.shape[1], 3],
             "intrinsic_matrix": k,
             "extrinsic_matrix": [[float(v) for v in row] for row in view.pose],
         }
+        if snapshot is not None:
+            provenance = _calibration_provenance(snapshot, camera)
+            image = (snapshot.get("images") or {}).get(camera) or {}
+            model = ("robodojo_sight.head_view:v1" if camera == "cam_head"
+                     else "robodojo_sight.wrist_view:v1")
+            provenance.update(
+                calibration_method="robot_model", model=model,
+                calibration_source_id=(model if camera == "cam_head"
+                                       else image.get("image_state_source_id")),
+            )
+            result["provenance"] = provenance
+        return result
 
-    def back_project(self, row: int, col: int, camera: str = "cam_head") -> SeenPoint:
-        """Return the world point seen at one pixel of the current image of ``camera``.
+    def back_project(
+        self, row: int, col: int, camera: str = "cam_head", *,
+        observation_id: str | None = None,
+    ) -> SeenPoint:
+        """Return the world point at a pixel using one snapshot's images and calibration.
 
         There is no depth image, so a pixel alone is only a ray.  The object
         under the pixel is segmented from that pixel (SAM3) and measured as
@@ -201,6 +278,9 @@ class RobodojoOfficialColourRobot(RobodojoRobot):
             row / col: pixel, row 0 at the top, col 0 at the left (images are
                 480 rows x 640 cols).
             camera: the camera the pixel was read from (default ``"cam_head"``).
+            observation_id: snapshot from which the pixel was read; None pins
+                the latest recorded observation.  Pass the source ID explicitly
+                for historical pixels or ``Segment.centroid``.
         Returns:
             SeenPoint; check ``surface``.  ``"object"``: ``xyz`` is on the
             object under the pixel, as well as ``locate`` would measure that
@@ -210,12 +290,14 @@ class RobodojoOfficialColourRobot(RobodojoRobot):
             part in mid-air (a peg, a handle, a cable) is not measured
             reliably: reason from the image and from ``locate`` of the whole
             object instead.
+            ``provenance`` identifies the capture; use
+            ``robo.require_current(result)`` before depending on coordinates.
         Raises:
             ToolError: pixel out of range, or it looks past the table.
         """
         camera = _camera(camera, self.CAMERAS)
         kwargs: dict[str, Any] = {"row": int(row), "col": int(col), "camera": camera}
-        p = self._readonly("back_project", kwargs)
+        p = self._perception_call("back_project", kwargs, observation_id=observation_id)
         pixel = p.get("pixel") or (int(row), int(col))
         return SeenPoint(
             pixel=(int(pixel[0]), int(pixel[1])),
@@ -223,14 +305,20 @@ class RobodojoOfficialColourRobot(RobodojoRobot):
             depth_m=float(p.get("depth_m", math.nan)),
             camera=str(p.get("camera", camera)),
             surface=str(p.get("surface") or "table"),
+            provenance=deepcopy(p.get("provenance")),
         )
 
     def locate(
-        self, text_prompt: str, camera: str = "cam_head", min_score: float = 0.2
+        self,
+        text_prompt: str,
+        camera: str = "cam_head",
+        min_score: float = 0.2,
+        *,
+        observation_id: str | None = None,
     ) -> ObjectSight:
         """Find an object by a text prompt and measure it in 3D from the colour cameras.
 
-        SAM3 segments the current image of ``camera`` (as ``segment``); the
+        SAM3 segments one snapshot's image of ``camera`` (as ``segment``); the
         same object is then looked for in the other two cameras, and its
         height and footprint are those that fit every camera that shows it.
         One camera cannot measure a height: a low deep thing and a tall
@@ -244,6 +332,9 @@ class RobodojoOfficialColourRobot(RobodojoRobot):
                 ``"cam_left_wrist"`` or ``"cam_right_wrist"`` (close up, from
                 the gripper).
             min_score: masks scoring below this are reported as not found.
+            observation_id: snapshot to measure; None pins the latest recorded
+                observation.  Historical IDs use the images and camera poses
+                from that capture, including the other cameras.
         Returns:
             ObjectSight.  For a top grasp: ``move_to([x, y, top_z + 0.09],
             pitch=90)`` above it, ``locate`` it again from there (the wrist
@@ -257,12 +348,16 @@ class RobodojoOfficialColourRobot(RobodojoRobot):
             bowl, a cup or anything wider above than below, and for a tall
             thing that tapers; ``center_xyz`` is then off, along the line
             away from the robot, by about half of what the height is wrong
-            by.  An object once measured with ``views >= 2`` keeps that height
-            in later calls with the same prompt.  No position comes back
+            by.  Snapshot-bound calls use evidence from that capture only;
+            a height measured in an earlier capture is not silently reused.
+            No position comes back
             (``center_xyz`` None, ``note`` says why) for a mask on the robot's
             own arm or on something that is not on the table.  The mask is
             the best match for the text, not proof of identity: check it
             against the image.
+            ``provenance`` links the measurement to its capture.  Use
+            ``robo.require_current(result)`` before depending on coordinates;
+            reading an old result does not make it current.
         Raises:
             ToolError: the camera image or the SAM3 service is unavailable.
         """
@@ -275,7 +370,7 @@ class RobodojoOfficialColourRobot(RobodojoRobot):
             "camera": camera,
             "min_score": float(min_score),
         }
-        p = self._readonly("locate", kwargs)
+        p = self._perception_call("locate", kwargs, observation_id=observation_id)
         centroid = p.get("centroid_rc") or ()
 
         def num(key: str) -> float | None:
@@ -298,6 +393,7 @@ class RobodojoOfficialColourRobot(RobodojoRobot):
             camera=str(p.get("camera", camera)),
             note=str(note) if note else None,
             views=int(p.get("views") or 1),
+            provenance=deepcopy(p.get("provenance")),
         )
 
 
@@ -312,7 +408,7 @@ ADAPTER = RobotAdapter(
     show_examples=(
         "`robo.show('cam_head')`, `robo.show('cam_left_wrist')` or `robo.show('cam_right_wrist')`"
     ),
-    services="a frozen Pi0.5 VLA and a SAM3 segmentation service",
+    services="a SAM3 segmentation service",
     services_novla="a SAM3 segmentation service",
 )
 

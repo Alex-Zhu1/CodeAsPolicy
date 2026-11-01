@@ -125,6 +125,10 @@ class CallRecord:
     env_steps: int | None = None
     error: str | None = None
     summary: dict[str, Any] = field(default_factory=dict)
+    session_id: str | None = None
+    action_id: str | None = None
+    observation_id: str | None = None
+    receipt: dict[str, Any] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         record = asdict(self)

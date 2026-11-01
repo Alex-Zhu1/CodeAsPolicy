@@ -92,7 +92,9 @@ def test_api_reference_walks_the_mro_and_hides_base_configuration():
     assert "robo.go(xyz: list[float])" in text and "robo.state(" in text and "robo.show(" in text
     assert "CAMERAS" not in text and "IMAGE_ARTIFACTS" not in text and "_summary_dict" not in text
     names = list(_public_members(LiberoRobot))
-    assert names[:3] == ["task", "done", "state"] and "move_to" in names
+    assert all(name in names for name in (
+        "task", "done", "state", "move_to", "snapshot", "action_receipt", "reconcile"))
+    assert names.index("task") < names.index("state") < names.index("move_to")
 
 
 def test_arm_toolkit_uses_the_robot_configuration(backend, tmp_path):

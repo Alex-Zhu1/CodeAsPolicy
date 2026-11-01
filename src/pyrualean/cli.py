@@ -29,6 +29,9 @@ from ._robot import PRIMITIVE_SETS
 from .evaluation.compare import main as compare_main
 from .evaluation.metrics import load_episode_result, summarize
 from .evaluation.rpent import parse_rpent_run
+from .evaluation.valen import add_arguments as add_valen_eval_arguments
+from .evaluation.valen import run as run_valen_eval
+from .execution import add_execution_arguments, execution_limits
 from .prompt import TaskCard, api_reference, render_prompt
 from .runner import run_host
 from .stuck_recovery import add_stuck_recovery_arguments
@@ -221,15 +224,27 @@ def cmd_play(args: argparse.Namespace) -> int:
     if args.api_key_env:
         argv += ["--api-key-env", args.api_key_env]
     argv += ["--images", args.images, "--feedback", args.feedback]
+    limits = execution_limits(args)
+    argv += ["--code-timeout-s", str(limits.timeout_s),
+             "--code-output-chars", str(limits.max_output_chars)]
+    if limits.max_actions is not None:
+        argv += ["--code-max-actions", str(limits.max_actions)]
     if args.stuck_recovery_skill is not None:
+        if args.arm != "cells":
+            raise ValueError("Stuck recovery currently supports only --arm cells")
         argv += ["--stuck-recovery-skill", str(args.stuck_recovery_skill.resolve()),
                  "--stuck-recovery-rounds", str(args.stuck_recovery_rounds)]
+    elif args.no_stuck_recovery:
+        argv += ["--no-stuck-recovery"]
+    elif args.arm == "cells":
+        argv += ["--stuck-recovery-rounds", str(args.stuck_recovery_rounds)]
     config = monitor_config(args)
+    # Forward even off: omitting it would re-enable the host CLI's cells default.
+    argv += ["--monitor-mode", config.mode]
     if config.mode != "off":
         if args.arm != "cells":
             raise ValueError("Visual supervision currently supports only --arm cells")
         argv += [
-            "--monitor-mode", config.mode,
             "--valen-url", config.url,
             "--monitor-timeout-s", str(config.timeout_s),
             "--monitor-threshold", str(config.threshold),
@@ -377,10 +392,15 @@ def main(argv: list[str] | None = None) -> int:
     summ.add_argument("paths", nargs="+")
     summ.add_argument("--json", action="store_true")
 
+    valen_eval = sub.add_parser("valen-eval", help="evaluate saved Valen checks without a robot")
+    add_valen_eval_arguments(valen_eval)
+
     play = sub.add_parser("play", help="run one code-arm episode with Codex (RPent host)")
     add_monitor_arguments(play)
     add_stuck_recovery_arguments(play)
-    play.add_argument("--arm", choices=("cells", "program"), required=True)
+    add_execution_arguments(play)
+    play.add_argument("--arm", choices=("cells", "program"), default="cells",
+                      help="code execution mode (default: cells)")
     play.add_argument("--model", default="gpt-6-astra")
     play.add_argument("--reasoning", default="xhigh")
     play.add_argument("--budget-s", type=float, default=1200.0)
@@ -455,6 +475,8 @@ def main(argv: list[str] | None = None) -> int:
         return cmd_generate(args)
     if args.command == "summarize":
         return cmd_summarize(args)
+    if args.command == "valen-eval":
+        return run_valen_eval(args)
     if args.command == "play":
         return cmd_play(args)
     if args.command == "compare":

@@ -61,7 +61,11 @@ markdown_extensions:
   - pymdownx.snippets:
       base_path: ["."]
       check_paths: true
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.tabbed:
       alternate_style: true
   - admonition
@@ -79,10 +83,32 @@ nav:
   - Get Started:
       - Quick Start: getting-started/quickstart.md
       - How It Works: getting-started/how-it-works.md
+  - Framework Design:
+      - design/index.md
+      - Architecture and Contracts: design/architecture.md
+      - Interaction Latency: design/interaction-latency.md
+      - L0 Fixed-task Baseline: design/l0-insert-key-baseline.md
+      - Observation and Action Recovery: design/interaction-contracts.md
+      - Perception Snapshots: design/perception-snapshots.md
+      - Parts:
+          - Task and Session: design/parts/task-session.md
+          - Capabilities and Manual: design/parts/capabilities-manual.md
+          - Observation and Perception: design/parts/observation-perception.md
+          - Planner and Context: design/parts/planner-context.md
+          - Code API and Runtime: design/parts/code-runtime.md
+          - Execution and Control: design/parts/execution-control.md
+          - Verification and Evidence: design/parts/verification-evidence.md
+          - Skills and Knowledge: design/parts/knowledge-skills.md
+          - Recovery and Handoff: design/parts/recovery-handoff.md
+          - Records and Evaluation: design/parts/records-evaluation.md
+      - Roadmap: design/roadmap.md
   - User Guide:
       - Agent Configuration: guide/agents.md
       - Running Episodes: guide/running.md
       - Closed-loop Recovery: guide/recovery.md
+      - Reusable Local Loops: guide/strategies.md
+      - Dual-arm Coordination: guide/coordination.md
+      - Valen Evaluation: guide/valen-evaluation.md
       - Output Files: guide/outputs.md
       - Command-Line Reference: guide/cli.md
   - Robots:

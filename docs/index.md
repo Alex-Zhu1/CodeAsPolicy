@@ -67,6 +67,10 @@ RPent ([RoboDojo](robots/robodojo.md)).
 
     What the agent writes, what `robo` returns, and what the model reads.
 
+-   :material-file-document-outline: **[Framework Design](design/index.md)**
+
+    Architecture, ten part designs, current implementation, missing contracts and rollout order (Chinese).
+
 -   :material-robot-industrial: **[Robots](robots/index.md)**
 
     RoboDojo through XPolicyLab; LIBERO-PRO, RoboTwin 2.0 and RoboCasa365 on RPent. Each with the API reference its agent reads.

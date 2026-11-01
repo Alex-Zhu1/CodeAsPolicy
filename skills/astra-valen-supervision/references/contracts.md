@@ -3,6 +3,22 @@
 Use this reference when preparing a supervised task. Adapt the template to the
 task; the fields below are planning records, not new `watch()` arguments.
 
+## Code composition
+
+A task brief is planning context, not a required runtime state machine. Astra may
+combine several motions, checks and bounded corrections in one Python call.
+Single-arm/gripper methods compose with `move_both` on supported hosts; see
+[dual-arm examples and feedback](../../../docs/guide/coordination.md). The planner
+chooses release timing and dependencies. Astra normally combines image, state and
+action evidence itself. Declare `requires` only when a fresh matching Valen answer
+must be a hard prerequisite before every action in that phase; the common boundary
+enforces it for either interface. It is not a default grasp/transport declaration.
+
+`DualMove.recoverable` allows a programmed correction, not automatic permission to
+continue dependent task work. A recoverable partial endpoint still goes through
+Valen; uncertainty or contradiction can pause it. Preflight rejection creates no
+new image evidence. Critical faults and expired budgets return to the model.
+
 ## Task brief template
 
 ```text
@@ -61,9 +77,10 @@ watch(
     "carry red cup to blue tray",
     {"held": "Is the red cup held between the right gripper fingers?"},
     alerts=[{"name": "cup lost", "when": {"held": "no"}}],
-    critical=["held"],
 )
-# Execute a planned transport primitive; inspect its report before continuing.
+# Astra has already assessed the grasp using available evidence. A confident
+# contradiction requests review; ordinary unknown is returned as information.
+# Code may contain several meaningful actions and result-driven branches.
 ```
 
 **Release, once the cup has been lowered into position:**
@@ -80,14 +97,13 @@ watch(
         {"name": "cup outside tray", "when": {"cup_in_tray": "no"}},
         {"name": "cup tipped", "when": {"cup_upright": "no"}},
     ],
-    critical=list(placement),
 )
 # Release, then inspect the endpoint. Withdraw only as appropriate to the
 # actual state and report; a pause may have skipped the intended withdrawal.
 ```
 
-Do not start drawer work because the report says `clear`. Require the placement
-facts to be established. If fingers obscure the cup, resolve the visibility gap
+Do not start drawer work merely because the report says `clear`. Assess the
+placement using images and permitted measurements. If fingers obscure the cup, resolve the visibility gap
 with a justified retreat before relying on the placement.
 
 **Closing the drawer:** carry `placement` into the approach and closing phases.
@@ -108,7 +124,6 @@ watch(
         {"name": "cup tipped", "when": {"cup_upright": "no"}},
         {"name": "drawer still open", "when": {"drawer_closed": "no"}},
     ],
-    critical=list(final_facts),
     completion={
         "name": "placement and closure candidate",
         "when": {key: "yes" for key in final_facts},
@@ -141,24 +156,40 @@ and use visible identifiers that remain distinguishable in the selected evidence
 Consult [the implementation](../../../src/pyrualean/supervision.py) if the API
 changes. At the time this skill was written:
 
-- `watch(phase, facts, alerts=[], critical=None, completion=None)` accepts 1–12
+- `watch(phase, facts, alerts=[], critical=None, completion=None, requires=None,
+  invalidates=None)` accepts 1–12
   distinct questions and at most eight alert rules. Each question is at most
   500 characters; fact IDs are at most 64; phase names are at most 200.
 - Rule `when` maps fact IDs to yes/no and is a conjunction. To stop when either
   of two invariants is false, use separate rules; one rule with both set to no
   would require both to fail simultaneously.
-- `critical` defaults to all facts and controls unknown handling only.
+- `critical` defaults to `[]`. Explicitly listed facts request review once when a
+  continuous unknown episode reaches the configured limit; this is not a persistent
+  pre-motion gate. A new known source rearms the fact for a later unknown episode.
 - The default threshold is .8; the default unknown window is two distinct
   endpoints. These are configuration defaults, not universal calibration advice.
 - A single low-confidence answer may return `clear`. Missing data or malformed
   probabilities produce `monitor_error`, not an ordinary model unknown.
-- Every new cell and every `watch()` declaration resets evidence streaks.
-  Phase changes do not reset the per-cell action budget (default eight actions).
-- Successful stateful primitives trigger checks; `show()` does not. No-op/stale
-  endpoints cannot count as new evidence. A monitor timeout or pause does not
-  undo the preceding physical action.
+- New cells preserve fact/version uncertainty and explicit phase gates. After a
+  normal visual review, Astra can generate subsequent actions from its combined
+  evidence without waiting for a Valen yes. An alert/completion condition notifies
+  once while continuously matching; new explicit counterevidence rearms it, and
+  unknown alone does not. The same source cannot add a confirmation or change its
+  stored vote. Phase changes do not reset the per-cell
+  action or separate verification budget (default eight each).
+- `evidence()` retains fact versions, observations, freshness and prerequisites
+  across cells. `requires` and `defer_fact(..., until=phase, reason=...)` register
+  persistent pre-motion gates. Unknown, contradictory or stale required facts
+  block dependent actions in pause mode, even after a `clear` monitor result.
+  Resetting a watch cannot erase gates. A motion invalidates all old facts by
+  default; a narrower `invalidates` list must be justified by the planner.
+- Executed endpoints trigger checks, including recoverable partial dual-arm
+  motion; `show()` does not. Zero-step IK/preflight refusals can return to code
+  without a visual vote. Critical faults and unclassified partial motion require
+  review. A monitor timeout or pause does not undo the preceding physical action.
 - `pause` interrupts the cell; `shadow` only records reviews. A completion rule
-  does not call `finish`. Endpoint checks cannot stop mid-primitive motion.
+  does not call `finish`. Single-arm primitives are checked at their endpoints; move_both also
+  exposes bounded native segments to the same supervisor.
 
 If an essential contract exceeds the limits, restructure its phases/checkpoints
 or change the host in a separately validated implementation. Do not merge

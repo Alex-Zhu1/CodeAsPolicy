@@ -145,7 +145,8 @@ def test_pure_feedback_returns_only_program_output(robo, tmp_path):
     out = tk.execute_tool(
         "python", {"code": "m = robo.move_to([0.05, -0.10, 0.6]); print(m.reached); m.final_dist_m"}
     )
-    assert set(out.result) == {"cell", "stdout", "stderr", "elapsed_s", "value"}
+    assert set(out.result) == {"cell", "stdout", "stderr", "elapsed_s", "value", "observation",
+                               "handoff", "action_receipts"}
     assert out.result["stdout"] == "True\n" and out.result["value"] == "0.0"
     assert out.images == []
     shown = tk.execute_tool("python", {"code": "robo.show('agentview')"})

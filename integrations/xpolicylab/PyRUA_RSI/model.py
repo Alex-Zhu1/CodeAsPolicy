@@ -154,6 +154,7 @@ class Model(ModelTemplate):
         return str(self.cfg.get("robot") or ROBOT)
 
     def _play(self, bridge: Bridge, info: dict[str, Any], robot: str) -> None:
+        from pyrualean.execution import ExecutionLimits
         from pyrualean.play import play_episode
 
         task = str(info.get("task_name") or self.cfg.get("task_name"))
@@ -180,6 +181,12 @@ class Model(ModelTemplate):
                 feedback=str(self.cfg.get("feedback") or "pure"),
                 max_turns=int(self.cfg.get("max_turns") or 100),
                 budget_s=float(self.cfg.get("budget_s") or 5400.0),
+                # A fixed offline policy is one whole-episode cell. Preserve
+                # its episode allowance; no online planner can repair a cutoff.
+                code_limits=ExecutionLimits(**{
+                    "timeout_s": float(self.cfg.get("budget_s") or 5400.0),
+                    **dict(self.cfg.get("code_limits") or {}),
+                }),
                 base_url=os.environ.get("PYRUALEAN_BASE_URL"),
                 api_key_env=os.environ.get("PYRUALEAN_API_KEY_ENV"),
                 boot_options={"bridge": bridge},

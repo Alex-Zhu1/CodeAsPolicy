@@ -1,0 +1,1342 @@
+{
+  "source": "organize-table-normal-progress-20261101-072852: cell 24 returned stdout/control envelope plus full calls.jsonl last_action and supervision/events.jsonl observation/state/reports",
+  "result": {
+    "output_truncated": true,
+    "execution_paused": true,
+    "action_receipt_counts": {
+      "completed": 1,
+      "partial": 1
+    },
+    "handoff": {
+      "schema": "pyrualean.handoff.v1",
+      "session_id": "e04909267481408b85ac04d769abc7a5",
+      "observation_id": "b410a81477e048aeb558e87b55fcf712:254",
+      "last_action": {
+        "session_id": "e04909267481408b85ac04d769abc7a5",
+        "action_id": "e04909267481408b85ac04d769abc7a5:action:c98d54907d0c4a8c9053ef7fd3dafec1",
+        "tool": "move_pose",
+        "status": "partial",
+        "effect_known": true,
+        "execution_complete": true,
+        "observation_id": "b410a81477e048aeb558e87b55fcf712:254",
+        "stop_confirmed": null,
+        "turn": 25,
+        "native_action_count": 19,
+        "last_native_action_ids": [
+          "af2a72579ccf428991dc6dc2185a2415",
+          "bc3ca144d6a14ed8bdd912683b8be157",
+          "bbc68da2ac834347a3b902e794bf4458"
+        ]
+      },
+      "unresolved_actions": [],
+      "next_owner": "program_or_planner",
+      "allowed_next": "check_prerequisites",
+      "new_motion_allowed": null,
+      "stop_reason": null,
+      "automatic_replay": false,
+      "scene_rolled_back": false,
+      "unresolved_action_count": 0
+    },
+    "supervision": {
+      "paused": true,
+      "reason": "motion_incomplete: Target not reached; inspect controller outcome; inspect current state and revise the motion",
+      "observation": {
+        "schema": "pyrualean.observation.v1",
+        "session_id": "e04909267481408b85ac04d769abc7a5",
+        "observation_id": "b410a81477e048aeb558e87b55fcf712:254",
+        "source_id": "b410a81477e048aeb558e87b55fcf712:254",
+        "step": 28,
+        "native_steps": 252,
+        "action_id": "e04909267481408b85ac04d769abc7a5:action:c98d54907d0c4a8c9053ef7fd3dafec1",
+        "captured_at": 1793519633.6345263,
+        "capture_clock": "client_unix_utc",
+        "recorded_at": 1793519634.0670805,
+        "source_freshness": "captured",
+        "aligned": true,
+        "images": {
+          "cam_head": {
+            "source_id": "b410a81477e048aeb558e87b55fcf712:254",
+            "image_source_id": "b410a81477e048aeb558e87b55fcf712:254",
+            "artifact": "cam_head.png",
+            "aligned": true,
+            "sensor_artifact": "sensors.npz",
+            "sensor_manifest": "sensors.json",
+            "sensor_path": "vision.cam_head",
+            "calibration_source_id": "robodojo_sight.head_view:v1",
+            "calibration_method": "robot_model",
+            "calibration_model": "robodojo_sight.head_view:v1",
+            "calibration_artifact": "observation.json",
+            "calibration_path": "cameras.cam_head",
+            "depth_artifact": null,
+            "depth_path": null,
+            "depth_source_id": null,
+            "image_state_source_id": "b410a81477e048aeb558e87b55fcf712:254",
+            "image_state_artifact": "observation.json",
+            "image_state_path": "image_state"
+          },
+          "cam_left_wrist": {
+            "source_id": "b410a81477e048aeb558e87b55fcf712:254",
+            "image_source_id": "b410a81477e048aeb558e87b55fcf712:254",
+            "artifact": "cam_left_wrist.png",
+            "aligned": true,
+            "sensor_artifact": "sensors.npz",
+            "sensor_manifest": "sensors.json",
+            "sensor_path": "vision.cam_left_wrist",
+            "calibration_source_id": "b410a81477e048aeb558e87b55fcf712:254",
+            "calibration_method": "robot_model",
+            "calibration_model": "robodojo_sight.wrist_view:v1",
+            "calibration_artifact": "observation.json",
+            "calibration_path": "cameras.cam_left_wrist",
+            "depth_artifact": null,
+            "depth_path": null,
+            "depth_source_id": null,
+            "image_state_source_id": "b410a81477e048aeb558e87b55fcf712:254",
+            "image_state_artifact": "observation.json",
+            "image_state_path": "image_state"
+          },
+          "cam_right_wrist": {
+            "source_id": "b410a81477e048aeb558e87b55fcf712:254",
+            "image_source_id": "b410a81477e048aeb558e87b55fcf712:254",
+            "artifact": "cam_right_wrist.png",
+            "aligned": true,
+            "sensor_artifact": "sensors.npz",
+            "sensor_manifest": "sensors.json",
+            "sensor_path": "vision.cam_right_wrist",
+            "calibration_source_id": "b410a81477e048aeb558e87b55fcf712:254",
+            "calibration_method": "robot_model",
+            "calibration_model": "robodojo_sight.wrist_view:v1",
+            "calibration_artifact": "observation.json",
+            "calibration_path": "cameras.cam_right_wrist",
+            "depth_artifact": null,
+            "depth_path": null,
+            "depth_source_id": null,
+            "image_state_source_id": "b410a81477e048aeb558e87b55fcf712:254",
+            "image_state_artifact": "observation.json",
+            "image_state_path": "image_state"
+          }
+        },
+        "alignment": {
+          "status": "aligned",
+          "basis": "isaac_render_product_fence",
+          "physics_time_before": 13.456000639125705,
+          "physics_step_before": 3364,
+          "native_step_before": 252,
+          "first_render_frame": 1094,
+          "render_frames": {
+            "/Render/OmniverseKit/HydraTextures/camera_prim_view_tiled_sensor_02": 1094,
+            "/Render/OmniverseKit/HydraTextures/camera_prim_view_tiled_sensor_01": 1094,
+            "/Render/OmniverseKit/HydraTextures/camera_prim_view_tiled_sensor": 1094
+          },
+          "render_products": [
+            "/Render/OmniverseKit/HydraTextures/camera_prim_view_tiled_sensor",
+            "/Render/OmniverseKit/HydraTextures/camera_prim_view_tiled_sensor_01",
+            "/Render/OmniverseKit/HydraTextures/camera_prim_view_tiled_sensor_02"
+          ],
+          "render_status": "completed",
+          "annotators_synchronized": true,
+          "physics_time_after": 13.456000639125705,
+          "physics_step_after": 3364,
+          "native_step_after": 252
+        },
+        "action_revision": 27,
+        "state": {
+          "state": {
+            "left_arm_joint_state": [
+              -0.07387306541204453,
+              2.13735032081604,
+              2.0830297470092773,
+              -1.4263957738876343,
+              0.5072818398475647,
+              0.7344237565994263
+            ],
+            "left_ee_pose": [
+              -0.2547672390937805,
+              -0.03445464000105858,
+              1.0381898880004883,
+              0.8103944659233093,
+              -0.2973160743713379,
+              0.4648611545562744,
+              0.19689564406871796
+            ],
+            "right_arm_joint_state": [
+              -1.9987955965916626e-06,
+              0.0010376032441854477,
+              0.00390075845643878,
+              0.00021860183915123343,
+              1.3000995124912151e-07,
+              -1.5082676441124931e-07
+            ],
+            "right_ee_pose": [
+              0.3004712164402008,
+              -0.35246148705482483,
+              0.9227731227874756,
+              0.7069997787475586,
+              0.001089664176106453,
+              -0.0010893134167417884,
+              0.7072120308876038
+            ],
+            "left_ee_joint_state": [
+              1.0
+            ],
+            "right_ee_joint_state": [
+              0.0
+            ]
+          },
+          "instruction": "Place the mouse on the mouse pad, push the keyboard into the frame, put the figurine on the stand, place the alarm clock on the drawer, then open the drawer and put all remaining miscellaneous items inside.",
+          "cameras": {
+            "cam_head": {
+              "shape": [
+                480,
+                640,
+                3
+              ],
+              "has_depth": false,
+              "intrinsic_matrix": null,
+              "extrinsic_matrix": null
+            },
+            "cam_left_wrist": {
+              "shape": [
+                480,
+                640,
+                3
+              ],
+              "has_depth": false,
+              "intrinsic_matrix": null,
+              "extrinsic_matrix": null
+            },
+            "cam_right_wrist": {
+              "shape": [
+                480,
+                640,
+                3
+              ],
+              "has_depth": false,
+              "intrinsic_matrix": null,
+              "extrinsic_matrix": null
+            }
+          },
+          "image_state": {
+            "left_arm_joint_state": [
+              -0.07387306541204453,
+              2.13735032081604,
+              2.0830297470092773,
+              -1.4263957738876343,
+              0.5072818398475647,
+              0.7344237565994263
+            ],
+            "left_ee_pose": [
+              -0.2547672390937805,
+              -0.03445464000105858,
+              1.0381898880004883,
+              0.8103944659233093,
+              -0.2973160743713379,
+              0.4648611545562744,
+              0.19689564406871796
+            ],
+            "right_arm_joint_state": [
+              -1.9987955965916626e-06,
+              0.0010376032441854477,
+              0.00390075845643878,
+              0.00021860183915123343,
+              1.3000995124912151e-07,
+              -1.5082676441124931e-07
+            ],
+            "right_ee_pose": [
+              0.3004712164402008,
+              -0.35246148705482483,
+              0.9227731227874756,
+              0.7069997787475586,
+              0.001089664176106453,
+              -0.0010893134167417884,
+              0.7072120308876038
+            ],
+            "left_ee_joint_state": [
+              1.0
+            ],
+            "right_ee_joint_state": [
+              0.0
+            ]
+          }
+        },
+        "source": "host_review"
+      },
+      "blocked": {},
+      "last_action": {
+        "index": 266,
+        "tool": "move_pose",
+        "kwargs": {
+          "xyz": [
+            -0.167,
+            0.069,
+            0.915
+          ],
+          "arm": "left",
+          "gripper": -1,
+          "path": "line",
+          "pitch": 50.0,
+          "yaw": -55.0
+        },
+        "started_at": 1793519627.6246812,
+        "elapsed_s": 6.44558516331017,
+        "ok": true,
+        "stateful": true,
+        "env_steps": 19,
+        "error": null,
+        "summary": {
+          "reached": false,
+          "dist_to_target_m": 0.0987,
+          "orientation_error_deg": 23.5,
+          "final_xyz": [
+            -0.1837,
+            -0.0283,
+            0.912
+          ],
+          "path": "line",
+          "blocked": "the arm stopped short of the planned pose: something is in the way",
+          "steps_used": 19,
+          "ik_error": null
+        },
+        "session_id": "e04909267481408b85ac04d769abc7a5",
+        "action_id": "e04909267481408b85ac04d769abc7a5:action:c98d54907d0c4a8c9053ef7fd3dafec1",
+        "observation_id": "b410a81477e048aeb558e87b55fcf712:235",
+        "receipt": {
+          "local_call_id": "tool_e758cc3c94fd4f04bb964fde37fb7408_242",
+          "transport": "mcp",
+          "agent_attempt_id": "agent_attempt_e758cc3c94fd4f04bb964fde37fb7408_4",
+          "tool": "move_pose",
+          "host_session_id": "d1e98cec488e4d0bb4ea3b5b66035bff",
+          "turn": 25,
+          "session_id": "e04909267481408b85ac04d769abc7a5",
+          "action_id": "e04909267481408b85ac04d769abc7a5:action:c98d54907d0c4a8c9053ef7fd3dafec1",
+          "observation_id": "b410a81477e048aeb558e87b55fcf712:254",
+          "source_id": "b410a81477e048aeb558e87b55fcf712:235",
+          "source_native_steps": 233,
+          "schema": "pyrualean.action.v1",
+          "status": "partial",
+          "effect_known": true,
+          "execution_complete": true,
+          "native_action_ids": [
+            "884b792792604882ba0e28a8b91b8160",
+            "ac994f9b8d8f42249e4bfa3475aa291b",
+            "24803a5661654ef9b8a9a17958490823",
+            "abbfbb0dd0ac4718837ef16509f6f867",
+            "f2c4a925cb404afd9efb235beacf6732",
+            "3bcdbe5ff4e64ca8bb12590bb08a79ce",
+            "183cb781a09c4760bdb60e466bb6c3c2",
+            "80b839c802864e92a8e4d3b133a9a01b",
+            "8680736fc69c43a796667308de9846b4",
+            "9b001ea70b034343b952d5689178e036",
+            "e3b5ac3bc0bc4753bf350334e6479f78",
+            "ef492b7e179d4be79645e5909fb9b3e4",
+            "4c7f7e30629c41519c22320e84604e63",
+            "44fc72f22f8c4d5e8fdd7d83da1ba80d",
+            "1afc82dd8c0142549ab2143a457a6b89",
+            "f954b4f95d374553a20ca262cf15001a",
+            "af2a72579ccf428991dc6dc2185a2415",
+            "bc3ca144d6a14ed8bdd912683b8be157",
+            "bbc68da2ac834347a3b902e794bf4458"
+          ],
+          "stop_confirmed": null,
+          "native_receipts": [
+            {
+              "session_id": "e04909267481408b85ac04d769abc7a5",
+              "native_action_id": "884b792792604882ba0e28a8b91b8160",
+              "action_id": "e04909267481408b85ac04d769abc7a5:action:c98d54907d0c4a8c9053ef7fd3dafec1",
+              "based_on_observation_id": "b410a81477e048aeb558e87b55fcf712:235",
+              "based_on_source_id": "b410a81477e048aeb558e87b55fcf712:235",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "b410a81477e048aeb558e87b55fcf712:236"
+            },
+            {
+              "session_id": "e04909267481408b85ac04d769abc7a5",
+              "native_action_id": "ac994f9b8d8f42249e4bfa3475aa291b",
+              "action_id": "e04909267481408b85ac04d769abc7a5:action:c98d54907d0c4a8c9053ef7fd3dafec1",
+              "based_on_observation_id": "b410a81477e048aeb558e87b55fcf712:235",
+              "based_on_source_id": "b410a81477e048aeb558e87b55fcf712:236",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "b410a81477e048aeb558e87b55fcf712:237"
+            },
+            {
+              "session_id": "e04909267481408b85ac04d769abc7a5",
+              "native_action_id": "24803a5661654ef9b8a9a17958490823",
+              "action_id": "e04909267481408b85ac04d769abc7a5:action:c98d54907d0c4a8c9053ef7fd3dafec1",
+              "based_on_observation_id": "b410a81477e048aeb558e87b55fcf712:235",
+              "based_on_source_id": "b410a81477e048aeb558e87b55fcf712:237",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "b410a81477e048aeb558e87b55fcf712:238"
+            },
+            {
+              "session_id": "e04909267481408b85ac04d769abc7a5",
+              "native_action_id": "abbfbb0dd0ac4718837ef16509f6f867",
+              "action_id": "e04909267481408b85ac04d769abc7a5:action:c98d54907d0c4a8c9053ef7fd3dafec1",
+              "based_on_observation_id": "b410a81477e048aeb558e87b55fcf712:235",
+              "based_on_source_id": "b410a81477e048aeb558e87b55fcf712:238",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "b410a81477e048aeb558e87b55fcf712:239"
+            },
+            {
+              "session_id": "e04909267481408b85ac04d769abc7a5",
+              "native_action_id": "f2c4a925cb404afd9efb235beacf6732",
+              "action_id": "e04909267481408b85ac04d769abc7a5:action:c98d54907d0c4a8c9053ef7fd3dafec1",
+              "based_on_observation_id": "b410a81477e048aeb558e87b55fcf712:235",
+              "based_on_source_id": "b410a81477e048aeb558e87b55fcf712:239",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "b410a81477e048aeb558e87b55fcf712:240"
+            },
+            {
+              "session_id": "e04909267481408b85ac04d769abc7a5",
+              "native_action_id": "3bcdbe5ff4e64ca8bb12590bb08a79ce",
+              "action_id": "e04909267481408b85ac04d769abc7a5:action:c98d54907d0c4a8c9053ef7fd3dafec1",
+              "based_on_observation_id": "b410a81477e048aeb558e87b55fcf712:235",
+              "based_on_source_id": "b410a81477e048aeb558e87b55fcf712:240",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "b410a81477e048aeb558e87b55fcf712:241"
+            },
+            {
+              "session_id": "e04909267481408b85ac04d769abc7a5",
+              "native_action_id": "183cb781a09c4760bdb60e466bb6c3c2",
+              "action_id": "e04909267481408b85ac04d769abc7a5:action:c98d54907d0c4a8c9053ef7fd3dafec1",
+              "based_on_observation_id": "b410a81477e048aeb558e87b55fcf712:235",
+              "based_on_source_id": "b410a81477e048aeb558e87b55fcf712:241",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "b410a81477e048aeb558e87b55fcf712:242"
+            },
+            {
+              "session_id": "e04909267481408b85ac04d769abc7a5",
+              "native_action_id": "80b839c802864e92a8e4d3b133a9a01b",
+              "action_id": "e04909267481408b85ac04d769abc7a5:action:c98d54907d0c4a8c9053ef7fd3dafec1",
+              "based_on_observation_id": "b410a81477e048aeb558e87b55fcf712:235",
+              "based_on_source_id": "b410a81477e048aeb558e87b55fcf712:242",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "b410a81477e048aeb558e87b55fcf712:243"
+            },
+            {
+              "session_id": "e04909267481408b85ac04d769abc7a5",
+              "native_action_id": "8680736fc69c43a796667308de9846b4",
+              "action_id": "e04909267481408b85ac04d769abc7a5:action:c98d54907d0c4a8c9053ef7fd3dafec1",
+              "based_on_observation_id": "b410a81477e048aeb558e87b55fcf712:235",
+              "based_on_source_id": "b410a81477e048aeb558e87b55fcf712:243",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "b410a81477e048aeb558e87b55fcf712:244"
+            },
+            {
+              "session_id": "e04909267481408b85ac04d769abc7a5",
+              "native_action_id": "9b001ea70b034343b952d5689178e036",
+              "action_id": "e04909267481408b85ac04d769abc7a5:action:c98d54907d0c4a8c9053ef7fd3dafec1",
+              "based_on_observation_id": "b410a81477e048aeb558e87b55fcf712:235",
+              "based_on_source_id": "b410a81477e048aeb558e87b55fcf712:244",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "b410a81477e048aeb558e87b55fcf712:245"
+            },
+            {
+              "session_id": "e04909267481408b85ac04d769abc7a5",
+              "native_action_id": "e3b5ac3bc0bc4753bf350334e6479f78",
+              "action_id": "e04909267481408b85ac04d769abc7a5:action:c98d54907d0c4a8c9053ef7fd3dafec1",
+              "based_on_observation_id": "b410a81477e048aeb558e87b55fcf712:235",
+              "based_on_source_id": "b410a81477e048aeb558e87b55fcf712:245",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "b410a81477e048aeb558e87b55fcf712:246"
+            },
+            {
+              "session_id": "e04909267481408b85ac04d769abc7a5",
+              "native_action_id": "ef492b7e179d4be79645e5909fb9b3e4",
+              "action_id": "e04909267481408b85ac04d769abc7a5:action:c98d54907d0c4a8c9053ef7fd3dafec1",
+              "based_on_observation_id": "b410a81477e048aeb558e87b55fcf712:235",
+              "based_on_source_id": "b410a81477e048aeb558e87b55fcf712:246",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "b410a81477e048aeb558e87b55fcf712:247"
+            },
+            {
+              "session_id": "e04909267481408b85ac04d769abc7a5",
+              "native_action_id": "4c7f7e30629c41519c22320e84604e63",
+              "action_id": "e04909267481408b85ac04d769abc7a5:action:c98d54907d0c4a8c9053ef7fd3dafec1",
+              "based_on_observation_id": "b410a81477e048aeb558e87b55fcf712:235",
+              "based_on_source_id": "b410a81477e048aeb558e87b55fcf712:247",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "b410a81477e048aeb558e87b55fcf712:248"
+            },
+            {
+              "session_id": "e04909267481408b85ac04d769abc7a5",
+              "native_action_id": "44fc72f22f8c4d5e8fdd7d83da1ba80d",
+              "action_id": "e04909267481408b85ac04d769abc7a5:action:c98d54907d0c4a8c9053ef7fd3dafec1",
+              "based_on_observation_id": "b410a81477e048aeb558e87b55fcf712:235",
+              "based_on_source_id": "b410a81477e048aeb558e87b55fcf712:248",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "b410a81477e048aeb558e87b55fcf712:249"
+            },
+            {
+              "session_id": "e04909267481408b85ac04d769abc7a5",
+              "native_action_id": "1afc82dd8c0142549ab2143a457a6b89",
+              "action_id": "e04909267481408b85ac04d769abc7a5:action:c98d54907d0c4a8c9053ef7fd3dafec1",
+              "based_on_observation_id": "b410a81477e048aeb558e87b55fcf712:235",
+              "based_on_source_id": "b410a81477e048aeb558e87b55fcf712:249",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "b410a81477e048aeb558e87b55fcf712:250"
+            },
+            {
+              "session_id": "e04909267481408b85ac04d769abc7a5",
+              "native_action_id": "f954b4f95d374553a20ca262cf15001a",
+              "action_id": "e04909267481408b85ac04d769abc7a5:action:c98d54907d0c4a8c9053ef7fd3dafec1",
+              "based_on_observation_id": "b410a81477e048aeb558e87b55fcf712:235",
+              "based_on_source_id": "b410a81477e048aeb558e87b55fcf712:250",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "b410a81477e048aeb558e87b55fcf712:251"
+            },
+            {
+              "session_id": "e04909267481408b85ac04d769abc7a5",
+              "native_action_id": "af2a72579ccf428991dc6dc2185a2415",
+              "action_id": "e04909267481408b85ac04d769abc7a5:action:c98d54907d0c4a8c9053ef7fd3dafec1",
+              "based_on_observation_id": "b410a81477e048aeb558e87b55fcf712:235",
+              "based_on_source_id": "b410a81477e048aeb558e87b55fcf712:251",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "b410a81477e048aeb558e87b55fcf712:252"
+            },
+            {
+              "session_id": "e04909267481408b85ac04d769abc7a5",
+              "native_action_id": "bc3ca144d6a14ed8bdd912683b8be157",
+              "action_id": "e04909267481408b85ac04d769abc7a5:action:c98d54907d0c4a8c9053ef7fd3dafec1",
+              "based_on_observation_id": "b410a81477e048aeb558e87b55fcf712:235",
+              "based_on_source_id": "b410a81477e048aeb558e87b55fcf712:252",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "b410a81477e048aeb558e87b55fcf712:253"
+            },
+            {
+              "session_id": "e04909267481408b85ac04d769abc7a5",
+              "native_action_id": "bbc68da2ac834347a3b902e794bf4458",
+              "action_id": "e04909267481408b85ac04d769abc7a5:action:c98d54907d0c4a8c9053ef7fd3dafec1",
+              "based_on_observation_id": "b410a81477e048aeb558e87b55fcf712:235",
+              "based_on_source_id": "b410a81477e048aeb558e87b55fcf712:253",
+              "status": "completed",
+              "dispatched": true,
+              "effect_known": true,
+              "execution_complete": true,
+              "observation_id": "b410a81477e048aeb558e87b55fcf712:254"
+            }
+          ],
+          "payload_status": null
+        }
+      },
+      "mode": "pause",
+      "actions": 2,
+      "verification_calls": 0,
+      "verification_limit": 8,
+      "unknown_streaks": {
+        "mouse_table": 1,
+        "pad_clear": 1,
+        "mouse_between": 1,
+        "mouse_held": 5,
+        "keyboard_table": 0,
+        "arms_separate": 0,
+        "omitted_keys": 4
+      },
+      "report_count": 2,
+      "evidence_cameras": [
+        "cam_head",
+        "cam_left_wrist",
+        "cam_right_wrist"
+      ],
+      "audit_dir": "/mnt/data_hdd/mhzhu/GPTCode/PyRUA-Lean/runs/organize-table-normal-progress-20261101-072852/episode/supervision",
+      "state": {
+        "state": {
+          "left_arm_joint_state": [
+            -0.07387306541204453,
+            2.13735032081604,
+            2.0830297470092773,
+            -1.4263957738876343,
+            0.5072818398475647,
+            0.7344237565994263
+          ],
+          "left_ee_pose": [
+            -0.2547672390937805,
+            -0.03445464000105858,
+            1.0381898880004883,
+            0.8103944659233093,
+            -0.2973160743713379,
+            0.4648611545562744,
+            0.19689564406871796
+          ],
+          "right_arm_joint_state": [
+            -1.9987955965916626e-06,
+            0.0010376032441854477,
+            0.00390075845643878,
+            0.00021860183915123343,
+            1.3000995124912151e-07,
+            -1.5082676441124931e-07
+          ],
+          "right_ee_pose": [
+            0.3004712164402008,
+            -0.35246148705482483,
+            0.9227731227874756,
+            0.7069997787475586,
+            0.001089664176106453,
+            -0.0010893134167417884,
+            0.7072120308876038
+          ],
+          "left_ee_joint_state": [
+            1.0
+          ],
+          "right_ee_joint_state": [
+            0.0
+          ]
+        },
+        "instruction": "Place the mouse on the mouse pad, push the keyboard into the frame, put the figurine on the stand, place the alarm clock on the drawer, then open the drawer and put all remaining miscellaneous items inside.",
+        "cameras": {
+          "cam_head": {
+            "shape": [
+              480,
+              640,
+              3
+            ],
+            "has_depth": false,
+            "intrinsic_matrix": null,
+            "extrinsic_matrix": null
+          },
+          "cam_left_wrist": {
+            "shape": [
+              480,
+              640,
+              3
+            ],
+            "has_depth": false,
+            "intrinsic_matrix": null,
+            "extrinsic_matrix": null
+          },
+          "cam_right_wrist": {
+            "shape": [
+              480,
+              640,
+              3
+            ],
+            "has_depth": false,
+            "intrinsic_matrix": null,
+            "extrinsic_matrix": null
+          }
+        },
+        "image_state": {
+          "left_arm_joint_state": [
+            -0.07387306541204453,
+            2.13735032081604,
+            2.0830297470092773,
+            -1.4263957738876343,
+            0.5072818398475647,
+            0.7344237565994263
+          ],
+          "left_ee_pose": [
+            -0.2547672390937805,
+            -0.03445464000105858,
+            1.0381898880004883,
+            0.8103944659233093,
+            -0.2973160743713379,
+            0.4648611545562744,
+            0.19689564406871796
+          ],
+          "right_arm_joint_state": [
+            -1.9987955965916626e-06,
+            0.0010376032441854477,
+            0.00390075845643878,
+            0.00021860183915123343,
+            1.3000995124912151e-07,
+            -1.5082676441124931e-07
+          ],
+          "right_ee_pose": [
+            0.3004712164402008,
+            -0.35246148705482483,
+            0.9227731227874756,
+            0.7069997787475586,
+            0.001089664176106453,
+            -0.0010893134167417884,
+            0.7072120308876038
+          ],
+          "left_ee_joint_state": [
+            1.0
+          ],
+          "right_ee_joint_state": [
+            0.0
+          ]
+        }
+      },
+      "reports": [
+        {
+          "cell": 16,
+          "sequence": 21,
+          "tool": "move_pose",
+          "step": 162,
+          "start_step": 157,
+          "mode": "pause",
+          "action_id": "e04909267481408b85ac04d769abc7a5:action:3c9b1b6bacce45c98f785d49ba9ad7b8",
+          "values": {
+            "keyboard_table": "yes",
+            "mouse_on_pad": "yes"
+          },
+          "probabilities": {
+            "keyboard_table": {
+              "yes": 0.8859443666525237,
+              "no": 0.09379147854355493,
+              "unknown": 0.020264154803921332
+            },
+            "mouse_on_pad": {
+              "yes": 0.9949746928085491,
+              "no": 0.004905551133206255,
+              "unknown": 0.00011975605824465404
+            }
+          },
+          "decisions": {
+            "keyboard_table": {
+              "raw_winner": "yes",
+              "probability": 0.8859443666525237,
+              "threshold": 0.8,
+              "abstention_reason": null
+            },
+            "mouse_on_pad": {
+              "raw_winner": "yes",
+              "probability": 0.9949746928085491,
+              "threshold": 0.8,
+              "abstention_reason": null
+            }
+          },
+          "new_evidence": {
+            "keyboard_table": true,
+            "mouse_on_pad": true
+          },
+          "blocked": {},
+          "event": "clear",
+          "triggers": [],
+          "elapsed_s": 1.3205,
+          "artifact_prefix": "/mnt/data_hdd/mhzhu/GPTCode/PyRUA-Lean/runs/organize-table-normal-progress-20261101-072852/episode/supervision/af3fd53ecbd24bc29a87263e350a56cf-00021"
+        },
+        {
+          "cell": 17,
+          "sequence": 22,
+          "tool": "move_pose",
+          "step": 173,
+          "start_step": 162,
+          "mode": "pause",
+          "action_id": "e04909267481408b85ac04d769abc7a5:action:c6e418ff07f7447c841064a345b45edc",
+          "values": {
+            "keyboard_table": "unknown"
+          },
+          "probabilities": {
+            "keyboard_table": {
+              "yes": 0.24829721080813988,
+              "no": 0.5391804495575957,
+              "unknown": 0.21252233963426442
+            }
+          },
+          "decisions": {
+            "keyboard_table": {
+              "raw_winner": "no",
+              "probability": 0.5391804495575957,
+              "threshold": 0.8,
+              "abstention_reason": "below_threshold"
+            }
+          },
+          "new_evidence": {
+            "keyboard_table": true
+          },
+          "blocked": {
+            "keyboard_table": {
+              "expected": "yes",
+              "value": "unknown",
+              "fresh": true,
+              "invalidated_by": null,
+              "observation": {
+                "observation_id": "b410a81477e048aeb558e87b55fcf712:175",
+                "source_id": "b410a81477e048aeb558e87b55fcf712:175",
+                "session_id": "e04909267481408b85ac04d769abc7a5",
+                "step": 22,
+                "step_id": 173,
+                "state_version": 21,
+                "action_revision": 21,
+                "captured_at": 1793519446.7956007,
+                "recorded_at": 1793519447.1983194,
+                "source_freshness": "captured",
+                "action_id": "e04909267481408b85ac04d769abc7a5:action:c6e418ff07f7447c841064a345b45edc"
+              },
+              "invalidated_by_action_id": null
+            }
+          },
+          "event": "clear",
+          "triggers": [],
+          "elapsed_s": 1.3085,
+          "artifact_prefix": "/mnt/data_hdd/mhzhu/GPTCode/PyRUA-Lean/runs/organize-table-normal-progress-20261101-072852/episode/supervision/af3fd53ecbd24bc29a87263e350a56cf-00022"
+        },
+        {
+          "cell": 17,
+          "sequence": 23,
+          "tool": "move_pose",
+          "step": 179,
+          "start_step": 173,
+          "mode": "pause",
+          "action_id": "e04909267481408b85ac04d769abc7a5:action:12457338655648cba44803a565489a32",
+          "values": {
+            "keyboard_table": "unknown",
+            "keyboard_at_frame": "unknown"
+          },
+          "probabilities": {
+            "keyboard_table": {
+              "yes": 0.45472650095005335,
+              "no": 0.3723335973123788,
+              "unknown": 0.17293990173756785
+            },
+            "keyboard_at_frame": {
+              "yes": 0.2795477467842736,
+              "no": 0.5046450420521938,
+              "unknown": 0.21580721116353258
+            }
+          },
+          "decisions": {
+            "keyboard_table": {
+              "raw_winner": "yes",
+              "probability": 0.45472650095005335,
+              "threshold": 0.8,
+              "abstention_reason": "below_threshold"
+            },
+            "keyboard_at_frame": {
+              "raw_winner": "no",
+              "probability": 0.5046450420521938,
+              "threshold": 0.8,
+              "abstention_reason": "below_threshold"
+            }
+          },
+          "new_evidence": {
+            "keyboard_table": true,
+            "keyboard_at_frame": true
+          },
+          "blocked": {
+            "keyboard_table": {
+              "value": "unknown",
+              "fresh": true,
+              "unknown_streak": 2,
+              "reason": "critical_unknown_limit",
+              "observation": {
+                "observation_id": "b410a81477e048aeb558e87b55fcf712:181",
+                "source_id": "b410a81477e048aeb558e87b55fcf712:181",
+                "session_id": "e04909267481408b85ac04d769abc7a5",
+                "step": 23,
+                "step_id": 179,
+                "state_version": 22,
+                "action_revision": 22,
+                "captured_at": 1793519450.3795736,
+                "recorded_at": 1793519450.7852552,
+                "source_freshness": "captured",
+                "action_id": "e04909267481408b85ac04d769abc7a5:action:12457338655648cba44803a565489a32"
+              }
+            }
+          },
+          "event": "review",
+          "triggers": [
+            "unknown:keyboard_table"
+          ],
+          "elapsed_s": 1.3129,
+          "artifact_prefix": "/mnt/data_hdd/mhzhu/GPTCode/PyRUA-Lean/runs/organize-table-normal-progress-20261101-072852/episode/supervision/af3fd53ecbd24bc29a87263e350a56cf-00023"
+        },
+        {
+          "cell": 18,
+          "sequence": 24,
+          "tool": "home",
+          "step": 194,
+          "start_step": 179,
+          "mode": "pause",
+          "action_id": "e04909267481408b85ac04d769abc7a5:action:b4632ee426ff483b91f81d6c0e239635",
+          "values": {
+            "keyboard_table": "yes",
+            "mouse_on_pad": "yes"
+          },
+          "probabilities": {
+            "keyboard_table": {
+              "yes": 0.9692206702901963,
+              "no": 0.02552611622111946,
+              "unknown": 0.0052532134886841934
+            },
+            "mouse_on_pad": {
+              "yes": 0.9989610101440011,
+              "no": 0.0010214980384940001,
+              "unknown": 1.7491817504919674e-05
+            }
+          },
+          "decisions": {
+            "keyboard_table": {
+              "raw_winner": "yes",
+              "probability": 0.9692206702901963,
+              "threshold": 0.8,
+              "abstention_reason": null
+            },
+            "mouse_on_pad": {
+              "raw_winner": "yes",
+              "probability": 0.9989610101440011,
+              "threshold": 0.8,
+              "abstention_reason": null
+            }
+          },
+          "new_evidence": {
+            "keyboard_table": true,
+            "mouse_on_pad": true
+          },
+          "blocked": {},
+          "event": "clear",
+          "triggers": [],
+          "elapsed_s": 1.3428,
+          "artifact_prefix": "/mnt/data_hdd/mhzhu/GPTCode/PyRUA-Lean/runs/organize-table-normal-progress-20261101-072852/episode/supervision/af3fd53ecbd24bc29a87263e350a56cf-00024"
+        },
+        {
+          "cell": 19,
+          "sequence": 25,
+          "tool": "move_pose",
+          "step": 215,
+          "start_step": 194,
+          "mode": "pause",
+          "action_id": "e04909267481408b85ac04d769abc7a5:action:272f2b4ff0194266bb916a3b3387af54",
+          "values": {
+            "clock_upright": "unknown",
+            "keyboard_table": "yes"
+          },
+          "probabilities": {
+            "clock_upright": {
+              "yes": 0.03505662808764338,
+              "no": 0.07755064254204687,
+              "unknown": 0.8873927293703098
+            },
+            "keyboard_table": {
+              "yes": 0.9958498273025667,
+              "no": 0.0038479458680231553,
+              "unknown": 0.00030222682941022887
+            }
+          },
+          "decisions": {
+            "clock_upright": {
+              "raw_winner": "unknown",
+              "probability": 0.8873927293703098,
+              "threshold": 0.8,
+              "abstention_reason": "model_unknown"
+            },
+            "keyboard_table": {
+              "raw_winner": "yes",
+              "probability": 0.9958498273025667,
+              "threshold": 0.8,
+              "abstention_reason": null
+            }
+          },
+          "new_evidence": {
+            "clock_upright": true,
+            "keyboard_table": true
+          },
+          "blocked": {},
+          "event": "clear",
+          "triggers": [],
+          "elapsed_s": 1.3202,
+          "artifact_prefix": "/mnt/data_hdd/mhzhu/GPTCode/PyRUA-Lean/runs/organize-table-normal-progress-20261101-072852/episode/supervision/af3fd53ecbd24bc29a87263e350a56cf-00025"
+        },
+        {
+          "cell": 22,
+          "sequence": 26,
+          "tool": "move_pose",
+          "step": 228,
+          "start_step": 215,
+          "mode": "pause",
+          "action_id": "e04909267481408b85ac04d769abc7a5:action:fc67036015264d269dd93083e10189a8",
+          "event": "motion_incomplete",
+          "error": "Target not reached; inspect controller outcome",
+          "primitive_outcome": {
+            "reached": false,
+            "dist_to_target_m": 0.0309,
+            "orientation_error_deg": 3.7,
+            "final_xyz": [
+              -0.1647,
+              0.0718,
+              0.8376
+            ],
+            "path": "line",
+            "blocked": true,
+            "steps_used": 13,
+            "ik_error": null,
+            "action_id": "e04909267481408b85ac04d769abc7a5:action:fc67036015264d269dd93083e10189a8",
+            "observation_id": "b410a81477e048aeb558e87b55fcf712:230",
+            "note": null
+          },
+          "executed_steps": 13
+        },
+        {
+          "cell": 24,
+          "sequence": 27,
+          "tool": "move_pose",
+          "step": 233,
+          "start_step": 228,
+          "mode": "pause",
+          "action_id": "e04909267481408b85ac04d769abc7a5:action:aa7fce171866497eac24acc24fd502a6",
+          "values": {
+            "clock_between": "unknown",
+            "keyboard_table": "yes"
+          },
+          "probabilities": {
+            "clock_between": {
+              "yes": 0.07748005481451709,
+              "no": 0.2777051606945309,
+              "unknown": 0.644814784490952
+            },
+            "keyboard_table": {
+              "yes": 0.9966399256021095,
+              "no": 0.0031167206923581048,
+              "unknown": 0.0002433537055324302
+            }
+          },
+          "decisions": {
+            "clock_between": {
+              "raw_winner": "unknown",
+              "probability": 0.644814784490952,
+              "threshold": 0.8,
+              "abstention_reason": "model_unknown"
+            },
+            "keyboard_table": {
+              "raw_winner": "yes",
+              "probability": 0.9966399256021095,
+              "threshold": 0.8,
+              "abstention_reason": null
+            }
+          },
+          "new_evidence": {
+            "clock_between": true,
+            "keyboard_table": true
+          },
+          "blocked": {},
+          "event": "clear",
+          "triggers": [],
+          "elapsed_s": 1.3242,
+          "artifact_prefix": "/mnt/data_hdd/mhzhu/GPTCode/PyRUA-Lean/runs/organize-table-normal-progress-20261101-072852/episode/supervision/af3fd53ecbd24bc29a87263e350a56cf-00027"
+        },
+        {
+          "cell": 24,
+          "sequence": 28,
+          "tool": "move_pose",
+          "step": 252,
+          "start_step": 233,
+          "mode": "pause",
+          "action_id": "e04909267481408b85ac04d769abc7a5:action:c98d54907d0c4a8c9053ef7fd3dafec1",
+          "event": "motion_incomplete",
+          "error": "Target not reached; inspect controller outcome",
+          "primitive_outcome": {
+            "reached": false,
+            "dist_to_target_m": 0.0987,
+            "orientation_error_deg": 23.5,
+            "final_xyz": [
+              -0.1837,
+              -0.0283,
+              0.912
+            ],
+            "path": "line",
+            "blocked": true,
+            "steps_used": 19,
+            "ik_error": null,
+            "action_id": "e04909267481408b85ac04d769abc7a5:action:c98d54907d0c4a8c9053ef7fd3dafec1",
+            "observation_id": "b410a81477e048aeb558e87b55fcf712:254",
+            "note": null
+          },
+          "executed_steps": 19
+        }
+      ],
+      "contract": {
+        "phase": "narrow-axis clock reapproach",
+        "facts": {
+          "clock_between": "Is the alarm clock between the left gripper fingers?",
+          "keyboard_table": "Is the keyboard lying flat on the tabletop?"
+        },
+        "alerts": [],
+        "critical": [
+          "keyboard_table"
+        ],
+        "completion": null,
+        "requires": {},
+        "invalidates": null
+      }
+    },
+    "action_receipts": [
+      {
+        "session_id": "e04909267481408b85ac04d769abc7a5",
+        "action_id": "e04909267481408b85ac04d769abc7a5:action:aa7fce171866497eac24acc24fd502a6",
+        "tool": "move_pose",
+        "status": "completed",
+        "effect_known": true,
+        "execution_complete": true,
+        "observation_id": "b410a81477e048aeb558e87b55fcf712:235",
+        "stop_confirmed": null,
+        "turn": 25,
+        "native_action_count": 5,
+        "last_native_action_ids": [
+          "c1c1c19ef3f14d5986243fe2da5b6555",
+          "54497cfc5e384521a8b4805e9f949205",
+          "484987b2fb0f4ea7804dba3a0c617b6b"
+        ]
+      },
+      {
+        "session_id": "e04909267481408b85ac04d769abc7a5",
+        "action_id": "e04909267481408b85ac04d769abc7a5:action:c98d54907d0c4a8c9053ef7fd3dafec1",
+        "tool": "move_pose",
+        "status": "partial",
+        "effect_known": true,
+        "execution_complete": true,
+        "observation_id": "b410a81477e048aeb558e87b55fcf712:254",
+        "stop_confirmed": null,
+        "turn": 25,
+        "native_action_count": 19,
+        "last_native_action_ids": [
+          "af2a72579ccf428991dc6dc2185a2415",
+          "bc3ca144d6a14ed8bdd912683b8be157",
+          "bbc68da2ac834347a3b902e794bf4458"
+        ]
+      }
+    ],
+    "observation": {
+      "observation_id": "d1e98cec488e4d0bb4ea3b5b66035bff-25",
+      "observed_at": 1793519634.0766518,
+      "source_session_id": "e04909267481408b85ac04d769abc7a5",
+      "source_observation_id": "b410a81477e048aeb558e87b55fcf712:254",
+      "step_id": 252,
+      "state_version": 27,
+      "state_included": true,
+      "actions": {
+        "attempted": 2,
+        "acknowledged": 2,
+        "first_ledger_index": 261,
+        "last_ledger_index": 266,
+        "action_ids": [
+          {
+            "omitted_items": 2
+          }
+        ],
+        "action_id_count": 2
+      },
+      "prior_targets_may_be_stale": true,
+      "images": [
+        {
+          "omitted_keys": 12
+        },
+        {
+          "name": "cam_left_wrist.png",
+          "omitted_keys": 11
+        },
+        {
+          "name": "cam_right_wrist.png",
+          "omitted_keys": 11
+        },
+        {
+          "name": "supervision_cam_head",
+          "omitted_keys": 5
+        },
+        {
+          "name": "supervision_cam_left_wrist",
+          "source": "supervision",
+          "omitted_keys": 4
+        },
+        {
+          "name": "supervision_cam_right_wrist",
+          "source": "supervision",
+          "observation_id": "[output omitted]",
+          "omitted_keys": 3
+        }
+      ]
+    },
+    "cell": 24,
+    "elapsed_s": 10.35,
+    "moved": true,
+    "env_steps": 24,
+    "images": [
+      "cam_head.png",
+      "cam_left_wrist.png",
+      "cam_right_wrist.png",
+      "supervision_cam_head",
+      "supervision_cam_left_wrist",
+      "supervision_cam_right_wrist"
+    ],
+    "details": "Detailed calls and evidence remain in the host audit.",
+    "primitive_call_count": 4,
+    "stderr": "",
+    "stdout": "Move(arm='left', target_xyz=(-0.167, 0.069, 0.915), start_xyz=(-0.1647, 0.0718, 0.8376), final_xyz=(-0.1664, 0.0688, 0.9142), dist_to_target_m=0.001, orientation_error_deg=0.1, pitch=25.0, yaw=-15.1, roll=0.3, reached=True, path='line', ik_error=None, note=None, blocked=False, steps_used=5, truncated=False)\n",
+    "state": {
+      "state": {
+        "left_arm_joint_state": [
+          -0.07387306541204453,
+          2.13735032081604,
+          2.0830297470092773,
+          -1.4263957738876343,
+          0.5072818398475647,
+          0.7344237565994263
+        ],
+        "left_ee_pose": [
+          -0.2547672390937805,
+          -0.03445464000105858,
+          1.0381898880004883,
+          0.8103944659233093,
+          -0.2973160743713379,
+          0.4648611545562744,
+          0.19689564406871796
+        ],
+        "right_arm_joint_state": [
+          -1.9987955965916626e-06,
+          0.0010376032441854477,
+          0.00390075845643878,
+          0.00021860183915123343,
+          1.3000995124912151e-07,
+          -1.5082676441124931e-07
+        ],
+        "right_ee_pose": [
+          0.3004712164402008,
+          -0.35246148705482483,
+          0.9227731227874756,
+          0.7069997787475586,
+          0.001089664176106453,
+          -0.0010893134167417884,
+          0.7072120308876038
+        ],
+        "left_ee_joint_state": [
+          1.0
+        ],
+        "right_ee_joint_state": [
+          0.0
+        ]
+      },
+      "instruction": "Place the mouse on the mouse pad, push the keyboard into the frame, put the figurine on the stand, place the alarm clock on the drawer, then open the drawer and put all remaining miscellaneous items inside.",
+      "cameras": {
+        "cam_head": {
+          "shape": [
+            480,
+            640,
+            3
+          ],
+          "has_depth": false,
+          "intrinsic_matrix": null,
+          "extrinsic_matrix": null
+        },
+        "cam_left_wrist": {
+          "shape": [
+            480,
+            640,
+            3
+          ],
+          "has_depth": false,
+          "intrinsic_matrix": null,
+          "extrinsic_matrix": null
+        },
+        "cam_right_wrist": {
+          "shape": [
+            480,
+            640,
+            3
+          ],
+          "has_depth": false,
+          "intrinsic_matrix": null,
+          "extrinsic_matrix": null
+        }
+      },
+      "image_state": {
+        "left_arm_joint_state": [
+          -0.07387306541204453,
+          2.13735032081604,
+          2.0830297470092773,
+          -1.4263957738876343,
+          0.5072818398475647,
+          0.7344237565994263
+        ],
+        "left_ee_pose": [
+          -0.2547672390937805,
+          -0.03445464000105858,
+          1.0381898880004883,
+          0.8103944659233093,
+          -0.2973160743713379,
+          0.4648611545562744,
+          0.19689564406871796
+        ],
+        "right_arm_joint_state": [
+          -1.9987955965916626e-06,
+          0.0010376032441854477,
+          0.00390075845643878,
+          0.00021860183915123343,
+          1.3000995124912151e-07,
+          -1.5082676441124931e-07
+        ],
+        "right_ee_pose": [
+          0.3004712164402008,
+          -0.35246148705482483,
+          0.9227731227874756,
+          0.7069997787475586,
+          0.001089664176106453,
+          -0.0010893134167417884,
+          0.7072120308876038
+        ],
+        "left_ee_joint_state": [
+          1.0
+        ],
+        "right_ee_joint_state": [
+          0.0
+        ]
+      }
+    }
+  },
+  "expected_action_id": "e04909267481408b85ac04d769abc7a5:action:c98d54907d0c4a8c9053ef7fd3dafec1",
+  "expected_endpoint": {
+    "reached": false,
+    "dist_to_target_m": 0.0987,
+    "orientation_error_deg": 23.5,
+    "final_xyz": [
+      -0.1837,
+      -0.0283,
+      0.912
+    ],
+    "path": "line",
+    "blocked": "the arm stopped short of the planned pose: something is in the way",
+    "steps_used": 19,
+    "ik_error": null
+  }
+}

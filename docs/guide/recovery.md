@@ -32,9 +32,10 @@ Finish or stop at the existing episode budgets
 
 There are two feedback loops. Within a cell, code branches on primitive results
 and can perform bounded local corrections. Between cells, the model interprets
-errors and observations, then changes the code or plan. Optional
-[visual supervision](../visual-supervision.md) adds checks at primitive endpoints
-and can return control before the rest of a cell executes.
+errors and observations, then changes the code or plan.
+[Visual supervision](../visual-supervision.md) is optional and off by default;
+when enabled it checks primitive endpoints and can return control before the
+rest of a cell executes.
 
 ## What happens when generated code is wrong
 
@@ -45,7 +46,7 @@ and can return control before the rest of a cell executes.
 | Missing import or program entry point | Program loader / Python exception | Inspect the load error; module code may already have run |
 | Undefined variable, wrong API arguments, arithmetic error | Runtime exception | Earlier assignments and actions persist; repair only the remaining work |
 | Controller/service exception | Primitive ledger plus `ToolError` | Treat the action as attempted with potentially partial effects; inspect current state |
-| `Move.reached == False`, failed grasp or missing mask | Generated code checks returned fields; a failed `assert` becomes a `verification` report | Re-observe and change target, parameters or strategy before the dependent action |
+| `Move.reached == False`, failed grasp or missing mask | Generated code checks returned fields and skips dependent actions | Handle known cases with a bounded local branch; return observations when new model judgment is needed. An unexpected failed assert becomes a verification report |
 | Code returns normally but the scene is wrong | Planner's observation or optional visual supervisor | Replan from visual evidence; normal execution does not establish task success |
 | Wall-clock/step/call/program limit | Existing host and robot guards | Finish; repair does not reset budgets |
 
@@ -62,7 +63,8 @@ including with `feedback=pure`:
 
 - `failure`: `kind`, `stage` (`validation`, `load`, `execution`), exception `type`,
   bounded `message`, and `location` when available. Kinds include `syntax`,
-  `sandbox`, `import`, `runtime`, `primitive`, `verification` and `timeout`.
+  `sandbox`, `import`, `runtime`, `primitive`, `verification`, `timeout`,
+  `action_limit` and `output_limit`.
 - `recovery`: `next_action`, `retry_allowed`, remaining `calls_left`,
   `stop_reason`, `same_failure_count`, motion attempt/completion counts,
   simulator steps consumed, `last_motion`, current `state`, and persistence
@@ -86,17 +88,45 @@ budgets enforce the limit. With `max_programs=1`, the first failure recommends
 
 The report follows the robot adapter's public state contract. It does not add a
 live benchmark success signal to robots, such as RoboDojo, that judge only the
-final scene. Image delivery still follows `images=on-motion|on-demand|none`;
-with `on-demand`, use an observation cell to request fresh views if the failed
-cell did not reach `robo.show()`. Supervisor pauses retain their existing rule
+final scene. With `images=on-demand`, a runtime failure/pause after a motion
+attempt returns available recorded default camera views if the program did not
+request a view or display an image. This recovers evidence when an exception
+skips the final `show`; it does not move the robot or capture a new observation.
+Purely read-only/validation errors do not trigger this fallback, and `none`
+disables it. Old or unverified sources are not marked as the current revision.
+Request an explicit observation when the returned evidence is insufficient.
+Supervisor pauses retain their existing rule
 of attaching the exact inspected evidence, even with normal images disabled.
 
-Large stdout cannot hide the failure/recovery fields. Oversized replies omit
-bulky state and last-action details while retaining a valid JSON diagnostic;
+Large stdout cannot hide the failure/recovery fields. Model text is bounded to
+9,000 characters. Oversized replies omit bulky state and native audit details
+while retaining a valid JSON diagnostic and essential action outcomes;
 inspect state/images again when those details are needed. The full structured
 failure and recovery report is also recorded in `tool_turns.json` by `play`.
 
 ## Repair from the current scene
+
+On a source-aware native/XPL backend, use `robo.snapshot()` for a recorded
+source reference or `robo.snapshot(refresh=True)` for an explicit read-only
+capture. With the cell supervisor enabled, `watch(..., requires=...)` followed
+by `verify(snapshot["observation_id"])` can establish a prerequisite before
+the first motion. Reusing the same capture does not add another confirmation.
+
+Every host tool result records a `handoff` and `action_receipts`, also in pure
+mode. Model feedback omits redundant normal handoffs but retains pending/stop
+restrictions. If `handoff.unresolved_actions` is nonempty, new motions
+are blocked. In a new cell, call `robo.reconcile(action_id)` to query the
+existing request, without replaying it. Both `effect_known` and
+`execution_complete` must be true, with a settled receipt status. Then
+observe and verify any required conditions again before submitting only the
+remaining work. A visual yes cannot replace execution acknowledgement.
+
+`robo.action_receipt(action_id)` returns the complete receipt without querying
+the backend. Unsupported reconciliation leaves the blocker in place. A known
+partial result can still be handled by a bounded program correction. Cancel
+acknowledgement currently describes dispatch; it is not hardware stop proof.
+See the [implementation scope](../design/interaction-contracts.md) for legacy
+backend limits and the distinction between feedback IDs and source IDs.
 
 Suppose a cell executes an approach and then raises `NameError`:
 
@@ -119,6 +149,70 @@ assignments are not transactional.
 
 ## Runtime behavior and scope
 
+### Shared execution boundaries
+
+All code tools now refuse execution after a final `finish`, including direct
+MCP calls. Repeated `finish` returns the original decision. A configured stuck
+recovery dispatch with `episode_finished=false` remains resumable.
+
+Each `python`/`run_program` call has a separate execution deadline, default
+120 seconds (`--code-timeout-s`). It covers program loading and execution,
+including Python loops in helpers defined by an earlier cell. Limits unwind
+the current call and return `failure`/`recovery` with the changed scene; they do
+not reset the episode's call, step or wall-clock budgets. Ordinary
+`except Exception` blocks do not swallow host limit interruptions.
+
+`--code-max-actions N` optionally limits motion attempts per call. A refused
+next motion has not reached the controller and is not counted as an attempt
+in the action ledger. The next code call gets a new local allowance within the
+remaining episode budget. `--code-output-chars N` bounds each stdout/stderr
+buffer while writing (default 8000); omitted characters are counted. Explicit
+`display()` calls are limited to eight images per call. Output truncation
+preserves parseable JSON with execution status and observation metadata.
+
+These Python limits use thread-local tracing, not process isolation. Native
+code, blocking I/O and allocation inside an individual operation cannot be
+forcibly interrupted by this guard; the deadline is checked when policy code
+resumes. Deliberately suppressing `BaseException` can defeat Python tracing.
+Keep the existing outer process watchdog for uncooperative work. This change
+does not claim a hard memory limit or hard real-time cancellation.
+
+`play` records the limits under `host.code_execution` in `result.json`. Both
+XPolicyLab adapters accept a `code_limits` mapping with `timeout_s`,
+`max_actions`, `max_output_chars`, and `max_display_images`. RSI defaults its
+code timeout to the full episode budget because a fixed offline policy runs
+as one call. It still has no online model repair.
+
+### Evidence shared by ordinary and supervised calls
+
+Every executed tool call, including successful `feedback=pure` calls, now returns
+an `observation` envelope. This is an additive change to pure feedback;
+full state and primitive results still follow the selected feedback mode.
+
+| Field | Meaning |
+| --- | --- |
+| `observation_id` | Unique session/turn identifier; also saved in `tool_turns.json` |
+| `step_id` | Backend environment-step count at feedback time; null if unavailable |
+| `state_version` | Monotonic motion-attempt revision; failed motions also advance it |
+| `actions` | Host audit: attempted/acknowledged counts and motion indices; omitted from model feedback when IDs are already in receipts |
+| `prior_targets_may_be_stale` | Host audit flag for changed steps/attempts; model feedback retains concrete source/revision instead of this repeated generic warning |
+| `images` | Per-image source, observation step/revision when known, and retrieval/capture timing |
+
+`state_version` is an action revision, not a complete simulator state hash;
+external scene changes are not all detectable from it. Acknowledgement means
+the primitive returned normally, not that `reached`/`holding` was true.
+
+Normal camera attachments are read after execution and bound to their recorded
+source. If the step or action revision changes during a read, its step/revision
+are marked unknown. Old, unaligned or unverified sources, including observations
+while an action is unresolved, do not receive the current action revision.
+`display(old_image)` remains explicitly unknown even if displayed after a new
+motion. Supervisor images retain the supervisor's original observation ID and
+step. Do not silently relabel older evidence as a new camera observation.
+
+Use the [reusable local loops](strategies.md) to verify a short action sequence,
+then return uncertain evidence or exhausted local corrections to the planner.
+
 MCP `isError`, `tool_turns.json`'s `ok`, and direct OpenAI runtime events agree on
 execution errors. A supervisor pause remains a request for review, not a Python
 error or task-success verdict.
@@ -138,7 +232,7 @@ own code. Online model repair requires `play --arm cells` or a multi-attempt
 `program` run; it must not be added silently to a single-shot benchmark.
 
 The optional supervisor checks endpoints, not every control step. Hard
-preemption of uncooperative code remains the host process's responsibility.
+preemption of uncooperative native code remains the host process's responsibility.
 The new recovery reports do not add collision checking, automatic rollback,
 guaranteed visual verification, or a real-robot emergency controller.
 

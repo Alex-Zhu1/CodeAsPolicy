@@ -52,6 +52,22 @@ def test_primitive_sets_and_the_vla_names_per_robot():
         vla_hidden(LiberoRobot, "some")
 
 
+@pytest.mark.parametrize("name", ["robodojo_xpl", "robodojo_xpl_rgb"])
+def test_native_hosts_filter_unsupported_vla_even_when_full_is_requested(name, backend):
+    adapter = get_adapter(name)
+    card = _card()
+    card.robot = name
+    text = build_prompt("cells", card, budget_s=1200, max_programs=None)
+    assert not VLA_TOKENS.search(text)
+    assert "robo.move_to(" in text and "robo.locate(" in text
+    assert not VLA_TOKENS.search(render_prompt(card, budget_s=1200).system)
+    robot = adapter.robot_cls(backend, primitives="full")
+    with pytest.raises(RuntimeError, match="not available"):
+        robot.pi0_pick()
+    assert not backend.calls and robot._action_revision == 0
+    assert not robot._ledger.stateful_calls()
+
+
 @pytest.mark.parametrize("robot", ROBOTS)
 def test_no_vla_reference_hides_the_vla_and_nothing_else(robot):
     cls = get_adapter(robot).robot_cls

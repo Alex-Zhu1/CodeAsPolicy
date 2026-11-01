@@ -425,7 +425,7 @@ class LiberoRobot(RobotBase):
     def show(self, camera: str = "agentview") -> None:
         """Attach the current image of ``camera`` to the feedback of this turn.
 
-        Images are not returned automatically; call ``show("agentview")`` or
+        For normal on-demand feedback, call ``show("agentview")`` or
         ``show("wrist")`` when *you* (the author) need to look at the scene
         before writing the next turn.  Costs tokens: look only when a
         decision depends on it.

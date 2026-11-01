@@ -146,6 +146,7 @@ class Model(ModelTemplate):
         return str(self.cfg.get("robot") or ROBOT)
 
     def _play(self, bridge: Bridge, info: dict[str, Any], robot: str) -> None:
+        from pyrualean.execution import ExecutionLimits
         from pyrualean.play import play_episode
         from pyrualean.supervision import MonitorConfig
 
@@ -177,6 +178,7 @@ class Model(ModelTemplate):
                 boot_options={"bridge": bridge},
                 openai_options=dict(self.cfg.get("openai_options") or {}),
                 monitor=MonitorConfig(**dict(self.cfg.get("monitor") or {})),
+                code_limits=ExecutionLimits(**dict(self.cfg.get("code_limits") or {})),
             )
             self.results.append(
                 {k: result.get(k) for k in ("status", "environment_success", "task", "robot")}

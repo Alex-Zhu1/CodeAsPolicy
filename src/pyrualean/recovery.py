@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Any
 
 from ._backend import ToolError
+from .execution import ExecutionLimit
 
 
 def failure_details(
@@ -18,7 +19,9 @@ def failure_details(
 ) -> dict[str, Any]:
     """Describe the original exception, retaining its generated-code location."""
     cause = exc
-    if isinstance(cause, SyntaxError):
+    if isinstance(cause, ExecutionLimit):
+        kind = cause.kind
+    elif isinstance(cause, SyntaxError):
         kind = "syntax"
     elif isinstance(cause, ToolError):
         kind = "primitive"

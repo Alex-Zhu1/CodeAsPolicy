@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import inspect
 
+import pytest
+
 from pyrualean import LiberoRobot, TaskCard, api_reference, render_prompt
 from pyrualean.libero import RESULT_TYPES
 
@@ -108,3 +110,31 @@ def _dump(tmp_path, card):
     path = tmp_path / "card.json"
     path.write_text(card.to_json())
     return path
+
+
+@pytest.mark.parametrize("mode", [None, "off", "pause"])
+def test_code_prompt_only_describes_visual_apis_when_enabled(mode):
+    from pyrualean.play import build_prompt
+    from pyrualean.supervision import MonitorConfig
+
+    card = TaskCard(
+        suite="arx_x5", task="organize_table", seed=0,
+        task_language="Organize the table", object_names=[], robot="robodojo_xpl_rgb",
+    )
+    text = build_prompt(
+        "cells", card, budget_s=5400, max_programs=None, primitives="no-vla",
+        images="on-demand", feedback="pure", budget_mode="calls",
+        monitor=None if mode is None else MonitorConfig(
+            mode=mode, url="http://localhost:1" if mode == "pause" else None,
+        ),
+    )
+    # The optional helper used to reference an unbound evidence() and require
+    # watch even in the default-off prompt. Keep monitored APIs scoped to opt-in.
+    assert ("evidence()" in text) is (mode == "pause")
+    assert ("watch(phase, facts" in text) is (mode == "pause")
+    assert "All callbacks still need watch contracts" not in text
+    assert "Only verified permits dependent work" not in text
+    assert "strategy.verify_grasp" in text
+    if mode == "pause":
+        assert "explicit HARD visual prerequisites" in text
+        assert "unresolved execution receipts remain enforced" in text

@@ -30,6 +30,7 @@ from __future__ import annotations
 import ast
 import base64
 import contextlib
+import functools
 import hashlib
 import io
 import json
@@ -37,12 +38,19 @@ import math
 import threading
 import time
 import traceback
+import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+from . import strategies
 from ._backend import EpisodeFinished
-from ._robot import RobotBase
+from ._robot import RobotBase, effective_primitives
+from .coordination import CoordinationPause
+from .execution import BoundedOutput, ExecutionBudget, ExecutionLimit, ExecutionLimits
+from .interaction import InteractionPause
+from .interaction_trace import InteractionTrace
+from .perception import perception_summary
 from .recovery import failure_details, result_is_error
 from .runner import PolicyLoadError, load_policy, run_policy
 from .sandbox import audit_source, blocked_names, make_builtins
@@ -59,7 +67,9 @@ IMAGE_POLICIES = ("on-motion", "on-demand", "none")
 #: whatever ``robo.show()`` asked for. Failures also include recovery evidence.
 #: ``rich`` adds the robot state, the ledger of primitive calls and step counts.
 FEEDBACK_MODES = ("pure", "rich")
-MAX_TEXT_CHARS = 20_000
+# Leave room for the transport wrapper below the observed ~12k delivery cut.
+# This bounds the model view only; ArmResult.result and the host audit stay full.
+MAX_TEXT_CHARS = 9_000
 
 
 @dataclass
@@ -75,56 +85,7 @@ class ArmResult:
 
     @property
     def content_blocks(self) -> list[dict[str, Any]]:
-        text = json.dumps(self.result, indent=2, ensure_ascii=False, default=str)
-        if (len(text) > MAX_TEXT_CHARS
-                and self.result.get("status") == "stuck_confirmed"):
-            compact = dict(self.result)
-            recovery = dict(compact["recovery"])
-            recovery["state"] = {"note": "Inspect current state with robo.state()."}
-            recovery["confirmed_stuck"] = {
-                "status": "stuck",
-                "summary": str(recovery["confirmed_stuck"].get("summary", ""))[:1000],
-            }
-            compact.update(recovery=recovery, output_truncated=True)
-            text = json.dumps(compact, ensure_ascii=False, default=str)
-        if len(text) > MAX_TEXT_CHARS and any(
-            key in self.result for key in ("supervision", "failure")
-        ):
-            # Long prints must not hide execution failures or a supervisor
-            # interruption. Keep valid JSON and the reason for replanning.
-            compact = dict(self.result)
-            compact["output_truncated"] = True
-            for key in ("stdout", "stderr", "value", "exception"):
-                if key in compact:
-                    compact[key] = _trim(str(compact[key]), 1000)
-            text = json.dumps(compact, indent=2, ensure_ascii=False, default=str)
-            if len(text) > MAX_TEXT_CHARS:
-                report = self.result.get("supervision", {})
-                compact = {
-                    "cell": self.result.get("cell"),
-                    "program": self.result.get("program"),
-                    "execution_paused": bool(report.get("paused")),
-                    "output_truncated": True,
-                    "details": (
-                        "Full report saved in the host audit; inspect with robo.state()/show() "
-                        "before replanning if the remaining evidence is insufficient."
-                    ),
-                }
-                if report:
-                    compact["supervision"] = {
-                        key: report.get(key)
-                        for key in ("mode", "paused", "reason", "actions", "audit_dir",
-                                    "evidence_cameras")
-                    }
-                if "failure" in self.result:
-                    compact["failure"] = self.result["failure"]
-                    compact["recovery"] = {
-                        k: v for k, v in self.result["recovery"].items()
-                        if k not in ("last_motion", "state")
-                    }
-                text = json.dumps(compact, indent=2, ensure_ascii=False, default=str)
-        if len(text) > MAX_TEXT_CHARS:
-            text = text[:MAX_TEXT_CHARS] + "\n[truncated]"
+        text = _feedback_text(self.result)
         blocks: list[dict[str, Any]] = [{"type": "text", "text": text}]
         for data in self.images:
             blocks.append(
@@ -138,6 +99,245 @@ class ArmResult:
                 }
             )
         return blocks
+
+
+def _json_text(value: Any) -> str:
+    return json.dumps(value, ensure_ascii=False, separators=(",", ":"), default=str)
+
+
+def _decision_receipt(receipt: dict) -> dict:
+    """Keep query identity and execution certainty, not the native audit trail."""
+    return {key: receipt[key] for key in (
+        "action_id", "tool", "status", "effect_known", "execution_complete",
+        "observation_id", "source_id", "stop_confirmed", "receipt_supported", "reason", "error",
+    ) if key in receipt and receipt[key] is not None}
+
+
+def _decision_record(record: dict) -> dict:
+    """Detach the model view from the full, append-only audit record."""
+    result = dict(record)
+    if isinstance(result.get("provenance"), dict):
+        result["provenance"] = perception_summary(result["provenance"])
+    if isinstance(result.get("summary"), dict):
+        result["summary"] = _decision_record(result["summary"])
+    receipt = result.get("receipt")
+    if isinstance(receipt, dict):
+        result["receipt"] = _decision_receipt(receipt)
+    return result
+
+
+def _decision_observation(observation: dict) -> dict:
+    """A supervisor evidence reference, not another copy of the sensor packet."""
+    return {key: observation[key] for key in (
+        "schema", "session_id", "observation_id", "source_id", "step", "step_id",
+        "native_steps", "action_id", "action_revision", "state_version", "captured_at",
+        "recorded_at", "source_freshness", "aligned",
+    ) if key in observation}
+
+
+def _decision_envelope(result: dict) -> dict:
+    """Remove repeated protocol bookkeeping without changing runtime controls."""
+    compact = dict(result)
+    receipts = result.get("action_receipts")
+    if isinstance(receipts, list):
+        compact["action_receipts"] = [_decision_receipt(r) for r in receipts]
+    observation = result.get("observation")
+    if isinstance(observation, dict):
+        # Receipt identities are already above. Currency is represented by the
+        # actual source and revision; the generic stale-target warning adds no
+        # new evidence. Image source/time/alignment fields remain intact.
+        compact["observation"] = {key: value for key, value in observation.items()
+                                  if key not in ("prior_targets_may_be_stale", "state_included")}
+        actions = observation.get("actions", {})
+        receipt_ids = {r.get("action_id") for r in (receipts or [])}
+        if isinstance(actions, dict) and all(isinstance(action_id, str) and action_id in receipt_ids
+                                            for action_id in actions.get("action_ids", [])):
+            compact["observation"].pop("actions", None)
+    handoff = result.get("handoff")
+    if isinstance(handoff, dict):
+        handoff = dict(handoff)
+        normal = (not handoff.get("unresolved_actions") and not handoff.get("stop_reason")
+                  and handoff.get("new_motion_allowed") is None
+                  and handoff.get("allowed_next") == "check_prerequisites")
+        if normal:
+            # Absence of a blocker is not a motion permit. Omit the normal
+            # default wording instead of inventing allowed_next="execute".
+            for key in ("schema", "allowed_next", "new_motion_allowed", "next_owner",
+                        "stop_reason", "unresolved_actions", "automatic_replay",
+                        "scene_rolled_back"):
+                handoff.pop(key, None)
+            if isinstance(observation, dict):
+                for key, source in (("session_id", "source_session_id"),
+                                    ("observation_id", "source_observation_id")):
+                    if handoff.get(key) == observation.get(source):
+                        handoff.pop(key, None)
+            last = handoff.get("last_action")
+            if last is None or any(r.get("action_id") == last.get("action_id")
+                                   for r in (receipts or [])):
+                handoff.pop("last_action", None)
+        if isinstance(handoff.get("last_action"), dict):
+            handoff["last_action"] = _decision_receipt(handoff["last_action"])
+        if isinstance(handoff.get("unresolved_actions"), list):
+            handoff["unresolved_actions"] = [_decision_receipt(r)
+                                               for r in handoff["unresolved_actions"]]
+        if handoff:
+            compact["handoff"] = handoff
+        else:
+            compact.pop("handoff", None)
+    recovery = result.get("recovery")
+    if isinstance(recovery, dict):
+        recovery = dict(recovery)
+        if isinstance(recovery.get("last_motion"), dict):
+            recovery["last_motion"] = _decision_record(recovery["last_motion"])
+        compact["recovery"] = recovery
+    return compact
+
+
+# Keep execution controls before optional diagnostic fields when a report is huge.
+_CONTROL_FIELDS = (
+    "output_truncated", "execution_paused", "status", "action_id", "effect_known",
+    "execution_complete", "stop_confirmed", "new_motion_allowed", "allowed_next",
+    "automatic_replay", "scene_rolled_back", "paused", "reason", "type", "kind",
+    "next_action", "retry_allowed", "unresolved_action_count", "action_receipt_counts",
+    "handoff", "supervision", "failure", "recovery", "action_receipts", "observation",
+    "blocked", "last_action", "last_motion", "unresolved_actions", "summary",
+    "primitive_outcome", "receipt",
+    "reached", "dist_to_target_m", "orientation_error_deg", "final_xyz", "message", "error",
+)
+
+
+def _bounded_detail(value: Any, budget: int) -> Any:
+    """Fit structured diagnostics without discarding controls behind arbitrary keys."""
+    if len(_json_text(value)) <= budget:
+        return value
+    if isinstance(value, dict):
+        rank = {key: i for i, key in enumerate(_CONTROL_FIELDS)}
+        entries = sorted(value.items(), key=lambda pair: rank.get(pair[0], len(rank)))
+        result = {}
+        omitted = 0
+        for index, (key, item) in enumerate(entries):
+            overhead = len(_json_text(str(key))) + 2
+            available = budget - len(_json_text(result)) - overhead - 32
+            if index >= 32 or overhead > budget // 4 or available < 32:
+                omitted += 1
+                continue
+            share = max(32, available // min(8, len(entries) - index))
+            # IDs are lookup keys, not prose. Never emit a shortened ID that a
+            # subsequent action_receipt / reconcile / snapshot call cannot use.
+            size = len(_json_text(item))
+            identity = str(key).endswith(("_id", "_ids"))
+            endpoint = key in ("summary", "primitive_outcome") and size <= 2048
+            if identity or endpoint:
+                if size > available:
+                    omitted += 1
+                    continue
+                share = max(share, size)
+            result[str(key)] = _bounded_detail(item, share)
+        if omitted:
+            result["omitted_keys"] = omitted
+        return result
+    if isinstance(value, (list, tuple)):
+        # An early unknown receipt must not disappear behind later completed calls.
+        urgent = [item for item in value if isinstance(item, dict)
+                  and item.get("status") in ("unknown", "partial")]
+        other = [item for item in value if not (isinstance(item, dict)
+                 and item.get("status") in ("unknown", "partial"))]
+        selected = (urgent + other[-12:])[:12]
+        result = []
+        for index, item in enumerate(selected):
+            available = budget - len(_json_text(result)) - 32
+            if available < 32:
+                break
+            result.append(_bounded_detail(item, max(32, available // (len(selected) - index))))
+        omitted = len(value) - len(result)
+        if omitted:
+            result.append({"omitted_items": omitted})
+        return result
+    return _fit_text(str(value), budget)
+
+
+def _fit_text(value: str, budget: int) -> str:
+    """Fit the JSON-encoded string, including escaped control characters."""
+    if len(_json_text(value)) <= budget:
+        return value
+    low, high = 0, len(value)
+    while low < high:
+        middle = (low + high + 1) // 2
+        if len(_json_text(_trim(value, middle))) <= budget:
+            low = middle
+        else:
+            high = middle - 1
+    return _trim(value, low) if low else ("[output omitted]" if budget >= 18 else "")
+
+
+def _feedback_text(result: dict) -> str:
+    compact = _decision_envelope(result)
+    if "primitive_calls" in compact:
+        compact["primitive_calls"] = [_decision_record(r) for r in compact["primitive_calls"]]
+    if isinstance(compact.get("supervision"), dict):
+        report = dict(compact["supervision"])
+        if isinstance(report.get("observation"), dict):
+            report["observation"] = _decision_observation(report["observation"])
+        if isinstance(report.get("last_action"), dict):
+            report["last_action"] = _decision_record(report["last_action"])
+        compact["supervision"] = report
+    text = _json_text(compact)
+    if len(text) <= MAX_TEXT_CHARS:
+        return text
+
+    # Redundant audit detail must never evict a short, useful policy result.
+    # The original remains in ArmResult.result and the host ledger / supervisor audit.
+    compact["output_truncated"] = True
+    compact["details"] = "Detailed calls and evidence remain in the host audit."
+    if isinstance(compact.get("observation"), dict):
+        observation = dict(compact["observation"])
+        actions = dict(observation.get("actions", {}))
+        if "action_ids" in actions:
+            actions["action_id_count"] = len(actions["action_ids"])
+            actions["action_ids"] = actions["action_ids"][-3:]
+        observation["actions"] = actions
+        compact["observation"] = observation
+    for key in ("state", "primitive_calls"):
+        if key in compact:
+            if key == "primitive_calls":
+                compact["primitive_call_count"] = len(compact[key])
+                failed = [r for r in compact[key] if not r.get("ok", True)]
+                if failed:
+                    compact["failed_calls"] = failed
+            del compact[key]
+    if isinstance(compact.get("supervision"), dict):
+        compact["supervision"] = {k: v for k, v in compact["supervision"].items()
+                                  if k not in ("reports", "contract", "state", "evidence")}
+    if isinstance(compact.get("recovery"), dict):
+        compact["recovery"] = {k: v for k, v in compact["recovery"].items() if k != "state"}
+    text = _json_text(compact)
+    if len(text) <= MAX_TEXT_CHARS:
+        return text
+
+    outputs = {key: str(compact.pop(key)) for key in
+               ("stdout", "stderr", "value", "exception", "error") if key in compact}
+    # Retain receipt counts even in an unusually long action sequence. Unknown
+    # and partial results must remain visible alongside the handoff prohibition.
+    receipts = compact.get("action_receipts", [])
+    if receipts:
+        statuses = [str(r.get("status", "unknown")) for r in receipts]
+        compact["action_receipt_counts"] = {status: statuses.count(status)
+                                             for status in sorted(set(statuses))}
+    handoff = compact.get("handoff")
+    if isinstance(handoff, dict):
+        compact["handoff"] = dict(handoff, unresolved_action_count=len(
+            handoff.get("unresolved_actions", [])))
+    # Reserve most of the response for outputs once repeated audit fields are
+    # removed. This fallback is for oversized errors / supervision reports too.
+    compact = _bounded_detail(compact, MAX_TEXT_CHARS // 2)
+    # Preserve small fields first; an enormous repr or stderr cannot hide a
+    # normal stdout or the exception. Account for JSON escaping, not raw length.
+    ordered = sorted(outputs, key=lambda key: len(_json_text(outputs[key])))
+    for index, key in enumerate(ordered):
+        remaining = len(ordered) - index - 1
+        budget = MAX_TEXT_CHARS - len(_json_text(compact)) - len(_json_text(key)) - 4
+        compact[key] = _fit_text(outputs[key], max(32, budget - remaining * 40))
+    return _json_text(compact)
 
 
 def _to_png(item: Any) -> bytes:
@@ -202,6 +402,8 @@ class ArmToolkit:
         max_turns: int | None = None,
         supervisor: VisualSupervisor | None = None,
         stuck_recovery: StuckRecoveryConfig | None = None,
+        execution_limits: ExecutionLimits | None = None,
+        trace: InteractionTrace | None = None,
     ) -> None:
         if arm not in ARMS:
             raise ValueError(f"arm must be one of {ARMS}, got {arm!r}")
@@ -223,6 +425,11 @@ class ArmToolkit:
         if feedback not in FEEDBACK_MODES:
             raise ValueError(f"feedback must be one of {FEEDBACK_MODES}, got {feedback!r}")
         self.feedback = feedback
+        self.execution_limits = execution_limits or ExecutionLimits()
+        self.trace = trace
+        self.agent_attempt_id: str | None = None
+        self._trace_context: dict[str, Any] = {}
+        self._session_id = trace.session_id if trace is not None else uuid.uuid4().hex
         self.robo = robo
         self.arm = arm
         self.workspace = Path(workspace)
@@ -249,9 +456,13 @@ class ArmToolkit:
             "time": time,
             "display": self._display,
             "log": print,
+            "strategy": strategies,
         }
         if supervisor is not None:
             self._globals["watch"] = supervisor.watch
+            self._globals["verify"] = functools.partial(supervisor.verify, robo)
+            self._globals["evidence"] = supervisor.read_evidence
+            self._globals["defer_fact"] = supervisor.defer_fact
         try:
             import numpy as np
 
@@ -265,7 +476,14 @@ class ArmToolkit:
 
     def _display(self, image: Any) -> None:
         """Attach an image (numpy array, PIL image or PNG bytes) to this turn's result."""
-        self._displayed.append(image)
+        if len(self._displayed) >= self.execution_limits.max_display_images:
+            error = ExecutionLimit("output_limit", "Too many display images in one code call")
+            if self.robo._execution_budget is not None:
+                self.robo._execution_budget.failure = error
+            raise error
+        # Freeze explicit displays at the time of the call. Their provenance is
+        # still unknown: a policy can display an image saved in an earlier cell.
+        self._displayed.append(_to_png(image))
 
     # -- toolkit contract ---------------------------------------------------
 
@@ -329,52 +547,102 @@ class ArmToolkit:
                     },
                 },
             }
+        main["description"] += " " + self.execution_limits.prompt()
         return [main, finish]
 
-    def execute_tool(self, name: str, input_dict: dict[str, Any]) -> ArmResult:
+    def _trace_event(self, event: str, **fields: Any) -> None:
+        if self.trace is not None:
+            self.trace.emit(event, **{**self._trace_context, **fields})
+
+    def execute_tool(
+        self, name: str, input_dict: dict[str, Any], *,
+        trace_context: dict[str, Any] | None = None,
+    ) -> ArmResult:
+        context = {
+            key: value for key, value in (trace_context or {}).items()
+            if key in {"local_call_id", "decision_id", "attempt_id", "provider_call_id",
+                       "agent_attempt_id", "transport"}
+        }
+        context["tool"] = name
+        context.setdefault("agent_attempt_id", self.agent_attempt_id)
+        if self.trace is not None:
+            context.setdefault("local_call_id", self.trace.new_id("tool"))
+            # The MCP adapter records receipt before its async lock. Direct
+            # callers reach this point before the toolkit's threading lock.
+            if context.get("transport") != "mcp":
+                self.trace.emit("tool_received", **context)
         with self._lock:
-            started = time.perf_counter()
-            calls_before = len(self.robo._ledger)
-            steps_before = self.robo._backend.env_steps()
+            self._trace_context = context
+            self.robo._code_context = dict(context, host_session_id=self._session_id,
+                                           turn=len(self.turns) + 1)
             try:
-                if name == "finish":
-                    result = self._finish(input_dict)
-                elif name == "python" and self.arm == "cells":
-                    result = self._python(str(input_dict.get("code", "")))
-                elif name == "run_program" and self.arm == "program":
-                    result = self._run_program(input_dict)
-                else:
-                    result = ArmResult({"error": f"unknown tool: {name}"})
-            except Exception as exc:  # noqa: BLE001 - never crash the server
-                result = ArmResult({"error": f"{type(exc).__name__}: {exc}"})
-            moved_flag = any(r.stateful for r in self.robo._ledger.records[calls_before:])
-            steps_after = self.robo._backend.env_steps()
-            steps_delta = (
-                steps_after - steps_before
-                if steps_before is not None and steps_after is not None
-                else None
-            )
-            flags, self._last_flags = self._last_flags, []
-            self.turns.append(
-                {
-                    "index": len(self.turns),
-                    "tool": name,
-                    "elapsed_s": round(time.perf_counter() - started, 3),
-                    "ok": not result.is_error,
-                    "moved": bool(result.result.get("moved", moved_flag)),
-                    "env_steps": result.result.get("env_steps", steps_delta),
-                    "terminated": self.robo._reported_success(),
-                    "sandbox_flags": flags,
-                    **{k: result.result[k] for k in ("failure", "recovery") if k in result.result},
-                }
-            )
-            if flags:
-                self.sandbox_flags.append({"turn": len(self.turns) - 1, "flags": flags})
-            return result
+                self._trace_event("tool_started")
+                started = time.perf_counter()
+                calls_before = len(self.robo._ledger)
+                steps_before = self.robo._backend.env_steps()
+                try:
+                    if name == "finish":
+                        result = self._finish(input_dict)
+                    elif self.finish is not None:
+                        result = ArmResult({
+                            "error": "Episode already finished; code was not executed.",
+                            "episode_finished": True,
+                            "finish": dict(self.finish),
+                        })
+                    elif name == "python" and self.arm == "cells":
+                        result = self._python(str(input_dict.get("code", "")))
+                    elif name == "run_program" and self.arm == "program":
+                        result = self._run_program(input_dict)
+                    else:
+                        result = ArmResult({"error": f"unknown tool: {name}"})
+                except Exception as exc:  # noqa: BLE001 - never crash the server
+                    result = ArmResult({"error": f"{type(exc).__name__}: {exc}"})
+                self._observe_result(result, calls_before, steps_before)
+                moved_flag = any(r.stateful for r in self.robo._ledger.records[calls_before:])
+                steps_after = self.robo._backend.env_steps()
+                steps_delta = (
+                    steps_after - steps_before
+                    if steps_before is not None and steps_after is not None
+                    else None
+                )
+                flags, self._last_flags = self._last_flags, []
+                self.turns.append(
+                    {
+                        "index": len(self.turns),
+                        "tool": name,
+                        "elapsed_s": round(time.perf_counter() - started, 3),
+                        "ok": not result.is_error,
+                        "moved": bool(result.result.get("moved", moved_flag)),
+                        "env_steps": result.result.get("env_steps", steps_delta),
+                        "terminated": self.robo._reported_success(),
+                        "sandbox_flags": flags,
+                        **{k: result.result[k] for k in (
+                            "failure", "recovery", "observation", "handoff", "action_receipts")
+                           if k in result.result},
+                    }
+                )
+                if flags:
+                    self.sandbox_flags.append({"turn": len(self.turns) - 1, "flags": flags})
+                if self.trace is not None:
+                    self.turns[-1]["local_call_id"] = context["local_call_id"]
+                observation = result.result.get("observation") or {}
+                self._trace_event(
+                    "tool_result_ready", outcome="error" if result.is_error else "returned",
+                    observation_id=observation.get("observation_id"),
+                    execution_paused=bool(result.result.get("execution_paused")),
+                    episode_finished=result.result.get("episode_finished"),
+                )
+                return result
+            finally:
+                self._trace_context = {}
+                self.robo._code_context = {}
 
     # -- tools ----------------------------------------------------------------
 
     def _finish(self, args: dict[str, Any]) -> ArmResult:
+        if self.robo._pending_actions and args.get("status") == "success":
+            return ArmResult({"error": "Cannot declare success while an action is unresolved; "
+                                      "inspect its receipt and reconcile first."})
         if self.finish is not None:
             return ArmResult({"ok": True, **self.finish,
                               **({"episode_finished": True} if self.stuck_recovery else {})})
@@ -410,12 +678,15 @@ class ArmToolkit:
             with (self.workspace.parent / "stuck_recovery.jsonl").open("a") as stream:
                 stream.write(json.dumps(event, ensure_ascii=False) + "\n")
             if not stopped:
-                images, cameras = [], []
+                images, cameras, evidence = [], [], []
                 for camera in self.robo.CAMERAS:
                     try:
+                        step = self.robo._backend.env_steps()
+                        revision = self.robo._action_revision
                         images.append(self.robo._backend.artifact(
                             self.robo._image_name(camera, self.robo.SHOW_RESOLUTION)))
                         cameras.append(camera)
+                        evidence.append(self._camera_evidence(camera, step, revision))
                     except Exception:
                         pass  # Missing views must not make a stuck declaration terminal.
                 return ArmResult({
@@ -433,6 +704,7 @@ class ArmToolkit:
                         "state": _state_dict(self.robo),
                     },
                     "images": cameras,
+                    "_image_evidence": evidence,
                 }, images)
         self.finish = {
             "status": str(args.get("status", "")),
@@ -440,6 +712,7 @@ class ArmToolkit:
         }
         if self._live_success():
             self.finish["environment_terminated"] = self.robo._reported_success()
+        self.robo._stop_episode(self.robo._stop_reason or "finished")
         return ArmResult({"ok": True, **self.finish,
                           **({"episode_finished": True} if self.stuck_recovery else {})})
 
@@ -453,6 +726,76 @@ class ArmToolkit:
 
     def _snapshot(self) -> tuple[int, int | None]:
         return len(self.robo._ledger), self.robo._backend.env_steps()
+
+    def _observe_result(self, output: ArmResult, calls_before: int, steps_before: int | None):
+        """A common evidence envelope for cells, programs, errors and finish."""
+        records = self.robo._ledger.records[calls_before:]
+        motions = [r for r in records if r.stateful]
+        step = self.robo._backend.env_steps()
+        images = output.result.pop("_image_evidence", [])
+        # Non-code results without capture metadata never claim image freshness.
+        if not images:
+            images = [dict(name=name, source="unknown", step_id=None, state_version=None)
+                      for name in output.result.get("images", [])]
+        output.result["handoff"] = self.robo._interaction_handoff()
+        output.result["action_receipts"] = [self.robo._receipt_summary(r.action_id)
+                                            for r in motions if r.action_id]
+        output.result["observation"] = {
+            "observation_id": f"{self._session_id}-{len(self.turns) + 1}",
+            "observed_at": time.time(),
+            "source_session_id": self.robo._interaction_session_id,
+            "source_observation_id": self.robo._latest_observation_id,
+            "step_id": step,
+            "state_version": self.robo._action_revision,
+            "state_included": "state" in output.result or "state" in output.result.get(
+                "recovery", {}
+            ),
+            "actions": {
+                "attempted": len(motions),
+                "acknowledged": sum(r.ok for r in motions),
+                "first_ledger_index": motions[0].index if motions else None,
+                "last_ledger_index": motions[-1].index if motions else None,
+                "action_ids": [r.action_id for r in motions if r.action_id],
+            },
+            "prior_targets_may_be_stale": bool(motions) or step != steps_before,
+            "images": images,
+        }
+
+    def _camera_evidence(self, name, step_before, revision_before, source=None):
+        step = self.robo._backend.env_steps()
+        revision = self.robo._action_revision
+        stable = step == step_before and revision == revision_before
+        result = dict(name=name, source="camera", retrieved_at=time.time(),
+                      step_id=step if stable else None,
+                      state_version=revision if stable else None,
+                      changed_during_read=not stable)
+        if source is not None:
+            camera = next((item for item in source.get("images", {}).values()
+                           if item.get("artifact") == name), {})
+            snapshot = self.robo._observations.get(source.get("observation_id"))
+            try:
+                current = self.robo._observation_is_current(snapshot)
+            except Exception:  # A failed source check cannot establish freshness.
+                current = False
+            result.update(source_observation_id=source.get("observation_id"),
+                          source_id=camera.get("source_id"),
+                          recorded_step=source.get("step"),
+                          captured_at=source.get("captured_at"),
+                          aligned=camera.get("aligned", False),
+                          source_freshness=source.get("source_freshness", "unverified"),
+                          step_id=source.get("native_steps") if stable else None,
+                          state_version=(revision if stable and current
+                                         and camera.get("aligned") is True else None))
+        return result
+
+    @staticmethod
+    def _output_fields(stdout: BoundedOutput, stderr: BoundedOutput):
+        fields = {"stdout": stdout.getvalue(), "stderr": stderr.getvalue()}
+        if stdout.omitted or stderr.omitted:
+            fields.update(output_truncated=True, output_omitted_chars={
+                "stdout": stdout.omitted, "stderr": stderr.omitted,
+            })
+        return fields
 
     def _failure_feedback(
         self,
@@ -484,11 +827,14 @@ class ArmToolkit:
             next_action = "change_approach_or_finish"
         if not retry_allowed:
             next_action = "finish"
+        elif self.robo._pending_actions:
+            next_action = "observe_and_reconcile"
         extra["failure"] = failure
         steps_after = self.robo._backend.env_steps()
         extra["recovery"] = {
             "next_action": next_action,
             "retry_allowed": bool(retry_allowed),
+            "new_motion_allowed": bool(retry_allowed and not self.robo._pending_actions),
             "calls_left": calls_left,
             "stop_reason": stopped,
             "same_failure_count": count,
@@ -505,7 +851,7 @@ class ArmToolkit:
             "instruction": (
                 "Read the error and current state. Earlier actions and assignments are not "
                 "undone; an interrupted assignment may still hold an older value. Inspect "
-                "images with robo.show() when available, then submit only the repaired "
+                "the returned camera evidence when available, then submit only the repaired "
                 "remaining work. Check primitive outcomes and verify the resulting scene. "
                 "Do not blindly replay this code; if the budget is exhausted, call finish."
             ),
@@ -524,6 +870,8 @@ class ArmToolkit:
         moved = any(r.stateful for r in records)
         steps_after = self.robo._backend.env_steps()
         result: dict[str, Any] = dict(extra)
+        if self.robo._coordination_feedback is not None:
+            result["coordination"] = self.robo._coordination_feedback
         if self.supervisor is not None:
             result["supervision"] = self.supervisor.feedback()
             if self.supervisor.paused:
@@ -537,10 +885,13 @@ class ArmToolkit:
         result["primitive_calls"] = [
             {
                 "tool": r.tool,
+                "action_id": r.action_id,
+                "observation_id": r.observation_id,
                 "kwargs": r.kwargs,
                 "ok": r.ok,
                 "error": r.error,
-                **{k: v for k, v in r.summary.items() if k != "eef_pos"},
+                **{k: perception_summary(v) if k == "provenance" else v
+                   for k, v in r.summary.items() if k != "eef_pos"},
             }
             for r in records
             if r.tool not in ("artifact",)
@@ -565,13 +916,25 @@ class ArmToolkit:
             wanted = list(type(self.robo).ON_MOTION_IMAGES)
         elif self.images == "on-demand":
             wanted = self.robo._show_artifacts(requested)
+            if (not wanted and not self._displayed and moved
+                    and (result.get("failure") or result.get("execution_paused"))):
+                # An exception/pause can skip the policy's final show(). Return
+                # the existing recorded views, without recapturing or moving.
+                wanted = list(type(self.robo).ON_MOTION_IMAGES)
         else:
             wanted = []
         attached: list[str] = []
+        evidence: list[dict[str, Any]] = []
         for name in wanted:
             try:
-                images.append(self.robo.artifact(name))
+                step, revision = self.robo._backend.env_steps(), self.robo._action_revision
+                metadata = getattr(self.robo._backend, "observation_metadata", None)
+                source = metadata() if callable(metadata) else None
+                data = self.robo.artifact(name, step=source["step"] if source else -1)
+                image_evidence = self._camera_evidence(name, step, revision, source)
+                images.append(data)
                 attached.append(name)
+                evidence.append(image_evidence)
             except Exception:  # noqa: BLE001 - image is optional
                 continue
         displayed, self._displayed = self._displayed, []
@@ -579,6 +942,8 @@ class ArmToolkit:
             try:
                 images.append(_to_png(item))
                 attached.append(f"display_{index}")
+                evidence.append(dict(name=f"display_{index}", source="display",
+                                     step_id=None, state_version=None))
             except Exception as exc:  # noqa: BLE001 - reported, not fatal
                 result.setdefault("display_errors", []).append(f"{type(exc).__name__}: {exc}")
         if self.supervisor is not None and self.supervisor.paused:
@@ -586,9 +951,17 @@ class ArmToolkit:
             # never called or the normal image policy is disabled.
             for index, data in enumerate(self.supervisor.evidence):
                 images.append(data)
-                attached.append(f"supervision_{self.supervisor.evidence_cameras[index]}")
+                name = f"supervision_{self.supervisor.evidence_cameras[index]}"
+                attached.append(name)
+                observation = result["supervision"].get("observation") or {}
+                evidence.append(dict(name=name, source="supervision",
+                                     observation_id=observation.get("observation_id"),
+                                     step_id=observation.get("step_id"),
+                                     captured_at=observation.get("captured_at"),
+                                     state_version=None))
         if attached:
             result["images"] = attached
+            result["_image_evidence"] = evidence
         return ArmResult(result, images)
 
     def _budget_left(self, used: int) -> bool:
@@ -609,19 +982,26 @@ class ArmToolkit:
                 }
             )
         self._cell_index += 1
+        self.robo._coordination_feedback = None
         index = self._cell_index
         if self.supervisor is not None:
             self.supervisor.begin_cell(index)
             self._globals["watch"] = self.supervisor.watch
+            self._globals["verify"] = functools.partial(self.supervisor.verify, self.robo)
+            self._globals["evidence"] = self.supervisor.read_evidence
+            self._globals["defer_fact"] = self.supervisor.defer_fact
         source_path = self.workspace / f"cell_{index:03d}.py"
         source_path.write_text(code, encoding="utf-8")
         filename = str(source_path.resolve())
         self._last_flags = audit_source(code, workspace=self.workspace)
         before = self._snapshot()
-        stdout, stderr = io.StringIO(), io.StringIO()
+        stdout = BoundedOutput(self.execution_limits.max_output_chars)
+        stderr = BoundedOutput(self.execution_limits.max_output_chars)
         extra: dict[str, Any] = {"cell": index}
+        self._trace_event("validation_started", cell=index, code_chars=len(code))
         blocked = blocked_names(code)
         if blocked:
+            self._trace_event("validation_failed", cell=index, error_type="SandboxError")
             extra["exception"] = _blocked_message(blocked, "cell")
             return self._failure_feedback(before, extra, {
                 "kind": "sandbox", "stage": "validation", "type": "SandboxError",
@@ -639,13 +1019,22 @@ class ArmToolkit:
             body_code = compile(tree, filename, "exec")
             tail_code = compile(ast.Expression(tail.value), filename, "eval") if tail else None
         except SyntaxError as exc:
+            self._trace_event("validation_failed", cell=index, error_type="SyntaxError")
             extra["exception"] = f"SyntaxError: {exc}"
             return self._failure_feedback(
                 before, extra, failure_details(exc, stage="validation", filename=filename), code
             )
+        self._trace_event(
+            "code_validated", cell=index, validation_scope="sandbox_and_complete_cell_compile",
+        )
         failure = None
+        execution_started = False
+        interrupted = False
         try:
-            with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+            with (ExecutionBudget(self.execution_limits, self.workspace, self.robo) as budget,
+                  contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr)):
+                self._trace_event("execution_started", cell=index)
+                execution_started = True
                 exec(body_code, self._globals)  # noqa: S102 - code arm
                 if tail_code is not None:
                     value = eval(  # noqa: S307 - trailing expression echo
@@ -653,21 +1042,32 @@ class ArmToolkit:
                     )
                     if value is not None:
                         extra["value"] = _trim(repr(value), 4000)
-        except SupervisionPause:
+                budget.check()
+        except (SupervisionPause, CoordinationPause, InteractionPause):
             extra["execution_paused"] = True
         except EpisodeFinished as exc:
             extra["episode_finished"] = exc.reason
-        except (Exception, SystemExit) as exc:
+        except (ExecutionLimit, Exception, SystemExit) as exc:
             extra["exception"] = _trim(traceback.format_exc(), 4000)
             failure = failure_details(exc, stage="execution", filename=filename)
-        extra["stdout"] = _trim(stdout.getvalue())
-        extra["stderr"] = _trim(stderr.getvalue())
+        except BaseException:
+            interrupted = True
+            raise
+        finally:
+            self._trace_event(
+                "execution_finished" if execution_started else "execution_setup_failed", cell=index,
+                outcome=("interrupted" if interrupted else "error" if failure
+                         else "paused" if extra.get("execution_paused")
+                         else "episode_finished" if extra.get("episode_finished") else "returned"),
+            )
+        extra.update(self._output_fields(stdout, stderr))
         extra["elapsed_s"] = round(time.perf_counter() - started, 2)
         if failure is not None:
             return self._failure_feedback(before, extra, failure, code)
         return self._feedback(before, extra)
 
     def _run_program(self, args: dict[str, Any]) -> ArmResult:
+        self.robo._coordination_feedback = None
         if not self._budget_left(self._program_index):
             return ArmResult({"error": "call budget exhausted: the episode is over, call finish"})
         if self.max_programs is not None and self._program_index >= self.max_programs:
@@ -709,7 +1109,8 @@ class ArmToolkit:
                 "kind": "sandbox", "stage": "validation", "type": "SandboxError",
                 "message": extra["exception"], "location": None,
             }, source)
-        stdout, stderr = io.StringIO(), io.StringIO()
+        stdout = BoundedOutput(self.execution_limits.max_output_chars)
+        stderr = BoundedOutput(self.execution_limits.max_output_chars)
         try:
             compile(source, str(target.resolve()), "exec")
         except SyntaxError as exc:
@@ -717,29 +1118,48 @@ class ArmToolkit:
             return self._failure_feedback(
                 before, extra, failure_details(exc, stage="validation"), source
             )
+        started = time.perf_counter()
+        stage = "load"
         try:
-            with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
-                policy = load_policy(target, builtins=self._builtins)
+            with (ExecutionBudget(self.execution_limits, self.workspace, self.robo) as budget,
+                  contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr)):
+                policy = load_policy(target, builtins=self._builtins,
+                                     bindings={"strategy": strategies})
+                stage = "execution"
+                outcome = run_policy(policy, self.robo, timeout_s=self.program_timeout_s)
+                if outcome.status != "timeout":
+                    budget.check()
         except PolicyLoadError as exc:
             extra["exception"] = str(exc)
-            extra["stdout"], extra["stderr"] = _trim(stdout.getvalue()), _trim(stderr.getvalue())
+            extra.update(self._output_fields(stdout, stderr))
             return self._failure_feedback(
                 before, extra, failure_details(
                     exc.__cause__ or exc, stage="load", filename=str(target.resolve())
                 ),
                 source,
             )
-        with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
-            outcome = run_policy(policy, self.robo, timeout_s=self.program_timeout_s)
+        except ExecutionLimit as exc:
+            extra.update(self._output_fields(stdout, stderr))
+            extra["elapsed_s"] = round(time.perf_counter() - started, 2)
+            extra["exception"] = str(exc)
+            return self._failure_feedback(
+                before, extra, failure_details(exc, stage=stage, filename=str(target.resolve())),
+                source,
+            )
+        except EpisodeFinished as exc:
+            extra.update(self._output_fields(stdout, stderr))
+            extra.update(status="finished", episode_finished=exc.reason)
+            return self._feedback(before, extra)
         extra["status"] = outcome.status
+        if outcome.status == "paused":
+            extra["execution_paused"] = True
         if outcome.reason:
             extra["reason"] = outcome.reason
         if outcome.error_type:
             extra["exception"] = _trim(
                 outcome.traceback or f"{outcome.error_type}: {outcome.error_message}", 4000
             )
-        extra["stdout"] = _trim(stdout.getvalue())
-        extra["stderr"] = _trim(stderr.getvalue())
+        extra.update(self._output_fields(stdout, stderr))
         extra["elapsed_s"] = round(outcome.elapsed_s, 2)
         extra["programs_left"] = (
             None if self.max_programs is None else self.max_programs - self._program_index
@@ -821,7 +1241,7 @@ IMAGE_NOTES = {
         "when you need to look before deciding, and loops when you do not."
     ),
     "on-demand": (
-        "Images are NOT attached automatically: call {show_examples} "
+        "Normal calls attach images only on request: call {show_examples} "
         "to see a current camera view, or "
         "`display(image)` to show any image array you built (a crop, an "
         "overlay, a picture you kept in memory), when you need to look before "
@@ -841,6 +1261,7 @@ FEEDBACK_NOTES = {
             "On a successful call, print what you want to know (for example "
             "`print(robo.state())` or the result of a motion call). Execution "
             "failures also include the host's failure and recovery report."
+            " Every reply adds observation IDs, action revisions and image provenance."
         ),
         "rich": (
             "The tool returns stdout, stderr, the exception if any, the value of "
@@ -854,6 +1275,7 @@ FEEDBACK_NOTES = {
             "and the exception if any. On a successful call, print what you "
             "want to know. Execution failures also include the host's failure "
             "and recovery report."
+            " Every reply adds observation IDs, action revisions and image provenance."
         ),
         "rich": (
             "The tool returns the program's stdout, stderr, the exception if any, "
@@ -924,29 +1346,29 @@ BUDGET_MODES = tuple(ENDING_NOTES)
 RECOVERY_NOTE = """\
 # Execution, verification and recovery
 
-Work in short phases: observe, act, check the returned outcome, then decide
-whether to continue. A primitive returning normally does not prove its goal
-was achieved: check fields such as `reached`, `found` or `success`. Use an
-assertion with a descriptive message before a dependent action when a required
-condition is false. Verify the scene before declaring task success.
+Check outcomes such as `reached`, `found` and geometric error before dependent
+actions. Use ordinary `if` branches and bounded corrections for results your
+program can handle, continuing useful steps in the same cell. Skip dependent
+actions when their condition is false; use assertions for genuinely unexpected
+conditions. Source freshness does not establish object detection or task success.
 
-When code fails, `failure` identifies its kind, stage, exception and source
-location; `recovery` reports the motion attempts, last action, current state,
-remaining calls and suggested next step. These reports also appear with pure
-feedback. Syntax and blocked-introspection checks reject the cell before it
-runs; runtime failures can occur after earlier actions already executed.
+When a new model judgment is needed, print the relevant result, request
+`robo.show()` and end the cell. show queues images for feedback at cell end;
+placing it before a move does not let Astra inspect the scene before that move.
+After a motion failure/pause, feedback includes requested images or available
+recorded camera evidence (unless images are disabled). Inspect provenance before
+treating images as current.
 
-The scene is never rolled back. In cells, earlier assignments persist; an
-interrupted assignment may still contain an old value. Inspect state and, when
-available, images before repairing the remaining work. Do not replay the whole
-failed cell/program blindly. Submit one code-tool call at a time when later
-actions depend on its result; wait for feedback before generating the repair.
-Supervisor pauses likewise require inspection and replanning, not a success
-claim. Three occurrences of the same code failure suggest changing approach
-or finishing stuck. This is guidance, not an extra retry allowance: every failed
-attempt consumes the existing call/program budget and the wall clock continues.
-If `retry_allowed` is false, call `finish`; a single-shot program gets no repair
-attempt. A clean tool execution is not the benchmark's success verdict.
+`failure` identifies the error and source location; `recovery` reports execution
+state and the remaining budget, including with pure feedback. Rejected syntax
+does not execute; runtime failures can follow actions already executed. Nothing
+rolls back. Earlier variables persist, and an interrupted assignment can retain
+an old value. Inspect feedback and repair only the remaining work; do not replay
+the whole cell. Submit dependent code-tool calls one at a time. Inspect host
+pauses before continuing; reconcile unknown action outcomes before motion. Repeated
+failure with no progress calls for a changed approach or finishing stuck.
+If `retry_allowed` is false, call `finish`. Verify the scene before claiming
+task success; a clean tool execution is not the benchmark's verdict.
 """
 #: The same notes for a robot whose benchmark judges the final scene: a limit
 #: ends the episode, and what the scene shows then is what counts.
@@ -1023,6 +1445,13 @@ def arm_contract(
         robot=robot,
     )
     text = text.rstrip() + "\n\n" + RECOVERY_NOTE
+    text += "\n\n" + strategies.PROMPT
+    text += (
+        "\nFeedback identifies observations and action receipts. Observation state_version "
+        "counts motion attempts, including failures; image provenance identifies the actual "
+        "capture. Explicit display images have unknown provenance; "
+        "do not assume they are current.\n"
+    )
     if guides:
         text = text.rstrip() + "\n\n" + GUIDES_NOTE + "\n"
     return text
@@ -1035,6 +1464,7 @@ def robot_words(adapter: Any, primitives: str = "full") -> dict[str, str]:
     services left once the VLA is removed) instead of ``services``.
     """
 
+    primitives = effective_primitives(adapter.robot_cls, primitives)
     key = "services" if primitives == "full" else "services_novla"
     phrase = getattr(adapter, key, "") or ""
     head, _, tail = phrase.partition(" ")

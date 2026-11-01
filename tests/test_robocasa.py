@@ -923,11 +923,20 @@ def test_the_vla_caps_when_the_base_is_far_and_arm_mode_clamps_the_base(rc, rc_b
     assert not rc.state().vla_desync
 
 
-def test_vla_refusals_and_backend_errors_become_tool_errors(rc, rc_backend):
+def test_vla_refusals_become_tool_errors_and_remain_unresolved_without_receipt(rc, rc_backend):
     rc_backend.error_next = {"error": "max_chunks must be positive; VLA was not executed"}
     with pytest.raises(ToolError, match="VLA was not executed") as info:
         rc.rldx_skill()
     assert info.value.tool == "rldx_skill" and rc._ledger.records[-1].ok is False
+    from pyrualean.interaction import InteractionPause
+
+    calls = len(rc_backend.calls)
+    with pytest.raises(InteractionPause):
+        rc.set_gripper(1.0)
+    assert len(rc_backend.calls) == calls  # prose error text is not a zero-execution receipt
+
+
+def test_backend_error_becomes_tool_error(rc, rc_backend):
     rc_backend.error_next = {"error": "simulated failure", "traceback": "..."}
     with pytest.raises(ToolError, match="simulated failure"):
         rc.set_gripper(1.0)

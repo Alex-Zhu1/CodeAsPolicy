@@ -231,6 +231,29 @@ def test_move_pose_takes_the_half_turned_grasp_when_it_is_nearer(sim):
     assert "half a turn" in again["note"]
 
 
+def test_position_only_move_refuses_a_reachable_half_turn_fallback(sim, monkeypatch):
+    env, prims, start = sim
+    xyz = [0.25, -0.15, 0.90]
+    assert tools.move_pose(prims, start, xyz, arm="right", pitch=90, yaw=0)["reached"]
+    before = _now(env, "right")[:3, :3].copy()
+    plan = tools._plan
+
+    def only_half_turn_is_reachable(arm, q, target, path, start_joints):
+        # Model an IK/path failure for the requested orientation. The existing
+        # planner can still solve the half-turn, but xyz alone never requests it.
+        if kin.rotation_error(target[:3, :3], before) < 1:
+            return [], None, "no orientation-preserving path", None
+        return plan(arm, q, target, path, start_joints)
+
+    monkeypatch.setattr(tools, "_plan", only_half_turn_is_reachable)
+    env.actions.clear()
+    r = tools.move_pose(prims, start, xyz, arm="right", path="joint")
+    assert not r["reached"] and r["steps_used"] == 0, r
+    assert r["ik_error"] == "no orientation-preserving path"
+    assert env.actions == []
+    assert kin.rotation_error(_now(env, "right")[:3, :3], before) < 1e-6
+
+
 def test_move_pose_never_swaps_the_fingers_of_a_gripper_that_holds_something(sim):
     env, prims, start = sim
     assert tools.move_pose(prims, start, [0.25, -0.15, 0.90], arm="right", pitch=90, yaw=0)[
@@ -280,7 +303,7 @@ def test_move_pose_names_what_is_reachable_instead_and_takes_a_near_miss(sim):
     assert r["dist_to_target_m"] <= 0.013
 
 
-def test_move_pose_reports_an_arm_that_was_stopped(sim):
+def test_move_pose_reports_tracking_lag_without_claiming_contact(sim):
     env, prims, start = sim
     stuck = env.step
 
@@ -292,7 +315,8 @@ def test_move_pose_reports_an_arm_that_was_stopped(sim):
 
     env.step = held_back
     r = tools.move_pose(prims, start, [0.25, -0.15, 0.90], arm="right", pitch=90, path="joint")
-    assert r["reached"] is False and "something is in the way" in r["blocked"]
+    assert r["reached"] is False and "tracking lag" in r["blocked"]
+    assert "contact not established" in r["blocked"]
 
 
 def test_keep_squeezes_what_the_last_command_closed_on(sim):

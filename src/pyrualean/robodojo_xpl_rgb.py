@@ -115,8 +115,10 @@ class RobodojoOfficialColourRobot(RobodojoRobot):
 
     World frame: x runs across the table (the LEFT arm is at negative x and
     appears on the LEFT of the head image), y points away from the robot
-    towards the far edge of the table, z is up; metres.  Orientations are unit
-    quaternions ordered [w, x, y, z].  The arms are ``"left"`` and ``"right"``
+    towards the far edge of the table, z is up; metres. State and ``Pose``
+    orientations are unit quaternions [w, x, y, z]; ``move_to`` uses the
+    gripper angles below, not generic XYZ Euler angles. The arms are
+    ``"left"`` and ``"right"``
     (``robo.LEFT`` / ``robo.RIGHT``). ``move_to`` names one arm and
     holds the other; ``move_both`` moves both on one native action clock.
     Choose roles, ordering and recovery in your Python program.
@@ -136,7 +138,10 @@ class RobodojoOfficialColourRobot(RobodojoRobot):
 
     Two gripper conventions, do not mix them up.  COMMANDS are signed:
     ``robo.CLOSE`` (1) closes, ``robo.OPEN`` (-1) opens, ``robo.KEEP`` (0)
-    leaves the gripper as it is.  MEASUREMENTS (``state().left.gripper``,
+    retains the last command. ``move_both`` uses 'close'/'open'/'keep'.
+    Gripper commands in either motion take effect from its first native action,
+    not on arrival; use a separate close/open call when timing requires it.
+    MEASUREMENTS (``state().left.gripper``,
     ``Gripper.opening``) are openings: 1.0 = open, 0.0 = closed on nothing.
 
     Every native action (one step of ``move_to``, ``set_gripper`` or

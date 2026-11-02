@@ -152,8 +152,9 @@ class Move:
     note: set when the exact pose was out of reach but one within 2 cm and
         8 degrees was not: the arm went there instead (``dist_to_target_m``
         and ``orientation_error_deg`` say how far off it is).
-    blocked: the arm stopped short of a planned pose it could reach: something
-        is in the way, or a held object is pushing against something.
+    blocked: the measured TCP is over 5 mm from the planned endpoint after
+        execution, with budget remaining. This is a tracking-lag heuristic,
+        not a contact sensor or proof of an obstacle; inspect the actual scene.
     steps_used: native actions consumed.
     truncated: the native-action budget ran out.
     """
@@ -545,8 +546,10 @@ class RobodojoRobot(CoordinationMixin, RobotBase):
 
     World frame: x runs across the table (the LEFT arm is at negative x and
     appears on the LEFT of the head image), y points away from the robot
-    towards the far edge of the table, z is up; metres.  Orientations are unit
-    quaternions ordered [w, x, y, z].  The arms are ``"left"`` and ``"right"``
+    towards the far edge of the table, z is up; metres. State and ``Pose``
+    orientations are unit quaternions [w, x, y, z]; ``move_to`` uses the
+    gripper angles below, not generic XYZ Euler angles. The arms are
+    ``"left"`` and ``"right"``
     (``robo.LEFT`` / ``robo.RIGHT``). ``move_to`` names one arm and
     holds the other; ``move_both`` moves both on one native action clock.
     Choose roles, ordering and recovery in your Python program.
@@ -566,7 +569,10 @@ class RobodojoRobot(CoordinationMixin, RobotBase):
 
     Two gripper conventions, do not mix them up.  COMMANDS are signed:
     ``robo.CLOSE`` (1) closes, ``robo.OPEN`` (-1) opens, ``robo.KEEP`` (0)
-    leaves the gripper as it is.  MEASUREMENTS (``state().left.gripper``,
+    retains the last command. ``move_both`` uses 'close'/'open'/'keep'.
+    Gripper commands in either motion take effect from its first native action,
+    not on arrival; use a separate close/open call when timing requires it.
+    MEASUREMENTS (``state().left.gripper``,
     ``Gripper.opening``) are openings: 1.0 = open, 0.0 = closed on nothing.
 
     Every native action (one step of ``move_to``, ``set_gripper`` or
@@ -1042,8 +1048,9 @@ class RobodojoRobot(CoordinationMixin, RobotBase):
         The grasp point is the middle of the finger pads (``tcp_pos``).  The
         library solves the arm's inverse kinematics for the full pose and,
         with ``path="auto"``, moves the grasp point along a straight line to
-        it, about 2.5 cm or 8 degrees per native action; when the line leaves
-        the arm's reach it swings the joints straight to the solution instead.
+        it, with nominal waypoints at most 2 cm / 8 degrees apart. Joint-step
+        limits may subdivide them; this is not a speed guarantee. When the
+        line leaves the arm's reach it swings the joints to the solution instead.
         Nothing moves when the pose is out of reach or every way there takes
         the arm into the table: ``ik_error`` says why.
 
@@ -1057,18 +1064,21 @@ class RobodojoRobot(CoordinationMixin, RobotBase):
                 carrying an object.
             pitch / yaw / roll: the orientation to arrive with, degrees (the
                 class docstring defines them).  An angle left None keeps its
-                current value, so a plain position move does not turn the
-                gripper.  With an EMPTY open gripper the fingers are
+                current value in the target. With an explicitly requested
+                orientation and an EMPTY open gripper the fingers are
                 interchangeable, so the pose turned half a turn about the
                 pointing direction may be taken when it needs less joint
                 travel (``note`` says so; yaw / roll then read 180 off);
-                holding something, the pose is taken exactly as asked.
+                holding something, no half-turn substitution is made.
+                Check the reported pose errors, including any near-miss note.
             path: ``"auto"`` (default), ``"line"`` (straight line or nothing)
                 or ``"joint"`` (swing the joints: fewer actions, but the grasp
-                point does not follow a line: not near objects).
+                point does not follow a line and orientation may change en
+                route even if the target preserves it: not near objects).
         Returns:
             Move; test ``reached`` (within 0.01 m and 5 degrees).  ``blocked``
-            means the arm was stopped by something on the way.
+            flags tracking lag, not confirmed contact. Inspect the actual
+            endpoint and scene before a dependent action or retry.
         Raises:
             ValueError: a malformed argument (nothing is sent).
         """
@@ -1144,14 +1154,17 @@ class RobodojoRobot(CoordinationMixin, RobotBase):
         then each native action commands the starting angles directly, so the
         arm swings straight back: no IK and no path planning beyond that lift
         (clear tall things yourself).  The call returns when every joint is
-        within 0.01 rad or after 25 actions of the swing.  The gripper keeps
-        the opening it has; an arm that is not named holds its joints.  Most
+        within 0.01 rad or after 25 actions of the swing. The gripper retains
+        its last command; an arm that is not named holds its joints. Most
         tasks count as done only with both arms back where they started.
 
         Args:
             arm: ``"left"``, ``"right"`` or ``"both"`` (default).
         Returns:
-            Home; test ``reached`` and call again when it is False.
+            Home; test ``reached`` and inspect an incomplete return before
+            deciding how to clear the path or retry. Between nearby operations,
+            continue from a clear local pose; use home when clearance or the
+            task's final reset requires it.
         """
         if arm not in (*self.ARMS, "both"):
             raise ValueError(f"arm must be 'left', 'right' or 'both', got {arm!r}")

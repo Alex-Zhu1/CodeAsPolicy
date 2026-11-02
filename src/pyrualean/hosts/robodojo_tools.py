@@ -361,8 +361,8 @@ def _alternatives(
 def _followable(q: Sequence[float], ways: Sequence[Sequence[float]]) -> list[list[float]]:
     """Waypoints split into steps the simulator can follow in one action each.
 
-    It turns a joint about 0.2 rad per action; an arm that then falls behind its waypoints is
-    one that something stopped.
+    Nominal joint changes stay within JOINT_STEP_RAD. This bounds target spacing,
+    not measured speed or acceleration; tracking lag alone does not identify contact.
     """
 
     out: list[list[float]] = []
@@ -389,11 +389,11 @@ def move_pose(
     """Move one arm's grasp point to ``xyz`` and an orientation: the tool behind ``move_to``.
 
     ``pitch`` / ``yaw`` / ``roll`` in degrees (:mod:`.robodojo_kinematics`); an angle left None
-    keeps its current value, so a plain position move no longer turns the wrist.  The two
-    fingers are interchangeable, so the target turned half a turn about the pointing axis is
-    tried too and the one needing less joint travel is taken.  ``path``: ``"line"`` moves the
-    grasp point along a straight line (waypoints every 2.5 cm or 8 degrees, each solved from the
-    last), ``"joint"`` swings the joints straight to the solution, ``"auto"`` takes the line and
+    keeps its current value in the target. With an explicit
+    orientation and an empty open gripper, the equivalent pose turned half a turn about the
+    pointing axis is also considered. ``path``: ``"line"`` moves the
+    grasp point along a straight line (nominal waypoints at most 2 cm / 8 degrees apart, solved
+    from the last), ``"joint"`` swings the joints to the solution, ``"auto"`` takes the line and
     falls back to the swing when the line cannot be followed.  Nothing moves when the target is
     out of reach or the motion would take the arm into the table: the result says why.
     """
@@ -418,9 +418,11 @@ def move_pose(
     # the half-turned pose turns the object (172 of 3373 moves made holding something arrived
     # turned 180 degrees: pours tipped the wrong way, a laptop stood up upside down).
     empty = _opening(state, arm) >= OPEN_FOR_HALF_TURN and grip != 0.0
+    # A position-only target keeps the current orientation, including after release.
+    may_flip = empty and any(angle is not None for angle in (pitch, yaw, roll))
     options = []
     first_why: str | None = None
-    for t in (target, flipped) if empty else (target,):
+    for t in (target, flipped) if may_flip else (target,):
         ways, taken, why, note = _plan(arm, q, t, path, start_joints)
         if why is None:
             travel = float(np.sum(np.abs(np.asarray(ways[-1]) - np.asarray(q))))
@@ -506,7 +508,10 @@ def move_pose(
     planned = kin.tcp(kin.fk(arm, final_q))
     lag_m = float(np.linalg.norm(np.asarray(kin.tcp(kin.fk(arm, q_now))) - planned))
     if lag_m > 0.005 and not _spent(status):
-        result["blocked"] = "the arm stopped short of the planned pose: something is in the way"
+        result["blocked"] = (
+            "measured TCP is over 5 mm from the planned endpoint after execution; "
+            "tracking lag, contact not established"
+        )
     return result
 
 
@@ -578,7 +583,7 @@ def home(
     goes straight up by HOME_LIFT_M (or less, where the line ends sooner), orientation kept.
 
     The same joint action as ``move_pose``, the other arm held where it is and each gripper
-    commanded its measured opening, with the joint target given instead of solved for.  The
+    retaining its last command, with the joint target given instead of solved for. The
     simulator moves a joint about 0.2 rad in one action: a return from a short reach took 5,
     and of 135 returns in one sweep half were still under way after 10 (the limit then).
     """

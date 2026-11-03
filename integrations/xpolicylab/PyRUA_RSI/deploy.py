@@ -25,6 +25,84 @@ import uuid
 from typing import Any
 
 
+def _motion_backend(task_env: Any) -> dict[str, Any] | None:
+    """Declare only the RoboDojo substep path this adapter can actually execute."""
+    manager = getattr(task_env, "obs_manager", None)
+    dt = getattr(manager, "dt", None)
+    count = getattr(manager, "collect_interval", None)
+    sim = getattr(task_env, "sim", None)
+    decimation = getattr(getattr(sim, "cfg", None), "decimation", None)
+    robots = getattr(task_env, "robot_manager", None)
+    try:
+        names = {robots.process_name(r.arm_name): len(r.arm_joint_indices)
+                 for r in robots.robot_list if r.type == "target"}
+    except (AttributeError, TypeError):
+        return None
+    if (names != {"left_arm_joint_state": 6, "right_arm_joint_state": 6}
+            or not callable(getattr(task_env, "process_control_info", None))
+            or not callable(getattr(robots, "control_robot", None))
+            or decimation != 1
+            or type(dt) not in (int, float) or not math.isfinite(dt) or not 0 < dt <= 1
+            or type(count) not in (int, float) or not math.isfinite(count)
+            or count != int(count) or not 1 <= count <= 1000):
+        return None
+    return dict(schema="robodojo_joint_substeps_v1", physics_dt_s=float(dt),
+                substeps=int(count), time_domain="simulation", position_velocity_targets=True)
+
+
+def _take_action(task_env: Any, action: dict[str, Any]) -> None:
+    """Execute one native tick, preserving gripper and support-arm processing.
+
+    Explicit substeps replace the native arm interpolation/hold only for this
+    call. The simulator remains responsible for physics and episode accounting.
+    No trajectory field is ever silently discarded by an unsupported client.
+    """
+    action = dict(action)
+    trajectory = action.pop("__pyrualean_trajectory__", None)
+    if trajectory is None:
+        task_env.take_action(action)
+        return
+    capability = _motion_backend(task_env)
+    if capability is None:
+        raise ValueError("timed joint trajectories are unsupported by this environment")
+    if (not isinstance(trajectory, dict) or trajectory.get("schema") != capability["schema"]
+            or trajectory.get("physics_dt_s") != capability["physics_dt_s"]):
+        raise ValueError("trajectory clock/schema does not match the live environment")
+    positions, velocities = trajectory.get("positions"), trajectory.get("velocities")
+    for values in (positions, velocities):
+        if (not isinstance(values, list) or len(values) != capability["substeps"]
+                or any(not isinstance(row, list) or len(row) != 12
+                       or any(type(v) not in (int, float) or not math.isfinite(v) for v in row)
+                       for row in values)):
+            raise ValueError("trajectory requires finite 12-joint samples at every substep")
+    keys = ("left_arm_joint_state", "right_arm_joint_state")
+    for i, key in enumerate(keys):
+        if list(action.get(key, [])) != positions[-1][i * 6:(i + 1) * 6]:
+            raise ValueError("trajectory endpoint differs from native action")
+    original = task_env.process_control_info
+    previous = vars(task_env).get("process_control_info")
+    had_override = "process_control_info" in vars(task_env)
+
+    def expand(control_info, env_idx):
+        sequence = original(control_info, env_idx)
+        if len(sequence) != capability["substeps"]:
+            raise ValueError("native interpolation length changed")
+        for step, position, velocity in zip(sequence, positions, velocities, strict=True):
+            for i, key in enumerate(keys):
+                step[key] = dict(position=position[i * 6:(i + 1) * 6],
+                                 velocity=velocity[i * 6:(i + 1) * 6])
+        return sequence
+
+    task_env.process_control_info = expand
+    try:
+        task_env.take_action(action)
+    finally:
+        if had_override:
+            task_env.process_control_info = previous
+        else:
+            del task_env.process_control_info
+
+
 def _capture_observation(task_env: Any) -> tuple[dict[str, Any], dict[str, Any]]:
     """Acquire current camera buffers with a bounded, read-only render fence.
 
@@ -158,6 +236,9 @@ def _capture_observation(task_env: Any) -> tuple[dict[str, Any], dict[str, Any]]
 
 def _status(task_env: Any, env_idx: int = 0) -> dict[str, Any]:
     info: dict[str, Any] = {}
+    motion = _motion_backend(task_env)
+    if motion is not None:
+        info["motion_backend"] = motion
     # RoboDojo's environment counts per environment; XPolicyLab's debug environment has one
     # counter and its own names
     taken = getattr(task_env, "take_action_cnt", None)
@@ -258,7 +339,7 @@ def eval_one_episode(TASK_ENV: Any, model_client: Any) -> None:
                     receipt = {key: request.get(key) for key in
                                ("session_id", "action_id", "native_action_id")}
                     receipt["status"] = "unknown"
-                TASK_ENV.take_action(action)
+                _take_action(TASK_ENV, action)
                 if receipt is not None:
                     receipt["status"] = "completed"
                 if TASK_ENV.is_episode_end():

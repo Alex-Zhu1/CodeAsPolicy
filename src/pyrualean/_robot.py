@@ -118,6 +118,7 @@ class RobotBase(InteractionMixin, PerceptionMixin):
         )
         self._supervisor: Any = None
         self._execution_budget: Any = None
+        self._episode_deadline: float | None = None
         # Increases on every attempted motion, even when a controller fails.
         # Failed calls may have changed the scene without reporting steps.
         self._action_revision = 0
@@ -280,6 +281,8 @@ class RobotBase(InteractionMixin, PerceptionMixin):
         return self._last_state
 
     def _guard(self) -> None:
+        if self._episode_deadline is not None and time.time() >= self._episode_deadline:
+            self._stop_episode("timeout")
         if self._stop_reason is not None:
             raise EpisodeFinished(self._stop_reason)
         if self._done:
@@ -401,6 +404,7 @@ class RobotBase(InteractionMixin, PerceptionMixin):
             raise
         finally:
             record.receipt = self.action_receipt(context["action_id"])
+            self._persist_action(context["action_id"])
             record.elapsed_s = time.perf_counter() - started
             steps_after = self._backend.env_steps()
             if steps_before is not None and steps_after is not None:

@@ -264,6 +264,7 @@ class Bridge:
             status = dict(self._status)
             if self._over is not None:
                 status["over"] = True
+                status["native_step_limit"] = status.get("step_limit")
                 # nothing more can be done: the budget is what has been spent
                 status["step_limit"] = status.get("step", 0)
             return status

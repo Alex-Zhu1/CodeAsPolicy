@@ -374,6 +374,7 @@ class NativeToolkit:
         start = {arm: tools._joints(obs.get("state") or {}, arm) for arm in tools.ARMS}
         self._tools: dict[str, Callable[..., dict[str, Any]]] = {
             "move_pose": partial(tools.move_pose, self._primitives, start),
+            "preview_move_pose": partial(tools.preview_move_pose, self._primitives, start),
             "grip": partial(tools.grip, self._primitives),
             "home": partial(tools.home, self._primitives, start),
             "locate": partial(tools.locate, self._primitives),

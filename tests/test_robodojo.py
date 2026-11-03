@@ -917,7 +917,7 @@ def test_api_reference_lists_every_public_method_and_result_type():
     assert "robo.CLOSE = 1" in text and "robo.OPEN = -1" in text and "robo.KEEP = 0" in text
     assert "RESULT_TYPES" not in text and "SUMMARY_KEYS" not in text and "CAMERAS" not in text
     assert "    pitch: float | None = None,\n    yaw: float | None = None,\n" in text
-    assert "    path: str = 'auto',\n) -> Move" in text
+    assert "    path: str = 'auto',\n    *,\n    motion: MotionProfile | MotionWindow | str | None = None," in text
     assert "robo.home(arm: str = 'both') -> Home" in text
     assert (
         "robo.pi0_pick(\n    prompt: str | None = None,\n    arm: str = 'right',\n"
@@ -1041,7 +1041,7 @@ def test_arm_toolkit_attaches_the_three_views_and_never_terminates(rd_backend, t
     assert "episode_done" not in after.result and after.result["moved"] is False
     finished = kit.execute_tool("finish", {"status": "success", "summary": "bottle is in the bin"})
     assert {k: v for k, v in finished.result.items()
-            if k not in ("observation", "handoff", "action_receipts")} == {
+            if k not in ("observation", "handoff", "action_receipts", "execution")} == {
         "ok": True, "status": "success", "summary": "bottle is in the bin",
     }
     assert "environment_terminated" not in finished.result
@@ -1161,10 +1161,13 @@ def test_dump_card_writes_json_images_and_facts(rd_backend, tmp_path):
     assert facts["right gripper initial pitch / yaw / roll"] == "0 / 0 / 0 deg"
     assert facts["left gripper opening"] == "1.00 (1 = open, 0 = closed)"
     assert facts["native action budget"].startswith("120 ")
+    assert facts["motion capabilities at episode start"]["force_control"] is False
     text = card.render()
     assert "- robot: robodojo" in text and "- variant: arx_x5" in text
     assert "`robo.image('cam_head')`" in text and "step 0 of your run" in text
-    assert "- simulator step budget: 120" in text
+    assert "- native action budget: 120" in text
+    assert "- simulator step budget:" not in text
+    assert "RoboDojo recorded step-0 instruction, copied verbatim" in text
     assert not VLA_TOKENS.search(text) and "success" not in text
     assert TaskCard.from_json(tmp_path / "card.json") == card
 

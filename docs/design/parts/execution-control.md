@@ -5,6 +5,7 @@
 ## 状态与范围
 
 初版依据 2026-10-31 UTC 静态分析；2026-11-01 更新 native/XPL 精确回执及对账，见[闭环实施记录](../interaction-contracts.md)。
+2026-11-02（Asia/Singapore）复核当前未提交的时间参数化执行；版本、测试和任务证据边界见[仓库审查](../repository-review-20261102.md)。
 “现有实现”描述代码语义；没有据此宣称已验证真实硬件停止或实时控制保证。
 `ActionReceipt`、`CapabilityManifest`、`BudgetSnapshot` 等是待实现的目标契约草案。
 范围包括领域调用、backend、原生动作、双臂控制器与远端 Bridge 的交接。
@@ -49,6 +50,40 @@
 同步保证是共享原生动作时钟与受限跟踪，不是刚性耦合或力控。
 控制器声明的几何覆盖包含 sampled arm/table，未声明臂间或物体碰撞保证。
 动作前预留计数避免异常后退还额度，但该计数不能证明异常情况下物理动作已经发生。
+
+## 时间参数化与底层能力核对（2026-11-02）
+
+`hosts/robodojo_trajectory.py` 在既有 IK 路点上生成 C2 五次关节样条，首尾速度/加速度为零，
+用 Bernstein 导数控制点的凸包上界约束整个曲线的速度、加速度和 jerk，再对齐原生动作时长。
+所有发送子步重新检查关节范围、桌面几何；双臂还检查相对位姿及路径偏离。
+`move_both(via=...)` 一次规划所有路点，中间不插入 settle；单独调用和中断不承诺连续。
+
+核对本机 RoboDojo 源码（HEAD `ee67a1468510da7624a089164402359f2afc72c8`）：
+
+- `src/eval_client/eval_env.py::process_control_info` 原先按采集间隔的前 80% 插值、后 20% 保持。
+  `take_action_batch` 的 joint 入口只构造 position；原生动作步数按该入口累计。
+- `env/robot_manager/control_manager.py::MetaControl.get_action` 可传递 velocity；
+  `robot_manager.py::control_robot` 实际调用 position target 和 velocity target，但没有 effort 命令。
+- `env/robot_manager/robot_config/x5.py` 使用固定 stiffness/damping 的 ImplicitActuator。
+  存在 effort 上限配置，不代表策略获得了目标力、接触力反馈或阻抗调参接口。
+- 当前配置物理 dt 为 0.004 s、采集频率 25 Hz；实现从运行中的客户端读取 dt 和子步数，
+  不把这些示例值硬编码成后端能力，也不使用 RPC 耗时推断控制周期。
+
+两份独立部署的 XPL `deploy.py` 实现同一版本子步协议：验证时钟、维度和末端指令一致性，
+只替换本次动作的双臂位置/速度序列，保留夹爪、第三臂和原生计数，并在异常后恢复原处理器。
+客户端未提供验证过的协议时保持旧几何执行，显式时间/连续路径请求零运动拒绝。
+力反馈、末端力控、夹爪力控、阻抗控制均维持 false；后续接入力环需要单独扩展底层协议。
+
+验证包括独立差分检查轨迹导数上限、实际 adapter 子步展开、单/双臂 API、预算拒绝、
+不可达后续路点、跟踪中断、旧后端兼容及协议错误。测试使用理想关节仿真，
+没有据此宣称实机速度/接触力保证或已经达到参考视频效果。
+
+**验收状态：**支持协议时，普通 `move_to` / `move_both` 自动使用时间参数化路径，
+影响在线 Lean 和调用相同 API 的固定 RSI 程序；`home` / `set_gripper` 未统一进入该样条。
+`Move` 现在区分 `status`、`planned_path`、实际 `path`、`stop_reason` 和 `trajectory`，
+零步拒绝不声称执行过路径。历史约定修复轮 score=75 不含此执行增量，不能作为新路径验收。
+下一步需要真实客户端/仿真跟踪、预算与取消故障验证，以及完整任务和代表 RSI 程序回归；
+当前测试通过只支持已覆盖的协议和理想关节行为。
 
 ## 待补齐契约
 

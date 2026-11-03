@@ -228,7 +228,29 @@ def api_reference(
         sections.append(
             "Write cooperation strategy in Python: choose arm roles, targets, release timing, "
             "conditions and bounded repairs from current observations. Use move_both for true "
-            "simultaneous movement; compose it freely with move_to and set_gripper. Test "
+            "simultaneous movement; compose it freely with move_to and set_gripper. "
+            "Read motion_capabilities before requesting timed motion. A motion_profile "
+            "limits joint command derivatives; move_both(via=...) connects targets in "
+            "one route. Prefer motion='native' for observed clear empty-hand travel and for clear "
+            "straight transport after a broad stable grasp is verified (no C2 guarantee). 'transit' offers smooth travel. "
+            "Use 'approach' "
+            "for the last approach, 'carry' for delicate held objects and 'precision' near contact. "
+            "Use motion_window(far='transit', near='approach', distance_m=0.02) to "
+            "slow only the final path region without stopping at the boundary; "
+            "at='start' slows departure. For supported placement choose far='carry', "
+            "near='precision'. Verify grasp with a short lift before longer carrying. "
+            "Choose a broad stable donor grasp before planning a handoff; do not rely on a thin-tip pinch just to expose the other end. Preserve "
+            "orientation along path='line'; joint swings may rotate and lose the object. The receiver must approach exposed material clear of donor fingers; include finger width and opening, not just TCP distance. Preposition outside this region, narrow the opening when useful, and use approach/precision for the final 1–2 cm after a wrist-view check. "
+            "move_to/move_both(preview=True) plans without movement: inspect accepted, "
+            "planned_steps (and trajectory timing for smooth motion) before costly travel; reserve "
+            "budget for subsequent manipulation. A preview is not an execution permit. "
+            "Plan the remaining manipulation and return allowance before grasping; "
+            "preposition a receiving arm and choose a mutually reachable handoff region "
+            "when cooperation is needed. Each preview starts from the CURRENT state, "
+            "so separate previews are not a simulated future sequence. "
+            "Within a call, the executor provides "
+            "one continuous trajectory for timed profiles when supported. Split at required observations "
+            "or release decisions. No force control is provided by current adapters. Test "
             "DualMove.reached and inspect recoverable failures before dependent actions. "
             "CoordinationPause(BaseException) stops code on critical execution faults/limits; "
             "SupervisionPause stops code when declared visual checks require review. Do not "
@@ -280,9 +302,10 @@ def knowledge_text(name: str = "libero", primitives: str = "full") -> str:
 class TaskCard:
     """What the policy author is told about one evaluation cell.
 
-    Everything here is available to RPent's agent too (through its first
-    ``view_env_state`` call); nothing privileged such as object poses is
-    included.
+    The host assembles benchmark instructions, public observations and optional
+    executor capabilities. Sources can identify native data, derived values and
+    configuration fallbacks. The planner does not author the card; no privileged
+    object poses or evaluator verdicts are included.
     """
 
     suite: str
@@ -306,6 +329,12 @@ class TaskCard:
     #: Robot-specific initial facts rendered as extra bullets (non-LIBERO
     #: robots put their identifiers and initial pose here).
     facts: dict[str, Any] = field(default_factory=dict)
+    #: Origin of host-assembled fields; optional for older cards and other robots.
+    sources: dict[str, str] = field(default_factory=dict)
+    #: Unrounded public robot measurements used to derive the displayed initial facts.
+    initial_state: dict[str, Any] = field(default_factory=dict)
+    #: Source identifiers, clock domains and artifact digests retained in card.json.
+    provenance: dict[str, Any] = field(default_factory=dict)
 
     def to_json(self) -> str:
         return json.dumps(self.__dict__, indent=2, ensure_ascii=False)
@@ -316,9 +345,10 @@ class TaskCard:
         known = {f.name for f in fields(cls)}
         return cls(**{k: v for k, v in data.items() if k in known})
 
-    def render(self) -> str:
+    def render(self, *, compact: bool = False) -> str:
+        """Render full audit detail, or a concise startup view without changing stored data."""
         if self.robot != "libero" or self.eef_pos is None or self.gripper_opening is None:
-            return self._render_generic()
+            return self._render_generic(compact=compact and self.robot.startswith("robodojo"))
         eef = ", ".join(f"{v:.3f}" for v in self.eef_pos)
         lines = [
             "# Task card",
@@ -356,7 +386,7 @@ class TaskCard:
                 )
         return "\n".join(lines)
 
-    def _render_generic(self) -> str:
+    def _render_generic(self, *, compact: bool = False) -> str:
         """Card of a non-LIBERO robot: identifiers, instruction, facts, images."""
 
         lines = [
@@ -372,9 +402,25 @@ class TaskCard:
         ]
         if self.object_names:
             lines.append(f"- objects named by the benchmark: {', '.join(self.object_names)}")
+        if not compact:
+            for key, value in self.sources.items():
+                lines.append(f"- source of {key}: {value}")
         for key, value in self.facts.items():
-            lines.append(f"- {key}: {value}")
-        lines.append(f"- simulator step budget: {self.max_env_steps}")
+            if compact and key == "motion capabilities at episode start":
+                lines.extend(self._motion_summary(value))
+                continue
+            if isinstance(value, dict):
+                lines.append(f"- {key}:\n\n```json\n"
+                             + json.dumps(value, indent=2, ensure_ascii=False) + "\n```\n")
+            else:
+                lines.append(f"- {key}: {value}")
+        if "native action budget" not in self.facts:
+            lines.append(f"- simulator step budget: {self.max_env_steps}")
+        if compact:
+            lines.extend(self._startup_summary())
+        elif self.provenance:
+            lines.append("\nTask-card provenance:\n\n```json\n"
+                         + json.dumps(self.provenance, indent=2, ensure_ascii=False) + "\n```\n")
         if self.images:
             names = ", ".join(f"{k} ({Path(v).name})" for k, v in self.images.items())
             cameras = ", ".join(f"`robo.image({k!r})`" for k in self.images)
@@ -385,12 +431,74 @@ class TaskCard:
                     "other seeds where objects are placed differently, so do "
                     "not hard-code pixels or world positions read off them."
                 )
+            elif compact:
+                lines.append(f"- initial images: {names}; copied from recorded step 0.")
             else:
                 lines.append(
                     f"- attached images: {names}. They are step 0 of your run, "
                     f"exactly what {cameras} return before any motion."
                 )
         return "\n".join(lines)
+
+    @staticmethod
+    def _motion_summary(caps: dict) -> list[str]:
+        def flag(name):
+            value = caps.get(name)
+            return "yes" if value is True else "no" if value is False else "unknown"
+
+        lines = [f"- timed joint commands: {flag('speed_control')}; "
+                 f"continuous via trajectory: {flag('continuous_trajectory')}"]
+        if caps.get("speed_control") is True:
+            defaults = caps.get("trajectory_defaults") or {}
+            values = ", ".join(f"{name}={defaults.get(name, 'unknown')} {unit}"
+                               for name, unit in (("velocity", "rad/s"),
+                                                  ("acceleration", "rad/s²"), ("jerk", "rad/s³")))
+            lines.append(f"- default joint-command limits: {values}; "
+                         "simulation time, no measured-speed guarantee")
+            if caps.get("motion_phases"):
+                lines.append("- motion phases: transit / approach / carry / precision; "
+                             "choose explicitly from task intent and observed clearance")
+            if caps.get("motion_preview"):
+                lines.append("- move_to/move_both(preview=True): read-only step/time estimate; "
+                             "execution replans from current state")
+            if caps.get("motion_window"):
+                lines.append("- motion_window(far, near, distance_m=0.02, at='end'/'start'): "
+                             "slow only a nominal endpoint region in one continuous move")
+        lines.append("- force capabilities: " + "; ".join(
+            f"{name}={flag(name)}" for name in
+            ("force_control", "force_feedback", "gripper_force_control", "impedance_control")))
+        checks = ", ".join(caps.get("collision_checks", [])) or "unknown"
+        lines.append(f"- collision checks: {checks}; "
+                     f"inter-arm clearance={flag('inter_arm_clearance')}; "
+                     f"object collision={flag('object_collision')}")
+        return lines
+
+    def _startup_summary(self) -> list[str]:
+        source = self.provenance.get("initial_observation") or {}
+        identity = source.get("observation_id") or "unavailable"
+        native = source.get("native_steps")
+        alignment = "reported aligned" if source.get("aligned") is True else "unverified"
+        images = self.provenance.get("images") or {}
+        if any(item.get("aligned") is not True for item in images.values()):
+            alignment = "unverified"
+        if any(item.get("image_source_id") and any(
+                   state_id and state_id != item["image_source_id"]
+                   for state_id in (source.get("source_id"), item.get("image_state_source_id")))
+               for item in images.values()):
+            alignment = "mismatched"
+        lines = [f"- initial observation: {identity}; recorded step 0; native actions "
+                 f"{native if native is not None else 'unknown'}; "
+                 f"image/state alignment {alignment}"]
+        budget = self.provenance.get("budget_at_card_creation") or {}
+        if budget.get("remaining") is not None:
+            lines.append(f"- native actions remaining at card creation: {budget['remaining']}")
+        if "fallback" in self.sources.get("native action budget", ""):
+            lines.append("- budget source: configured fallback; native limit unavailable")
+        if not self.task_language:
+            lines.append("- task instruction unavailable; do not infer it from the task identifier")
+        lines.append("- startup snapshot only; use robo.state() and robo.motion_capabilities() "
+                     "for current data. Full source records are saved in card.json.")
+        return lines
 
 
 @dataclass(frozen=True)
@@ -521,7 +629,7 @@ def render_prompt(
         user = "# Task card\n(no cell selected; render with a TaskCard for a real run)"
         images: tuple[str, ...] = ()
     else:
-        user = card.render()
+        user = card.render(compact=True)
         images = tuple(card.images.values())
     return PromptBundle(system=system, user=user, images=images)
 

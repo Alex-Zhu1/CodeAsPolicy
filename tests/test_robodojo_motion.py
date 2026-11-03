@@ -389,6 +389,79 @@ def test_home_lifts_first_then_brings_both_arms_back(sim):
     assert env.joints["right"] == pytest.approx([0.0] * 6, abs=tools.HOME_TOL_RAD)
 
 
+def test_home_withdraws_after_side_release_and_resumes_remaining_distance(sim):
+    env, prims, start = sim
+    assert tools.move_pose(prims, start, [.25, -.15, .92], arm="right", pitch=0)["reached"]
+    env.block["right"] = .4
+    assert tools.grip(prims, "right", 1)["holding"]
+    tools.grip(prims, "right", -1)
+    release = prims._release_poses["right"].copy()
+    # Vertical motion did not withdraw a side-facing gripper from its object.
+    assert tools.move_pose(prims, start, [.25, -.15, .95], arm="right")["reached"]
+    saved_limit = env.step_limit
+    env.step_limit = env.step_count + 1
+    partial = tools.home(prims, start, arm="right", lift=False)
+    assert not partial["reached"] and partial["stop_reason"] == "episode_native_step_budget"
+    assert partial["steps_used"] == 1
+    offset = tools._pose_of("right", env.joints["right"])[:3, 3] - release[:3, 3]
+    already = float(offset @ -release[:3, 0])
+    assert 0 < already < .055
+    env.step_limit = saved_limit
+    done = tools.home(prims, start, arm="right", lift=False)
+    assert done["reached"]
+    assert done["clearance_retreat_m"]["right"] == pytest.approx(.06 - already, abs=.002)
+
+
+def test_home_does_not_swing_when_release_retreat_is_unreachable(sim, monkeypatch):
+    env, prims, start = sim
+    assert tools.move_pose(prims, start, [.25, -.15, .92], arm="right", pitch=0)["reached"]
+    env.block["right"] = .4
+    tools.grip(prims, "right", 1)
+    tools.grip(prims, "right", -1)
+    before = len(env.actions)
+    monkeypatch.setattr(kin, "line_path", lambda *args: ([], "unreachable"))
+    result = tools.home(prims, start, arm="right")
+    assert not result["reached"] and result["stop_reason"] == "release_clearance_required"
+    assert result["steps_used"] == 0 and len(env.actions) == before
+
+
+def test_home_after_release_returns_above_origin_before_swinging_joints(sim):
+    env, prims, start = sim
+    assert tools.move_pose(prims, start, [-.45, .07, 1.055], arm="left", pitch=0)["reached"]
+    env.block["left"] = .4
+    tools.grip(prims, "left", 1)
+    tools.grip(prims, "left", -1)
+    release = prims._release_poses["left"].copy()
+    withdrawn = release[:3, 3] - .065 * release[:3, 0]
+    assert tools.move_pose(prims, start, withdrawn, arm="left", path="line")["reached"]
+    assert "left" not in prims._release_poses
+    assert "left" in prims._home_after_release
+    before = len(env.actions)
+    height = tools._pose_of("left", env.joints["left"])[2, 3]
+    result = tools.home(prims, start, arm="left")
+    assert result["reached"]
+    actions = env.actions[before:]
+    swing = next(i for i, a in enumerate(actions) if a["left_arm_joint_state"] == start["left"])
+    assert swing > 0
+    poses = [tools._pose_of("left", a["left_arm_joint_state"]) for a in actions[:swing]]
+    assert min(p[2, 3] for p in poses) >= height - .003
+    origin = tools._pose_of("left", start["left"])
+    assert poses[-1][:2, 3] == pytest.approx(origin[:2, 3], abs=.003)
+    assert "left" not in prims._home_after_release
+
+
+def test_home_without_release_keeps_original_joint_return(sim):
+    env, prims, start = sim
+    assert tools.move_pose(prims, start, [-.45, .07, 1.055], arm="left", pitch=0)["reached"]
+    before = len(env.actions)
+    result = tools.home(prims, start, arm="left")
+    assert result["reached"]
+    # Above the old lift threshold, ordinary home commands the original joint
+    # target directly. No unrequested Cartesian detour changes the return.
+    assert all(a["left_arm_joint_state"] == start["left"] for a in env.actions[before:])
+    assert "staging_height_m" not in result
+
+
 # -- perception ------------------------------------------------------------------
 
 TABLE_DEPTH = 1.0  # the camera is 1 m above the table, looking straight down
@@ -740,13 +813,14 @@ def test_register_adds_motion_and_coordination_tools_with_readonly_planning(sim)
     coordination = {f"motion_{n}" for n in (
         "capabilities", "observe", "plan", "execute", "stop", "discard"
     )}
-    assert set(added) == {"move_pose", "grip", "locate", "home"} | coordination
+    assert set(added) == {"move_pose", "preview_move_pose", "grip", "locate", "home"} | coordination
+    assert added["preview_move_pose"][1].func._readonly is True
     for name, (spec, handler) in added.items():
         if name not in coordination:
             assert spec is tools.SPECS[name]
         assert spec["name"] == name and "input_schema" in spec
         # RPent's own test of read-only handlers: unwrap partials, read ``_readonly``
-        readonly = name == "locate" or (name in coordination and name != "motion_execute")
+        readonly = name in {"locate", "preview_move_pose"} or (name in coordination and name != "motion_execute")
         assert getattr(handler.func, "_readonly", False) is readonly
     env.joints["left"] = [0.5, 0.5, 0.0, 0.0, 0.0, 0.0]
     assert added["home"][1](arm="left")["reached"]

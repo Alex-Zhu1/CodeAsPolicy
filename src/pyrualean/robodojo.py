@@ -49,6 +49,7 @@ from typing import Any, ClassVar
 
 from ._robot import RobotBase
 from .coordination import CoordinationMixin
+from .motion import MotionProfile, MotionWindow, resolve_motion
 from .perception import PerceptionResult
 from .robots import RobotAdapter
 
@@ -113,8 +114,9 @@ class State:
         recorded after every motion call.
     task: the task instruction given by the benchmark (authoritative).
     left / right: the two arms (``state.arm("left")`` picks one by name).
-    truncated: the native-action budget of the episode is exhausted; no
-        further motion is possible.
+    truncated: the native-action budget is exhausted or the environment has
+        ended the episode; no further motion is possible. This is not a task
+        success verdict.
     """
 
     step: int
@@ -138,25 +140,32 @@ class Move:
     target_xyz: the requested grasp-point position.
     start_xyz / final_xyz: where the grasp point was before and after.
     dist_to_target_m: distance from ``final_xyz`` to ``target_xyz``.
-    orientation_error_deg: how far the final orientation is from the one asked
-        (the angles passed, the others as they were).
+    orientation_error_deg: error against the selected orientation; this may be
+        an equivalent half-turn or nearby solution described in note.
     pitch / yaw / roll: the orientation the gripper ended with, degrees.
-    reached: within 0.01 m and 5 degrees of the target.
-    path: ``"line"`` (the grasp point moved along a straight line),
-        ``"joint"`` (the joints swung straight to the solution) or None
-        (nothing moved).
-    ik_error: why nothing moved (the pose is out of reach, or every way there
-        goes through the table), or None.  An out-of-reach target names the
-        nearby poses that ARE reachable (a less steep pitch here, or this
-        orientation higher or lower).
-    note: set when the exact pose was out of reach but one within 2 cm and
-        8 degrees was not: the arm went there instead (``dist_to_target_m``
-        and ``orientation_error_deg`` say how far off it is).
+    reached: within 0.01 m of target_xyz and 5 degrees of the selected target
+        orientation, without a timed tracking interruption.
+    status: completed, rejected (zero native actions), or partial (actions
+        executed but not reached). This is motion status, not task success.
+    planned_path: selected geometry, "line" or "joint", even if timing rejects
+        it; None if no path was selected.
+    path: executed geometry, "line" or "joint"; None when steps_used is zero.
+        A non-None path does not mean that the whole path completed.
+    stop_reason: None on completion; otherwise ik_path_rejected,
+        unsupported_timed_trajectory, timed_path_exceeds_native_step_budget,
+        trajectory_validation_failed, tracking_error, episode_native_step_budget
+        or final_target_not_reached. Inspect this before choosing a correction.
+    ik_error: geometric preflight detail (unreachable pose/path or table
+        collision), otherwise None. It is not used for timing/budget refusals.
+        An unreachable target may name nearby reachable alternatives.
+    note: extra planning/execution detail, including timing refusal or selection
+        of a nearby pose (within 2 cm / 8 degrees) or equivalent empty-gripper
+        orientation. It is not evidence that a selected pose was reached.
     blocked: the measured TCP is over 5 mm from the planned endpoint after
         execution, with budget remaining. This is a tracking-lag heuristic,
         not a contact sensor or proof of an obstacle; inspect the actual scene.
     steps_used: native actions consumed.
-    truncated: the native-action budget ran out.
+    truncated: the budget ran out or the environment ended the episode.
     """
 
     arm: str
@@ -175,6 +184,10 @@ class Move:
     blocked: bool
     steps_used: int
     truncated: bool
+    trajectory: dict | None = None
+    status: str = "rejected"
+    planned_path: str | None = None
+    stop_reason: str | None = None
 
 
 @dataclass(frozen=True)
@@ -186,7 +199,7 @@ class Home:
         angle it had when the episode started.
     max_joint_error_rad: the largest difference that remains.
     steps_used: native actions consumed.
-    truncated: the native-action budget ran out.
+    truncated: the budget ran out or the environment ended the episode.
     """
 
     arm: str
@@ -194,6 +207,9 @@ class Home:
     max_joint_error_rad: float
     steps_used: int
     truncated: bool
+    stop_reason: str | None = None
+    note: str | None = None
+    clearance_retreat_m: dict[str, float] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -211,7 +227,7 @@ class Gripper:
     steps_used: native actions consumed.
     step / step_limit: native actions executed so far and the episode budget
         (None if the runtime did not report them).
-    truncated: the native-action budget ran out.
+    truncated: the budget ran out or the environment ended the episode.
     """
 
     arm: str
@@ -652,8 +668,14 @@ class RobodojoRobot(CoordinationMixin, RobotBase):
         "orientation_error_deg",
         "final_xyz",
         "path",
+        "planned_path",
+        "status",
+        "stop_reason",
+        "recoverable",
+        "note",
         "blocked",
         "steps_used",
+        "trajectory",
         "max_joint_error_rad",
         "holding",
         "opening",
@@ -1042,7 +1064,10 @@ class RobodojoRobot(CoordinationMixin, RobotBase):
         yaw: float | None = None,
         roll: float | None = None,
         path: str = "auto",
-    ) -> Move:
+        *,
+        motion: MotionProfile | MotionWindow | str | None = None,
+        preview: bool = False,
+    ) -> Move | dict:
         """Move one arm's grasp point to a world position, with an orientation.
 
         The grasp point is the middle of the finger pads (``tcp_pos``).  The
@@ -1075,8 +1100,38 @@ class RobodojoRobot(CoordinationMixin, RobotBase):
                 or ``"joint"`` (swing the joints: fewer actions, but the grasp
                 point does not follow a line and orientation may change en
                 route even if the target preserves it: not near objects).
+            motion: 'native' uses the original simulator waypoint execution
+                (no C2/derivative guarantees); prefer it for observed clear
+                empty-hand travel and clear, orientation-preserving transport
+                after a broad stable grasp is verified. 'transit' is the smooth travel alternative;
+                'approach' for the
+                final approach, 'carry' for delicate held-object transport, 'precision'
+                for placement/insertion, or robo.motion_profile(velocity, acceleration, jerk), in
+                rad/s, rad/s², rad/s³. On timed backends, omitted uses defaults;
+                legacy hosts retain geometric stepping. Explicit limits require
+                timed substep support and otherwise reject without movement.
+                One call ramps from/to rest; use move_both(via=...) to connect
+                multiple targets in a single continuous joint trajectory.
+                trajectory reports simulation timing and command bounds, not
+                measured speed or force. Tracking misses interrupt both native
+                and timed moves before later waypoints or endpoint settling.
+                Select phases from task intent and current observations, not
+                gripper opening alone. Omitted limits remain 1/4/40. Explicit
+                carry is faster. motion_window(far='transit', near='approach',
+                distance_m=0.02) slows only the last nominal path region in
+                the same C2 move. at='start' slows departure before speeding up.
+                Use far='carry', near='precision' for a placement approach.
+            preview: True returns a read-only planning dict with accepted,
+                trajectory.planned_steps, planned_duration_s, limiting_factor
+                and budget information. Neither arms nor grippers move. An
+                over-budget rejection keeps its estimate. Execution always
+                replans from current state; a preview grants no motion permission.
         Returns:
-            Move; test ``reached`` (within 0.01 m and 5 degrees).  ``blocked``
+            A planning dict when preview=True, otherwise Move; inspect
+            status/stop_reason and test ``reached``. A rejected
+            move consumes zero native actions and path is None; planned_path
+            may still name the selected geometry. ``ik_error`` only describes
+            geometry refusals, never timing support or budget failures. ``blocked``
             flags tracking lag, not confirmed contact. Inspect the actual
             endpoint and scene before a dependent action or retry.
         Raises:
@@ -1088,10 +1143,17 @@ class RobodojoRobot(CoordinationMixin, RobotBase):
         if path not in ("auto", "line", "joint"):
             raise ValueError(f"path must be 'auto', 'line' or 'joint', got {path!r}")
         kwargs: dict[str, Any] = {"xyz": list(target), "arm": arm, "gripper": command, "path": path}
+        motion = resolve_motion(motion)
+        if type(preview) is not bool:
+            raise ValueError("preview must be bool")
+        if motion is not None:
+            kwargs["motion"] = motion.payload()
         for name, value in (("pitch", pitch), ("yaw", yaw), ("roll", roll)):
             angle = _angle(value, name)
             if angle is not None:
                 kwargs[name] = angle
+        if preview:
+            return self._readonly("preview_move_pose", kwargs)
         return self._stateful("move_pose", kwargs, lambda p: self._move(arm, target, p))
 
     def set_gripper(self, arm: str, gripper: int, opening: float | None = None) -> Gripper:
@@ -1150,10 +1212,19 @@ class RobodojoRobot(CoordinationMixin, RobotBase):
     def home(self, arm: str = "both") -> Home:
         """Return an arm to the joint angles it had when the episode started.
 
-        A grasp point lower than 1.0 m first goes straight up by up to 6 cm;
-        then each native action commands the starting angles directly, so the
-        arm swings straight back: no IK and no path planning beyond that lift
-        (clear tall things yourself).  The call returns when every joint is
+        Near a recorded release, first withdraw along the gripper's negative
+        pointing axis until 6 cm behind the release plane, keeping orientation.
+        A partial withdrawal resumes from the measured pose. If this line is
+        blocked or unreachable, return incomplete without swinging. This local
+        guard does not detect objects along the rest of the home path.
+        A grasp point lower than 1.0 m then goes straight up by up to 6 cm;
+        after releasing a held object, it then follows a Cartesian line above
+        the starting TCP at that cleared height before the joint return. This
+        protection persists after finger retreat until homed or a new close command.
+        Ordinary home keeps the original lift/joint route. An unreachable or
+        incomplete staging line stops the call.
+        Clear tall things yourself: there is no scene collision checking.
+        The call returns when every joint is
         within 0.01 rad or after 25 actions of the swing. The gripper retains
         its last command; an arm that is not named holds its joints. Most
         tasks count as done only with both arms back where they started.
@@ -1177,6 +1248,9 @@ class RobodojoRobot(CoordinationMixin, RobotBase):
                 max_joint_error_rad=float(p.get("max_joint_error_rad", math.inf)),
                 steps_used=int(p.get("steps_used", 0)),
                 truncated=self._latest_state().truncated,
+                stop_reason=p.get("stop_reason"),
+                note=p.get("note"),
+                clearance_retreat_m=dict(p.get("clearance_retreat_m") or {}),
             )
 
         return self._stateful("home", {"arm": which}, build)
@@ -1191,6 +1265,12 @@ class RobodojoRobot(CoordinationMixin, RobotBase):
     def _move(self, arm: str, target: tuple[float, ...], p: dict[str, Any]) -> Move:
         commanded = p.get("target_xyz")
         angles = p.get("final_angles") or {}
+        steps = int(p.get("steps_used", 0))
+        reached = bool(p.get("reached"))
+        planned = p.get("planned_path", p.get("path"))
+        reason = p.get("stop_reason")
+        if reason is None and not reached:  # older geometric hosts
+            reason = "ik_path_rejected" if p.get("ik_error") else "final_target_not_reached"
         return Move(
             arm=str(p.get("arm", arm)),
             target_xyz=_tuple3(commanded if commanded is not None else target),
@@ -1201,13 +1281,18 @@ class RobodojoRobot(CoordinationMixin, RobotBase):
             pitch=float(angles.get("pitch", math.nan)),
             yaw=float(angles.get("yaw", math.nan)),
             roll=float(angles.get("roll", math.nan)),
-            reached=bool(p.get("reached")),
-            path=str(p["path"]) if p.get("path") else None,
+            reached=reached,
+            path=str(p["path"]) if steps and p.get("path") else None,
             ik_error=str(p["ik_error"]) if p.get("ik_error") else None,
             note=str(p["note"]) if p.get("note") else None,
             blocked=bool(p.get("blocked")),
-            steps_used=int(p.get("steps_used", 0)),
+            steps_used=steps,
             truncated=self._latest_state().truncated,
+            trajectory=p.get("trajectory"),
+            status=p.get("status") or ("completed" if reached else
+                                       "partial" if steps else "rejected"),
+            planned_path=str(planned) if planned else None,
+            stop_reason=reason,
         )
 
     def _state_from_envelope(self, envelope: dict[str, Any]) -> State:

@@ -57,10 +57,10 @@ from pathlib import Path
 from typing import Any
 
 from ..prompt import TaskCard
-from ..robodojo import _arm_state
 from . import robodojo_tools as tools
+from .robodojo_card import build_card
 from .robodojo_native import CAMERAS, NativeBackend, NativeToolkit
-from .rpent_robodojo import Cell, _fmt, _opening, add_cell_args, cell_from_args
+from .rpent_robodojo import Cell, add_cell_args, cell_from_args
 from .xpolicylab_bridge import Bridge, BridgeEnv, serve
 
 POLICY_NAME = "PyRUA_Lean"
@@ -450,36 +450,19 @@ def dump_card(toolkit: NativeToolkit, cell: Cell, out_dir: Path, robot: str = RO
     card_dir = out_dir / "card"
     card_dir.mkdir(exist_ok=True)
     images: dict[str, str] = {}
+    image_sources: dict[str, str] = {}
     for camera in CAMERAS:
         source = toolkit.state.artifact_path(f"{camera}.png", step=0)
         if source.is_file():
             target = card_dir / f"{camera}.png"
             shutil.copyfile(source, target)
             images[camera] = str(target)
-    facts: dict[str, Any] = {}
-    for arm in ("left", "right"):
-        start = _arm_state(raw, arm)
-        facts[f"{arm} arm initial grasp point [x, y, z]"] = f"{_fmt(start.tcp_pos)} m"
-        facts[f"{arm} gripper initial pitch / yaw / roll"] = (
-            f"{round(start.pitch)} / {round(start.yaw)} / {round(start.roll)} deg"
-        )
-        opening = _opening(raw.get(f"{arm}_ee_joint_state"))
-        facts[f"{arm} gripper opening"] = f"{opening:.2f} (1 = open, 0 = closed)"
-    try:
-        budget = int(toolkit._status().get("step_limit"))
-    except (TypeError, ValueError):
-        budget = cell.max_episode_steps
-    facts["native action budget"] = f"{budget} (a motion call spends one or more)"
-    card = TaskCard(
-        suite=cell.suite,
-        task=cell.task,
-        seed=cell.seed,
-        task_language=record["instruction"],
-        object_names=[],
-        images=images,
-        max_env_steps=budget,
-        robot=robot,
-        facts=facts,
+            image_sources[camera] = str(source.resolve())
+    card = build_card(
+        cell=cell, raw=raw, instruction=record["instruction"], images=images,
+        status=toolkit._status(), primitives=toolkit._primitives, robot=robot,
+        observation=record.get("observation"), image_sources=image_sources,
+        observation_artifact=str((toolkit.state.root / "0000" / "observation.json").resolve()),
     )
     (out_dir / "card.json").write_text(card.to_json() + "\n", encoding="utf-8")
     return card

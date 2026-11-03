@@ -990,7 +990,7 @@ def test_supervision_skill_is_frozen_and_hashed_even_if_boot_fails(tmp_path, mon
     assert frozen == frozen_core
     assert result["monitor"]["planning_skill"]["sha256"] == hashlib.sha256(
         frozen.encode()).hexdigest()
-    card = SimpleNamespace(max_env_steps=100, render=lambda: "TASK")
+    card = SimpleNamespace(max_env_steps=100, render=lambda **kwargs: "TASK")
     prompt = play.build_prompt("cells", card, budget_s=100, max_programs=None,
                                adapter=get_adapter("libero"),
                                monitor=MonitorConfig(mode="pause", url="http://localhost:1"),

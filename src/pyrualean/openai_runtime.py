@@ -47,6 +47,7 @@ import os
 import random
 import threading
 import time
+import uuid
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
@@ -382,6 +383,7 @@ def run_openai_agent(
     post_budget_replies = 1
     decision_id: str | None = None
     attempt_id: str | None = None
+    decision_context: dict[str, Any] = {}
 
     def remaining() -> float:
         return budget_s - (time.perf_counter() - started)
@@ -418,9 +420,10 @@ def run_openai_agent(
     def chat() -> dict[str, Any] | None:
         """One chat request with retries; ``None`` when the provider is down for good."""
 
-        nonlocal requests, decision_id, attempt_id
-        if trace is not None:
-            decision_id = trace.new_id("decision")
+        nonlocal requests, decision_id, attempt_id, decision_context
+        decision_id = trace.new_id("decision") if trace is not None else uuid.uuid4().hex
+        decision_context = dict(arm_toolkit.submission_context(), transport="openai",
+                                resume_token=arm_toolkit.resume_state(details=False)["resume_token"])
         body: dict[str, Any] = {
             "model": model,
             "messages": transcript.messages,
@@ -608,9 +611,16 @@ def run_openai_agent(
                 elif problem:
                     result = ArmResult({"error": problem})
                 else:
+                    execution_context = dict(
+                        decision_context,
+                        **(trace_contexts[index] if trace is not None else
+                           dict(decision_id=decision_id, provider_call_id=call_id)),
+                        agent_attempt_id=arm_toolkit.agent_attempt_id,
+                        invocation_id=call_id,
+                    )
                     result = _execute_with_deadline(
                         arm_toolkit, name, arguments or {}, remaining(), stop_once,
-                        trace_context=trace_contexts[index] if trace is not None else None,
+                        trace_context=execution_context,
                     )
                 # A later action in this reply was planned without seeing the
                 # failure/pause. Answer its call ID but wait for a new model

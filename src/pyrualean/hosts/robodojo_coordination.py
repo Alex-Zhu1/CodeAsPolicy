@@ -17,6 +17,7 @@ import numpy as np
 from ..coordination import Pose
 from . import robodojo_kinematics as kin
 from . import robodojo_tools as tools
+from . import robodojo_trajectory as trajectory
 
 
 def _positive(value, name, upper, *, integer=False):
@@ -42,6 +43,25 @@ def _errors(now, target):
     )
 
 
+def capabilities(primitives, *, status=None):
+    """One capability description for the live API and startup task cards."""
+    return dict(
+        modes=["synchronized"],
+        frames=["world"],
+        points=["tcp"],
+        orientation="unit quaternion [w,x,y,z]",
+        position_unit="metre",
+        grippers=["keep", "open", "close"],
+        relative_pose="sampled_path_and_native_feedback",
+        keep_initial="last command; measured opening only if no command has been recorded",
+        collision_checks=["sampled_arm_table"],
+        inter_arm_clearance=False,
+        object_collision=False,
+        **trajectory.capabilities(primitives, status=status),
+        synchronized="shared Cartesian progress; bounded measured tracking, not rigid coupling",
+    )
+
+
 class Controller:
     def __init__(self, primitives):
         self.primitives = primitives
@@ -49,22 +69,7 @@ class Controller:
         self.plans: dict[str, dict] = {}
 
     def capabilities(self):
-        return dict(
-            modes=["synchronized"],
-            frames=["world"],
-            points=["tcp"],
-            orientation="unit quaternion [w,x,y,z]",
-            position_unit="metre",
-            grippers=["keep", "open", "close"],
-            relative_pose="sampled_path_and_native_feedback",
-            keep_initial="last command; measured opening only if no command has been recorded",
-            collision_checks=["sampled_arm_table"],
-            inter_arm_clearance=False,
-            object_collision=False,
-            force_control=False,
-            speed_control=False,
-            synchronized="shared Cartesian progress; bounded measured tracking, not rigid coupling",
-        )
+        return capabilities(self.primitives)
 
     def _native_steps(self):
         get_status = getattr(self.primitives.env, "get_status", None)
@@ -121,6 +126,8 @@ class Controller:
             return "motion_timeout"
         if plan["steps"] >= plan["max_steps"]:
             return "native_step_budget"
+        if plan.get("clock") is not None and trajectory.backend(self.primitives) != plan["clock"]:
+            return "trajectory_clock_changed"
         return None
 
     def plan(
@@ -137,8 +144,13 @@ class Controller:
         max_step_deg,
         checkpoint_steps,
         require_inter_arm_clearance,
+        motion=None,
+        via=None,
+        preview=False,
     ):
         started = time.monotonic()
+        if type(preview) is not bool:
+            raise ValueError("preview must be bool")
         _positive(max_steps, "max_steps", 10000, integer=True)
         _positive(timeout_s, "timeout_s", 3600)
         _positive(checkpoint_steps, "checkpoint_steps", 8, integer=True)
@@ -155,9 +167,16 @@ class Controller:
             ("max_step_deg", max_step_deg, 8),
         ):
             _positive(value, key, upper)
+        if via is not None and (not isinstance(via, list) or len(via) > 128
+                                or any(not isinstance(v, dict) or set(v) - set(kin.ARMS)
+                                       for v in via)):
+            raise ValueError("via must contain at most 128 left/right waypoint mappings")
+        route = [*(via or []), targets]
         snap = self.observations.get(observation_id)
         current = self._snapshot()
-        goals = {a: _matrix(targets[a]) if a in targets else current["poses"][a] for a in kin.ARMS}
+        goals = dict(current["poses"])
+        for leg in route:
+            goals.update({a: _matrix(p) for a, p in leg.items()})
         limits = dict(
             position=position_tolerance_m,
             orientation=orientation_tolerance_deg,
@@ -182,85 +201,155 @@ class Controller:
         def reject(reason, *, recoverable=True):
             result = self._report(plan, "rejected", reason)
             result.update(accepted=False, recoverable=recoverable)
+            if preview:
+                result.update(preview=True, replan_before_dispatch=True)
             return result
 
         if require_inter_arm_clearance:
             return reject("unsupported: inter-arm collision geometry")
         if snap is None or not self._same(snap):
             return reject("stale_observation")
-        goals = {a: _matrix(targets[a]) if a in targets else snap["poses"][a] for a in kin.ARMS}
+        native = motion == {"mode": "native"}
+        clock = None if native else trajectory.backend(self.primitives)
+        if not native and clock is None and (motion is not None or via):
+            return reject("unsupported: timed joint trajectories")
         rel = np.linalg.inv(snap["poses"]["left"]) @ snap["poses"]["right"]
         q = {a: np.asarray(snap["joints"][a], float) for a in kin.ARMS}
         poses = {a: snap["poses"][a].copy() for a in kin.ARMS}
         ways = []
         arms = kin.ARMS
         commands = dict(grippers)
-        begin = {a: poses[a].copy() for a in kin.ARMS}
-        counts = [1]
-        for a in arms:
-            distance, angle = _errors(begin[a], goals[a])
-            counts.extend((math.ceil(distance / max_step_m), math.ceil(angle / max_step_deg)))
-        count = max(counts)
-        if count > min(1000, max_steps):
-            return reject("planned_path_exceeds_native_step_budget")
-        for i in range(1, count + 1):
-            if time.monotonic() >= plan["deadline"]:
-                return reject("motion_timeout", recoverable=False)
-            self.primitives._check_cancelled()
-            solved = {a: q[a].copy() for a in kin.ARMS}
+        for leg in route:
+            leg_goals = {a: _matrix(leg[a]) if a in leg else poses[a] for a in kin.ARMS}
+            begin = {a: poses[a].copy() for a in kin.ARMS}
+            counts = [1]
             for a in arms:
-                desired = np.eye(4)
-                desired[:3, 3] = begin[a][:3, 3] + (goals[a][:3, 3] - begin[a][:3, 3]) * i / count
-                desired[:3, :3] = kin.slerp(begin[a][:3, :3], goals[a][:3, :3], i / count)
-                res = kin.solve(a, desired, q[a])
-                if not res.ok or res.collides:
-                    return reject(
-                        f"{a}: unreachable or table collision at path fraction {i / count}"
-                    )
-                err_m, err_deg = _errors(tools._pose_of(a, res.q), desired)
-                if err_m > position_tolerance_m or err_deg > orientation_tolerance_deg:
-                    return reject(f"{a}: IK cannot meet requested tolerance")
-                if max(abs(np.asarray(res.q) - q[a])) > 0.6:
-                    return reject(f"{a}: singularity/IK branch jump")
-                solved[a] = np.asarray(res.q)
-            subdivisions = max(
-                1,
-                math.ceil(
-                    max(float(np.max(np.abs(solved[a] - q[a]))) for a in kin.ARMS)
-                    / tools.JOINT_STEP_RAD
-                ),
-            )
-            for j in range(1, subdivisions + 1):
-                point = {
-                    a: (q[a] + (solved[a] - q[a]) * j / subdivisions).tolist() for a in kin.ARMS
-                }
-                now = {a: tools._pose_of(a, point[a]) for a in kin.ARMS}
-                for a in kin.ARMS:
-                    if kin.clearance_violations(a, point[a]):
-                        return reject(f"{a}: interpolated path intersects table")
-                    dist, angle = _errors(now[a], poses[a])
-                    # IK tolerance can perturb an ideal Cartesian sample slightly.
-                    if dist > max_step_m + 0.001 or angle > max_step_deg + 0.5:
-                        return reject(f"{a}: interpolated path exceeds TCP step limit")
-                if keep_relative and self._relative_error(now, rel, limits):
-                    return reject("relative_pose_constraint: sampled path changes arm relationship")
-                ways.append(dict(joints=point, grippers=dict(commands)))
-                poses = now
-            q = solved
+                distance, angle = _errors(begin[a], leg_goals[a])
+                counts.extend((math.ceil(distance / max_step_m), math.ceil(angle / max_step_deg)))
+            count = max(counts)
+            if count > min(1000, max_steps):
+                return reject("planned_path_exceeds_native_step_budget")
+            for i in range(1, count + 1):
+                if time.monotonic() >= plan["deadline"]:
+                    return reject("motion_timeout", recoverable=False)
+                self.primitives._check_cancelled()
+                solved = {a: q[a].copy() for a in kin.ARMS}
+                for a in arms:
+                    desired = np.eye(4)
+                    desired[:3, 3] = (begin[a][:3, 3]
+                                       + (leg_goals[a][:3, 3] - begin[a][:3, 3]) * i / count)
+                    desired[:3, :3] = kin.slerp(begin[a][:3, :3], leg_goals[a][:3, :3], i / count)
+                    res = kin.solve(a, desired, q[a])
+                    if not res.ok or res.collides:
+                        return reject(
+                            f"{a}: unreachable or table collision at path fraction {i / count}"
+                        )
+                    err_m, err_deg = _errors(tools._pose_of(a, res.q), desired)
+                    if err_m > position_tolerance_m or err_deg > orientation_tolerance_deg:
+                        return reject(f"{a}: IK cannot meet requested tolerance")
+                    if max(abs(np.asarray(res.q) - q[a])) > 0.6:
+                        return reject(f"{a}: singularity/IK branch jump")
+                    solved[a] = np.asarray(res.q)
+                subdivisions = max(
+                    1,
+                    math.ceil(
+                        max(float(np.max(np.abs(solved[a] - q[a]))) for a in kin.ARMS)
+                        / tools.JOINT_STEP_RAD
+                    ),
+                )
+                for j in range(1, subdivisions + 1):
+                    point = {
+                        a: (q[a] + (solved[a] - q[a]) * j / subdivisions).tolist() for a in kin.ARMS
+                    }
+                    now = {a: tools._pose_of(a, point[a]) for a in kin.ARMS}
+                    for a in kin.ARMS:
+                        if kin.clearance_violations(a, point[a]):
+                            return reject(f"{a}: interpolated path intersects table")
+                        dist, angle = _errors(now[a], poses[a])
+                        # IK tolerance can perturb an ideal Cartesian sample slightly.
+                        if dist > max_step_m + 0.001 or angle > max_step_deg + 0.5:
+                            return reject(f"{a}: interpolated path exceeds TCP step limit")
+                    if keep_relative and self._relative_error(now, rel, limits):
+                        return reject(
+                            "relative_pose_constraint: sampled path changes arm relationship"
+                        )
+                    ways.append(dict(joints=point, grippers=dict(commands)))
+                    if len(ways) > max_steps:
+                        return reject("planned_path_exceeds_native_step_budget")
+                    poses = now
+                q = solved
+
+        if clock is not None:
+            def check(joints):
+                self.primitives._check_cancelled()
+                if time.monotonic() >= plan["deadline"]:
+                    raise ValueError("motion_timeout")
+                trajectory.check_joints(joints, start=snap["joints"])
+                if keep_relative:
+                    measured = {a: tools._pose_of(a, joints[a]) for a in kin.ARMS}
+                    if self._relative_error(measured, rel, limits):
+                        raise ValueError("relative_pose_constraint: timed substep")
+
+            grip_steps = (tools.GRIP_MAX_ACTIONS
+                          if any(v != "keep" for v in grippers.values()) else 0)
+            status = self.primitives.env.get_status()
+            available = min(max_steps, status.get("step_limit", 10000) - status.get("step", 0))
+            try:
+                ways, plan["trajectory"] = trajectory.parameterize(
+                    snap["joints"], [w["joints"] for w in ways], clock, motion,
+                    max_actions=available - grip_steps, check=check,
+                    line_tolerance_m=0.003,
+                )
+                previous = snap["poses"]
+                for way in ways:
+                    way["grippers"] = dict(commands)
+                    now = {a: tools._pose_of(a, way["joints"][a]) for a in kin.ARMS}
+                    for a in kin.ARMS:
+                        dist, angle = _errors(now[a], previous[a])
+                        if dist > max_step_m + 0.001 or angle > max_step_deg + 0.5:
+                            raise ValueError(f"{a}: timed path exceeds TCP step limit")
+                    previous = now
+            except ValueError as exc:
+                if isinstance(exc, trajectory.TrajectoryBudgetError):
+                    plan["trajectory"] = exc.trajectory
+                return reject(str(exc), recoverable=str(exc) != "motion_timeout")
         # Let each requested gripper stroke finish while both arm poses hold.
         if any(grippers[a] != "keep" for a in arms):
             for _ in range(tools.GRIP_MAX_ACTIONS):
-                ways.append(
-                    dict(joints={a: q[a].tolist() for a in kin.ARMS}, grippers=dict(commands))
+                point = {a: q[a].tolist() for a in kin.ARMS}
+                way = dict(joints=point, grippers=dict(commands))
+                if clock is not None:
+                    way["trajectory"] = trajectory.hold(point, clock)
+                ways.append(way)
+            if clock is not None:
+                plan["trajectory"]["gripper_hold_steps"] = tools.GRIP_MAX_ACTIONS
+                plan["trajectory"]["planned_steps"] = len(ways)
+                plan["trajectory"]["planned_duration_s"] = (
+                    len(ways) * plan["trajectory"]["native_dt_s"]
                 )
         if len(ways) > max_steps:
             return reject("planned_path_exceeds_native_step_budget")
+        if native:
+            status = self.primitives.env.get_status()
+            if len(ways) > status.get("step_limit", 10000) - status.get("step", 0):
+                result = reject("planned_path_exceeds_native_step_budget")
+                result["planned_steps"] = len(ways)
+                return result
         checked = ["both_arm_ik", "sampled_arm_table", "joint_step_limit", "tcp_step_limit"]
+        if clock is not None:
+            checked.extend(["timed_joint_derivative_limits", "substep_arm_table"])
         if keep_relative:
             checked.append("sampled_relative_tcp_pose")
         plan.update(
-            ways=ways, goals=goals, relative=rel, keep_commands=snap["commands"], checked=checked
+            ways=ways, goals=goals, relative=rel, keep_commands=snap["commands"], checked=checked,
+            clock=clock,
         )
+        if preview:
+            return dict(accepted=True, preview=True, status="planned", executed_steps=0,
+                        planned_steps=len(ways), trajectory=plan.get("trajectory"),
+                        remaining_episode_steps=(self.primitives.env.get_status().get("step_limit", 10000)
+                                                 - (snap["native_steps"] or 0)),
+                        checked=checked, replan_before_dispatch=True)
         # Only one in-flight primitive, protected by the host's normal dispatch lock.
         self.plans.clear()
         self.plans[plan["id"]] = plan
@@ -299,6 +388,7 @@ class Controller:
             remaining_steps=max(0, plan["max_steps"] - plan["steps"]),
             recoverable=self._recoverable(reason),
             checked=plan["checked"],
+            trajectory=plan.get("trajectory"),
         )
 
     def execute(self, plan_id):
@@ -334,7 +424,9 @@ class Controller:
                 # Reserve before native dispatch. An exception may occur AFTER movement;
                 # it never refunds a physical action.
                 plan["steps"] += 1
-                state, status = tools._act(self.primitives, state, way["joints"], grips)
+                state, status = tools._act(
+                    self.primitives, state, way["joints"], grips, way.get("trajectory")
+                )
                 plan["cursor"] += 1
                 snap = self._snapshot()
                 tracking_reason = None
@@ -356,7 +448,7 @@ class Controller:
                 ):
                     reason = "relative_pose_constraint"
                 if not reason and tools._spent(status):
-                    reason = "episode_native_step_budget"
+                    reason = tools._episode_stop_reason(status)
                 reason = reason or tracking_reason
                 if reason or plan["cursor"] == len(plan["ways"]):
                     break

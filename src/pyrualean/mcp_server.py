@@ -79,12 +79,14 @@ def _build_asgi_app(toolkit: Any, *, annotations: dict[str, Any] | None) -> Any:
         lookup = name.split("__")[-1] if name.startswith("mcp__") else name
         trace = getattr(toolkit, "trace", None)
         context = None
+        submission = getattr(toolkit, "submission_context", None)
+        if callable(submission):
+            context = dict(submission(), transport="mcp",
+                           agent_attempt_id=getattr(toolkit, "agent_attempt_id", None))
         if trace is not None:
             # This is a host invocation ID, not the provider's tool-call ID.
-            context = {
-                "local_call_id": trace.new_id("tool"), "transport": "mcp",
-                "agent_attempt_id": getattr(toolkit, "agent_attempt_id", None),
-            }
+            context = dict(context or {}, local_call_id=trace.new_id("tool"), transport="mcp",
+                           agent_attempt_id=getattr(toolkit, "agent_attempt_id", None))
             trace.emit("tool_received", tool=lookup, **context)
         try:
             async with lock:

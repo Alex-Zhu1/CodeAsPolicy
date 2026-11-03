@@ -4,7 +4,7 @@
 
 ## 状态与范围
 
-本文依据 2026-10-31 UTC 当前工作区静态分析，包含未提交的模块和改动。
+初版依据 2026-10-31 UTC 静态分析；2026-11-02（Asia/Singapore）复核机器人约定、来源任务卡与未提交的时间参数化能力，见[仓库审查](../repository-review-20261102.md)。
 “现有实现”描述代码当前表达的行为，不代表已完成实机或运行验证。
 `CapabilityManifest` 等名称是目标契约草案，尚不是已经实现的公共类型。
 本模块负责让 Astra 知道当前环境提供什么能力，以及如何正确使用这些能力。
@@ -45,7 +45,17 @@ Computer Use 仅作为接口设计参照；本设计不要求增加 Computer 适
 - `src/pyrualean/arms.py` 的 `arm_contract`、`robot_words` 组装执行方式相关说明。
 - `src/pyrualean/coordination.py` 的 `Pose` 明确 world/TCP、米和 `[w,x,y,z]` 单位四元数。
 - `CoordinationMixin.motion_capabilities` 可查询同步执行器实际声明的能力覆盖。
-- `src/pyrualean/hosts/robodojo_coordination.py` 的 `Controller.capabilities` 明确不提供臂间碰撞、物体碰撞、力控和速度控制保证。
+- `Controller.capabilities` 根据客户端实际时钟和子步协议声明时间参数化能力；支持时，
+  `move_to` / `move_both` 默认使用带关节速度、加速度、jerk 上限的轨迹。
+  `motion_profile` 声明单位，`move_both(via=...)` 支持单次调用内连续路点；不支持时显式请求拒绝。
+- 能力快照写入任务卡，API docstring 和四份 RoboDojo 操作说明同步描述执行语义。
+  `speed_control` 仅指计划关节指令限制；实测速度保证、臂间/物体碰撞保证和力控仍未提供。
+  力反馈、末端力控、夹爪力控、阻抗控制分别声明为 false。
+- `hosts/robodojo_card.py::build_card` 为 RPent 与 XPL 使用同一能力描述；`TaskCard.sources` 标明原始指令、初始状态、预算与能力来源，缺失测量不伪装为零值。
+- 已提交的 `513755a` 统一 TCP/腕部、角度/四元数和夹爪语义；纯位置单臂目标保留原朝向，不选择半转候选。`blocked` 表示跟踪偏差，不是接触力证据。
+
+最新75分任务复跑只覆盖约定与单臂姿态修复；当前能力快照与子步轨迹尚缺完整任务实测。
+支持新协议时，默认单/双臂动作都会使用新轨迹；旧后端、`home` 和夹爪路径的边界应继续在说明中保留。
 
 目前已有按运行裁剪的说明书和领域语义；统一、带版本且可验证的 `CapabilityManifest` 尚待建立。
 不能把某一适配器的同步、观测或停止保证推广到所有机器人。

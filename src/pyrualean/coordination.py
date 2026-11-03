@@ -6,6 +6,8 @@ import math
 from dataclasses import dataclass, replace
 from typing import ClassVar
 
+from .motion import MotionProfile, MotionWindow, resolve_motion
+
 
 class CoordinationPause(BaseException):
     """Execution cannot continue locally; return the actual scene to the model."""
@@ -90,6 +92,7 @@ class DualMove:
     observation: Observation
     remaining_steps: int
     checked: tuple[str, ...]
+    trajectory: dict | None = None
 
     @property
     def reached(self) -> bool:
@@ -127,6 +130,7 @@ def _result(raw, robo):
         obs,
         raw["remaining_steps"],
         tuple(raw["checked"]),
+        raw.get("trajectory"),
     )
 
 
@@ -136,12 +140,44 @@ class CoordinationMixin:
     COORDINATION_API: ClassVar[bool] = True
 
     def motion_capabilities(self) -> dict:
-        """Return actual frame, synchronization, feedback and collision-check coverage."""
+        """Read live motion support before choosing constraints.
+
+        speed_control/continuous_trajectory require trajectory_clock with a
+        verified simulation timestep. Limits apply to commanded joint splines;
+        measured_speed_guarantee is false. force_control, force_feedback,
+        gripper_force_control and impedance_control describe separate abilities.
+        Current RoboDojo adapters provide no force loop. Legacy hosts without
+        timing support retain geometric moves and reject explicit motion/via.
+        """
         return self._readonly("motion_capabilities", {})
+
+    def motion_profile(self, velocity=1.0, acceleration=4.0, jerk=40.0) -> MotionProfile:
+        """Joint-command limits: rad/s, rad/s², rad/s³, applied to every moving joint.
+
+        Pass as motion to move_to or move_both. Defaults are planning choices,
+        not hardware ratings. No TCP speed or force guarantee. Nonpositive,
+        nonfinite and boolean values reject before any movement.
+        """
+        return MotionProfile(velocity, acceleration, jerk)
 
     def pose(self, xyz, quat, *, frame="world", point="tcp") -> Pose:
         """Construct a world TCP Pose: metres, unit quaternion [w,x,y,z]."""
         return Pose(xyz, quat, frame, point)
+
+    def motion_window(self, far="transit", near="approach", *,
+                      distance_m=0.02, at="end") -> MotionWindow:
+        """Use slower limits near a path endpoint without an intermediate stop.
+
+        far/near are phase names or motion_profile() values; near must be no
+        faster in any derivative. at='end' slows the last distance_m of nominal
+        TCP travel; at='start' moves away slowly before speeding up. The whole
+        IK segment crossing the window is slow. Choose distance from observed
+        geometry; this neither detects contact nor provides collision checking.
+        For dual motion the distance is a shared path metric, not per-arm clearance.
+        Use far='carry', near='precision' for supported placement; verify a
+        grasp with a SHORT lift before longer carry. Preview to check the cost.
+        """
+        return MotionWindow(resolve_motion(far), resolve_motion(near), distance_m, at)
 
     def observe(self) -> Observation:
         """Read both arms together; use the returned step for matching camera images."""
@@ -163,7 +199,10 @@ class CoordinationMixin:
         max_step_deg: float = 5.0,
         checkpoint_steps: int = 4,
         require_inter_arm_clearance: bool = False,
-    ) -> DualMove:
+        motion: MotionProfile | MotionWindow | str | None = None,
+        via: list[dict] | None = None,
+        preview: bool = False,
+    ) -> DualMove | dict:
         """Move both arms on one native action clock, returning their actual outcomes.
 
         left/right: world TCP xyz (metres, retain current orientation), a Pose,
@@ -188,13 +227,54 @@ class CoordinationMixin:
 
         Compose freely with move_to/set_gripper/home. For sequential cooperation,
         write the sequence and branches in Python; no operation object is needed.
+
+        On a timed backend, motion selects joint velocity/acceleration/jerk
+        limits (default motion_profile()). via is up to 128 intermediate
+        {left: pose_or_xyz, right: pose_or_xyz} mappings, followed by left/right
+        final targets. An omitted arm holds its preceding waypoint. xyz keeps
+        the preceding orientation. The entire route is checked before dispatch
+        and follows one C2 joint spline, with zero endpoint velocity/acceleration.
+        Joint blending is checked at every physical substep. No stop is inserted
+        at intermediate waypoints; reversals may require zero joint velocity.
+        Gripper commands apply from the first tick throughout the route. Split
+        calls where observation, contact or release decisions must occur.
+        Continuity is in simulation time within this call, not across model/RPC
+        waits, interruptions or separate calls. trajectory reports timing and
+        planned derivative bounds. Explicit motion/via require backend support.
+        motion also accepts 'native' (original waypoint execution, no C2 or
+        derivative guarantees), 'transit' (smooth empty-hand travel), 'approach'
+        (final approach), 'carry' (held-object transport; default limits), or
+        'precision' (placement/insertion). Phase choice is explicit; no force
+        or obstacle knowledge is inferred from the grippers.
+        preview=True returns a read-only planning dict with accepted, trajectory,
+        planned_steps and remaining_episode_steps, without creating an executable
+        plan or moving either gripper. Over-budget results retain their timing
+        estimate. Execution replans from current state; preview is not permission.
         """
+        motion = resolve_motion(motion)
+        if type(preview) is not bool:
+            raise ValueError("preview must be bool")
+        if via is not None and (not isinstance(via, list) or len(via) > 128
+                                or any(not isinstance(v, dict) or set(v) - {"left", "right"}
+                                       for v in via)):
+            raise ValueError("via must contain at most 128 left/right waypoint mappings")
         self._guard()
         obs = self.observe()
+        previous = {a: getattr(obs, a) for a in ("left", "right")}
+        waypoints = []
+        for waypoint in via or []:
+            converted = {}
+            for arm, value in waypoint.items():
+                if value is None:
+                    continue
+                target = value if isinstance(value, Pose) else Pose(value, previous[arm].quat)
+                converted[arm] = dict(xyz=target.xyz, quat=target.quat)
+                previous[arm] = target
+            waypoints.append(converted)
         targets = {}
         for arm, value in (("left", left), ("right", right)):
             if value is not None:
-                target = value if isinstance(value, Pose) else Pose(value, getattr(obs, arm).quat)
+                target = value if isinstance(value, Pose) else Pose(value, previous[arm].quat)
                 targets[arm] = dict(xyz=target.xyz, quat=target.quat)
         grips = {"left": "keep", "right": "keep", **(grippers or {})}
         if set(grips) != {"left", "right"} or any(
@@ -216,8 +296,14 @@ class CoordinationMixin:
                 max_step_deg=max_step_deg,
                 checkpoint_steps=checkpoint_steps,
                 require_inter_arm_clearance=require_inter_arm_clearance,
+                motion=motion.payload() if motion is not None else None,
+                via=waypoints,
+                **({"preview": True} if preview else {}),
             ),
         )
+
+        if preview:
+            return raw
 
         def record(payload):
             payload["observation"]["step"] = self._last_state.step
@@ -255,4 +341,4 @@ class CoordinationMixin:
             self._readonly("motion_discard", {"plan_id": plan_id})
 
 
-RESULT_TYPES = (Pose, Observation, ArmMotion, DualMove)
+RESULT_TYPES = (Pose, Observation, ArmMotion, DualMove, MotionProfile, MotionWindow)

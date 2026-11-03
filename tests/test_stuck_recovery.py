@@ -138,7 +138,7 @@ def test_initial_prompt_contains_trigger_not_recovery_procedure():
 
     prompt = build_prompt(
         "cells",
-        SimpleNamespace(max_env_steps=300, render=lambda: "TASK"),
+        SimpleNamespace(max_env_steps=300, render=lambda **kwargs: "TASK"),
         budget_s=30,
         max_programs=None,
         stuck_recovery=StuckRecoveryConfig("PRIVATE_RECOVERY_PROCEDURE"),

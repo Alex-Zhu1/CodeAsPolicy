@@ -48,6 +48,8 @@ from ._backend import EpisodeFinished
 from ._robot import RobotBase, effective_primitives
 from .coordination import CoordinationPause
 from .execution import BoundedOutput, ExecutionBudget, ExecutionLimit, ExecutionLimits
+from .execution_journal import ExecutionJournal, fingerprint, plain
+from .execution_plan import ExecutionPlan
 from .interaction import InteractionPause
 from .interaction_trace import InteractionTrace
 from .perception import perception_summary
@@ -110,6 +112,7 @@ def _decision_receipt(receipt: dict) -> dict:
     return {key: receipt[key] for key in (
         "action_id", "tool", "status", "effect_known", "execution_complete",
         "observation_id", "source_id", "stop_confirmed", "receipt_supported", "reason", "error",
+        "request_id", "operation_id",
     ) if key in receipt and receipt[key] is not None}
 
 
@@ -195,6 +198,7 @@ def _decision_envelope(result: dict) -> dict:
 
 # Keep execution controls before optional diagnostic fields when a report is huge.
 _CONTROL_FIELDS = (
+    "execution", "resume_token", "request_id", "replayed", "operation",
     "output_truncated", "execution_paused", "status", "action_id", "effect_known",
     "execution_complete", "stop_confirmed", "new_motion_allowed", "allowed_next",
     "automatic_replay", "scene_rolled_back", "paused", "reason", "type", "kind",
@@ -225,7 +229,7 @@ def _bounded_detail(value: Any, budget: int) -> Any:
             # IDs are lookup keys, not prose. Never emit a shortened ID that a
             # subsequent action_receipt / reconcile / snapshot call cannot use.
             size = len(_json_text(item))
-            identity = str(key).endswith(("_id", "_ids"))
+            identity = str(key).endswith(("_id", "_ids", "_token"))
             endpoint = key in ("summary", "primitive_outcome") and size <= 2048
             if identity or endpoint:
                 if size > available:
@@ -404,6 +408,9 @@ class ArmToolkit:
         stuck_recovery: StuckRecoveryConfig | None = None,
         execution_limits: ExecutionLimits | None = None,
         trace: InteractionTrace | None = None,
+        task_card_path: Path | None = None,
+        execution_state_path: Path | None = None,
+        resume: bool = False,
     ) -> None:
         if arm not in ARMS:
             raise ValueError(f"arm must be one of {ARMS}, got {arm!r}")
@@ -434,6 +441,7 @@ class ArmToolkit:
         self.arm = arm
         self.workspace = Path(workspace)
         self.workspace.mkdir(parents=True, exist_ok=True)
+        self._plan_store = ExecutionPlan(self.workspace.parent, self._session_id, task_card_path)
         self.max_programs = max_programs
         self.program_timeout_s = program_timeout_s
         #: Decision budget: at most this many `python` / `run_program` calls.
@@ -442,7 +450,7 @@ class ArmToolkit:
         self.images = images
         self.finish: dict[str, Any] | None = None
         self.turns: list[dict[str, Any]] = []
-        self._lock = threading.Lock()
+        self._lock = threading.RLock()
         self._displayed: list[Any] = []
         #: Audit flags of every cell / program that raised any (host-side only).
         self.sandbox_flags: list[dict[str, Any]] = []
@@ -457,6 +465,9 @@ class ArmToolkit:
             "display": self._display,
             "log": print,
             "strategy": strategies,
+            "plan": self._plan,
+            "once": self._once,
+            "resume_state": self.resume_state,
         }
         if supervisor is not None:
             self._globals["watch"] = supervisor.watch
@@ -473,6 +484,202 @@ class ArmToolkit:
         self._cell_index = 0
         self._program_index = 0
         self._failure_counts: dict[str, int] = {}
+        if execution_state_path is not None:
+            execution_state_path = Path(execution_state_path).resolve()
+            if execution_state_path.is_relative_to(self.workspace.resolve()):
+                raise ValueError("Execution state must be outside the policy workspace")
+        if resume and not getattr(robo._backend, "session_id", None):
+            raise ValueError("Backend has no stable session identity; cannot resume execution")
+        self._journal = ExecutionJournal(
+            execution_state_path, session_id=robo._interaction_session_id, resume=resume,
+            binding=dict(robot=robo.NAME, arm=arm, max_turns=max_turns,
+                         max_programs=max_programs, program_timeout_s=program_timeout_s,
+                         execution_limits=self.execution_limits.record(),
+                         primitives=robo._primitives,
+                         supervision=plain(supervisor.config) if supervisor else None,
+                         stuck_recovery=stuck_recovery.record() if stuck_recovery else None,
+                         task_card=self._plan_store.card_reference),
+        )
+        self._review = None
+        self._invalid_decisions: set[str] = set()
+        self._feedback_epoch = 0
+        self._operation_feedback = None
+        self._resumed = resume
+        self._started_at = time.time()
+        if resume:
+            state = self._journal.get("meta", "execution")
+            if state is None:
+                self._journal.close()
+                raise ValueError("Execution state has no session checkpoint")
+            self._session_id = state["host_session_id"]
+            self._cell_index = state["cells"]
+            self._program_index = state["programs"]
+            self._started_at = state["started_at"]
+            self.finish = state["finish"]
+            self._feedback_epoch = state["feedback_epoch"] + 1
+            self._review = dict(token=uuid.uuid4().hex, decision_id=None, request_id=None)
+            self._invalid_decisions = set(state.get("invalid_decisions", []))
+            self._invalid_decisions.update(value["decision_id"]
+                                           for value in self._journal.all("request").values()
+                                           if value.get("decision_id"))
+            self.turns = list(self._journal.all("turn").values())
+            self._failure_counts = state.get("failure_counts", {})
+            self.stuck_recovery_events = state.get("stuck_recovery_events", [])
+            self.turn_budget_exhausted = state.get("turn_budget_exhausted", False)
+            robo._stop_reason = state.get("stop_reason")
+            robo._done, robo._truncated = state.get("done", False), state.get("truncated", False)
+            robo._receipts = dict(sorted(self._journal.all("action").items(),
+                                        key=lambda item: item[1].get("action_revision", 0)))
+            robo._pending_actions.clear()
+            robo._observations.clear()
+            robo._latest_observation_id = None
+            robo._last_state = None
+            robo._paused_turn = None
+            robo._last_action_id = None
+            robo._action_revision = 0
+            for identity, receipt in robo._receipts.items():
+                resolved = (receipt.get("execution_complete") is True and (
+                    (receipt.get("effect_known") is True
+                     and receipt.get("status") in ("completed", "partial", "rejected"))
+                    or (receipt.get("status") == "acknowledged"
+                        and receipt.get("receipt_supported") is False)))
+                if not resolved:
+                    receipt.update(status="unknown", effect_known=False, execution_complete=False,
+                                   reason="host_restarted_before_execution_confirmation")
+                    robo._pending_actions.add(identity)
+                    self._journal.put("action", identity, receipt)
+            if robo._receipts:
+                latest = max(robo._receipts.values(), key=lambda r: r.get("action_revision", 0))
+                robo._last_action_id = latest["action_id"]
+                robo._action_revision = latest.get("action_revision", 0)
+            # Rebuild no Python variables, visual evidence, or cached scene coordinates.
+            if supervisor is not None:
+                supervisor.ledger.invalidate(None, "host_restarted")
+            self._plan_store.session_id = self._session_id
+            plan = self._journal.get("meta", "plan")
+            if plan is not None:
+                self._plan_store.latest = plan
+                self._plan_store.revision = plan["revision"]
+            for identity, operation in self._journal.all("operation").items():
+                operation["action_ids"] = [key for key, receipt in robo._receipts.items()
+                                           if receipt.get("operation_id") == identity]
+                if operation["status"] == "running":
+                    operation["status"] = "interrupted"
+                self._journal.put("operation", identity, operation)
+        robo._execution_journal = self._journal
+        if program_timeout_s is not None:
+            robo._episode_deadline = self._started_at + program_timeout_s
+        self._recovery_started = time.perf_counter() - (time.time() - self._started_at)
+        self._save_execution_state()
+
+    def close(self):
+        """Release the writer lease; return False while an execution worker still owns it."""
+        if not self._lock.acquire(blocking=False):
+            return False
+        try:
+            self._journal.close()
+            return True
+        finally:
+            self._lock.release()
+
+    def _save_execution_state(self):
+        self._journal.put("meta", "execution", dict(
+            host_session_id=self._session_id, started_at=self._started_at,
+            cells=self._cell_index, programs=self._program_index, finish=self.finish,
+            feedback_epoch=self._feedback_epoch, review=self._review,
+            invalid_decisions=sorted(self._invalid_decisions),
+            stop_reason=self.robo._stop_reason, done=self.robo._done,
+            truncated=self.robo._truncated, turn_budget_exhausted=self.turn_budget_exhausted,
+            failure_counts=self._failure_counts, stuck_recovery_events=self.stuck_recovery_events,
+        ))
+
+    def submission_context(self):
+        """Capture at receipt time, BEFORE queueing behind another code request."""
+        return {"received_epoch": self._feedback_epoch}
+
+    def resume_state(self, *, details=True):
+        """Read current recovery state without executing or replaying any code."""
+        result = dict(
+            resume_token=self._review["token"] if self._review else None,
+            namespace_restored=False if self._resumed else None,
+            cells_used=self._cell_index, programs_used=self._program_index,
+            deadline=self.robo._episode_deadline,
+            handoff=self.robo._interaction_handoff(),
+        )
+        if details:
+            result.update(
+                operations=list(self._journal.all("operation").values()),
+                interrupted_requests=[dict(request_id=key.removeprefix("request:"),
+                                           tool=value.get("tool"), status=value["status"])
+                                      for key, value in self._journal.all("request").items()
+                                      if value.get("result") is None],
+            )
+        return result
+
+    def _once(self, step_id, method=None, *args, **kwargs):
+        """Run a named robot operation at most once; return JSON data, never a fresh observation."""
+        if not isinstance(step_id, str) or not 1 <= len(step_id) <= 200:
+            raise ValueError("once needs a nonempty step ID of at most 200 characters")
+        saved = self._journal.get("operation", step_id)
+        if method is None:
+            if args or kwargs or saved is None:
+                raise ValueError("once(id) reads an existing operation")
+            return dict(saved, receipts=[self.robo.action_receipt(key)
+                                        for key in saved.get("action_ids", [])])
+        if getattr(method, "__self__", None) is not self.robo or method.__name__.startswith("_"):
+            raise ValueError("once accepts a public bound robo method, not arbitrary Python")
+        signature = fingerprint(dict(method=method.__name__, args=args, kwargs=kwargs))
+        if saved is not None:
+            if saved["signature"] != signature:
+                raise ValueError("Step ID already names a different operation; inspect once(id)")
+            self._operation_feedback = dict(saved, replayed=True)
+            if saved["status"] != "returned":
+                raise InteractionPause("Operation was interrupted; inspect once(id) and reconcile "
+                                       "its actions. Submit only remaining work under a new step ID")
+            return dict(saved, replayed=True)
+        self.robo._interaction_guard()
+        saved = dict(step_id=step_id, signature=signature, method=method.__name__,
+                     status="running", action_ids=[])
+        self._journal.put("operation", step_id, saved)
+        self.robo._operation_id = step_id
+        try:
+            value = method(*args, **kwargs)
+            saved.update(status="returned", value=plain(value))
+        except BaseException:
+            saved["status"] = "interrupted"
+            raise
+        finally:
+            self.robo._operation_id = None
+            saved["action_ids"] = [key for key, receipt in self.robo._receipts.items()
+                                   if receipt.get("operation_id") == step_id]
+            self._journal.put("operation", step_id, saved)
+            self._operation_feedback = saved
+        return dict(saved, replayed=False)
+
+    def _plan(self, goal=None, *, next_action="", done_when="", evidence="", status="in_progress"):
+        """Read/update Astra's current-goal note; no observation refresh or robot action."""
+        if goal is None:
+            if next_action or done_when or evidence or status != "in_progress":
+                raise ValueError("plan() reads the note; supply goal to update it")
+            return self._plan_store.read()
+        observation = self.robo._observations.get(self.robo._latest_observation_id, {})
+        context = dict(
+            robot_session_id=self.robo._interaction_session_id,
+            observation_id=self.robo._latest_observation_id,
+            source_id=observation.get("source_id"),
+            observation_native_steps=observation.get("native_steps"),
+            action_revision=self.robo._action_revision,
+            last_action_id=self.robo._last_action_id,
+            turn=len(self.turns) + 1,
+        )
+        result = self._plan_store.update(
+            goal=goal, next_action=next_action, done_when=done_when,
+            evidence=evidence, status=status, context=context,
+        )
+        self._journal.put("meta", "plan", result)
+        self._trace_event("execution_plan_updated", plan_revision=result["revision"],
+                          observation_id=context["observation_id"])
+        return result
 
     def _display(self, image: Any) -> None:
         """Attach an image (numpy array, PIL image or PNG bytes) to this turn's result."""
@@ -548,6 +755,17 @@ class ArmToolkit:
                 },
             }
         main["description"] += " " + self.execution_limits.prompt()
+        for spec in (main, finish):
+            spec["input_schema"]["properties"].update({
+                "request_id": {"type": "string", "description":
+                    "Unique ID for this intended request; reuse it only to retrieve the same "
+                    "request after a lost reply. Changed code needs a new ID."},
+                "resume_token": {"type": "string", "description":
+                    "After a failure/pause, copy the resume_token from execution feedback "
+                    "into subsequent requests after reviewing what already happened. "
+                    "Use the latest token if another failure changes it."},
+            })
+            spec["input_schema"].setdefault("required", []).append("request_id")
         return [main, finish]
 
     def _trace_event(self, event: str, **fields: Any) -> None:
@@ -558,10 +776,104 @@ class ArmToolkit:
         self, name: str, input_dict: dict[str, Any], *,
         trace_context: dict[str, Any] | None = None,
     ) -> ArmResult:
+        """Deduplicate intended requests and invalidate queued work after interruption."""
+        context = dict(trace_context or {})
+        context.setdefault("received_epoch", self._feedback_epoch)
+        arguments = dict(input_dict)
+        supplied_id = arguments.pop("request_id", None)
+        token = arguments.pop("resume_token", context.get("resume_token"))
+        if supplied_id is not None and (
+            not isinstance(supplied_id, str) or not 1 <= len(supplied_id) <= 200
+        ):
+            return ArmResult({"error": "request_id must contain 1..200 characters"})
+        if context.get("transport") == "mcp" and supplied_id is None:
+            return self._request_report("Supply a stable request_id; no code was executed")
+        provider_id = context.get("provider_call_id") or context.get("invocation_id")
+        key = ("request:" + supplied_id if supplied_id is not None else
+               f"provider:{context.get('agent_attempt_id') or ''}:{provider_id}" if provider_id else
+               "local:" + uuid.uuid4().hex)
+        signature = fingerprint(dict(tool=name, arguments=arguments))
+        context["request_id"] = key
+        with self._lock:
+            saved = self._journal.get("request", key)
+            if saved is not None:
+                if saved["signature"] != signature:
+                    return self._request_report(
+                        "Request ID already used with different code/arguments", key)
+                if saved.get("result") is None:
+                    return self._request_report(
+                        "Original request was interrupted. Reconcile actions and submit only "
+                        "remaining work with a new request_id; it will not be replayed", key)
+                result = ArmResult(saved["result"], [base64.b64decode(data)
+                                                   for data in saved.get("images", [])])
+                # The result/images are historical. Never replay an old motion permission.
+                result.result["handoff"] = self.robo._interaction_handoff()
+                if isinstance(result.result.get("recovery"), dict):
+                    result.result["recovery"].update(historical=True, new_motion_allowed=False)
+                result.result["execution"] = self._execution_feedback(key, replayed=True)
+                return result
+            stale = context["received_epoch"] != self._feedback_epoch
+            same_decision = context.get("decision_id") in self._invalid_decisions
+            needs_token = bool(self._review and (self._resumed
+                               or context.get("transport") in ("mcp", "openai")))
+            if stale or same_decision or (needs_token and token != self._review["token"]):
+                return self._request_report(
+                    "Not executed: review the latest feedback, then submit remaining work "
+                    "with its resume_token and a new request_id", key)
+            self._journal.put("request", key, dict(signature=signature, tool=name, status="running",
+                                                   decision_id=context.get("decision_id")))
+            # Keep the last review token after successful repair. A delayed old MCP
+            # request without that token must not become admissible again.
+            self._operation_feedback = None
+            self._save_execution_state()
+            try:
+                result = self._execute_tool(name, arguments, trace_context=context)
+            except BaseException:
+                self._require_review(context, key)
+                self._save_execution_state()
+                raise
+            if (result.is_error or result.result.get("execution_paused")
+                    or (result.result.get("supervision") or {}).get("paused")
+                    or result.result.get("status") == "stuck_confirmed"):
+                self._require_review(context, key)
+            result.result["execution"] = self._execution_feedback(key)
+            if self._operation_feedback is not None:
+                result.result["operation"] = self._operation_feedback
+            self._save_execution_state()
+            self._journal.put("request", key, dict(
+                signature=signature, tool=name, status="returned", result=result.result,
+                decision_id=context.get("decision_id"),
+                images=[base64.b64encode(data).decode("ascii") for data in result.images],
+            ))
+            self._journal.put("turn", f"{len(self.turns):09d}", self.turns[-1])
+            return result
+
+    def _require_review(self, context, key):
+        self._feedback_epoch += 1
+        if context.get("decision_id"):
+            self._invalid_decisions.add(context["decision_id"])
+        self._review = dict(token=uuid.uuid4().hex, request_id=key,
+                            decision_id=context.get("decision_id"))
+
+    def _execution_feedback(self, key, *, replayed=False):
+        return dict(request_id=key.removeprefix("request:") if key else None, replayed=replayed,
+                    resume_token=self._review["token"] if self._review else None,
+                    feedback_epoch=self._feedback_epoch,
+                    namespace_restored=False if self._resumed else None)
+
+    def _request_report(self, message, key=None):
+        return ArmResult(dict(error=message, skipped=True,
+                              execution=self._execution_feedback(key),
+                              handoff=self.robo._interaction_handoff()))
+
+    def _execute_tool(
+        self, name: str, input_dict: dict[str, Any], *,
+        trace_context: dict[str, Any] | None = None,
+    ) -> ArmResult:
         context = {
             key: value for key, value in (trace_context or {}).items()
             if key in {"local_call_id", "decision_id", "attempt_id", "provider_call_id",
-                       "agent_attempt_id", "transport"}
+                       "agent_attempt_id", "transport", "request_id"}
         }
         context["tool"] = name
         context.setdefault("agent_attempt_id", self.agent_attempt_id)
@@ -579,6 +891,7 @@ class ArmToolkit:
                 self._trace_event("tool_started")
                 started = time.perf_counter()
                 calls_before = len(self.robo._ledger)
+                plan_before = self._plan_store.revision
                 steps_before = self.robo._backend.env_steps()
                 try:
                     if name == "finish":
@@ -598,6 +911,8 @@ class ArmToolkit:
                 except Exception as exc:  # noqa: BLE001 - never crash the server
                     result = ArmResult({"error": f"{type(exc).__name__}: {exc}"})
                 self._observe_result(result, calls_before, steps_before)
+                if self._plan_store.revision != plan_before:
+                    result.result["execution_plan"] = self._plan_store.summary()
                 moved_flag = any(r.stateful for r in self.robo._ledger.records[calls_before:])
                 steps_after = self.robo._backend.env_steps()
                 steps_delta = (
@@ -617,7 +932,8 @@ class ArmToolkit:
                         "terminated": self.robo._reported_success(),
                         "sandbox_flags": flags,
                         **{k: result.result[k] for k in (
-                            "failure", "recovery", "observation", "handoff", "action_receipts")
+                            "failure", "recovery", "observation", "handoff", "action_receipts",
+                            "execution_plan")
                            if k in result.result},
                     }
                 )
@@ -965,6 +1281,9 @@ class ArmToolkit:
         return ArmResult(result, images)
 
     def _budget_left(self, used: int) -> bool:
+        if self.robo._episode_deadline is not None and time.time() >= self.robo._episode_deadline:
+            self.robo._stop_episode("timeout")
+            return False
         """False once the decision budget is spent; ends the episode on the robot."""
         if self.max_turns is None or used < self.max_turns:
             return True
@@ -982,6 +1301,9 @@ class ArmToolkit:
                 }
             )
         self._cell_index += 1
+        self._save_execution_state()  # reserve budget before generated Python can execute
+        self._globals["plan"] = self._plan
+        self._globals.update(once=self._once, resume_state=self.resume_state)
         self.robo._coordination_feedback = None
         index = self._cell_index
         if self.supervisor is not None:
@@ -1082,6 +1404,7 @@ class ArmToolkit:
         if not code and not path:
             return ArmResult({"error": "run_program needs `code` or `path`"})
         self._program_index += 1
+        self._save_execution_state()
         index = self._program_index
         if code:
             target = self.workspace / f"program_{index:02d}.py"
@@ -1124,9 +1447,12 @@ class ArmToolkit:
             with (ExecutionBudget(self.execution_limits, self.workspace, self.robo) as budget,
                   contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr)):
                 policy = load_policy(target, builtins=self._builtins,
-                                     bindings={"strategy": strategies})
+                                     bindings={"strategy": strategies, "plan": self._plan,
+                                               "once": self._once, "resume_state": self.resume_state})
                 stage = "execution"
-                outcome = run_policy(policy, self.robo, timeout_s=self.program_timeout_s)
+                timeout = (max(0.001, self.robo._episode_deadline - time.time())
+                           if self.robo._episode_deadline is not None else None)
+                outcome = run_policy(policy, self.robo, timeout_s=timeout)
                 if outcome.status != "timeout":
                     budget.check()
         except PolicyLoadError as exc:
@@ -1149,6 +1475,10 @@ class ArmToolkit:
         except EpisodeFinished as exc:
             extra.update(self._output_fields(stdout, stderr))
             extra.update(status="finished", episode_finished=exc.reason)
+            return self._feedback(before, extra)
+        except (SupervisionPause, CoordinationPause, InteractionPause):
+            extra.update(self._output_fields(stdout, stderr))
+            extra.update(status="paused", execution_paused=True)
             return self._feedback(before, extra)
         extra["status"] = outcome.status
         if outcome.status == "paused":
@@ -1345,6 +1675,27 @@ BUDGET_MODES = tuple(ENDING_NOTES)
 
 RECOVERY_NOTE = """\
 # Execution, verification and recovery
+
+Give each code/finish request a unique `request_id`. Reuse that ID with exactly
+the same arguments only when retrieving a lost reply; it never reruns the code.
+After a failure/pause, inspect feedback, then copy the latest `execution.resume_token`
+into subsequent tool requests and use a new request_id for remaining work.
+Previously queued dependent requests are invalidated. Replayed results and images
+are historical; use fresh observations for new decisions.
+
+Wrap non-repeatable robot operations in `once(step_id, robo.method, *args, **kwargs)`.
+Keep the same step_id for the same logical operation when repairing code; use
+distinct IDs for intentional repetitions (e.g. press_red_1 and press_red_2).
+It returns JSON data with status, action_ids and value (dataclass fields, including
+reached). `status="returned"` means the method returned, not task success. Check
+value.reached/outcomes as dictionary fields before dependent work. Calling it
+again returns the recorded value without movement. `once(step_id)` reads its record.
+An interrupted operation never automatically retries: inspect its receipts,
+reconcile unknown actions, and submit only the necessary continuation with a new
+step ID. A completed logical operation must not get a replacement ID.
+`resume_state()` reads recovery state. Host restart restores execution records and
+budgets, not Python variables or visual evidence; never rerun old cells to rebuild
+them. Recreate helpers without movement and obtain current observations.
 
 Check outcomes such as `reached`, `found` and geometric error before dependent
 actions. Use ordinary `if` branches and bounded corrections for results your

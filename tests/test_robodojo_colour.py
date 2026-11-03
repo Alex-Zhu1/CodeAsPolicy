@@ -389,6 +389,8 @@ def test_the_client_ends_the_episode_itself_when_the_task_is_solved(tmp_path):
     thread.join(5.0)
     assert bridge.over["success"] is True and bridge.over["step"] == 3
     assert info["status"]["over"] is True and info["status"]["step_limit"] == info["status"]["step"]
+    assert info["status"]["native_step_limit"] == 200
+    assert tools._episode_stop_reason(info["status"]) == "episode_ended"
     with pytest.raises(xb.EpisodeOver):
         bridge.step({})
 

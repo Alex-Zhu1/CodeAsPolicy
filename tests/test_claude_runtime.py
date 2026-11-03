@@ -428,22 +428,28 @@ def test_play_episode_wires_the_claude_runtime(tmp_path, monkeypatch, backend):
     for module in ("mcp", "uvicorn", "httpx"):
         pytest.importorskip(module, reason=f"the MCP server needs {module} (the dev extra has it)")
     from pyrualean import play
+    from pyrualean.prompt import TaskCard
     from pyrualean.robots import get_adapter
 
     captured = fake_sdk(monkeypatch, episode_messages())
     monkeypatch.chdir(tmp_path)
     png = tmp_path / "agentview.png"
     png.write_bytes(b"\x89PNG not really")
-    card = SimpleNamespace(
+    card = TaskCard(
+        suite="libero_object_swap", task=2, seed=0, object_names=[],
         robot="libero",
         max_env_steps=600,
         task_language="put the bowl on the plate",
         images={"agentview": str(png)},
-        render=lambda: "# Task\n\nput the bowl on the plate",
     )
+
+    def dump_card(toolkit, cell, out_dir):
+        (out_dir / "card.json").write_text(card.to_json())
+        return card
+
     host = SimpleNamespace(
         boot=lambda cell, out_dir, rpent_root=None, **options: (backend, []),
-        dump_card=lambda toolkit, cell, out_dir: card,
+        dump_card=dump_card,
         make_backend=lambda toolkit: toolkit,
     )
     adapter = SimpleNamespace(**vars(get_adapter("libero")), host_module=lambda: host)

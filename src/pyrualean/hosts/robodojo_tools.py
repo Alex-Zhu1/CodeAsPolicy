@@ -35,8 +35,10 @@ from typing import Any
 import numpy as np
 
 from ..robodojo import HOME_MAX_ACTIONS, HOME_TOL_RAD
+from ..motion import MOTION_SCHEMA
 from . import robodojo_kinematics as kin
 from . import robodojo_sight as sight
+from . import robodojo_trajectory as trajectory_tools
 
 ARMS = kin.ARMS
 #: Extra native actions at the end of a motion while the joints settle on the target.
@@ -57,6 +59,8 @@ NEAR_DEG = 8.0
 #: swing back does not sweep across the table: one swing knocked a placed board off.
 HOME_LIFT_BELOW = 1.0
 HOME_LIFT_M = 0.06
+RELEASE_WITHDRAW_M = 0.06
+RELEASE_NEAR_M = 0.12
 #: ``locate`` measures a footprint on a grid this fine (metres), one point per occupied cell:
 #: an oblique camera sees an object's sides edge-on, and counted pixel by pixel they outweigh
 #: its top (a cube's sides pulled its long axis onto the diagonal).
@@ -183,10 +187,11 @@ def _act(
     state: dict[str, Any],
     joints: dict[str, Sequence[float]],
     grips: dict[str, float | None],
+    trajectory: dict | None = None,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     """One native action: the arms named in ``joints`` to those angles, the others held."""
 
-    action: dict[str, list[float]] = {}
+    action: dict[str, Any] = {}
     for arm in ARMS:
         q = joints.get(arm)
         action[f"{arm}_arm_joint_state"] = [
@@ -195,11 +200,51 @@ def _act(
         g = grips.get(arm)
         if g is None:
             g = _keep(primitives, state, arm)
-        _remember(primitives, arm, g)
         action[f"{arm}_ee_joint_state"] = [float(g)]
+    if trajectory is not None:
+        clock = trajectory_tools.backend(primitives)
+        if (clock is None or trajectory.get("schema") != clock["schema"]
+                or trajectory.get("physics_dt_s") != clock["physics_dt_s"]
+                or len(trajectory.get("positions", [])) != clock["substeps"]):
+            raise ValueError("trajectory backend/clock changed before dispatch")
+        action[trajectory_tools.TRAJECTORY_KEY] = trajectory
+    for arm in ARMS:
+        command = action[f"{arm}_ee_joint_state"][0]
+        last = (getattr(primitives, "_grip_commands", None) or {}).get(arm)
+        # Keep the release frame, not a boolean "retreated" flag: a partial
+        # retreat/resume must compute only the distance still missing.
+        releases = getattr(primitives, "_release_poses", None)
+        if releases is None:
+            releases = {}
+            try:
+                primitives._release_poses = releases
+            except AttributeError:
+                pass
+        staging = getattr(primitives, "_home_after_release", None)
+        if staging is None:
+            staging = set()
+            try:
+                primitives._home_after_release = staging
+            except AttributeError:
+                pass
+        if command <= .05:
+            releases.pop(arm, None)
+            staging.discard(arm)
+        elif last is not None and last <= .05 and _opening(state, arm) > HOLD_MIN_OPENING:
+            releases[arm] = _pose_of(arm, _joints(state, arm))
+            # Finger withdrawal alone does not clear the arm's return sweep.
+            # Retain this until homed or grasping again, even after the release
+            # plane no longer needs an additional retreat.
+            staging.add(arm)
+        _remember(primitives, arm, command)
     primitives._motion_revision = getattr(primitives, "_motion_revision", 0) + 1
     _obs_step, _reward, _done, info = primitives.env.step(action)
     obs = _obs(primitives)
+    for arm, release in list((getattr(primitives, "_release_poses", None) or {}).items()):
+        offset = _pose_of(arm, _joints(obs["state"], arm))[:3, 3] - release[:3, 3]
+        if (np.linalg.norm(offset) >= RELEASE_NEAR_M
+                or float(np.dot(offset, -release[:3, 0])) >= RELEASE_WITHDRAW_M - .001):
+            primitives._release_poses.pop(arm, None)
     return obs["state"], (info.get("status") or {}) if isinstance(info, dict) else {}
 
 
@@ -236,10 +281,21 @@ def _keep(primitives: Any, state: dict[str, Any], arm: str) -> float:
 
 
 def _spent(status: dict[str, Any]) -> bool:
+    if status.get("over"):
+        return True
     try:
         return int(status.get("step", 0)) >= int(status.get("step_limit", 1 << 30))
     except (TypeError, ValueError):
         return False
+
+
+def _episode_stop_reason(status: dict[str, Any]) -> str | None:
+    if not _spent(status):
+        return None
+    limit = status.get("native_step_limit", status.get("step_limit"))
+    if status.get("over") and (limit is None or int(status.get("step", 0)) < int(limit)):
+        return "episode_ended"
+    return "episode_native_step_budget"
 
 
 def _tcp(arm: str, q: Sequence[float]) -> list[float]:
@@ -311,7 +367,7 @@ def _plan(
     if not res.ok:
         goal = _pose_of(arm, res.q)
         note = (
-            f"the exact pose is out of reach; went to the closest one, {res.pos_err_m:.3f} m "
+            f"the exact pose is out of reach; selected the closest one, {res.pos_err_m:.3f} m "
             f"and {res.rot_err_deg:.0f} deg from it"
         )
     if path in ("line", "auto"):
@@ -385,6 +441,9 @@ def move_pose(
     yaw: float | None = None,
     roll: float | None = None,
     path: str = "auto",
+    motion: dict | None = None,
+    *,
+    preview: bool = False,
 ) -> dict[str, Any]:
     """Move one arm's grasp point to ``xyz`` and an orientation: the tool behind ``move_to``.
 
@@ -441,6 +500,9 @@ def move_pose(
         "start_xyz": start,
         "steps_used": 0,
         "path": None,
+        "planned_path": None,
+        "status": "rejected",
+        "recoverable": True,
     }
     if not options:
         if first_why and first_why.startswith("out of reach"):
@@ -460,46 +522,132 @@ def move_pose(
             ),
             reached=False,
             ik_error=first_why,
+            stop_reason="ik_path_rejected",
         )
         return result
     _near, _travel, ways, taken, goal, note = min(options, key=lambda o: (o[0], o[1]))
-    result["path"] = taken
+    result["planned_path"] = taken
     if goal is flipped:
         half = (
-            "took the pose turned half a turn about the pointing direction (the empty "
+            "selected the pose turned half a turn about the pointing direction (the empty "
             "fingers are interchangeable): yaw / roll read 180 off"
         )
         note = f"{note}; {half}" if note else half
+    timed = None
+    native = motion == {"mode": "native"}
+    clock = None if native else trajectory_tools.backend(primitives)
+    if not native and (clock is not None or motion is not None):
+        try:
+            if clock is None:
+                raise ValueError("backend has no timed joint trajectory support")
+            status = primitives.env.get_status()
+            remaining = min(10000, status.get("step_limit", 10000) - status.get("step", 0))
+            initial = {a: _joints(state, a) for a in ARMS}
+
+            def check(joints):
+                primitives._check_cancelled()
+                trajectory_tools.check_joints(joints, start=initial)
+                if taken == "line":
+                    # Smoothing may blend joints, but cannot silently turn a requested
+                    # Cartesian line into an unchecked curve.
+                    pose = _pose_of(arm, joints[arm])
+                    begin = _pose_of(arm, initial[arm])
+                    vector = goal[:3, 3] - begin[:3, 3]
+                    fraction = np.clip(np.dot(pose[:3, 3] - begin[:3, 3], vector)
+                                       / max(np.dot(vector, vector), 1e-12), 0, 1)
+                    if np.linalg.norm(pose[:3, 3] - begin[:3, 3] - fraction * vector) > 0.003:
+                        raise ValueError("smoothed trajectory leaves Cartesian line tolerance")
+
+            timed, result["trajectory"] = trajectory_tools.parameterize(
+                initial, [{**initial, arm: way} for way in ways], clock, motion,
+                max_actions=remaining, check=check,
+                line_tolerance_m=0.003 if taken == "line" else None,
+            )
+        except ValueError as exc:
+            if isinstance(exc, trajectory_tools.TrajectoryBudgetError):
+                result["trajectory"] = exc.trajectory
+            now = _pose_summary(arm, q)
+            reason = ("unsupported_timed_trajectory" if clock is None else
+                      "timed_path_exceeds_native_step_budget" if str(exc) ==
+                      "timed_path_exceeds_native_step_budget" else "trajectory_validation_failed")
+            result.update(final_xyz=now["xyz"],
+                          final_angles={k: now[k] for k in ("pitch", "yaw", "roll")},
+                          reached=False, ik_error=None, stop_reason=reason, note=str(exc),
+                          dist_to_target_m=float(np.linalg.norm(np.asarray(start) - xyz)),
+                          orientation_error_deg=kin.rotation_error(
+                              kin.fk(arm, q)[:3, :3], goal[:3, :3]))
+            return result
+    if native:
+        getter = getattr(primitives.env, "get_status", None)
+        status = getter() if callable(getter) else {}
+        remaining = status.get("step_limit", 10000) - status.get("step", 0)
+        result["execution_mode"] = "native"
+        if len(ways) > remaining:
+            result.update(reached=False, accepted=False, planned_steps=len(ways),
+                          stop_reason="planned_path_exceeds_native_step_budget")
+            return result
+    if preview:
+        status = primitives.env.get_status()
+        result.update(status="planned", accepted=True, reached=False, preview=True,
+                      planned_steps=result.get("trajectory", {}).get("planned_steps", len(ways)),
+                      remaining_episode_steps=status.get("step_limit", 10000) - status.get("step", 0),
+                      settle_reserve_steps=SETTLE_ACTIONS,
+                      replan_before_dispatch=True)
+        return result
     if note:
         result["note"] = note
     steps = 0
     status: dict[str, Any] = {}
-    for way in ways:
+    tracking_failed = False
+    commands = timed if timed is not None else [dict(joints={arm: way}) for way in ways]
+    for command in commands:
         primitives._check_cancelled()
-        state, status = _act(primitives, state, {arm: way}, {arm: grip})
+        state, status = _act(primitives, state, command["joints"], {arm: grip},
+                             command.get("trajectory"))
         steps += 1
+        actual = _pose_of(arm, _joints(state, arm))
+        expected = _pose_of(arm, command["joints"][arm])
+        tracking_failed = (
+            np.linalg.norm(actual[:3, 3] - expected[:3, 3]) > ARRIVE_M
+            or kin.rotation_error(actual[:3, :3], expected[:3, :3]) > ARRIVE_DEG
+        )
+        if tracking_failed:
+            mode = "timed trajectory" if timed is not None else "native waypoint path"
+            result["note"] = f"{mode} interrupted by measured tracking error"
+            break
         if _spent(status):
             break
     final_q = ways[-1]
     for _ in range(SETTLE_ACTIONS):
-        if _spent(status):
+        if _spent(status) or tracking_failed:
             break
         err = max(abs(a - b) for a, b in zip(_joints(state, arm), final_q, strict=True))
         if err < 0.01:
             break
         primitives._check_cancelled()
-        state, status = _act(primitives, state, {arm: final_q}, {arm: grip})
+        hold_joints = timed[-1]["joints"] if timed is not None else {arm: final_q}
+        hold = trajectory_tools.hold(hold_joints, clock) if timed is not None else None
+        state, status = _act(primitives, state, hold_joints, {arm: grip}, hold)
         steps += 1
+    if timed is not None:
+        result["trajectory"]["settle_steps"] = max(0, steps - len(timed))
     q_now = _joints(state, arm)
     now = _pose_summary(arm, q_now)
     dist = float(np.linalg.norm(np.asarray(kin.tcp(kin.fk(arm, q_now))) - np.asarray(xyz)))
     turn = kin.rotation_error(kin.fk(arm, q_now)[:3, :3], goal[:3, :3])
+    reached = bool(not tracking_failed and dist <= ARRIVE_M and turn <= ARRIVE_DEG)
     result.update(
         final_xyz=now["xyz"],
         final_angles={k: now[k] for k in ("pitch", "yaw", "roll")},
         dist_to_target_m=round(dist, 4),
         orientation_error_deg=round(turn, 1),
-        reached=bool(dist <= ARRIVE_M and turn <= ARRIVE_DEG),
+        reached=reached,
+        status="completed" if reached else "partial",
+        path=taken,
+        recoverable=False,
+        stop_reason=(None if reached else "tracking_error" if tracking_failed else
+                     _episode_stop_reason(status) if _spent(status) else
+                     "final_target_not_reached"),
         steps_used=steps,
         ik_error=None,
     )
@@ -605,6 +753,48 @@ def home(
     steps_used = 0
     status: dict[str, Any] = {}
     lifted: dict[str, float] = {}
+    retreated: dict[str, float] = {}
+    for name in arms if error > tol else ():
+        release = (getattr(primitives, "_release_poses", None) or {}).get(name)
+        if release is None:
+            continue
+        q = _joints(state, name)
+        pose = _pose_of(name, q)
+        withdrawal = -release[:3, 0]
+        offset = pose[:3, 3] - release[:3, 3]
+        missing = RELEASE_WITHDRAW_M - float(np.dot(offset, withdrawal))
+        if np.linalg.norm(offset) >= RELEASE_NEAR_M or missing <= .001:
+            continue
+        target = pose.copy()
+        target[:3, 3] += withdrawal * missing
+        ways, why = kin.line_path(name, q, target)
+        if why is not None:
+            return dict(arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
+                        steps_used=steps_used, stop_reason="release_clearance_required",
+                        status="partial" if steps_used else "rejected",
+                        note=f"{name}: cannot withdraw from the last release before homing: {why}")
+        for way in _followable(q, ways):
+            primitives._check_cancelled()
+            state, status = _act(primitives, state, {name: way}, {})
+            steps_used += 1
+            if _spent(status):
+                break
+        for _ in range(SETTLE_ACTIONS):
+            if _spent(status) or max(abs(a - b) for a, b in
+                    zip(_joints(state, name), ways[-1], strict=True)) < tol:
+                break
+            primitives._check_cancelled()
+            state, status = _act(primitives, state, {name: ways[-1]}, {})
+            steps_used += 1
+        actual = _pose_of(name, _joints(state, name))
+        retreated[name] = round(float(np.dot(actual[:3, 3] - pose[:3, 3], withdrawal)), 4)
+        if (_spent(status) or float(np.dot(actual[:3, 3] - release[:3, 3], withdrawal))
+                < RELEASE_WITHDRAW_M - .005):
+            return dict(arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
+                        steps_used=steps_used, clearance_retreat_m=retreated,
+                        status="partial",
+                        stop_reason=_episode_stop_reason(status) if _spent(status)
+                                    else "release_clearance_incomplete")
     for name in arms if lift and error > tol else ():
         q = _joints(state, name)
         if max(abs(a - b) for a, b in zip(q, start_joints[name], strict=True)) <= tol:
@@ -627,6 +817,47 @@ def home(
                 break
         if _spent(status):
             break
+    # After placing an object, a joint return can dip through it even after
+    # finger withdrawal. Stage that arm above the origin first. Ordinary home
+    # keeps its original lift/joint route: changing every return perturbs later
+    # contact motions even when all Cartesian endpoints remain within tolerance.
+    staged: dict[str, float] = {}
+    for name in arms if lift and not _spent(status) else ():
+        if name not in (getattr(primitives, "_home_after_release", None) or ()):
+            continue
+        q = _joints(state, name)
+        if max(abs(a - b) for a, b in zip(q, start_joints[name], strict=True)) <= tol:
+            continue
+        pose = _pose_of(name, q)
+        above = _pose_of(name, start_joints[name])
+        above[2, 3] = max(above[2, 3], pose[2, 3])
+        ways, why = kin.line_path(name, q, above)
+        if why is not None:
+            return dict(arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
+                        steps_used=steps_used, status="partial" if steps_used else "rejected",
+                        stop_reason="home_staging_required",
+                        note=f"{name}: cannot return above the origin at the cleared height: {why}")
+        for way in _followable(q, ways):
+            primitives._check_cancelled()
+            state, status = _act(primitives, state, {name: way}, {})
+            steps_used += 1
+            if _spent(status):
+                break
+        for _ in range(SETTLE_ACTIONS):
+            if _spent(status) or max(abs(a - b) for a, b in
+                    zip(_joints(state, name), ways[-1], strict=True)) < tol:
+                break
+            primitives._check_cancelled()
+            state, status = _act(primitives, state, {name: ways[-1]}, {})
+            steps_used += 1
+        actual = _pose_of(name, _joints(state, name))
+        if (_spent(status) or np.linalg.norm(actual[:3, 3] - above[:3, 3]) > ARRIVE_M
+                or kin.rotation_error(actual[:3, :3], above[:3, :3]) > ARRIVE_DEG):
+            return dict(arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
+                        steps_used=steps_used, status="partial",
+                        stop_reason=_episode_stop_reason(status) if _spent(status)
+                                    else "home_staging_incomplete")
+        staged[name] = round(float(above[2, 3]), 4)
     error = error_of(state)
     swing = 0
     while error > tol and swing < max_steps and not _spent(status):
@@ -641,8 +872,20 @@ def home(
         "max_joint_error_rad": round(error, 4),
         "steps_used": steps_used,
     }
+    if error > tol:
+        out["stop_reason"] = _episode_stop_reason(status) or "home_action_limit"
     if lifted:
         out["lifted_m"] = lifted
+    if retreated:
+        out["clearance_retreat_m"] = retreated
+    if staged:
+        out["staging_height_m"] = staged
+    pending = getattr(primitives, "_home_after_release", None)
+    if pending is not None:
+        for name in arms:
+            if max(abs(a - b) for a, b in
+                   zip(_joints(state, name), start_joints[name], strict=True)) <= tol:
+                pending.discard(name)
     return out
 
 
@@ -1452,6 +1695,19 @@ def locate(
 locate._readonly = True  # type: ignore[attr-defined]
 
 
+def preview_move_pose(primitives, start_joints, **kwargs):
+    """Plan/validate the same route as move_pose, without dispatch or gripper changes."""
+    result = move_pose(primitives, start_joints, **kwargs, preview=True)
+    status = primitives.env.get_status()
+    result.update(preview=True, replan_before_dispatch=True,
+                  remaining_episode_steps=status.get("step_limit", 10000) - status.get("step", 0))
+    result.setdefault("accepted", False)
+    return result
+
+
+preview_move_pose._readonly = True
+
+
 # ---------------------------------------------------------------------------
 # registration
 # ---------------------------------------------------------------------------
@@ -1472,6 +1728,7 @@ SPECS: dict[str, dict[str, Any]] = {
                 "yaw": {"type": "number"},
                 "roll": {"type": "number"},
                 "path": {"type": "string", "enum": ["auto", "line", "joint"]},
+                "motion": MOTION_SCHEMA,
             },
             "required": ["xyz"],
         },
@@ -1528,6 +1785,10 @@ SPECS: dict[str, dict[str, Any]] = {
 }
 
 
+SPECS["preview_move_pose"] = dict(SPECS["move_pose"], name="preview_move_pose",
+    description="Read-only trajectory validation, timing and native-step estimate; never moves.")
+
+
 def register(toolkit: Any) -> None:
     """Add this module's tools to a freshly booted RoboDojo toolkit.
 
@@ -1541,6 +1802,7 @@ def register(toolkit: Any) -> None:
     start = {arm: _joints(state, arm) for arm in ARMS}
     handlers = {
         "move_pose": partial(move_pose, primitives, start),
+        "preview_move_pose": partial(preview_move_pose, primitives, start),
         "grip": partial(grip, primitives),
         "locate": partial(locate, primitives),
         "home": partial(home, primitives, start),

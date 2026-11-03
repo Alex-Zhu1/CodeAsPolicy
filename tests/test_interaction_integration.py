@@ -112,11 +112,18 @@ def test_play_writes_sidecar_and_actual_configuration_without_model(
 ):
     import pyrualean.mcp_server as mcp
     import pyrualean.play as play
+    from pyrualean.prompt import TaskCard
 
     monkeypatch.chdir(tmp_path)  # restore the process cwd after play enters its workspace
+
+    def dump_card(toolkit, cell, out_dir):
+        card = TaskCard(suite="fake", task="fake", seed=1, task_language="test", object_names=[])
+        (out_dir / "card.json").write_text(card.to_json())
+        return card
+
     host = SimpleNamespace(
         boot=lambda *args, **kwargs: (backend, []),
-        dump_card=lambda *args: SimpleNamespace(task_language="test", images={}),
+        dump_card=dump_card,
     )
     adapter = SimpleNamespace(name="libero", robot_cls=type(robo), host_module=lambda: host)
     monkeypatch.setattr(play, "get_adapter", lambda name: adapter)
@@ -127,7 +134,7 @@ def test_play_writes_sidecar_and_actual_configuration_without_model(
         start=lambda: "http://unused.invalid", stop=lambda: None,
     ))
     replies = iter([
-        ("c1", "python", {"code": "answer = 42"}),
+        ("c1", "python", {"code": 'answer = 42\nplan(goal="Inspect", done_when="read image")'}),
         ("c2", "finish", {"status": "failed", "summary": "fixture complete"}),
     ])
 
@@ -150,6 +157,9 @@ def test_play_writes_sidecar_and_actual_configuration_without_model(
     )
     assert result["error"] is None
     assert result["tool_turns"] == 2
+    plan = json.loads((out / "execution_plan.json").read_text())
+    assert plan["task_card"]["path"] == str(out / "card.json")
+    assert plan["goal"] == "Inspect" and plan["context"]["turn"] == 1
     record = json.loads((out / "result.json").read_text())["interaction"]
     assert record["configuration"]["submitted_reasoning_effort"] == "high"
     assert record["capabilities"]["provider_first_token"] is False

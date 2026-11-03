@@ -65,12 +65,13 @@ from typing import Any
 
 from .._backend import Ledger
 from ..prompt import TaskCard, render_prompt
-from ..robodojo import RobodojoRobot, _arm_state
+from ..robodojo import RobodojoRobot
 from ..runner import PolicyLoadError, load_policy, policy_sha256, run_policy
 from ..sandbox import DESCRIPTION as SANDBOX_DESCRIPTION
 from ..sandbox import audit_source, make_builtins
 from . import robodojo_tools as tools
 from .common import RESULT_SCHEMA, RpentBackend, resolve_rpent_root, stop_all
+from .robodojo_card import build_card
 
 #: RPent's ``--env-cfg-type`` values (``robots/robodojo/robot_spec.py``).
 ENV_CONFIGS = ("arx_x5",)
@@ -415,25 +416,6 @@ def boot(
     return toolkit, daemons
 
 
-def _fmt(values: Any) -> str:
-    return "[" + ", ".join(f"{v:.3f}" for v in values) + "]"
-
-
-def _opening(value: Any) -> float:
-    """A gripper opening recorded as ``[0.97]`` (or a one-value numpy array)."""
-    for _ in range(4):
-        if value is None or isinstance(value, (int, float)):
-            break
-        try:
-            value = next(iter(value))
-        except (TypeError, StopIteration):
-            break
-    try:
-        return float(value)
-    except (TypeError, ValueError):
-        return 0.0
-
-
 def dump_card(toolkit: Any, cell: Cell, out_dir: Path) -> TaskCard:
     """Write ``card.json`` plus the step-0 images and return the card.
 
@@ -451,6 +433,7 @@ def dump_card(toolkit: Any, cell: Cell, out_dir: Path) -> TaskCard:
     card_dir = out_dir / "card"
     card_dir.mkdir(exist_ok=True)
     images: dict[str, str] = {}
+    image_sources: dict[str, str] = {}
     for camera, name in CARD_IMAGES.items():
         try:
             source = toolkit.state.artifact_path(name, step=0)
@@ -460,31 +443,12 @@ def dump_card(toolkit: Any, cell: Cell, out_dir: Path) -> TaskCard:
             target = card_dir / f"{camera}.png"
             shutil.copyfile(source, target)
             images[camera] = str(target)
-    facts: dict[str, Any] = {}
-    for arm in ("left", "right"):
-        start = _arm_state(raw, arm)
-        facts[f"{arm} arm initial grasp point [x, y, z]"] = f"{_fmt(start.tcp_pos)} m"
-        facts[f"{arm} gripper initial pitch / yaw / roll"] = (
-            f"{round(start.pitch)} / {round(start.yaw)} / {round(start.roll)} deg"
-        )
-        opening = _opening(raw.get(f"{arm}_ee_joint_state"))
-        facts[f"{arm} gripper opening"] = f"{opening:.2f} (1 = open, 0 = closed)"
-    limit = _status(toolkit).get("step_limit")
-    try:
-        budget = int(limit)
-    except (TypeError, ValueError):
-        budget = cell.max_episode_steps
-    facts["native action budget"] = f"{budget} (a motion call spends one or more)"
-    card = TaskCard(
-        suite=cell.suite,
-        task=cell.task,
-        seed=cell.seed,
-        task_language=str(view.get("task_language") or summary.get("instruction") or ""),
-        object_names=[],
-        images=images,
-        max_env_steps=budget,
-        robot="robodojo",
-        facts=facts,
+            image_sources[camera] = str(source.resolve())
+    card = build_card(
+        cell=cell, raw=raw,
+        instruction=str(view.get("task_language") or summary.get("instruction") or ""),
+        images=images, status=_status(toolkit), primitives=toolkit._primitives, robot="robodojo",
+        observation=view.get("observation"), image_sources=image_sources,
     )
     (out_dir / "card.json").write_text(card.to_json() + "\n", encoding="utf-8")
     return card

@@ -43,6 +43,7 @@ from ._robot import PRIMITIVE_SETS, effective_primitives
 from .arms import ARMS, ArmToolkit, arm_contract, robot_words
 from .claude_runtime import resolve_cli, run_claude_agent, sdk_max_turns
 from .execution import ExecutionLimits, add_execution_arguments, execution_limits
+from .execution_plan import PLAN_PROMPT
 from .generate import codex_catalog_flags, provider_overrides
 from .hosts.common import RESULT_SCHEMA, RpentBackend, resolve_rpent_root, stop_all
 from .interaction_trace import InteractionTrace
@@ -220,7 +221,8 @@ def build_prompt(
             contract.rstrip(),
             "# API reference (the `robo` object)\n\n" + reference,
             knowledge_text(adapter.knowledge, primitives=primitives).strip(),
-            card.render(),
+            card.render(compact=True),
+            PLAN_PROMPT.strip(),
         ]
     )
 
@@ -591,6 +593,7 @@ def play_episode(
     primitives = effective_primitives(adapter.robot_cls, primitives)
     host = adapter.host_module()
     boot_options = dict(boot_options or {})
+    out_dir = out_dir.resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
     workspace = out_dir / "workspace"
     if workspace.exists():
@@ -704,6 +707,8 @@ def play_episode(
             stuck_recovery=stuck_recovery,
             execution_limits=code_limits,
             trace=trace,
+            task_card_path=out_dir / "card.json",
+            execution_state_path=out_dir / "execution" / f"{robo._interaction_session_id}.sqlite3",
             supervisor=(
                 VisualSupervisor(monitor, out_dir / "supervision")
                 if monitor.mode != "off" else None
@@ -981,6 +986,8 @@ def play_episode(
             with contextlib.suppress(Exception):
                 server.stop()
         stop_all(toolkit, daemons)
+        if arm_toolkit is not None and not arm_toolkit.close():
+            result["notes"].append("Execution worker still active; journal writer lease retained")
         result["total_wall_s"] = time.perf_counter() - started
         trace.emit("episode_finished", status=result["status"])
         result["interaction"].update(trace.summary())

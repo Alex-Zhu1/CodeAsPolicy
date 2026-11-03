@@ -42,6 +42,12 @@ class InteractionMixin:
         self._verification_depth = 0
         self._code_context: dict = {}
         self._paused_turn: int | None = None
+        self._execution_journal = None
+        self._operation_id: str | None = None
+
+    def _persist_action(self, action_id):
+        if self._execution_journal is not None:
+            self._execution_journal.put("action", action_id, self._receipts[action_id])
 
     def _remember_observation(self, envelope, *, current=True) -> None:
         meta = (envelope or {}).get("observation")
@@ -148,6 +154,8 @@ class InteractionMixin:
             self._verification_depth -= 1
 
     def _interaction_guard(self) -> None:
+        if self._execution_journal is not None:
+            self._execution_journal.check()
         if self._verification_depth:
             raise RuntimeError("Physical actions are not permitted during read-only verification")
         if self._pending_actions:
@@ -165,14 +173,18 @@ class InteractionMixin:
         context = dict(self._code_context, session_id=self._interaction_session_id,
                        action_id=action_id, observation_id=self._latest_observation_id,
                        source_id=source.get("source_id"),
-                       source_native_steps=source.get("native_steps"))
+                       source_native_steps=source.get("native_steps"),
+                       action_revision=self._action_revision + 1,
+                       operation_id=self._operation_id)
         receipt = dict(context, schema="pyrualean.action.v1", tool=tool,
+                       arguments=record.kwargs,
                        status="running", effect_known=False, execution_complete=False)
         self._receipts[action_id] = receipt
         record.session_id = self._interaction_session_id
         record.action_id = action_id
         record.observation_id = self._latest_observation_id
         record.receipt = copy.deepcopy(receipt)
+        self._persist_action(action_id)  # durable intent BEFORE any backend dispatch
         return context
 
     def _store_receipt(self, receipt, action_id) -> dict:
@@ -192,6 +204,7 @@ class InteractionMixin:
         else:
             self._pending_actions.add(action_id)
             self._paused_turn = self._code_context.get("turn")
+        self._persist_action(action_id)
         return saved
 
     def _unknown_action(self, action_id, error) -> None:
@@ -200,6 +213,7 @@ class InteractionMixin:
                        error=f"{type(error).__name__}: {error}")
         self._pending_actions.add(action_id)
         self._paused_turn = self._code_context.get("turn")
+        self._persist_action(action_id)
 
     def action_receipt(self, action_id: str | None = None) -> dict:
         """Read a detached action receipt; no query, retry or physical action occurs.
@@ -272,6 +286,7 @@ class InteractionMixin:
         summary = {k: receipt[k] for k in (
             "session_id", "action_id", "tool", "status", "effect_known", "execution_complete",
             "observation_id", "stop_confirmed", "receipt_supported", "reason", "turn",
+            "request_id", "operation_id",
         ) if k in receipt}
         if receipt.get("error"):
             summary["error"] = str(receipt["error"])[:300]

@@ -4,7 +4,7 @@
 
 ## 状态与范围
 
-本文基于 **2026-10-31 UTC 当前工作区的静态梳理**，包括尚未提交的模块与修改。
+初版基于 2026-10-31 UTC 静态梳理；2026-11-02（Asia/Singapore）补充未提交的来源任务卡实现，见[仓库审查](../repository-review-20261102.md)。
 “现有实现”描述已读到的代码；`TaskSpec`、`BudgetSnapshot` 等名称表示目标协议草案，尚未统一实现。
 设计对象是 Robot Use 完整框架；Computer Use 仅提供交互与执行语义的设计参照。
 本次文档整理不改变运行逻辑，也不声称已经完成实机或仿真验证。
@@ -26,6 +26,9 @@ Astra 可以提出阶段和假设，但不能把这些派生内容自动升级�
 
 `arm` 在运行参数中表示 cells/program 模式，不表示左臂或右臂。
 暂停继续是从真实现场生成后续代码，不是恢复到被中断的 Python 栈帧。
+宿主执行记录可通过 `ArmToolkit(..., execution_state_path=..., resume=True)` 恢复到同一后端会话，
+保留调用预算、原墙钟截止时间和未决动作；不恢复 Python namespace 或重建仿真现场。
+请求与命名操作的防重放边界见[恢复与交接](recovery-handoff.md#请求逻辑操作与重启恢复)。
 
 ## 输入输出
 
@@ -41,6 +44,10 @@ Astra 可以提出阶段和假设，但不能把这些派生内容自动升级�
 ## 现有实现
 
 - `src/pyrualean/prompt.py`：`TaskCard` 保存任务指令、对象名、初始图像、机器人事实和步数预算；`render()` 区分实际初始图与 transfer 示例图。
+- `TaskCard.sources` 保存组装、原始指令、初始观测、预算及能力的来源说明；旧 JSON 缺少此字段时按空字典读取。
+- 审查期间新增 `initial_state` / `provenance`，保存未舍入测量、观测标识、时钟、产物摘要和创建时预算；完整审计数据在 `card.json`，模型入口用 `render(compact=True)` 的启动摘要。该并行增量的验证状态见仓库审查记录。
+- `hosts/robodojo_card.py::build_card` 供 RPent 与 XPL RGB-D/RGB 共用：原始任务指令不改写，缺失或无效初始位姿/开度标为 unknown，预算回退标明配置来源，不从任务名或隐藏状态推导任务事实。
+- RoboDojo 任务卡保存启动时的执行能力快照；运行中能力应重新调用 `motion_capabilities()` 查询。来源字段和能力快照尚未构成版本化的统一任务协议。
 - `src/pyrualean/prompt.py`：`SCORING_NOTES` 区分实时成功信号与最终场景评分，`CONTRACT` 明确离线程序执行期间没有模型。
 - `src/pyrualean/robots.py`：`RobotAdapter` 描述机器人类、host 和知识来源；`live_success` 指示是否提供在线任务成功信号。
 - `src/pyrualean/play.py`：`play_episode()` 启动 host、生成任务卡、建立 toolkit、运行模型循环并写入最终结果。

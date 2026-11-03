@@ -9,6 +9,9 @@
 `HandoffReport`、`DecisionContext` 等是目标契约草案，不能视为已存在的统一 API。
 恢复指从实际现场继续任务；它不回滚环境、不自动重放动作、不恢复旧 Python 调用栈。
 
+2026-11-02 增量：统一工具入口现已接入请求去重、失败后的反馈标识、命名操作记录和可持久化的执行账本。
+下述机制已有可控后端及进程退出测试；不代表实机停止或仿真器重启后现场还原已经验收。
+
 ## 职责边界
 
 - 识别当前问题属于代码修复、程序内纠偏、证据补充、执行对账还是策略重规划。
@@ -50,6 +53,57 @@
 反馈已有 `pyrualean.handoff.v1` 最小字段：来源、最后动作、未决动作、下一责任方和可执行边界；pure 和压缩反馈均保留。
 native/XPL 在途动作可对账；unknown 时新 cell 也不能派发，视觉 yes 不会清除执行门槛。完整预算、依赖图和实机停止确认仍待补齐。
 `retry_allowed` 当前是基于已知停止原因和调用额度给出的建议；执行前仍需复查预算和现场，不能解释为重试许可或效果确定性保证。
+
+### 请求、逻辑操作与重启恢复
+
+`python`、`run_program` 和 `finish` 的工具参数新增 `request_id` 和 `resume_token`。
+MCP 要求提供稳定的 `request_id`；直接 OpenAI runtime 还可使用供应端的调用 ID，且不依赖 tracing 开关。
+同一请求 ID、同一参数只返回已存结果与原始图像，不增加调用预算、不再运动；更改参数后复用 ID 会被拒绝。
+原请求若在完成记录写入前中断，则只返回待恢复状态，不重跑代码来补造结果。
+缓存结果标记 `execution.replayed=true`，其图像及结果是历史数据，当前未决动作仍以新的 handoff 为准。
+
+失败或暂停后，反馈给出 `execution.resume_token`。MCP 的后续新请求必须携带最新标识；
+直接模型循环在读取反馈后发起新决策时传递它。宿主同时校验请求入队时的反馈版本，
+阻断失败前已排队的调用；已失败 decision 永久失效，修复成功也不重新接收其迟到调用。
+恢复标识在修复成功后继续有效，避免迟到的旧 MCP 请求重新获得执行资格。
+独立的同步 Python 嵌入调用兼容旧签名，但调用方应提供稳定请求身份来获得跨重试去重。
+
+对不能重复的逻辑操作，代码使用 `once(step_id, robo.method, *args, **kwargs)`：
+
+```python
+result = once("lift-red-1", robo.move_to, target, arm="left")
+if not result["value"]["reached"]:
+    print(result)  # 从实际终点规划剩余运动，不能把调用返回视作任务完成
+```
+
+同一 step ID 必须对应同一个方法与参数。正常返回的操作再次出现时只返回保存的 JSON 值；
+`status="returned"` 表示方法返回，不表示到达目标或任务成功。`once(step_id)` 可读取操作及关联回执。
+若操作被中断，再次执行同一 ID 会暂停；先对账，再为确有必要的剩余工作分配新的 continuation ID。
+有意重复的事件分别编号，例如 `press-red-1`、`press-red-2`。
+框架不按代码文本或坐标去重，也不推断任意新代码的业务意图；绕开 `once` 的新动作仍是新请求。
+
+生产 `play_episode` 在 `execution/<robot-session-id>.sqlite3` 写入执行记录。
+请求开始、调用预算、动作派发前的意图、执行回执、命名操作结果和工具结果分别持久提交；
+单写者文件锁阻止两个宿主同时使用一份账本。SQLite 使用 FULL 同步，不用 pickle 恢复对象。
+嵌入调用不提供 `execution_state_path` 时使用内存账本，仅支持本进程去重。
+
+连接到**仍存在的同一个执行端会话**后，宿主可创建：
+
+```python
+restored = ArmToolkit(
+    robot_for_same_backend_session, arm="cells", workspace=original_workspace,
+    execution_state_path=original_database, resume=True,
+    # 使用与原会话一致的 task_card_path 和预算配置
+)
+context = restored.resume_state()
+```
+
+恢复校验会话、机器人、任务卡与预算配置，保留已用调用数、原墙钟截止时间、请求及动作身份。
+未确认动作按 unknown 处理；没有准确回执时仍不放行。Python 变量、调用栈和视觉证据不恢复，
+需要无副作用地重建 helper，并重新观察现场。恢复出的新代码也须携带新的恢复标识。
+`close()` 在宿主停止处理调用后释放账本锁；执行线程仍占用时返回 false，保留锁而不阻塞关闭流程。
+普通 `play_episode` 仍启动新 episode；这个恢复入口不负责重新启动仿真器、重建物理现场或恢复另一执行端的会话。
+后端没有稳定 session ID 或原动作查询能力时，不能用旧记录猜测执行结果。
 
 ## 待补齐契约
 

@@ -110,7 +110,7 @@ def test_tools_spec_converts_to_openai_functions(robo, tmp_path):
     tools = orun.openai_tools(_toolkit(robo, tmp_path).get_tools_spec())
     assert [t["function"]["name"] for t in tools] == ["python", "finish"]
     assert tools[0]["type"] == "function"
-    assert tools[0]["function"]["parameters"]["required"] == ["code"]
+    assert tools[0]["function"]["parameters"]["required"] == ["code", "request_id"]
 
 
 def test_full_episode_with_images_and_finish(robo, backend, tmp_path, card_images):

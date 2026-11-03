@@ -49,7 +49,7 @@ def _handler(monkeypatch, toolkit):
     return captured[0].request_handlers[types.CallToolRequest]
 
 
-async def _call(handler, marker, *, wire_id, name="python"):
+async def _call(handler, marker, *, wire_id, name="python", arguments=None):
     from mcp import types
     from mcp.server.lowlevel.server import request_ctx
     from mcp.shared.context import RequestContext
@@ -59,7 +59,7 @@ async def _call(handler, marker, *, wire_id, name="python"):
     try:
         response = await handler(types.CallToolRequest(
             method="tools/call", params=types.CallToolRequestParams(
-                name=name, arguments={"marker": marker},
+                name=name, arguments=arguments if arguments is not None else {"marker": marker},
             ),
         ))
         return response.root
@@ -247,3 +247,63 @@ def test_mcp_without_trace_supports_existing_toolkit_signature(monkeypatch):
     content, is_error = mcp_server._result_to_mcp(_result("legacy"))
     assert response.content == content
     assert response.isError is is_error is False
+
+
+def test_real_toolkit_mcp_blocks_prequeued_dependents_without_trace(monkeypatch, tmp_path):
+    from pyrualean.arms import ArmToolkit
+    from pyrualean.libero import LiberoRobot
+    from tests.test_interaction_contracts import ProtocolBackend
+
+    backend = ProtocolBackend()
+    toolkit = ArmToolkit(LiberoRobot(backend), arm="cells", workspace=tmp_path / "ws",
+                         images="none")
+    execute = toolkit.execute_tool
+    release = threading.Event()
+
+    async def exercise():
+        loop = asyncio.get_running_loop()
+        started, queued = asyncio.Event(), asyncio.Event()
+        submission = toolkit.submission_context
+        submissions = []
+
+        def received():
+            context = submission()
+            submissions.append(context)
+            if len(submissions) == 2:
+                queued.set()
+            return context
+
+        def blocking(*args, **kwargs):
+            if args[1]["request_id"] == "first":
+                loop.call_soon_threadsafe(started.set)
+                assert release.wait(5)
+            return execute(*args, **kwargs)
+
+        monkeypatch.setattr(toolkit, "submission_context", received)
+        monkeypatch.setattr(toolkit, "execute_tool", blocking)
+        handler = _handler(monkeypatch, toolkit)
+        first = asyncio.create_task(_call(handler, None, wire_id=1, arguments={
+            "request_id": "first", "code": "robo.move_to([0.05,-0.1,0.6])\n1/0",
+        }))
+        tasks = [first]
+        try:
+            await asyncio.wait_for(started.wait(), 3)
+            tasks.append(asyncio.create_task(_call(handler, None, wire_id=2, arguments={
+                "request_id": "second", "code": "robo.release()",
+            })))
+            await asyncio.wait_for(queued.wait(), 3)
+        finally:
+            release.set()
+            responses = await asyncio.wait_for(asyncio.gather(*tasks), 5)
+        assert all(r.isError for r in responses)
+        payload = json.loads(responses[1].content[0].text)
+        assert payload["skipped"] and payload["execution"]["resume_token"]
+        repaired = await _call(handler, None, wire_id=3, arguments={
+            "request_id": "repair", "code": "robo.release()",
+            "resume_token": payload["execution"]["resume_token"],
+        })
+        assert not repaired.isError
+
+    _run(exercise())
+    assert len(backend.contexts) == 2
+    assert toolkit._cell_index == 2

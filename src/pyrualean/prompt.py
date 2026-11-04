@@ -163,18 +163,25 @@ def _apply_edits(text: str, edits: tuple[tuple[str, str], ...], what: str) -> st
 
 
 def api_reference(
-    robot_cls: type = LiberoRobot, *, var: str = "robo", primitives: str = "full"
+    robot_cls: type = LiberoRobot, *, var: str = "robo", primitives: str = "full",
+    intent_only: bool | None = None,
 ) -> str:
     """Render the policy-facing API of ``robot_cls`` from its live definition.
 
     ``primitives="no-vla"`` leaves out the robot's ``VLA_PRIMITIVES``, the
     result types only they return, and (through ``VLA_REFERENCE_EDITS``) the
     sentences of the other docstrings that describe the VLA.
+    Intent-capable robots default to the shared operation interface, omitting
+    legacy controller tuning. ``intent_only=False`` explicitly renders the full
+    library reference for existing scripts and controller development.
     """
 
     primitives = effective_primitives(robot_cls, primitives)
     vla_members, vla_types = vla_hidden(robot_cls, primitives)
     sections: list[str] = []
+    intent_only = intent_only is not False and getattr(robot_cls, "INTENT_API", False)
+    legacy_members = (set(getattr(robot_cls, "LEGACY_MOTION_METHODS", ())) | {"try_grasp"}
+                      if intent_only else ())
     class_doc = inspect.getdoc(robot_cls) or ""
     sections.append(f"class {robot_cls.__name__}\n{textwrap.indent(class_doc, '    ')}")
     # Base-class configuration, ``RESULT_TYPES`` (rendered as the result-type
@@ -201,7 +208,7 @@ def api_reference(
         sections.append("Constants:\n" + "\n".join(f"    {c}" for c in constants))
     members: list[str] = []
     for name, member in _public_members(robot_cls).items():
-        if name in vla_members:
+        if name in vla_members or name in legacy_members:
             continue
         if isinstance(member, property):
             members.append(_render_property(var, name, member))
@@ -213,6 +220,7 @@ def api_reference(
         _render_result_type(cls)
         for cls in result_types
         if is_dataclass(cls) and cls.__name__ not in vla_types
+        and not (intent_only and cls.__name__ == "Move")
     ]
     sections.append(
         "Result types (frozen dataclasses; access fields as attributes):\n\n" + "\n\n".join(results)
@@ -223,40 +231,71 @@ def api_reference(
 
         sections.append("Coordination types:\n\n" + "\n\n".join(
             _render_result_type(cls) for cls in MOTION_TYPES
+            if not intent_only or cls.__name__ in {"Pose", "Observation"}
         ))
         sections.append(_render_callable("pose", "shifted", Pose.shifted))
         sections.append(
-            "Write cooperation strategy in Python: choose arm roles, targets, release timing, "
-            "conditions and bounded repairs from current observations. Use move_both for true "
-            "simultaneous movement; compose it freely with move_to and set_gripper. "
-            "Read motion_capabilities before requesting timed motion. A motion_profile "
-            "limits joint command derivatives; move_both(via=...) connects targets in "
-            "one route. Prefer motion='native' for observed clear empty-hand travel and for clear "
-            "straight transport after a broad stable grasp is verified (no C2 guarantee). 'transit' offers smooth travel. "
-            "Use 'approach' "
-            "for the last approach, 'carry' for delicate held objects and 'precision' near contact. "
-            "Use motion_window(far='transit', near='approach', distance_m=0.02) to "
-            "slow only the final path region without stopping at the boundary; "
-            "at='start' slows departure. For supported placement choose far='carry', "
-            "near='precision'. Verify grasp with a short lift before longer carrying. "
-            "Choose a broad stable donor grasp before planning a handoff; do not rely on a thin-tip pinch just to expose the other end. Preserve "
-            "orientation along path='line'; joint swings may rotate and lose the object. The receiver must approach exposed material clear of donor fingers; include finger width and opening, not just TCP distance. Preposition outside this region, narrow the opening when useful, and use approach/precision for the final 1–2 cm after a wrist-view check. "
-            "move_to/move_both(preview=True) plans without movement: inspect accepted, "
-            "planned_steps (and trajectory timing for smooth motion) before costly travel; reserve "
-            "budget for subsequent manipulation. A preview is not an execution permit. "
-            "Plan the remaining manipulation and return allowance before grasping; "
-            "preposition a receiving arm and choose a mutually reachable handoff region "
-            "when cooperation is needed. Each preview starts from the CURRENT state, "
-            "so separate previews are not a simulated future sequence. "
-            "Within a call, the executor provides "
-            "one continuous trajectory for timed profiles when supported. Split at required observations "
-            "or release decisions. No force control is provided by current adapters. Test "
-            "DualMove.reached and inspect recoverable failures before dependent actions. "
-            "CoordinationPause(BaseException) stops code on critical execution faults/limits; "
-            "SupervisionPause stops code when declared visual checks require review. Do not "
-            "catch these interruptions. Already executed actions remain done. Call watch "
-            "when monitoring is enabled; only declared prerequisites are enforced. Skills "
-            "provide guidance, not a prescribed task sequence or object-support verdict."
+            "Write cooperation strategy in Python: choose arm roles, targets, direction, "
+            "holding requirements, completion evidence and budgets from current observations. "
+            "Use execute_motion(id, left=..., right=..., interaction=..., directions=..., "
+            "holding=..., completion=...) for routine motion. "
+            "The executor selects spacing and speed, checks constraints, and retains progress. "
+            "Motion, alignment and grasp results share result['operation']: a session-scoped "
+            "ref, state, phase, cumulative budget, effect certainty, receipt and continuation. "
+            "Use operation_status(ref) to inspect and resume_operation(ref) to continue only "
+            "the already-started phase. ready/advance requires choosing the next grasp_step; "
+            "completed means execution finished, never verified object/task success. "
+            "unknown/reconcile forbids blind retry; needs_replan requires a revised decision. "
+            "Completed IDs never move again. After reconciling an interruption, resume_motion(id) "
+            "continues only known remaining work, retaining step and correction budgets. "
+            "Use begin_grasp plus grasp_step for open/approach/align/close/probe, and align_local "
+            "for explicit observed adjustments inside a fixed envelope. Do not wrap these or "
+            "intent calls in once(); retain once() for set_gripper and home. Default action "
+            "allowance is the remaining native episode budget, with no future-task reserve. "
+            "A costly route can return paused/segment_complete after useful resting progress; "
+            "resume the same ID. An explicit cap can be increased cumulatively with max_steps. "
+            "Do not abandon a task or begin cleanup solely because a cost estimate suggests "
+            "the whole remaining sequence may not fit. Continue useful constrained progress "
+            "until completion, actual episode termination or a physical/execution blocker. "
+            "A preview is not a simulation of later stages. A grasp, direction or route change "
+            "needs a new intent based on "
+            "the actual scene. Check reached, needs_model and needs_observation before dependent "
+            "actions. Semantic completion is never inferred from pose or obstructed closure. "
+            "Choose grasps backwards from the object's remaining use: its working region "
+            "must be free when used and the receiver grasp region accessible during transfer. "
+            "A donor may temporarily hold a future working region if transfer frees it. "
+            "For a handoff, choose both "
+            "grasp regions and a mutually reachable exchange pose before pickup. A changed "
+            "grasp or slip requires rechecking transfer and subsequent use, even if the "
+            "new hold is stable. Account for finger clearance, not just TCP separation; "
+            "verify support before release. "
+            "On snapshot backends, object_ref(name, description) preserves a logical object "
+            "identity across grasps. Pass object_ref=ref to begin_grasp while the target is "
+            "visible: preparation/open/approach/align return object_tracking. The executor "
+            "tracks material features through native RGB frames and closure, without extra "
+            "actions. If preclosure features are missing, observe the visible object or "
+            "supply named current landmarks via observe_object; do not wait until occlusion. "
+            "Only actual post-closure positions form the fixed hold baseline. close/probe "
+            "return object_evidence. Preclosure tracking is not hold evidence. Inspect "
+            "baseline_ready, baseline_quality.space and recovery before dependent actions. "
+            "An empty capture is not a baseline; repair its exact capture_observation_id "
+            "using visible matching landmarks, or revise visibility/grasp. Do not repeatedly "
+            "probe to manufacture evidence. observe_hold compares against the fixed capture "
+            "and reassociates original features after lost tracks without rebasing. "
+            "Repeated reset=True cannot erase drift within one grasp. following/relative_motion "
+            "are 3D evidence; image_consistent/image_relative_motion are explicitly limited "
+            "wrist-image 2D evidence and cannot verify depth or a stable 3D hold. "
+            "Inspect state/reason/features; unknown is not empty. Evidence changes require "
+            "fresh observation and strategy review. Do not infer a held object's pose from "
+            "table-height geometry. "
+            "Read motion_capabilities: object/inter-arm collision checking and force control "
+            "are not provided by current adapters. Split at "
+            "required observation, contact or release decisions. Timed trajectories are "
+            "continuous within uninterrupted execution, not across interruptions or model waits. "
+            "CoordinationPause(BaseException) and SupervisionPause stop code for review; do not "
+            "catch these interruptions. Already executed actions remain done. Use watch when "
+            "monitoring is enabled; only declared prerequisites are enforced. Skills provide "
+            "guidance, not a prescribed task sequence or object-support verdict."
         )
     # A robot without ``done`` never ends an episode as "terminated".
     absent = frozenset(getattr(robot_cls, "ABSENT_MEMBERS", ()))
@@ -273,9 +312,18 @@ def api_reference(
         f"(reason: {reasons}); return."
     )
     text = "\n\n".join(sections)
+    class_section = sections[0]
     if primitives == "no-vla":
         edits = tuple(getattr(robot_cls, "VLA_REFERENCE_EDITS", ()))
         text = _apply_edits(text, edits, f"{robot_cls.__name__} docstrings")
+        for old, new in edits:
+            class_section = class_section.replace(old, new)
+    if intent_only:
+        text = text.replace(class_section, f"class {robot_cls.__name__}\n"
+                            "    Two-arm robot. Declare motion through execute_motion; the "
+                            "executor owns spacing, timing, corrections and continuation. "
+                            "Positions are world TCP metres; angles follow robot conventions "
+                            "below. Low-level motion methods are disabled in this session.", 1)
     return text
 
 
@@ -287,15 +335,29 @@ def knowledge_stem(name: str, primitives: str = "full") -> str:
     return name if primitives == "full" else f"{name}-novla"
 
 
-def knowledge_text(name: str = "libero", primitives: str = "full") -> str:
+def knowledge_text(name: str = "libero", primitives: str = "full", *,
+                   intent_only: bool | None = None) -> str:
     """Return the packaged operating-knowledge markdown for a backend.
 
     ``primitives="no-vla"`` reads ``knowledge/<name>-novla.md``: the same
     document with the sections and sentences about the VLA removed.
+    RoboDojo defaults to the shared operation protocol; ``intent_only=False``
+    explicitly includes legacy controller guidance.
     """
 
     stem = knowledge_stem(name, primitives)
-    return resources.files("pyrualean").joinpath(f"knowledge/{stem}.md").read_text(encoding="utf-8")
+    package = resources.files("pyrualean")
+    text = package.joinpath(f"knowledge/{stem}.md").read_text(encoding="utf-8")
+    if intent_only is not False and name in {"robodojo", "robodojo_xpl_rgb"}:
+        # Share sensing/acceptance facts with the adapter-specific knowledge;
+        # legacy controller tuning instructions do not enter the policy prompt.
+        sections = {part.split("\n", 1)[0]: "## " + part for part in text.split("\n## ")[1:]}
+        motion = package.joinpath("knowledge/robodojo-intent.md").read_text(encoding="utf-8")
+        return "\n\n".join([motion.rstrip()] + [sections[key].rstrip() for key in (
+            "The VLA", "Perception",
+            "Judging progress", "Safety and recovery",
+        ) if key in sections]) + "\n"
+    return text
 
 
 @dataclass
@@ -448,7 +510,18 @@ class TaskCard:
 
         lines = [f"- timed joint commands: {flag('speed_control')}; "
                  f"continuous via trajectory: {flag('continuous_trajectory')}"]
-        if caps.get("speed_control") is True:
+        if caps.get("motion_intents"):
+            lines.extend([
+                "- execute_motion(id, ...): supply goals, interaction, allowed directions, "
+                "holding requirements, completion conditions and step allocation",
+                "- executor chooses spacing/speed in simulation time and bounded arrival "
+                "corrections; resume_motion(id) continues known remaining work",
+                "- a completed intent never dispatches again; direction/grasp/path changes "
+                "require a new intent; semantic completion still needs observation",
+                "- preview=True estimates without moving; low-level motion profiles remain "
+                "available for explicit control requirements",
+            ])
+        elif caps.get("speed_control") is True:
             defaults = caps.get("trajectory_defaults") or {}
             values = ", ".join(f"{name}={defaults.get(name, 'unknown')} {unit}"
                                for name, unit in (("velocity", "rad/s"),

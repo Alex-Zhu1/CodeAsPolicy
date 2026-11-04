@@ -6,6 +6,62 @@ and bounded corrections in generated Python. Skills provide manipulation knowled
 Valen supplies visual evidence for the checks Astra declares. Neither supplies a
 fixed handover/carry/recovery workflow.
 
+## Shared operation protocol
+
+This is the default policy interface for RoboDojo, on RPent and both XPolicyLab
+adapters. Interactive `play`, offline `render_prompt`/generation, `api_reference`
+and operating knowledge select it automatically; no experiment flag is needed.
+For controller development, `api_reference(..., intent_only=False)` and
+`knowledge_text(..., intent_only=False)` explicitly expose the legacy reference.
+Directly instantiated robots retain the legacy calls for existing scripts.
+
+Motion intents, local alignment and staged grasp expose `pyrualean.operation.v1`
+in `result["operation"]`, alongside their existing domain feedback. The shared
+implementation in `pyrualean.operations` has no robot geometry or task names.
+Adapters supply their existing execution state, budget units and continuation;
+the registry does not introduce a second execution state machine.
+
+| Field | Contract |
+| --- | --- |
+| `ref` | Session, kind and immutable operation ID; kinds have separate namespaces. |
+| `state` | ready, running, paused, completed, needs_replan, rejected, unknown or preview. |
+| `phase`, `phase_complete` | Current phase and optional adjustment identity, separate from whole-operation completion. |
+| `progress` | Completed phases and next phase; a next phase is a suggestion, not permission to execute it automatically. |
+| `budget` | Unit, cumulative used/limit/remaining; Robot uses native actions. |
+| `effect`, `receipt` | Dispatch certainty and the last effectful action receipt reference. |
+| `continuation` | resume, advance, observe, replan, reconcile or none; `allowed` authorizes continuation of the current phase only. |
+| `verification` | A required semantic condition remains separate from execution completion; domain evidence must be inspected. |
+| `observation` | Recorded endpoint provenance, not a claim that the scene remains unchanged. |
+
+```python
+result = robo.grasp_step(grasp_id, "close")
+operation = result["operation"]["ref"]
+status = robo.operation_status(operation)  # no movement or image capture
+if status["operation"]["continuation"]["allowed"]:
+    result = robo.resume_operation(operation)  # remaining closure only
+# Inspect object_evidence and choose a later grasp_step explicitly.
+```
+
+`resume_motion` delegates to the same continuation path. A ready or completed
+grasp never starts another phase through resume. Interrupted local refinements
+retain their original offsets and adjustment identity. Completed-stage cache
+results retain historical domain data, while the common envelope reports the
+operation's current cumulative progress. Repeated zero-action calls do not
+replace the last effectful receipt. Full native receipt chains remain in the
+existing action journal; the operation protocol links them rather than duplicating
+the journal or promising exactly-once physical effects.
+
+Unknown dispatch effects require reconciliation before further actions. Even a
+late resolved receipt does not reconstruct lost controller state or authorize
+replaying an uncertain stage. Changed unfinished endpoints require replanning;
+references from another host session reject. Host process restart recovery is
+not supported. Budget estimates remain advisory, with no new future-task reserve.
+
+The envelope does not certify task success, force, collision clearance or object
+support. `verification` records a requirement, not an automatic verifier. The
+existing visual object evidence retains its provenance, uncertainty and 2D/3D
+distinction. No handover recipe or object-specific policy is added by this protocol.
+
 `robo.move_both()` adds true simultaneous execution to the existing primitives.
 It is available on RoboDojo's RPent and official XPolicyLab hosts, including RGB.
 The generic CLI automatically includes it in the generated model API reference.
@@ -23,12 +79,53 @@ threads or silently replaced with two sequential moves.
 | `robo.pose(xyz, quat)` | World TCP pose, metres, unit quaternion `[w,x,y,z]` |
 | `obs.left.shifted(dx, dy, dz)` | World translation from this fixed observation, preserving orientation |
 | `robo.motion_capabilities()` | Live synchronization, geometry, timing and force capability coverage |
+| `robo.object_ref(name, description)` | Stable session-local logical object identity; snapshot backends |
+| `robo.observe_object(ref, landmarks=...)` | Frozen images, matching named feature pixels and triangulated points without a table-height prior |
+| `robo.observe_hold(ref, arm=..., reset=False)` | Fixed-baseline evidence of object motion relative to the gripper; read-only |
 | `robo.motion_profile(velocity, acceleration, jerk)` | Per-joint command limits in rad/s, rad/s², rad/s³ |
 
 Each `move_both` target is an xyz sequence (retain current orientation), a `Pose`,
 or `None` (hold that arm at the current pose). A Pose is an absolute target, not a
 live instruction to follow the other arm. Existing `move_to` pitch/yaw/roll and
 signed gripper commands retain their documented meanings.
+
+Object evidence is available on the native snapshot backends. An `object_ref`
+names the intended object within the live session; it does not certify physical
+identity. `observe_object` accepts named matching `[row, col]` feature pixels in
+two or more cameras and triangulates them from the frozen camera calibration.
+Without new pixels it attempts fixed-keyframe appearance matching. Failed tracks are omitted;
+segmentation masks are visibility candidates, never corresponding 3D centres.
+This path does not apply the table-height prior used by RGB table-object locating.
+
+Pass `object_ref=ref` to `begin_grasp` while the object is visible. Preparation,
+open, approach and align expose `object_tracking`. The executor follows these
+material features on each available native RGB frame through closure, with
+two-way flow and appearance checks. This uses no extra physical actions.
+Current explicit `observe_object` landmarks can seed a missing preclosure track.
+Only the measured post-closure positions become the immutable hold baseline;
+preclosure tracking alone cannot establish retention. `object_evidence` compares
+this baseline after probing. `object_evidence.baseline_ready` is true
+only for usable data, with `baseline_quality.space` distinguishing 3D from a
+limited wrist-image comparison. Empty captures return their original observation
+ID and a recovery instruction; a later frame cannot silently replace them.
+Supply visible named landmarks for that original capture to repair it, then
+request current evidence. A repeated completed grasp stage cannot execute again
+or recreate its baseline. A perception error preserves the completed stroke.
+
+`observe_hold` retains a fixed keyframe even after an empty/occluded observation.
+The rolling image tracker never updates this geometric comparison baseline.
+Distinctive descriptor/template matches can recover original features without
+using a rigid-grasp prediction to find them. Ambiguous matches remain unknown.
+Reopening/reclosing invalidates the comparison; reset after the new grasp.
+Repeated reset within one grasp cannot conceal accumulated drift.
+
+`following` and `relative_motion` concern 3D points. `image_consistent` and
+`image_relative_motion` concern only the projection in a rigid calibrated wrist
+camera; depth and unseen rotations remain unresolved. They must not be interpreted
+as 3D grasp verification. These read-only calls use zero native actions, retain
+full source/evidence in the ledger, never release automatically and do not replace
+motion guards. Neither a reference, closure nor visual following certifies
+physical identity, force or future retention.
 
 Single-arm `Move.status` is `completed`, `rejected` (zero native actions), or
 `partial`. `planned_path` describes the selected geometry; `path` is None until
@@ -74,6 +171,30 @@ It does not establish object support or implement force control. Both paths are
 checked before either arm moves; there is no implicit near-pose or sequential
 fallback. On tracking failure, both stop advancing together.
 
+## Choose grasps for later operations
+
+The shared RoboDojo policy guidance asks Astra to plan backwards from the object's
+remaining use. Identify the region that must remain free for that use and the
+region that can be held, then choose an initial grasp that permits that final hold.
+A donor may temporarily hold a future working region if transfer frees it before use.
+For a handoff, select donor and receiver grasp regions together with a mutually
+reachable exchange pose and finger/object clearance. Staging an empty receiver
+and presenting the object to it is one option; no arm side or object-specific
+sequence is prescribed.
+
+Record these choices and the remaining action budget in the existing `plan()`
+fields. Compare a small set of distinct candidates through read-only previews.
+A preview starts from current robot state and does not simulate the later grasp
+or certify object/inter-arm clearance. Reobserve the actual object-in-hand pose
+before continuing. A changed grasp, slip or arm role requires revisiting transfer
+and later use, even when the new grasp passes its short lift check.
+
+If the required grasp is inaccessible, Astra may choose to reposition or set down
+and regrasp the object, accounting for those actions and final return in the budget.
+This is model-facing planning guidance, not a new executor-enforced semantic gate.
+The executor still handles movement details and bounded correction; it does not
+choose a different grasp or infer object support from a closed gripper.
+
 ## Timed and continuous trajectories
 
 The updated XPL client reports its physical timestep and substeps per native
@@ -89,14 +210,80 @@ validated against joint/table geometry, and line moves and dual-arm paths retain
 their 3 mm / 1 degree path checks. If simplification prevents path validation,
 the planner retries with the original knots; it never widens geometry limits.
 
-Choose an explicit motion phase from task intent and observed clearance:
+For routine motion, declare the intent and let the executor select mechanics:
+
+```python
+result = robo.execute_motion(
+    "approach_part", right={"xyz": target_xyz, "angles": [90, closing_yaw, 0]},
+    interaction="approach", directions={"right": [0, 0, -1]},
+    holding={"right": "empty"}, completion={"position_m": 0.003},
+    max_steps=60, reserve_steps=80,
+)
+```
+
+The target must lie along the permitted direction from the actual start. The
+executor preflights the line and budget, selects spacing and timing, checks
+holding/direction constraints each action, and shares the two-correction limit.
+`free`, `approach`, and `contact` describe interaction with the scene; they do
+not name a speed. Empty clear travel uses native interpolation; unknown/held
+transport stays smooth; approach slows near the endpoint and contact stays
+smooth throughout. Cost estimates do not relax these requirements.
+
+Motion intents now default to all remaining native actions (`max_steps=None`),
+with no required reserve for future work or return. If the requested route does
+not fit an explicit allocation or remaining native actions, the executor tries
+a shorter Cartesian segment, re-timed to finish at rest. It returns
+`paused`/`segment_complete`, `reached=False`, and errors to the original goal.
+`resume_motion(id)` continues from that endpoint; `max_steps=new_total` can raise
+an explicit cumulative allowance without resetting spent actions or corrections.
+If no useful resting segment fits, it reports that limit. Native episode
+termination remains authoritative. Do not abandon a task or begin cleanup merely
+because an estimate suggests the whole remaining sequence may not fit.
+
+For motion intents, `completion.position_m` and `orientation_deg` specify final
+arrival accuracy. The executor separately selects the intermediate tracking
+envelope: 10 mm / 5 degrees for free travel, 5 mm / 3 degrees for approach, and
+2.5 mm / 3 degrees for contact. These are tracking bounds, not object-clearance
+or force guarantees. Direction, relative-pose, table and holding constraints
+remain independent; an explicit tighter constraint can stop a move inside the
+tracking envelope. Legacy direct `move_both` calls retain their existing bounds.
+
+At the final resting target, arrival tolerance applies again. A progressing
+residual may settle by holding that same target, within the larger of twice the
+arrival tolerance and the tracking envelope, with at most two corrective actions
+across the intent's lifetime and within its original budget/reserve. A stalled or
+excessive residual stops. Moving timed splines never insert corrective holds.
+`tracking.phase` distinguishes `path_tracking` from `arrival`, and
+`tracking.tolerances` reports the active bounds. `reached` still requires the
+requested arrival accuracy; the wider tracking envelope cannot certify arrival.
+
+An intent ID freezes its target and constraints. Completed IDs return the saved
+outcome without movement. After a known interruption, reconcile receipts and
+call `robo.resume_motion("approach_part")`: the executor replans the remainder
+from the measured endpoint and retains spent steps and correction count.
+Unknown execution, external state changes and lost host sessions require review.
+`needs_model` names that handoff; `needs_observation` preserves an optional
+`completion["verify"]` condition without claiming it was checked from robot pose.
+This motion API never changes a grasp or opens/closes fingers. Do not wrap it in
+`once()`; use `once()` for the existing grasp/gripper primitives.
+
+The benchmark instruction and initial facts remain authoritative on the task
+card. Astra supplies the current intent; the host retains its execution state.
+Generated RoboDojo sessions launched by `pyrualean.play` expose this intent
+contract and reject low-level movement/profile calls before dispatch. Their
+operating knowledge omits controller tuning instructions. Directly instantiated
+robot objects and the full library reference retain the following low-level
+controls for existing scripts and controller development:
 
 For observed clear empty-hand travel or straight transport after a broad stable
 grasp is verified, `motion="native"` uses the original
 waypoint executor and simulator interpolation. It retains geometric checks,
-gripper KEEP, action receipts and resume. A measured tracking miss stops both
-native and timed moves before later waypoints or endpoint settling. Native
-execution provides no C2 or derivative-limit
+gripper KEEP, action receipts and resume. A native tracking miss can hold the
+current target within the shared two-correction allowance, provided every missed
+dimension improves and the unexecuted path still fits the remaining budget.
+Otherwise it stops. Moving timed splines stop on a tracking miss; corrective
+holds are allowed at their final resting target. `tracking` reports the measured
+errors, decision and correction count. Native execution provides no C2 or derivative-limit
 guarantee. Its preview reports `planned_steps`; timed profiles additionally
 report `trajectory`. Keep smooth profiles for grasping and contact. For fragile
 grasps, `path="line"` preserves orientation along the route; a cheaper joint
@@ -230,6 +417,44 @@ verbatim, initial TCP/angles are derived from recorded step-0 state, and the ful
 capability snapshot uses the live API's provider. Sources and configured budget
 fallbacks are labelled. Missing initial measurements are unknown, not zero-valued
 poses or closed grippers. Astra receives this card; it does not author it.
+
+## Staged grasp and local alignment
+
+`begin_grasp(id, target, arm=..., approach=..., pregrasp=..., probe=...)` records
+an immutable grasp plan without physical effects. Call `grasp_step(id, stage)`
+for `open`, `approach`, `align`, `close`, and `probe`. Only the current stage is
+planned, and each stage returns before the next. A later expensive path cannot
+veto an earlier useful phase. The default allowance is the remaining native
+episode budget; an explicit `max_steps` is cumulative across all stages and
+refinements. `grasp_status(id)` exposes progress and recorded measurements.
+
+The closure target is a world TCP pose. `pregrasp` optionally has a different
+orientation; otherwise it uses `target + approach`. Alignment accuracy defaults
+to 1.5 mm / 1 degree and is configurable with `completion`. Closure is forbidden
+until measured alignment succeeds. A probe starts from the measured closure
+pose, keeps squeezing and stops on lost obstruction. `retained` and
+`grasp_complete` still require visual confirmation of the intended object.
+
+After approach/alignment, an observed correction can use
+`grasp_step(id, 'align', adjustment_id='fresh-id', offset=[dx,dy,dz],
+rotation_deg=[rx,ry,rz])`. Offsets are absolute relative to the original target
+in world axes, with axis-angle rotation vectors in degrees. They share the
+original `translation_limits` and `rotation_limit_deg`; all path substeps and
+measured endpoints are checked. There is no search, automatic opening or regrasp.
+An alignment can be refined before closure; after closure a new grasp strategy
+is required. Repeated completed phase/adjustment IDs return recorded results
+without dispatch. Interrupted phases retain their stroke/path progress. Unknown
+dispatch or external movement refuses continuation.
+
+`align_local(id, offset, reference=pose, frame='world' or 'tcp', ...)` applies
+the same bounded local motion outside a grasp. The reference is an observed
+estimate, not ground-truth object geometry. Reuse a fixed reference across new
+adjustment IDs. Without a reference, the current pose is frozen on first use of
+the ID. Bounds cover translation (at most 5 cm per axis) and rotation (at most
+15 degrees); they provide no object collision or force guarantee. Inspect
+arrival feedback before choosing another target. Generated intent policies
+expose these staged methods; direct library callers retain the old `try_grasp`
+macro for compatibility.
 
 ## Task records and a short execution plan
 

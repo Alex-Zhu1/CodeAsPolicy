@@ -72,7 +72,8 @@ def test_hosts_preserve_native_instruction_and_full_startup_capabilities(tmp_pat
     assert "simulator step budget" not in text
     assert "hidden_object_poses" not in card.to_json() and "success" not in card.to_json()
     prompt = build_prompt("cells", card, budget_s=1200, max_programs=None, primitives="no-vla")
-    assert card.render(compact=True) in prompt and "robo.motion_profile(" in prompt
+    assert card.render(compact=True) in prompt and "robo.execute_motion(" in prompt
+    assert "robo.motion_profile(" not in prompt
     assert text not in prompt and "# Execution plan" in prompt
     compact = card.render(compact=True)
     assert "force_control=no" in compact and "inter-arm clearance=no" in compact

@@ -883,6 +883,10 @@ def test_ledger_marks_stateful_calls_and_counts_native_actions(rd, rd_backend):
         "home",
         "pi0_pick",
         "motion_execute",
+        "try_grasp",
+        "intent_execute",
+        "grasp_step",
+        "operation_resume",
     }
 
 
@@ -892,7 +896,7 @@ VLA_TOKENS = re.compile(r"pi0|lingbot|rldx|vla", re.IGNORECASE)
 
 
 def test_api_reference_lists_every_public_method_and_result_type():
-    text = api_reference(RobodojoRobot)
+    text = api_reference(RobodojoRobot, intent_only=False)
     for name in _public_members(RobodojoRobot):
         assert f"robo.{name}" in text, name
     # absent members and the success vocabulary are not part of the reference
@@ -917,14 +921,15 @@ def test_api_reference_lists_every_public_method_and_result_type():
     assert "robo.CLOSE = 1" in text and "robo.OPEN = -1" in text and "robo.KEEP = 0" in text
     assert "RESULT_TYPES" not in text and "SUMMARY_KEYS" not in text and "CAMERAS" not in text
     assert "    pitch: float | None = None,\n    yaw: float | None = None,\n" in text
-    assert "    path: str = 'auto',\n    *,\n    motion: MotionProfile | MotionWindow | str | None = None," in text
+    assert ("    path: str = 'auto',\n    *,\n"
+            "    motion: MotionProfile | MotionWindow | str | None = None,") in text
     assert "robo.home(arm: str = 'both') -> Home" in text
     assert (
         "robo.pi0_pick(\n    prompt: str | None = None,\n    arm: str = 'right',\n"
         "    max_chunks: int = 8,\n) -> Pick"
     ) in text
     assert "min_score: float = 0.2" in text
-    novla = api_reference(RobodojoRobot, primitives="no-vla")
+    novla = api_reference(RobodojoRobot, primitives="no-vla", intent_only=False)
     assert not VLA_TOKENS.search(novla), sorted(set(VLA_TOKENS.findall(novla)))
     assert "class Pick(" not in novla and "robo.move_to(" in novla and "class Move(" in novla
     assert "robo.home(" in novla and "class Home(" in novla  # the return is no VLA primitive

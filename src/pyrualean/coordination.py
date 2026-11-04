@@ -81,6 +81,9 @@ class DualMove:
     allowance, not the episode budget. checked names actual geometric coverage.
     Critical faults and visual reviews instead unwind the current code block;
     their physical endpoint remains in the tool's coordination feedback.
+    tracking reports shared measured-progress decisions and corrective holds.
+    Corrections retain the current target across checkpoints, consume the same
+    max_steps allowance and never bypass table or relative-pose constraints.
     """
 
     status: str
@@ -93,6 +96,7 @@ class DualMove:
     remaining_steps: int
     checked: tuple[str, ...]
     trajectory: dict | None = None
+    tracking: dict | None = None
 
     @property
     def reached(self) -> bool:
@@ -131,6 +135,7 @@ def _result(raw, robo):
         raw["remaining_steps"],
         tuple(raw["checked"]),
         raw.get("trajectory"),
+        raw.get("tracking"),
     )
 
 
@@ -138,6 +143,14 @@ class CoordinationMixin:
     """Adapter-neutral Python surface over the host's synchronized executor."""
 
     COORDINATION_API: ClassVar[bool] = True
+
+    def _legacy_motion_guard(self):
+        if getattr(self, "_intent_motion_only", False):
+            raise ValueError(
+                "This policy session uses execute_motion(intent_id, ...): declare the goal, "
+                "interaction, direction/holding constraints, completion and budget. "
+                "The executor owns motion parameters; low-level motion is disabled."
+            )
 
     def motion_capabilities(self) -> dict:
         """Read live motion support before choosing constraints.
@@ -158,6 +171,7 @@ class CoordinationMixin:
         not hardware ratings. No TCP speed or force guarantee. Nonpositive,
         nonfinite and boolean values reject before any movement.
         """
+        self._legacy_motion_guard()
         return MotionProfile(velocity, acceleration, jerk)
 
     def pose(self, xyz, quat, *, frame="world", point="tcp") -> Pose:
@@ -177,6 +191,7 @@ class CoordinationMixin:
         Use far='carry', near='precision' for supported placement; verify a
         grasp with a SHORT lift before longer carry. Preview to check the cost.
         """
+        self._legacy_motion_guard()
         return MotionWindow(resolve_motion(far), resolve_motion(near), distance_m, at)
 
     def observe(self) -> Observation:
@@ -251,6 +266,7 @@ class CoordinationMixin:
         plan or moving either gripper. Over-budget results retain their timing
         estimate. Execution replans from current state; preview is not permission.
         """
+        self._legacy_motion_guard()
         motion = resolve_motion(motion)
         if type(preview) is not bool:
             raise ValueError("preview must be bool")

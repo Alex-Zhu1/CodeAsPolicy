@@ -518,7 +518,7 @@ def test_pose_and_generated_api_expose_the_simple_interface():
     p = Pose(values, [1, 0, 0, 0])
     values[0] = 100
     assert p.xyz == (1, 2, 3)
-    text = api_reference(RobodojoOfficialColourRobot)
+    text = api_reference(RobodojoOfficialColourRobot, intent_only=False)
     assert "robo.move_both(" in text and "DualMove" in text
     assert "robo.coordination(" not in text and "op.plan(" not in text
 

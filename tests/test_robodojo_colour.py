@@ -528,8 +528,9 @@ def test_an_episode_under_the_adapter_runs_the_real_loop(monkeypatch, tmp_path):
 
     cell = (
         "seen = robo.locate('the cube')\n"
-        "moved = robo.move_to([0.25, 0.0, 0.95], arm='right', pitch=45)\n"
-        "print(seen.found, moved.reached)\n"
+        "moved = robo.execute_motion('travel', right=robo.observe().right.shifted(dz=.06), "
+        "holding={'right': 'empty'})\n"
+        "print(seen.found, moved['reached'])\n"
     )
     replies = [
         reply("python", {"code": cell}, "c1"),
@@ -603,7 +604,8 @@ def test_a_trial_the_client_ends_is_wrapped_up_without_another_request(monkeypat
     from pyrualean.hosts import sam3_local
 
     scene = DepthScene([CUBE])
-    cell = "moved = robo.move_to([0.25, 0.0, 0.95], arm='right', pitch=45)\nprint(moved.reached)\n"
+    cell = ("moved = robo.execute_motion('travel', right=robo.observe().right.shifted(dz=.06), "
+            "holding={'right': 'empty'})\nprint(moved['reached'])\n")
     call = {"name": "python", "arguments": json.dumps({"code": cell})}
     message = {
         "role": "assistant",

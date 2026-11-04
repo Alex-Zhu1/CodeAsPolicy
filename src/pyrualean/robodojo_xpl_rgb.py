@@ -323,6 +323,9 @@ class RobodojoOfficialColourRobot(RobodojoRobot):
     ) -> ObjectSight:
         """Find an object by a text prompt and measure it in 3D from the colour cameras.
 
+        This backend uses RGB only: there is no depth image. Check views and
+        provenance before relying on the estimated geometry.
+
         SAM3 segments one snapshot's image of ``camera`` (as ``segment``); the
         same object is then looked for in the other two cameras, and its
         height and footprint are those that fit every camera that shows it.
@@ -341,8 +344,8 @@ class RobodojoOfficialColourRobot(RobodojoRobot):
                 observation.  Historical IDs use the images and camera poses
                 from that capture, including the other cameras.
         Returns:
-            ObjectSight.  For a top grasp: ``move_to([x, y, top_z + 0.09],
-            pitch=90)`` above it, ``locate`` it again from there (the wrist
+            ObjectSight. For a top grasp, choose a reachable target above it
+            with pitch=90 and enough finger clearance; ``locate`` again (the wrist
             camera then looks down on it and the reading is good to 1-2 mm),
             turn to ``yaw=grasp_yaw`` and go down to the height to hold it
             at.  With ``views >= 2`` and no ``note`` a block, a can, a bowl

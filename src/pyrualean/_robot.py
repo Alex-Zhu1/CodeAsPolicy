@@ -309,7 +309,9 @@ class RobotBase(InteractionMixin, PerceptionMixin):
             self._truncated = True
 
     def _summary(self, tool: str, payload: dict[str, Any]) -> dict[str, Any]:
-        if tool == "motion_execute":
+        if tool in ("motion_execute", "intent_execute", "intent_prepare",
+                    "intent_status", "intent_pause", "operation_resume", "operation_status",
+                    "grasp_step", "grasp_prepare", "grasp_status", "local_prepare"):
             return dict(payload)
         return {key: payload[key] for key in self.SUMMARY_KEYS if key in payload}
 

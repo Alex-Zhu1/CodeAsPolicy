@@ -149,10 +149,39 @@ no request is held longer than `poll_s` (20 s).
 
 Motion:
 
+Generated policies default to the shared operation protocol below, including
+`pyrualean.play`, offline prompts and policy generation. Low-level movement and
+profile selection reject before dispatch in interactive `play` sessions; directly
+instantiated robot objects retain the full legacy API for existing scripts.
+
+- `operation_status(ref)` / `resume_operation(ref)`: inspect or continue motion,
+  local alignment and staged grasp through `result["operation"]`. Continuation
+  resumes only the already-started phase, retains cumulative cost, and never
+  replays completed phases. Unknown effects require receipt reconciliation.
+- `begin_grasp(...)` / `grasp_step(id, stage)`: explicitly advance through open,
+  approach, align, close and probe, checking object evidence between stages.
+- `align_local(...)`: constrain an observed local correction to a fixed envelope.
+
+- `execute_motion(intent_id, left=..., right=..., interaction=..., directions=...,
+  holding=..., completion=..., max_steps=..., reserve_steps=...)`: declare an
+  immutable motion intent. The executor selects spacing/speed and bounded
+  corrections, while enforcing the direction, holding and budget constraints.
+  A completed ID does not move again. `resume_motion(id)` continues only known
+  remaining work within the same live session; `motion_status(id)` reads it.
+  Semantic completion conditions are returned for observation, not inferred
+  from arrival. See [motion contracts](../guide/coordination.md).
+
 - `move_to(xyz, arm, gripper, pitch, yaw, roll, path)`: move one arm's grasp point to a world position, with an
   orientation. A pose out of reach moves nothing, and the result names reachable poses nearby.
 - `set_gripper(arm, gripper, opening=None)`: close or open one gripper until the fingers stop; the result says
   whether something is held and how wide it is.
+- `try_grasp(xyz, arm, ..., approach, lift, max_steps=64, preview=False)`: one bounded
+  approach, close and short probe. It preflights every phase, uses small Cartesian
+  targets near contact, and stops on tracking loss, empty closure or probe loss.
+  `max_steps` includes gripper actions and at most two progressing corrections.
+  A retained candidate still needs visual confirmation of the intended object;
+  this does not provide force control or scene collision checking. Use `once()`
+  and reconcile a partial attempt before planning only the remaining work.
 - `home(arm="both")`: return an arm to the joint angles it had when the episode started.
 
 Perception and state:
@@ -165,6 +194,15 @@ Perception and state:
   arms, the images, and what the model looks at.
 
 Twists and button presses are compositions of these; the knowledge text says how.
+
+Single-arm moves, coordinated moves and bounded grasps share measured-progress
+feedback. At most two corrective target holds are allowed per motion, while every
+missed dimension improves and budget remains. Stalls return the actual endpoint.
+Coordinated corrections retain both targets across checkpoints and continue to
+check table clearance and relative-pose constraints. Moving timed splines stop on
+tracking failure; corrective holds are permitted at their final resting target.
+The `tracking` result reports these decisions without inferring contact or grasp
+success from tracking error.
 
 ??? note "API reference: what the agent reads, generated from `pyrualean.robodojo_xpl_rgb` when these docs are built"
 

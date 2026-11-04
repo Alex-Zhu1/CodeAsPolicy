@@ -39,6 +39,48 @@ def test_signatures_render_defaults_and_keyword_markers():
     assert "robo.pi0_pick(\n    prompt: str,\n    *,\n    max_chunks: int = 24," in text
 
 
+@pytest.mark.parametrize("robot", ["robodojo", "robodojo_xpl_rgb"])
+@pytest.mark.parametrize("primitives", ["full", "no-vla"])
+def test_generated_motion_policy_declares_intents_without_controller_tuning(robot, primitives):
+    from pyrualean.play import build_prompt
+    from pyrualean.robots import get_adapter
+
+    card = TaskCard(suite="arx_x5", task="test", seed=0, task_language="Move the object",
+                    object_names=[], robot=robot)
+    text = build_prompt("cells", card, budget_s=900, max_programs=None, primitives=primitives)
+    for name in ("execute_motion", "resume_motion", "motion_status", "set_gripper",
+                 "operation_status", "resume_operation",
+                 "begin_grasp", "grasp_step", "grasp_status", "align_local",
+                 "object_ref", "observe_object", "observe_hold"):
+        assert f"robo.{name}(" in text
+    for name in ("move_to", "move_both", "motion_profile", "motion_window", "try_grasp"):
+        assert f"robo.{name}(\n" not in text
+    assert 'motion="native"' not in text and 'motion="transit"' not in text
+    assert "Low-level movement and speed selection are disabled" in text
+    assert "## Perception" in text and "## Judging progress" in text
+    assert "reserve steps for required cleanup" not in text
+    assert "Do not abandon a task" in text
+    assert "unknown is not empty" in text
+    assert "table-height geometry" in text
+    assert "robo.move_to(\n" in api_reference(get_adapter(robot).robot_cls, intent_only=False)
+
+
+@pytest.mark.parametrize("robot", ["robodojo", "robodojo_xpl", "robodojo_xpl_rgb"])
+def test_offline_generation_defaults_to_shared_operations(robot):
+    from pyrualean.robots import get_adapter
+
+    card = TaskCard(suite="arx_x5", task="test", seed=0, task_language="Move the object",
+                    object_names=[], robot=robot)
+    cls = get_adapter(robot).robot_cls
+    for text in (api_reference(cls), render_prompt(card).system):
+        for name in ("execute_motion", "begin_grasp", "align_local", "operation_status",
+                     "resume_operation"):
+            assert f"robo.{name}(" in text
+        for name in ("move_to", "move_both", "motion_profile", "motion_window", "try_grasp"):
+            assert f"robo.{name}(\n" not in text
+    assert "pyrualean.operation.v1" in render_prompt(card).system
+
+
 def test_render_prompt_contains_contract_reference_knowledge_and_card(tmp_path):
     img = tmp_path / "agentview_high.png"
     img.write_bytes(b"png")

@@ -123,13 +123,14 @@ class PerceptionMixin:
     def perception_is_current(self, result) -> bool:
         """Check whether this perception result still describes the current source.
 
-        Accept a locate/segment/back_project result from this robot session.
+        Accept a locate/segment/back_project or object-evidence result from this session.
         Recheck immediately before depending on its coordinates: a source change,
         motion attempt, unresolved action or missing provenance makes it false.
         This checks applicability, not detection quality, collision safety or task success.
         Extracted xyz tuples carry no provenance; keep the original result too.
         """
-        provenance = getattr(result, "provenance", None)
+        provenance = (result.get("provenance") if isinstance(result, dict)
+                      else getattr(result, "provenance", None))
         if not isinstance(provenance, dict):
             return False
         saved = self._perception_records.get(provenance.get("perception_id"))

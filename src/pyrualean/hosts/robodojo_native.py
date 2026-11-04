@@ -42,8 +42,9 @@ import numpy as np
 from . import robodojo_tools as tools
 
 CAMERAS = ("cam_head", "cam_left_wrist", "cam_right_wrist")
-STATEFUL = frozenset({"move_pose", "grip", "home", "motion_execute"})
-PERCEPTION = frozenset({"locate", "back_project", "segment"})
+STATEFUL = frozenset({"move_pose", "grip", "home", "motion_execute", "try_grasp", "intent_execute",
+                      "grasp_step", "operation_resume"})
+PERCEPTION = frozenset({"locate", "back_project", "segment", "object_observe"})
 
 
 class Cancelled(Exception):
@@ -175,7 +176,8 @@ class Steps:
         self.session_id = session_id or uuid.uuid4().hex
 
     def record(
-        self, obs: dict[str, Any], status: dict[str, Any], action_id: str | None = None
+        self, obs: dict[str, Any], status: dict[str, Any], action_id: str | None = None,
+        *, gripper_commands=None, gripper_command_epochs=None,
     ) -> int:
         # Keep PNGs, state JSON and the lossless sensor packet on one detached value,
         # even if a native environment reuses and mutates its camera buffers later.
@@ -246,6 +248,8 @@ class Steps:
             )
         metadata = dict(
             schema="pyrualean.observation.v1", session_id=self.session_id,
+            gripper_commands=copy.deepcopy(gripper_commands or {}),
+            gripper_command_epochs=copy.deepcopy(gripper_command_epochs or {}),
             observation_id=observation_id, source_id=source_id,
             step=step, native_steps=native_steps, action_id=action_id or receipt.get("action_id"),
             captured_at=source.get("captured_at"), capture_clock=source.get("capture_clock"),
@@ -365,11 +369,14 @@ class NativeToolkit:
         self._primitives = _Primitives(env, sam3_client, colour_only)
         bridge = getattr(env, "bridge", None)
         self.session_id = getattr(bridge, "session_id", None) or uuid.uuid4().hex
+        self._primitives._operation_session_id = self.session_id
         self.state = Steps(out_dir, self.session_id)
         self._verdict = verdict
         self._lock = threading.Lock()
         self._receipts: dict[str, dict[str, Any]] = {}
         self._active_action: str | None = None
+        self._visual_tracks = {}  # At most one active RGB track per arm.
+        self._primitives._visual_observer = self._track_frame
         self._primitives._last_obs = obs
         start = {arm: tools._joints(obs.get("state") or {}, arm) for arm in tools.ARMS}
         self._tools: dict[str, Callable[..., dict[str, Any]]] = {
@@ -380,11 +387,30 @@ class NativeToolkit:
             "locate": partial(tools.locate, self._primitives),
             "back_project": partial(tools.back_project, self._primitives),
             "segment": partial(segment, self._primitives),
+            "object_observe": None,  # handled on the frozen perception path
+
         }
         from .robodojo_coordination import handlers
 
         self._tools.update(handlers(self._primitives))
-        self.state.record(obs, self._status())
+        from .robodojo_grasp import handlers as grasp_handlers
+
+        self._tools.update(grasp_handlers(self._primitives, start))
+        self._record(obs, self._status())
+
+    def _record(self, obs, status, action_id=None):
+        return self.state.record(obs, status, action_id,
+            gripper_commands=getattr(self._primitives, "_grip_commands", {}),
+            gripper_command_epochs=getattr(self._primitives, "_grip_command_epochs", {}))
+
+    def _track_frame(self, obs):
+        source = obs.get('pyrualean_observation') or {}
+        epochs = getattr(self._primitives, '_grip_command_epochs', {})
+        for _, track in self._visual_tracks.values():
+            try:
+                track.advance(obs, source, epoch=epochs.get(track.arm))
+            except Exception as exc:  # Completed actions must survive perception errors.
+                track.invalidate(f'visual_tracking_error:{type(exc).__name__}')
 
     def _status(self) -> dict[str, Any]:
         try:
@@ -426,7 +452,7 @@ class NativeToolkit:
             except IndexError as exc:
                 return {"error": str(exc)}
         handler = self._tools.get(name)
-        if handler is None:
+        if handler is None and name not in PERCEPTION:
             return {"error": f"this RoboDojo host has no tool {name!r}"}
         with self._lock:
             if name in PERCEPTION:
@@ -454,7 +480,7 @@ class NativeToolkit:
                     and context["source_native_steps"] != status["step"]
                 )
                 if stale_source or stale_step:
-                    step = self.state.record(obs, status)
+                    step = self._record(obs, status)
                     result = self._envelope(step, name, dict(
                         error="stale observation source; refresh before another action",
                         code="stale_observation", reached=False, steps_used=0,
@@ -498,13 +524,22 @@ class NativeToolkit:
                     if hasattr(self._primitives.env, "action_context"):
                         self._primitives.env.action_context = None
                     self._finalize_receipt(action_id, payload, failed, before_revision)
+                    self._link_operation_receipt(name, kwargs, self._receipts[action_id],
+                                                 before_revision)
             if not stateful:
                 return payload
             obs = tools._obs(self._primitives)
-            step = self.state.record(obs, self._status(), action_id=action_id)
+            step = self._record(obs, self._status(), action_id=action_id)
             result = self._envelope(step, name, payload)
             receipt = self._receipts[action_id]
             receipt["observation_id"] = result["observation"]["observation_id"]
+            self._link_operation_receipt(name, kwargs, receipt, before_revision)
+            if "operation" in payload:
+                registry = self._primitives._operations
+                ref = payload["operation"]["ref"]
+                if not registry.validate(ref):
+                    payload.update(registry.attach(ref["kind"], ref["id"], payload))
+                    result["log"]["result"] = copy.deepcopy(payload)
             result["observation"]["action_id"] = action_id
             result["action_receipt"] = dict(receipt)
             return result
@@ -521,10 +556,53 @@ class NativeToolkit:
             return {"error": str(exc), "code": "invalid_observation"}
         metadata = copy.deepcopy(self.state.records[step]["observation"])
         frozen = _SnapshotPrimitives(self._primitives, obs, metadata)
-        handler = segment if name == "segment" else getattr(tools, name)
+        track_id = kwargs.pop('tracking_id', None)
+        track_epoch = kwargs.pop('tracking_epoch', None)
+        tracking = None
+        if name == "object_observe":
+            from .robodojo_object_evidence import observe
+
+            handler = observe
+            for field in ("previous", "anchor"):
+                prior = kwargs.get(field)
+                if not prior:
+                    continue
+                try:
+                    src = prior["provenance"]
+                    old_step = self.state.resolve_observation(
+                        src["observation_id"], src["session_id"], src["step"])
+                    if old_step > step:
+                        raise ValueError("tracking source is newer than the requested observation")
+                    kwargs[field + "_packet"] = self.state.load_observation(old_step)
+                except (ValueError, KeyError, IndexError, OSError) as exc:
+                    return {"error": str(exc), "code": "invalid_tracking_source"}
+            if track_id is not None:
+                from .robodojo_visual_track import VisualTrack
+
+                arm = kwargs.get('arm')
+                if arm not in tools.ARMS or not isinstance(track_id, str) or len(track_id) > 200:
+                    return {'error': 'invalid visual tracking identity'}
+                # Historical reads cannot mutate the live tracker.
+                if step != self.state.index(-1):
+                    return {'error': 'live visual tracking requires the current snapshot'}
+                existing = self._visual_tracks.get(arm)
+                tracking = existing[1] if existing and existing[0] == track_id else None
+                if tracking is None and kwargs.get('anchor') and not kwargs.get('capture'):
+                    tracking = VisualTrack(kwargs['anchor'], kwargs['anchor_packet'],
+                        kwargs['anchor']['provenance'], arm=arm, epoch=track_epoch)
+                if (tracking is not None and not kwargs.get('capture')
+                        and kwargs.get('landmarks') is None):
+                    try:
+                        kwargs['tracked'] = tracking.read(obs, metadata,
+                            epoch=metadata.get('gripper_command_epochs', {}).get(arm))
+                    except Exception as exc:
+                        tracking.invalidate(f'visual_tracking_error:{type(exc).__name__}')
+                        kwargs['tracked'] = tracking.read(obs, metadata)
+        else:
+            handler = segment if name == "segment" else getattr(tools, name)
         try:
             payload = handler(frozen, **kwargs)
-        except TypeError as exc:
+        except (TypeError, ValueError) as exc:
             payload = {"error": f"{name}: {exc}"}
         geometry = payload.get("geometry_provenance") or {}
         camera = kwargs.get("camera", "cam_head")
@@ -542,6 +620,12 @@ class NativeToolkit:
         if geometry:
             provenance["geometry"] = copy.deepcopy(geometry)
         payload["provenance"] = provenance
+        if name == 'object_observe' and track_id is not None and 'error' not in payload:
+            if tracking is None or kwargs.get('capture') or payload.get('tracking_reseeded'):
+                from .robodojo_visual_track import VisualTrack
+
+                tracking = VisualTrack(payload, obs, metadata, arm=kwargs['arm'], epoch=track_epoch)
+            self._visual_tracks[kwargs['arm']] = (track_id, tracking)
         return payload
 
     def _finalize_receipt(self, action_id, payload, failed, before_revision):
@@ -576,6 +660,21 @@ class NativeToolkit:
         if failed is not None:
             receipt["error"] = f"{type(failed).__name__}: {failed}"
 
+    def _link_operation_receipt(self, name, kwargs, receipt, before_revision):
+        registry = getattr(self._primitives, "_operations", None)
+        if registry is None or getattr(self._primitives, "_motion_revision", 0) == before_revision:
+            return
+        if name == "operation_resume":
+            ref = kwargs.get("operation")
+        elif name in ("intent_execute", "grasp_step"):
+            kind = "motion" if name == "intent_execute" else "grasp"
+            key = "intent_id" if kind == "motion" else "grasp_id"
+            ref = registry.reference(kind, kwargs.get(key))
+        else:
+            return
+        if not registry.validate(ref):
+            registry.record_receipt(ref["kind"], ref["id"], receipt)
+
     def reconcile(self, action_id: str) -> dict[str, Any]:
         receipt = self._receipts.get(action_id)
         if receipt is None:
@@ -604,7 +703,7 @@ class NativeToolkit:
                     try:
                         if self._active_action is None:
                             obs = tools._obs(self._primitives)
-                            step = self.state.record(obs, self._status())
+                            step = self._record(obs, self._status())
                             current = self.state.records[step]["observation"]
                             receipt["current_observation_id"] = current["observation_id"]
                             receipt["current_observation_step"] = step
@@ -618,7 +717,7 @@ class NativeToolkit:
             refresh = getattr(env, "refresh_observation", None)
             obs = refresh() if callable(refresh) else env.get_obs()
             self._primitives._last_obs = obs
-            step = self.state.record(obs, self._status())
+            step = self._record(obs, self._status())
             return self._envelope(step, "refresh_observation", {})
 
     def conclude(self) -> None:

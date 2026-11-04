@@ -47,6 +47,8 @@ def capabilities(primitives, *, status=None):
         motion_preview=True,
         motion_window=True,
         native_motion=True,
+        bounded_grasp=True,
+        grasp_visual_confirmation_required=True,
         trajectory_units=dict(velocity="rad/s", acceleration="rad/s^2", jerk="rad/s^3"),
         trajectory_continuity="C2 within one call; rest at ends; interruptions end continuity",
         measured_speed_guarantee=False,

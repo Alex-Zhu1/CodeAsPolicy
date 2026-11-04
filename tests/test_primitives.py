@@ -59,7 +59,7 @@ def test_native_hosts_filter_unsupported_vla_even_when_full_is_requested(name, b
     card.robot = name
     text = build_prompt("cells", card, budget_s=1200, max_programs=None)
     assert not VLA_TOKENS.search(text)
-    assert "robo.move_to(" in text and "robo.locate(" in text
+    assert "robo.execute_motion(" in text and "robo.locate(" in text
     assert not VLA_TOKENS.search(render_prompt(card, budget_s=1200).system)
     robot = adapter.robot_cls(backend, primitives="full")
     with pytest.raises(RuntimeError, match="not available"):
@@ -71,9 +71,9 @@ def test_native_hosts_filter_unsupported_vla_even_when_full_is_requested(name, b
 @pytest.mark.parametrize("robot", ROBOTS)
 def test_no_vla_reference_hides_the_vla_and_nothing_else(robot):
     cls = get_adapter(robot).robot_cls
-    full = api_reference(cls)
-    assert api_reference(cls, primitives="full") == full
-    text = api_reference(cls, primitives="no-vla")
+    full = api_reference(cls, intent_only=False)
+    assert api_reference(cls, primitives="full", intent_only=False) == full
+    text = api_reference(cls, primitives="no-vla", intent_only=False)
     for name in cls.VLA_PRIMITIVES:
         assert f"robo.{name}(" in full and f"robo.{name}(" not in text
     for type_name in vla_hidden(cls, "no-vla")[1]:
@@ -175,9 +175,9 @@ DROPPED_SECTIONS = {
 @pytest.mark.parametrize("robot", ROBOTS)
 def test_no_vla_knowledge_is_the_same_document_minus_the_vla(robot):
     assert knowledge_stem(robot) == robot and knowledge_stem(robot, "no-vla") == f"{robot}-novla"
-    full = knowledge_text(robot)
-    novla = knowledge_text(robot, primitives="no-vla")
-    assert knowledge_text(robot, primitives="full") == full
+    full = knowledge_text(robot, intent_only=False)
+    novla = knowledge_text(robot, primitives="no-vla", intent_only=False)
+    assert knowledge_text(robot, primitives="full", intent_only=False) == full
     assert not VLA_TOKENS.search(novla), sorted(set(VLA_TOKENS.findall(novla)))
     assert DROPPED_SECTIONS[robot] in full and DROPPED_SECTIONS[robot] not in novla
     full_lines = set(full.splitlines())

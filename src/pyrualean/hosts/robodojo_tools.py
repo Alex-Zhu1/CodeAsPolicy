@@ -34,15 +34,16 @@ from typing import Any
 
 import numpy as np
 
-from ..robodojo import HOME_MAX_ACTIONS, HOME_TOL_RAD
 from ..motion import MOTION_SCHEMA
+from ..robodojo import HOME_MAX_ACTIONS, HOME_TOL_RAD
 from . import robodojo_kinematics as kin
 from . import robodojo_sight as sight
 from . import robodojo_trajectory as trajectory_tools
+from .robodojo_feedback import MAX_CORRECTIONS, ProgressTracker, TrackingLimits
 
 ARMS = kin.ARMS
 #: Extra native actions at the end of a motion while the joints settle on the target.
-SETTLE_ACTIONS = 8
+SETTLE_ACTIONS = MAX_CORRECTIONS
 #: The motion has arrived when the grasp point is this close (metres) and turned this little.
 ARRIVE_M = 0.01
 ARRIVE_DEG = 5.0
@@ -240,6 +241,9 @@ def _act(
     primitives._motion_revision = getattr(primitives, "_motion_revision", 0) + 1
     _obs_step, _reward, _done, info = primitives.env.step(action)
     obs = _obs(primitives)
+    observer = getattr(primitives, '_visual_observer', None)
+    if observer is not None:
+        observer(obs)  # Read-only; the native host isolates perception failures.
     for arm, release in list((getattr(primitives, "_release_poses", None) or {}).items()):
         offset = _pose_of(arm, _joints(obs["state"], arm))[:3, 3] - release[:3, 3]
         if (np.linalg.norm(offset) >= RELEASE_NEAR_M
@@ -256,6 +260,16 @@ def _remember(primitives: Any, arm: str, command: float) -> None:
             primitives._grip_commands = commands
         except AttributeError:  # an object that takes no attributes: KEEP measures, as before
             return
+    if commands.get(arm) != float(command):
+        epochs = getattr(primitives, "_grip_command_epochs", None)
+        if epochs is None:
+            epochs = {}
+            try:
+                primitives._grip_command_epochs = epochs
+            except AttributeError:  # legacy slots adapter: history stays unavailable
+                commands[arm] = float(command)
+                return
+        epochs[arm] = epochs.get(arm, 0) + 1
     commands[arm] = float(command)
 
 
@@ -590,27 +604,48 @@ def move_pose(
         status = primitives.env.get_status()
         result.update(status="planned", accepted=True, reached=False, preview=True,
                       planned_steps=result.get("trajectory", {}).get("planned_steps", len(ways)),
-                      remaining_episode_steps=status.get("step_limit", 10000) - status.get("step", 0),
+                      remaining_episode_steps=(status.get("step_limit", 10000)
+                                               - status.get("step", 0)),
                       settle_reserve_steps=SETTLE_ACTIONS,
                       replan_before_dispatch=True)
         return result
     if note:
         result["note"] = note
-    steps = 0
-    status: dict[str, Any] = {}
+    steps = settle_steps = 0
+    status_getter = getattr(primitives.env, "get_status", None)
+    status = status_getter() if callable(status_getter) else {}
     tracking_failed = False
+    tracker = ProgressTracker()
     commands = timed if timed is not None else [dict(joints={arm: way}) for way in ways]
-    for command in commands:
-        primitives._check_cancelled()
-        state, status = _act(primitives, state, command["joints"], {arm: grip},
-                             command.get("trajectory"))
-        steps += 1
-        actual = _pose_of(arm, _joints(state, arm))
-        expected = _pose_of(arm, command["joints"][arm])
-        tracking_failed = (
-            np.linalg.norm(actual[:3, 3] - expected[:3, 3]) > ARRIVE_M
-            or kin.rotation_error(actual[:3, :3], expected[:3, :3]) > ARRIVE_DEG
-        )
+    for index, command in enumerate(commands):
+        endpoint = index == len(commands) - 1
+        limits = TrackingLimits(ARRIVE_M, ARRIVE_DEG, joint=.01 if endpoint else None)
+        corrective = False
+        while not _spent(status):
+            primitives._check_cancelled()
+            before_q = {arm: _joints(state, arm)}
+            before = {arm: _pose_of(arm, before_q[arm])}
+            block = command.get("trajectory")
+            if corrective:
+                tracker.corrected()
+                settle_steps += int(endpoint)
+                block = trajectory_tools.hold(command["joints"], clock) if timed else None
+            state, status = _act(primitives, state, command["joints"], {arm: grip}, block)
+            steps += 1
+            actual_q = {arm: _joints(state, arm)}
+            decision = tracker.assess(
+                before, {arm: _pose_of(arm, actual_q[arm])},
+                {arm: goal if endpoint else _pose_of(arm, command["joints"][arm])}, limits,
+                can_correct=timed is None or endpoint,
+                spare_steps=(status.get("step_limit", 10000) - status.get("step", 0)
+                             - (len(commands) - index - 1)),
+                joints_before=before_q, joints_actual=actual_q,
+                joints_expected=command["joints"],
+            )
+            tracking_failed = decision == "stop"
+            if decision != "correct":
+                break
+            corrective = True
         if tracking_failed:
             mode = "timed trajectory" if timed is not None else "native waypoint path"
             result["note"] = f"{mode} interrupted by measured tracking error"
@@ -618,19 +653,9 @@ def move_pose(
         if _spent(status):
             break
     final_q = ways[-1]
-    for _ in range(SETTLE_ACTIONS):
-        if _spent(status) or tracking_failed:
-            break
-        err = max(abs(a - b) for a, b in zip(_joints(state, arm), final_q, strict=True))
-        if err < 0.01:
-            break
-        primitives._check_cancelled()
-        hold_joints = timed[-1]["joints"] if timed is not None else {arm: final_q}
-        hold = trajectory_tools.hold(hold_joints, clock) if timed is not None else None
-        state, status = _act(primitives, state, hold_joints, {arm: grip}, hold)
-        steps += 1
+    result["tracking"] = tracker.summary()
     if timed is not None:
-        result["trajectory"]["settle_steps"] = max(0, steps - len(timed))
+        result["trajectory"]["settle_steps"] = settle_steps
     q_now = _joints(state, arm)
     now = _pose_summary(arm, q_now)
     dist = float(np.linalg.norm(np.asarray(kin.tcp(kin.fk(arm, q_now))) - np.asarray(xyz)))
@@ -645,8 +670,8 @@ def move_pose(
         status="completed" if reached else "partial",
         path=taken,
         recoverable=False,
-        stop_reason=(None if reached else "tracking_error" if tracking_failed else
-                     _episode_stop_reason(status) if _spent(status) else
+        stop_reason=(None if reached else _episode_stop_reason(status) if _spent(status) else
+                     "tracking_error" if tracking_failed else
                      "final_target_not_reached"),
         steps_used=steps,
         ik_error=None,
@@ -1812,6 +1837,11 @@ def register(toolkit: Any) -> None:
     from .robodojo_coordination import register as register_coordination
 
     register_coordination(toolkit)
+    from .robodojo_grasp import SPECS as grasp_specs
+    from .robodojo_grasp import handlers as grasp_handlers
+
+    for name, handler in grasp_handlers(primitives, start).items():
+        toolkit.add_tool(name, grasp_specs[name], handler)
 
 
 __all__ = [

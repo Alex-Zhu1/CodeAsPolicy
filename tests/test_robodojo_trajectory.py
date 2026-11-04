@@ -578,13 +578,13 @@ def test_startup_card_and_generated_api_describe_live_support(tmp_path):
     env, robo, host = station(tmp_path)
     card = dump_card(host, Cell("arx_x5", "example", 0), tmp_path)
     assert card.facts["motion capabilities at episode start"] == robo.motion_capabilities()
-    reference = api_reference(type(robo), primitives="no-vla")
+    reference = api_reference(type(robo), primitives="no-vla", intent_only=False)
     assert "robo.motion_profile(" in reference and "via: list[dict]" in reference
     assert "planned_path" in reference and "stop_reason" in reference
     mechanics = []
     for name in ("robodojo", "robodojo_xpl_rgb"):
         for primitives in ("full", "no-vla"):
-            manual = knowledge_text(name, primitives)
+            manual = knowledge_text(name, primitives, intent_only=False)
             assert "force_feedback=False" in manual and "rad/s³" in manual
             assert "move_both(left=final_left" in manual
             boundary = "## The VLA" if primitives == "full" else "## Perception"

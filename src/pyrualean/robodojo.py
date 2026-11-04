@@ -49,7 +49,9 @@ from typing import Any, ClassVar
 
 from ._robot import RobotBase
 from .coordination import CoordinationMixin
+from .intent import IntentMixin
 from .motion import MotionProfile, MotionWindow, resolve_motion
+from .object_evidence import ObjectEvidenceMixin
 from .perception import PerceptionResult
 from .robots import RobotAdapter
 
@@ -165,6 +167,11 @@ class Move:
         execution, with budget remaining. This is a tracking-lag heuristic,
         not a contact sensor or proof of an obstacle; inspect the actual scene.
     steps_used: native actions consumed.
+    tracking: measured progress and correction_steps; at most two corrective
+        holds per call, only while every missed dimension improves and budget
+        remains for the planned path. Moving timed splines stop on tracking
+        failure; corrections may hold their final resting target. No contact
+        force or object-support inference is made from tracking error.
     truncated: the budget ran out or the environment ended the episode.
     """
 
@@ -188,6 +195,7 @@ class Move:
     status: str = "rejected"
     planned_path: str | None = None
     stop_reason: str | None = None
+    tracking: dict | None = None
 
 
 @dataclass(frozen=True)
@@ -372,7 +380,8 @@ class ObjectPose(PerceptionResult):
     provenance: dict[str, Any] | None = field(default=None, kw_only=True)
 
 
-STATEFUL_TOOLS = frozenset({"move_pose", "grip", "home", "pi0_pick", "motion_execute"})
+STATEFUL_TOOLS = frozenset({"move_pose", "grip", "home", "pi0_pick", "motion_execute", "try_grasp",
+                            "intent_execute", "grasp_step", "operation_resume"})
 
 
 def _floats(value: Any, n: int, name: str) -> tuple[float, ...]:
@@ -557,7 +566,7 @@ def _pick_arm(raw: Any) -> dict[str, float]:
 # ---------------------------------------------------------------------------
 
 
-class RobodojoRobot(CoordinationMixin, RobotBase):
+class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBase):
     """The RoboDojo dual-arm station: two 6-DoF ARX-X5 arms with parallel grippers at a table.
 
     World frame: x runs across the table (the LEFT arm is at negative x and
@@ -691,6 +700,11 @@ class RobodojoRobot(CoordinationMixin, RobotBase):
         "world_xyz",
         "truncated",
         "step",
+        "phase",
+        "retained",
+        "needs_visual_confirmation",
+        "planned_step_bound",
+        "tracking",
     )
 
     # -- observation --------------------------------------------------------
@@ -1137,6 +1151,7 @@ class RobodojoRobot(CoordinationMixin, RobotBase):
         Raises:
             ValueError: a malformed argument (nothing is sent).
         """
+        self._legacy_motion_guard()
         arm = _arm(arm)
         target = _floats(xyz, 3, "xyz")
         command = _command(gripper, allow_keep=True)
@@ -1155,6 +1170,59 @@ class RobodojoRobot(CoordinationMixin, RobotBase):
         if preview:
             return self._readonly("preview_move_pose", kwargs)
         return self._stateful("move_pose", kwargs, lambda p: self._move(arm, target, p))
+
+    def try_grasp(
+        self, xyz: Sequence[float], arm: str = "right", *,
+        pitch: float | None = None, yaw: float | None = None, roll: float | None = None,
+        approach: Sequence[float] = (0, 0, 0.05),
+        lift: Sequence[float] = (0, 0, 0.025), opening: float = 1.0,
+        max_steps: int = 64, preview: bool = False,
+    ) -> dict:
+        """Try one bounded grasp with fast travel, short local approach and probe.
+
+        xyz is the finger-pad centre at closure, chosen from current images.
+        approach is a world offset FROM xyz to the clear pregrasp (2–12 cm);
+        lift is a short world offset FROM xyz for the probe (1–6 cm).
+        Angles use the same convention as move_to; omitted angles are kept.
+        For a vertical grasp specify pitch=90, yaw=<closing axis>, roll=0.
+        opening is the initial normalized finger separation in (0, 1].
+
+        Before any movement/opening, preflight the approach, closure position
+        and probe with one fixed orientation and a conservative step bound.
+        preview=True only returns that plan. No approximate pose or equivalent
+        half-turn is substituted. Geometry checks cover robot/table limits,
+        not objects, finger clearance or the other arm. Choose a clear route.
+        Preview a subsequent carry/turn/place separately before grasping.
+
+        Execution uses native interpolation for clear travel and 4 mm targets
+        for the last 2 cm and probe, with measured tracking checks; no C2 or
+        force-control guarantee. At most two local target holds are allowed
+        while measurable progress continues. A stall, empty close or closure
+        lost during the probe stops immediately, with no automatic regrasp.
+        max_steps caps ALL actions including opening/closing and corrections.
+
+        Returns phase, phases, status, stop_reason, final_xyz, steps_used and
+        retained. retained only means a short probe completed with obstructed
+        closure; grasp_verified remains False. Show the wrist/head images and
+        confirm the intended object followed before carrying or releasing a
+        donor. Prefer a broad solid grasp patch with exposed finger clearance.
+        A failed probe leaves the last gripper command in place. Inspect the
+        actual state before any recovery. Wrap this attempt in once(); after
+        interruption reconcile receipts and continue only remaining work, never
+        repeat the entire grasp on an object that may already be held.
+        """
+        kwargs = dict(xyz=list(_floats(xyz, 3, "xyz")), arm=_arm(arm),
+                      approach=list(_floats(approach, 3, "approach")),
+                      lift=list(_floats(lift, 3, "lift")), opening=opening, max_steps=max_steps)
+        for name, value in (("pitch", pitch), ("yaw", yaw), ("roll", roll)):
+            angle = _angle(value, name)
+            if angle is not None:
+                kwargs[name] = angle
+        if type(preview) is not bool:
+            raise ValueError("preview must be bool")
+        if preview:
+            return self._readonly("preview_grasp", kwargs)
+        return self._stateful("try_grasp", kwargs, lambda payload: payload)
 
     def set_gripper(self, arm: str, gripper: int, opening: float | None = None) -> Gripper:
         """Close or open one gripper, without moving the arms.
@@ -1293,6 +1361,7 @@ class RobodojoRobot(CoordinationMixin, RobotBase):
                                        "partial" if steps else "rejected"),
             planned_path=str(planned) if planned else None,
             stop_reason=reason,
+            tracking=p.get("tracking"),
         )
 
     def _state_from_envelope(self, envelope: dict[str, Any]) -> State:

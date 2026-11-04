@@ -813,15 +813,27 @@ def test_register_adds_motion_and_coordination_tools_with_readonly_planning(sim)
     coordination = {f"motion_{n}" for n in (
         "capabilities", "observe", "plan", "execute", "stop", "discard"
     )}
-    assert set(added) == {"move_pose", "preview_move_pose", "grip", "locate", "home"} | coordination
+    intents = {f"intent_{n}" for n in ("prepare", "execute", "status", "pause", "extend")}
+    staged = {"grasp_prepare", "grasp_status", "grasp_step", "local_prepare",
+              "operation_status", "operation_resume"}
+    from pyrualean.hosts.robodojo_grasp import SPECS as grasp_specs
+
+    assert set(added) == (
+        {"move_pose", "preview_move_pose", "grip", "locate", "home"}
+        | coordination | intents | staged | set(grasp_specs))
     assert added["preview_move_pose"][1].func._readonly is True
     for name, (spec, handler) in added.items():
-        if name not in coordination:
+        if name in grasp_specs:
+            assert spec is grasp_specs[name]
+        elif name not in coordination | intents | staged:
             assert spec is tools.SPECS[name]
         assert spec["name"] == name and "input_schema" in spec
         # RPent's own test of read-only handlers: unwrap partials, read ``_readonly``
-        readonly = name in {"locate", "preview_move_pose"} or (name in coordination and name != "motion_execute")
-        assert getattr(handler.func, "_readonly", False) is readonly
+        readonly = name in {"locate", "preview_move_pose", "preview_grasp"} or (
+            name in coordination | intents | staged
+            and name not in ("motion_execute", "intent_execute", "grasp_step",
+                             "operation_resume"))
+        assert getattr(getattr(handler, "func", handler), "_readonly", False) is readonly
     env.joints["left"] = [0.5, 0.5, 0.0, 0.0, 0.0, 0.0]
     assert added["home"][1](arm="left")["reached"]
     assert env.joints["left"] == pytest.approx([0.0, 0.3, 0.0, 0.0, 0.0, 0.0], abs=0.01)

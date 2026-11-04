@@ -18,6 +18,7 @@ from ..coordination import Pose
 from . import robodojo_kinematics as kin
 from . import robodojo_tools as tools
 from . import robodojo_trajectory as trajectory
+from .robodojo_feedback import ProgressTracker, TrackingLimits
 
 
 def _positive(value, name, upper, *, integer=False):
@@ -45,7 +46,10 @@ def _errors(now, target):
 
 def capabilities(primitives, *, status=None):
     """One capability description for the live API and startup task cards."""
+    from .robodojo_intent import capabilities as intent_capabilities
+
     return dict(
+        motion_intents=intent_capabilities(),
         modes=["synchronized"],
         frames=["world"],
         points=["tcp"],
@@ -122,6 +126,12 @@ class Controller:
         return dict(id=token, **self._view(snap))
 
     def _reason(self, plan):
+        if "episode_reserve" in plan:
+            status = self.primitives.env.get_status()
+            if tools._spent(status):
+                return tools._episode_stop_reason(status)
+            if status.get("step_limit", 10000) - status.get("step", 0) <= plan["episode_reserve"]:
+                return "reserved_episode_budget"
         if time.monotonic() >= plan["deadline"]:
             return "motion_timeout"
         if plan["steps"] >= plan["max_steps"]:
@@ -147,6 +157,8 @@ class Controller:
         motion=None,
         via=None,
         preview=False,
+        tracking_position_tolerance_m=None,
+        tracking_orientation_tolerance_deg=None,
     ):
         started = time.monotonic()
         if type(preview) is not bool:
@@ -167,6 +179,15 @@ class Controller:
             ("max_step_deg", max_step_deg, 8),
         ):
             _positive(value, key, upper)
+        # Intent execution supplies a scene-independent tracking envelope. Keep
+        # direct legacy callers compatible when they do not supply one.
+        tracking_position = (position_tolerance_m if tracking_position_tolerance_m is None
+                             else tracking_position_tolerance_m)
+        tracking_orientation = (orientation_tolerance_deg
+                                if tracking_orientation_tolerance_deg is None
+                                else tracking_orientation_tolerance_deg)
+        _positive(tracking_position, "tracking_position_tolerance_m", .05)
+        _positive(tracking_orientation, "tracking_orientation_tolerance_deg", 20)
         if via is not None and (not isinstance(via, list) or len(via) > 128
                                 or any(not isinstance(v, dict) or set(v) - set(kin.ARMS)
                                        for v in via)):
@@ -182,6 +203,8 @@ class Controller:
             orientation=orientation_tolerance_deg,
             relative_position=position_tolerance_m,
             relative_angle=orientation_tolerance_deg,
+            tracking_position=tracking_position,
+            tracking_orientation=tracking_orientation,
         )
         plan = dict(
             id=uuid.uuid4().hex,
@@ -196,6 +219,8 @@ class Controller:
             checked=[],
             max_steps=max_steps,
             deadline=started + timeout_s,
+            tracker=ProgressTracker(),
+            correcting=False,
         )
 
         def reject(reason, *, recoverable=True):
@@ -313,6 +338,7 @@ class Controller:
                 if isinstance(exc, trajectory.TrajectoryBudgetError):
                     plan["trajectory"] = exc.trajectory
                 return reject(str(exc), recoverable=str(exc) != "motion_timeout")
+        plan["motion_steps"] = len(ways)
         # Let each requested gripper stroke finish while both arm poses hold.
         if any(grippers[a] != "keep" for a in arms):
             for _ in range(tools.GRIP_MAX_ACTIONS):
@@ -347,8 +373,9 @@ class Controller:
         if preview:
             return dict(accepted=True, preview=True, status="planned", executed_steps=0,
                         planned_steps=len(ways), trajectory=plan.get("trajectory"),
-                        remaining_episode_steps=(self.primitives.env.get_status().get("step_limit", 10000)
-                                                 - (snap["native_steps"] or 0)),
+                        remaining_episode_steps=(
+                            self.primitives.env.get_status().get("step_limit", 10000)
+                            - (snap["native_steps"] or 0)),
                         checked=checked, replan_before_dispatch=True)
         # Only one in-flight primitive, protected by the host's normal dispatch lock.
         self.plans.clear()
@@ -374,13 +401,14 @@ class Controller:
                 ),
                 **self._view(snap)[a],
             )
-        # Checkpoint success is segment arrival; arm.reached refers to the FINAL goal.
+        # A checkpoint may pause before a bounded correction of its current
+        # target. Report that honestly; arm.reached always refers to FINAL goals.
         plan["last_status"], plan["last_reason"] = status, reason
         return dict(
             plan_id=plan["id"],
             status=status,
             stop_reason=reason,
-            reached=status in ("completed", "checkpoint"),
+            reached=status in ("completed", "checkpoint") and not plan["correcting"],
             note=reason,
             executed_steps=plan["steps"],
             arms=arms,
@@ -389,6 +417,7 @@ class Controller:
             recoverable=self._recoverable(reason),
             checked=plan["checked"],
             trajectory=plan.get("trajectory"),
+            tracking=plan["tracker"].summary(),
         )
 
     def execute(self, plan_id):
@@ -415,8 +444,12 @@ class Controller:
                 if reason:
                     break
                 self.primitives._check_cancelled()
+                guard = plan.get("guard")
+                if guard and (reason := guard(self._snapshot())):
+                    break
                 way = plan["ways"][plan["cursor"]]
                 state = tools._obs(self.primitives)["state"]
+                before = {a: tools._pose_of(a, tools._joints(state, a)) for a in kin.ARMS}
                 grips = {
                     a: {"keep": plan["keep_commands"][a], "close": 0.0, "open": 1.0}[v]
                     for a, v in way["grippers"].items()
@@ -424,23 +457,23 @@ class Controller:
                 # Reserve before native dispatch. An exception may occur AFTER movement;
                 # it never refunds a physical action.
                 plan["steps"] += 1
+                block = way.get("trajectory")
+                if plan["correcting"]:
+                    plan["tracker"].corrected()
+                    block = (trajectory.hold(way["joints"], plan["clock"])
+                             if plan["clock"] else None)
+                plan["dispatch_pending"] = True
                 state, status = tools._act(
-                    self.primitives, state, way["joints"], grips, way.get("trajectory")
+                    self.primitives, state, way["joints"], grips, block
                 )
-                plan["cursor"] += 1
+                plan["dispatch_pending"] = False
                 snap = self._snapshot()
-                tracking_reason = None
                 for arm in kin.ARMS:
                     # A recoverable tracking miss must not hide a hard invariant
                     # violation on either arm or in their relative transform.
                     if kin.clearance_violations(arm, snap["joints"][arm]):
                         reason = f"{arm}: measured_table_clearance"
                         break
-                    dist, angle = _errors(
-                        snap["poses"][arm], tools._pose_of(arm, way["joints"][arm])
-                    )
-                    if dist > plan["limits"]["position"] or angle > plan["limits"]["orientation"]:
-                        tracking_reason = tracking_reason or f"{arm}: tracking_error"
                 if (
                     not reason
                     and plan["keep_relative"]
@@ -449,7 +482,43 @@ class Controller:
                     reason = "relative_pose_constraint"
                 if not reason and tools._spent(status):
                     reason = tools._episode_stop_reason(status)
-                reason = reason or tracking_reason
+                if not reason and guard:
+                    reason = guard(snap)
+                if not reason:
+                    arrival = plan["cursor"] >= plan["motion_steps"] - 1
+                    bounds = plan["limits"]
+                    # Timing lag inside the tracking envelope is not an arrival
+                    # failure. At rest, enforce the requested goal accuracy and
+                    # allow only bounded, progressing holds of that same target.
+                    limits = TrackingLimits(
+                        bounds["position"] if arrival else bounds["tracking_position"],
+                        bounds["orientation"] if arrival else bounds["tracking_orientation"],
+                        position_ceiling=max(2 * bounds["position"], bounds["tracking_position"])
+                        if arrival else None,
+                        orientation_ceiling=max(2 * bounds["orientation"],
+                                                bounds["tracking_orientation"])
+                        if arrival else None,
+                    )
+                    decision = plan["tracker"].assess(
+                        before, snap["poses"],
+                        (plan["goals"] if arrival else
+                         {a: tools._pose_of(a, way["joints"][a]) for a in kin.ARMS}), limits,
+                        can_correct=(plan["clock"] is None or arrival),
+                        spare_steps=(min(plan["max_steps"] - plan["steps"],
+                                         status.get("step_limit", 10000) - status.get("step", 0))
+                                     - (len(plan["ways"]) - plan["cursor"] - 1)),
+                    )
+                    plan["tracker"].last.update(
+                        phase="arrival" if arrival else "path_tracking",
+                        tolerances=dict(position_m=limits.position,
+                                        orientation_deg=limits.orientation),
+                    )
+                    plan["correcting"] = decision == "correct"
+                    if decision == "advance":
+                        plan["cursor"] += 1
+                    elif decision == "stop":
+                        arm = plan["tracker"].last["missed_arms"][0]
+                        reason = f"{arm}: tracking_error"
                 if reason or plan["cursor"] == len(plan["ways"]):
                     break
             plan["expected"] = self._snapshot()
@@ -473,6 +542,10 @@ class Controller:
         except Exception as exc:
             plan["stopped"] = True
             plan["expected"] = self._snapshot()
+            cancelled = getattr(self.primitives, "cancelled", None)
+            if (plan.get("resume_on_cancel") and not plan.get("dispatch_pending")
+                    and cancelled is not None and cancelled.is_set()):
+                return self._report(plan, "partial", "code_interrupted")
             return self._report(
                 plan,
                 "partial" if plan["steps"] else "rejected",
@@ -530,11 +603,14 @@ _read._readonly = True
 
 
 def handlers(primitives):
+    from .robodojo_intent import handlers as intent_handlers
+
     controller = Controller(primitives)
     names = ("capabilities", "observe", "plan", "execute", "stop", "discard")
     return {
-        f"motion_{name}": partial(_dispatch if name == "execute" else _read, controller, name)
-        for name in names
+        **intent_handlers(primitives),
+        **{f"motion_{name}": partial(_dispatch if name == "execute" else _read, controller, name)
+           for name in names},
     }
 
 

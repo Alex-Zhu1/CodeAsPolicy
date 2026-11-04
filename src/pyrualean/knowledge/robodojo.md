@@ -51,7 +51,81 @@
   position target keeps its full orientation. For a vertical grasp, yaw and
   roll readings can change together without a physical turn; compare poses.
 
+## Motion intent and executor responsibilities
+- Use `execute_motion(intent_id, left=..., right=..., interaction=...,
+  directions=..., holding=..., completion=..., max_steps=..., reserve_steps=...)`
+  for routine single/dual-arm motion. Astra chooses the goal and constraints;
+  the executor chooses waypoint spacing, speed and bounded arrival correction.
+  The task card preserves the native instruction and initial facts. `plan()`
+  records your current goal; an executable intent is a separate fixed contract.
+- Targets are absolute world TCP xyz (preserve initial orientation), a Pose, or
+  `{"xyz": xyz, "angles": [pitch,yaw,roll]}`. Omitted arms hold their poses.
+  `interaction="free"` asserts a currently observed clear route; `"approach"`
+  means interaction only near the endpoint; `"contact"` means interaction
+  throughout. Choose this physical meaning, not velocity/acceleration values.
+  Each intent follows a Cartesian line. Choose a new staging goal when a route
+  or grasp must change; the executor never invents a detour or object recipe.
+- `directions={"right":[0,0,-1]}` permits positive motion along that world axis;
+  both the target and measured path must remain in its tolerance corridor.
+  Omit the constraint for an unrestricted line. Directions do not authorize
+  lateral searches, back-and-forth insertion or a changed grasp.
+- `holding={"right":"empty"}` asserts an observed empty hand; `"retain"`
+  requires the existing closed grip to remain obstructed at every native action;
+  `"keep"` preserves the command without asserting object support. No intent
+  opens, closes or regrips. Use set_gripper/try_grasp for those operations and
+  observe the intended object before declaring retention. A retained opening
+  cannot identify an object or detect all slips. In a push with a closed empty
+  gripper, declare empty plus contact; no retained-object requirement applies.
+- `completion` can set position_m/orientation_deg and a short `verify` condition.
+  Robot pose is checked automatically. `verify` returns as needs_observation;
+  inspect the actual scene, or use the existing visual watch contract. TCP
+  arrival alone never establishes insertion, intended-object grasp or release.
+- `max_steps` covers the entire intent, including corrections and resumptions;
+  `reserve_steps` protects episode actions for later work. Preview costly
+  intents with preview=True. Budget refusal does not allow weakening a motion
+  constraint. Change the allocation or strategy from the returned evidence.
+- Normal checkpoints and progressing corrections stay inside the executor.
+  After a known interruption, reconcile receipts and use resume_motion(id).
+  It continues the remaining route from measured state with the same budget;
+  it does not replay earlier travel or gripper actions. Completed IDs return
+  their saved endpoint without movement. Unknown dispatch, external movement
+  or a lost host session require review. Read stop_reason when needs_model is
+  true. Do not wrap execute_motion/resume_motion in once(); their intent ID is
+  already the execution identity. Keep once() for legacy motion and gripper calls.
+- Start with a clear staging intent, then a separately observed approach/contact
+  intent where geometry demands it. Avoid unnecessary segmentation inside a
+  known-clear route. Low-level move_to/move_both profiles remain available for
+  explicit motion requirements; routine intent execution does not need them.
+
+## Bounded grasp attempts
+- For a grasp target measured from current images, an optional bounded helper is
+  `try_grasp(xyz, arm=..., pitch=..., yaw=..., roll=0, approach=[0,0,0.05],
+  lift=[0,0,0.025], max_steps=64)`. Preview first to check the complete
+  approach and probe plus the conservative step bound. Offsets are world
+  vectors from the closure TCP, not object dimensions. Choose actual offsets
+  for clearance; the helper does not sense object/finger/inter-arm collisions.
+- The helper uses fast native travel and small native targets only near the
+  grasp and during the probe. It stops on tracking loss, empty closure or
+  closure lost during lifting; no blind position search or automatic regrasp.
+  `retained` is a proprioceptive candidate, NOT object identity or a verified
+  stable grasp. Show head/wrist images and check that the intended object
+  followed before carrying or releasing a donor. Use a broad solid patch and
+  keep finger clearance from nearby material and the other gripper.
+- Put the attempt in `once()`. A partial/interrupted attempt is not permission
+  to repeat it: reconcile and inspect the measured endpoint and closure, then
+  continue only the remaining operation. The primitive refuses to open a
+  gripper that may already hold an object. Do not retry the same geometry.
+- Before closing, preview the later carry, orientation change and placement
+  from reachable staging poses. A successful grasp does not prove those paths
+  exist. Limit grasp retries and reserve steps for the rest of the task.
+
 ## Motion
+- Single-arm moves, coordinated moves and bounded grasps share measured-progress
+  feedback. At most two corrective target holds per motion are allowed while
+  every missed dimension improves and budget remains. A stall returns the actual
+  endpoint. Moving timed splines stop on tracking failure; corrective holds are
+  allowed at their final resting target. `tracking` reports the cause and count;
+  tracking error alone does not establish contact or object support.
 - `move_to(xyz, arm, gripper, pitch, yaw, roll, path)` solves the arm's
   inverse kinematics for the full pose in the library (not in the simulator)
   and commands joint angles.  With `path="auto"` the grasp point follows a
@@ -177,11 +251,12 @@
   / `Gripper.step_limit` tell you where you stand).  When it is spent the
   state reports `truncated` and no motion is possible.
 
-## Timed trajectories and contact capabilities
+## Advanced motion controls and contact capabilities
 - Read `robo.motion_capabilities()`. `card.json` retains the full startup
   capability snapshot and observation provenance; the prompt shows a concise
   summary. This is initial data; the live query reports current support.
-- When `speed_control` is true, `move_to` and `move_both` automatically use timed
+- The intent executor selects timing itself. For low-level calls, when
+  `speed_control` is true, `move_to` and `move_both` automatically use timed
   joint splines. `motion=robo.motion_profile(velocity=1.0, acceleration=4.0,
   jerk=40.0)` selects maximum commanded joint derivatives in rad/s, rad/s²,
   rad/s³. These defaults are planning choices, not hardware ratings. Limits
@@ -207,13 +282,14 @@
   arm processing stay native. Continuity is in **simulation time within one
   call**; network/model waits and interruptions have no wall-clock continuity
   guarantee. Separate calls start/end at rest. `home` retains geometric stepping.
-- Prefer `motion="native"` for observed clear empty-hand travel and for clear
+- For explicit low-level moves, `motion="native"` is available for observed clear empty-hand travel and clear
   straight transport after a broad stable grasp has been verified. Keep a
   delicate, thin, slipping or uncertain grasp on smooth `carry`. This restores
   the original waypoint executor and simulator interpolation, with no C2 or
   derivative-limit guarantee. Geometry checks, gripper KEEP, receipts and resume
-  still apply. Measured tracking misses stop native moves before subsequent
-  waypoints or endpoint settling, just as with timed moves. `path="joint"` can save steps where the whole swing is clear;
+  still apply. A native tracking miss holds the current target only within
+  the shared progress/correction limits; otherwise it stops before advancing.
+  Moving timed splines stop on a tracking miss. `path="joint"` can save steps where the whole swing is clear;
   use `path="line"` where orientation/path shape matters. Never choose a joint
   swing for a fragile grasp merely because its preview is cheaper.
 - Choose `motion="transit"` for smooth empty-hand travel, `"approach"` for the
@@ -455,8 +531,9 @@
   started in (within 0.15 m and 20 degrees) with BOTH grippers open (an
   opening above 0.8, for a few tasks 0.9), the scene being as the instruction
   wants it at that moment - whether or not the instruction says to reset the
-  arms. Account for this convention in the task acceptance conditions and
-  reserve steps for required cleanup (about 20 is a useful estimate). First
+  arms. Account for applicable cleanup in the task acceptance conditions. Complete
+  the required manipulation before cleanup; do not reserve a guessed return
+  allowance or abandon useful task progress because of a cost forecast. First
   establish where held objects can be supported; choose release and retreat
   order from the scene. Homing/releasing is not harmless in every configuration.
 - Finish when the required task state and applicable cleanup conditions hold.

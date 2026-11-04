@@ -690,6 +690,10 @@ def play_episode(
         card = host.dump_card(toolkit, cell, out_dir)
         result["task_language"] = card.task_language
         robo = adapter.robot_cls(backend, ledger=ledger, primitives=primitives)
+        # Generated policies declare intent; directly instantiated robots retain
+        # the low-level API for existing scripts and controller development.
+        if getattr(robo, "INTENT_API", False):
+            robo._intent_motion_only = True
         # The contract tells the agent its working directory is the scratch
         # workspace; make that true for code run by the `python` tool as well
         # (Codex's own shell already runs there via `-C`).  Everything the

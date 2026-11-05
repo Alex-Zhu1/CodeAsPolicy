@@ -1,0 +1,1815 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "type": "file",
+      "name": "rpent_robotwin.py",
+      "filePath": "src/pyrualean/hosts/rpent_robotwin.py",
+      "summary": "启动 RoboTwin 的 RPent 服务栈，导出初始任务卡并执行单回合策略，保存原生产物与统一结果。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "回合执行"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robotwin.py:add_cell_args",
+      "type": "function",
+      "name": "add_cell_args",
+      "filePath": "src/pyrualean/hosts/rpent_robotwin.py",
+      "lineRange": [
+        75,
+        90
+      ],
+      "summary": "注册RoboTwin任务单元的标识、配置与随机种子参数。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robotwin.py:add_boot_args",
+      "type": "function",
+      "name": "add_boot_args",
+      "filePath": "src/pyrualean/hosts/rpent_robotwin.py",
+      "lineRange": [
+        93,
+        116
+      ],
+      "summary": "注册RoboTwin宿主服务启动和已有服务连接参数。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robotwin.py:cell_from_args",
+      "type": "function",
+      "name": "cell_from_args",
+      "filePath": "src/pyrualean/hosts/rpent_robotwin.py",
+      "lineRange": [
+        119,
+        126
+      ],
+      "summary": "将命令行参数规范化为RoboTwin任务单元。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robotwin.py:boot_options",
+      "type": "function",
+      "name": "boot_options",
+      "filePath": "src/pyrualean/hosts/rpent_robotwin.py",
+      "lineRange": [
+        129,
+        136
+      ],
+      "summary": "从命令行提取RoboTwin启动选项和服务端点。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robotwin.py:_eval_success",
+      "type": "function",
+      "name": "_eval_success",
+      "filePath": "src/pyrualean/hosts/rpent_robotwin.py",
+      "lineRange": [
+        139,
+        145
+      ],
+      "summary": "从工具包缓存读取 RoboTwin 原生成功状态，避免额外 RPC。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robotwin.py:make_backend",
+      "type": "function",
+      "name": "make_backend",
+      "filePath": "src/pyrualean/hosts/rpent_robotwin.py",
+      "lineRange": [
+        165,
+        168
+      ],
+      "summary": "为已启动的RoboTwin工具包创建包含专用步数语义的后端适配器。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robotwin.py:boot",
+      "type": "function",
+      "name": "boot",
+      "filePath": "src/pyrualean/hosts/rpent_robotwin.py",
+      "lineRange": [
+        171,
+        244
+      ],
+      "summary": "启动或连接RoboTwin仿真与模型服务，创建 RPent 工具包并返回待清理的后台进程。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robotwin.py:_floats",
+      "type": "function",
+      "name": "_floats",
+      "filePath": "src/pyrualean/hosts/rpent_robotwin.py",
+      "lineRange": [
+        247,
+        252
+      ],
+      "summary": "将输入规范为固定长度浮点向量，无法解析时使用零向量。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robotwin.py:_fmt",
+      "type": "function",
+      "name": "_fmt",
+      "filePath": "src/pyrualean/hosts/rpent_robotwin.py",
+      "lineRange": [
+        255,
+        256
+      ],
+      "summary": "将数值向量格式化为三位小数的紧凑文本。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robotwin.py:_table_height",
+      "type": "function",
+      "name": "_table_height",
+      "filePath": "src/pyrualean/hosts/rpent_robotwin.py",
+      "lineRange": [
+        259,
+        269
+      ],
+      "summary": "取初始头部相机世界坐标图的高度中位数估计桌面高度。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robotwin.py:dump_card",
+      "type": "function",
+      "name": "dump_card",
+      "filePath": "src/pyrualean/hosts/rpent_robotwin.py",
+      "lineRange": [
+        272,
+        323
+      ],
+      "summary": "保存RoboTwin初始图像及任务卡，仅提供规划者允许观察的初始状态。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robotwin.py:_sha256_text",
+      "type": "function",
+      "name": "_sha256_text",
+      "filePath": "src/pyrualean/hosts/rpent_robotwin.py",
+      "lineRange": [
+        326,
+        327
+      ],
+      "summary": "计算文本的 SHA-256 摘要，用于记录策略版本。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robotwin.py:run_episode",
+      "type": "function",
+      "name": "run_episode",
+      "filePath": "src/pyrualean/hosts/rpent_robotwin.py",
+      "lineRange": [
+        330,
+        450
+      ],
+      "summary": "为单个RoboTwin任务启动宿主并执行策略，保存统一 result.json 后清理服务。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robotwin.py:_install_sigterm",
+      "type": "function",
+      "name": "_install_sigterm",
+      "filePath": "src/pyrualean/hosts/rpent_robotwin.py",
+      "lineRange": [
+        453,
+        458
+      ],
+      "summary": "安装终止信号处理器，使宿主可以清理当前回合。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robotwin.py:card_only",
+      "type": "function",
+      "name": "card_only",
+      "filePath": "src/pyrualean/hosts/rpent_robotwin.py",
+      "lineRange": [
+        461,
+        475
+      ],
+      "summary": "仅启动RoboTwin仿真以导出任务卡，完成后停止服务。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robotwin.py:_add_cell_args",
+      "type": "function",
+      "name": "_add_cell_args",
+      "filePath": "src/pyrualean/hosts/rpent_robotwin.py",
+      "lineRange": [
+        478,
+        484
+      ],
+      "summary": "为宿主命令补充输出目录、设备、步数和 RPent 路径等参数。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robotwin.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "src/pyrualean/hosts/rpent_robotwin.py",
+      "lineRange": [
+        487,
+        532
+      ],
+      "summary": "提供RoboTwin宿主命令行，在任务卡导出与策略执行之间分发。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/pyrualean/hosts/rpent_robotwin.py:Cell",
+      "type": "class",
+      "name": "Cell",
+      "filePath": "src/pyrualean/hosts/rpent_robotwin.py",
+      "lineRange": [
+        61,
+        72
+      ],
+      "summary": "描述一个RoboTwin评估任务的配置、种子与执行预算。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robotwin.py:Cell.tag",
+      "type": "function",
+      "name": "Cell.tag",
+      "filePath": "src/pyrualean/hosts/rpent_robotwin.py",
+      "lineRange": [
+        71,
+        72
+      ],
+      "summary": "根据任务、配置和种子生成输出目录标识。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "class:src/pyrualean/hosts/rpent_robotwin.py:RobotwinBackend",
+      "type": "class",
+      "name": "RobotwinBackend",
+      "filePath": "src/pyrualean/hosts/rpent_robotwin.py",
+      "lineRange": [
+        148,
+        162
+      ],
+      "summary": "补齐 RPent RoboTwin 工具包缺少的成功状态与原生动作计数接口。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robotwin.py:RobotwinBackend.solved",
+      "type": "function",
+      "name": "RobotwinBackend.solved",
+      "filePath": "src/pyrualean/hosts/rpent_robotwin.py",
+      "lineRange": [
+        155,
+        156
+      ],
+      "summary": "返回工具包缓存的 RoboTwin 原生成功状态。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robotwin.py:RobotwinBackend.env_steps",
+      "type": "function",
+      "name": "RobotwinBackend.env_steps",
+      "filePath": "src/pyrualean/hosts/rpent_robotwin.py",
+      "lineRange": [
+        158,
+        162
+      ],
+      "summary": "读取 RoboTwin 原语对象累计的原生 VLA 动作数。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "file:src/pyrualean/prompt.py",
+      "type": "file",
+      "name": "prompt.py",
+      "filePath": "src/pyrualean/prompt.py",
+      "summary": "根据实际机器人类的签名和说明生成模型可见 API，结合任务卡与包内操作知识组装提示，支持移除 VLA 原语的实验配置。",
+      "tags": [
+        "提示生成",
+        "接口反射",
+        "任务描述"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/prompt.py:_annotation",
+      "type": "function",
+      "name": "_annotation",
+      "filePath": "src/pyrualean/prompt.py",
+      "lineRange": [
+        36,
+        43
+      ],
+      "summary": "将参数或返回值注解转为紧凑文本，省略缺失注解和 typing 前缀。",
+      "tags": [
+        "提示生成",
+        "接口反射",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/prompt.py:_format_parameters",
+      "type": "function",
+      "name": "_format_parameters",
+      "filePath": "src/pyrualean/prompt.py",
+      "lineRange": [
+        46,
+        62
+      ],
+      "summary": "按函数签名生成参数列表，保留默认值和仅限关键字参数标记。",
+      "tags": [
+        "提示生成",
+        "接口反射",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/prompt.py:_render_callable",
+      "type": "function",
+      "name": "_render_callable",
+      "filePath": "src/pyrualean/prompt.py",
+      "lineRange": [
+        65,
+        75
+      ],
+      "summary": "把方法签名与说明渲染为 API 参考文本，长签名自动换行。",
+      "tags": [
+        "提示生成",
+        "接口反射",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/prompt.py:_render_property",
+      "type": "function",
+      "name": "_render_property",
+      "filePath": "src/pyrualean/prompt.py",
+      "lineRange": [
+        78,
+        85
+      ],
+      "summary": "渲染只读属性的名称、类型和属性文档。",
+      "tags": [
+        "提示生成",
+        "接口反射",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/prompt.py:_render_result_type",
+      "type": "function",
+      "name": "_render_result_type",
+      "filePath": "src/pyrualean/prompt.py",
+      "lineRange": [
+        88,
+        103
+      ],
+      "summary": "渲染结果数据类字段及公开辅助属性，供模型理解返回对象。",
+      "tags": [
+        "提示生成",
+        "接口反射",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/prompt.py:_public_members",
+      "type": "function",
+      "name": "_public_members",
+      "filePath": "src/pyrualean/prompt.py",
+      "lineRange": [
+        106,
+        125
+      ],
+      "summary": "沿继承链按定义顺序收集公开成员，应用覆盖并排除声明不可用的接口。",
+      "tags": [
+        "提示生成",
+        "接口反射",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/prompt.py:_return_type_name",
+      "type": "function",
+      "name": "_return_type_name",
+      "filePath": "src/pyrualean/prompt.py",
+      "lineRange": [
+        128,
+        135
+      ],
+      "summary": "提取方法或属性 getter 的返回类型名称。",
+      "tags": [
+        "提示生成",
+        "接口反射",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/prompt.py:vla_hidden",
+      "type": "function",
+      "name": "vla_hidden",
+      "filePath": "src/pyrualean/prompt.py",
+      "lineRange": [
+        138,
+        153
+      ],
+      "summary": "计算当前原语配置隐藏的 VLA 方法及其独占返回类型。",
+      "tags": [
+        "提示生成",
+        "接口反射",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/prompt.py:_apply_edits",
+      "type": "function",
+      "name": "_apply_edits",
+      "filePath": "src/pyrualean/prompt.py",
+      "lineRange": [
+        156,
+        162
+      ],
+      "summary": "逐项应用要求恰好出现一次的文档替换，避免静默修改错误位置。",
+      "tags": [
+        "提示生成",
+        "接口反射",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/prompt.py:api_reference",
+      "type": "function",
+      "name": "api_reference",
+      "filePath": "src/pyrualean/prompt.py",
+      "lineRange": [
+        165,
+        257
+      ],
+      "summary": "从实时机器人类生成策略 API 文档，并按能力与原语配置过滤内容。",
+      "tags": [
+        "提示生成",
+        "接口反射",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/prompt.py:knowledge_stem",
+      "type": "function",
+      "name": "knowledge_stem",
+      "filePath": "src/pyrualean/prompt.py",
+      "lineRange": [
+        260,
+        265
+      ],
+      "summary": "根据后端名称和是否启用 VLA 选择操作知识文件名。",
+      "tags": [
+        "提示生成",
+        "接口反射",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/prompt.py:knowledge_text",
+      "type": "function",
+      "name": "knowledge_text",
+      "filePath": "src/pyrualean/prompt.py",
+      "lineRange": [
+        268,
+        276
+      ],
+      "summary": "读取对应机器人与原语配置的包内 Markdown 操作知识。",
+      "tags": [
+        "提示生成",
+        "接口反射",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/prompt.py:render_prompt",
+      "type": "function",
+      "name": "render_prompt",
+      "filePath": "src/pyrualean/prompt.py",
+      "lineRange": [
+        474,
+        526
+      ],
+      "summary": "按任务卡选择机器人适配器，组合 API、操作知识、运行契约、任务描述和图像附件。",
+      "tags": [
+        "提示生成",
+        "接口反射",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/pyrualean/prompt.py:TaskCard",
+      "type": "class",
+      "name": "TaskCard",
+      "filePath": "src/pyrualean/prompt.py",
+      "lineRange": [
+        280,
+        393
+      ],
+      "summary": "保存规划者可见的任务标识、指令、初始状态和图像，不包含特权物体位姿。",
+      "tags": [
+        "提示生成",
+        "接口反射",
+        "数据模型"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/prompt.py:TaskCard.to_json",
+      "type": "function",
+      "name": "TaskCard.to_json",
+      "filePath": "src/pyrualean/prompt.py",
+      "lineRange": [
+        310,
+        311
+      ],
+      "summary": "把任务卡字段序列化为可读 JSON。",
+      "tags": [
+        "提示生成",
+        "接口反射",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/prompt.py:TaskCard.from_json",
+      "type": "function",
+      "name": "TaskCard.from_json",
+      "filePath": "src/pyrualean/prompt.py",
+      "lineRange": [
+        314,
+        317
+      ],
+      "summary": "读取任务卡 JSON，仅接收当前数据类支持的字段。",
+      "tags": [
+        "提示生成",
+        "接口反射",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/prompt.py:TaskCard.render",
+      "type": "function",
+      "name": "TaskCard.render",
+      "filePath": "src/pyrualean/prompt.py",
+      "lineRange": [
+        319,
+        357
+      ],
+      "summary": "渲染 LIBERO 初始末端状态，其他机器人转用通用任务卡格式。",
+      "tags": [
+        "提示生成",
+        "接口反射",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/prompt.py:TaskCard._render_generic",
+      "type": "function",
+      "name": "TaskCard._render_generic",
+      "filePath": "src/pyrualean/prompt.py",
+      "lineRange": [
+        359,
+        393
+      ],
+      "summary": "将非 LIBERO 任务的标识、指令、初始事实和图像列表渲染为模型文本。",
+      "tags": [
+        "提示生成",
+        "接口反射",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "class:src/pyrualean/prompt.py:PromptBundle",
+      "type": "class",
+      "name": "PromptBundle",
+      "filePath": "src/pyrualean/prompt.py",
+      "lineRange": [
+        397,
+        411
+      ],
+      "summary": "封装一次生成所需的系统提示、用户提示和图像附件。",
+      "tags": [
+        "提示生成",
+        "接口反射",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/prompt.py:PromptBundle.messages",
+      "type": "function",
+      "name": "PromptBundle.messages",
+      "filePath": "src/pyrualean/prompt.py",
+      "lineRange": [
+        404,
+        408
+      ],
+      "summary": "返回系统与用户两条结构化消息。",
+      "tags": [
+        "提示生成",
+        "接口反射",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/prompt.py:PromptBundle.text",
+      "type": "function",
+      "name": "PromptBundle.text",
+      "filePath": "src/pyrualean/prompt.py",
+      "lineRange": [
+        410,
+        411
+      ],
+      "summary": "将系统和用户提示拼接为单段文本。",
+      "tags": [
+        "提示生成",
+        "接口反射",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:add_cell_args",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:add_cell_args",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:add_boot_args",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:add_boot_args",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:cell_from_args",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:cell_from_args",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:boot_options",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:boot_options",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:_eval_success",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:_eval_success",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:make_backend",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:make_backend",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:boot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:boot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:_floats",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:_floats",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:_fmt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:_fmt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:_table_height",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:_table_height",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:dump_card",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:dump_card",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:_sha256_text",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:_sha256_text",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:run_episode",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:run_episode",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:_install_sigterm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:_install_sigterm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:card_only",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:card_only",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:_add_cell_args",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:_add_cell_args",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "class:src/pyrualean/hosts/rpent_robotwin.py:Cell",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "class:src/pyrualean/hosts/rpent_robotwin.py:Cell",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:Cell.tag",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/rpent_robotwin.py:Cell",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:Cell.tag",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "class:src/pyrualean/hosts/rpent_robotwin.py:RobotwinBackend",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "class:src/pyrualean/hosts/rpent_robotwin.py:RobotwinBackend",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:RobotwinBackend.solved",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/rpent_robotwin.py:RobotwinBackend",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:RobotwinBackend.solved",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:RobotwinBackend.env_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/rpent_robotwin.py:RobotwinBackend",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:RobotwinBackend.env_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "file:src/pyrualean/_backend.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "file:src/pyrualean/hosts/common.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "file:src/pyrualean/prompt.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "file:src/pyrualean/robotwin.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "file:src/pyrualean/runner.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robotwin.py",
+      "target": "file:src/pyrualean/sandbox.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:cell_from_args",
+      "target": "class:src/pyrualean/hosts/rpent_robotwin.py:Cell",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:RobotwinBackend.solved",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:_eval_success",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:make_backend",
+      "target": "class:src/pyrualean/hosts/rpent_robotwin.py:RobotwinBackend",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:boot",
+      "target": "function:src/pyrualean/hosts/common.py:resolve_rpent_root",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:dump_card",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:_floats",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:dump_card",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:_fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:dump_card",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:_table_height",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:dump_card",
+      "target": "class:src/pyrualean/prompt.py:TaskCard",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:run_episode",
+      "target": "function:src/pyrualean/runner.py:policy_sha256",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:run_episode",
+      "target": "class:src/pyrualean/_backend.py:Ledger",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:run_episode",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:boot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:run_episode",
+      "target": "function:src/pyrualean/hosts/common.py:resolve_rpent_root",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:run_episode",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:make_backend",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:run_episode",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:dump_card",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:run_episode",
+      "target": "function:src/pyrualean/prompt.py:render_prompt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:run_episode",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:_sha256_text",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:run_episode",
+      "target": "class:src/pyrualean/robotwin.py:RobotwinRobot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:run_episode",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:_install_sigterm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:run_episode",
+      "target": "function:src/pyrualean/sandbox.py:audit_source",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:run_episode",
+      "target": "function:src/pyrualean/runner.py:load_policy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:run_episode",
+      "target": "function:src/pyrualean/sandbox.py:make_builtins",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:run_episode",
+      "target": "function:src/pyrualean/runner.py:run_policy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:run_episode",
+      "target": "function:src/pyrualean/hosts/common.py:stop_all",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:card_only",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:boot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:card_only",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:dump_card",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:card_only",
+      "target": "function:src/pyrualean/hosts/common.py:stop_all",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:_add_cell_args",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:add_cell_args",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:_add_cell_args",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:add_boot_args",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:main",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:_add_cell_args",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:main",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:run_episode",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:main",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:cell_from_args",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:main",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:boot_options",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robotwin.py:main",
+      "target": "function:src/pyrualean/hosts/rpent_robotwin.py:card_only",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/pyrualean/hosts/rpent_robotwin.py:RobotwinBackend",
+      "target": "class:src/pyrualean/hosts/common.py:RpentBackend",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "function:src/pyrualean/prompt.py:_annotation",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "function:src/pyrualean/prompt.py:_annotation",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "function:src/pyrualean/prompt.py:_format_parameters",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "function:src/pyrualean/prompt.py:_format_parameters",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "function:src/pyrualean/prompt.py:_render_callable",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "function:src/pyrualean/prompt.py:_render_callable",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "function:src/pyrualean/prompt.py:_render_property",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "function:src/pyrualean/prompt.py:_render_property",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "function:src/pyrualean/prompt.py:_render_result_type",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "function:src/pyrualean/prompt.py:_render_result_type",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "function:src/pyrualean/prompt.py:_public_members",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "function:src/pyrualean/prompt.py:_public_members",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "function:src/pyrualean/prompt.py:_return_type_name",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "function:src/pyrualean/prompt.py:_return_type_name",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "function:src/pyrualean/prompt.py:vla_hidden",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "function:src/pyrualean/prompt.py:vla_hidden",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "function:src/pyrualean/prompt.py:_apply_edits",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "function:src/pyrualean/prompt.py:_apply_edits",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "function:src/pyrualean/prompt.py:api_reference",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "function:src/pyrualean/prompt.py:api_reference",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "function:src/pyrualean/prompt.py:knowledge_stem",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "function:src/pyrualean/prompt.py:knowledge_stem",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "function:src/pyrualean/prompt.py:knowledge_text",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "function:src/pyrualean/prompt.py:knowledge_text",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "function:src/pyrualean/prompt.py:render_prompt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "function:src/pyrualean/prompt.py:render_prompt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "class:src/pyrualean/prompt.py:TaskCard",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "class:src/pyrualean/prompt.py:TaskCard",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "function:src/pyrualean/prompt.py:TaskCard.to_json",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/prompt.py:TaskCard",
+      "target": "function:src/pyrualean/prompt.py:TaskCard.to_json",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "function:src/pyrualean/prompt.py:TaskCard.from_json",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/prompt.py:TaskCard",
+      "target": "function:src/pyrualean/prompt.py:TaskCard.from_json",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "function:src/pyrualean/prompt.py:TaskCard.render",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/prompt.py:TaskCard",
+      "target": "function:src/pyrualean/prompt.py:TaskCard.render",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "function:src/pyrualean/prompt.py:TaskCard._render_generic",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/prompt.py:TaskCard",
+      "target": "function:src/pyrualean/prompt.py:TaskCard._render_generic",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "class:src/pyrualean/prompt.py:PromptBundle",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "class:src/pyrualean/prompt.py:PromptBundle",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "function:src/pyrualean/prompt.py:PromptBundle.messages",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/prompt.py:PromptBundle",
+      "target": "function:src/pyrualean/prompt.py:PromptBundle.messages",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "function:src/pyrualean/prompt.py:PromptBundle.text",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/prompt.py:PromptBundle",
+      "target": "function:src/pyrualean/prompt.py:PromptBundle.text",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "file:src/pyrualean/_robot.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "file:src/pyrualean/libero.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:src/pyrualean/prompt.py:_format_parameters",
+      "target": "function:src/pyrualean/prompt.py:_annotation",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/prompt.py:_render_callable",
+      "target": "function:src/pyrualean/prompt.py:_format_parameters",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/prompt.py:_render_callable",
+      "target": "function:src/pyrualean/prompt.py:_annotation",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/prompt.py:_render_property",
+      "target": "function:src/pyrualean/prompt.py:_annotation",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/prompt.py:_render_result_type",
+      "target": "function:src/pyrualean/prompt.py:_annotation",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/prompt.py:vla_hidden",
+      "target": "function:src/pyrualean/_robot.py:effective_primitives",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/prompt.py:vla_hidden",
+      "target": "function:src/pyrualean/prompt.py:_public_members",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/prompt.py:vla_hidden",
+      "target": "function:src/pyrualean/prompt.py:_return_type_name",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/prompt.py:api_reference",
+      "target": "function:src/pyrualean/_robot.py:effective_primitives",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/prompt.py:api_reference",
+      "target": "function:src/pyrualean/prompt.py:vla_hidden",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/prompt.py:api_reference",
+      "target": "function:src/pyrualean/prompt.py:_public_members",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/prompt.py:api_reference",
+      "target": "function:src/pyrualean/prompt.py:_render_property",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/prompt.py:api_reference",
+      "target": "function:src/pyrualean/prompt.py:_render_callable",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/prompt.py:api_reference",
+      "target": "function:src/pyrualean/prompt.py:_render_result_type",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/prompt.py:api_reference",
+      "target": "function:src/pyrualean/prompt.py:_apply_edits",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/prompt.py:knowledge_text",
+      "target": "function:src/pyrualean/prompt.py:knowledge_stem",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/prompt.py:TaskCard.render",
+      "target": "function:src/pyrualean/prompt.py:TaskCard._render_generic",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/prompt.py:render_prompt",
+      "target": "function:src/pyrualean/_robot.py:effective_primitives",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/prompt.py:render_prompt",
+      "target": "function:src/pyrualean/prompt.py:api_reference",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/prompt.py:render_prompt",
+      "target": "function:src/pyrualean/prompt.py:knowledge_text",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/prompt.py:render_prompt",
+      "target": "class:src/pyrualean/prompt.py:PromptBundle",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

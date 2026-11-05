@@ -1,0 +1,22 @@
+import fs from 'node:fs';
+import {KnowledgeGraphSchema, validateGraph} from '/home/mhzhu/.understand-anything-plugin/packages/core/dist/index.js';
+
+const input=process.argv[2];
+const output=process.argv[3];
+const graph=JSON.parse(fs.readFileSync(input,'utf8'));
+const raw=KnowledgeGraphSchema.safeParse(graph);
+const validated=validateGraph(graph);
+const issues=[];
+if(!raw.success) issues.push(...raw.error.issues);
+if(!validated.success || validated.issues?.length) issues.push(...(validated.issues||[]),...(validated.fatal?[validated.fatal]:[]));
+const fileIds=graph.nodes.filter(n=>n.id===n.type+':'+n.filePath).map(n=>n.id);
+const assignment=graph.layers.flatMap(l=>l.nodeIds);
+if(assignment.length!==fileIds.length || new Set(assignment).size!==fileIds.length || fileIds.some(id=>!assignment.includes(id))) issues.push('文件架构分层不完整或重复');
+if(graph.layers.length<3 || graph.layers.length>10) issues.push('架构层数超出范围');
+if(graph.tour.length<5 || graph.tour.length>15 || graph.tour.some((s,i)=>s.order!==i+1 || !s.nodeIds.length || s.nodeIds.length>5)) issues.push('导览步骤或顺序不符合要求');
+for(const layer of graph.layers) if(!/[\u4e00-\u9fff]/.test(layer.name+layer.description)) issues.push('架构分层缺少中文');
+for(const step of graph.tour) if(!/[\u4e00-\u9fff]/.test(step.title+step.description)) issues.push('导览缺少中文');
+const report={success:issues.length===0,issues,fileNodes:fileIds.length,nodes:graph.nodes.length,edges:graph.edges.length,layers:graph.layers.length,tourSteps:graph.tour.length};
+fs.writeFileSync(output,JSON.stringify(report,null,2)+'\n');
+console.log(JSON.stringify(report));
+process.exitCode=issues.length?1:0;

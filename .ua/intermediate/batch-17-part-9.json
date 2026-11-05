@@ -1,0 +1,4157 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "type": "file",
+      "name": "fill_pen_holder.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "一臂侧夹固定笔筒，另一臂视觉识别笔的方向、抓取并转直插入；持续检查横梁碰撞、倾斜偏差及掉笔后的复抓补救。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "视觉定位",
+        "运动控制"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:P",
+      "type": "function",
+      "name": "P",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "输出带耗时和步数的执行诊断信息。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        146,
+        147
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:E",
+      "type": "function",
+      "name": "E",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "把重要操作事件同时写入带控制步数的内存日志并打印。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        150,
+        153
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:f3",
+      "type": "function",
+      "name": "f3",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "把坐标向量格式化为三位小数的诊断文本。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        156,
+        159
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:nang",
+      "type": "function",
+      "name": "nang",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "将方向角归一到以零为中心的完整圆周。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        162,
+        163
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:unit",
+      "type": "function",
+      "name": "unit",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "把平面方向角转换为二维单位向量。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        166,
+        168
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:hvec_yaw",
+      "type": "function",
+      "name": "hvec_yaw",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "按夹爪偏航约定计算其在桌面的前指方向。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        171,
+        174
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:mv",
+      "type": "function",
+      "name": "mv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "执行指定机械臂的笛卡尔运动并返回控制反馈。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        177,
+        188
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:moved",
+      "type": "function",
+      "name": "moved",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "根据 IK 错误和目标距离判断运动是否到达容差内。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        191,
+        192
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:grip",
+      "type": "function",
+      "name": "grip",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "执行指定机械臂的夹爪指令并返回夹持反馈。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        195,
+        205
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:home",
+      "type": "function",
+      "name": "home",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "调用机械臂归位并检查返回的完成状态。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        208,
+        217
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:budget",
+      "type": "function",
+      "name": "budget",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "返回动作预算与当前步数之差。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        220,
+        221
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:park",
+      "type": "function",
+      "name": "park",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "把左臂停到不遮挡头部相机笔区域的位置。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        227,
+        231
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:head_ray",
+      "type": "function",
+      "name": "head_ray",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "缓存头部标定并计算像素射线在指定高度的世界交点。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        239,
+        250
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:head_px",
+      "type": "function",
+      "name": "head_px",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "使用头部标定把世界位置投影为像素。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        253,
+        263
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:loc",
+      "type": "function",
+      "name": "loc",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "尝试用视觉提示词定位目标，并对失败或无效结果作容错处理。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        266,
+        274
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:holder_estimate",
+      "type": "function",
+      "name": "holder_estimate",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "利用笔筒分割质心与已知高度估计中心，必要时采用可靠双视角定位。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        282,
+        316
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:right_yaw_to",
+      "type": "function",
+      "name": "right_yaw_to",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "计算右臂从自身基座朝向目标平面点的偏航。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        319,
+        320
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:left_yaw_to",
+      "type": "function",
+      "name": "left_yaw_to",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "计算左臂从自身基座朝向目标平面点的偏航。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        323,
+        324
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:SG",
+      "type": "function",
+      "name": "SG",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "返回当前活动机械臂对应的镜像符号。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        330,
+        331
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:WRIST",
+      "type": "function",
+      "name": "WRIST",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "返回当前活动机械臂的腕相机名称。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        334,
+        335
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:ME",
+      "type": "function",
+      "name": "ME",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "返回当前活动机械臂的状态。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        338,
+        340
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:yaw_to",
+      "type": "function",
+      "name": "yaw_to",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "按当前活动机械臂选择朝向目标的偏航计算。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        343,
+        344
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:seg_dist",
+      "type": "function",
+      "name": "seg_dist",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "计算平面位置到笔的有限长度线段的距离。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        347,
+        352
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:spot_clear",
+      "type": "function",
+      "name": "spot_clear",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "计算候选放置点与已有笔段的最小距离。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        359,
+        360
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:pick_target",
+      "type": "function",
+      "name": "pick_target",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "在预定暂存点中选择避开桌上笔的可用目标。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        363,
+        371
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:holder_look",
+      "type": "function",
+      "name": "holder_look",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "移动右腕相机俯视笔筒，获得高度合理的双视角定位。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        374,
+        395
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:grab_holder",
+      "type": "function",
+      "name": "grab_holder",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "尝试多组低俯仰和高度侧向夹住笔筒，保持指梁较低。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        404,
+        423
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:hold_holder",
+      "type": "function",
+      "name": "hold_holder",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "侧夹笔筒并搬到工作位置，落桌后保持夹持以防插笔时倾倒。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        426,
+        472
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:point_vec",
+      "type": "function",
+      "name": "point_vec",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "把俯仰与偏航转换为夹爪的三维前指向量。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        475,
+        477
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:release_holder",
+      "type": "function",
+      "name": "release_holder",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "打开固定笔筒的夹爪，先沿低位前指方向和侧向退出，再抬升归位。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        480,
+        510
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:pen_xy",
+      "type": "function",
+      "name": "pen_xy",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "优先采用可靠双视角笔中心，否则用质心射线投影到桌面上方。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        520,
+        527
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:pen_ok",
+      "type": "function",
+      "name": "pen_ok",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "依据检测置信度、高度和距笔筒距离排除误识别或已经插入的笔。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        530,
+        551
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:gap120",
+      "type": "function",
+      "name": "gap120",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "计算方向角到允许初始朝向扇区的距离。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        554,
+        556
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:dir_from",
+      "type": "function",
+      "name": "dir_from",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "结合先前方向与初始朝向约束，从长轴的两个方向中选择笔端朝向。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        559,
+        564
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:assign_dir",
+      "type": "function",
+      "name": "assign_dir",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "关联历史笔记录，并利用掉笔位置相对笔筒关系推断需向下插入的一端。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        567,
+        588
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:remember",
+      "type": "function",
+      "name": "remember",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "将新识别笔的位置和方向合并到历史跟踪记录。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        591,
+        596
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:forget",
+      "type": "function",
+      "name": "forget",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "移除指定位置邻域中的旧笔记录，避免已搬运目标被重复使用。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        599,
+        602
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:detect_pens",
+      "type": "function",
+      "name": "detect_pens",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "遍历提示词定位笔，筛选有效结果并整理几何与方向。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        605,
+        633
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:refine",
+      "type": "function",
+      "name": "refine",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "在预抓取姿态从腕相机和头相机细化笔位置，局部视野只信任横向测量。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        636,
+        663
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:s_top",
+      "type": "function",
+      "name": "s_top",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "按笔长度和粗细计算靠近非插入端的抓取偏移。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        666,
+        671
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:try_top_grasp",
+      "type": "function",
+      "name": "try_top_grasp",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "悬停细化目标后下降夹住笔，返回抓取模型或不可达状态。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        674,
+        723
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:clear_of_pens",
+      "type": "function",
+      "name": "clear_of_pens",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "检查候选笔姿态是否与其他笔段保持足够净空。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        726,
+        734
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:drag_closer",
+      "type": "function",
+      "name": "drag_closer",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "将末端抓取点超出垂直工作区的笔沿桌面拖向机器人。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        737,
+        806
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:rotm",
+      "type": "function",
+      "name": "rotm",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "按机器人偏航、俯仰、滚转约定构造夹爪旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        809,
+        816
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:bottom_offset",
+      "type": "function",
+      "name": "bottom_offset",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "依据抓取时的笔轴和当前夹爪姿态计算笔下端相对抓取点的偏移。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        819,
+        826
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:ins_yaws",
+      "type": "function",
+      "name": "ins_yaws",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "按笔粗细和笔筒位置枚举更适合插入的偏航角。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        840,
+        846
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:far_dir",
+      "type": "function",
+      "name": "far_dir",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "取得远离固定笔筒的右夹爪方向，供放笔时避免向夹爪侧倾倒。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        865,
+        869
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:lean_far",
+      "type": "function",
+      "name": "lean_far",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "保持笔下端位置不动，同时改变俯仰和滚转让笔向远离固定夹爪的一侧倾斜。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        872,
+        899
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:slow_turn",
+      "type": "function",
+      "name": "slow_turn",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "先按原抓取姿态抬升，再逐步改变俯仰把笔转直，减少甩动。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        902,
+        952
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:pen_tilt",
+      "type": "function",
+      "name": "pen_tilt",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "将头部图像中的笔框与不同倾角模型投影比较，估计夹持滑移后的笔倾角。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        955,
+        1000
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:fix_tilt",
+      "type": "function",
+      "name": "fix_tilt",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "测量持笔偏斜并补偿夹爪俯仰，使笔恢复竖直。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1003,
+        1038
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:leave_pen",
+      "type": "function",
+      "name": "leave_pen",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "放开笔后先沿夹爪前指方向退出，避免抬升把笔带出笔筒。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1045,
+        1065
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:leave_pen_lift",
+      "type": "function",
+      "name": "leave_pen_lift",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "在允许的释放姿态先升到笔顶上方，再沿夹爪方向退出。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1068,
+        1101
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:carry",
+      "type": "function",
+      "name": "carry",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "优先用直线轻缓搬运持有的笔，失败时原地转向再移动，最后回退摆动路径。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1104,
+        1115
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:insert_pen",
+      "type": "function",
+      "name": "insert_pen",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "将笔转直并对准笔筒槽位，补偿底端偏移下降插入，释放后按安全轨迹退开。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1118,
+        1289
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:fell_out",
+      "type": "function",
+      "name": "fell_out",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "在插入后检测笔筒附近是否出现低位长笔，诊断是否掉出。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1292,
+        1302
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:is_thick",
+      "type": "function",
+      "name": "is_thick",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "结合测得宽度和提示类别判断是否为粗笔或马克笔。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1305,
+        1309
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:pen_order",
+      "type": "function",
+      "name": "pen_order",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "依据长度、粗细和位置生成插入优先级，安排需要更多空间的笔。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1312,
+        1318
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:park_right",
+      "type": "function",
+      "name": "park_right",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "把右臂移到观察避让位，失败时归位。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1324,
+        1327
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:fallen_pens",
+      "type": "function",
+      "name": "fallen_pens",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "检测已释放笔筒两侧的掉落笔，按靠近笔筒的笔端推断方向并分配机械臂。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1330,
+        1364
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:solved_check",
+      "type": "function",
+      "name": "solved_check",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "双臂归位后执行一次夹爪轻动作，通过截断反馈判断回合是否解决。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1367,
+        1374
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:recover",
+      "type": "function",
+      "name": "recover",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "笔筒释放后有限次重新插入两侧掉出的笔。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1377,
+        1415
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:head_rays",
+      "type": "function",
+      "name": "head_rays",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "批量生成头部相机像素的世界光线。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1437,
+        1445
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:standing_px",
+      "type": "function",
+      "name": "standing_px",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "检查像素射线是否穿过笔筒轴线上方邻域，区分已竖立的笔与桌面笔。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1448,
+        1455
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:near_ok",
+      "type": "function",
+      "name": "near_ok",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "结合笔筒距离与射线几何筛选躺在桌面的真实笔。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1458,
+        1471
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:colour_pens",
+      "type": "function",
+      "name": "colour_pens",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "提取笔色区域并遮蔽机器人，保留笔筒周围的掉笔候选。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1474,
+        1529
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:lying_pens",
+      "type": "function",
+      "name": "lying_pens",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "融合 SAM3 与颜色区域检测笔筒附近所有横卧笔，关联历史方向。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1532,
+        1587
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:rail_dist",
+      "type": "function",
+      "name": "rail_dist",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "计算垂直抓取时夹爪横梁到笔筒中心的距离。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1590,
+        1596
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:rail_conflict",
+      "type": "function",
+      "name": "rail_conflict",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "检查抓取横梁是否进入笔筒碰撞半径。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1599,
+        1601
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:clear_offset",
+      "type": "function",
+      "name": "clear_offset",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "在允许抓取偏移范围搜索能够避开笔筒的横梁位置。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1604,
+        1612
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:seg_point_dist",
+      "type": "function",
+      "name": "seg_point_dist",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "计算二维点到有限线段的最短距离。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1615,
+        1618
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:push_away",
+      "type": "function",
+      "name": "push_away",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "规划闭合夹爪推笔动作，使笔远离笔筒且横梁始终保持净空。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1621,
+        1691
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:relocate_right",
+      "type": "function",
+      "name": "relocate_right",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "用右臂从上方抓取右侧笔并保持方向放到左臂可操作区域。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1697,
+        1774
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:regrab_holder",
+      "type": "function",
+      "name": "regrab_holder",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "沿之前释放路径反向低位接近并重新固定笔筒，减少撞到已插入笔的风险。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1780,
+        1827
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:repair",
+      "type": "function",
+      "name": "repair",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "最终归位后仍未完成时重新夹住笔筒，搬回桌面残留笔并再次插入。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1830,
+        1919
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:held_repair",
+      "type": "function",
+      "name": "held_repair",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "笔筒仍被固定时优先补回左侧近处掉笔，减少释放后再固定的代价。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1926,
+        1971
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "summary": "定位并固定笔筒，依次检测和插入笔，再执行持筒补救、释放和终局修复。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1974,
+        2106
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:P",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:P",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:E",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:E",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:f3",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:f3",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:nang",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:nang",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:unit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:unit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:hvec_yaw",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:hvec_yaw",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:mv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:mv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:moved",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:moved",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:grip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:grip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:home",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:budget",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:budget",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:park",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:park",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:head_ray",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:head_ray",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:head_px",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:head_px",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:loc",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:loc",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:holder_estimate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:holder_estimate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:right_yaw_to",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:right_yaw_to",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:left_yaw_to",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:left_yaw_to",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:SG",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:SG",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:WRIST",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:WRIST",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:ME",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:ME",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:yaw_to",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:yaw_to",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:seg_dist",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:seg_dist",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:spot_clear",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:spot_clear",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:pick_target",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:pick_target",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:holder_look",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:holder_look",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:grab_holder",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:grab_holder",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:hold_holder",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:hold_holder",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:point_vec",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:point_vec",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:release_holder",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:release_holder",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:pen_xy",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:pen_xy",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:pen_ok",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:pen_ok",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:gap120",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:gap120",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:dir_from",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:dir_from",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:assign_dir",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:assign_dir",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:remember",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:remember",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:forget",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:forget",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:detect_pens",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:detect_pens",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:refine",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:refine",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:s_top",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:s_top",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:try_top_grasp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:try_top_grasp",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:clear_of_pens",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:clear_of_pens",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:drag_closer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:drag_closer",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:rotm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:rotm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:bottom_offset",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:bottom_offset",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:ins_yaws",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:ins_yaws",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:far_dir",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:far_dir",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:lean_far",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:lean_far",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:slow_turn",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:slow_turn",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:pen_tilt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:pen_tilt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:fix_tilt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:fix_tilt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:leave_pen",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:leave_pen",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:leave_pen_lift",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:leave_pen_lift",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:carry",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:carry",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:insert_pen",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:insert_pen",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:fell_out",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:fell_out",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:is_thick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:is_thick",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:pen_order",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:pen_order",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:park_right",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:park_right",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:fallen_pens",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:fallen_pens",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:solved_check",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:solved_check",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:recover",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:recover",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:head_rays",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:head_rays",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:standing_px",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:standing_px",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:near_ok",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:near_ok",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:colour_pens",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:colour_pens",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:lying_pens",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:lying_pens",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:rail_dist",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:rail_dist",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:rail_conflict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:rail_conflict",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:clear_offset",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:clear_offset",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:seg_point_dist",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:seg_point_dist",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:push_away",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:push_away",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:relocate_right",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:relocate_right",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:regrab_holder",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:regrab_holder",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:repair",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:repair",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:held_repair",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:held_repair",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:E",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:home",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:park",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:park",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:moved",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:park",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:head_px",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:head_ray",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:loc",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:holder_estimate",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:holder_estimate",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:head_ray",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:holder_estimate",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:loc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:holder_estimate",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:yaw_to",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:left_yaw_to",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:yaw_to",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:right_yaw_to",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:seg_dist",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:unit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:spot_clear",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:seg_dist",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:pick_target",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:spot_clear",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:holder_look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:holder_look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:right_yaw_to",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:holder_look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:moved",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:holder_look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:loc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:grab_holder",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:right_yaw_to",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:grab_holder",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:grab_holder",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:moved",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:grab_holder",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:grab_holder",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:E",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:hold_holder",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:hold_holder",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:holder_look",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:hold_holder",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:E",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:hold_holder",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:grab_holder",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:hold_holder",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:hold_holder",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:hold_holder",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:right_yaw_to",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:hold_holder",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:moved",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:release_holder",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:release_holder",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:point_vec",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:release_holder",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:release_holder",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:E",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:release_holder",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:pen_xy",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:head_ray",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:pen_ok",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:pen_xy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:dir_from",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:gap120",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:dir_from",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:nang",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:assign_dir",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:dir_from",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:assign_dir",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:unit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:detect_pens",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:loc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:detect_pens",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:pen_ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:detect_pens",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:pen_xy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:detect_pens",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:assign_dir",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:detect_pens",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:WRIST",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:loc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:pen_xy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:dir_from",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:nang",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:unit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:E",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:s_top",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:is_thick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:try_top_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:try_top_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:nang",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:try_top_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:unit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:try_top_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:try_top_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:moved",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:try_top_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:refine",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:try_top_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:E",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:clear_of_pens",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:unit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:clear_of_pens",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:seg_dist",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:drag_closer",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:unit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:drag_closer",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:s_top",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:drag_closer",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:clear_of_pens",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:drag_closer",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:E",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:drag_closer",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:drag_closer",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:nang",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:drag_closer",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:drag_closer",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:moved",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:drag_closer",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:forget",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:bottom_offset",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:rotm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:ins_yaws",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:yaw_to",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:ins_yaws",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:SG",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:far_dir",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:hvec_yaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:lean_far",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:ME",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:lean_far",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:bottom_offset",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:lean_far",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:rotm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:lean_far",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:lean_far",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:E",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:slow_turn",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:ME",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:slow_turn",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:slow_turn",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:nang",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:slow_turn",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:E",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:pen_tilt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:pen_tilt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:ME",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:pen_tilt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:head_px",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:pen_tilt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:rotm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:pen_tilt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:bottom_offset",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:fix_tilt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:pen_tilt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:fix_tilt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:E",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:fix_tilt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:ME",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:fix_tilt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:fix_tilt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:moved",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:leave_pen",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:ME",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:leave_pen",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:hvec_yaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:leave_pen",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:leave_pen",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:SG",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:leave_pen",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:E",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:leave_pen",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:leave_pen_lift",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:leave_pen_lift",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:ME",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:leave_pen_lift",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:hvec_yaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:leave_pen_lift",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:leave_pen_lift",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:E",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:leave_pen_lift",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:SG",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:carry",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:carry",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:moved",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:carry",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:ME",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:insert_pen",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:insert_pen",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:ME",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:insert_pen",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:E",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:insert_pen",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:slow_turn",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:insert_pen",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:moved",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:insert_pen",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:SG",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:insert_pen",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:yaw_to",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:insert_pen",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:carry",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:insert_pen",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:fix_tilt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:insert_pen",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:far_dir",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:insert_pen",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:ins_yaws",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:insert_pen",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:bottom_offset",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:insert_pen",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:nang",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:insert_pen",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:release_holder",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:insert_pen",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:lean_far",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:insert_pen",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:insert_pen",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:leave_pen",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:fell_out",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:loc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:fell_out",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:E",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:pen_order",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:is_thick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:park_right",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:park_right",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:moved",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:park_right",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:fallen_pens",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:loc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:fallen_pens",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:pen_xy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:fallen_pens",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:unit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:fallen_pens",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:solved_check",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:recover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:budget",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:recover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:E",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:recover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:park_right",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:recover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:park",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:recover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:holder_estimate",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:recover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:fallen_pens",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:recover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:try_top_grasp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:recover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:s_top",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:recover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:insert_pen",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:recover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:recover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:solved_check",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:recover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:head_rays",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:head_ray",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:standing_px",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:head_ray",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:near_ok",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:standing_px",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:colour_pens",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:colour_pens",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:point_vec",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:colour_pens",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:head_px",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:colour_pens",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:head_rays",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:colour_pens",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:near_ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:lying_pens",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:loc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:lying_pens",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:pen_xy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:lying_pens",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:near_ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:lying_pens",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:colour_pens",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:lying_pens",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:dir_from",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:lying_pens",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:unit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:lying_pens",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:rail_dist",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:unit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:rail_dist",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:seg_point_dist",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:rail_conflict",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:rail_dist",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:rail_conflict",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:s_top",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:clear_offset",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:s_top",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:clear_offset",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:is_thick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:clear_offset",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:rail_dist",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:push_away",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:unit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:push_away",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:is_thick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:push_away",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:seg_point_dist",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:push_away",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:E",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:push_away",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:push_away",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:nang",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:push_away",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:push_away",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:moved",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:relocate_right",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:rail_dist",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:relocate_right",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:E",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:relocate_right",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:try_top_grasp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:relocate_right",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:nang",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:relocate_right",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:relocate_right",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:seg_dist",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:relocate_right",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:relocate_right",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:moved",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:relocate_right",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:regrab_holder",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:regrab_holder",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:right_yaw_to",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:regrab_holder",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:point_vec",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:regrab_holder",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:regrab_holder",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:moved",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:regrab_holder",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:E",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:regrab_holder",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:budget",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:E",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:lying_pens",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:release_holder",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:relocate_right",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:rail_conflict",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:clear_offset",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:push_away",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:park",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:regrab_holder",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:s_top",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:try_top_grasp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:insert_pen",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:forget",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:solved_check",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:held_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:budget",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:held_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:park",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:held_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:lying_pens",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:held_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:E",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:held_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:rail_conflict",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:held_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:clear_offset",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:held_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:push_away",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:held_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:s_top",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:held_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:try_top_grasp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:held_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:insert_pen",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:held_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:forget",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:held_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:park",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:holder_estimate",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:E",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:detect_pens",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:remember",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:pick_target",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:hold_holder",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:budget",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:colour_pens",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:assign_dir",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:held_repair",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:s_top",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:try_top_grasp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:drag_closer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:insert_pen",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:forget",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:release_holder",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:solved_check",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_pen_holder.py:repair",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

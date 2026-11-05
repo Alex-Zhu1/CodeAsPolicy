@@ -1,0 +1,2257 @@
+{
+  "nodes": [
+    {
+      "id": "file:tests/test_cli_supervision_defaults.py",
+      "type": "file",
+      "name": "test_cli_supervision_defaults.py",
+      "filePath": "tests/test_cli_supervision_defaults.py",
+      "summary": "验证外层和宿主命令行的视觉监督、卡住恢复默认值、显式覆盖及不支持组合的提前拒绝。",
+      "tags": [
+        "测试",
+        "视觉监督",
+        "默认配置"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_cli_supervision_defaults.py:capture_episode",
+      "type": "function",
+      "name": "capture_episode",
+      "filePath": "tests/test_cli_supervision_defaults.py",
+      "lineRange": [
+        14,
+        30
+      ],
+      "summary": "替换进程与回合入口，捕获外层参数传到最终执行器的配置。",
+      "tags": [
+        "测试",
+        "视觉监督",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_cli_supervision_defaults.py:test_insert_key_defaults_enable_full_loop_and_defer_recovery_body",
+      "type": "function",
+      "name": "test_insert_key_defaults_enable_full_loop_and_defer_recovery_body",
+      "filePath": "tests/test_cli_supervision_defaults.py",
+      "lineRange": [
+        34,
+        59
+      ],
+      "summary": "验证默认单元执行开启监督与卡住恢复，恢复主体只在触发时提供。",
+      "tags": [
+        "测试",
+        "视觉监督",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_cli_supervision_defaults.py:test_explicit_modes_survive_outer_to_host_forwarding",
+      "type": "function",
+      "name": "test_explicit_modes_survive_outer_to_host_forwarding",
+      "filePath": "tests/test_cli_supervision_defaults.py",
+      "lineRange": [
+        70,
+        80
+      ],
+      "summary": "验证显式监督模式与恢复开关通过外层命令完整传递。",
+      "tags": [
+        "测试",
+        "视觉监督",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_cli_supervision_defaults.py:test_valen_address_parameter_overrides_environment",
+      "type": "function",
+      "name": "test_valen_address_parameter_overrides_environment",
+      "filePath": "tests/test_cli_supervision_defaults.py",
+      "lineRange": [
+        85,
+        93
+      ],
+      "summary": "验证命令行 Valen 地址优先于环境设置。",
+      "tags": [
+        "测试",
+        "视觉监督",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_cli_supervision_defaults.py:test_custom_recovery_and_rounds_override_defaults",
+      "type": "function",
+      "name": "test_custom_recovery_and_rounds_override_defaults",
+      "filePath": "tests/test_cli_supervision_defaults.py",
+      "lineRange": [
+        97,
+        105
+      ],
+      "summary": "验证自定义恢复说明和轮数覆盖内置默认值。",
+      "tags": [
+        "测试",
+        "视觉监督",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_cli_supervision_defaults.py:test_builtin_recovery_rounds_are_forwarded",
+      "type": "function",
+      "name": "test_builtin_recovery_rounds_are_forwarded",
+      "filePath": "tests/test_cli_supervision_defaults.py",
+      "lineRange": [
+        108,
+        114
+      ],
+      "summary": "验证内置恢复的轮数参数传到宿主配置。",
+      "tags": [
+        "测试",
+        "视觉监督",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_cli_supervision_defaults.py:test_conflicting_recovery_flags_are_rejected_before_launch",
+      "type": "function",
+      "name": "test_conflicting_recovery_flags_are_rejected_before_launch",
+      "filePath": "tests/test_cli_supervision_defaults.py",
+      "lineRange": [
+        118,
+        125
+      ],
+      "summary": "验证关闭恢复与指定恢复文件的冲突在启动前被拒绝。",
+      "tags": [
+        "测试",
+        "视觉监督",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_cli_supervision_defaults.py:test_program_cannot_silently_accept_unsupported_features",
+      "type": "function",
+      "name": "test_program_cannot_silently_accept_unsupported_features",
+      "filePath": "tests/test_cli_supervision_defaults.py",
+      "lineRange": [
+        130,
+        142
+      ],
+      "summary": "验证程序执行方式明确拒绝不支持的监督或恢复选项。",
+      "tags": [
+        "测试",
+        "视觉监督",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_coordination.py",
+      "type": "file",
+      "name": "test_coordination.py",
+      "filePath": "tests/test_coordination.py",
+      "summary": "用可控双臂假环境验证同步运动、观测新鲜度、部分执行、故障预算、视觉监督和阶段门控的交互。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "执行边界"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:tests/test_coordination.py:station",
+      "type": "function",
+      "name": "station",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        60,
+        64
+      ],
+      "summary": "创建假关节环境、原生工具包和纯 RGB 双臂机器人。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_coordination.py:lift",
+      "type": "function",
+      "name": "lift",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        67,
+        69
+      ],
+      "summary": "读取当前双臂观测并同步抬升四厘米。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_coordination.py:monitored",
+      "type": "function",
+      "name": "monitored",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        72,
+        99
+      ],
+      "summary": "创建带假 Valen 客户端的监督单元工具包并捕获视觉请求。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_coordination.py:test_sync_moves_both_each_tick_and_keeps_squeeze",
+      "type": "function",
+      "name": "test_sync_moves_both_each_tick_and_keeps_squeeze",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        105,
+        121
+      ],
+      "summary": "验证每个原生动作同时驱动双臂并保持先前闭合命令。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_coordination.py:test_xyz_retains_orientation_and_omitted_arm_holds",
+      "type": "function",
+      "name": "test_xyz_retains_orientation_and_omitted_arm_holds",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        124,
+        130
+      ],
+      "summary": "验证只给位置时保留方向，未指定手臂保持不动。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_coordination.py:test_python_freely_composes_single_arm_grip_and_both",
+      "type": "function",
+      "name": "test_python_freely_composes_single_arm_grip_and_both",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        133,
+        152
+      ],
+      "summary": "验证 Python 可自由组合单臂、夹爪和双臂运动。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_coordination.py:test_preflight_refusal_returns_both_errors_without_actions_or_visual_vote",
+      "type": "function",
+      "name": "test_preflight_refusal_returns_both_errors_without_actions_or_visual_vote",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        155,
+        172
+      ],
+      "summary": "验证预检查拒绝返回双臂误差但不执行动作或产生视觉投票。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_coordination.py:test_bounded_generated_loop_changes_rejected_target_in_same_cell",
+      "type": "function",
+      "name": "test_bounded_generated_loop_changes_rejected_target_in_same_cell",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        175,
+        193
+      ],
+      "summary": "验证单元内有界循环可修改被拒绝的目标并继续执行。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_coordination.py:test_partial_result_stops_both_but_returns_to_python",
+      "type": "function",
+      "name": "test_partial_result_stops_both_but_returns_to_python",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        196,
+        217
+      ],
+      "summary": "验证可恢复跟踪偏差同时停止双臂，并将部分结果交回 Python。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_coordination.py:test_generated_correction_after_partial_uses_actual_endpoint",
+      "type": "function",
+      "name": "test_generated_correction_after_partial_uses_actual_endpoint",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        220,
+        252
+      ],
+      "summary": "验证修正以实际部分终点为起点，避免从原始轨迹重放。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_coordination.py:test_visual_unknown_stops_even_a_recoverable_partial_move",
+      "type": "function",
+      "name": "test_visual_unknown_stops_even_a_recoverable_partial_move",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        255,
+        275
+      ],
+      "summary": "验证视觉未知可暂停本来可恢复的部分运动。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_coordination.py:test_gripper_timing_is_chosen_by_python_not_a_fixed_release_workflow",
+      "type": "function",
+      "name": "test_gripper_timing_is_chosen_by_python_not_a_fixed_release_workflow",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        278,
+        285
+      ],
+      "summary": "验证夹爪开闭时机由 Python 参数决定，动作开始即生效。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_coordination.py:test_declared_phase_gate_applies_to_all_motion",
+      "type": "function",
+      "name": "test_declared_phase_gate_applies_to_all_motion",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        289,
+        307
+      ],
+      "summary": "验证声明的阶段前置条件同时约束单臂与双臂动作。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_coordination.py:test_declared_gate_with_fresh_evidence_allows_release",
+      "type": "function",
+      "name": "test_declared_gate_with_fresh_evidence_allows_release",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        310,
+        325
+      ],
+      "summary": "验证有效且满足要求的视觉事实允许后续释放。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_coordination.py:test_unsupported_geometry_and_relative_preflight_return_rejection",
+      "type": "function",
+      "name": "test_unsupported_geometry_and_relative_preflight_return_rejection",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        328,
+        337
+      ],
+      "summary": "验证未实现碰撞能力和不可满足相对姿态约束在运动前被拒绝。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_coordination.py:test_relative_violation_in_execution_hands_back_to_model",
+      "type": "function",
+      "name": "test_relative_violation_in_execution_hands_back_to_model",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        340,
+        354
+      ],
+      "summary": "验证执行中的相对姿态违约触发暂停并保留部分结果。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_coordination.py:test_recoverable_tracking_miss_cannot_hide_relative_violation",
+      "type": "function",
+      "name": "test_recoverable_tracking_miss_cannot_hide_relative_violation",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        357,
+        363
+      ],
+      "summary": "验证可恢复跟踪偏差不能掩盖更严重的相对约束失败。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_coordination.py:test_native_error_after_physical_step_is_charged_and_hands_back",
+      "type": "function",
+      "name": "test_native_error_after_physical_step_is_charged_and_hands_back",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        366,
+        385
+      ],
+      "summary": "验证物理动作后通信失败仍计入步数并暂停依赖动作。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_coordination.py:test_call_deadline_stops_inside_segment",
+      "type": "function",
+      "name": "test_call_deadline_stops_inside_segment",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        388,
+        405
+      ],
+      "summary": "验证运动调用的时间限制可以在检查分段内部停止。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_coordination.py:test_interruption_between_checkpoints_reports_existing_partial_motion",
+      "type": "function",
+      "name": "test_interruption_between_checkpoints_reports_existing_partial_motion",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        409,
+        437
+      ],
+      "summary": "验证检查点之间中断仍报告已经发生的部分运动。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_coordination.py:test_limits_preflight_and_episode_budget_survive_new_calls",
+      "type": "function",
+      "name": "test_limits_preflight_and_episode_budget_survive_new_calls",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        440,
+        452
+      ],
+      "summary": "验证过小局部预算在预检查拒绝，回合预算耗尽后新调用不能继续。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_coordination.py:test_host_refuses_plan_after_external_drift",
+      "type": "function",
+      "name": "test_host_refuses_plan_after_external_drift",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        455,
+        466
+      ],
+      "summary": "验证计划执行前出现外部状态漂移时拒绝陈旧计划。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_coordination.py:test_keep_retains_last_close_even_if_measured_open",
+      "type": "function",
+      "name": "test_keep_retains_last_close_even_if_measured_open",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        469,
+        474
+      ],
+      "summary": "验证保持模式重发上次闭合命令，而不依赖实测开度。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_coordination.py:test_program_can_branch_on_rejected_motion",
+      "type": "function",
+      "name": "test_program_can_branch_on_rejected_motion",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        477,
+        492
+      ],
+      "summary": "验证完整程序可根据零步拒绝结果分支处理。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_coordination.py:test_pose_and_generated_api_expose_the_simple_interface",
+      "type": "function",
+      "name": "test_pose_and_generated_api_expose_the_simple_interface",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        495,
+        506
+      ],
+      "summary": "验证 Pose 校验与不可变数据，并检查生成 API 暴露简洁同步接口。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_coordination.py:test_unknown_streak_survives_recoverable_partial_retries",
+      "type": "function",
+      "name": "test_unknown_streak_survives_recoverable_partial_retries",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        510,
+        538
+      ],
+      "summary": "验证局部重试和零步拒绝不会清除连续未知视觉证据。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_coordination.py:test_program_critical_fault_is_paused_with_physical_feedback",
+      "type": "function",
+      "name": "test_program_critical_fault_is_paused_with_physical_feedback",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        541,
+        558
+      ],
+      "summary": "验证完整程序的关键故障返回暂停及已执行物理动作反馈。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_coordination.py:test_zero_step_ik_retries_still_hit_supervisor_action_budget",
+      "type": "function",
+      "name": "test_zero_step_ik_retries_still_hit_supervisor_action_budget",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        561,
+        586
+      ],
+      "summary": "验证不产生物理步的逆运动学重试仍消耗监督动作预算。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:tests/test_coordination.py:JointEnvironment",
+      "type": "class",
+      "name": "JointEnvironment",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        19,
+        56
+      ],
+      "summary": "提供双臂关节、夹爪、冻结故障和动作后错误的可控测试环境。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "数据模型"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_coordination.py:JointEnvironment.__init__",
+      "type": "function",
+      "name": "JointEnvironment.__init__",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        20,
+        26
+      ],
+      "summary": "初始化双臂关节、夹爪、动作列表和故障注入选项。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:tests/test_coordination.py:JointEnvironment.get_status",
+      "type": "function",
+      "name": "JointEnvironment.get_status",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        28,
+        29
+      ],
+      "summary": "返回测试环境已执行动作数和动作上限。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:tests/test_coordination.py:JointEnvironment.get_obs",
+      "type": "function",
+      "name": "JointEnvironment.get_obs",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        31,
+        44
+      ],
+      "summary": "用实际运动学生成双臂位姿并构造模拟相机观测。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:tests/test_coordination.py:JointEnvironment.step",
+      "type": "function",
+      "name": "JointEnvironment.step",
+      "filePath": "tests/test_coordination.py",
+      "lineRange": [
+        46,
+        56
+      ],
+      "summary": "记录并更新动作，支持冻结单臂或物理步后的通信异常注入。",
+      "tags": [
+        "测试",
+        "双臂协调",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "file:tests/test_env.py",
+      "type": "file",
+      "name": "test_env.py",
+      "filePath": "tests/test_env.py",
+      "summary": "验证统一环境变量读取语义和 Codex 重试次数配置。",
+      "tags": [
+        "测试",
+        "环境变量",
+        "运行时配置"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_env.py:test_setting_reads_the_pyrualean_variable_else_the_default",
+      "type": "function",
+      "name": "test_setting_reads_the_pyrualean_variable_else_the_default",
+      "filePath": "tests/test_env.py",
+      "lineRange": [
+        9,
+        16
+      ],
+      "summary": "验证变量缺失用默认值，而显式空字符串仍视为已设置。",
+      "tags": [
+        "测试",
+        "环境变量",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_env.py:test_codex_retries_come_from_the_environment",
+      "type": "function",
+      "name": "test_codex_retries_come_from_the_environment",
+      "filePath": "tests/test_env.py",
+      "lineRange": [
+        19,
+        22
+      ],
+      "summary": "验证请求与流式重试次数均来自统一环境设置。",
+      "tags": [
+        "测试",
+        "环境变量",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_evaluation.py",
+      "type": "file",
+      "name": "test_evaluation.py",
+      "filePath": "tests/test_evaluation.py",
+      "summary": "验证跨系统回合计量、原生成功、步数重建、严格配对以及 Claude 用量归一化。",
+      "tags": [
+        "测试",
+        "评估指标",
+        "结果解析"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:tests/test_evaluation.py:_result",
+      "type": "function",
+      "name": "_result",
+      "filePath": "tests/test_evaluation.py",
+      "lineRange": [
+        17,
+        39
+      ],
+      "summary": "创建具有统一结果结构的测试运行目录，并允许覆盖字段。",
+      "tags": [
+        "测试",
+        "评估指标",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_evaluation.py:test_crashed_and_timed_out_episodes_count_as_failures",
+      "type": "function",
+      "name": "test_crashed_and_timed_out_episodes_count_as_failures",
+      "filePath": "tests/test_evaluation.py",
+      "lineRange": [
+        42,
+        64
+      ],
+      "summary": "验证崩溃和超时计入失败分母，并保存错误备注。",
+      "tags": [
+        "测试",
+        "评估指标",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_evaluation.py:test_env_steps_from_states_counts_chunks_and_servo_steps",
+      "type": "function",
+      "name": "test_env_steps_from_states_counts_chunks_and_servo_steps",
+      "filePath": "tests/test_evaluation.py",
+      "lineRange": [
+        67,
+        82
+      ],
+      "summary": "验证 VLA 块与伺服动作按各自单位重建步数。",
+      "tags": [
+        "测试",
+        "评估指标",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_evaluation.py:test_parse_rpent_run_uses_native_termination_not_agent_claim",
+      "type": "function",
+      "name": "test_parse_rpent_run_uses_native_termination_not_agent_claim",
+      "filePath": "tests/test_evaluation.py",
+      "lineRange": [
+        85,
+        132
+      ],
+      "summary": "验证原生环境判据优先于智能体自报成功，并记录二者冲突。",
+      "tags": [
+        "测试",
+        "评估指标",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_evaluation.py:test_parse_rpent_run_without_finish_is_no_finish",
+      "type": "function",
+      "name": "test_parse_rpent_run_without_finish_is_no_finish",
+      "filePath": "tests/test_evaluation.py",
+      "lineRange": [
+        135,
+        164
+      ],
+      "summary": "验证缺少完成调用会明确标记 no_finish。",
+      "tags": [
+        "测试",
+        "评估指标",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_evaluation.py:test_compare_pairs_strictly_by_backend_task_seed",
+      "type": "function",
+      "name": "test_compare_pairs_strictly_by_backend_task_seed",
+      "filePath": "tests/test_evaluation.py",
+      "lineRange": [
+        167,
+        201
+      ],
+      "summary": "验证仅后端、任务、种子完全匹配的回合能够配对。",
+      "tags": [
+        "测试",
+        "评估指标",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_evaluation.py:test_env_steps_from_states_trusts_a_native_action_counter",
+      "type": "function",
+      "name": "test_env_steps_from_states_trusts_a_native_action_counter",
+      "filePath": "tests/test_evaluation.py",
+      "lineRange": [
+        204,
+        217
+      ],
+      "summary": "验证存在原生动作计数时不重复累加推导步数。",
+      "tags": [
+        "测试",
+        "评估指标",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_evaluation.py:test_parse_rpent_run_reads_robotwin_transcripts",
+      "type": "function",
+      "name": "test_parse_rpent_run_reads_robotwin_transcripts",
+      "filePath": "tests/test_evaluation.py",
+      "lineRange": [
+        220,
+        263
+      ],
+      "summary": "验证 RoboTwin 任务标识、原生成功和动作数的解析。",
+      "tags": [
+        "测试",
+        "评估指标",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_evaluation.py:test_env_steps_from_states_rebuilds_robocasa_runs",
+      "type": "function",
+      "name": "test_env_steps_from_states_rebuilds_robocasa_runs",
+      "filePath": "tests/test_evaluation.py",
+      "lineRange": [
+        266,
+        285
+      ],
+      "summary": "验证 RoboCasa VLA、脚本动作和校准开销的统一计数。",
+      "tags": [
+        "测试",
+        "评估指标",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_evaluation.py:test_parse_rpent_run_normalises_claude_sdk_token_stats",
+      "type": "function",
+      "name": "test_parse_rpent_run_normalises_claude_sdk_token_stats",
+      "filePath": "tests/test_evaluation.py",
+      "lineRange": [
+        288,
+        316
+      ],
+      "summary": "验证 Claude 普通输入、缓存读写与输出用量映射到统一指标。",
+      "tags": [
+        "测试",
+        "评估指标",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_evaluation.py:test_claude_stream_usage_counts_each_model_request_once",
+      "type": "function",
+      "name": "test_claude_stream_usage_counts_each_model_request_once",
+      "filePath": "tests/test_evaluation.py",
+      "lineRange": [
+        319,
+        373
+      ],
+      "summary": "验证流式重复助手消息不会重复计量请求。",
+      "tags": [
+        "测试",
+        "评估指标",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_evaluation.py:test_claude_stream_usage_takes_output_from_the_transcript",
+      "type": "function",
+      "name": "test_claude_stream_usage_takes_output_from_the_transcript",
+      "filePath": "tests/test_evaluation.py",
+      "lineRange": [
+        376,
+        410
+      ],
+      "summary": "验证最终输出词元优先读取完整会话记录而非流式快照。",
+      "tags": [
+        "测试",
+        "评估指标",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_evaluation.py:test_parse_rpent_run_keys_robocasa_cells_like_the_code_arm",
+      "type": "function",
+      "name": "test_parse_rpent_run_keys_robocasa_cells_like_the_code_arm",
+      "filePath": "tests/test_evaluation.py",
+      "lineRange": [
+        413,
+        419
+      ],
+      "summary": "验证 RoboCasa 工具调用与代码执行方式采用一致的任务配对键。",
+      "tags": [
+        "测试",
+        "评估指标",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_evidence.py",
+      "type": "file",
+      "name": "test_evidence.py",
+      "filePath": "tests/test_evidence.py",
+      "summary": "验证持久证据声明的原子失败、冲突拒绝和容量边界，确保错误声明不损坏已建立依赖。",
+      "tags": [
+        "测试",
+        "证据账本",
+        "原子校验"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_evidence.py:test_bad_watch_cannot_erase_prior_gate_or_change_fact",
+      "type": "function",
+      "name": "test_bad_watch_cannot_erase_prior_gate_or_change_fact",
+      "filePath": "tests/test_evidence.py",
+      "lineRange": [
+        12,
+        18
+      ],
+      "summary": "验证非法监督声明不能删除既有门控或修改事实。",
+      "tags": [
+        "测试",
+        "证据账本",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_evidence.py:test_invalid_deferral_cannot_change_requirements",
+      "type": "function",
+      "name": "test_invalid_deferral_cannot_change_requirements",
+      "filePath": "tests/test_evidence.py",
+      "lineRange": [
+        26,
+        32
+      ],
+      "summary": "验证非法延期请求保持原有阶段需求不变。",
+      "tags": [
+        "测试",
+        "证据账本",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_evidence.py:test_conflicting_gate_cannot_overwrite_existing_dependency",
+      "type": "function",
+      "name": "test_conflicting_gate_cannot_overwrite_existing_dependency",
+      "filePath": "tests/test_evidence.py",
+      "lineRange": [
+        35,
+        43
+      ],
+      "summary": "验证相互冲突的事实条件不能覆盖已登记依赖。",
+      "tags": [
+        "测试",
+        "证据账本",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_evidence.py:test_episode_fact_capacity_fails_without_partial_registration",
+      "type": "function",
+      "name": "test_episode_fact_capacity_fails_without_partial_registration",
+      "filePath": "tests/test_evidence.py",
+      "lineRange": [
+        46,
+        53
+      ],
+      "summary": "验证超出事实容量时不会部分登记新事实。",
+      "tags": [
+        "测试",
+        "证据账本",
+        "函数"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:tests/test_cli_supervision_defaults.py",
+      "target": "function:tests/test_cli_supervision_defaults.py:capture_episode",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_cli_supervision_defaults.py",
+      "target": "function:tests/test_cli_supervision_defaults.py:capture_episode",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_cli_supervision_defaults.py",
+      "target": "function:tests/test_cli_supervision_defaults.py:test_insert_key_defaults_enable_full_loop_and_defer_recovery_body",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_cli_supervision_defaults.py",
+      "target": "function:tests/test_cli_supervision_defaults.py:test_insert_key_defaults_enable_full_loop_and_defer_recovery_body",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_cli_supervision_defaults.py",
+      "target": "function:tests/test_cli_supervision_defaults.py:test_explicit_modes_survive_outer_to_host_forwarding",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_cli_supervision_defaults.py",
+      "target": "function:tests/test_cli_supervision_defaults.py:test_explicit_modes_survive_outer_to_host_forwarding",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_cli_supervision_defaults.py",
+      "target": "function:tests/test_cli_supervision_defaults.py:test_valen_address_parameter_overrides_environment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_cli_supervision_defaults.py",
+      "target": "function:tests/test_cli_supervision_defaults.py:test_valen_address_parameter_overrides_environment",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_cli_supervision_defaults.py",
+      "target": "function:tests/test_cli_supervision_defaults.py:test_custom_recovery_and_rounds_override_defaults",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_cli_supervision_defaults.py",
+      "target": "function:tests/test_cli_supervision_defaults.py:test_custom_recovery_and_rounds_override_defaults",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_cli_supervision_defaults.py",
+      "target": "function:tests/test_cli_supervision_defaults.py:test_builtin_recovery_rounds_are_forwarded",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_cli_supervision_defaults.py",
+      "target": "function:tests/test_cli_supervision_defaults.py:test_builtin_recovery_rounds_are_forwarded",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_cli_supervision_defaults.py",
+      "target": "function:tests/test_cli_supervision_defaults.py:test_conflicting_recovery_flags_are_rejected_before_launch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_cli_supervision_defaults.py",
+      "target": "function:tests/test_cli_supervision_defaults.py:test_conflicting_recovery_flags_are_rejected_before_launch",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_cli_supervision_defaults.py",
+      "target": "function:tests/test_cli_supervision_defaults.py:test_program_cannot_silently_accept_unsupported_features",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_cli_supervision_defaults.py",
+      "target": "function:tests/test_cli_supervision_defaults.py:test_program_cannot_silently_accept_unsupported_features",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "file:tests/test_cli_supervision_defaults.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/stuck_recovery.py",
+      "target": "file:tests/test_cli_supervision_defaults.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "file:tests/test_cli_supervision_defaults.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "file:tests/test_cli_supervision_defaults.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "function:tests/test_cli_supervision_defaults.py:test_insert_key_defaults_enable_full_loop_and_defer_recovery_body",
+      "target": "function:tests/test_cli_supervision_defaults.py:capture_episode",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_cli_supervision_defaults.py:test_explicit_modes_survive_outer_to_host_forwarding",
+      "target": "function:tests/test_cli_supervision_defaults.py:capture_episode",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_cli_supervision_defaults.py:test_valen_address_parameter_overrides_environment",
+      "target": "function:tests/test_cli_supervision_defaults.py:capture_episode",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_cli_supervision_defaults.py:test_custom_recovery_and_rounds_override_defaults",
+      "target": "function:tests/test_cli_supervision_defaults.py:capture_episode",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_cli_supervision_defaults.py:test_builtin_recovery_rounds_are_forwarded",
+      "target": "function:tests/test_cli_supervision_defaults.py:capture_episode",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_cli_supervision_defaults.py:test_conflicting_recovery_flags_are_rejected_before_launch",
+      "target": "function:tests/test_cli_supervision_defaults.py:capture_episode",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_cli_supervision_defaults.py:test_program_cannot_silently_accept_unsupported_features",
+      "target": "function:tests/test_cli_supervision_defaults.py:capture_episode",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:station",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:station",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:lift",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:lift",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:monitored",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:monitored",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_sync_moves_both_each_tick_and_keeps_squeeze",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_sync_moves_both_each_tick_and_keeps_squeeze",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_xyz_retains_orientation_and_omitted_arm_holds",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_xyz_retains_orientation_and_omitted_arm_holds",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_python_freely_composes_single_arm_grip_and_both",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_python_freely_composes_single_arm_grip_and_both",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_preflight_refusal_returns_both_errors_without_actions_or_visual_vote",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_preflight_refusal_returns_both_errors_without_actions_or_visual_vote",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_bounded_generated_loop_changes_rejected_target_in_same_cell",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_bounded_generated_loop_changes_rejected_target_in_same_cell",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_partial_result_stops_both_but_returns_to_python",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_partial_result_stops_both_but_returns_to_python",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_generated_correction_after_partial_uses_actual_endpoint",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_generated_correction_after_partial_uses_actual_endpoint",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_visual_unknown_stops_even_a_recoverable_partial_move",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_visual_unknown_stops_even_a_recoverable_partial_move",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_gripper_timing_is_chosen_by_python_not_a_fixed_release_workflow",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_gripper_timing_is_chosen_by_python_not_a_fixed_release_workflow",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_declared_phase_gate_applies_to_all_motion",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_declared_phase_gate_applies_to_all_motion",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_declared_gate_with_fresh_evidence_allows_release",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_declared_gate_with_fresh_evidence_allows_release",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_unsupported_geometry_and_relative_preflight_return_rejection",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_unsupported_geometry_and_relative_preflight_return_rejection",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_relative_violation_in_execution_hands_back_to_model",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_relative_violation_in_execution_hands_back_to_model",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_recoverable_tracking_miss_cannot_hide_relative_violation",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_recoverable_tracking_miss_cannot_hide_relative_violation",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_native_error_after_physical_step_is_charged_and_hands_back",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_native_error_after_physical_step_is_charged_and_hands_back",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_call_deadline_stops_inside_segment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_call_deadline_stops_inside_segment",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_interruption_between_checkpoints_reports_existing_partial_motion",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_interruption_between_checkpoints_reports_existing_partial_motion",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_limits_preflight_and_episode_budget_survive_new_calls",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_limits_preflight_and_episode_budget_survive_new_calls",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_host_refuses_plan_after_external_drift",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_host_refuses_plan_after_external_drift",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_keep_retains_last_close_even_if_measured_open",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_keep_retains_last_close_even_if_measured_open",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_program_can_branch_on_rejected_motion",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_program_can_branch_on_rejected_motion",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_pose_and_generated_api_expose_the_simple_interface",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_pose_and_generated_api_expose_the_simple_interface",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_unknown_streak_survives_recoverable_partial_retries",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_unknown_streak_survives_recoverable_partial_retries",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_program_critical_fault_is_paused_with_physical_feedback",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_program_critical_fault_is_paused_with_physical_feedback",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_zero_step_ik_retries_still_hit_supervisor_action_budget",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:test_zero_step_ik_retries_still_hit_supervisor_action_budget",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "class:tests/test_coordination.py:JointEnvironment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "class:tests/test_coordination.py:JointEnvironment",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:JointEnvironment.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_coordination.py:JointEnvironment",
+      "target": "function:tests/test_coordination.py:JointEnvironment.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:JointEnvironment.get_status",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_coordination.py:JointEnvironment",
+      "target": "function:tests/test_coordination.py:JointEnvironment.get_status",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:JointEnvironment.get_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_coordination.py:JointEnvironment",
+      "target": "function:tests/test_coordination.py:JointEnvironment.get_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_coordination.py",
+      "target": "function:tests/test_coordination.py:JointEnvironment.step",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_coordination.py:JointEnvironment",
+      "target": "function:tests/test_coordination.py:JointEnvironment.step",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "file:tests/test_coordination.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/coordination.py",
+      "target": "file:tests/test_coordination.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "file:tests/test_coordination.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "file:tests/test_coordination.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/robodojo_xpl_rgb.py",
+      "target": "file:tests/test_coordination.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "file:tests/test_coordination.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "file:tests/test_coordination.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "function:tests/test_coordination.py:JointEnvironment.step",
+      "target": "function:tests/test_coordination.py:JointEnvironment.get_obs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_coordination.py:JointEnvironment.step",
+      "target": "function:tests/test_coordination.py:JointEnvironment.get_status",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_coordination.py:station",
+      "target": "class:tests/test_coordination.py:JointEnvironment",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_coordination.py:test_sync_moves_both_each_tick_and_keeps_squeeze",
+      "target": "function:tests/test_coordination.py:lift",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_coordination.py:test_preflight_refusal_returns_both_errors_without_actions_or_visual_vote",
+      "target": "function:tests/test_coordination.py:monitored",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_coordination.py:test_bounded_generated_loop_changes_rejected_target_in_same_cell",
+      "target": "function:tests/test_coordination.py:monitored",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_coordination.py:test_partial_result_stops_both_but_returns_to_python",
+      "target": "function:tests/test_coordination.py:monitored",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_coordination.py:test_generated_correction_after_partial_uses_actual_endpoint",
+      "target": "function:tests/test_coordination.py:monitored",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_coordination.py:test_visual_unknown_stops_even_a_recoverable_partial_move",
+      "target": "function:tests/test_coordination.py:monitored",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_coordination.py:test_gripper_timing_is_chosen_by_python_not_a_fixed_release_workflow",
+      "target": "function:tests/test_coordination.py:lift",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_coordination.py:test_declared_phase_gate_applies_to_all_motion",
+      "target": "function:tests/test_coordination.py:monitored",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_coordination.py:test_declared_gate_with_fresh_evidence_allows_release",
+      "target": "function:tests/test_coordination.py:monitored",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_coordination.py:test_unsupported_geometry_and_relative_preflight_return_rejection",
+      "target": "function:tests/test_coordination.py:lift",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_coordination.py:test_relative_violation_in_execution_hands_back_to_model",
+      "target": "function:tests/test_coordination.py:lift",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_coordination.py:test_recoverable_tracking_miss_cannot_hide_relative_violation",
+      "target": "function:tests/test_coordination.py:lift",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_coordination.py:test_call_deadline_stops_inside_segment",
+      "target": "function:tests/test_coordination.py:lift",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_coordination.py:test_interruption_between_checkpoints_reports_existing_partial_motion",
+      "target": "function:tests/test_coordination.py:lift",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_coordination.py:test_limits_preflight_and_episode_budget_survive_new_calls",
+      "target": "function:tests/test_coordination.py:lift",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_coordination.py:test_host_refuses_plan_after_external_drift",
+      "target": "function:tests/test_coordination.py:lift",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_coordination.py:test_keep_retains_last_close_even_if_measured_open",
+      "target": "function:tests/test_coordination.py:lift",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_coordination.py:test_unknown_streak_survives_recoverable_partial_retries",
+      "target": "function:tests/test_coordination.py:monitored",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_coordination.py:test_zero_step_ik_retries_still_hit_supervisor_action_budget",
+      "target": "function:tests/test_coordination.py:monitored",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_env.py",
+      "target": "function:tests/test_env.py:test_setting_reads_the_pyrualean_variable_else_the_default",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_env.py",
+      "target": "function:tests/test_env.py:test_setting_reads_the_pyrualean_variable_else_the_default",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_env.py",
+      "target": "function:tests/test_env.py:test_codex_retries_come_from_the_environment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_env.py",
+      "target": "function:tests/test_env.py:test_codex_retries_come_from_the_environment",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/_env.py",
+      "target": "file:tests/test_env.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/generate.py",
+      "target": "file:tests/test_env.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:tests/test_evaluation.py",
+      "target": "function:tests/test_evaluation.py:_result",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_evaluation.py",
+      "target": "function:tests/test_evaluation.py:_result",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_evaluation.py",
+      "target": "function:tests/test_evaluation.py:test_crashed_and_timed_out_episodes_count_as_failures",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_evaluation.py",
+      "target": "function:tests/test_evaluation.py:test_crashed_and_timed_out_episodes_count_as_failures",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_evaluation.py",
+      "target": "function:tests/test_evaluation.py:test_env_steps_from_states_counts_chunks_and_servo_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_evaluation.py",
+      "target": "function:tests/test_evaluation.py:test_env_steps_from_states_counts_chunks_and_servo_steps",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_evaluation.py",
+      "target": "function:tests/test_evaluation.py:test_parse_rpent_run_uses_native_termination_not_agent_claim",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_evaluation.py",
+      "target": "function:tests/test_evaluation.py:test_parse_rpent_run_uses_native_termination_not_agent_claim",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_evaluation.py",
+      "target": "function:tests/test_evaluation.py:test_parse_rpent_run_without_finish_is_no_finish",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_evaluation.py",
+      "target": "function:tests/test_evaluation.py:test_parse_rpent_run_without_finish_is_no_finish",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_evaluation.py",
+      "target": "function:tests/test_evaluation.py:test_compare_pairs_strictly_by_backend_task_seed",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_evaluation.py",
+      "target": "function:tests/test_evaluation.py:test_compare_pairs_strictly_by_backend_task_seed",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_evaluation.py",
+      "target": "function:tests/test_evaluation.py:test_env_steps_from_states_trusts_a_native_action_counter",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_evaluation.py",
+      "target": "function:tests/test_evaluation.py:test_env_steps_from_states_trusts_a_native_action_counter",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_evaluation.py",
+      "target": "function:tests/test_evaluation.py:test_parse_rpent_run_reads_robotwin_transcripts",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_evaluation.py",
+      "target": "function:tests/test_evaluation.py:test_parse_rpent_run_reads_robotwin_transcripts",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_evaluation.py",
+      "target": "function:tests/test_evaluation.py:test_env_steps_from_states_rebuilds_robocasa_runs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_evaluation.py",
+      "target": "function:tests/test_evaluation.py:test_env_steps_from_states_rebuilds_robocasa_runs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_evaluation.py",
+      "target": "function:tests/test_evaluation.py:test_parse_rpent_run_normalises_claude_sdk_token_stats",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_evaluation.py",
+      "target": "function:tests/test_evaluation.py:test_parse_rpent_run_normalises_claude_sdk_token_stats",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_evaluation.py",
+      "target": "function:tests/test_evaluation.py:test_claude_stream_usage_counts_each_model_request_once",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_evaluation.py",
+      "target": "function:tests/test_evaluation.py:test_claude_stream_usage_counts_each_model_request_once",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_evaluation.py",
+      "target": "function:tests/test_evaluation.py:test_claude_stream_usage_takes_output_from_the_transcript",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_evaluation.py",
+      "target": "function:tests/test_evaluation.py:test_claude_stream_usage_takes_output_from_the_transcript",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_evaluation.py",
+      "target": "function:tests/test_evaluation.py:test_parse_rpent_run_keys_robocasa_cells_like_the_code_arm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_evaluation.py",
+      "target": "function:tests/test_evaluation.py:test_parse_rpent_run_keys_robocasa_cells_like_the_code_arm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/rpent.py",
+      "target": "file:tests/test_evaluation.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "function:tests/test_evaluation.py:test_crashed_and_timed_out_episodes_count_as_failures",
+      "target": "function:tests/test_evaluation.py:_result",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_evaluation.py:test_compare_pairs_strictly_by_backend_task_seed",
+      "target": "function:tests/test_evaluation.py:_result",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_evidence.py",
+      "target": "function:tests/test_evidence.py:test_bad_watch_cannot_erase_prior_gate_or_change_fact",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_evidence.py",
+      "target": "function:tests/test_evidence.py:test_bad_watch_cannot_erase_prior_gate_or_change_fact",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_evidence.py",
+      "target": "function:tests/test_evidence.py:test_invalid_deferral_cannot_change_requirements",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_evidence.py",
+      "target": "function:tests/test_evidence.py:test_invalid_deferral_cannot_change_requirements",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_evidence.py",
+      "target": "function:tests/test_evidence.py:test_conflicting_gate_cannot_overwrite_existing_dependency",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_evidence.py",
+      "target": "function:tests/test_evidence.py:test_conflicting_gate_cannot_overwrite_existing_dependency",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_evidence.py",
+      "target": "function:tests/test_evidence.py:test_episode_fact_capacity_fails_without_partial_registration",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_evidence.py",
+      "target": "function:tests/test_evidence.py:test_episode_fact_capacity_fails_without_partial_registration",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evidence.py",
+      "target": "file:tests/test_evidence.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

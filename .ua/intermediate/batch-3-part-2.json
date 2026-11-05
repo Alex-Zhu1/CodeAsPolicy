@@ -1,0 +1,1675 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/pyrualean/mcp_server.py",
+      "type": "file",
+      "name": "mcp_server.py",
+      "filePath": "src/pyrualean/mcp_server.py",
+      "summary": "用低层 MCP Server 和后台 uvicorn 线程发布机器人代码工具，支持 streamable HTTP、工具注解及统一错误内容转换。",
+      "tags": [
+        "工具服务",
+        "MCP",
+        "异步服务"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/mcp_server.py:_result_to_mcp",
+      "type": "function",
+      "name": "_result_to_mcp",
+      "filePath": "src/pyrualean/mcp_server.py",
+      "lineRange": [
+        30,
+        51
+      ],
+      "summary": "将工具文本与图像块转换为 MCP 内容，并沿用统一执行错误判据。",
+      "tags": [
+        "工具服务",
+        "MCP",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/mcp_server.py:_build_asgi_app",
+      "type": "function",
+      "name": "_build_asgi_app",
+      "filePath": "src/pyrualean/mcp_server.py",
+      "lineRange": [
+        54,
+        107
+      ],
+      "summary": "建立工具列表和调用处理器，将工具包包装为无状态 streamable HTTP ASGI 应用。",
+      "tags": [
+        "工具服务",
+        "MCP",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/mcp_server.py:_free_port",
+      "type": "function",
+      "name": "_free_port",
+      "filePath": "src/pyrualean/mcp_server.py",
+      "lineRange": [
+        110,
+        113
+      ],
+      "summary": "临时绑定端口零以取得可用本地 TCP 端口。",
+      "tags": [
+        "工具服务",
+        "MCP",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/mcp_server.py:ArmMcpServer",
+      "type": "class",
+      "name": "ArmMcpServer",
+      "filePath": "src/pyrualean/mcp_server.py",
+      "lineRange": [
+        116,
+        171
+      ],
+      "summary": "管理后台线程中的机器人 MCP 服务及其启动、地址和关闭流程。",
+      "tags": [
+        "工具服务",
+        "MCP",
+        "数据模型"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/mcp_server.py:ArmMcpServer.__init__",
+      "type": "function",
+      "name": "ArmMcpServer.__init__",
+      "filePath": "src/pyrualean/mcp_server.py",
+      "lineRange": [
+        119,
+        132
+      ],
+      "summary": "保存工具包、监听地址、端口和工具注解配置。",
+      "tags": [
+        "工具服务",
+        "MCP",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/mcp_server.py:ArmMcpServer.url",
+      "type": "function",
+      "name": "ArmMcpServer.url",
+      "filePath": "src/pyrualean/mcp_server.py",
+      "lineRange": [
+        135,
+        136
+      ],
+      "summary": "返回当前服务的 MCP HTTP 入口地址。",
+      "tags": [
+        "工具服务",
+        "MCP",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/mcp_server.py:ArmMcpServer.start",
+      "type": "function",
+      "name": "ArmMcpServer.start",
+      "filePath": "src/pyrualean/mcp_server.py",
+      "lineRange": [
+        138,
+        165
+      ],
+      "summary": "创建 uvicorn 后台线程并通过初始化请求等待服务可用。",
+      "tags": [
+        "工具服务",
+        "MCP",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/mcp_server.py:ArmMcpServer.stop",
+      "type": "function",
+      "name": "ArmMcpServer.stop",
+      "filePath": "src/pyrualean/mcp_server.py",
+      "lineRange": [
+        167,
+        171
+      ],
+      "summary": "通知 uvicorn 退出并有界等待后台线程结束。",
+      "tags": [
+        "工具服务",
+        "MCP",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "file:src/pyrualean/openai_runtime.py",
+      "type": "file",
+      "name": "openai_runtime.py",
+      "filePath": "src/pyrualean/openai_runtime.py",
+      "summary": "实现兼容 Chat Completions 的进程内代理循环，直接调用机器人工具并将图像以用户消息补回上下文，记录完整对话与用量。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "多模态"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/openai_runtime.py:_resize_png",
+      "type": "function",
+      "name": "_resize_png",
+      "filePath": "src/pyrualean/openai_runtime.py",
+      "lineRange": [
+        85,
+        102
+      ],
+      "summary": "将图片按最长边限制缩小并返回 PNG 数据与缩放比例。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/openai_runtime.py:image_part",
+      "type": "function",
+      "name": "image_part",
+      "filePath": "src/pyrualean/openai_runtime.py",
+      "lineRange": [
+        105,
+        111
+      ],
+      "summary": "把 PNG 数据封装为 OpenAI image_url 数据 URI 内容块。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/openai_runtime.py:openai_tools",
+      "type": "function",
+      "name": "openai_tools",
+      "filePath": "src/pyrualean/openai_runtime.py",
+      "lineRange": [
+        114,
+        127
+      ],
+      "summary": "将 MCP 风格工具输入规范转换为 OpenAI 函数工具格式。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/openai_runtime.py:httpx_transport",
+      "type": "function",
+      "name": "httpx_transport",
+      "filePath": "src/pyrualean/openai_runtime.py",
+      "lineRange": [
+        133,
+        151
+      ],
+      "summary": "建立使用 Bearer 认证的 HTTP 客户端，发送 JSON 请求并返回 JSON 响应。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/openai_runtime.py:_usage_fields",
+      "type": "function",
+      "name": "_usage_fields",
+      "filePath": "src/pyrualean/openai_runtime.py",
+      "lineRange": [
+        202,
+        208
+      ],
+      "summary": "规范化服务端返回的输入、输出、缓存和推理词元计数。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/openai_runtime.py:_tool_result_text",
+      "type": "function",
+      "name": "_tool_result_text",
+      "filePath": "src/pyrualean/openai_runtime.py",
+      "lineRange": [
+        211,
+        214
+      ],
+      "summary": "生成与 MCP 一致的工具文本返回内容。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/openai_runtime.py:_execute_with_deadline",
+      "type": "function",
+      "name": "_execute_with_deadline",
+      "filePath": "src/pyrualean/openai_runtime.py",
+      "lineRange": [
+        217,
+        245
+      ],
+      "summary": "在执行工具期间保留墙钟定时器，超时先停止回合，使后续原语立即退出。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/openai_runtime.py:_parse_arguments",
+      "type": "function",
+      "name": "_parse_arguments",
+      "filePath": "src/pyrualean/openai_runtime.py",
+      "lineRange": [
+        248,
+        259
+      ],
+      "summary": "接受对象或解析 JSON 工具参数，格式错误转成可反馈的说明。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/openai_runtime.py:run_openai_agent",
+      "type": "function",
+      "name": "run_openai_agent",
+      "filePath": "src/pyrualean/openai_runtime.py",
+      "lineRange": [
+        262,
+        668
+      ],
+      "summary": "执行模型请求、重试和顺序工具调用循环，处理图像反馈、预算和完成状态并保存生成记录。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "函数"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:src/pyrualean/openai_runtime.py:OpenAIRuntimeError",
+      "type": "class",
+      "name": "OpenAIRuntimeError",
+      "filePath": "src/pyrualean/openai_runtime.py",
+      "lineRange": [
+        78,
+        79
+      ],
+      "summary": "表示模型服务在重试后仍然失败。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/openai_runtime.py:_Transcript",
+      "type": "class",
+      "name": "_Transcript",
+      "filePath": "src/pyrualean/openai_runtime.py",
+      "lineRange": [
+        157,
+        199
+      ],
+      "summary": "同时维护模型实际消息与将图片替换为本地文件引用的审计副本。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "数据模型"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/openai_runtime.py:_Transcript.__init__",
+      "type": "function",
+      "name": "_Transcript.__init__",
+      "filePath": "src/pyrualean/openai_runtime.py",
+      "lineRange": [
+        160,
+        165
+      ],
+      "summary": "初始化消息列表和图片目录。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/openai_runtime.py:_Transcript.add",
+      "type": "function",
+      "name": "_Transcript.add",
+      "filePath": "src/pyrualean/openai_runtime.py",
+      "lineRange": [
+        176,
+        199
+      ],
+      "summary": "追加消息，将工具图像保存到磁盘并加入可发送的图像内容块。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "file:src/pyrualean/play.py",
+      "type": "file",
+      "name": "play.py",
+      "filePath": "src/pyrualean/play.py",
+      "summary": "统筹单个机器人回合的宿主启动、提示、工具接口与 Codex、Claude 或 OpenAI 运行时，负责预算、审计、最终结果和清理。",
+      "tags": [
+        "回合编排",
+        "运行时",
+        "结果记录"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/play.py:_recordable",
+      "type": "function",
+      "name": "_recordable",
+      "filePath": "src/pyrualean/play.py",
+      "lineRange": [
+        74,
+        85
+      ],
+      "summary": "将宿主启动选项转成可记录形式，对运行时对象只保存类型信息。",
+      "tags": [
+        "回合编排",
+        "运行时",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/play.py:_conclude",
+      "type": "function",
+      "name": "_conclude",
+      "filePath": "src/pyrualean/play.py",
+      "lineRange": [
+        88,
+        98
+      ],
+      "summary": "在策略结束时通知需要延迟裁决的后端完成本回合。",
+      "tags": [
+        "回合编排",
+        "运行时",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/play.py:_make_backend",
+      "type": "function",
+      "name": "_make_backend",
+      "filePath": "src/pyrualean/play.py",
+      "lineRange": [
+        101,
+        105
+      ],
+      "summary": "优先使用宿主专属后端工厂，否则采用公共 RPent 适配器。",
+      "tags": [
+        "回合编排",
+        "运行时",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/play.py:copy_guides",
+      "type": "function",
+      "name": "copy_guides",
+      "filePath": "src/pyrualean/play.py",
+      "lineRange": [
+        108,
+        131
+      ],
+      "summary": "复制选定操作指南并返回每份内容的 SHA-256，用于记录模型实际可读知识。",
+      "tags": [
+        "回合编排",
+        "运行时",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/play.py:build_prompt",
+      "type": "function",
+      "name": "build_prompt",
+      "filePath": "src/pyrualean/play.py",
+      "lineRange": [
+        134,
+        183
+      ],
+      "summary": "组合执行契约、实际 API、机器人知识和任务卡，按原语配置过滤 VLA 内容。",
+      "tags": [
+        "回合编排",
+        "运行时",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/play.py:_codex_argv",
+      "type": "function",
+      "name": "_codex_argv",
+      "filePath": "src/pyrualean/play.py",
+      "lineRange": [
+        186,
+        238
+      ],
+      "summary": "组装 Codex exec 命令、模型配置、MCP 服务和图像参数。",
+      "tags": [
+        "回合编排",
+        "运行时",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/play.py:_agent_environment",
+      "type": "function",
+      "name": "_agent_environment",
+      "filePath": "src/pyrualean/play.py",
+      "lineRange": [
+        275,
+        308
+      ],
+      "summary": "构建允许列表限定的代理环境，避免继承外部会话、记忆目录和无关配置。",
+      "tags": [
+        "回合编排",
+        "运行时",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/play.py:_usage_from_rollouts",
+      "type": "function",
+      "name": "_usage_from_rollouts",
+      "filePath": "src/pyrualean/play.py",
+      "lineRange": [
+        311,
+        364
+      ],
+      "summary": "从 Codex 本地会话记录恢复累计词元用量，补足被预算中断时缺少的完成事件。",
+      "tags": [
+        "回合编排",
+        "运行时",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/play.py:_is_warning",
+      "type": "function",
+      "name": "_is_warning",
+      "filePath": "src/pyrualean/play.py",
+      "lineRange": [
+        373,
+        374
+      ],
+      "summary": "识别已知可降级处理的诊断文本。",
+      "tags": [
+        "回合编排",
+        "运行时",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/play.py:_codex_context_config",
+      "type": "function",
+      "name": "_codex_context_config",
+      "filePath": "src/pyrualean/play.py",
+      "lineRange": [
+        380,
+        404
+      ],
+      "summary": "解析实际生效的上下文窗口和自动压缩配置，并记录到回合结果。",
+      "tags": [
+        "回合编排",
+        "运行时",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/play.py:_audit_events",
+      "type": "function",
+      "name": "_audit_events",
+      "filePath": "src/pyrualean/play.py",
+      "lineRange": [
+        407,
+        470
+      ],
+      "summary": "汇总 Codex JSON 事件中的请求、工具、错误与词元统计。",
+      "tags": [
+        "回合编排",
+        "运行时",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/play.py:play_episode",
+      "type": "function",
+      "name": "play_episode",
+      "filePath": "src/pyrualean/play.py",
+      "lineRange": [
+        473,
+        928
+      ],
+      "summary": "启动指定机器人及执行方式，连接所选代理运行时并施加预算，最终保存原始证据和统一 result.json。",
+      "tags": [
+        "回合编排",
+        "运行时",
+        "函数"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/play.py:_openai_options",
+      "type": "function",
+      "name": "_openai_options",
+      "filePath": "src/pyrualean/play.py",
+      "lineRange": [
+        931,
+        948
+      ],
+      "summary": "把 OpenAI 运行时参数转换为进程内代理循环所需的关键字选项。",
+      "tags": [
+        "回合编排",
+        "运行时",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/play.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "src/pyrualean/play.py",
+      "lineRange": [
+        951,
+        1121
+      ],
+      "summary": "先识别机器人适配器，再注册其宿主参数与公共执行选项，启动单回合交互运行。",
+      "tags": [
+        "回合编排",
+        "运行时",
+        "函数"
+      ],
+      "complexity": "complex"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/pyrualean/mcp_server.py",
+      "target": "function:src/pyrualean/mcp_server.py:_result_to_mcp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/mcp_server.py",
+      "target": "function:src/pyrualean/mcp_server.py:_result_to_mcp",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/mcp_server.py",
+      "target": "function:src/pyrualean/mcp_server.py:_build_asgi_app",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/mcp_server.py",
+      "target": "function:src/pyrualean/mcp_server.py:_build_asgi_app",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/mcp_server.py",
+      "target": "function:src/pyrualean/mcp_server.py:_free_port",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/mcp_server.py",
+      "target": "function:src/pyrualean/mcp_server.py:_free_port",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/mcp_server.py",
+      "target": "class:src/pyrualean/mcp_server.py:ArmMcpServer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/mcp_server.py",
+      "target": "class:src/pyrualean/mcp_server.py:ArmMcpServer",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/mcp_server.py",
+      "target": "function:src/pyrualean/mcp_server.py:ArmMcpServer.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/mcp_server.py:ArmMcpServer",
+      "target": "function:src/pyrualean/mcp_server.py:ArmMcpServer.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/mcp_server.py",
+      "target": "function:src/pyrualean/mcp_server.py:ArmMcpServer.url",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/mcp_server.py:ArmMcpServer",
+      "target": "function:src/pyrualean/mcp_server.py:ArmMcpServer.url",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/mcp_server.py",
+      "target": "function:src/pyrualean/mcp_server.py:ArmMcpServer.start",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/mcp_server.py:ArmMcpServer",
+      "target": "function:src/pyrualean/mcp_server.py:ArmMcpServer.start",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/mcp_server.py",
+      "target": "function:src/pyrualean/mcp_server.py:ArmMcpServer.stop",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/mcp_server.py:ArmMcpServer",
+      "target": "function:src/pyrualean/mcp_server.py:ArmMcpServer.stop",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/mcp_server.py",
+      "target": "file:src/pyrualean/recovery.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:src/pyrualean/mcp_server.py:_result_to_mcp",
+      "target": "function:src/pyrualean/recovery.py:result_is_error",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/mcp_server.py:_build_asgi_app",
+      "target": "function:src/pyrualean/mcp_server.py:_result_to_mcp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/mcp_server.py:ArmMcpServer.__init__",
+      "target": "function:src/pyrualean/mcp_server.py:_free_port",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/mcp_server.py:ArmMcpServer.start",
+      "target": "function:src/pyrualean/mcp_server.py:_build_asgi_app",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/openai_runtime.py",
+      "target": "function:src/pyrualean/openai_runtime.py:_resize_png",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/openai_runtime.py",
+      "target": "function:src/pyrualean/openai_runtime.py:_resize_png",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/openai_runtime.py",
+      "target": "function:src/pyrualean/openai_runtime.py:image_part",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/openai_runtime.py",
+      "target": "function:src/pyrualean/openai_runtime.py:image_part",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/openai_runtime.py",
+      "target": "function:src/pyrualean/openai_runtime.py:openai_tools",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/openai_runtime.py",
+      "target": "function:src/pyrualean/openai_runtime.py:openai_tools",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/openai_runtime.py",
+      "target": "function:src/pyrualean/openai_runtime.py:httpx_transport",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/openai_runtime.py",
+      "target": "function:src/pyrualean/openai_runtime.py:httpx_transport",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/openai_runtime.py",
+      "target": "function:src/pyrualean/openai_runtime.py:_usage_fields",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/openai_runtime.py",
+      "target": "function:src/pyrualean/openai_runtime.py:_usage_fields",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/openai_runtime.py",
+      "target": "function:src/pyrualean/openai_runtime.py:_tool_result_text",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/openai_runtime.py",
+      "target": "function:src/pyrualean/openai_runtime.py:_tool_result_text",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/openai_runtime.py",
+      "target": "function:src/pyrualean/openai_runtime.py:_execute_with_deadline",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/openai_runtime.py",
+      "target": "function:src/pyrualean/openai_runtime.py:_execute_with_deadline",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/openai_runtime.py",
+      "target": "function:src/pyrualean/openai_runtime.py:_parse_arguments",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/openai_runtime.py",
+      "target": "function:src/pyrualean/openai_runtime.py:_parse_arguments",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/openai_runtime.py",
+      "target": "function:src/pyrualean/openai_runtime.py:run_openai_agent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/openai_runtime.py",
+      "target": "function:src/pyrualean/openai_runtime.py:run_openai_agent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/openai_runtime.py",
+      "target": "class:src/pyrualean/openai_runtime.py:OpenAIRuntimeError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/openai_runtime.py",
+      "target": "class:src/pyrualean/openai_runtime.py:OpenAIRuntimeError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/openai_runtime.py",
+      "target": "class:src/pyrualean/openai_runtime.py:_Transcript",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/openai_runtime.py",
+      "target": "class:src/pyrualean/openai_runtime.py:_Transcript",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/openai_runtime.py",
+      "target": "function:src/pyrualean/openai_runtime.py:_Transcript.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/openai_runtime.py:_Transcript",
+      "target": "function:src/pyrualean/openai_runtime.py:_Transcript.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/openai_runtime.py",
+      "target": "function:src/pyrualean/openai_runtime.py:_Transcript.add",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/openai_runtime.py:_Transcript",
+      "target": "function:src/pyrualean/openai_runtime.py:_Transcript.add",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/openai_runtime.py",
+      "target": "file:src/pyrualean/arms.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:src/pyrualean/openai_runtime.py:_Transcript.add",
+      "target": "function:src/pyrualean/openai_runtime.py:image_part",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/openai_runtime.py:run_openai_agent",
+      "target": "function:src/pyrualean/openai_runtime.py:httpx_transport",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/openai_runtime.py:run_openai_agent",
+      "target": "function:src/pyrualean/openai_runtime.py:openai_tools",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/openai_runtime.py:run_openai_agent",
+      "target": "class:src/pyrualean/openai_runtime.py:_Transcript",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/openai_runtime.py:run_openai_agent",
+      "target": "function:src/pyrualean/openai_runtime.py:_resize_png",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/openai_runtime.py:run_openai_agent",
+      "target": "function:src/pyrualean/openai_runtime.py:_usage_fields",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/openai_runtime.py:run_openai_agent",
+      "target": "function:src/pyrualean/openai_runtime.py:_parse_arguments",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/openai_runtime.py:run_openai_agent",
+      "target": "class:src/pyrualean/arms.py:ArmResult",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/openai_runtime.py:run_openai_agent",
+      "target": "function:src/pyrualean/openai_runtime.py:_execute_with_deadline",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/openai_runtime.py:run_openai_agent",
+      "target": "function:src/pyrualean/openai_runtime.py:_tool_result_text",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "function:src/pyrualean/play.py:_recordable",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "function:src/pyrualean/play.py:_recordable",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "function:src/pyrualean/play.py:_conclude",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "function:src/pyrualean/play.py:_conclude",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "function:src/pyrualean/play.py:_make_backend",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "function:src/pyrualean/play.py:_make_backend",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "function:src/pyrualean/play.py:copy_guides",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "function:src/pyrualean/play.py:copy_guides",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "function:src/pyrualean/play.py:build_prompt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "function:src/pyrualean/play.py:build_prompt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "function:src/pyrualean/play.py:_codex_argv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "function:src/pyrualean/play.py:_codex_argv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "function:src/pyrualean/play.py:_agent_environment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "function:src/pyrualean/play.py:_agent_environment",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "function:src/pyrualean/play.py:_usage_from_rollouts",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "function:src/pyrualean/play.py:_usage_from_rollouts",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "function:src/pyrualean/play.py:_is_warning",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "function:src/pyrualean/play.py:_is_warning",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "function:src/pyrualean/play.py:_codex_context_config",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "function:src/pyrualean/play.py:_codex_context_config",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "function:src/pyrualean/play.py:_audit_events",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "function:src/pyrualean/play.py:_audit_events",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "function:src/pyrualean/play.py:play_episode",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "function:src/pyrualean/play.py:play_episode",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "function:src/pyrualean/play.py:_openai_options",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "function:src/pyrualean/play.py:_openai_options",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "function:src/pyrualean/play.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "function:src/pyrualean/play.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "file:src/pyrualean/_backend.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "file:src/pyrualean/_env.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "file:src/pyrualean/_robot.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "file:src/pyrualean/arms.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "file:src/pyrualean/claude_runtime.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "file:src/pyrualean/execution.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "file:src/pyrualean/generate.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "file:src/pyrualean/hosts/common.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "file:src/pyrualean/openai_runtime.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "file:src/pyrualean/prompt.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "file:src/pyrualean/robots.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "file:src/pyrualean/sandbox.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "file:src/pyrualean/stuck_recovery.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "file:src/pyrualean/supervision.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:src/pyrualean/play.py:_make_backend",
+      "target": "class:src/pyrualean/hosts/common.py:RpentBackend",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:build_prompt",
+      "target": "function:src/pyrualean/robots.py:get_adapter",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:build_prompt",
+      "target": "function:src/pyrualean/_robot.py:effective_primitives",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:build_prompt",
+      "target": "function:src/pyrualean/arms.py:arm_contract",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:build_prompt",
+      "target": "function:src/pyrualean/arms.py:robot_words",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:build_prompt",
+      "target": "function:src/pyrualean/prompt.py:api_reference",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:build_prompt",
+      "target": "class:src/pyrualean/execution.py:ExecutionLimits",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:build_prompt",
+      "target": "function:src/pyrualean/supervision.py:monitor_prompt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:build_prompt",
+      "target": "function:src/pyrualean/prompt.py:knowledge_text",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:_codex_argv",
+      "target": "function:src/pyrualean/generate.py:codex_catalog_flags",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:_codex_argv",
+      "target": "function:src/pyrualean/generate.py:provider_overrides",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:_audit_events",
+      "target": "function:src/pyrualean/play.py:_is_warning",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:play_episode",
+      "target": "class:src/pyrualean/supervision.py:MonitorConfig",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:play_episode",
+      "target": "function:src/pyrualean/supervision.py:planning_instructions",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:play_episode",
+      "target": "class:src/pyrualean/execution.py:ExecutionLimits",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:play_episode",
+      "target": "function:src/pyrualean/robots.py:get_adapter",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:play_episode",
+      "target": "function:src/pyrualean/_robot.py:effective_primitives",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:play_episode",
+      "target": "function:src/pyrualean/hosts/common.py:resolve_rpent_root",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:play_episode",
+      "target": "function:src/pyrualean/play.py:copy_guides",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:play_episode",
+      "target": "function:src/pyrualean/supervision.py:config_record",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:play_episode",
+      "target": "class:src/pyrualean/_backend.py:Ledger",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:play_episode",
+      "target": "function:src/pyrualean/play.py:_recordable",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:play_episode",
+      "target": "function:src/pyrualean/play.py:_codex_context_config",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:play_episode",
+      "target": "function:src/pyrualean/play.py:_make_backend",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:play_episode",
+      "target": "class:src/pyrualean/arms.py:ArmToolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:play_episode",
+      "target": "class:src/pyrualean/supervision.py:VisualSupervisor",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:play_episode",
+      "target": "function:src/pyrualean/play.py:build_prompt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:play_episode",
+      "target": "function:src/pyrualean/play.py:_agent_environment",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:play_episode",
+      "target": "function:src/pyrualean/play.py:_codex_argv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:play_episode",
+      "target": "function:src/pyrualean/claude_runtime.py:resolve_cli",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:play_episode",
+      "target": "function:src/pyrualean/openai_runtime.py:run_openai_agent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:play_episode",
+      "target": "function:src/pyrualean/claude_runtime.py:run_claude_agent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:play_episode",
+      "target": "function:src/pyrualean/play.py:_audit_events",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:play_episode",
+      "target": "function:src/pyrualean/play.py:_usage_from_rollouts",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:play_episode",
+      "target": "function:src/pyrualean/play.py:_conclude",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:play_episode",
+      "target": "function:src/pyrualean/claude_runtime.py:sdk_max_turns",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:play_episode",
+      "target": "function:src/pyrualean/hosts/common.py:stop_all",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:main",
+      "target": "function:src/pyrualean/robots.py:get_adapter",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:main",
+      "target": "function:src/pyrualean/supervision.py:add_monitor_arguments",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:main",
+      "target": "function:src/pyrualean/stuck_recovery.py:add_stuck_recovery_arguments",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:main",
+      "target": "function:src/pyrualean/execution.py:add_execution_arguments",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:main",
+      "target": "function:src/pyrualean/_env.py:setting",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:main",
+      "target": "function:src/pyrualean/play.py:play_episode",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:main",
+      "target": "function:src/pyrualean/play.py:_openai_options",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:main",
+      "target": "function:src/pyrualean/supervision.py:monitor_config",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:main",
+      "target": "function:src/pyrualean/stuck_recovery.py:stuck_recovery_config",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/play.py:main",
+      "target": "function:src/pyrualean/execution.py:execution_limits",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

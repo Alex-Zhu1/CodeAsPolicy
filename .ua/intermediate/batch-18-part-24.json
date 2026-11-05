@@ -1,0 +1,1650 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "type": "file",
+      "name": "swap_T.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "实现离线 RoboDojo 任务程序：拟合红蓝 T 形块的位姿，双臂分阶段交换位置并通过腕部图像校验和修正放置。通过执行环境注入的 robo 接口完成任务，不在评测时调用规划模型。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:wrap180",
+      "type": "function",
+      "name": "wrap180",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "把角度规范到一个完整周期的对称区间。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        23,
+        24
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:say",
+      "type": "function",
+      "name": "say",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "打印任务执行进度和诊断信息。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        27,
+        28
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:cam_of",
+      "type": "function",
+      "name": "cam_of",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "读取相机标定并转为数值矩阵供投影计算。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        31,
+        33
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:project",
+      "type": "function",
+      "name": "project",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "把世界坐标点投影到标定相机图像平面。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        36,
+        39
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:on_plane",
+      "type": "function",
+      "name": "on_plane",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "将像素视线与给定高度平面相交以恢复世界坐标。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        42,
+        47
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:place",
+      "type": "function",
+      "name": "place",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "对二维轮廓施加平移和旋转。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        50,
+        52
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:render",
+      "type": "function",
+      "name": "render",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "将已知几何轮廓投影渲染为图像覆盖掩码。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        55,
+        72
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:solidity",
+      "type": "function",
+      "name": "solidity",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "计算区域相对于凸包的实心程度。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        75,
+        80
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:px_area_m2",
+      "type": "function",
+      "name": "px_area_m2",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "通过邻近像素反投影估计单位像素对应的桌面面积。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        83,
+        86
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:components",
+      "type": "function",
+      "name": "components",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "提取满足面积阈值的连通区域。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        89,
+        92
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:colour_regions",
+      "type": "function",
+      "name": "colour_regions",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "根据图像颜色阈值筛选目标或背景像素区域。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        95,
+        117
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:search",
+      "type": "function",
+      "name": "search",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "多阶段搜索几何模型位姿并以掩码重叠程度选择最佳拟合。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        120,
+        138
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:fit_T",
+      "type": "function",
+      "name": "fit_T",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "把已知轮廓拟合到相机图像以估计 T 形块或目标垫位姿。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        141,
+        194
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:used",
+      "type": "function",
+      "name": "used",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "累计底层动作消耗并处理任务终止或预算状态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        211,
+        216
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:unit",
+      "type": "function",
+      "name": "unit",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "由平面方向角构造单位向量。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        219,
+        220
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:j1_deg",
+      "type": "function",
+      "name": "j1_deg",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "按目标相对机械臂基座的位置计算自然接近朝向。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        223,
+        224
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:fmt",
+      "type": "function",
+      "name": "fmt",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "格式化向量或测量数据以便打印诊断信息。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        227,
+        228
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:stem_pt",
+      "type": "function",
+      "name": "stem_pt",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "计算 T 形块竖杆上给定偏移处的抓点。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        231,
+        232
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:wrist",
+      "type": "function",
+      "name": "wrist",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "选择指定机械臂对应的腕部相机名称。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        235,
+        236
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:tcp",
+      "type": "function",
+      "name": "tcp",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "读取机械臂当前抓取点位置。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        239,
+        240
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:move",
+      "type": "function",
+      "name": "move",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "调用机器人位姿运动接口并处理本任务的运动结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        243,
+        249
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:hover",
+      "type": "function",
+      "name": "hover",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "搜索可到达目标上方且误差符合容差的接近姿态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        252,
+        262
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:plan_turn",
+      "type": "function",
+      "name": "plan_turn",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "选择夹指方向与转向以保证搬运过程腕关节不超限。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        265,
+        282
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:look",
+      "type": "function",
+      "name": "look",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "读取相机图像并进行任务所需的目标识别或位姿估计。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        285,
+        294
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:pick",
+      "type": "function",
+      "name": "pick",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "执行接近、闭合和抬升步骤，并依据本任务的视觉或夹爪反馈处理抓取结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        297,
+        330
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:carry_turn",
+      "type": "function",
+      "name": "carry_turn",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "将带旋转搬运拆成多个偏航变化有限的平移段。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        333,
+        341
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:carry_to",
+      "type": "function",
+      "name": "carry_to",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "按竖杆抓点偏移将 T 形块旋转搬运到目标上方。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        344,
+        359
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:put_down",
+      "type": "function",
+      "name": "put_down",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "将抓持物体降到目标位置并释放。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        362,
+        371
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:check",
+      "type": "function",
+      "name": "check",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "从腕部图像复测放置位姿并报告位置和角度误差。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        374,
+        382
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:correct",
+      "type": "function",
+      "name": "correct",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "重新抓取偏离目标的 T 形块并小幅抬升纠正位姿。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        385,
+        397
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:place_and_fix",
+      "type": "function",
+      "name": "place_and_fix",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "放置 T 形块后复测并执行有限次数纠偏。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        400,
+        412
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:head_both",
+      "type": "function",
+      "name": "head_both",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "在头部图像中同时拟合红蓝两块 T 形积木。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        415,
+        416
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:go_home",
+      "type": "function",
+      "name": "go_home",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "将指定机械臂返回起始姿态并处理返回结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        419,
+        430
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:head_fallback",
+      "type": "function",
+      "name": "head_fallback",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "用语义分割辅助低置信度 T 形轮廓定位。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        433,
+        452
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "summary": "拟合红蓝 T 形块的位姿，双臂分阶段交换位置并通过腕部图像校验和修正放置。统筹观察、运动和任务检查。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        455,
+        519
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:wrap180",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:wrap180",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:say",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:say",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:cam_of",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:cam_of",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:project",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:on_plane",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:on_plane",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:place",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:place",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:render",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:render",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:solidity",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:solidity",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:px_area_m2",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:px_area_m2",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:components",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:components",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:colour_regions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:colour_regions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:search",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:search",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:fit_T",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:fit_T",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:used",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:used",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:unit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:unit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:j1_deg",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:j1_deg",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:fmt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:fmt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:stem_pt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:stem_pt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:wrist",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:wrist",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:tcp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:tcp",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:move",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:move",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:hover",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:hover",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:plan_turn",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:plan_turn",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:look",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:look",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:pick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:pick",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:carry_turn",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:carry_turn",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:carry_to",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:carry_to",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:put_down",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:put_down",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:check",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:check",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:correct",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:correct",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:place_and_fix",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:place_and_fix",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:head_both",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:head_both",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:go_home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:go_home",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:head_fallback",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:head_fallback",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:render",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:place",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:render",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:px_area_m2",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:colour_regions",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:components",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:colour_regions",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:px_area_m2",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:fit_T",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:cam_of",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:fit_T",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:colour_regions",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:fit_T",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:fit_T",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:solidity",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:fit_T",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:search",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:fit_T",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:render",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:fit_T",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:stem_pt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:unit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:move",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:used",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:move",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:hover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:move",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:plan_turn",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:plan_turn",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:stem_pt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:plan_turn",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:j1_deg",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:fit_T",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:wrist",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:used",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:hover",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:stem_pt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:look",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:tcp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:move",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:unit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:carry_turn",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:move",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:carry_turn",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:carry_to",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:unit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:carry_to",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:carry_to",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:j1_deg",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:carry_to",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:carry_to",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:carry_turn",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:put_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:unit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:put_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:put_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:move",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:put_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:used",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:put_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:tcp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:put_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:hover",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:check",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:look",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:check",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:check",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:check",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:correct",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:plan_turn",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:correct",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:correct",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:pick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:correct",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:carry_to",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:correct",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:put_down",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:place_and_fix",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:put_down",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:place_and_fix",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:check",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:place_and_fix",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:place_and_fix",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:correct",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:head_both",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:fit_T",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:go_home",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:used",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:go_home",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:move",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:head_fallback",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:fit_T",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:head_fallback",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:head_both",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:head_fallback",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:plan_turn",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:pick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:move",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:carry_to",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:place_and_fix",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:go_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:used",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:correct",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/swap_T.py:check",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

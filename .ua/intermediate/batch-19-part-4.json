@@ -1,0 +1,2498 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/pyrualean/hosts/sam3_local.py",
+      "type": "file",
+      "name": "sam3_local.py",
+      "filePath": "src/pyrualean/hosts/sam3_local.py",
+      "summary": "在策略进程内加载并缓存 SAM3，提供与 RPent 客户端一致的文本或像素分割接口及最高置信候选选择。",
+      "tags": [
+        "分割模型",
+        "模型缓存",
+        "感知适配"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/sam3_local.py:_array",
+      "type": "function",
+      "name": "_array",
+      "filePath": "src/pyrualean/hosts/sam3_local.py",
+      "lineRange": [
+        44,
+        45
+      ],
+      "summary": "将张量转为 CPU 浮点数组，已有数组直接复用。",
+      "tags": [
+        "分割模型",
+        "模型缓存",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/sam3_local.py:select_top",
+      "type": "function",
+      "name": "select_top",
+      "filePath": "src/pyrualean/hosts/sam3_local.py",
+      "lineRange": [
+        48,
+        81
+      ],
+      "summary": "选择达到阈值且掩膜非空的最高置信候选。",
+      "tags": [
+        "分割模型",
+        "模型缓存",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/sam3_local.py:shared",
+      "type": "function",
+      "name": "shared",
+      "filePath": "src/pyrualean/hosts/sam3_local.py",
+      "lineRange": [
+        195,
+        207
+      ],
+      "summary": "按检查点与设备复用进程中的 SAM3 实例，避免每回合重复加载。",
+      "tags": [
+        "分割模型",
+        "模型缓存",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/hosts/sam3_local.py:Segmented",
+      "type": "class",
+      "name": "Segmented",
+      "filePath": "src/pyrualean/hosts/sam3_local.py",
+      "lineRange": [
+        34,
+        41
+      ],
+      "summary": "保存一次分割的掩膜、分数与边界或未找到结果。",
+      "tags": [
+        "分割模型",
+        "模型缓存",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/hosts/sam3_local.py:LocalSam3",
+      "type": "class",
+      "name": "LocalSam3",
+      "filePath": "src/pyrualean/hosts/sam3_local.py",
+      "lineRange": [
+        84,
+        188
+      ],
+      "summary": "封装单 GPU 上的 SAM3 模型、图像特征缓存和交互分割。",
+      "tags": [
+        "分割模型",
+        "模型缓存",
+        "数据模型"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/sam3_local.py:LocalSam3.__init__",
+      "type": "function",
+      "name": "LocalSam3.__init__",
+      "filePath": "src/pyrualean/hosts/sam3_local.py",
+      "lineRange": [
+        87,
+        125
+      ],
+      "summary": "校验模型检查点并设置设备，加载官方 SAM3 及交互像素分割组件。",
+      "tags": [
+        "分割模型",
+        "模型缓存",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/sam3_local.py:LocalSam3._state_for",
+      "type": "function",
+      "name": "LocalSam3._state_for",
+      "filePath": "src/pyrualean/hosts/sam3_local.py",
+      "lineRange": [
+        130,
+        140
+      ],
+      "summary": "为同一图片缓存图像特征，供多个提示重复使用。",
+      "tags": [
+        "分割模型",
+        "模型缓存",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/sam3_local.py:LocalSam3.segment",
+      "type": "function",
+      "name": "LocalSam3.segment",
+      "filePath": "src/pyrualean/hosts/sam3_local.py",
+      "lineRange": [
+        142,
+        188
+      ],
+      "summary": "验证文本与像素提示互斥及阈值范围，执行分割并返回最高分有效掩膜。",
+      "tags": [
+        "分割模型",
+        "模型缓存",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "file:tests/conftest.py",
+      "type": "file",
+      "name": "conftest.py",
+      "filePath": "tests/conftest.py",
+      "summary": "提供模拟 RPent 状态封装的 LIBERO 假后端和公共 pytest fixture，以离线验证机器人接口和执行流程。",
+      "tags": [
+        "测试",
+        "模拟后端",
+        "共享fixture"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:tests/conftest.py:backend",
+      "type": "function",
+      "name": "backend",
+      "filePath": "tests/conftest.py",
+      "lineRange": [
+        288,
+        289
+      ],
+      "summary": "创建独立的假 LIBERO 后端供测试使用。",
+      "tags": [
+        "测试",
+        "模拟后端",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/conftest.py:robo",
+      "type": "function",
+      "name": "robo",
+      "filePath": "tests/conftest.py",
+      "lineRange": [
+        293,
+        296
+      ],
+      "summary": "把假后端封装为实际 LiberoRobot 接口。",
+      "tags": [
+        "测试",
+        "模拟后端",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:tests/conftest.py:_ToolResult",
+      "type": "class",
+      "name": "_ToolResult",
+      "filePath": "tests/conftest.py",
+      "lineRange": [
+        12,
+        17
+      ],
+      "summary": "模拟 RPent 工具结果对象中原始负载的形状。",
+      "tags": [
+        "测试",
+        "模拟后端",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/conftest.py:_ToolResult.__init__",
+      "type": "function",
+      "name": "_ToolResult.__init__",
+      "filePath": "tests/conftest.py",
+      "lineRange": [
+        15,
+        17
+      ],
+      "summary": "保存模拟工具名称和返回负载。",
+      "tags": [
+        "测试",
+        "模拟后端",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "class:tests/conftest.py:FakeLiberoBackend",
+      "type": "class",
+      "name": "FakeLiberoBackend",
+      "filePath": "tests/conftest.py",
+      "lineRange": [
+        20,
+        284
+      ],
+      "summary": "模拟碗与盘的简化场景，只有持碗在盘上释放才触发原生成功。",
+      "tags": [
+        "测试",
+        "模拟后端",
+        "数据模型"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:tests/conftest.py:FakeLiberoBackend.__init__",
+      "type": "function",
+      "name": "FakeLiberoBackend.__init__",
+      "filePath": "tests/conftest.py",
+      "lineRange": [
+        32,
+        44
+      ],
+      "summary": "初始化末端、夹爪、物体持有、步数与错误注入状态并记录初始观测。",
+      "tags": [
+        "测试",
+        "模拟后端",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:tests/conftest.py:FakeLiberoBackend.execute_tool",
+      "type": "function",
+      "name": "FakeLiberoBackend.execute_tool",
+      "filePath": "tests/conftest.py",
+      "lineRange": [
+        48,
+        73
+      ],
+      "summary": "记录调用并执行读操作或模拟动作，将运动结果包装为 RPent 观测结构。",
+      "tags": [
+        "测试",
+        "模拟后端",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:tests/conftest.py:FakeLiberoBackend.solved",
+      "type": "function",
+      "name": "FakeLiberoBackend.solved",
+      "filePath": "tests/conftest.py",
+      "lineRange": [
+        75,
+        76
+      ],
+      "summary": "返回模拟环境的原生成功状态。",
+      "tags": [
+        "测试",
+        "模拟后端",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:tests/conftest.py:FakeLiberoBackend.artifact",
+      "type": "function",
+      "name": "FakeLiberoBackend.artifact",
+      "filePath": "tests/conftest.py",
+      "lineRange": [
+        78,
+        93
+      ],
+      "summary": "按产物扩展名生成模拟图像或世界坐标数据。",
+      "tags": [
+        "测试",
+        "模拟后端",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:tests/conftest.py:FakeLiberoBackend.env_steps",
+      "type": "function",
+      "name": "FakeLiberoBackend.env_steps",
+      "filePath": "tests/conftest.py",
+      "lineRange": [
+        95,
+        96
+      ],
+      "summary": "返回模拟累计帧数。",
+      "tags": [
+        "测试",
+        "模拟后端",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:tests/conftest.py:FakeLiberoBackend.cancel",
+      "type": "function",
+      "name": "FakeLiberoBackend.cancel",
+      "filePath": "tests/conftest.py",
+      "lineRange": [
+        98,
+        99
+      ],
+      "summary": "设置模拟后端取消标志。",
+      "tags": [
+        "测试",
+        "模拟后端",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:tests/conftest.py:FakeLiberoBackend._do_move_to",
+      "type": "function",
+      "name": "FakeLiberoBackend._do_move_to",
+      "filePath": "tests/conftest.py",
+      "lineRange": [
+        106,
+        128
+      ],
+      "summary": "模拟受限位置移动、夹爪保持、步数消耗和不可达停滞。",
+      "tags": [
+        "测试",
+        "模拟后端",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:tests/conftest.py:FakeLiberoBackend._do_pi0_pick",
+      "type": "function",
+      "name": "FakeLiberoBackend._do_pi0_pick",
+      "filePath": "tests/conftest.py",
+      "lineRange": [
+        130,
+        150
+      ],
+      "summary": "根据与碗的平面距离模拟 VLA 抓取及动作块消耗。",
+      "tags": [
+        "测试",
+        "模拟后端",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:tests/conftest.py:FakeLiberoBackend._do_release",
+      "type": "function",
+      "name": "FakeLiberoBackend._do_release",
+      "filePath": "tests/conftest.py",
+      "lineRange": [
+        162,
+        179
+      ],
+      "summary": "模拟释放；仅在持碗且位于盘上时设置成功。",
+      "tags": [
+        "测试",
+        "模拟后端",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:tests/conftest.py:FakeLiberoBackend._do_rotate_wrist",
+      "type": "function",
+      "name": "FakeLiberoBackend._do_rotate_wrist",
+      "filePath": "tests/conftest.py",
+      "lineRange": [
+        181,
+        195
+      ],
+      "summary": "校验角度输入并返回模拟腕部旋转结果。",
+      "tags": [
+        "测试",
+        "模拟后端",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:tests/conftest.py:FakeLiberoBackend._readonly",
+      "type": "function",
+      "name": "FakeLiberoBackend._readonly",
+      "filePath": "tests/conftest.py",
+      "lineRange": [
+        199,
+        254
+      ],
+      "summary": "模拟状态、相机标定、物体分割和反投影查询。",
+      "tags": [
+        "测试",
+        "模拟后端",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:tests/conftest.py:FakeLiberoBackend._record",
+      "type": "function",
+      "name": "FakeLiberoBackend._record",
+      "filePath": "tests/conftest.py",
+      "lineRange": [
+        256,
+        271
+      ],
+      "summary": "保存当前模拟状态及对应命令与原语结果。",
+      "tags": [
+        "测试",
+        "模拟后端",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:tests/conftest.py:FakeLiberoBackend._view",
+      "type": "function",
+      "name": "FakeLiberoBackend._view",
+      "filePath": "tests/conftest.py",
+      "lineRange": [
+        273,
+        284
+      ],
+      "summary": "将指定步骤记录包装为原生观测封装。",
+      "tags": [
+        "测试",
+        "模拟后端",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "file:tests/test_arms.py",
+      "type": "file",
+      "name": "test_arms.py",
+      "filePath": "tests/test_arms.py",
+      "summary": "离线验证持久 Python 单元和独立程序工具的状态、预算、图像策略、错误反馈和运行契约。",
+      "tags": [
+        "测试",
+        "代码执行",
+        "工具接口"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_arms.py:cells",
+      "type": "function",
+      "name": "cells",
+      "filePath": "tests/test_arms.py",
+      "lineRange": [
+        13,
+        14
+      ],
+      "summary": "创建持久 Python 单元模式的工具包 fixture。",
+      "tags": [
+        "测试",
+        "代码执行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_arms.py:program",
+      "type": "function",
+      "name": "program",
+      "filePath": "tests/test_arms.py",
+      "lineRange": [
+        18,
+        19
+      ],
+      "summary": "创建最多运行两个程序的完整程序模式 fixture。",
+      "tags": [
+        "测试",
+        "代码执行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_arms.py:test_tool_specs_per_arm",
+      "type": "function",
+      "name": "test_tool_specs_per_arm",
+      "filePath": "tests/test_arms.py",
+      "lineRange": [
+        22,
+        25
+      ],
+      "summary": "验证两种执行方式暴露正确工具及程序次数说明。",
+      "tags": [
+        "测试",
+        "代码执行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_arms.py:test_cells_persist_state_and_echo_trailing_expression",
+      "type": "function",
+      "name": "test_cells_persist_state_and_echo_trailing_expression",
+      "filePath": "tests/test_arms.py",
+      "lineRange": [
+        28,
+        48
+      ],
+      "summary": "验证变量函数跨单元保留、尾表达式回显和运动后的图像反馈。",
+      "tags": [
+        "测试",
+        "代码执行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_arms.py:test_cells_report_exceptions_and_episode_end",
+      "type": "function",
+      "name": "test_cells_report_exceptions_and_episode_end",
+      "filePath": "tests/test_arms.py",
+      "lineRange": [
+        51,
+        71
+      ],
+      "summary": "验证异常可反馈，环境成功后拒绝继续运动并正确记录完成状态。",
+      "tags": [
+        "测试",
+        "代码执行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_arms.py:test_program_runs_fresh_namespace_and_enforces_budget",
+      "type": "function",
+      "name": "test_program_runs_fresh_namespace_and_enforces_budget",
+      "filePath": "tests/test_arms.py",
+      "lineRange": [
+        74,
+        105
+      ],
+      "summary": "验证程序使用独立命名空间、可复用工作目录模块并严格执行次数预算。",
+      "tags": [
+        "测试",
+        "代码执行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_arms.py:test_program_reports_crash_and_load_errors",
+      "type": "function",
+      "name": "test_program_reports_crash_and_load_errors",
+      "filePath": "tests/test_arms.py",
+      "lineRange": [
+        108,
+        114
+      ],
+      "summary": "验证程序异常和缺少 run 入口均返回明确错误。",
+      "tags": [
+        "测试",
+        "代码执行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_arms.py:test_contracts_mention_budget_and_single_shot",
+      "type": "function",
+      "name": "test_contracts_mention_budget_and_single_shot",
+      "filePath": "tests/test_arms.py",
+      "lineRange": [
+        117,
+        123
+      ],
+      "summary": "验证运行契约包含墙钟预算与单次或多次程序限制。",
+      "tags": [
+        "测试",
+        "代码执行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_arms.py:test_on_demand_images_only_when_shown",
+      "type": "function",
+      "name": "test_on_demand_images_only_when_shown",
+      "filePath": "tests/test_arms.py",
+      "lineRange": [
+        126,
+        138
+      ],
+      "summary": "验证按需图像仅在显式 show 后返回且请求只消费一次。",
+      "tags": [
+        "测试",
+        "代码执行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_arms.py:test_pure_feedback_returns_only_program_output",
+      "type": "function",
+      "name": "test_pure_feedback_returns_only_program_output",
+      "filePath": "tests/test_arms.py",
+      "lineRange": [
+        141,
+        157
+      ],
+      "summary": "验证纯反馈模式输出受约束，同时保留内部审计和显式图像。",
+      "tags": [
+        "测试",
+        "代码执行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_arms.py:test_display_and_log_helpers",
+      "type": "function",
+      "name": "test_display_and_log_helpers",
+      "filePath": "tests/test_arms.py",
+      "lineRange": [
+        160,
+        175
+      ],
+      "summary": "验证日志保留和主动图像展示编码。",
+      "tags": [
+        "测试",
+        "代码执行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_arms.py:test_arm_contract_guides_note_is_opt_in",
+      "type": "function",
+      "name": "test_arm_contract_guides_note_is_opt_in",
+      "filePath": "tests/test_arms.py",
+      "lineRange": [
+        178,
+        188
+      ],
+      "summary": "验证操作指南提示只在显式开启时附加。",
+      "tags": [
+        "测试",
+        "代码执行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_arms.py:test_copy_guides_copies_the_three_files_and_hashes_them",
+      "type": "function",
+      "name": "test_copy_guides_copies_the_three_files_and_hashes_them",
+      "filePath": "tests/test_arms.py",
+      "lineRange": [
+        191,
+        210
+      ],
+      "summary": "验证指定指南的复制、内容摘要及缺失文件错误。",
+      "tags": [
+        "测试",
+        "代码执行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_arms.py:test_arm_contract_budget_modes",
+      "type": "function",
+      "name": "test_arm_contract_budget_modes",
+      "filePath": "tests/test_arms.py",
+      "lineRange": [
+        213,
+        224
+      ],
+      "summary": "验证墙钟与调用次数预算使用不同提示，非法预算模式被拒绝。",
+      "tags": [
+        "测试",
+        "代码执行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_arms.py:test_python_tool_call_budget",
+      "type": "function",
+      "name": "test_python_tool_call_budget",
+      "filePath": "tests/test_arms.py",
+      "lineRange": [
+        227,
+        237
+      ],
+      "summary": "验证 Python 调用次数耗尽后持续拒绝额外执行。",
+      "tags": [
+        "测试",
+        "代码执行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_claude_runtime.py",
+      "type": "file",
+      "name": "test_claude_runtime.py",
+      "filePath": "tests/test_claude_runtime.py",
+      "summary": "以假的 Claude SDK 异步消息流验证运行时选项、图片、超时、错误分类及词元审计，无需网络。",
+      "tags": [
+        "测试",
+        "Claude运行时",
+        "用量审计"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:tests/test_claude_runtime.py:fake_sdk",
+      "type": "function",
+      "name": "fake_sdk",
+      "filePath": "tests/test_claude_runtime.py",
+      "lineRange": [
+        92,
+        111
+      ],
+      "summary": "安装假的 SDK 模块并捕获查询参数及消息。",
+      "tags": [
+        "测试",
+        "Claude运行时",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_claude_runtime.py:usage",
+      "type": "function",
+      "name": "usage",
+      "filePath": "tests/test_claude_runtime.py",
+      "lineRange": [
+        114,
+        123
+      ],
+      "summary": "构造包含缓存和可选思考词元的模拟用量。",
+      "tags": [
+        "测试",
+        "Claude运行时",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_claude_runtime.py:episode_messages",
+      "type": "function",
+      "name": "episode_messages",
+      "filePath": "tests/test_claude_runtime.py",
+      "lineRange": [
+        144,
+        206
+      ],
+      "summary": "构造读指南、执行代码和完成回合的三次请求消息序列。",
+      "tags": [
+        "测试",
+        "Claude运行时",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_claude_runtime.py:run",
+      "type": "function",
+      "name": "run",
+      "filePath": "tests/test_claude_runtime.py",
+      "lineRange": [
+        209,
+        226
+      ],
+      "summary": "以模拟 SDK 和初始图片执行运行时包装，返回生成记录及捕获参数。",
+      "tags": [
+        "测试",
+        "Claude运行时",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_claude_runtime.py:test_usage_totals_from_result_and_profile_from_assistant_messages",
+      "type": "function",
+      "name": "test_usage_totals_from_result_and_profile_from_assistant_messages",
+      "filePath": "tests/test_claude_runtime.py",
+      "lineRange": [
+        229,
+        259
+      ],
+      "summary": "验证最终总用量来自结果消息，而请求输入画像按助手消息去重。",
+      "tags": [
+        "测试",
+        "Claude运行时",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_claude_runtime.py:test_options_and_initial_message",
+      "type": "function",
+      "name": "test_options_and_initial_message",
+      "filePath": "tests/test_claude_runtime.py",
+      "lineRange": [
+        262,
+        292
+      ],
+      "summary": "验证模型、工具、环境隔离、MCP 配置与首条多模态消息。",
+      "tags": [
+        "测试",
+        "Claude运行时",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_claude_runtime.py:test_effort_none_disables_thinking_and_program_arm_tools",
+      "type": "function",
+      "name": "test_effort_none_disables_thinking_and_program_arm_tools",
+      "filePath": "tests/test_claude_runtime.py",
+      "lineRange": [
+        295,
+        307
+      ],
+      "summary": "验证无推理模式关闭思考，并为程序执行方式选择正确工具。",
+      "tags": [
+        "测试",
+        "Claude运行时",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_claude_runtime.py:test_wall_clock_timeout_cancels_and_reports",
+      "type": "function",
+      "name": "test_wall_clock_timeout_cancels_and_reports",
+      "filePath": "tests/test_claude_runtime.py",
+      "lineRange": [
+        310,
+        324
+      ],
+      "summary": "验证墙钟超时取消查询、触发停止回调并保存正确终态。",
+      "tags": [
+        "测试",
+        "Claude运行时",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_claude_runtime.py:test_budget_subtypes_are_warnings_provider_failures_are_errors",
+      "type": "function",
+      "name": "test_budget_subtypes_are_warnings_provider_failures_are_errors",
+      "filePath": "tests/test_claude_runtime.py",
+      "lineRange": [
+        327,
+        347
+      ],
+      "summary": "验证轮数上限记为告警，模型服务失败记为错误。",
+      "tags": [
+        "测试",
+        "Claude运行时",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_claude_runtime.py:test_sdk_exception_and_failed_mcp_server_are_errors",
+      "type": "function",
+      "name": "test_sdk_exception_and_failed_mcp_server_are_errors",
+      "filePath": "tests/test_claude_runtime.py",
+      "lineRange": [
+        350,
+        360
+      ],
+      "summary": "验证 SDK 异常、MCP 初始化失败和缺少结果消息均留下错误。",
+      "tags": [
+        "测试",
+        "Claude运行时",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_claude_runtime.py:test_usage_falls_back_to_assistant_messages_without_a_result",
+      "type": "function",
+      "name": "test_usage_falls_back_to_assistant_messages_without_a_result",
+      "filePath": "tests/test_claude_runtime.py",
+      "lineRange": [
+        363,
+        374
+      ],
+      "summary": "验证无最终结果时保留已知输入统计且不虚构输出词元。",
+      "tags": [
+        "测试",
+        "Claude运行时",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_claude_runtime.py:test_replay_events_reproduces_the_live_audit",
+      "type": "function",
+      "name": "test_replay_events_reproduces_the_live_audit",
+      "filePath": "tests/test_claude_runtime.py",
+      "lineRange": [
+        377,
+        405
+      ],
+      "summary": "验证离线事件重放与实时用量审计一致。",
+      "tags": [
+        "测试",
+        "Claude运行时",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_claude_runtime.py:test_helpers",
+      "type": "function",
+      "name": "test_helpers",
+      "filePath": "tests/test_claude_runtime.py",
+      "lineRange": [
+        408,
+        421
+      ],
+      "summary": "验证轮数映射、工具名称、CLI 路径和其他运行时辅助行为。",
+      "tags": [
+        "测试",
+        "Claude运行时",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_claude_runtime.py:test_play_episode_wires_the_claude_runtime",
+      "type": "function",
+      "name": "test_play_episode_wires_the_claude_runtime",
+      "filePath": "tests/test_claude_runtime.py",
+      "lineRange": [
+        424,
+        487
+      ],
+      "summary": "使用假宿主验证 play_episode 正确接入 Claude 并保存文件、字段和参数。",
+      "tags": [
+        "测试",
+        "Claude运行时",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:tests/test_claude_runtime.py:TextBlock",
+      "type": "class",
+      "name": "TextBlock",
+      "filePath": "tests/test_claude_runtime.py",
+      "lineRange": [
+        26,
+        27
+      ],
+      "summary": "模拟 Claude 文本消息块。",
+      "tags": [
+        "测试",
+        "Claude运行时",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:tests/test_claude_runtime.py:ToolUseBlock",
+      "type": "class",
+      "name": "ToolUseBlock",
+      "filePath": "tests/test_claude_runtime.py",
+      "lineRange": [
+        31,
+        34
+      ],
+      "summary": "模拟含调用标识、工具名和参数的工具请求块。",
+      "tags": [
+        "测试",
+        "Claude运行时",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:tests/test_claude_runtime.py:ToolResultBlock",
+      "type": "class",
+      "name": "ToolResultBlock",
+      "filePath": "tests/test_claude_runtime.py",
+      "lineRange": [
+        38,
+        41
+      ],
+      "summary": "模拟工具输出及错误标记。",
+      "tags": [
+        "测试",
+        "Claude运行时",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:tests/test_claude_runtime.py:UserMessage",
+      "type": "class",
+      "name": "UserMessage",
+      "filePath": "tests/test_claude_runtime.py",
+      "lineRange": [
+        45,
+        49
+      ],
+      "summary": "模拟用户消息及关联工具结果字段。",
+      "tags": [
+        "测试",
+        "Claude运行时",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:tests/test_claude_runtime.py:AssistantMessage",
+      "type": "class",
+      "name": "AssistantMessage",
+      "filePath": "tests/test_claude_runtime.py",
+      "lineRange": [
+        53,
+        59
+      ],
+      "summary": "模拟助手内容、模型、消息标识及用量。",
+      "tags": [
+        "测试",
+        "Claude运行时",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:tests/test_claude_runtime.py:SystemMessage",
+      "type": "class",
+      "name": "SystemMessage",
+      "filePath": "tests/test_claude_runtime.py",
+      "lineRange": [
+        63,
+        65
+      ],
+      "summary": "模拟初始化等系统事件。",
+      "tags": [
+        "测试",
+        "Claude运行时",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:tests/test_claude_runtime.py:ResultMessage",
+      "type": "class",
+      "name": "ResultMessage",
+      "filePath": "tests/test_claude_runtime.py",
+      "lineRange": [
+        69,
+        84
+      ],
+      "summary": "模拟最终结果的状态、耗时、会话和总用量字段。",
+      "tags": [
+        "测试",
+        "Claude运行时",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:tests/test_claude_runtime.py:ClaudeAgentOptions",
+      "type": "class",
+      "name": "ClaudeAgentOptions",
+      "filePath": "tests/test_claude_runtime.py",
+      "lineRange": [
+        87,
+        89
+      ],
+      "summary": "模拟可接收任意运行时选项的 SDK 配置类。",
+      "tags": [
+        "测试",
+        "Claude运行时",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_claude_runtime.py:ClaudeAgentOptions.__init__",
+      "type": "function",
+      "name": "ClaudeAgentOptions.__init__",
+      "filePath": "tests/test_claude_runtime.py",
+      "lineRange": [
+        88,
+        89
+      ],
+      "summary": "把传入的模拟 SDK 选项保存为属性。",
+      "tags": [
+        "测试",
+        "Claude运行时",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "file:tests/test_cli.py",
+      "type": "file",
+      "name": "test_cli.py",
+      "filePath": "tests/test_cli.py",
+      "summary": "验证离线 API 和提示输出、指标汇总、自定义模型服务配置以及代码限制参数向宿主透传。",
+      "tags": [
+        "测试",
+        "命令行",
+        "参数传递"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_cli.py:test_api_and_prompt_render_offline",
+      "type": "function",
+      "name": "test_api_and_prompt_render_offline",
+      "filePath": "tests/test_cli.py",
+      "lineRange": [
+        10,
+        15
+      ],
+      "summary": "验证 API 与系统提示无需启动仿真即可渲染。",
+      "tags": [
+        "测试",
+        "命令行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_cli.py:test_summarize_reads_result_dirs",
+      "type": "function",
+      "name": "test_summarize_reads_result_dirs",
+      "filePath": "tests/test_cli.py",
+      "lineRange": [
+        18,
+        39
+      ],
+      "summary": "验证 summarize 命令可读取运行结果目录并输出聚合 JSON。",
+      "tags": [
+        "测试",
+        "命令行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_cli.py:test_provider_overrides_shape",
+      "type": "function",
+      "name": "test_provider_overrides_shape",
+      "filePath": "tests/test_cli.py",
+      "lineRange": [
+        42,
+        51
+      ],
+      "summary": "验证自定义兼容网关参数格式与无地址时的缺省行为。",
+      "tags": [
+        "测试",
+        "命令行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_cli.py:test_execution_options_reach_the_host",
+      "type": "function",
+      "name": "test_execution_options_reach_the_host",
+      "filePath": "tests/test_cli.py",
+      "lineRange": [
+        54,
+        69
+      ],
+      "summary": "验证代码超时、动作和输出限制被外层 CLI 传给宿主。",
+      "tags": [
+        "测试",
+        "命令行",
+        "函数"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/pyrualean/hosts/sam3_local.py",
+      "target": "function:src/pyrualean/hosts/sam3_local.py:_array",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/sam3_local.py",
+      "target": "function:src/pyrualean/hosts/sam3_local.py:_array",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/sam3_local.py",
+      "target": "function:src/pyrualean/hosts/sam3_local.py:select_top",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/sam3_local.py",
+      "target": "function:src/pyrualean/hosts/sam3_local.py:select_top",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/sam3_local.py",
+      "target": "function:src/pyrualean/hosts/sam3_local.py:shared",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/sam3_local.py",
+      "target": "function:src/pyrualean/hosts/sam3_local.py:shared",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/sam3_local.py",
+      "target": "class:src/pyrualean/hosts/sam3_local.py:Segmented",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/sam3_local.py",
+      "target": "class:src/pyrualean/hosts/sam3_local.py:Segmented",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/sam3_local.py",
+      "target": "class:src/pyrualean/hosts/sam3_local.py:LocalSam3",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/sam3_local.py",
+      "target": "class:src/pyrualean/hosts/sam3_local.py:LocalSam3",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/sam3_local.py",
+      "target": "function:src/pyrualean/hosts/sam3_local.py:LocalSam3.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/sam3_local.py:LocalSam3",
+      "target": "function:src/pyrualean/hosts/sam3_local.py:LocalSam3.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/sam3_local.py",
+      "target": "function:src/pyrualean/hosts/sam3_local.py:LocalSam3._state_for",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/sam3_local.py:LocalSam3",
+      "target": "function:src/pyrualean/hosts/sam3_local.py:LocalSam3._state_for",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/sam3_local.py",
+      "target": "function:src/pyrualean/hosts/sam3_local.py:LocalSam3.segment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/sam3_local.py:LocalSam3",
+      "target": "function:src/pyrualean/hosts/sam3_local.py:LocalSam3.segment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:src/pyrualean/hosts/sam3_local.py:select_top",
+      "target": "class:src/pyrualean/hosts/sam3_local.py:Segmented",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/sam3_local.py:select_top",
+      "target": "function:src/pyrualean/hosts/sam3_local.py:_array",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/sam3_local.py:LocalSam3.segment",
+      "target": "function:src/pyrualean/hosts/sam3_local.py:LocalSam3._state_for",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/sam3_local.py:LocalSam3.segment",
+      "target": "function:src/pyrualean/hosts/sam3_local.py:select_top",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/sam3_local.py:shared",
+      "target": "class:src/pyrualean/hosts/sam3_local.py:LocalSam3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "function:tests/conftest.py:backend",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "function:tests/conftest.py:backend",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "function:tests/conftest.py:robo",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "function:tests/conftest.py:robo",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "class:tests/conftest.py:_ToolResult",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "class:tests/conftest.py:_ToolResult",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "function:tests/conftest.py:_ToolResult.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/conftest.py:_ToolResult",
+      "target": "function:tests/conftest.py:_ToolResult.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "class:tests/conftest.py:FakeLiberoBackend",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "class:tests/conftest.py:FakeLiberoBackend",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "function:tests/conftest.py:FakeLiberoBackend.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/conftest.py:FakeLiberoBackend",
+      "target": "function:tests/conftest.py:FakeLiberoBackend.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "function:tests/conftest.py:FakeLiberoBackend.execute_tool",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/conftest.py:FakeLiberoBackend",
+      "target": "function:tests/conftest.py:FakeLiberoBackend.execute_tool",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "function:tests/conftest.py:FakeLiberoBackend.solved",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/conftest.py:FakeLiberoBackend",
+      "target": "function:tests/conftest.py:FakeLiberoBackend.solved",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "function:tests/conftest.py:FakeLiberoBackend.artifact",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/conftest.py:FakeLiberoBackend",
+      "target": "function:tests/conftest.py:FakeLiberoBackend.artifact",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "function:tests/conftest.py:FakeLiberoBackend.env_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/conftest.py:FakeLiberoBackend",
+      "target": "function:tests/conftest.py:FakeLiberoBackend.env_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "function:tests/conftest.py:FakeLiberoBackend.cancel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/conftest.py:FakeLiberoBackend",
+      "target": "function:tests/conftest.py:FakeLiberoBackend.cancel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "function:tests/conftest.py:FakeLiberoBackend._do_move_to",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/conftest.py:FakeLiberoBackend",
+      "target": "function:tests/conftest.py:FakeLiberoBackend._do_move_to",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "function:tests/conftest.py:FakeLiberoBackend._do_pi0_pick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/conftest.py:FakeLiberoBackend",
+      "target": "function:tests/conftest.py:FakeLiberoBackend._do_pi0_pick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "function:tests/conftest.py:FakeLiberoBackend._do_release",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/conftest.py:FakeLiberoBackend",
+      "target": "function:tests/conftest.py:FakeLiberoBackend._do_release",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "function:tests/conftest.py:FakeLiberoBackend._do_rotate_wrist",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/conftest.py:FakeLiberoBackend",
+      "target": "function:tests/conftest.py:FakeLiberoBackend._do_rotate_wrist",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "function:tests/conftest.py:FakeLiberoBackend._readonly",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/conftest.py:FakeLiberoBackend",
+      "target": "function:tests/conftest.py:FakeLiberoBackend._readonly",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "function:tests/conftest.py:FakeLiberoBackend._record",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/conftest.py:FakeLiberoBackend",
+      "target": "function:tests/conftest.py:FakeLiberoBackend._record",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "function:tests/conftest.py:FakeLiberoBackend._view",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/conftest.py:FakeLiberoBackend",
+      "target": "function:tests/conftest.py:FakeLiberoBackend._view",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:tests/conftest.py:FakeLiberoBackend.__init__",
+      "target": "function:tests/conftest.py:FakeLiberoBackend._record",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/conftest.py:FakeLiberoBackend.execute_tool",
+      "target": "class:tests/conftest.py:_ToolResult",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/conftest.py:FakeLiberoBackend.execute_tool",
+      "target": "function:tests/conftest.py:FakeLiberoBackend._readonly",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/conftest.py:FakeLiberoBackend.execute_tool",
+      "target": "function:tests/conftest.py:FakeLiberoBackend._record",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/conftest.py:FakeLiberoBackend.execute_tool",
+      "target": "function:tests/conftest.py:FakeLiberoBackend._view",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/conftest.py:FakeLiberoBackend._readonly",
+      "target": "function:tests/conftest.py:FakeLiberoBackend._view",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/conftest.py:backend",
+      "target": "class:tests/conftest.py:FakeLiberoBackend",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_arms.py",
+      "target": "function:tests/test_arms.py:cells",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_arms.py",
+      "target": "function:tests/test_arms.py:cells",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_arms.py",
+      "target": "function:tests/test_arms.py:program",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_arms.py",
+      "target": "function:tests/test_arms.py:program",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_arms.py",
+      "target": "function:tests/test_arms.py:test_tool_specs_per_arm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_arms.py",
+      "target": "function:tests/test_arms.py:test_tool_specs_per_arm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_arms.py",
+      "target": "function:tests/test_arms.py:test_cells_persist_state_and_echo_trailing_expression",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_arms.py",
+      "target": "function:tests/test_arms.py:test_cells_persist_state_and_echo_trailing_expression",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_arms.py",
+      "target": "function:tests/test_arms.py:test_cells_report_exceptions_and_episode_end",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_arms.py",
+      "target": "function:tests/test_arms.py:test_cells_report_exceptions_and_episode_end",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_arms.py",
+      "target": "function:tests/test_arms.py:test_program_runs_fresh_namespace_and_enforces_budget",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_arms.py",
+      "target": "function:tests/test_arms.py:test_program_runs_fresh_namespace_and_enforces_budget",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_arms.py",
+      "target": "function:tests/test_arms.py:test_program_reports_crash_and_load_errors",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_arms.py",
+      "target": "function:tests/test_arms.py:test_program_reports_crash_and_load_errors",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_arms.py",
+      "target": "function:tests/test_arms.py:test_contracts_mention_budget_and_single_shot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_arms.py",
+      "target": "function:tests/test_arms.py:test_contracts_mention_budget_and_single_shot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_arms.py",
+      "target": "function:tests/test_arms.py:test_on_demand_images_only_when_shown",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_arms.py",
+      "target": "function:tests/test_arms.py:test_on_demand_images_only_when_shown",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_arms.py",
+      "target": "function:tests/test_arms.py:test_pure_feedback_returns_only_program_output",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_arms.py",
+      "target": "function:tests/test_arms.py:test_pure_feedback_returns_only_program_output",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_arms.py",
+      "target": "function:tests/test_arms.py:test_display_and_log_helpers",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_arms.py",
+      "target": "function:tests/test_arms.py:test_display_and_log_helpers",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_arms.py",
+      "target": "function:tests/test_arms.py:test_arm_contract_guides_note_is_opt_in",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_arms.py",
+      "target": "function:tests/test_arms.py:test_arm_contract_guides_note_is_opt_in",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_arms.py",
+      "target": "function:tests/test_arms.py:test_copy_guides_copies_the_three_files_and_hashes_them",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_arms.py",
+      "target": "function:tests/test_arms.py:test_copy_guides_copies_the_three_files_and_hashes_them",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_arms.py",
+      "target": "function:tests/test_arms.py:test_arm_contract_budget_modes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_arms.py",
+      "target": "function:tests/test_arms.py:test_arm_contract_budget_modes",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_arms.py",
+      "target": "function:tests/test_arms.py:test_python_tool_call_budget",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_arms.py",
+      "target": "function:tests/test_arms.py:test_python_tool_call_budget",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "file:tests/test_arms.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "file:tests/test_arms.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "function:tests/test_claude_runtime.py:fake_sdk",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "function:tests/test_claude_runtime.py:fake_sdk",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "function:tests/test_claude_runtime.py:usage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "function:tests/test_claude_runtime.py:usage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "function:tests/test_claude_runtime.py:episode_messages",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "function:tests/test_claude_runtime.py:episode_messages",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "function:tests/test_claude_runtime.py:run",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "function:tests/test_claude_runtime.py:run",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "function:tests/test_claude_runtime.py:test_usage_totals_from_result_and_profile_from_assistant_messages",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "function:tests/test_claude_runtime.py:test_usage_totals_from_result_and_profile_from_assistant_messages",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "function:tests/test_claude_runtime.py:test_options_and_initial_message",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "function:tests/test_claude_runtime.py:test_options_and_initial_message",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "function:tests/test_claude_runtime.py:test_effort_none_disables_thinking_and_program_arm_tools",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "function:tests/test_claude_runtime.py:test_effort_none_disables_thinking_and_program_arm_tools",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "function:tests/test_claude_runtime.py:test_wall_clock_timeout_cancels_and_reports",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "function:tests/test_claude_runtime.py:test_wall_clock_timeout_cancels_and_reports",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "function:tests/test_claude_runtime.py:test_budget_subtypes_are_warnings_provider_failures_are_errors",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "function:tests/test_claude_runtime.py:test_budget_subtypes_are_warnings_provider_failures_are_errors",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "function:tests/test_claude_runtime.py:test_sdk_exception_and_failed_mcp_server_are_errors",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "function:tests/test_claude_runtime.py:test_sdk_exception_and_failed_mcp_server_are_errors",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "function:tests/test_claude_runtime.py:test_usage_falls_back_to_assistant_messages_without_a_result",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "function:tests/test_claude_runtime.py:test_usage_falls_back_to_assistant_messages_without_a_result",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "function:tests/test_claude_runtime.py:test_replay_events_reproduces_the_live_audit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "function:tests/test_claude_runtime.py:test_replay_events_reproduces_the_live_audit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "function:tests/test_claude_runtime.py:test_helpers",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "function:tests/test_claude_runtime.py:test_helpers",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "function:tests/test_claude_runtime.py:test_play_episode_wires_the_claude_runtime",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "function:tests/test_claude_runtime.py:test_play_episode_wires_the_claude_runtime",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "class:tests/test_claude_runtime.py:TextBlock",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "class:tests/test_claude_runtime.py:TextBlock",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "class:tests/test_claude_runtime.py:ToolUseBlock",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "class:tests/test_claude_runtime.py:ToolUseBlock",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "class:tests/test_claude_runtime.py:ToolResultBlock",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "class:tests/test_claude_runtime.py:ToolResultBlock",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "class:tests/test_claude_runtime.py:UserMessage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "class:tests/test_claude_runtime.py:UserMessage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "class:tests/test_claude_runtime.py:AssistantMessage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "class:tests/test_claude_runtime.py:AssistantMessage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "class:tests/test_claude_runtime.py:SystemMessage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "class:tests/test_claude_runtime.py:SystemMessage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "class:tests/test_claude_runtime.py:ResultMessage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "class:tests/test_claude_runtime.py:ResultMessage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "class:tests/test_claude_runtime.py:ClaudeAgentOptions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "class:tests/test_claude_runtime.py:ClaudeAgentOptions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_claude_runtime.py",
+      "target": "function:tests/test_claude_runtime.py:ClaudeAgentOptions.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_claude_runtime.py:ClaudeAgentOptions",
+      "target": "function:tests/test_claude_runtime.py:ClaudeAgentOptions.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robots.py",
+      "target": "file:tests/test_claude_runtime.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "function:tests/test_claude_runtime.py:episode_messages",
+      "target": "class:tests/test_claude_runtime.py:AssistantMessage",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_claude_runtime.py:episode_messages",
+      "target": "class:tests/test_claude_runtime.py:ToolUseBlock",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_claude_runtime.py:episode_messages",
+      "target": "class:tests/test_claude_runtime.py:UserMessage",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_claude_runtime.py:episode_messages",
+      "target": "class:tests/test_claude_runtime.py:ToolResultBlock",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_claude_runtime.py:episode_messages",
+      "target": "class:tests/test_claude_runtime.py:TextBlock",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_claude_runtime.py:episode_messages",
+      "target": "function:tests/test_claude_runtime.py:usage",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_claude_runtime.py:episode_messages",
+      "target": "class:tests/test_claude_runtime.py:ResultMessage",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_claude_runtime.py:run",
+      "target": "function:tests/test_claude_runtime.py:fake_sdk",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_claude_runtime.py:test_usage_totals_from_result_and_profile_from_assistant_messages",
+      "target": "function:tests/test_claude_runtime.py:run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_claude_runtime.py:test_usage_totals_from_result_and_profile_from_assistant_messages",
+      "target": "function:tests/test_claude_runtime.py:episode_messages",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_claude_runtime.py:test_options_and_initial_message",
+      "target": "function:tests/test_claude_runtime.py:run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_claude_runtime.py:test_options_and_initial_message",
+      "target": "function:tests/test_claude_runtime.py:episode_messages",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_claude_runtime.py:test_effort_none_disables_thinking_and_program_arm_tools",
+      "target": "function:tests/test_claude_runtime.py:run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_claude_runtime.py:test_effort_none_disables_thinking_and_program_arm_tools",
+      "target": "function:tests/test_claude_runtime.py:episode_messages",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_claude_runtime.py:test_wall_clock_timeout_cancels_and_reports",
+      "target": "function:tests/test_claude_runtime.py:run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_claude_runtime.py:test_budget_subtypes_are_warnings_provider_failures_are_errors",
+      "target": "class:tests/test_claude_runtime.py:ResultMessage",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_claude_runtime.py:test_budget_subtypes_are_warnings_provider_failures_are_errors",
+      "target": "function:tests/test_claude_runtime.py:usage",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_claude_runtime.py:test_budget_subtypes_are_warnings_provider_failures_are_errors",
+      "target": "function:tests/test_claude_runtime.py:run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_claude_runtime.py:test_sdk_exception_and_failed_mcp_server_are_errors",
+      "target": "function:tests/test_claude_runtime.py:run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_claude_runtime.py:test_sdk_exception_and_failed_mcp_server_are_errors",
+      "target": "class:tests/test_claude_runtime.py:SystemMessage",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_claude_runtime.py:test_usage_falls_back_to_assistant_messages_without_a_result",
+      "target": "function:tests/test_claude_runtime.py:run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_claude_runtime.py:test_usage_falls_back_to_assistant_messages_without_a_result",
+      "target": "function:tests/test_claude_runtime.py:episode_messages",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_claude_runtime.py:test_replay_events_reproduces_the_live_audit",
+      "target": "function:tests/test_claude_runtime.py:run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_claude_runtime.py:test_replay_events_reproduces_the_live_audit",
+      "target": "function:tests/test_claude_runtime.py:episode_messages",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_claude_runtime.py:test_play_episode_wires_the_claude_runtime",
+      "target": "function:tests/test_claude_runtime.py:fake_sdk",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_claude_runtime.py:test_play_episode_wires_the_claude_runtime",
+      "target": "function:tests/test_claude_runtime.py:episode_messages",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_cli.py",
+      "target": "function:tests/test_cli.py:test_api_and_prompt_render_offline",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_cli.py",
+      "target": "function:tests/test_cli.py:test_api_and_prompt_render_offline",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_cli.py",
+      "target": "function:tests/test_cli.py:test_summarize_reads_result_dirs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_cli.py",
+      "target": "function:tests/test_cli.py:test_summarize_reads_result_dirs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_cli.py",
+      "target": "function:tests/test_cli.py:test_provider_overrides_shape",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_cli.py",
+      "target": "function:tests/test_cli.py:test_provider_overrides_shape",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_cli.py",
+      "target": "function:tests/test_cli.py:test_execution_options_reach_the_host",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_cli.py",
+      "target": "function:tests/test_cli.py:test_execution_options_reach_the_host",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "file:tests/test_cli.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/generate.py",
+      "target": "file:tests/test_cli.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

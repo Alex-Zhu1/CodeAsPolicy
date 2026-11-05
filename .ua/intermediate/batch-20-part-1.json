@@ -1,0 +1,711 @@
+{
+  "nodes": [
+    {
+      "id": "file:tests/test_execution.py",
+      "type": "file",
+      "name": "test_execution.py",
+      "filePath": "tests/test_execution.py",
+      "summary": "验证代码执行边界、输出限额与证据版本。通过固定输入、模拟后端或临时资源检查正常行为及失败边界。",
+      "tags": [
+        "测试",
+        "回归验证",
+        "行为契约"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_execution.py:test_finish_refuses_all_later_code_without_consuming_budget",
+      "type": "function",
+      "name": "test_finish_refuses_all_later_code_without_consuming_budget",
+      "filePath": "tests/test_execution.py",
+      "summary": "验证结束后拒绝所有后续代码且不再消耗动作预算。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        18,
+        29
+      ]
+    },
+    {
+      "id": "function:tests/test_execution.py:test_pure_python_loop_is_interrupted_in_a_bounded_subprocess",
+      "type": "function",
+      "name": "test_pure_python_loop_is_interrupted_in_a_bounded_subprocess",
+      "filePath": "tests/test_execution.py",
+      "summary": "验证在受限子进程中中断纯 Python 无限循环。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        33,
+        82
+      ]
+    },
+    {
+      "id": "function:tests/test_execution.py:test_action_limit_stops_dependents_and_resets_only_the_local_budget",
+      "type": "function",
+      "name": "test_action_limit_stops_dependents_and_resets_only_the_local_budget",
+      "filePath": "tests/test_execution.py",
+      "summary": "验证动作上限阻断后续依赖动作且只重置单次执行预算。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        85,
+        94
+      ]
+    },
+    {
+      "id": "function:tests/test_execution.py:test_episode_timeout_is_still_terminal_for_programs",
+      "type": "function",
+      "name": "test_episode_timeout_is_still_terminal_for_programs",
+      "filePath": "tests/test_execution.py",
+      "summary": "验证整个回合超时后程序保持终止状态。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        97,
+        105
+      ]
+    },
+    {
+      "id": "function:tests/test_execution.py:test_output_is_bounded_while_writing_and_keeps_parseable_failure",
+      "type": "function",
+      "name": "test_output_is_bounded_while_writing_and_keeps_parseable_failure",
+      "filePath": "tests/test_execution.py",
+      "summary": "验证写入时限制输出体积并保留可解析失败信息。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        108,
+        121
+      ]
+    },
+    {
+      "id": "function:tests/test_execution.py:test_display_limit_and_old_image_provenance",
+      "type": "function",
+      "name": "test_display_limit_and_old_image_provenance",
+      "filePath": "tests/test_execution.py",
+      "summary": "验证限制显示图像数量并记录旧图像来源。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        124,
+        133
+      ]
+    },
+    {
+      "id": "function:tests/test_execution.py:test_evidence_versions_include_failed_motion_and_correlate_images",
+      "type": "function",
+      "name": "test_evidence_versions_include_failed_motion_and_correlate_images",
+      "filePath": "tests/test_execution.py",
+      "summary": "验证失败运动也推进证据版本且图像与动作关联。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        136,
+        149
+      ]
+    },
+    {
+      "id": "function:tests/test_execution.py:test_image_capture_during_scene_change_is_not_marked_current",
+      "type": "function",
+      "name": "test_image_capture_during_scene_change_is_not_marked_current",
+      "filePath": "tests/test_execution.py",
+      "summary": "验证场景变化期间采集的图像不被标记为当前证据。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        152,
+        164
+      ]
+    },
+    {
+      "id": "file:tests/test_libero.py",
+      "type": "file",
+      "name": "test_libero.py",
+      "filePath": "tests/test_libero.py",
+      "summary": "验证LIBERO 类型化接口、抓放流程和调用账本。通过固定输入、模拟后端或临时资源检查正常行为及失败边界。",
+      "tags": [
+        "测试",
+        "回归验证",
+        "行为契约"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_libero.py:test_state_and_task_come_from_the_envelope",
+      "type": "function",
+      "name": "test_state_and_task_come_from_the_envelope",
+      "filePath": "tests/test_libero.py",
+      "summary": "验证从后端响应读取类型化状态与任务说明。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        10,
+        18
+      ]
+    },
+    {
+      "id": "function:tests/test_libero.py:test_move_to_returns_a_typed_result_with_reached",
+      "type": "function",
+      "name": "test_move_to_returns_a_typed_result_with_reached",
+      "filePath": "tests/test_libero.py",
+      "summary": "验证位姿运动返回带到达标志的类型化结果。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        21,
+        29
+      ]
+    },
+    {
+      "id": "function:tests/test_libero.py:test_planar_moves_over_0_30_m_are_refused_before_dispatch",
+      "type": "function",
+      "name": "test_planar_moves_over_0_30_m_are_refused_before_dispatch",
+      "filePath": "tests/test_libero.py",
+      "summary": "验证超过0.30米的平面位移在下发前被拒绝。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        32,
+        36
+      ]
+    },
+    {
+      "id": "function:tests/test_libero.py:test_full_pick_and_place_terminates_and_freezes_motion",
+      "type": "function",
+      "name": "test_full_pick_and_place_terminates_and_freezes_motion",
+      "filePath": "tests/test_libero.py",
+      "summary": "验证完整抓放成功结束回合并冻结后续运动。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        39,
+        55
+      ]
+    },
+    {
+      "id": "function:tests/test_libero.py:test_carrying_with_open_gripper_drops_the_object",
+      "type": "function",
+      "name": "test_carrying_with_open_gripper_drops_the_object",
+      "filePath": "tests/test_libero.py",
+      "summary": "验证携带过程中张开夹爪使物体脱落。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        58,
+        63
+      ]
+    },
+    {
+      "id": "function:tests/test_libero.py:test_backend_error_payload_becomes_tool_error",
+      "type": "function",
+      "name": "test_backend_error_payload_becomes_tool_error",
+      "filePath": "tests/test_libero.py",
+      "summary": "验证后端错误负载转换为 ToolError。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        66,
+        71
+      ]
+    },
+    {
+      "id": "function:tests/test_libero.py:test_library_side_argument_validation",
+      "type": "function",
+      "name": "test_library_side_argument_validation",
+      "filePath": "tests/test_libero.py",
+      "summary": "验证库层校验运动和夹爪参数。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        74,
+        81
+      ]
+    },
+    {
+      "id": "function:tests/test_libero.py:test_segment_not_found_is_a_result_not_an_error",
+      "type": "function",
+      "name": "test_segment_not_found_is_a_result_not_an_error",
+      "filePath": "tests/test_libero.py",
+      "summary": "验证未找到分割目标返回正常的未检测结果。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        84,
+        87
+      ]
+    },
+    {
+      "id": "function:tests/test_libero.py:test_back_project_out_of_bounds_raises_tool_error",
+      "type": "function",
+      "name": "test_back_project_out_of_bounds_raises_tool_error",
+      "filePath": "tests/test_libero.py",
+      "summary": "验证反投影越界转换为工具错误。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        90,
+        96
+      ]
+    },
+    {
+      "id": "function:tests/test_libero.py:test_images_and_world_maps_decode",
+      "type": "function",
+      "name": "test_images_and_world_maps_decode",
+      "filePath": "tests/test_libero.py",
+      "summary": "验证解码不同分辨率图像与世界坐标图。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        99,
+        107
+      ]
+    },
+    {
+      "id": "function:tests/test_libero.py:test_ledger_records_every_call_with_env_steps",
+      "type": "function",
+      "name": "test_ledger_records_every_call_with_env_steps",
+      "filePath": "tests/test_libero.py",
+      "summary": "验证调用账本完整记录工具和环境步数。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        110,
+        119
+      ]
+    },
+    {
+      "id": "function:tests/test_libero.py:test_cancellation_surfaces_as_episode_finished",
+      "type": "function",
+      "name": "test_cancellation_surfaces_as_episode_finished",
+      "filePath": "tests/test_libero.py",
+      "summary": "验证取消执行转换为 EpisodeFinished。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        122,
+        126
+      ]
+    },
+    {
+      "id": "function:tests/test_libero.py:test_state_orientation_helpers",
+      "type": "function",
+      "name": "test_state_orientation_helpers",
+      "filePath": "tests/test_libero.py",
+      "summary": "验证末端姿态角辅助属性遵循约定。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        129,
+        142
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:tests/test_execution.py",
+      "target": "function:tests/test_execution.py:test_finish_refuses_all_later_code_without_consuming_budget",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_execution.py",
+      "target": "function:tests/test_execution.py:test_finish_refuses_all_later_code_without_consuming_budget",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_execution.py",
+      "target": "function:tests/test_execution.py:test_pure_python_loop_is_interrupted_in_a_bounded_subprocess",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_execution.py",
+      "target": "function:tests/test_execution.py:test_pure_python_loop_is_interrupted_in_a_bounded_subprocess",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_execution.py",
+      "target": "function:tests/test_execution.py:test_action_limit_stops_dependents_and_resets_only_the_local_budget",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_execution.py",
+      "target": "function:tests/test_execution.py:test_action_limit_stops_dependents_and_resets_only_the_local_budget",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_execution.py",
+      "target": "function:tests/test_execution.py:test_episode_timeout_is_still_terminal_for_programs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_execution.py",
+      "target": "function:tests/test_execution.py:test_episode_timeout_is_still_terminal_for_programs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_execution.py",
+      "target": "function:tests/test_execution.py:test_output_is_bounded_while_writing_and_keeps_parseable_failure",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_execution.py",
+      "target": "function:tests/test_execution.py:test_output_is_bounded_while_writing_and_keeps_parseable_failure",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_execution.py",
+      "target": "function:tests/test_execution.py:test_display_limit_and_old_image_provenance",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_execution.py",
+      "target": "function:tests/test_execution.py:test_display_limit_and_old_image_provenance",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_execution.py",
+      "target": "function:tests/test_execution.py:test_evidence_versions_include_failed_motion_and_correlate_images",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_execution.py",
+      "target": "function:tests/test_execution.py:test_evidence_versions_include_failed_motion_and_correlate_images",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_execution.py",
+      "target": "function:tests/test_execution.py:test_image_capture_during_scene_change_is_not_marked_current",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_execution.py",
+      "target": "function:tests/test_execution.py:test_image_capture_during_scene_change_is_not_marked_current",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/execution.py",
+      "target": "file:tests/test_execution.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "file:tests/test_execution.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:tests/test_libero.py",
+      "target": "function:tests/test_libero.py:test_state_and_task_come_from_the_envelope",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_libero.py",
+      "target": "function:tests/test_libero.py:test_state_and_task_come_from_the_envelope",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_libero.py",
+      "target": "function:tests/test_libero.py:test_move_to_returns_a_typed_result_with_reached",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_libero.py",
+      "target": "function:tests/test_libero.py:test_move_to_returns_a_typed_result_with_reached",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_libero.py",
+      "target": "function:tests/test_libero.py:test_planar_moves_over_0_30_m_are_refused_before_dispatch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_libero.py",
+      "target": "function:tests/test_libero.py:test_planar_moves_over_0_30_m_are_refused_before_dispatch",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_libero.py",
+      "target": "function:tests/test_libero.py:test_full_pick_and_place_terminates_and_freezes_motion",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_libero.py",
+      "target": "function:tests/test_libero.py:test_full_pick_and_place_terminates_and_freezes_motion",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_libero.py",
+      "target": "function:tests/test_libero.py:test_carrying_with_open_gripper_drops_the_object",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_libero.py",
+      "target": "function:tests/test_libero.py:test_carrying_with_open_gripper_drops_the_object",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_libero.py",
+      "target": "function:tests/test_libero.py:test_backend_error_payload_becomes_tool_error",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_libero.py",
+      "target": "function:tests/test_libero.py:test_backend_error_payload_becomes_tool_error",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_libero.py",
+      "target": "function:tests/test_libero.py:test_library_side_argument_validation",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_libero.py",
+      "target": "function:tests/test_libero.py:test_library_side_argument_validation",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_libero.py",
+      "target": "function:tests/test_libero.py:test_segment_not_found_is_a_result_not_an_error",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_libero.py",
+      "target": "function:tests/test_libero.py:test_segment_not_found_is_a_result_not_an_error",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_libero.py",
+      "target": "function:tests/test_libero.py:test_back_project_out_of_bounds_raises_tool_error",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_libero.py",
+      "target": "function:tests/test_libero.py:test_back_project_out_of_bounds_raises_tool_error",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_libero.py",
+      "target": "function:tests/test_libero.py:test_images_and_world_maps_decode",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_libero.py",
+      "target": "function:tests/test_libero.py:test_images_and_world_maps_decode",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_libero.py",
+      "target": "function:tests/test_libero.py:test_ledger_records_every_call_with_env_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_libero.py",
+      "target": "function:tests/test_libero.py:test_ledger_records_every_call_with_env_steps",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_libero.py",
+      "target": "function:tests/test_libero.py:test_cancellation_surfaces_as_episode_finished",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_libero.py",
+      "target": "function:tests/test_libero.py:test_cancellation_surfaces_as_episode_finished",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_libero.py",
+      "target": "function:tests/test_libero.py:test_state_orientation_helpers",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_libero.py",
+      "target": "function:tests/test_libero.py:test_state_orientation_helpers",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "file:tests/test_libero.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "file:tests/test_libero.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

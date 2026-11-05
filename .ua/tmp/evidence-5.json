@@ -1,0 +1,2073 @@
+[
+  {
+    "path": "src/pyrualean/__init__.py",
+    "category": "code",
+    "moduleDoc": "PyRUA-Lean: a pyautogui-style robot library for code policies.\n\nA policy is an ordinary Python file that defines ``run(robo)``.  ``robo`` is a\ntyped library (``robo.move_to(...)``, ``robo.pi0_pick(...)``,\n``robo.segment(...)``) whose calls are executed by a real backend; the first\nbackend is RPent's LIBERO toolkit, so the very same primitives that RPent's\ntool-calling agent uses are available as plain Python functions.",
+    "symbols": [],
+    "imports": [
+      "from ._backend import Backend, CallRecord, EpisodeFinished, Ledger, ToolError",
+      "from ._robot import RobotBase",
+      "from .libero import BackProjection, Contact, Gripper, LiberoRobot, Move, MovePose, Pick, RegionCenter, Release, Rotation, Segment, State",
+      "from .prompt import PromptBundle, TaskCard, api_reference, knowledge_text, render_prompt",
+      "from .robots import ROBOTS, RobotAdapter, get_adapter",
+      "from .runner import PolicyLoadError, PolicyOutcome, load_policy, run_policy"
+    ]
+  },
+  {
+    "path": "src/pyrualean/_backend.py",
+    "category": "code",
+    "moduleDoc": "Backend contract, error types and the per-episode call ledger.\n\nA backend is whatever executes a primitive for real: RPent's ``Toolkit`` is\nthe reference implementation (``execute_tool`` / ``solved``).  The robot\nclasses in this package only ever talk to a backend through this small\ncontract, so the same policy code runs against a fake backend in tests and\nagainst a live simulator in an evaluation.",
+    "symbols": [
+      {
+        "name": "unwrap",
+        "kind": "function",
+        "range": [
+          77,
+          95
+        ],
+        "owner": null,
+        "doc": "Split a backend result into ``(primitive_payload, state_envelope)``.\n\nRPent replaces the result of every state-changing tool with an observation\nenvelope (``step``, ``state``, ``terminated``, ``log.result`` ...).  The\nprimitive's own return value lives at ``log.result``.  Read-only tools\nreturn their payload directly, in which case the envelope is ``None``.",
+        "body": "payload = getattr(result, \"result\", result)\nif not isinstance(payload, dict):\n        raise ToolError(tool, f\"backend returned {type(payload).__name__}, not a dict\")\nlog = payload.get(\"log\")\nif isinstance(log, dict) and \"state\" in payload:\n        inner = log.get(\"result\")\n        if not isinstance(inner, dict):\nreturn payload, None"
+      },
+      {
+        "name": "raise_for_error",
+        "kind": "function",
+        "range": [
+          98,
+          103
+        ],
+        "owner": null,
+        "doc": "Raise :class:`ToolError` when a payload carries a backend error.",
+        "body": "error = payload.get(\"error\")\nif error:\n        raise ToolError(tool, str(error), payload)"
+      },
+      {
+        "name": "_jsonable",
+        "kind": "function",
+        "range": [
+          106,
+          111
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "try:\n        json.dumps(value)\n        return value"
+      },
+      {
+        "name": "Backend",
+        "kind": "class",
+        "range": [
+          28,
+          44
+        ],
+        "owner": null,
+        "doc": "Minimal dispatch contract implemented by every backend.",
+        "body": ""
+      },
+      {
+        "name": "Backend.execute_tool",
+        "kind": "function",
+        "range": [
+          31,
+          32
+        ],
+        "owner": "Backend",
+        "doc": "Run one primitive and return its native result.",
+        "body": ""
+      },
+      {
+        "name": "Backend.solved",
+        "kind": "function",
+        "range": [
+          34,
+          35
+        ],
+        "owner": "Backend",
+        "doc": "Whether the environment's own success predicate has fired.",
+        "body": ""
+      },
+      {
+        "name": "Backend.artifact",
+        "kind": "function",
+        "range": [
+          37,
+          38
+        ],
+        "owner": "Backend",
+        "doc": "Return the bytes of a recorded observation artifact.",
+        "body": ""
+      },
+      {
+        "name": "Backend.env_steps",
+        "kind": "function",
+        "range": [
+          40,
+          41
+        ],
+        "owner": "Backend",
+        "doc": "Total simulator steps executed so far (``None`` if unknown).",
+        "body": ""
+      },
+      {
+        "name": "Backend.cancel",
+        "kind": "function",
+        "range": [
+          43,
+          44
+        ],
+        "owner": "Backend",
+        "doc": "Interrupt the primitive that is currently executing, if any.",
+        "body": ""
+      },
+      {
+        "name": "ToolError",
+        "kind": "class",
+        "range": [
+          47,
+          60
+        ],
+        "owner": null,
+        "doc": "A primitive refused the call or failed while running.\n\nRaised for bad arguments, service failures and out-of-range lookups.\nMeasured outcomes (a grasp that did not lift, a servo that stopped short,\na segmentation with no mask) are *not* errors: they are returned as\nresult fields so a policy can branch on them.",
+        "body": ""
+      },
+      {
+        "name": "ToolError.__init__",
+        "kind": "function",
+        "range": [
+          56,
+          60
+        ],
+        "owner": "ToolError",
+        "doc": "",
+        "body": "super().__init__(f\"{tool}: {message}\")\nself.tool = tool\nself.message = message\nself.payload = payload or {}"
+      },
+      {
+        "name": "EpisodeFinished",
+        "kind": "class",
+        "range": [
+          63,
+          74
+        ],
+        "owner": null,
+        "doc": "The episode is over; the policy should return.\n\nThis derives from ``BaseException`` (like ``KeyboardInterrupt``) so that a\npolicy's ``except Exception`` blocks do not swallow it.  ``reason`` is one\nof ``\"terminated\"`` (task success), ``\"truncated\"`` (simulator step\nbudget), ``\"timeout\"`` (host wall-clock budget) or ``\"cancelled\"``.",
+        "body": ""
+      },
+      {
+        "name": "EpisodeFinished.__init__",
+        "kind": "function",
+        "range": [
+          72,
+          74
+        ],
+        "owner": "EpisodeFinished",
+        "doc": "",
+        "body": "super().__init__(reason)\nself.reason = reason"
+      },
+      {
+        "name": "CallRecord",
+        "kind": "class",
+        "range": [
+          115,
+          133
+        ],
+        "owner": null,
+        "doc": "One ``robo.<tool>(...)`` call as seen by the library.",
+        "body": "index: int\ntool: str\nkwargs: dict[str, Any]\nstarted_at: float\nelapsed_s: float\nok: bool\nstateful: bool\nenv_steps: int | None = None\nerror: str | None = None\nsummary: dict[str, Any] = field(default_factory=dict)"
+      },
+      {
+        "name": "CallRecord.to_dict",
+        "kind": "function",
+        "range": [
+          129,
+          133
+        ],
+        "owner": "CallRecord",
+        "doc": "",
+        "body": "record = asdict(self)\nrecord[\"kwargs\"] = {k: _jsonable(v) for k, v in self.kwargs.items()}\nrecord[\"summary\"] = {k: _jsonable(v) for k, v in self.summary.items()}\nreturn record"
+      },
+      {
+        "name": "Ledger",
+        "kind": "class",
+        "range": [
+          136,
+          176
+        ],
+        "owner": null,
+        "doc": "Append-only record of every library call in an episode.",
+        "body": ""
+      },
+      {
+        "name": "Ledger.__init__",
+        "kind": "function",
+        "range": [
+          139,
+          140
+        ],
+        "owner": "Ledger",
+        "doc": "",
+        "body": "self._records: list[CallRecord] = []"
+      },
+      {
+        "name": "Ledger.records",
+        "kind": "function",
+        "range": [
+          149,
+          150
+        ],
+        "owner": "Ledger",
+        "doc": "",
+        "body": "return list(self._records)"
+      },
+      {
+        "name": "Ledger.open",
+        "kind": "function",
+        "range": [
+          152,
+          163
+        ],
+        "owner": "Ledger",
+        "doc": "",
+        "body": "record = CallRecord(\n            index=len(self._records),\n            tool=tool,\nself._records.append(record)\nreturn record"
+      },
+      {
+        "name": "Ledger.stateful_calls",
+        "kind": "function",
+        "range": [
+          165,
+          166
+        ],
+        "owner": "Ledger",
+        "doc": "",
+        "body": "return sum(1 for record in self._records if record.stateful)"
+      },
+      {
+        "name": "Ledger.env_steps",
+        "kind": "function",
+        "range": [
+          168,
+          169
+        ],
+        "owner": "Ledger",
+        "doc": "",
+        "body": "return sum(record.env_steps or 0 for record in self._records)"
+      },
+      {
+        "name": "Ledger.write_jsonl",
+        "kind": "function",
+        "range": [
+          171,
+          176
+        ],
+        "owner": "Ledger",
+        "doc": "",
+        "body": "location = Path(path)\nlocation.parent.mkdir(parents=True, exist_ok=True)\nwith location.open(\"w\", encoding=\"utf-8\") as handle:\n            for record in self._records:\n                handle.write(json.dumps(record.to_dict(), ensure_ascii=False) + \"\\n\")"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import json",
+      "import time",
+      "from collections.abc import Iterator",
+      "from dataclasses import asdict, dataclass, field",
+      "from pathlib import Path",
+      "from typing import Any, Protocol"
+    ]
+  },
+  {
+    "path": "src/pyrualean/_robot.py",
+    "category": "code",
+    "moduleDoc": "Robot-independent core of a PyRUA-Lean robot class.\n\nA robot class (``LiberoRobot``, ``RobocasaRobot``, ``RobotwinRobot``,\n``RobodojoRobot``) is the only object a policy sees.  Every public method maps\n1:1 onto one RPent tool of that robot and returns a frozen dataclass; this\nmodule holds what all of them share: the backend dispatch with the call ledger, the episode guard\n(``EpisodeFinished`` once the task predicate fired or the host stopped the\nepisode), image / world-map / artifact access and the ``show`` request used\nby the ``on-demand`` image policy.\n\nSubclasses set the class attributes below and implement\n:meth:`_state_from_envelope` (turn RPent's observation envelope into their\n``State`` dataclass) and :meth:`_summary_dict` (a small dict the tool\nfeedback shows after every turn).  Public methods are rendered into the model-facing\nAPI reference from their signatures and docstrings, so every attribute or\nmethod that is not meant for the policy must start with an underscore.",
+    "symbols": [
+      {
+        "name": "effective_primitives",
+        "kind": "function",
+        "range": [
+          46,
+          50
+        ],
+        "owner": null,
+        "doc": "Intersect the requested primitive set with this adapter's capabilities.",
+        "body": "if requested not in PRIMITIVE_SETS:\n        raise ValueError(f\"primitives must be one of {PRIMITIVE_SETS}, got {requested!r}\")\nreturn requested if getattr(robot_cls, \"SUPPORTS_VLA\", True) else \"no-vla\""
+      },
+      {
+        "name": "RobotBase",
+        "kind": "class",
+        "range": [
+          53,
+          380
+        ],
+        "owner": null,
+        "doc": "Shared machinery of every robot class (see the module docstring).",
+        "body": "NAME: ClassVar[str] = \"\"\nVLA_PRIMITIVES: ClassVar[tuple[str, ...]] = ()\nSUPPORTS_VLA: ClassVar[bool] = True\nVLA_REFERENCE_EDITS: ClassVar[tuple[tuple[str, str], ...]] = ()\nCAMERAS: ClassVar[tuple[str, ...]] = ()\nIMAGE_ARTIFACTS: ClassVar[dict[tuple[str, str], str]] = {}\nWORLD_MAP_ARTIFACTS: ClassVar[dict[tuple[str, str], str]] = {}\nON_MOTION_IMAGES: ClassVar[tuple[str, ...]] = ()\nSHOW_RESOLUTION: ClassVar[str] = \"high\"\nSTATEFUL_TOOLS: ClassVar[frozenset[str]] = frozenset()\nSUMMARY_KEYS: ClassVar[tuple[str, ...]] = (\n        \"terminated\",\n        \"truncated\",\nSTATE_TOOL: ClassVar[str] = \"view_env_state\"\nABSENT_MEMBERS: ClassVar[frozenset[str]] = frozenset()"
+      },
+      {
+        "name": "RobotBase.__init__",
+        "kind": "function",
+        "range": [
+          104,
+          126
+        ],
+        "owner": "RobotBase",
+        "doc": "",
+        "body": "primitives = effective_primitives(type(self), primitives)\nself._backend = backend\nself._ledger = ledger if ledger is not None else Ledger()\nself._last_state: Any = None\nself._done = False\nself._truncated = False\nself._stop_reason: str | None = None\nself._show_requests: list[str] = []\nself._primitives = primitives\nself._hidden: frozenset[str] = (\n            frozenset(self.VLA_PRIMITIVES) if primitives == \"no-vla\" else frozenset()\n        )\nself._supervisor: Any = None\nself._execution_budget: Any = None\nself._action_revision = 0\nself._coordination_feedback: dict | None = None\nfor name in self._hidden:\n            setattr(self, name, functools.partial(self._refuse_hidden, name))"
+      },
+      {
+        "name": "RobotBase.task",
+        "kind": "function",
+        "range": [
+          180,
+          182
+        ],
+        "owner": "RobotBase",
+        "doc": "The task instruction given by the benchmark (authoritative).",
+        "body": "return str(getattr(self._current_state(), \"task\", \"\"))"
+      },
+      {
+        "name": "RobotBase.done",
+        "kind": "function",
+        "range": [
+          185,
+          187
+        ],
+        "owner": "RobotBase",
+        "doc": "True once the benchmark's success predicate has fired (sticky).",
+        "body": "return self._reported_success()"
+      },
+      {
+        "name": "RobotBase.state",
+        "kind": "function",
+        "range": [
+          189,
+          195
+        ],
+        "owner": "RobotBase",
+        "doc": "Read the recorded proprioceptive state of step ``step`` (``-1`` = latest).",
+        "body": "payload = self._readonly(self.STATE_TOOL, {\"step\": int(step)})\nstate = self._state_from_envelope(payload)\nif step == -1:\n            self._last_state = state\nreturn state"
+      },
+      {
+        "name": "RobotBase.image",
+        "kind": "function",
+        "range": [
+          197,
+          209
+        ],
+        "owner": "RobotBase",
+        "doc": "Load a recorded camera image as a ``numpy`` uint8 array (H, W, 3), RGB.\n\nPixel coordinates are (row, col) with row 0 at the top and col 0 at the\nleft; pass the same ``camera`` and ``resolution`` to the back-projection\nhelpers.  ``step`` selects the recorded step (``-1`` = latest).",
+        "body": "data = self.artifact(self._image_name(camera, resolution), step=step)\nimport numpy as np\nfrom PIL import Image\nwith Image.open(io.BytesIO(data)) as img:\n            return np.asarray(img.convert(\"RGB\"))"
+      },
+      {
+        "name": "RobotBase.world_map",
+        "kind": "function",
+        "range": [
+          211,
+          232
+        ],
+        "owner": "RobotBase",
+        "doc": "Load the per-pixel world coordinates of a recorded image.\n\nReturns a ``numpy`` float array (H, W, 3): ``world_map[row, col]`` is\nthe [x, y, z] of the surface seen at that pixel (zeros / non-finite\nwhere depth is invalid).  Load it to reason about many pixels at once.",
+        "body": "key = (camera, resolution)\nif key not in self.WORLD_MAP_ARTIFACTS:\n            raise ValueError(\n                f\"no world map for camera={camera!r} resolution={resolution!r}; \"\ndata = self.artifact(self.WORLD_MAP_ARTIFACTS[key], step=step)\nimport numpy as np\nloaded = np.load(io.BytesIO(data))\nif isinstance(loaded, np.ndarray):  # a bare .npy array\n            return loaded\nwith loaded as archive:  # an .npz archive: \"array\" or its first member\n            name = \"array\" if \"array\" in archive.files else archive.files[0]\n            return np.asarray(archive[name])"
+      },
+      {
+        "name": "RobotBase.show",
+        "kind": "function",
+        "range": [
+          234,
+          244
+        ],
+        "owner": "RobotBase",
+        "doc": "Attach the current image of ``camera`` to the feedback of this turn.\n\nImages are not returned automatically: call ``show(<camera>)`` when\n*you* (the author) need to look at the scene before writing the next\nturn.  Costs tokens: look only when a decision depends on it.",
+        "body": "if camera not in self.CAMERAS:\n            raise ValueError(f\"camera must be one of {self.CAMERAS}\")\nif camera not in self._show_requests:\n            self._show_requests.append(camera)"
+      },
+      {
+        "name": "RobotBase.artifact",
+        "kind": "function",
+        "range": [
+          246,
+          259
+        ],
+        "owner": "RobotBase",
+        "doc": "Return the raw bytes of a recorded artifact by name (advanced).",
+        "body": "record = self._ledger.open(\"artifact\", {\"name\": name, \"step\": step}, stateful=False)\nstarted = time.perf_counter()\ntry:\n            data = self._backend.artifact(name, step=int(step))\n            record.ok = True"
+      },
+      {
+        "name": "RobotBase._absorb",
+        "kind": "function",
+        "range": [
+          286,
+          302
+        ],
+        "owner": "RobotBase",
+        "doc": "Record the latest state and latch the episode flags.\n\n``terminated`` / ``truncated`` come from the envelope and from the\nparsed state when it has attributes of those names, so a robot whose\nsuccess flag RPent names differently (``eval_success``) or whose step\nbudget RPent never reports maps them in ``_state_from_envelope``\ninstead of overriding this method.",
+        "body": "if envelope is None:\n            return\nstate = self._state_from_envelope(envelope)\nself._last_state = state\nif envelope.get(\"terminated\") or getattr(state, \"terminated\", False):\n            self._done = True\nif envelope.get(\"truncated\") or getattr(state, \"truncated\", False):\n            self._truncated = True"
+      },
+      {
+        "name": "RobotBase._readonly",
+        "kind": "function",
+        "range": [
+          309,
+          330
+        ],
+        "owner": "RobotBase",
+        "doc": "",
+        "body": "record = self._ledger.open(tool, kwargs, stateful=False)\nstarted = time.perf_counter()\ntry:\n            payload, envelope = unwrap(self._backend.execute_tool(tool, kwargs), tool)\n            if envelope is not None:"
+      },
+      {
+        "name": "RobotBase._stateful",
+        "kind": "function",
+        "range": [
+          332,
+          380
+        ],
+        "owner": "RobotBase",
+        "doc": "",
+        "body": "self._guard()\nif self._supervisor is not None:\n            self._supervisor.before_action(tool, self)\nif self._execution_budget is not None:\n            self._execution_budget.before_action()\nrecord = self._ledger.open(tool, kwargs, stateful=True)\nself._action_revision += 1\nsteps_before = self._backend.env_steps()\nstarted = time.perf_counter()\ntry:\n            if self._supervisor is not None:\n                self._supervisor.begin_action(tool)\nif self._supervisor is not None:\n            outcome = dict(record.summary)\n            # Some adapters derive arrival from distance/tolerance instead of\nreturn result"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import functools",
+      "import io",
+      "import time",
+      "from collections.abc import Callable",
+      "from typing import Any, ClassVar",
+      "from ._backend import Backend, EpisodeFinished, Ledger, ToolError, raise_for_error, unwrap",
+      "import numpy as np",
+      "from PIL import Image",
+      "import numpy as np"
+    ]
+  },
+  {
+    "path": "src/pyrualean/libero.py",
+    "category": "code",
+    "moduleDoc": "LIBERO robot API for code policies.\n\nEvery public method of :class:`LiberoRobot` maps 1:1 onto one RPent LIBERO\nprimitive (the same scripted OSC servos, the same frozen Pi0.5 VLA calls and\nthe same SAM3 / back-projection helpers that RPent's tool-calling agent uses).\nThe difference is the calling convention: a policy is an ordinary Python\nprogram that calls these methods and branches on their typed return values,\ninstead of a language model emitting one tool call per turn.\n\nThe docstrings in this module are the model-facing documentation: the prompt\nis generated from them (see :mod:`pyrualean.prompt`), so keep them accurate.",
+    "symbols": [
+      {
+        "name": "_quat_to_matrix",
+        "kind": "function",
+        "range": [
+          43,
+          49
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "x, y, z, w = (float(v) for v in q)\nreturn [\n        [1 - 2 * (y * y + z * z), 2 * (x * y - z * w), 2 * (x * z + y * w)],\n        [2 * (x * y + z * w), 1 - 2 * (x * x + z * z), 2 * (y * z - x * w)],"
+      },
+      {
+        "name": "_xyz",
+        "kind": "function",
+        "range": [
+          296,
+          303
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "try:\n        vals = tuple(float(v) for v in value)\n    except (TypeError, ValueError) as exc:\nif len(vals) != 3 or not all(math.isfinite(v) for v in vals):\n        raise ValueError(f\"{name} must be three finite numbers, got {value!r}\")\nreturn vals  # type: ignore[return-value]"
+      },
+      {
+        "name": "_tuple3",
+        "kind": "function",
+        "range": [
+          306,
+          312
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "if value is None:\n        return None\nvals = tuple(float(v) for v in value)\nif len(vals) != 3:\n        return None\nreturn vals  # type: ignore[return-value]"
+      },
+      {
+        "name": "_gripper",
+        "kind": "function",
+        "range": [
+          315,
+          322
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "try:\n        g = float(value)\n    except (TypeError, ValueError) as exc:\nif not -1.0 <= g <= 1.0:\n        raise ValueError(\"gripper must be within [-1, +1]: -1 opens, +1 closes\")\nreturn g"
+      },
+      {
+        "name": "State",
+        "kind": "class",
+        "range": [
+          53,
+          89
+        ],
+        "owner": null,
+        "doc": "Proprioceptive snapshot of the robot at one recorded step.\n\nstep: index of the recorded step (0 = initial scene).\ntask: the task instruction given by the benchmark (authoritative).\neef_pos: end-effector (gripper) position [x, y, z] in the world frame, metres.\neef_quat: end-effector orientation quaternion [x, y, z, w].\ngripper_qpos: the two finger joint positions.\ngripper_opening: finger separation proxy, |q0| + |q1|.  About 0.08 when\n    fully open, about 0.0 when closed on nothing; roughly 0.01-0.05 means\n    the fingers closed on an object.\nobject_names: names of the movable objects in the scene (no poses).\nterminated: the benchmark's success predicate has fired.\ntruncated: the simulator step budget is exhausted.",
+        "body": "step: int\ntask: str\neef_pos: tuple[float, float, float]\neef_quat: tuple[float, float, float, float]\ngripper_qpos: tuple[float, float]\ngripper_opening: float\nobject_names: tuple[str, ...]\nterminated: bool\ntruncated: bool"
+      },
+      {
+        "name": "State.eef_yaw",
+        "kind": "function",
+        "range": [
+          80,
+          83
+        ],
+        "owner": "State",
+        "doc": "World-frame yaw of the gripper in radians (as used by rotate_wrist).",
+        "body": "m = _quat_to_matrix(self.eef_quat)\nreturn math.atan2(m[1][0], m[0][0])"
+      },
+      {
+        "name": "State.eef_pitch",
+        "kind": "function",
+        "range": [
+          86,
+          89
+        ],
+        "owner": "State",
+        "doc": "Gripper tilt in radians (0 = pointing straight down; see rotate_pitch).",
+        "body": "m = _quat_to_matrix(self.eef_quat)\nreturn math.atan2(m[1][2], -m[2][2])"
+      },
+      {
+        "name": "Move",
+        "kind": "class",
+        "range": [
+          93,
+          112
+        ],
+        "owner": null,
+        "doc": "Outcome of ``move_to``.\n\ntarget_xyz: the commanded target.\nfinal_eef_pos: where the gripper actually stopped.\nfinal_dist_m: distance between the two, metres.\nreached: ``final_dist_m <= tol``.  False means the servo stalled (IK limit,\n    collision, or step budget) - re-plan instead of assuming you arrived.\nsteps_used / max_steps: simulator steps consumed / allowed.\nterminated / truncated: episode flags after the move.",
+        "body": "target_xyz: tuple[float, float, float]\nfinal_eef_pos: tuple[float, float, float]\nfinal_dist_m: float\nreached: bool\nsteps_used: int\nmax_steps: int\nterminated: bool\ntruncated: bool"
+      },
+      {
+        "name": "MovePose",
+        "kind": "class",
+        "range": [
+          116,
+          129
+        ],
+        "owner": null,
+        "doc": "Outcome of ``move_pose`` (position and orientation servo).\n\nreached: position within ``tol`` (orientation errors are not folded in).\nfinal_pitch: gripper pitch after the move, radians.",
+        "body": "final_eef_pos: tuple[float, float, float]\nfinal_dist_m: float\nfinal_pitch: float\nreached: bool\nsteps_used: int\nterminated: bool\ntruncated: bool"
+      },
+      {
+        "name": "Rotation",
+        "kind": "class",
+        "range": [
+          133,
+          146
+        ],
+        "owner": null,
+        "doc": "Outcome of ``rotate_wrist`` / ``rotate_pitch``; angles in radians.\n\nreached: ``abs(final_err) <= tol``.",
+        "body": "start: float\ntarget: float\nfinal: float\nfinal_err: float\nreached: bool\nsteps_used: int\nterminated: bool\ntruncated: bool"
+      },
+      {
+        "name": "Gripper",
+        "kind": "class",
+        "range": [
+          150,
+          156
+        ],
+        "owner": null,
+        "doc": "Outcome of ``set_gripper``: the command that was held and for how long.",
+        "body": "gripper: float\nsteps: int\nterminated: bool\ntruncated: bool"
+      },
+      {
+        "name": "Release",
+        "kind": "class",
+        "range": [
+          160,
+          172
+        ],
+        "owner": null,
+        "doc": "Outcome of ``release``.\n\npeak_gripper_opening: widest finger separation seen while opening.\nterminated: True if letting go satisfied the task predicate.",
+        "body": "steps_used: int\nstart_gripper_opening: float\npeak_gripper_opening: float\nfinal_gripper_opening: float\nterminated: bool\ntruncated: bool"
+      },
+      {
+        "name": "Pick",
+        "kind": "class",
+        "range": [
+          176,
+          197
+        ],
+        "owner": null,
+        "doc": "Outcome of ``pi0_pick``.\n\nsuccess: the VLA's lift heuristic fired (descended, then rose by\n    ``lift_thresh`` with the fingers closed on something).  It is a hint,\n    not proof: confirm with ``state().gripper_opening`` and the wrist image.\nchunks_used / max_chunks: VLA action chunks consumed / allowed.\npeak_lift_m: how far the gripper rose after its lowest point.\nmin_gripper_opening / final_gripper_opening: finger separation statistics.\nterminated: the task predicate fired during the pick.\ndiagnostics: raw threshold bookkeeping from the primitive.",
+        "body": "success: bool\nchunks_used: int\nmax_chunks: int\npeak_lift_m: float\nmin_gripper_opening: float\nfinal_gripper_opening: float\nterminated: bool\ntruncated: bool\ndiagnostics: dict[str, Any]"
+      },
+      {
+        "name": "Contact",
+        "kind": "class",
+        "range": [
+          201,
+          213
+        ],
+        "owner": null,
+        "doc": "Outcome of ``pi0_doubled``.\n\nsuccess: mirrors ``terminated`` only.  For an intermediate contact skill\n    (knob, drawer, door) ``False`` does not mean the contact failed;\n    inspect the state or an image.",
+        "body": "success: bool\nchunks_used: int\nmax_chunks: int\nterminated: bool\ntruncated: bool"
+      },
+      {
+        "name": "Segment",
+        "kind": "class",
+        "range": [
+          217,
+          237
+        ],
+        "owner": null,
+        "doc": "Outcome of ``segment``.\n\nfound: a mask above ``min_score`` was produced.\nworld_xyz: median world coordinate of the mask (surface point, metres), or\n    None when not found / no valid depth.\nscore: SAM3 confidence in [0, 1] (brand nouns score ~0.05, colour+shape\n    phrases ~0.7).\nbox: mask bounding box as reported by SAM3, or None.\noverlay_artifact: name of the saved overlay image (``artifact()`` loads it).\nerror: why nothing was found, or None.",
+        "body": "found: bool\nworld_xyz: tuple[float, float, float] | None\nscore: float | None\nbox: Any\ncamera: str\nstep: int\noverlay_artifact: str | None\nerror: str | None"
+      },
+      {
+        "name": "BackProjection",
+        "kind": "class",
+        "range": [
+          241,
+          249
+        ],
+        "owner": null,
+        "doc": "Outcome of ``back_project``: the world point under one pixel.",
+        "body": "world_xyz: tuple[float, float, float]\npixel: tuple[int, int]\ncamera: str\nresolution: str\nstep: int\nimage_size: tuple[int, int]"
+      },
+      {
+        "name": "RegionCenter",
+        "kind": "class",
+        "range": [
+          253,
+          265
+        ],
+        "owner": null,
+        "doc": "Outcome of ``region_center``.\n\ncenter_xyz: midpoint of the region's world x/y extent with median z.\nmedian_xyz: per-axis median of the same pixels.\nn_valid: pixels that survived the depth and z-band filters.",
+        "body": "center_xyz: tuple[float, float, float]\nmedian_xyz: tuple[float, float, float]\nn_valid: int\ncamera: str\nstep: int"
+      },
+      {
+        "name": "LiberoRobot",
+        "kind": "class",
+        "range": [
+          330,
+          938
+        ],
+        "owner": null,
+        "doc": "A LIBERO tabletop Franka arm with a two-finger gripper.\n\nWorld frame: x/y span the table, z is up, units are metres and radians.\nThe arm starts at a home pose above the table, gripper open and pointing\ndown.  Motion calls block until the primitive finishes and return a typed\nresult describing what actually happened; nothing is queued.\n\nGripper commands are floats: ``LiberoRobot.OPEN`` (-1) opens,\n``LiberoRobot.CLOSE`` (+1) closes and keeps holding.  Every motion call\ntakes a ``gripper`` argument that is *held for the whole motion*; carrying\nan object with the default ``gripper=-1`` silently drops it.\n\nPerception is camera based: the scene is observed through a fixed\n``agentview`` camera (global layout) and a ``wrist`` camera (close range).\nObject poses are never given; use ``segment`` / ``back_project`` on the\nrecorded images to obtain world coordinates.",
+        "body": "OPEN: float = -1.0\nCLOSE: float = 1.0\nNAME: ClassVar[str] = \"libero\"\nCAMERAS: ClassVar[tuple[str, ...]] = (\"agentview\", \"wrist\")\nIMAGE_ARTIFACTS: ClassVar[dict[tuple[str, str], str]] = {\n        (\"agentview\", \"high\"): \"agentview_high.png\",\n        (\"agentview\", \"low\"): \"agentview.png\",\nWORLD_MAP_ARTIFACTS: ClassVar[dict[tuple[str, str], str]] = {\n        (\"agentview\", \"high\"): \"agentview_world_high.npz\",\n        (\"agentview\", \"low\"): \"agentview_world.npz\",\nON_MOTION_IMAGES: ClassVar[tuple[str, ...]] = (\"agentview_high.png\", \"wrist_high.png\")\nSTATEFUL_TOOLS: ClassVar[frozenset[str]] = STATEFUL_TOOLS\nVLA_PRIMITIVES: ClassVar[tuple[str, ...]] = (\"pi0_pick\", \"pi0_doubled\")"
+      },
+      {
+        "name": "LiberoRobot.task",
+        "kind": "function",
+        "range": [
+          374,
+          376
+        ],
+        "owner": "LiberoRobot",
+        "doc": "The task instruction, e.g. ``\"put the bowl on the plate\"``.",
+        "body": "return self._current_state().task"
+      },
+      {
+        "name": "LiberoRobot.done",
+        "kind": "function",
+        "range": [
+          379,
+          381
+        ],
+        "owner": "LiberoRobot",
+        "doc": "True once the benchmark's success predicate has fired (sticky).",
+        "body": "return self._done or bool(self._backend.solved())"
+      },
+      {
+        "name": "LiberoRobot.state",
+        "kind": "function",
+        "range": [
+          383,
+          397
+        ],
+        "owner": "LiberoRobot",
+        "doc": "Read the recorded proprioceptive state.\n\nArgs:\n    step: recorded step to read; ``-1`` is the latest, ``0`` the\n        initial scene.  A new step is recorded after every motion call.\nReturns:\n    State with gripper position, orientation, finger opening, the\n    object names and the episode flags.",
+        "body": "payload = self._readonly(\"view_env_state\", {\"step\": int(step)})\nstate = self._state_from_envelope(payload)\nif step == -1:\n            self._last_state = state\nreturn state"
+      },
+      {
+        "name": "LiberoRobot.image",
+        "kind": "function",
+        "range": [
+          399,
+          411
+        ],
+        "owner": "LiberoRobot",
+        "doc": "Load a recorded camera image as a ``numpy`` uint8 array (H, W, 3), RGB.\n\nArgs:\n    camera: ``\"agentview\"`` (fixed global view, best for identifying\n        objects and layout) or ``\"wrist\"`` (camera on the gripper,\n        best for close-range geometry).\n    resolution: ``\"high\"`` (1024x1024) or ``\"low\"`` (256x256).  Pixel\n        coordinates are (row, col) with row 0 at the top and col 0 at\n        the left; pass the same resolution to ``back_project``.\n    step: recorded step, ``-1`` = latest.",
+        "body": "return super().image(camera, resolution=resolution, step=step)"
+      },
+      {
+        "name": "LiberoRobot.world_map",
+        "kind": "function",
+        "range": [
+          413,
+          423
+        ],
+        "owner": "LiberoRobot",
+        "doc": "Load the per-pixel world coordinates of a recorded image.\n\nReturns a ``numpy`` float array (H, W, 3): ``world_map[row, col]`` is\nthe [x, y, z] of the surface seen at that pixel (zeros / non-finite\nwhere depth is invalid).  This is what ``back_project`` reads; load it\nwhen you want to reason about many pixels at once.",
+        "body": "return super().world_map(camera, resolution=resolution, step=step)"
+      },
+      {
+        "name": "LiberoRobot.show",
+        "kind": "function",
+        "range": [
+          425,
+          433
+        ],
+        "owner": "LiberoRobot",
+        "doc": "Attach the current image of ``camera`` to the feedback of this turn.\n\nImages are not returned automatically; call ``show(\"agentview\")`` or\n``show(\"wrist\")`` when *you* (the author) need to look at the scene\nbefore writing the next turn.  Costs tokens: look only when a\ndecision depends on it.",
+        "body": "super().show(camera)"
+      },
+      {
+        "name": "LiberoRobot.artifact",
+        "kind": "function",
+        "range": [
+          435,
+          441
+        ],
+        "owner": "LiberoRobot",
+        "doc": "Return the raw bytes of a recorded artifact (advanced).\n\nNames include ``agentview_high.png``, ``wrist_high.png``,\n``agentview_depth.npz`` and the ``overlay_artifact`` of a ``segment``.",
+        "body": "return super().artifact(name, step=step)"
+      },
+      {
+        "name": "LiberoRobot.camera_meta",
+        "kind": "function",
+        "range": [
+          443,
+          447
+        ],
+        "owner": "LiberoRobot",
+        "doc": "Return the camera calibration metadata (intrinsics/extrinsics) as a dict.",
+        "body": "payload = self._readonly(\"view_camera_meta\", {\"camera\": camera, \"step\": int(step)})\nmeta = payload.get(\"camera_meta\")\nreturn dict(meta) if isinstance(meta, dict) else {}"
+      },
+      {
+        "name": "LiberoRobot.segment",
+        "kind": "function",
+        "range": [
+          449,
+          498
+        ],
+        "owner": "LiberoRobot",
+        "doc": "Locate an object with SAM3 on a recorded image and return its world position.\n\nGive exactly one of ``prompt`` (a short visual description) or\n``point`` (a positive pixel ``(row, col)`` in the high-resolution\nimage).  The top-ranked mask is projected through the world map, so\n``world_xyz`` is the object's visible *surface* median: use its x/y for\na target and pick z from the object's resting height.\n\nArgs:\n    prompt: colour + shape + relation, e.g. ``\"the black bowl on the\n        stove\"``.  Brand or internal names (``\"akita\"``,\n        ``\"alphabet soup\"``) score badly; describe what it looks like.\n    camera: ``\"agentview\"`` for global identity, ``\"wrist\"`` for\n        refinement once the gripper is 15-20 cm above the target.\n    point: alternative to ``prompt``; a pixel on the object.\n    min_score: reject masks below this confidence.\n    step: recorded step whose image to use (``-1`` = latest).\nReturns:\n    Segment; check ``found`` before using ``world_xyz``.",
+        "body": "kwargs: dict[str, Any] = {\n            \"camera\": camera,\n            \"step\": int(step),\nif prompt is not None:\n            kwargs[\"prompt\"] = str(prompt)\nif point is not None:\n            kwargs[\"point\"] = [int(point[0]), int(point[1])]\npayload = self._readonly(\"segment\", kwargs, allow_error_key=\"found\")\nreturn Segment(\n            found=bool(payload.get(\"found\")),\n            world_xyz=_tuple3(payload.get(\"world_xyz\")),"
+      },
+      {
+        "name": "LiberoRobot.back_project",
+        "kind": "function",
+        "range": [
+          500,
+          541
+        ],
+        "owner": "LiberoRobot",
+        "doc": "Return the world [x, y, z] of the surface seen at pixel ``(row, col)``.\n\nThe pixel must come from the same camera and resolution as requested\n(``image(camera, resolution=...)``).  Sample several pixels firmly on\nan object's top surface and take the median; pixels on thin rims,\nedges or the gap to the table hit the background metres away.\n\nRaises:\n    ToolError: pixel out of bounds or no valid depth at that pixel.",
+        "body": "payload = self._readonly(\n            \"back_project\",\n            {\nxyz = _tuple3(payload.get(\"world_xyz\"))\nif xyz is None:\n            raise ToolError(\"back_project\", \"no world_xyz in result\", payload)\npixel = payload.get(\"pixel\", [row, col])\nsize = payload.get(\"image_size\", [0, 0])\nreturn BackProjection(\n            world_xyz=xyz,\n            pixel=(int(pixel[0]), int(pixel[1])),"
+      },
+      {
+        "name": "LiberoRobot.region_center",
+        "kind": "function",
+        "range": [
+          543,
+          585
+        ],
+        "owner": "LiberoRobot",
+        "doc": "Return the world centre of a pixel window (e.g. a container cavity).\n\nUses the midpoint of the window's world x/y extent rather than a\nmedian, which is biased towards a rim or edge.  ``z_min`` / ``z_max``\nkeep only pixels inside a world-z band (e.g. the basket floor).\n\nRaises:\n    ToolError: empty window or too few valid pixels.",
+        "body": "kwargs: dict[str, Any] = {\n            \"row_range\": [int(row_range[0]), int(row_range[1])],\n            \"col_range\": [int(col_range[0]), int(col_range[1])],\nif z_min is not None:\n            kwargs[\"z_min\"] = float(z_min)\nif z_max is not None:\n            kwargs[\"z_max\"] = float(z_max)\npayload = self._readonly(\"back_project\", kwargs)\ncenter = _tuple3(payload.get(\"center_xyz\"))\nmedian = _tuple3(payload.get(\"median_xyz\"))\nif center is None or median is None:\n            raise ToolError(\"back_project\", \"no region centre in result\", payload)\nreturn RegionCenter(\n            center_xyz=center,\n            median_xyz=median,"
+      },
+      {
+        "name": "LiberoRobot.move_to",
+        "kind": "function",
+        "range": [
+          589,
+          645
+        ],
+        "owner": "LiberoRobot",
+        "doc": "Servo the gripper to a world-frame position, holding its orientation.\n\nArgs:\n    xyz: target [x, y, z] in metres.  One call may move at most\n        0.30 m in the x/y plane; longer traversals raise ValueError -\n        split them into 2-3 waypoints at carrying height.\n    gripper: -1 open, +1 close; held during the whole motion.\n    tol: stop when within this distance (m).\n    step_clip: per-step travel cap (m): 0.025 empty/box, 0.015 cans,\n        0.012 tall bottles or fine approaches.\n    max_steps: simulator step budget.\n    target_yaw: optional world yaw (rad) to servo simultaneously.\n    yaw_step_clip: per-step yaw cap (rad) when ``target_yaw`` is set.\n    action_scale: OSC action scale; leave at the default.\nReturns:\n    Move; check ``reached`` - a stalled servo returns normally.",
+        "body": "target = _xyz(xyz)\nself._check_planar_move(target)\nkwargs: dict[str, Any] = {\n            \"xyz\": list(target),\n            \"gripper\": _gripper(gripper),\nif target_yaw is not None:\n            kwargs[\"target_yaw\"] = float(target_yaw)\n            kwargs[\"yaw_step_clip\"] = float(yaw_step_clip)\nreturn self._stateful(\"move_to\", kwargs, build)"
+      },
+      {
+        "name": "LiberoRobot.move_pose",
+        "kind": "function",
+        "range": [
+          647,
+          699
+        ],
+        "owner": "LiberoRobot",
+        "doc": "Servo position and wrist orientation (pitch/yaw) at the same time.\n\nUse it where ``move_to`` stalls short of a low or recessed target\n(cabinet fronts, microwave cavities): co-varying tilt and position\nthreads the IK singularity that a fixed gripper-down servo hits.\n``gripper`` defaults to open; pass ``+1`` when holding an object.",
+        "body": "target = _xyz(xyz)\nself._check_planar_move(target)\nkwargs: dict[str, Any] = {\n            \"xyz\": list(target),\n            \"gripper\": _gripper(gripper),\nif target_pitch is not None:\n            kwargs[\"target_pitch\"] = float(target_pitch)\nif target_yaw is not None:\n            kwargs[\"target_yaw\"] = float(target_yaw)\nreturn self._stateful(\"move_pose\", kwargs, build)"
+      },
+      {
+        "name": "LiberoRobot.rotate_wrist",
+        "kind": "function",
+        "range": [
+          701,
+          729
+        ],
+        "owner": "LiberoRobot",
+        "doc": "Rotate the gripper about the world z axis, keeping its position.\n\nGive exactly one of ``target_yaw`` (absolute, rad) or ``delta_yaw``\n(relative, rad).  ``state().eef_yaw`` reports the current yaw.\n``gripper`` defaults to +1 (keep holding).",
+        "body": "if (target_yaw is None) == (delta_yaw is None):\n            raise ValueError(\"give exactly one of target_yaw or delta_yaw\")\nkwargs: dict[str, Any] = {\n            \"gripper\": _gripper(gripper),\n            \"max_steps\": int(max_steps),\nif target_yaw is not None:\n            kwargs[\"target_yaw\"] = float(target_yaw)\n        else:\nreturn self._stateful(\"rotate_wrist\", kwargs, lambda p: self._rotation(p, \"yaw\", tol))"
+      },
+      {
+        "name": "LiberoRobot.rotate_pitch",
+        "kind": "function",
+        "range": [
+          731,
+          759
+        ],
+        "owner": "LiberoRobot",
+        "doc": "Tilt the gripper about the world x axis, keeping position and yaw.\n\nPitch 0 points the gripper straight down; +pi/2 points it along world\n+y, -pi/2 along -y.  Use before threading into an opening whose front\nfaces along y.  Give exactly one of ``target_pitch`` or ``delta_pitch``.",
+        "body": "if (target_pitch is None) == (delta_pitch is None):\n            raise ValueError(\"give exactly one of target_pitch or delta_pitch\")\nkwargs: dict[str, Any] = {\n            \"gripper\": _gripper(gripper),\n            \"max_steps\": int(max_steps),\nif target_pitch is not None:\n            kwargs[\"target_pitch\"] = float(target_pitch)\n        else:\nreturn self._stateful(\"rotate_pitch\", kwargs, lambda p: self._rotation(p, \"pitch\", tol))"
+      },
+      {
+        "name": "LiberoRobot.set_gripper",
+        "kind": "function",
+        "range": [
+          761,
+          777
+        ],
+        "owner": "LiberoRobot",
+        "doc": "Hold the current pose and drive the gripper for ``steps`` simulator steps.\n\n``set_gripper(+1, steps=8)`` right after a successful pick firms the\ngrip before carrying (use ``steps<=5`` for a laterally weak can).",
+        "body": "kwargs = {\"gripper\": _gripper(gripper), \"steps\": int(steps)}\nreturn self._stateful(\n            \"set_gripper\",\n            kwargs,"
+      },
+      {
+        "name": "LiberoRobot.release",
+        "kind": "function",
+        "range": [
+          779,
+          797
+        ],
+        "owner": "LiberoRobot",
+        "doc": "Open the gripper in place for up to ``max_steps`` steps and let go.\n\nReturns as soon as the task predicate fires (``terminated``), so a\nsuccessful placement usually ends the episode here.",
+        "body": "kwargs = {\"max_steps\": int(max_steps)}\nreturn self._stateful(\n            \"release\",\n            kwargs,"
+      },
+      {
+        "name": "LiberoRobot.pi0_pick",
+        "kind": "function",
+        "range": [
+          801,
+          849
+        ],
+        "owner": "LiberoRobot",
+        "doc": "Let the frozen Pi0.5 VLA perform a closed-loop grasp.\n\nThe VLA runs ``prompt`` for up to ``max_chunks`` action chunks (each a\nshort burst of steps) and stops early once the gripper has descended by\n``descent_thresh``, closed on something (opening in\n``[gripper_open_thresh, gripper_closed_thresh)``) and risen by\n``lift_thresh``.  Use it for the grasp: pre-position the gripper above\nthe target, keep the prompt short (``\"pick up the red mug\"``), use a\nmodest chunk budget (20 is the usual choice) and verify the grasp from\nthe lift, the gripper closure and the images; then script the carry\nand release yourself.\n\nReturns:\n    Pick; ``success`` is a heuristic - verify with ``state()`` and the\n    wrist image before carrying.",
+        "body": "kwargs: dict[str, Any] = {\n            \"prompt\": str(prompt),\n            \"max_chunks\": int(max_chunks),\nreturn self._stateful(\n            \"pi0_pick\",\n            kwargs,"
+      },
+      {
+        "name": "LiberoRobot.pi0_doubled",
+        "kind": "function",
+        "range": [
+          851,
+          870
+        ],
+        "owner": "LiberoRobot",
+        "doc": "Let the frozen Pi0.5 VLA perform a contact skill that is not a pick.\n\nFor knobs, buttons, drawers, doors and short pushes (``\"turn on the\nstove\"``, ``\"open the top drawer\"``).  Runs up to ``max_chunks`` chunks\nor until the task predicate fires.  ``success`` only mirrors that\npredicate; check the state or an image to judge an intermediate step.",
+        "body": "kwargs = {\"prompt\": str(prompt), \"max_chunks\": int(max_chunks)}\nreturn self._stateful(\n            \"pi0_doubled\",\n            kwargs,"
+      },
+      {
+        "name": "LiberoRobot._rotation",
+        "kind": "function",
+        "range": [
+          875,
+          886
+        ],
+        "owner": "LiberoRobot",
+        "doc": "",
+        "body": "err = float(p.get(\"final_err\", math.inf))\nreturn Rotation(\n            start=float(p.get(f\"start_{axis}\", 0.0)),\n            target=float(p.get(f\"target_{axis}\", 0.0)),"
+      },
+      {
+        "name": "LiberoRobot._state_from_envelope",
+        "kind": "function",
+        "range": [
+          888,
+          909
+        ],
+        "owner": "LiberoRobot",
+        "doc": "",
+        "body": "raw = envelope.get(\"state\") or {}\npos = _tuple3(raw.get(\"robot0_eef_pos\")) or (0.0, 0.0, 0.0)\nquat_raw = raw.get(\"robot0_eef_quat\") or (0.0, 0.0, 0.0, 1.0)\nquat = tuple(float(v) for v in quat_raw)\nif len(quat) != 4:\n            quat = (0.0, 0.0, 0.0, 1.0)\nqpos_raw = raw.get(\"robot0_gripper_qpos\") or (0.0, 0.0)\nqpos = tuple(float(v) for v in qpos_raw)[:2]\nif len(qpos) != 2:\n            qpos = (0.0, 0.0)\nreturn State(\n            step=int(envelope.get(\"step\", -1)),\n            task=str(envelope.get(\"task_language\") or \"\"),"
+      },
+      {
+        "name": "LiberoRobot._summary_dict",
+        "kind": "function",
+        "range": [
+          911,
+          922
+        ],
+        "owner": "LiberoRobot",
+        "doc": "Compact state for the per-turn tool feedback (host-facing).",
+        "body": "state = self.state()\nreturn {\n            \"step\": state.step,\n            \"eef_pos\": [round(v, 4) for v in state.eef_pos],"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import math",
+      "from collections.abc import Sequence",
+      "from dataclasses import dataclass",
+      "from typing import Any, ClassVar",
+      "from ._backend import ToolError",
+      "from ._robot import RobotBase",
+      "from .robots import RobotAdapter"
+    ]
+  },
+  {
+    "path": "src/pyrualean/robocasa.py",
+    "category": "code",
+    "moduleDoc": "RoboCasa365 robot API for code policies.\n\nEvery public method of :class:`RobocasaRobot` maps 1:1 onto one RPent RoboCasa\ntool (the same OSC arm servos and base controller, the same frozen RLDX-1 VLA\ncalls and the same world-map queries that RPent's tool-calling agent uses),\nwith RPent's argument names and defaults.  The difference is the calling\nconvention: a policy is an ordinary Python program that calls these methods\nand branches on their typed return values.\n\nThe docstrings in this module are the model-facing documentation: the prompt\nis generated from them (see :mod:`pyrualean.prompt`), so keep them accurate.",
+    "symbols": [
+      {
+        "name": "_floats",
+        "kind": "function",
+        "range": [
+          377,
+          384
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "try:\n        vals = tuple(float(v) for v in value)\n    except (TypeError, ValueError) as exc:\nif len(vals) != n or not all(math.isfinite(v) for v in vals):\n        raise ValueError(f\"{name} must be {n} finite numbers, got {value!r}\")\nreturn vals"
+      },
+      {
+        "name": "_tuple_n",
+        "kind": "function",
+        "range": [
+          387,
+          395
+        ],
+        "owner": null,
+        "doc": "``value`` as an n-tuple of floats, None when absent or malformed (numpy-safe).",
+        "body": "if value is None:\n        return None\ntry:\n        vals = tuple(float(v) for v in value)\n    except (TypeError, ValueError):\nreturn vals if len(vals) == n else None"
+      },
+      {
+        "name": "_tuple3",
+        "kind": "function",
+        "range": [
+          398,
+          399
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return _tuple_n(value, 3)  # type: ignore[return-value]"
+      },
+      {
+        "name": "_gripper",
+        "kind": "function",
+        "range": [
+          402,
+          408
+        ],
+        "owner": null,
+        "doc": "RPent's tri-state gripper argument: +1 close, -1 open or ``\"hold\"``.",
+        "body": "if value is None or value == \"hold\":\n        return \"hold\"\nif isinstance(value, str):\n        raise ValueError(\"gripper must be +1 (close), -1 (open) or 'hold'\")\nreturn _gripper_command(value)"
+      },
+      {
+        "name": "_gripper_command",
+        "kind": "function",
+        "range": [
+          411,
+          418
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "try:\n        g = float(value)\n    except (TypeError, ValueError) as exc:\nif not -1.0 <= g <= 1.0 or not math.isfinite(g):\n        raise ValueError(\"gripper must be within [-1, +1]: +1 closes, -1 opens\")\nreturn g"
+      },
+      {
+        "name": "_pixels",
+        "kind": "function",
+        "range": [
+          421,
+          431
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "if len(pixels) == 2 and all(isinstance(v, Real) for v in pixels):\n        pixels = [pixels]  # a single [row, col] pair\nif not 1 <= len(pixels) <= MAX_PIXELS:\n        raise ValueError(f\"pixels must contain between 1 and {MAX_PIXELS} [row, col] pairs\")\nout = []\nfor pixel in pixels:\n        if len(pixel) != 2:\n            raise ValueError(f\"every pixel must be a [row, col] pair, got {pixel!r}\")\nreturn out"
+      },
+      {
+        "name": "State",
+        "kind": "class",
+        "range": [
+          57,
+          120
+        ],
+        "owner": null,
+        "doc": "Snapshot of the robot and of the episode at one recorded step.\n\nstep: index of the recorded step (0 = initial scene).  A new step is\n    recorded after every motion call.\ntask: the task instruction given by the benchmark (authoritative; the VLA\n    acts on exactly this text).\neef_pos: gripper (end-effector) position [x, y, z] in the world frame,\n    metres.  This is what ``move_to`` servos and what ``back_project_batch``\n    coordinates are directly comparable to.\neef_quat: gripper orientation as a unit quaternion [x, y, z, w].\ngripper_qpos: the two finger joint positions (q0 >= 0, q1 <= 0).\ngripper_opening: finger separation proxy |q0| + |q1|: about 0.04 at the\n    start (fingers half open), about 0.08 fully open, about 0.0 closed on\n    nothing; a value that stays in between after closing means the\n    fingers stopped on something.\nbase_pos: mobile-base position [x, y, z] in the world frame, metres.\nbase_quat: base orientation [x, y, z, w]; ``base_yaw`` is its heading.\nsuccess: the benchmark's own success predicate (``_check_success``) has\n    fired.  This is the only definition of success; it equals\n    ``terminated`` and ``robo.done``.\ntask_progress: the live values the success predicate computes (its\n    counters, flags and sub-predicates, e.g. a joint fraction, a\n    ``success_time`` counter, ``is_open`` flags).  The keys are\n    task-specific: read them at step 0, then compare before and after an\n    action to see whether the action moved the criterion.  May be empty.\nvla_desync: a non-VLA primitive ran since the last VLA call, so the next\n    ``rldx_skill`` / ``rldx_arm`` starts from a fresh frame history.\nterminated: same as ``success``.\ntruncated: RPent never reports a step budget for this robot (always\n    False); the host's wall-clock and decision budgets end an episode.",
+        "body": "step: int\ntask: str\neef_pos: tuple[float, float, float]\neef_quat: tuple[float, float, float, float]\ngripper_qpos: tuple[float, float]\ngripper_opening: float\nbase_pos: tuple[float, float, float]\nbase_quat: tuple[float, float, float, float]\nsuccess: bool\ntask_progress: dict[str, Any]\nvla_desync: bool\nterminated: bool\ntruncated: bool"
+      },
+      {
+        "name": "State.base_yaw",
+        "kind": "function",
+        "range": [
+          105,
+          108
+        ],
+        "owner": "State",
+        "doc": "Heading of the base about world z in radians (0 = facing +x, pi/2 = facing +y).",
+        "body": "x, y, z, w = self.base_quat\nreturn math.atan2(2.0 * (w * z + x * y), 1.0 - 2.0 * (y * y + z * z))"
+      },
+      {
+        "name": "State.eef_approach",
+        "kind": "function",
+        "range": [
+          111,
+          114
+        ],
+        "owner": "State",
+        "doc": "Unit vector the fingers point along, world frame ((0, 0, -1) = straight down).",
+        "body": "x, y, z, w = self.eef_quat\nreturn (2.0 * (x * z + y * w), 2.0 * (y * z - x * w), 1.0 - 2.0 * (x * x + y * y))"
+      },
+      {
+        "name": "State.eef_tilt",
+        "kind": "function",
+        "range": [
+          117,
+          120
+        ],
+        "owner": "State",
+        "doc": "Angle between the approach axis and straight down, radians (0 = down, pi/2 = level).",
+        "body": "ax, ay, az = self.eef_approach\nreturn math.atan2(math.hypot(ax, ay), -az)"
+      },
+      {
+        "name": "Move",
+        "kind": "class",
+        "range": [
+          124,
+          147
+        ],
+        "owner": null,
+        "doc": "Outcome of ``move_to`` / ``move_delta`` (a closed-loop OSC servo).\n\ntarget_xyz: the commanded world target.\nfinal_eef_pos: where the gripper actually stopped (metres).\nfinal_dist_m: distance between the two.\nreached: ``final_dist_m < tol``.  False means the servo used its whole\n    step budget without converging (out of reach, contact, joint limit):\n    re-plan (navigate closer, change the approach) instead of repeating it.\nsteps_used / max_steps: env steps consumed / allowed.\ngripper_q0: first finger joint after the move (RPent's gripper width\n    proxy: about 0.02 half open, about 0.0 closed on nothing).\nterminated: the benchmark's success predicate after the move\n    (same as ``robo.done``).",
+        "body": "target_xyz: tuple[float, float, float]\nfinal_eef_pos: tuple[float, float, float]\nfinal_dist_m: float\nreached: bool\nsteps_used: int\nmax_steps: int\ngripper_q0: float\nterminated: bool"
+      },
+      {
+        "name": "Pitch",
+        "kind": "class",
+        "range": [
+          151,
+          161
+        ],
+        "owner": null,
+        "doc": "Outcome of ``rotate_pitch``.\n\nNo measured angle is reported by the primitive: read\n``state().eef_tilt`` / ``state().eef_approach`` afterwards.",
+        "body": "target_pitch: float\nfinal_eef_pos: tuple[float, float, float]\nsteps_used: int\nterminated: bool"
+      },
+      {
+        "name": "Gripper",
+        "kind": "class",
+        "range": [
+          165,
+          179
+        ],
+        "owner": null,
+        "doc": "Outcome of ``set_gripper`` / ``release``.\n\ngripper: the command that was held (+1 close, -1 open); steps: for how\n    many env steps.  ``gripper_qpos`` / ``gripper_opening`` are the finger\n    positions afterwards (a position, not proof of a hold: verify a\n    grasp from the wrist image and from the object moving with the\n    gripper).",
+        "body": "gripper: float\nsteps: int\ngripper_qpos: tuple[float, float]\ngripper_opening: float\nterminated: bool"
+      },
+      {
+        "name": "Grasp",
+        "kind": "class",
+        "range": [
+          183,
+          200
+        ],
+        "owner": null,
+        "doc": "Outcome of ``scripted_grasp`` (open, hover, descend, close, lift).\n\nok: every stage servoed to its target.  ``stage`` names the stage that\n    stalled (``approach`` | ``descent`` | ``lift``) or is None when ok;\n    ``final_dist_m`` is that stage's remaining distance (0 when ok).\nfinal_eef_pos: where the gripper ended (after the lift when ok).\ngripper_opening: finger separation afterwards; a value clearly above 0\n    after the close means the fingers stopped on something.",
+        "body": "ok: bool\nstage: str | None\nfinal_eef_pos: tuple[float, float, float]\nfinal_dist_m: float\ngripper_qpos: tuple[float, float]\ngripper_opening: float\nterminated: bool"
+      },
+      {
+        "name": "Navigation",
+        "kind": "class",
+        "range": [
+          204,
+          225
+        ],
+        "owner": null,
+        "doc": "Outcome of ``navigate_to`` (drive the base towards a world x/y).\n\nreached: the base came within ``tol`` of the target and faces it.\nstuck: it ran out of steps having moved less than 0.12 m (it rammed a\n    fixture: there is no path planning).  Back off with ``move_base``\n    and approach from another side.\nfinal_dist_m: remaining distance to the target; moved_m: distance\n    travelled from ``start_xy``; base_pos: the base afterwards.\nsteps_used / max_steps: env steps consumed / allowed.",
+        "body": "target_xy: tuple[float, float]\nreached: bool\nstuck: bool\nfinal_dist_m: float\nmoved_m: float\nsteps_used: int\nmax_steps: int\nstart_xy: tuple[float, float]\nbase_pos: tuple[float, float, float]\nterminated: bool"
+      },
+      {
+        "name": "BaseMove",
+        "kind": "class",
+        "range": [
+          229,
+          239
+        ],
+        "owner": null,
+        "doc": "Outcome of ``move_base`` (raw base velocities in the robot's local frame).\n\nbase_moved: world displacement [dx, dy, dz] of the base over the call;\nbase_pos: the base afterwards; steps: env steps executed.",
+        "body": "base_moved: tuple[float, float, float]\nbase_pos: tuple[float, float, float]\nsteps: int\nterminated: bool"
+      },
+      {
+        "name": "Skill",
+        "kind": "class",
+        "range": [
+          243,
+          283
+        ],
+        "owner": null,
+        "doc": "Outcome of ``rldx_skill`` / ``rldx_arm`` (a closed-loop RLDX-1 run).\n\nstatus: why the run stopped: ``success`` (the benchmark predicate fired),\n    ``settled`` (arm and gripper stopped changing for ``settle_patience``\n    chunks) or ``cap`` (``max_chunks`` reached; the VLA was still acting:\n    call again to continue with its frame history intact).\nchunks_used / steps_applied: action chunks and env steps executed.\nmax_chunks: the chunk cap that applied (the evaluation protocol may pin\n    it through the environment, overriding the argument).\ngrasped: holding something at the end of the call (carry-ready).\ngrasp_detected: held something at some chunk (it may have been placed\n    or dropped since).\ngrasp_contact: both fingerpads touch the same task object right now (the\n    benchmark's own grasp check; works for any grasp direction).\nheld_apart: the VLA commanded a close and the fingers stopped apart, i.e.\n    something is between them (also a fixture handle, which\n    ``grasp_contact`` cannot see).  grasp_obj: the contacted object's\n    name, or None.\ngripper_q0: first finger joint at the end; peak_lift_m: highest rise of\n    the gripper above its lowest point during the run; base_drift_m: how\n    far the base moved; base_clip: the base-motion cap that applied.\ninstruction: the task text the policy received (always ``robo.task``).\nterminated: the benchmark's success predicate after the run.",
+        "body": "status: str\nchunks_used: int\nsteps_applied: int\nmax_chunks: int\ngrasped: bool\ngrasp_detected: bool\ngrasp_contact: bool\nheld_apart: bool\ngrasp_obj: str | None\ngripper_q0: float\npeak_lift_m: float\nbase_drift_m: float\nbase_clip: float | None\ninstruction: str\nterminated: bool"
+      },
+      {
+        "name": "Point",
+        "kind": "class",
+        "range": [
+          287,
+          302
+        ],
+        "owner": null,
+        "doc": "One pixel of ``back_project_batch``: its world coordinate or why it has none.\n\nworld_xyz: [x, y, z] of the surface seen at ``pixel`` (metres), None when\n    the pixel is out of bounds or has no valid depth (``error`` says\n    which).",
+        "body": "pixel: tuple[int, int]\nworld_xyz: tuple[float, float, float] | None\nerror: str | None"
+      },
+      {
+        "name": "Point.valid",
+        "kind": "function",
+        "range": [
+          300,
+          302
+        ],
+        "owner": "Point",
+        "doc": "True when ``world_xyz`` is available.",
+        "body": "return self.world_xyz is not None"
+      },
+      {
+        "name": "BackProjection",
+        "kind": "class",
+        "range": [
+          306,
+          326
+        ],
+        "owner": null,
+        "doc": "Outcome of ``back_project_batch``: one ``Point`` per requested pixel, in order.\n\nmedian_xyz: per-axis median of the valid points (None when none are\n    valid): the robust object coordinate when the pixels lie on one\n    object's top surface.  valid_count / total_count: how many pixels\n    had a world coordinate.  step / camera: the world map that was read.",
+        "body": "points: tuple[Point, ...]\nmedian_xyz: tuple[float, float, float] | None\nvalid_count: int\ntotal_count: int\ncamera: str\nresolution: str\nstep: int"
+      },
+      {
+        "name": "BackProjection.xyz",
+        "kind": "function",
+        "range": [
+          324,
+          326
+        ],
+        "owner": "BackProjection",
+        "doc": "The valid world coordinates only, in request order.",
+        "body": "return tuple(p.world_xyz for p in self.points if p.world_xyz is not None)"
+      },
+      {
+        "name": "Cluster",
+        "kind": "class",
+        "range": [
+          330,
+          342
+        ],
+        "owner": null,
+        "doc": "One cluster of ``query_world_map``: pixels of one grid cell inside the height band.\n\ncenter_xyz: median world point of the cluster; bbox_min / bbox_max: its\n    world extent; pixel_count: matched pixels; sample_pixel: one\n    ``(row, col)`` inside it (look there in the image to see what it is).",
+        "body": "center_xyz: tuple[float, float, float]\nbbox_min: tuple[float, float, float]\nbbox_max: tuple[float, float, float]\npixel_count: int\nsample_pixel: tuple[int, int]"
+      },
+      {
+        "name": "HeightQuery",
+        "kind": "class",
+        "range": [
+          346,
+          358
+        ],
+        "owner": null,
+        "doc": "Outcome of ``query_world_map``: clusters of pixels inside a world-z band.\n\nclusters: largest first (at most 20); total_pixels: pixels that matched\n    the band and the optional x/y ranges before clustering.  Clustering\n    is a coarse image grid, not connected components: one object can\n    span two clusters and two touching objects can share one.",
+        "body": "clusters: tuple[Cluster, ...]\ntotal_pixels: int\ncamera: str\nresolution: str"
+      },
+      {
+        "name": "RobocasaRobot",
+        "kind": "class",
+        "range": [
+          439,
+          1378
+        ],
+        "owner": null,
+        "doc": "A mobile-base PandaOmron (Franka arm with a two-finger gripper on an\nomnidirectional base) in a RoboCasa365 kitchen.\n\nWorld frame: x/y span the kitchen (coordinates run over several metres),\nz is up; metres and radians; quaternions are ``[x, y, z, w]``.\n``state().eef_pos`` is the gripper position in this frame,\n``state().base_pos`` the base position and ``state().base_yaw`` its\nheading.  Counters are at about z = 0.9 m; read every height from the\nworld maps, never assume one.  The arm reaches about 0.8 m from the\nbase: a target farther away in x/y needs ``navigate_to`` first.  Every\nbase motion (``navigate_to``, ``move_base``, a VLA run) moves the arm and\nall three cameras with it, so re-localise before the next arm target.\n\nGripper commands: ``robo.CLOSE`` (+1) closes and keeps squeezing,\n``robo.OPEN`` (-1) opens, ``robo.HOLD`` (``\"hold\"``) servos the fingers to\nthe width they had when the motion began.  ``\"hold\"`` is the default of\nevery motion call and the carry-safe choice: a sustained +1 squeezes a\nsmall object out of the fingers, and carrying with -1 drops it.\n\nPerception is camera based: three 256x256 cameras ride on the robot,\n``agentview`` (shoulder view: what is where), ``wrist`` (on the gripper:\nclose-range geometry) and ``navview`` (forward-down floor view: where\nto drive), each with a per-pixel world map.  Object poses are never\ngiven.\n\nThe frozen RLDX-1 VLA (``rldx_skill``, ``rldx_arm``) always receives the\nbenchmark's own task instruction (``robo.task``); there is no prompt to\nwrite.  Success is the benchmark's own predicate (``state().success``,\n``robo.done``); ``state().task_progress`` shows the values that predicate\ncomputes and ``success_criteria()`` its source.  Motion calls block until\nthe primitive finishes and return a typed result; nothing is queued.",
+        "body": "OPEN: float = -1.0\nCLOSE: float = 1.0\nHOLD: str = \"hold\"\nMAX_MOVE_M: float = MAX_MOVE_M\nRESULT_TYPES: ClassVar[tuple[type, ...]] = (\n        State,\n        Move,\nNAME: ClassVar[str] = \"robocasa\"\nCAMERAS: ClassVar[tuple[str, ...]] = (\"agentview\", \"navview\", \"wrist\")\nIMAGE_ARTIFACTS: ClassVar[dict[tuple[str, str], str]] = {\n        (\"agentview\", \"low\"): \"agentview.png\",\n        (\"navview\", \"low\"): \"navview.png\",\nWORLD_MAP_ARTIFACTS: ClassVar[dict[tuple[str, str], str]] = {\n        (\"agentview\", \"low\"): \"agentview_world.npz\",\n        (\"navview\", \"low\"): \"navview_world.npz\",\nDEPTH_ARTIFACTS: ClassVar[dict[str, str]] = {\n        \"agentview\": \"agentview_depth.npz\",\n        \"wrist\": \"wrist_depth.npz\",\nCAMERA_META_ARTIFACTS: ClassVar[dict[str, str]] = {\n        \"agentview\": \"agentview_metadata.json\",\n        \"wrist\": \"wrist_metadata.json\",\nON_MOTION_IMAGES: ClassVar[tuple[str, ...]] = (\"agentview.png\", \"navview.png\", \"wrist.png\")\nSHOW_RESOLUTION: ClassVar[str] = \"low\"\nSTATEFUL_TOOLS: ClassVar[frozenset[str]] = STATEFUL_TOOLS\nVLA_PRIMITIVES: ClassVar[tuple[str, ...]] = (\"rldx_skill\", \"rldx_arm\")\nVLA_REFERENCE_EDITS: ClassVar[tuple[tuple[str, str], ...]] = (\n        (\n            \"    base motion (``navigate_to``, ``move_base``, a VLA run) moves the arm and\\n\",\nSUMMARY_KEYS: ClassVar[tuple[str, ...]] = (\n        \"ok\",\n        \"steps\","
+      },
+      {
+        "name": "RobocasaRobot.task",
+        "kind": "function",
+        "range": [
+          582,
+          587
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "The task instruction, e.g. ``\"Open the left drawer.\"``.\n\nIt is authoritative and the VLA acts on exactly this text.",
+        "body": "return super().task"
+      },
+      {
+        "name": "RobocasaRobot.done",
+        "kind": "function",
+        "range": [
+          590,
+          592
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "True once the benchmark's success predicate (``state().success``) has fired (sticky).",
+        "body": "return super().done"
+      },
+      {
+        "name": "RobocasaRobot.state",
+        "kind": "function",
+        "range": [
+          594,
+          604
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "Read the recorded state of the robot and of the episode.\n\nArgs:\n    step: recorded step to read; ``-1`` is the latest, ``0`` the\n        initial scene.  A new step is recorded after every motion call.\nReturns:\n    State with the gripper pose, finger positions, base pose, the\n    success flag, ``task_progress`` and ``vla_desync``.",
+        "body": "return super().state(step)"
+      },
+      {
+        "name": "RobocasaRobot.image",
+        "kind": "function",
+        "range": [
+          606,
+          622
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "Load a recorded camera image as a ``numpy`` uint8 array (256, 256, 3), RGB.\n\nArgs:\n    camera: ``\"agentview\"`` (shoulder camera: identify objects,\n        fixtures and the layout; its pixels back-project directly),\n        ``\"wrist\"`` (on the gripper: close-range geometry, best within\n        20 cm of a target) or ``\"navview\"`` (forward-down view of the\n        floor ahead of the base: where driving is possible).  All\n        three move with the robot.\n    resolution: there is one resolution, ``\"low\"`` (256x256).  Pixel\n        coordinates are (row, col) with row 0 at the top and col 0 at\n        the left; pass the same camera and step to\n        ``back_project_batch``.\n    step: recorded step, ``-1`` = latest.",
+        "body": "return super().image(camera, resolution=resolution, step=step)"
+      },
+      {
+        "name": "RobocasaRobot.world_map",
+        "kind": "function",
+        "range": [
+          624,
+          649
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "Load the per-pixel world coordinates of a recorded image.\n\nReturns a ``numpy`` float32 array (256, 256, 3): ``world_map[row, col]``\nis the [x, y, z] of the surface seen at that pixel (zeros where the\ncamera saw no depth).  This is what ``back_project_batch`` and\n``query_world_map`` read; load it to reason about many pixels at once\n(e.g. ``np.median(world_map[r0:r1, c0:c1, 2])`` is a surface height).\nMaps older than 25 recorded steps are deleted; a missing map raises\n``ToolError``.",
+        "body": "if (camera, resolution) not in self.WORLD_MAP_ARTIFACTS:\n            raise ValueError(\n                f\"camera must be one of {self.CAMERAS} and resolution 'low'; \"\ntry:\n            return super().world_map(camera, resolution=resolution, step=step)\n        except FileNotFoundError as exc:"
+      },
+      {
+        "name": "RobocasaRobot.depth",
+        "kind": "function",
+        "range": [
+          651,
+          663
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "Load the metric depth of a recorded ``agentview`` or ``wrist`` image.\n\nReturns a ``numpy`` float32 array (256, 256) in metres.  ``navview``\nhas no depth map (use its world map).",
+        "body": "if camera not in self.DEPTH_ARTIFACTS:\n            raise ValueError(f\"depth is recorded for {sorted(self.DEPTH_ARTIFACTS)} only\")\nimport numpy as np\ndata = self.artifact(self.DEPTH_ARTIFACTS[camera], step=step)\nwith np.load(io.BytesIO(data)) as archive:\n            return np.asarray(archive[\"array\"])"
+      },
+      {
+        "name": "RobocasaRobot.floor_overlay",
+        "kind": "function",
+        "range": [
+          665,
+          675
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "Load the navview image with the floor painted green: uint8 (256, 256, 3), RGB.\n\nFloor = pixels whose world z lies between -0.2 and 0.12 m; green\narea ahead of the base is where it can drive.",
+        "body": "import numpy as np\nfrom PIL import Image\nwith Image.open(io.BytesIO(self.artifact(\"navview_floor.png\", step=step))) as img:\n            return np.asarray(img.convert(\"RGB\"))"
+      },
+      {
+        "name": "RobocasaRobot.camera_meta",
+        "kind": "function",
+        "range": [
+          677,
+          689
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "Return the camera calibration of a recorded step as a dict (``agentview`` / ``wrist``).\n\nKeys: ``intrinsic`` (3x3), ``extrinsic_cam2world`` (4x4), ``height``,\n``width``, ``depth_near`` / ``depth_far``.  Both cameras move with the\nrobot (the wrist camera with the gripper), so read the meta of the\nsame step as the image.",
+        "body": "if camera not in self.CAMERA_META_ARTIFACTS:\n            raise ValueError(\n                f\"calibration is recorded for {sorted(self.CAMERA_META_ARTIFACTS)} only\"\nreturn json.loads(self.artifact(self.CAMERA_META_ARTIFACTS[camera], step=step))"
+      },
+      {
+        "name": "RobocasaRobot.success_criteria",
+        "kind": "function",
+        "range": [
+          691,
+          699
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "Return the source code of this task's success predicate (``_check_success``).\n\nIt names the objects and fixtures that matter and the thresholds\n(e.g. a drawer joint fraction of 0.95, a ``success_time`` counter)\nthat ``state().task_progress`` reports live.  It contains no object\ncoordinates.",
+        "body": "return self._session_artifact(\"success_criteria.md\").decode(\"utf-8\", errors=\"replace\")"
+      },
+      {
+        "name": "RobocasaRobot.show",
+        "kind": "function",
+        "range": [
+          701,
+          709
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "Attach the current image of ``camera`` to the feedback of this turn.\n\nImages are not returned automatically; call ``show(\"agentview\")``,\n``show(\"wrist\")`` or ``show(\"navview\")`` when *you* (the author) need\nto look at the scene before writing the next turn.  Costs tokens:\nlook only when a decision depends on it.",
+        "body": "super().show(camera)"
+      },
+      {
+        "name": "RobocasaRobot.artifact",
+        "kind": "function",
+        "range": [
+          711,
+          719
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "Return the raw bytes of a recorded artifact (advanced).\n\nNames are ``agentview.png``, ``wrist.png``, ``navview.png``,\n``navview_floor.png``, ``<camera>_world.npz`` (all three cameras),\n``<camera>_depth.npz`` and ``<camera>_metadata.json`` (agentview and\nwrist only).",
+        "body": "return super().artifact(name, step=step)"
+      },
+      {
+        "name": "RobocasaRobot.back_project_batch",
+        "kind": "function",
+        "range": [
+          723,
+          777
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "Return the world [x, y, z] under image pixels of a recorded view.\n\nArgs:\n    pixels: 1 to 50 ``[row, col]`` pairs read off ``image(camera,\n        step=step)`` (a single pair is accepted too).\n    step: recorded step whose world map to read, ``-1`` = latest.\n    camera: ``\"agentview\"``, ``\"wrist\"`` or ``\"navview\"``: the pixel\n        coordinate space, so use the view the pixels came from.\n    resolution: ``\"low\"`` (the only one recorded).\nReturns:\n    BackProjection; ``median_xyz`` is the robust coordinate of what\n    the pixels cover.  Every point is a visible SURFACE point (the\n    top of an object, not its centre): sample 3-8 pixels firmly on\n    the object's top surface and use the median; pixels on thin rims,\n    edges, shadows or the gap to a counter hit the background.\nRaises:\n    ToolError: no world map recorded for that step / camera.",
+        "body": "if camera not in self.CAMERAS:\n            raise ValueError(f\"camera must be one of {self.CAMERAS}\")\nif resolution != \"low\":\n            raise ValueError(\"resolution must be 'low' (the only recorded resolution)\")\nkwargs: dict[str, Any] = {\n            \"pixels\": _pixels(pixels),\n            \"step\": int(step),\npayload = self._readonly(\"back_project_batch\", kwargs)\npoints = tuple(\n            Point(\n                pixel=(int(r[\"pixel\"][0]), int(r[\"pixel\"][1])),\nsummary = payload.get(\"summary\") or {}\nreturn BackProjection(\n            points=points,\n            median_xyz=_tuple3(summary.get(\"median_xyz\")),"
+      },
+      {
+        "name": "RobocasaRobot.query_world_map",
+        "kind": "function",
+        "range": [
+          779,
+          844
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "Find what lies inside a world-z band of the LATEST world map, as pixel clusters.\n\nArgs:\n    z_min / z_max: height band in metres.  0.85-0.95 finds objects on\n        a counter; ``camera=\"navview\"`` with 0.0-0.12 finds walkable\n        floor.\n    x_range / y_range: optional ``[min, max]`` world limits.\n    camera: which camera's world map (``\"agentview\"``, ``\"wrist\"``,\n        ``\"navview\"``).\n    resolution: ``\"low\"`` (the only one recorded).\n    min_cluster_size: smallest cluster reported (pixels).\nReturns:\n    HeightQuery; each ``Cluster.center_xyz`` is a candidate location,\n    ``sample_pixel`` a place to look in the image to identify it.\n    Always reads the latest recorded step.",
+        "body": "if camera not in self.CAMERAS:\n            raise ValueError(f\"camera must be one of {self.CAMERAS}\")\nif resolution != \"low\":\n            raise ValueError(\"resolution must be 'low' (the only recorded resolution)\")\nif not float(z_min) <= float(z_max):\n            raise ValueError(\"z_min must not exceed z_max\")\nif int(min_cluster_size) < 1:\n            raise ValueError(\"min_cluster_size must be at least 1\")\nkwargs: dict[str, Any] = {\n            \"z_min\": float(z_min),\n            \"z_max\": float(z_max),\npayload = self._readonly(\"query_world_map\", kwargs)\nnan3 = (math.nan, math.nan, math.nan)\nclusters = []\nfor c in payload.get(\"clusters\") or ():\n            bbox = c.get(\"bbox_xyz\") or {}\n            samples = c.get(\"sample_pixels\") or [[0, 0]]\nsummary = payload.get(\"summary\") or {}\nreturn HeightQuery(\n            clusters=tuple(clusters),\n            total_pixels=int(summary.get(\"total_pixels_matched\", 0)),"
+      },
+      {
+        "name": "RobocasaRobot.rldx_skill",
+        "kind": "function",
+        "range": [
+          848,
+          890
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "Let the frozen RLDX-1 VLA drive the whole body (arm AND base) on the task instruction.\n\nThe policy always receives the benchmark's own instruction\n(``robo.task``) and the three current camera images, executes\n``n_action_steps`` env steps per chunk and stops when the task\nsucceeds, when it settles or at ``max_chunks``.  It is the tool for\ngrasps, re-grasps, pulling / pushing fixtures, pressing controls and\nother contact-rich motion, and it may reposition the base by itself.\n\nArgs:\n    base_clip: cap on the base velocity commands (None = full base\n        motion; ``rldx_arm`` is the same skill with 0.1).\n    max_chunks: action-chunk cap.  The evaluation protocol may pin it\n        (and ``n_action_steps`` / ``settle_patience``) through the\n        environment; ``Skill.max_chunks`` reports what applied.\n    force_reset: start from a fresh frame history even after a\n        previous VLA call (the runtime does this by itself whenever\n        a non-VLA primitive ran in between: see\n        ``state().vla_desync``).\n    n_action_steps: env steps executed per predicted chunk.\n    settle_patience: chunks without arm / gripper motion after which\n        the run stops as ``settled``; leave the default (999 disables\n        it: the VLA is expected to run until success or the cap).\n    settle_eps: motion threshold of that test, metres.\nReturns:\n    Skill; check ``status``, the grasp signals and ``robo.done``.\n    ``cap`` means the VLA was still acting: call again (its frame\n    history continues) rather than staging by hand.",
+        "body": "kwargs = self._skill_kwargs(\n            base_clip, max_chunks, force_reset, n_action_steps, settle_patience, settle_eps\n        )\nreturn self._stateful(\"rldx_skill\", kwargs, lambda p: self._skill(p, kwargs))"
+      },
+      {
+        "name": "RobocasaRobot.rldx_arm",
+        "kind": "function",
+        "range": [
+          892,
+          912
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "Let the frozen RLDX-1 VLA drive the arm with the base clamped to small motions.\n\nSame skill and arguments as ``rldx_skill`` with ``base_clip=0.1``: the\nVLA can micro-align the gripper for a grasp or a contact but cannot\ndrive away.  Use it once the base already stands at the right place;\nuse ``rldx_skill`` when the VLA has to reposition the base as well.",
+        "body": "kwargs = self._skill_kwargs(\n            base_clip, max_chunks, force_reset, n_action_steps, settle_patience, settle_eps\n        )\nreturn self._stateful(\"rldx_arm\", kwargs, lambda p: self._skill(p, kwargs))"
+      },
+      {
+        "name": "RobocasaRobot.move_to",
+        "kind": "function",
+        "range": [
+          916,
+          957
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "Servo the gripper to a world-frame position, holding its orientation.\n\nA closed-loop OSC servo: each env step moves the gripper at most\n``step_clip`` towards the target until it is within ``tol`` or\n``max_steps`` are spent.  The first arm servo after a base motion\nspends a few extra steps calibrating.\n\nArgs:\n    xyz: target gripper position [x, y, z] in metres.  One call may\n        move at most 0.30 m (``ValueError`` beyond); split longer\n        traversals into 2-3 waypoints at carrying height.\n    gripper: ``\"hold\"`` (default: keep the finger width, carry-safe),\n        +1 (close and keep squeezing) or -1 (open); held during the\n        whole motion.\n    step_clip: per-step travel cap (m): 0.02 in free space, 0.012 for\n        a fine approach or a vertical retreat.\n    max_steps: env step budget.\n    tol: stop when within this distance (m).\nReturns:\n    Move; check ``reached`` and compare ``final_eef_pos`` with the\n    target: a stalled servo returns normally.",
+        "body": "target = _floats(xyz, 3, \"xyz\")\nself._check_reach(target)\nkwargs: dict[str, Any] = {\n            \"xyz\": list(target),\n            \"gripper\": _gripper(gripper),\nself._check_servo(kwargs)\nreturn self._stateful(\"move_to\", kwargs, lambda p: self._move(target, kwargs, p))"
+      },
+      {
+        "name": "RobocasaRobot.move_delta",
+        "kind": "function",
+        "range": [
+          959,
+          990
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "Servo the gripper by a relative displacement from its current position.\n\n``target = current eef_pos + dxyz`` (tolerance 0.012 m); for small\nadjustments such as a final approach or a lift.  ``|dxyz|`` may not\nexceed 0.30 m.  ``gripper`` as in ``move_to`` (default ``\"hold\"``).",
+        "body": "delta = _floats(dxyz, 3, \"dxyz\")\nif math.hypot(*delta) > MAX_MOVE_M + 1e-6:\n            raise ValueError(\n                f\"|dxyz| = {math.hypot(*delta):.3f} m exceeds {MAX_MOVE_M} m; \"\ncurrent = self._current_state().eef_pos\ntarget = tuple(c + d for c, d in zip(current, delta, strict=True))\nkwargs: dict[str, Any] = {\n            \"dxyz\": list(delta),\n            \"gripper\": _gripper(gripper),\nself._check_servo(kwargs)\nreturn self._stateful(\n            \"move_delta\", kwargs, lambda p: self._move(target, {**kwargs, \"tol\": 0.012}, p)\n        )"
+      },
+      {
+        "name": "RobocasaRobot.rotate_pitch",
+        "kind": "function",
+        "range": [
+          992,
+          1020
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "Tilt the wrist by ``target_pitch`` radians (relative, about the controller's x axis).\n\nPitches the gripper forward / back over ``n`` env steps while the\nposition is held by the controller (it is not actively servoed:\nexpect a few mm of drift).  Use it before threading the gripper into\nan opening whose front face points along world +/-y.  ``gripper`` is\na numeric command held during the rotation (+1 keep closed, -1 open;\n``\"hold\"`` is not accepted here).  Read ``state().eef_tilt``\nafterwards; the primitive reports no angle.",
+        "body": "pitch = float(target_pitch)\nif not math.isfinite(pitch):\n            raise ValueError(\"target_pitch must be finite (radians; clamped to +/-1.5)\")\nif int(n) < 1:\n            raise ValueError(\"n must be at least 1\")\nkwargs = {\"target_pitch\": pitch, \"gripper\": _gripper_command(gripper), \"n\": int(n)}\nreturn self._stateful(\n            \"rotate_pitch\",\n            kwargs,"
+      },
+      {
+        "name": "RobocasaRobot.set_gripper",
+        "kind": "function",
+        "range": [
+          1022,
+          1035
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "Hold the gripper pose and drive the fingers with ``gripper`` for ``steps`` env steps.\n\n``set_gripper(+1, steps=10)`` closes (or firms a grip before a\ncarry), ``set_gripper(-1)`` opens.  Numeric only: ``\"hold\"`` is not a\ncommand here.  Verify a grasp afterwards from\n``Gripper.gripper_opening`` (clearly above 0 = something between the\nfingers) and the wrist image.",
+        "body": "command = _gripper_command(gripper)\nif int(steps) < 1:\n            raise ValueError(\"steps must be at least 1\")\nkwargs = {\"gripper\": command, \"steps\": int(steps)}\nreturn self._stateful(\"set_gripper\", kwargs, lambda p: self._gripper(command, steps, p))"
+      },
+      {
+        "name": "RobocasaRobot.release",
+        "kind": "function",
+        "range": [
+          1037,
+          1047
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "Open the gripper in place for ``steps`` env steps (``set_gripper(-1, steps)``).\n\nRelease only when the object is supported at its destination, then\nretreat upwards and check that it stayed put.  ``terminated``\nreports whether letting go satisfied the task.",
+        "body": "if int(steps) < 1:\n            raise ValueError(\"steps must be at least 1\")\nkwargs = {\"steps\": int(steps)}\nreturn self._stateful(\"release\", kwargs, lambda p: self._gripper(-1.0, steps, p))"
+      },
+      {
+        "name": "RobocasaRobot.scripted_grasp",
+        "kind": "function",
+        "range": [
+          1049,
+          1076
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "Coarse scripted grasp: open, hover ``approach_z`` above ``xyz``, descend, close, lift.\n\nA fallback for simple, well-localised objects; prefer ``rldx_arm``\nfor anything hard.  ``grasp_z_offset`` shifts the closing height\n(negative = below the sampled surface point); ``step_clip`` caps the\ndescent speed.  The hover point must be within 0.30 m of the gripper.\nReturns Grasp; ``ok`` False names the ``stage`` that stalled.",
+        "body": "target = _floats(xyz, 3, \"xyz\")\nhover = (target[0], target[1], target[2] + float(approach_z))\nself._check_reach(hover)\nkwargs: dict[str, Any] = {\n            \"xyz\": list(target),\n            \"approach_z\": float(approach_z),\nif kwargs[\"step_clip\"] <= 0:\n            raise ValueError(\"step_clip must be positive\")\nreturn self._stateful(\"scripted_grasp\", kwargs, self._grasp)"
+      },
+      {
+        "name": "RobocasaRobot.navigate_to",
+        "kind": "function",
+        "range": [
+          1080,
+          1123
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "Drive the base towards a world (x, y) and stop facing it.\n\nThe base first turns to face the target, then drives forward at full\nspeed (about 2.3 mm per env step, so 300 steps cover roughly 0.7 m)\nwith closed-loop steering until it is within ``tol``; the first call\nspends a few steps calibrating the heading.  There is no path\nplanning: choose a target with a clear line ahead (``floor_overlay``,\n``query_world_map`` on the navview) and expect ``stuck`` when a\nfixture is in the way.  The arm is held in place and its world\nposition changes with the base.\n\nArgs:\n    xy: world target [x, y] in metres (a third value is ignored).\n    tol: stopping distance (m): the standoff you want in front of a\n        fixture plus the object's half depth (``tol=0.6`` stops about\n        0.6 m in front of the target).\n    max_steps: env step budget; increase for a long drive or call\n        again.\n    gripper: ``\"hold\"`` (default, carry-safe), +1 or -1 while driving.\nReturns:\n    Navigation; check ``reached`` / ``stuck`` and re-localise\n    everything afterwards.",
+        "body": "vals = _floats(xy, 3, \"xy\") if len(xy) == 3 else _floats(xy, 2, \"xy\")\ntarget = (vals[0], vals[1])\nif float(tol) <= 0:\n            raise ValueError(\"tol must be positive\")\nif int(max_steps) < 1:\n            raise ValueError(\"max_steps must be at least 1\")\nkwargs: dict[str, Any] = {\n            \"xy\": list(target),\n            \"tol\": float(tol),\nreturn self._stateful(\"navigate_to\", kwargs, lambda p: self._navigation(target, kwargs, p))"
+      },
+      {
+        "name": "RobocasaRobot.move_base",
+        "kind": "function",
+        "range": [
+          1125,
+          1164
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "Drive the base with raw velocities in its own frame for ``steps`` env steps.\n\n``forward`` (+ = ahead), ``lateral`` (+ = strafe right) and ``turn``\n(+ = rotate counter-clockwise) are clipped to [-1, 1].  For fine\nadjustments near a fixture (a short nudge, a small turn): keep\n``forward <= 0.4``, ``turn <= 0.3`` and ``steps <= 20`` per call,\nthen re-observe.  ``gripper`` as in ``navigate_to``.\nReturns BaseMove with the measured world displacement of the base.",
+        "body": "if int(steps) < 1:\n            raise ValueError(\"steps must be at least 1\")\nfor name, value in ((\"forward\", forward), (\"lateral\", lateral), (\"turn\", turn)):\n            if not math.isfinite(float(value)):\n                raise ValueError(f\"{name} must be a finite number in [-1, 1]\")\nkwargs: dict[str, Any] = {\n            \"forward\": float(forward),\n            \"lateral\": float(lateral),\nreturn self._stateful(\n            \"move_base\",\n            kwargs,"
+      },
+      {
+        "name": "RobocasaRobot._session_artifact",
+        "kind": "function",
+        "range": [
+          1173,
+          1186
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "A session-level artifact (no step), recorded in the ledger like ``artifact``.",
+        "body": "record = self._ledger.open(\"artifact\", {\"name\": name, \"step\": None}, stateful=False)\nstarted = time.perf_counter()\ntry:\n            data = self._backend.artifact(name, step=None)  # type: ignore[arg-type]\n            record.ok = True"
+      },
+      {
+        "name": "RobocasaRobot._skill_kwargs",
+        "kind": "function",
+        "range": [
+          1206,
+          1236
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "",
+        "body": "if base_clip is not None and not float(base_clip) > 0:\n            raise ValueError(\"base_clip must be positive or None\")\nfor name, value in (\n            (\"max_chunks\", max_chunks),\n            (\"n_action_steps\", n_action_steps),\nif not float(settle_eps) > 0:\n            raise ValueError(\"settle_eps must be positive\")\nreturn {\n            # The runtime always uses the live task language; sending it keeps\n            # the recorded command identical to the tool-calling agent's."
+      },
+      {
+        "name": "RobocasaRobot._skill",
+        "kind": "function",
+        "range": [
+          1238,
+          1257
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "",
+        "body": "state = self._latest_state()\nclip = p.get(\"base_clip\", kwargs.get(\"base_clip\"))\nreturn Skill(\n            status=str(p.get(\"status\", \"\")),\n            chunks_used=int(p.get(\"chunks\", 0)),"
+      },
+      {
+        "name": "RobocasaRobot._move",
+        "kind": "function",
+        "range": [
+          1259,
+          1272
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "",
+        "body": "state = self._latest_state()\nfinal = _tuple3(p.get(\"eef\")) or state.eef_pos\ndist = float(p.get(\"final_dist\", math.dist(final, target[:3])))\nreturn Move(\n            target_xyz=(target[0], target[1], target[2]),\n            final_eef_pos=final,"
+      },
+      {
+        "name": "RobocasaRobot._gripper",
+        "kind": "function",
+        "range": [
+          1274,
+          1283
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "",
+        "body": "state = self._latest_state()\nqpos = _tuple_n(p.get(\"gripper_qpos\"), 2) or state.gripper_qpos\nreturn Gripper(\n            gripper=float(command),\n            steps=int(steps),"
+      },
+      {
+        "name": "RobocasaRobot._grasp",
+        "kind": "function",
+        "range": [
+          1285,
+          1297
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "",
+        "body": "state = self._latest_state()\nok = bool(p.get(\"ok\"))\nqpos = _tuple_n(p.get(\"gripper_qpos\"), 2) or state.gripper_qpos\nreturn Grasp(\n            ok=ok,\n            stage=(str(p[\"stage\"]) if p.get(\"stage\") else None),"
+      },
+      {
+        "name": "RobocasaRobot._navigation",
+        "kind": "function",
+        "range": [
+          1299,
+          1315
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "",
+        "body": "state = self._latest_state()\nstart = _tuple_n(p.get(\"start_pos\"), 2) or state.base_pos[:2]\nreturn Navigation(\n            target_xy=target,\n            reached=bool(p.get(\"ok\")),"
+      },
+      {
+        "name": "RobocasaRobot._state_from_envelope",
+        "kind": "function",
+        "range": [
+          1317,
+          1340
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "",
+        "body": "raw = envelope.get(\"state\") or {}\neef_pos = _tuple3(raw.get(\"robot0_eef_pos\")) or (0.0, 0.0, 0.0)\neef_quat = _tuple_n(raw.get(\"robot0_eef_quat\"), 4) or (0.0, 0.0, 0.0, 1.0)\nqpos = _tuple_n(raw.get(\"robot0_gripper_qpos\"), 2) or (0.0, 0.0)\nbase_pos = _tuple3(raw.get(\"robot0_base_pos\")) or (0.0, 0.0, 0.0)\nbase_quat = _tuple_n(raw.get(\"robot0_base_quat\"), 4) or (0.0, 0.0, 0.0, 1.0)\nsuccess = bool(envelope.get(\"success\")) or bool(envelope.get(\"robocasa_terminated\"))\nprogress = envelope.get(\"task_progress\")\nreturn State(\n            step=int(envelope.get(\"step\", -1)),\n            task=str(envelope.get(\"task_language\") or \"\"),"
+      },
+      {
+        "name": "RobocasaRobot._summary_dict",
+        "kind": "function",
+        "range": [
+          1342,
+          1355
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "Compact state for the per-turn tool feedback (host-facing).",
+        "body": "state = self.state()\nreturn {\n            \"step\": state.step,\n            \"eef_pos\": [round(v, 4) for v in state.eef_pos],"
+      },
+      {
+        "name": "RobocasaRobot._summary",
+        "kind": "function",
+        "range": [
+          1357,
+          1378
+        ],
+        "owner": "RobocasaRobot",
+        "doc": "",
+        "body": "out = super()._summary(tool, payload)\nif tool == \"view_env_state\":\n            state = payload.get(\"state\") or {}\n            out[\"eef_pos\"] = state.get(\"robot0_eef_pos\")\nreturn out"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import io",
+      "import json",
+      "import math",
+      "import time",
+      "from collections.abc import Sequence",
+      "from dataclasses import dataclass",
+      "from numbers import Real",
+      "from typing import Any, ClassVar",
+      "from ._backend import ToolError",
+      "from ._robot import RobotBase",
+      "from .robots import RobotAdapter",
+      "import numpy as np",
+      "import numpy as np",
+      "from PIL import Image"
+    ]
+  },
+  {
+    "path": "src/pyrualean/robots.py",
+    "category": "code",
+    "moduleDoc": "Registry of the robots PyRUA-Lean can drive.\n\nEach robot module (``pyrualean.libero``, ``pyrualean.robocasa``,\n``pyrualean.robotwin``, ``pyrualean.robodojo``) defines a module-level\n``ADAPTER`` describing the robot class, the host module that boots RPent's\nstack for it, the knowledge file and the words the contract uses for it.\n``get_adapter(name)`` imports the module lazily so a robot whose dependencies\nare missing does not break the others.",
+    "symbols": [
+      {
+        "name": "get_adapter",
+        "kind": "function",
+        "range": [
+          81,
+          90
+        ],
+        "owner": null,
+        "doc": "Return the adapter of robot ``name`` (one of :data:`ROBOTS`).",
+        "body": "if name not in ROBOTS:\n        raise ValueError(f\"unknown robot {name!r}; known: {ROBOTS}\")\nmodule = importlib.import_module(f\"pyrualean.{name}\")\nadapter = getattr(module, \"ADAPTER\", None)\nif not isinstance(adapter, RobotAdapter):\n        raise ImportError(f\"pyrualean.{name} defines no ADAPTER\")\nreturn adapter"
+      },
+      {
+        "name": "RobotAdapter",
+        "kind": "class",
+        "range": [
+          36,
+          78
+        ],
+        "owner": null,
+        "doc": "What the host and the prompt need to know about one robot.",
+        "body": "name: str\nrobot_cls: type\nhost: str\nknowledge: str\nblurb: str\nguides_subdir: str = \"\"\nguide_names: tuple[str, ...] = ()\nshow_examples: str = \"`robo.show(<camera>)`\"\nservices: str = \"\"\nservices_novla: str = \"\""
+      },
+      {
+        "name": "RobotAdapter.cameras",
+        "kind": "function",
+        "range": [
+          63,
+          64
+        ],
+        "owner": "RobotAdapter",
+        "doc": "",
+        "body": "return tuple(getattr(self.robot_cls, \"CAMERAS\", ()))"
+      },
+      {
+        "name": "RobotAdapter.live_success",
+        "kind": "function",
+        "range": [
+          67,
+          75
+        ],
+        "owner": "RobotAdapter",
+        "doc": "Whether the benchmark reports task success while the episode runs.\n\nTrue when the robot class has ``done`` (and ``terminated`` flags on its\nresults).  False for a robot whose success RPent reads only after its\nplanner has finished (RoboDojo declares ``done`` absent): the contract\nthen says that the final scene is judged and nothing reports success.",
+        "body": "return \"done\" not in getattr(self.robot_cls, \"ABSENT_MEMBERS\", ())"
+      },
+      {
+        "name": "RobotAdapter.host_module",
+        "kind": "function",
+        "range": [
+          77,
+          78
+        ],
+        "owner": "RobotAdapter",
+        "doc": "",
+        "body": "return importlib.import_module(self.host)"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import importlib",
+      "from dataclasses import dataclass",
+      "from typing import Any"
+    ]
+  },
+  {
+    "path": "src/pyrualean/robotwin.py",
+    "category": "code",
+    "moduleDoc": "RoboTwin robot API for code policies.\n\nEvery public method of :class:`RobotwinRobot` maps 1:1 onto one RPent RoboTwin\ntool (the same cuRobo-planned arm motions, the same frozen LingBot-VLA calls\nand the same world-map queries that RPent's tool-calling agent uses), with\nRPent's argument names and defaults.  The difference is the calling\nconvention: a policy is an ordinary Python program that calls these methods\nand branches on their typed return values.\n\nThe docstrings in this module are the model-facing documentation: the prompt\nis generated from them (see :mod:`pyrualean.prompt`), so keep them accurate.",
+    "symbols": [
+      {
+        "name": "_floats",
+        "kind": "function",
+        "range": [
+          255,
+          262
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "try:\n        vals = tuple(float(v) for v in value)\n    except (TypeError, ValueError) as exc:\nif len(vals) != n or not all(math.isfinite(v) for v in vals):\n        raise ValueError(f\"{name} must be {n} finite numbers, got {value!r}\")\nreturn vals"
+      },
+      {
+        "name": "_tuple3",
+        "kind": "function",
+        "range": [
+          265,
+          271
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "if value is None:\n        return None\nvals = tuple(float(v) for v in value)\nif len(vals) != 3:\n        return None\nreturn vals  # type: ignore[return-value]"
+      },
+      {
+        "name": "_arm",
+        "kind": "function",
+        "range": [
+          274,
+          277
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "if name not in (\"left\", \"right\"):\n        raise ValueError(f\"arm must be 'left' or 'right', got {name!r}\")\nreturn str(name)"
+      },
+      {
+        "name": "_gripper",
+        "kind": "function",
+        "range": [
+          280,
+          287
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "try:\n        g = float(value)\n    except (TypeError, ValueError) as exc:\nif not 0.0 <= g <= 1.0:\n        raise ValueError(\"gripper must be within [0, 1]: 0 closes, 1 opens\")\nreturn g"
+      },
+      {
+        "name": "_pose7",
+        "kind": "function",
+        "range": [
+          290,
+          298
+        ],
+        "owner": null,
+        "doc": "Split a 7-vector pose into (xyz, wxyz); ``value`` may be a list or a numpy array.",
+        "body": "try:\n        vals = tuple(float(v) for v in value) if value is not None else ()\n    except (TypeError, ValueError):\nif len(vals) != 7:\n        return (0.0, 0.0, 0.0), (1.0, 0.0, 0.0, 0.0)\nreturn vals[:3], vals[3:]  # type: ignore[return-value]"
+      },
+      {
+        "name": "ArmState",
+        "kind": "class",
+        "range": [
+          51,
+          83
+        ],
+        "owner": null,
+        "doc": "One arm at a recorded step.\n\neef_pos: end-effector position [x, y, z] in the world frame, metres.  The\n    EEF is the wrist link that ``move_to`` targets.\neef_quat: EEF orientation as a unit quaternion [w, x, y, z].\ntcp_pos: tool centre point (the gripper centre, where an object is held):\n    0.12 m beyond the EEF along the gripper's approach axis.\ntcp_quat: TCP orientation [w, x, y, z] (same as the EEF).\ngripper: normalised gripper command, 0.0 = closed ... 1.0 = open.  It is\n    the position the fingers were told to hold, not a contact sensor.",
+        "body": "eef_pos: tuple[float, float, float]\neef_quat: tuple[float, float, float, float]\ntcp_pos: tuple[float, float, float]\ntcp_quat: tuple[float, float, float, float]\ngripper: float"
+      },
+      {
+        "name": "ArmState.approach",
+        "kind": "function",
+        "range": [
+          71,
+          77
+        ],
+        "owner": "ArmState",
+        "doc": "Unit vector from the EEF to the TCP: the direction the gripper points (world frame).",
+        "body": "d = [t - e for t, e in zip(self.tcp_pos, self.eef_pos, strict=True)]\nn = math.sqrt(sum(v * v for v in d))\nif n < 1e-9:\n            return (0.0, 1.0, 0.0)\nreturn (d[0] / n, d[1] / n, d[2] / n)"
+      },
+      {
+        "name": "ArmState.eef_yaw",
+        "kind": "function",
+        "range": [
+          80,
+          83
+        ],
+        "owner": "ArmState",
+        "doc": "Rotation of the EEF about the world z axis, radians (what ``rotate_wrist`` changes).",
+        "body": "w, x, y, z = self.eef_quat\nreturn math.atan2(2.0 * (w * z + x * y), 1.0 - 2.0 * (y * y + z * z))"
+      },
+      {
+        "name": "State",
+        "kind": "class",
+        "range": [
+          87,
+          125
+        ],
+        "owner": null,
+        "doc": "Snapshot of both arms and of the episode at one recorded step.\n\nstep: index of the recorded step (0 = initial scene).  A new step is\n    recorded after every motion call and after ``render``.\ntask: the task instruction given by the benchmark (authoritative; the VLA\n    acts on exactly this text).\nleft / right: the two arms (``state.arm(\"left\")`` picks one by name).\neval_success: the benchmark's success predicate has fired (sticky).  This\n    is the only definition of success; it equals ``terminated``.\ntake_action_cnt: native actions executed so far.  Every ``move_to``\n    substep, every gripper step and every VLA action is one native action.\nstep_lim: native-action budget of the episode.\nterminated: same as ``eval_success``.\ntruncated: the native-action budget is exhausted (``take_action_cnt >=\n    step_lim``); no further motion is possible.",
+        "body": "step: int\ntask: str\nleft: ArmState\nright: ArmState\neval_success: bool\ntake_action_cnt: int\nstep_lim: int\nterminated: bool\ntruncated: bool"
+      },
+      {
+        "name": "State.arm",
+        "kind": "function",
+        "range": [
+          115,
+          120
+        ],
+        "owner": "State",
+        "doc": "",
+        "body": "if name == \"left\":\n            return self.left\nif name == \"right\":\n            return self.right\nraise ValueError(\"arm must be 'left' or 'right'\")"
+      },
+      {
+        "name": "State.actions_left",
+        "kind": "function",
+        "range": [
+          123,
+          125
+        ],
+        "owner": "State",
+        "doc": "Native actions still available before ``truncated`` fires.",
+        "body": "return max(0, self.step_lim - self.take_action_cnt)"
+      },
+      {
+        "name": "Move",
+        "kind": "class",
+        "range": [
+          129,
+          158
+        ],
+        "owner": null,
+        "doc": "Outcome of ``move_to`` / ``rotate_wrist``.\n\nplanned: the motion planner found a collision-free joint path.  False\n    means NOTHING moved (target unreachable, in collision, or too close to\n    the other arm / the table): change the target, do not repeat it.\nfinal_eef_pos: where the EEF actually stopped (metres), None when nothing\n    moved.\nfinal_dist_m: distance between the requested xyz and ``final_eef_pos``\n    (``rotate_wrist``: distance from the xyz it was told to hold).\nreached: ``planned`` and ``final_dist_m <= 0.01``.  A planned motion can\n    still stop short when the episode ended or the budget ran out.\nwaypoints: planner waypoints that were executed.\nactions_used: native actions consumed (one per waypoint).\nstop_reason: ``completed`` | ``native_success`` | ``budget_exhausted`` |\n    ``plan_failed`` | ``runtime_failure``.\nterminated / truncated: episode flags after the motion.",
+        "body": "arm: str\ntarget_xyz: tuple[float, float, float]\nfinal_eef_pos: tuple[float, float, float] | None\nfinal_dist_m: float\nplanned: bool\nreached: bool\nwaypoints: int\nactions_used: int\nstop_reason: str\nterminated: bool\ntruncated: bool"
+      },
+      {
+        "name": "Gripper",
+        "kind": "class",
+        "range": [
+          162,
+          177
+        ],
+        "owner": null,
+        "doc": "Outcome of ``set_gripper`` / ``release``.\n\ntarget: the commanded gripper value; final: the value reported after the\n    motion (a commanded position, not proof of a hold: verify a grasp from\n    the images and from the object moving with the TCP).\nactions_used: native actions consumed (one per interpolation step).",
+        "body": "arm: str\ntarget: float\nfinal: float\nactions_used: int\nstop_reason: str\nterminated: bool\ntruncated: bool"
+      },
+      {
+        "name": "VlaRun",
+        "kind": "class",
+        "range": [
+          181,
+          200
+        ],
+        "owner": null,
+        "doc": "Outcome of ``lingbot_act``.\n\nchunks_requested / actions_requested: what was asked (50 actions per chunk).\nactions_used: native actions actually executed; fewer than requested when\n    the task succeeded (``native_success``) or the budget ran out.\nstop_reason: ``completed`` | ``native_success`` | ``budget_exhausted`` |\n    ``runtime_failure``.\ninstruction: the task text the policy received (always the benchmark's\n    own instruction, i.e. ``robo.task``).\nterminated / truncated: episode flags after the run.",
+        "body": "chunks_requested: int\nactions_requested: int\nactions_used: int\nstop_reason: str\ninstruction: str\nterminated: bool\ntruncated: bool"
+      },
+      {
+        "name": "WorldSample",
+        "kind": "class",
+        "range": [
+          204,
+          213
+        ],
+        "owner": null,
+        "doc": "World coordinate of one queried pixel (``sample_world_xyz``).\n\nxyz: median [x, y, z] (metres) of the finite world points in the pixel's\n    neighbourhood; valid_points: how many neighbourhood pixels had depth.",
+        "body": "pixel: tuple[int, int]\nxyz: tuple[float, float, float]\nvalid_points: int"
+      },
+      {
+        "name": "WorldSamples",
+        "kind": "class",
+        "range": [
+          217,
+          228
+        ],
+        "owner": null,
+        "doc": "Outcome of ``sample_world_xyz``: one ``WorldSample`` per requested pixel, in order.",
+        "body": "samples: tuple[WorldSample, ...]\nview: str\nstep: int\nimage_shape: tuple[int, int]"
+      },
+      {
+        "name": "WorldSamples.xyz",
+        "kind": "function",
+        "range": [
+          226,
+          228
+        ],
+        "owner": "WorldSamples",
+        "doc": "The sampled coordinates only, in request order.",
+        "body": "return tuple(s.xyz for s in self.samples)"
+      },
+      {
+        "name": "WorldRegion",
+        "kind": "class",
+        "range": [
+          232,
+          247
+        ],
+        "owner": null,
+        "doc": "Outcome of ``query_world_map``: statistics of the world points inside a pixel box.\n\nxyz_min / xyz_max / xyz_median: per-axis extremes and median of the\n    finite points (metres); valid_points: how many pixels had depth.\npoints: up to ``max_points`` ``(pixel, xyz)`` samples spread over the box\n    in row-major order, for your own geometry.",
+        "body": "xyz_min: tuple[float, float, float]\nxyz_max: tuple[float, float, float]\nxyz_median: tuple[float, float, float]\nvalid_points: int\npoints: tuple[tuple[tuple[int, int], tuple[float, float, float]], ...]\nview: str\nstep: int"
+      },
+      {
+        "name": "RobotwinRobot",
+        "kind": "class",
+        "range": [
+          306,
+          913
+        ],
+        "owner": null,
+        "doc": "A RoboTwin dual-arm robot (aloha-agilex: two 6-DoF arms with parallel grippers) at a table.\n\nWorld frame: x runs across the table (the robot's LEFT arm is at negative\nx and appears on the LEFT of the head image), y points away from the robot\ntowards the far edge of the table, z is up; metres and radians.\nOrientations are unit quaternions ordered [w, x, y, z].  The arms are\n``\"left\"`` and ``\"right\"`` (``robo.LEFT`` / ``robo.RIGHT``); every motion\ncall names one arm and leaves the other where it is.\n\nTwo frames per arm: ``move_to`` targets the EEF (wrist link); the TCP\n(gripper centre, where an object is held) lies ``EEF_TO_TCP_M`` = 0.12 m\nbeyond the EEF along the gripper's approach axis (``ArmState.approach``),\nso to bring the gripper centre onto a point p command\n``p - 0.12 * approach``.  Never send an object's surface point as an EEF\ntarget.  Both frames are reported by ``state()``.\n\nGripper commands are floats in [0, 1]: ``robo.OPEN`` (1.0) is fully open,\n``robo.CLOSE`` (0.0) fully closed; ``state().left.gripper`` reports the\ncommanded value, not a contact measurement.\n\nEvery native action (one ``move_to`` substep, one gripper step, one VLA\naction) advances ``take_action_cnt`` towards ``step_lim``.  Motion calls\nblock until the primitive finishes and return a typed result; nothing is\nqueued.\n\nPerception is camera based: a fixed ``head`` camera (whole table, 320x240)\nand one wrist camera per arm (``left_wrist``, ``right_wrist``); every\nrecorded step also carries per-pixel world coordinates for each view\n(``sample_world_xyz``, ``query_world_map``, ``world_map``).  Object poses\nare never given.\n\nThe frozen LingBot-VLA (``lingbot_act``) is a learned dual-arm policy for\nthis benchmark.  It always receives the benchmark's own task instruction\n(``robo.task``), never a prompt of yours.",
+        "body": "ARMS: tuple[str, str] = (\"left\", \"right\")\nLEFT: str = \"left\"\nRIGHT: str = \"right\"\nOPEN: float = 1.0\nCLOSE: float = 0.0\nEEF_TO_TCP_M: float = EEF_TO_TCP_M\nRESULT_TYPES: ClassVar[tuple[type, ...]] = (\n        State,\n        ArmState,\nNAME: ClassVar[str] = \"robotwin\"\nCAMERAS: ClassVar[tuple[str, ...]] = (\"head\", \"left_wrist\", \"right_wrist\")\nIMAGE_ARTIFACTS: ClassVar[dict[tuple[str, str], str]] = {\n        (\"head\", \"high\"): \"head_rgb.png\",\n        (\"left_wrist\", \"high\"): \"left_wrist_rgb.png\",\nWORLD_MAP_ARTIFACTS: ClassVar[dict[tuple[str, str], str]] = {\n        (\"head\", \"high\"): \"head_world_xyz.npy\",\n        (\"left_wrist\", \"high\"): \"left_wrist_world_xyz.npy\",\nON_MOTION_IMAGES: ClassVar[tuple[str, ...]] = (\n        \"head_rgb.png\",\n        \"left_wrist_rgb.png\",\nSTATEFUL_TOOLS: ClassVar[frozenset[str]] = STATEFUL_TOOLS\nVLA_PRIMITIVES: ClassVar[tuple[str, ...]] = (\"lingbot_act\",)\nVLA_REFERENCE_EDITS: ClassVar[tuple[tuple[str, str], ...]] = (\n        (\n            \"    Every native action (one ``move_to`` substep, one gripper step, one VLA\\n\"\nSUMMARY_KEYS: ClassVar[tuple[str, ...]] = (\n        \"success\",\n        \"stop_reason\","
+      },
+      {
+        "name": "RobotwinRobot.task",
+        "kind": "function",
+        "range": [
+          432,
+          438
+        ],
+        "owner": "RobotwinRobot",
+        "doc": "The task instruction, e.g. ``\"Grab the hammer with the left arm and hit the block\"``.\n\nIt is authoritative: it names the arm when one is required and the VLA\nacts on exactly this text.",
+        "body": "return super().task"
+      },
+      {
+        "name": "RobotwinRobot.done",
+        "kind": "function",
+        "range": [
+          441,
+          443
+        ],
+        "owner": "RobotwinRobot",
+        "doc": "True once the benchmark's success predicate (``eval_success``) has fired (sticky).",
+        "body": "return super().done"
+      },
+      {
+        "name": "RobotwinRobot.state",
+        "kind": "function",
+        "range": [
+          445,
+          456
+        ],
+        "owner": "RobotwinRobot",
+        "doc": "Read the recorded state of both arms and the episode status.\n\nArgs:\n    step: recorded step to read; ``-1`` is the latest, ``0`` the\n        initial scene.  A new step is recorded after every motion call\n        and after ``render``.\nReturns:\n    State with ``left`` / ``right`` arm poses and gripper values,\n    ``take_action_cnt`` / ``step_lim`` and the episode flags.",
+        "body": "return super().state(step)"
+      },
+      {
+        "name": "RobotwinRobot.image",
+        "kind": "function",
+        "range": [
+          458,
+          473
+        ],
+        "owner": "RobotwinRobot",
+        "doc": "Load a recorded camera image as a ``numpy`` uint8 array (240, 320, 3), RGB.\n\nArgs:\n    camera: ``\"head\"`` (fixed view of the whole table: identify objects,\n        destinations and the global layout), ``\"left_wrist\"`` or\n        ``\"right_wrist\"`` (on the gripper: close-range geometry of the\n        object that arm is working on).\n    resolution: there is one resolution per camera, ``\"high\"`` (320x240).\n        Pixel coordinates are (row, col) with row 0 at the top and col 0\n        at the left; pass the same camera and step to\n        ``sample_world_xyz`` / ``query_world_map``.\n    step: recorded step, ``-1`` = latest (call ``render()`` first to\n        get a fresh picture after time has passed without motion).",
+        "body": "return super().image(camera, resolution=resolution, step=step)"
+      },
+      {
+        "name": "RobotwinRobot.world_map",
+        "kind": "function",
+        "range": [
+          475,
+          489
+        ],
+        "owner": "RobotwinRobot",
+        "doc": "Load the per-pixel world coordinates of a recorded image.\n\nReturns a ``numpy`` float32 array (240, 320, 3): ``world_map[row, col]``\nis the [x, y, z] of the surface seen at that pixel, NaN where the\ncamera saw no depth.  This is what ``sample_world_xyz`` and\n``query_world_map`` read; load it to reason about many pixels at once\n(e.g. ``np.nanmedian(world_map[..., 2])`` is the table height).",
+        "body": "key = (camera, resolution)\nif key not in self.WORLD_MAP_ARTIFACTS:\n            raise ValueError(\n                f\"camera must be one of {self.CAMERAS} and resolution 'high'; got {key!r}\"\nreturn super().world_map(camera, resolution=resolution, step=step)"
+      },
+      {
+        "name": "RobotwinRobot.depth",
+        "kind": "function",
+        "range": [
+          491,
+          497
+        ],
+        "owner": "RobotwinRobot",
+        "doc": "Load the metric depth of a recorded image: float32 (240, 320) metres, NaN if invalid.",
+        "body": "if camera not in self.CAMERAS:\n            raise ValueError(f\"camera must be one of {self.CAMERAS}\")\nimport numpy as np\nreturn np.load(io.BytesIO(self.artifact(f\"{camera}_depth.npy\", step=step)))"
+      },
+      {
+        "name": "RobotwinRobot.camera_meta",
+        "kind": "function",
+        "range": [
+          499,
+          508
+        ],
+        "owner": "RobotwinRobot",
+        "doc": "Return the camera calibration of a recorded step as a dict.\n\nKeys: ``intrinsic_K`` (3x3), ``extrinsic_cv`` (3x4), ``cam2world_gl``\n(4x4, OpenGL convention: the camera looks down its -z axis), ``width``,\n``height``.  The wrist cameras move with their arm.",
+        "body": "if camera not in self.CAMERAS:\n            raise ValueError(f\"camera must be one of {self.CAMERAS}\")\nreturn json.loads(self.artifact(f\"{camera}_camera_meta.json\", step=step))"
+      },
+      {
+        "name": "RobotwinRobot.show",
+        "kind": "function",
+        "range": [
+          510,
+          518
+        ],
+        "owner": "RobotwinRobot",
+        "doc": "Attach the current image of ``camera`` to the feedback of this turn.\n\nImages are not returned automatically; call ``show(\"head\")``,\n``show(\"left_wrist\")`` or ``show(\"right_wrist\")`` when *you* (the\nauthor) need to look at the scene before writing the next turn.  Costs\ntokens: look only when a decision depends on it.",
+        "body": "super().show(camera)"
+      },
+      {
+        "name": "RobotwinRobot.artifact",
+        "kind": "function",
+        "range": [
+          520,
+          527
+        ],
+        "owner": "RobotwinRobot",
+        "doc": "Return the raw bytes of a recorded artifact (advanced).\n\nNames are ``<camera>_rgb.png``, ``<camera>_depth.npy``,\n``<camera>_world_xyz.npy`` and ``<camera>_camera_meta.json`` for the\nthree cameras.",
+        "body": "return super().artifact(name, step=step)"
+      },
+      {
+        "name": "RobotwinRobot.render",
+        "kind": "function",
+        "range": [
+          529,
+          536
+        ],
+        "owner": "RobotwinRobot",
+        "doc": "Record a fresh observation (new step with images and world maps) without moving.\n\nUse it before ``image`` / ``sample_world_xyz`` when the scene may have\nchanged since the last recorded step (an object settling after a\nrelease, for instance).  Costs no native action.",
+        "body": "return self._stateful(\"render\", {}, lambda payload: self._latest_state())"
+      },
+      {
+        "name": "RobotwinRobot.sample_world_xyz",
+        "kind": "function",
+        "range": [
+          538,
+          600
+        ],
+        "owner": "RobotwinRobot",
+        "doc": "Return the world [x, y, z] under image pixels of a recorded view.\n\nArgs:\n    view: ``\"head\"``, ``\"left_wrist\"`` or ``\"right_wrist\"``; it is also\n        the pixel coordinate space, so use the view whose image the\n        pixels were read from (same ``step``).\n    pixels: 1 to 256 ``[row, col]`` pairs (a single pair is accepted too).\n    step: recorded step, ``-1`` = latest.\n    neighborhood: half-size of the square window (0..32) whose finite\n        points are median-filtered; 1 = a 3x3 window.\nReturns:\n    WorldSamples; each ``xyz`` is a visible SURFACE point (the top of an\n    object, not its centre): sample several interior pixels and take\n    the median; pixels on edges, shadows or the gap to the table hit\n    the background.\nRaises:\n    ToolError: pixel out of bounds (images are 240 rows x 320 cols),\n    no finite depth in the window, or no world map for that step.",
+        "body": "if view not in self.CAMERAS:\n            raise ValueError(f\"view must be one of {self.CAMERAS}\")\nif len(pixels) == 2 and all(isinstance(v, Real) for v in pixels):\n            pixels = [pixels]  # a single [row, col] pair\nif not 1 <= len(pixels) <= 256:\n            raise ValueError(\"pixels must contain between 1 and 256 [row, col] pairs\")\nrows_cols = []\nfor pixel in pixels:\n            if len(pixel) != 2:\n                raise ValueError(f\"every pixel must be a [row, col] pair, got {pixel!r}\")\nif not 0 <= int(neighborhood) <= 32:\n            raise ValueError(\"neighborhood must be between 0 and 32\")\nkwargs: dict[str, Any] = {\n            \"view\": view,\n            \"pixels\": rows_cols,\npayload = self._readonly(\"sample_world_xyz\", kwargs, allow_error_key=\"success\")\nself._raise_world_error(\"sample_world_xyz\", payload)\nsamples = tuple(\n            WorldSample(\n                pixel=(int(s[\"pixel\"][0]), int(s[\"pixel\"][1])),\nshape = payload.get(\"image_shape\") or [0, 0]\nreturn WorldSamples(\n            samples=samples,\n            view=str(payload.get(\"view\", view)),"
+      },
+      {
+        "name": "RobotwinRobot.query_world_map",
+        "kind": "function",
+        "range": [
+          602,
+          655
+        ],
+        "owner": "RobotwinRobot",
+        "doc": "Return statistics of the world points inside a pixel box of a recorded view.\n\nArgs:\n    view: ``\"head\"``, ``\"left_wrist\"`` or ``\"right_wrist\"`` (the box's\n        pixel space; same step as the image you read it from).\n    bbox: half-open ``[row_start, col_start, row_end, col_end]``.\n    step: recorded step, ``-1`` = latest.\n    max_points: how many ``(pixel, xyz)`` samples to return (1..4096).\nReturns:\n    WorldRegion; ``xyz_median`` is the robust surface height / position\n    of what fills the box, ``xyz_min`` / ``xyz_max`` its extent.\nRaises:\n    ToolError: box outside the image or no finite depth inside it.",
+        "body": "if view not in self.CAMERAS:\n            raise ValueError(f\"view must be one of {self.CAMERAS}\")\nbox = [int(v) for v in bbox]\nif len(box) != 4:\n            raise ValueError(\"bbox must be [row_start, col_start, row_end, col_end]\")\nif not 1 <= int(max_points) <= 4096:\n            raise ValueError(\"max_points must be between 1 and 4096\")\nkwargs: dict[str, Any] = {\n            \"view\": view,\n            \"bbox\": box,\npayload = self._readonly(\"query_world_map\", kwargs, allow_error_key=\"success\")\nself._raise_world_error(\"query_world_map\", payload)\npoints = tuple(\n            (\n                (int(p[\"pixel\"][0]), int(p[\"pixel\"][1])),\nnan3 = (math.nan, math.nan, math.nan)\nreturn WorldRegion(\n            xyz_min=_tuple3(payload.get(\"xyz_min\")) or nan3,\n            xyz_max=_tuple3(payload.get(\"xyz_max\")) or nan3,"
+      },
+      {
+        "name": "RobotwinRobot.lingbot_act",
+        "kind": "function",
+        "range": [
+          659,
+          703
+        ],
+        "owner": "RobotwinRobot",
+        "doc": "Let the frozen LingBot-VLA drive both arms for ``chunks`` x 50 native actions.\n\nThe policy runs on the benchmark's own task instruction (``robo.task``)\nand the three current camera images; it stops early when the task\nsucceeds or the budget runs out.  It is the tool for grasps and\nre-grasps, bimanual coordination, insertion, hanging, tool use and\nother contact-rich motion; script free-space transport, staging and\nrelease yourself with the primitives after verifying the state.\n\nArgs:\n    chunks: action chunks to execute (>= 1).  One chunk near contact,\n        near success or for a small correction; two for ordinary\n        stable progress; three only for a continuity-sensitive phase\n        that is already moving correctly.\n    use_length: actions per chunk; the runtime fixes it at 50.\n    prompt: recorded with the call but NOT sent to the policy (the\n        runtime always uses the task instruction); leave it None.\nReturns:\n    VlaRun; check ``terminated`` / ``robo.done`` and the images\n    afterwards - a completed run is not a solved task.",
+        "body": "if int(chunks) < 1:\n            raise ValueError(\"chunks must be at least 1\")\nif int(use_length) != VLA_CHUNK_ACTIONS:\n            raise ValueError(f\"use_length must be {VLA_CHUNK_ACTIONS} for this VLA\")\nkwargs: dict[str, Any] = {\"chunks\": int(chunks), \"use_length\": int(use_length)}\nif prompt is not None:\n            kwargs[\"prompt\"] = str(prompt)\nrequested = int(chunks) * VLA_CHUNK_ACTIONS\nreturn self._stateful(\"lingbot_act\", kwargs, build)"
+      },
+      {
+        "name": "RobotwinRobot.move_to",
+        "kind": "function",
+        "range": [
+          707,
+          748
+        ],
+        "owner": "RobotwinRobot",
+        "doc": "Plan and execute a collision-aware arm motion to a world-frame EEF pose.\n\nThe motion planner computes a joint path from the current pose to the\ntarget; the path is executed as ``substeps`` native actions.  If no\npath exists (unreachable, in collision, through the other arm or the\ntable) nothing moves and ``Move.planned`` is False.\n\nArgs:\n    arm: ``\"left\"`` or ``\"right\"``.\n    xyz: target EEF position [x, y, z] in metres (NOT the gripper centre:\n        subtract 0.12 m along ``ArmState.approach``).\n    quat: target orientation [w, x, y, z]; None keeps the current one.\n    gripper: gripper value in [0, 1] to hold during the motion; None\n        keeps the current command (so a held object stays held).\n    substeps: waypoints executed (1 = jump to the final pose in one\n        action, 0 = every planner waypoint).  Near the table, a rim or\n        the other arm use small motions (z changes of 5-10 mm) with at\n        most 8 substeps and re-observe between them.\nReturns:\n    Move; always check ``planned`` and ``reached`` and compare\n    ``final_eef_pos`` with the target: a returned call is not proof of\n    arrival.",
+        "body": "arm = _arm(arm)\ntarget = _floats(xyz, 3, \"xyz\")\nkwargs: dict[str, Any] = {\"arm\": arm, \"xyz\": list(target), \"substeps\": int(substeps)}\nif int(substeps) < 0:\n            raise ValueError(\"substeps must be non-negative\")\nif quat is not None:\n            kwargs[\"quat\"] = list(_floats(quat, 4, \"quat\"))\nif gripper is not None:\n            kwargs[\"gripper\"] = _gripper(gripper)\nreturn self._stateful(\"move_to\", kwargs, lambda p: self._move(arm, target, p))"
+      },
+      {
+        "name": "RobotwinRobot.rotate_wrist",
+        "kind": "function",
+        "range": [
+          750,
+          783
+        ],
+        "owner": "RobotwinRobot",
+        "doc": "Rotate one EEF about the world z axis by a relative angle, keeping its position.\n\nBecause the TCP sits 0.12 m from the EEF, the gripper (and a held\nobject) sweeps an arc: rotate only with clearance around the gripper,\nat a safe height, in small increments, after a verified hold.\n\nArgs:\n    arm: ``\"left\"`` or ``\"right\"``.\n    delta_yaw_deg: relative yaw in degrees (``state().arm(arm).eef_yaw``\n        reports the current yaw in radians).\n    gripper: value to hold during the motion; None keeps the current.\n    substeps: waypoints executed (see ``move_to``).\nReturns:\n    Move (``target_xyz`` is the position it was told to keep).",
+        "body": "arm = _arm(arm)\nyaw = float(delta_yaw_deg)\nif not math.isfinite(yaw):\n            raise ValueError(\"delta_yaw_deg must be finite\")\nif int(substeps) < 0:\n            raise ValueError(\"substeps must be non-negative\")\nkwargs: dict[str, Any] = {\"arm\": arm, \"delta_yaw_deg\": yaw, \"substeps\": int(substeps)}\nif gripper is not None:\n            kwargs[\"gripper\"] = _gripper(gripper)\ntarget = self._current_state().arm(arm).eef_pos\nreturn self._stateful(\"rotate_wrist\", kwargs, lambda p: self._move(arm, target, p))"
+      },
+      {
+        "name": "RobotwinRobot.set_gripper",
+        "kind": "function",
+        "range": [
+          785,
+          797
+        ],
+        "owner": "RobotwinRobot",
+        "doc": "Drive one gripper linearly to ``val`` over ``steps`` native actions.\n\n``set_gripper(\"left\", robo.CLOSE)`` closes the left gripper; verify a\ngrasp afterwards from the wrist image and from the object moving with\nthe TCP - the reported value is a command, not a contact measurement.",
+        "body": "arm = _arm(arm)\ntarget = _gripper(val)\nif int(steps) < 1:\n            raise ValueError(\"steps must be at least 1\")\nkwargs = {\"arm\": arm, \"val\": target, \"steps\": int(steps)}\nreturn self._stateful(\"set_gripper\", kwargs, lambda p: self._gripper(arm, target, p))"
+      },
+      {
+        "name": "RobotwinRobot.release",
+        "kind": "function",
+        "range": [
+          799,
+          811
+        ],
+        "owner": "RobotwinRobot",
+        "doc": "Open one gripper to ``val`` (default fully open) over ``steps`` native actions.\n\nRelease only when the object is supported at its destination; then\nretreat upwards and check that it stayed put.  Returns\n``terminated=True`` when letting go satisfied the task.",
+        "body": "arm = _arm(arm)\ntarget = _gripper(val)\nif int(steps) < 1:\n            raise ValueError(\"steps must be at least 1\")\nkwargs = {\"arm\": arm, \"val\": target, \"steps\": int(steps)}\nreturn self._stateful(\"release\", kwargs, lambda p: self._gripper(arm, target, p))"
+      },
+      {
+        "name": "RobotwinRobot._move",
+        "kind": "function",
+        "range": [
+          820,
+          837
+        ],
+        "owner": "RobotwinRobot",
+        "doc": "",
+        "body": "planned = str(p.get(\"plan_status\", \"\")) == \"Success\" and p.get(\"success\") is not False\nfinal = _tuple3(p.get(\"final_eef_xyz\"))\ndist = float(p.get(\"final_dist_m\", math.inf)) if final is not None else math.inf\nstate = self._latest_state()\nreturn Move(\n            arm=arm,\n            target_xyz=(target[0], target[1], target[2]),"
+      },
+      {
+        "name": "RobotwinRobot._gripper",
+        "kind": "function",
+        "range": [
+          839,
+          849
+        ],
+        "owner": "RobotwinRobot",
+        "doc": "",
+        "body": "state = self._latest_state()\nreturn Gripper(\n            arm=arm,\n            target=target,"
+      },
+      {
+        "name": "RobotwinRobot._state_from_envelope",
+        "kind": "function",
+        "range": [
+          861,
+          891
+        ],
+        "owner": "RobotwinRobot",
+        "doc": "",
+        "body": "raw = envelope.get(\"state\") or {}\nrobot = raw.get(\"robot_state\") or {}\nstatus = raw.get(\"episode_status\") or {}\narms = {}\nfor name in (\"left\", \"right\"):\n            eef_pos, eef_quat = _pose7(robot.get(f\"{name}_eef_pose\"))\n            tcp_pos, tcp_quat = _pose7(robot.get(f\"{name}_tcp_pose\"))\neval_success = bool(status.get(\"eval_success\"))\ncount = int(status.get(\"take_action_cnt\", 0) or 0)\nlimit = status.get(\"step_lim\")\nstep_lim = int(limit) if limit is not None else 0\ntruncated = bool(envelope.get(\"truncated\")) or (limit is not None and count >= step_lim)\nreturn State(\n            step=int(envelope.get(\"step\", raw.get(\"step_idx\", -1))),\n            task=str(envelope.get(\"task_language\") or raw.get(\"task_language\") or \"\"),"
+      },
+      {
+        "name": "RobotwinRobot._summary_dict",
+        "kind": "function",
+        "range": [
+          893,
+          906
+        ],
+        "owner": "RobotwinRobot",
+        "doc": "Compact state for the per-turn tool feedback (host-facing).",
+        "body": "state = self.state()\nreturn {\n            \"step\": state.step,\n            \"left_eef\": [round(v, 4) for v in state.left.eef_pos],"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import io",
+      "import json",
+      "import math",
+      "from collections.abc import Sequence",
+      "from dataclasses import dataclass",
+      "from numbers import Real",
+      "from typing import Any, ClassVar",
+      "from ._backend import ToolError",
+      "from ._robot import RobotBase",
+      "from .robots import RobotAdapter",
+      "import numpy as np"
+    ]
+  }
+]

@@ -1,0 +1,1710 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/pyrualean/robodojo.py",
+      "type": "file",
+      "name": "robodojo.py",
+      "filePath": "src/pyrualean/robodojo.py",
+      "summary": "为 RoboDojo 双臂工作站提供全姿态移动、夹爪、定位、复位和同步协调接口。执行时隐藏最终任务成功判据，只报告实际动作和观测结果。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "双臂操作"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:_floats",
+      "type": "function",
+      "name": "_floats",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        345,
+        352
+      ],
+      "summary": "验证向量维度与数值有限性并转换为浮点元组。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:_tuple3",
+      "type": "function",
+      "name": "_tuple3",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        355,
+        362
+      ],
+      "summary": "解析三维坐标，格式无效时返回 NaN 坐标。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:_arm",
+      "type": "function",
+      "name": "_arm",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        365,
+        368
+      ],
+      "summary": "校验手臂名称为左臂或右臂。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:_camera",
+      "type": "function",
+      "name": "_camera",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        371,
+        374
+      ],
+      "summary": "校验相机名称属于当前机器人支持列表。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:_command",
+      "type": "function",
+      "name": "_command",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        377,
+        387
+      ],
+      "summary": "校验夹爪开、闭、保持命令并限定保持操作的适用场景。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:_scalar",
+      "type": "function",
+      "name": "_scalar",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        390,
+        402
+      ],
+      "summary": "展开可能多层嵌套的单值列表或数组。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:_sequence",
+      "type": "function",
+      "name": "_sequence",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        405,
+        412
+      ],
+      "summary": "将列表或数组转换为浮点元组，其他输入返回空元组。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:_rotation",
+      "type": "function",
+      "name": "_rotation",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        415,
+        424
+      ],
+      "summary": "将 wxyz 四元数转换为三维旋转矩阵。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:_wrap",
+      "type": "function",
+      "name": "_wrap",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        427,
+        428
+      ],
+      "summary": "将角度规范到负一百八十度到一百八十度范围。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:gripper_angles",
+      "type": "function",
+      "name": "gripper_angles",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        431,
+        453
+      ],
+      "summary": "从末端四元数提取面向夹爪的俯仰、偏航与滚转，处理垂直向下时的退化。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:_arm_state",
+      "type": "function",
+      "name": "_arm_state",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        456,
+        472
+      ],
+      "summary": "从原始末端位姿和关节数据计算一侧手臂 TCP、方向及开度。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:_angle",
+      "type": "function",
+      "name": "_angle",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        475,
+        484
+      ],
+      "summary": "验证可选角度为有限浮点数。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:_pick_arm",
+      "type": "function",
+      "name": "_pick_arm",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        497,
+        499
+      ],
+      "summary": "从抓取结果提取指定手臂的数值诊断字段，缺失值保留为 NaN。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/robodojo.py:ArmState",
+      "type": "class",
+      "name": "ArmState",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        74,
+        103
+      ],
+      "summary": "保存单臂抓取点、夹爪角度、关节与实测开度。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/robodojo.py:State",
+      "type": "class",
+      "name": "State",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        107,
+        129
+      ],
+      "summary": "保存同一步骤的双臂和动作预算状态，不暴露执行中成功标志。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:State.arm",
+      "type": "function",
+      "name": "State.arm",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        124,
+        129
+      ],
+      "summary": "根据左或右名称返回对应手臂状态。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "class:src/pyrualean/robodojo.py:Move",
+      "type": "class",
+      "name": "Move",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        133,
+        174
+      ],
+      "summary": "记录抓取点运动的请求与实际终点、位置角度误差、路径及停止原因。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "数据模型"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/pyrualean/robodojo.py:Home",
+      "type": "class",
+      "name": "Home",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        178,
+        193
+      ],
+      "summary": "保存回初始关节姿态的结果、最大关节误差和动作消耗。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/robodojo.py:Gripper",
+      "type": "class",
+      "name": "Gripper",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        197,
+        222
+      ],
+      "summary": "记录完整开合后的开度和持物宽度启发式，不推断所持物体身份。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/robodojo.py:Pick",
+      "type": "class",
+      "name": "Pick",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        226,
+        255
+      ],
+      "summary": "记录 Pi0.5 双臂抓取启发式及诊断，不能作为目标物体持有的充分证据。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/robodojo.py:Segment",
+      "type": "class",
+      "name": "Segment",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        259,
+        276
+      ],
+      "summary": "保存 SAM3 掩膜质心、面积、置信度和边界，用于后续同相机几何查询。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/robodojo.py:WorldPoint",
+      "type": "class",
+      "name": "WorldPoint",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        280,
+        291
+      ],
+      "summary": "表示单像素可见表面的世界坐标与光轴深度。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/robodojo.py:ObjectPose",
+      "type": "class",
+      "name": "ObjectPose",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        295,
+        339
+      ],
+      "summary": "描述深度掩膜估计的物体足迹中心、顶部、尺寸和方向。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "数据模型"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/pyrualean/robodojo.py:RobodojoRobot",
+      "type": "class",
+      "name": "RobodojoRobot",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        507,
+        1126
+      ],
+      "summary": "封装双 ARX-X5 工作站，提供策略可组合的感知、全姿态运动与双臂协调原语。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "数据模型"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:RobodojoRobot.task",
+      "type": "function",
+      "name": "RobodojoRobot.task",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        635,
+        640
+      ],
+      "summary": "返回基准为当前布局生成的任务指令。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:RobodojoRobot.done",
+      "type": "function",
+      "name": "RobodojoRobot.done",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        643,
+        653
+      ],
+      "summary": "主动抛出属性缺失，防止策略读取基准只在结束后评判的成功标志。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:RobodojoRobot.state",
+      "type": "function",
+      "name": "RobodojoRobot.state",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        658,
+        668
+      ],
+      "summary": "读取指定记录步骤的双臂位姿、开度、关节与预算状态。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:RobodojoRobot.image",
+      "type": "function",
+      "name": "RobodojoRobot.image",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        670,
+        685
+      ],
+      "summary": "读取头部或腕部相机保存的高分辨率 RGB 图像。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:RobodojoRobot.world_map",
+      "type": "function",
+      "name": "RobodojoRobot.world_map",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        687,
+        693
+      ],
+      "summary": "明确拒绝不存在的逐像素世界坐标图接口。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:RobodojoRobot.camera_meta",
+      "type": "function",
+      "name": "RobodojoRobot.camera_meta",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        695,
+        706
+      ],
+      "summary": "读取指定记录步骤的相机形状、内外参和深度能力。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:RobodojoRobot.show",
+      "type": "function",
+      "name": "RobodojoRobot.show",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        708,
+        716
+      ],
+      "summary": "登记当前相机图片以附加到本轮模型反馈。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:RobodojoRobot.artifact",
+      "type": "function",
+      "name": "RobodojoRobot.artifact",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        718,
+        724
+      ],
+      "summary": "读取相机图片等记录产物的原始字节。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:RobodojoRobot.segment",
+      "type": "function",
+      "name": "RobodojoRobot.segment",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        728,
+        768
+      ],
+      "summary": "按文本提示分割当前相机物体，返回掩膜质心和置信度。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:RobodojoRobot.back_project",
+      "type": "function",
+      "name": "RobodojoRobot.back_project",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        770,
+        794
+      ],
+      "summary": "读取指定像素的可见表面世界坐标，要求像素与相机一致。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:RobodojoRobot.locate",
+      "type": "function",
+      "name": "RobodojoRobot.locate",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        796,
+        851
+      ],
+      "summary": "用文本分割与深度估计物体中心、顶部、足迹及方向，过程不驱动机器人。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:RobodojoRobot.pi0_pick",
+      "type": "function",
+      "name": "RobodojoRobot.pi0_pick",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        855,
+        913
+      ],
+      "summary": "调用冻结 Pi0.5 驱动双臂，按抓取启发式或动作块上限停止并返回诊断。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:RobodojoRobot.move_to",
+      "type": "function",
+      "name": "RobodojoRobot.move_to",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        917,
+        972
+      ],
+      "summary": "求完整 TCP 位姿并执行直线或受控关节路径，返回真实运动误差及是否可恢复。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:RobodojoRobot.set_gripper",
+      "type": "function",
+      "name": "RobodojoRobot.set_gripper",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        974,
+        1025
+      ],
+      "summary": "重复开合命令直到手指稳定，并记录持物开度与后续保持命令。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:RobodojoRobot.home",
+      "type": "function",
+      "name": "RobodojoRobot.home",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        1027,
+        1056
+      ],
+      "summary": "必要时先抬升，再将指定手臂驱回回合初始关节角。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:RobodojoRobot._move",
+      "type": "function",
+      "name": "RobodojoRobot._move",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        1065,
+        1085
+      ],
+      "summary": "将宿主运动负载规范为强类型 Move 对象。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:RobodojoRobot._state_from_envelope",
+      "type": "function",
+      "name": "RobodojoRobot._state_from_envelope",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        1087,
+        1096
+      ],
+      "summary": "从宿主观测封装提取任务、双臂和原生预算状态。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:RobodojoRobot._absorb",
+      "type": "function",
+      "name": "RobodojoRobot._absorb",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        1098,
+        1110
+      ],
+      "summary": "只锁存动作预算耗尽，不把任何观测封装当作执行中的任务成功信号。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robodojo.py:RobodojoRobot._summary_dict",
+      "type": "function",
+      "name": "RobodojoRobot._summary_dict",
+      "filePath": "src/pyrualean/robodojo.py",
+      "lineRange": [
+        1112,
+        1126
+      ],
+      "summary": "生成双臂姿态与夹爪等当前状态的紧凑反馈。",
+      "tags": [
+        "机器人接口",
+        "RoboDojo",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "file:src/pyrualean/robodojo_xpl.py",
+      "type": "file",
+      "name": "robodojo_xpl.py",
+      "filePath": "src/pyrualean/robodojo_xpl.py",
+      "summary": "在官方 XPolicyLab 评估客户端上复用 RoboDojo API，使用深度和相机矩阵但不提供 VLA，由客户端负责最终裁决。",
+      "tags": [
+        "机器人适配",
+        "官方评估",
+        "深度感知"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/robodojo_xpl.py:RobodojoOfficialRobot",
+      "type": "class",
+      "name": "RobodojoOfficialRobot",
+      "filePath": "src/pyrualean/robodojo_xpl.py",
+      "lineRange": [
+        37,
+        46
+      ],
+      "summary": "继承 RoboDojo 机器人接口并选择官方客户端宿主，声明无 VLA 能力。",
+      "tags": [
+        "机器人适配",
+        "官方评估",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:_floats",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:_floats",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:_tuple3",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:_tuple3",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:_arm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:_arm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:_camera",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:_camera",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:_command",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:_command",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:_scalar",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:_scalar",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:_sequence",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:_sequence",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:_rotation",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:_rotation",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:_wrap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:_wrap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:gripper_angles",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:gripper_angles",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:_arm_state",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:_arm_state",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:_angle",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:_angle",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:_pick_arm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:_pick_arm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "class:src/pyrualean/robodojo.py:ArmState",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "class:src/pyrualean/robodojo.py:ArmState",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "class:src/pyrualean/robodojo.py:State",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "class:src/pyrualean/robodojo.py:State",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:State.arm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robodojo.py:State",
+      "target": "function:src/pyrualean/robodojo.py:State.arm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "class:src/pyrualean/robodojo.py:Move",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "class:src/pyrualean/robodojo.py:Move",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "class:src/pyrualean/robodojo.py:Home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "class:src/pyrualean/robodojo.py:Home",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "class:src/pyrualean/robodojo.py:Gripper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "class:src/pyrualean/robodojo.py:Gripper",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "class:src/pyrualean/robodojo.py:Pick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "class:src/pyrualean/robodojo.py:Pick",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "class:src/pyrualean/robodojo.py:Segment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "class:src/pyrualean/robodojo.py:Segment",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "class:src/pyrualean/robodojo.py:WorldPoint",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "class:src/pyrualean/robodojo.py:WorldPoint",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "class:src/pyrualean/robodojo.py:ObjectPose",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "class:src/pyrualean/robodojo.py:ObjectPose",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "class:src/pyrualean/robodojo.py:RobodojoRobot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "class:src/pyrualean/robodojo.py:RobodojoRobot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot.task",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robodojo.py:RobodojoRobot",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot.task",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot.done",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robodojo.py:RobodojoRobot",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot.done",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot.state",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robodojo.py:RobodojoRobot",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot.state",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot.image",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robodojo.py:RobodojoRobot",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot.image",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot.world_map",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robodojo.py:RobodojoRobot",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot.world_map",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot.camera_meta",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robodojo.py:RobodojoRobot",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot.camera_meta",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot.show",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robodojo.py:RobodojoRobot",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot.show",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot.artifact",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robodojo.py:RobodojoRobot",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot.artifact",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot.segment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robodojo.py:RobodojoRobot",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot.segment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot.back_project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robodojo.py:RobodojoRobot",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot.back_project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot.locate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robodojo.py:RobodojoRobot",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot.locate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot.pi0_pick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robodojo.py:RobodojoRobot",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot.pi0_pick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot.move_to",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robodojo.py:RobodojoRobot",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot.move_to",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot.set_gripper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robodojo.py:RobodojoRobot",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot.set_gripper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot.home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robodojo.py:RobodojoRobot",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot.home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot._move",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robodojo.py:RobodojoRobot",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot._move",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot._state_from_envelope",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robodojo.py:RobodojoRobot",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot._state_from_envelope",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot._absorb",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robodojo.py:RobodojoRobot",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot._absorb",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot._summary_dict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robodojo.py:RobodojoRobot",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot._summary_dict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "file:src/pyrualean/_robot.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "file:src/pyrualean/coordination.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "file:src/pyrualean/robots.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:gripper_angles",
+      "target": "function:src/pyrualean/robodojo.py:_rotation",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:gripper_angles",
+      "target": "function:src/pyrualean/robodojo.py:_wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:_arm_state",
+      "target": "function:src/pyrualean/robodojo.py:_sequence",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:_arm_state",
+      "target": "function:src/pyrualean/robodojo.py:_rotation",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:_arm_state",
+      "target": "function:src/pyrualean/robodojo.py:gripper_angles",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:_arm_state",
+      "target": "class:src/pyrualean/robodojo.py:ArmState",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:_arm_state",
+      "target": "function:src/pyrualean/robodojo.py:_scalar",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:RobodojoRobot.camera_meta",
+      "target": "function:src/pyrualean/robodojo.py:_camera",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:RobodojoRobot.segment",
+      "target": "function:src/pyrualean/robodojo.py:_camera",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:RobodojoRobot.segment",
+      "target": "class:src/pyrualean/robodojo.py:Segment",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:RobodojoRobot.back_project",
+      "target": "function:src/pyrualean/robodojo.py:_camera",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:RobodojoRobot.back_project",
+      "target": "class:src/pyrualean/robodojo.py:WorldPoint",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:RobodojoRobot.back_project",
+      "target": "function:src/pyrualean/robodojo.py:_tuple3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:RobodojoRobot.locate",
+      "target": "function:src/pyrualean/robodojo.py:_camera",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:RobodojoRobot.locate",
+      "target": "class:src/pyrualean/robodojo.py:ObjectPose",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:RobodojoRobot.locate",
+      "target": "function:src/pyrualean/robodojo.py:_tuple3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:RobodojoRobot.pi0_pick",
+      "target": "function:src/pyrualean/robodojo.py:_arm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:RobodojoRobot.pi0_pick",
+      "target": "class:src/pyrualean/robodojo.py:Pick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:RobodojoRobot.pi0_pick",
+      "target": "function:src/pyrualean/robodojo.py:_pick_arm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:RobodojoRobot.move_to",
+      "target": "function:src/pyrualean/robodojo.py:_arm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:RobodojoRobot.move_to",
+      "target": "function:src/pyrualean/robodojo.py:_floats",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:RobodojoRobot.move_to",
+      "target": "function:src/pyrualean/robodojo.py:_command",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:RobodojoRobot.move_to",
+      "target": "function:src/pyrualean/robodojo.py:_angle",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:RobodojoRobot.move_to",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot._move",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:RobodojoRobot.set_gripper",
+      "target": "function:src/pyrualean/robodojo.py:_arm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:RobodojoRobot.set_gripper",
+      "target": "function:src/pyrualean/robodojo.py:_command",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:RobodojoRobot.set_gripper",
+      "target": "class:src/pyrualean/robodojo.py:Gripper",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:RobodojoRobot.home",
+      "target": "class:src/pyrualean/robodojo.py:Home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:RobodojoRobot._move",
+      "target": "class:src/pyrualean/robodojo.py:Move",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:RobodojoRobot._move",
+      "target": "function:src/pyrualean/robodojo.py:_tuple3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:RobodojoRobot._state_from_envelope",
+      "target": "class:src/pyrualean/robodojo.py:State",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:RobodojoRobot._state_from_envelope",
+      "target": "function:src/pyrualean/robodojo.py:_arm_state",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:RobodojoRobot._absorb",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot._state_from_envelope",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robodojo.py:RobodojoRobot._summary_dict",
+      "target": "function:src/pyrualean/robodojo.py:RobodojoRobot.state",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/pyrualean/robodojo.py:RobodojoRobot",
+      "target": "class:src/pyrualean/coordination.py:CoordinationMixin",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "class:src/pyrualean/robodojo.py:RobodojoRobot",
+      "target": "class:src/pyrualean/_robot.py:RobotBase",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "file:src/pyrualean/robodojo_xpl.py",
+      "target": "class:src/pyrualean/robodojo_xpl.py:RobodojoOfficialRobot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robodojo_xpl.py",
+      "target": "class:src/pyrualean/robodojo_xpl.py:RobodojoOfficialRobot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robodojo_xpl.py",
+      "target": "file:src/pyrualean/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/robodojo_xpl.py",
+      "target": "file:src/pyrualean/robodojo.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "class:src/pyrualean/robodojo_xpl.py:RobodojoOfficialRobot",
+      "target": "class:src/pyrualean/robodojo.py:RobodojoRobot",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    }
+  ]
+}

@@ -1,0 +1,691 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/pyrualean/recovery.py",
+      "type": "file",
+      "name": "recovery.py",
+      "filePath": "src/pyrualean/recovery.py",
+      "summary": "定义代码工具与代理运行时共享的结构化失败信息，保留生成代码位置并统一执行错误判据。",
+      "tags": [
+        "错误处理",
+        "恢复反馈",
+        "执行审计"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/recovery.py:failure_details",
+      "type": "function",
+      "name": "failure_details",
+      "filePath": "src/pyrualean/recovery.py",
+      "lineRange": [
+        17,
+        54
+      ],
+      "summary": "提取原始异常、traceback 和生成代码位置，形成可用于现场修复的失败说明。",
+      "tags": [
+        "错误处理",
+        "恢复反馈",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/recovery.py:result_is_error",
+      "type": "function",
+      "name": "result_is_error",
+      "filePath": "src/pyrualean/recovery.py",
+      "lineRange": [
+        57,
+        64
+      ],
+      "summary": "统一判断工具结果中的执行失败，保证 MCP、运行时事件和审计一致。",
+      "tags": [
+        "错误处理",
+        "恢复反馈",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/pyrualean/strategies.py",
+      "type": "file",
+      "name": "strategies.py",
+      "filePath": "src/pyrualean/strategies.py",
+      "summary": "提供机器人无关的有限反馈循环，用最新观测完成重定位、误差修正和抓取验证；不自动重放失败代码或推断任务成功。",
+      "tags": [
+        "反馈控制",
+        "抓取验证",
+        "重规划"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/strategies.py:_verdict",
+      "type": "function",
+      "name": "_verdict",
+      "filePath": "src/pyrualean/strategies.py",
+      "lineRange": [
+        77,
+        80
+      ],
+      "summary": "要求判断回调只返回布尔值或未知值。",
+      "tags": [
+        "反馈控制",
+        "抓取验证",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/strategies.py:verify_grasp",
+      "type": "function",
+      "name": "verify_grasp",
+      "filePath": "src/pyrualean/strategies.py",
+      "lineRange": [
+        83,
+        167
+      ],
+      "summary": "闭合夹爪后执行一次安全探测，用新的配对观测验证目标物体跟随且稳定，证据不足交回规划者。",
+      "tags": [
+        "反馈控制",
+        "抓取验证",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/strategies.py:_count",
+      "type": "function",
+      "name": "_count",
+      "filePath": "src/pyrualean/strategies.py",
+      "lineRange": [
+        170,
+        172
+      ],
+      "summary": "验证尝试次数为规定范围内的正整数。",
+      "tags": [
+        "反馈控制",
+        "抓取验证",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/strategies.py:relocalize",
+      "type": "function",
+      "name": "relocalize",
+      "filePath": "src/pyrualean/strategies.py",
+      "lineRange": [
+        175,
+        196
+      ],
+      "summary": "有限次重新观测，必要时先改变视角；只有明确有效的观测才返回通过。",
+      "tags": [
+        "反馈控制",
+        "抓取验证",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/strategies.py:correct",
+      "type": "function",
+      "name": "correct",
+      "filePath": "src/pyrualean/strategies.py",
+      "lineRange": [
+        199,
+        236
+      ],
+      "summary": "每次有限修正后重新验证完成条件，未知或连续无进展时停止并请求重规划。",
+      "tags": [
+        "反馈控制",
+        "抓取验证",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/pyrualean/strategies.py:StrategyResult",
+      "type": "class",
+      "name": "StrategyResult",
+      "filePath": "src/pyrualean/strategies.py",
+      "lineRange": [
+        16,
+        21
+      ],
+      "summary": "保存验证或重规划状态、原因、尝试次数和当前观测，不代表环境任务成功。",
+      "tags": [
+        "反馈控制",
+        "抓取验证",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/strategies.py:GraspObservation",
+      "type": "class",
+      "name": "GraspObservation",
+      "filePath": "src/pyrualean/strategies.py",
+      "lineRange": [
+        25,
+        64
+      ],
+      "summary": "保存夹爪接触、目标物体持有、新鲜度和观测身份，用于区分接触与目标抓取成立。",
+      "tags": [
+        "反馈控制",
+        "抓取验证",
+        "数据模型"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/strategies.py:GraspObservation.__post_init__",
+      "type": "function",
+      "name": "GraspObservation.__post_init__",
+      "filePath": "src/pyrualean/strategies.py",
+      "lineRange": [
+        43,
+        53
+      ],
+      "summary": "验证抓取判断、观测标识和状态版本字段类型。",
+      "tags": [
+        "反馈控制",
+        "抓取验证",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/strategies.py:GraspObservation.from_evidence",
+      "type": "function",
+      "name": "GraspObservation.from_evidence",
+      "filePath": "src/pyrualean/strategies.py",
+      "lineRange": [
+        56,
+        64
+      ],
+      "summary": "从独立证据快照提取目标抓取状态，拒绝将过期或未知证据提升为肯定。",
+      "tags": [
+        "反馈控制",
+        "抓取验证",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "class:src/pyrualean/strategies.py:GraspResult",
+      "type": "class",
+      "name": "GraspResult",
+      "filePath": "src/pyrualean/strategies.py",
+      "lineRange": [
+        68,
+        74
+      ],
+      "summary": "保存已验证、失败或不确定的抓取结论及探测前后观测。",
+      "tags": [
+        "反馈控制",
+        "抓取验证",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/pyrualean/stuck_recovery.py",
+      "type": "file",
+      "name": "stuck_recovery.py",
+      "filePath": "src/pyrualean/stuck_recovery.py",
+      "summary": "在规划者主动确认卡住后提供专用恢复指令，并记录指令版本及最大恢复轮数。",
+      "tags": [
+        "卡住恢复",
+        "执行配置",
+        "规划"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/stuck_recovery.py:add_stuck_recovery_arguments",
+      "type": "function",
+      "name": "add_stuck_recovery_arguments",
+      "filePath": "src/pyrualean/stuck_recovery.py",
+      "lineRange": [
+        45,
+        62
+      ],
+      "summary": "注册恢复技能路径、关闭开关和最大恢复轮数等互斥参数。",
+      "tags": [
+        "卡住恢复",
+        "执行配置",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/stuck_recovery.py:stuck_recovery_config",
+      "type": "function",
+      "name": "stuck_recovery_config",
+      "filePath": "src/pyrualean/stuck_recovery.py",
+      "lineRange": [
+        65,
+        76
+      ],
+      "summary": "根据执行方式和开关选择包内或指定的恢复说明，只允许受支持的单元执行方式。",
+      "tags": [
+        "卡住恢复",
+        "执行配置",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/stuck_recovery.py:recovery_instructions",
+      "type": "function",
+      "name": "recovery_instructions",
+      "filePath": "src/pyrualean/stuck_recovery.py",
+      "lineRange": [
+        79,
+        83
+      ],
+      "summary": "读取包内卡住恢复核心说明，使安装后的包无需仓库即可使用。",
+      "tags": [
+        "卡住恢复",
+        "执行配置",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/stuck_recovery.py:StuckRecoveryConfig",
+      "type": "class",
+      "name": "StuckRecoveryConfig",
+      "filePath": "src/pyrualean/stuck_recovery.py",
+      "lineRange": [
+        12,
+        42
+      ],
+      "summary": "保存卡住恢复指令与允许轮数。",
+      "tags": [
+        "卡住恢复",
+        "执行配置",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/stuck_recovery.py:StuckRecoveryConfig.record",
+      "type": "function",
+      "name": "StuckRecoveryConfig.record",
+      "filePath": "src/pyrualean/stuck_recovery.py",
+      "lineRange": [
+        22,
+        27
+      ],
+      "summary": "记录恢复轮数和指令内容摘要，便于复核执行协议版本。",
+      "tags": [
+        "卡住恢复",
+        "执行配置",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/stuck_recovery.py:StuckRecoveryConfig.prompt",
+      "type": "function",
+      "name": "StuckRecoveryConfig.prompt",
+      "filePath": "src/pyrualean/stuck_recovery.py",
+      "lineRange": [
+        29,
+        42
+      ],
+      "summary": "生成 finish(status='stuck') 的确认与恢复协议提示。",
+      "tags": [
+        "卡住恢复",
+        "执行配置",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/pyrualean/recovery.py",
+      "target": "function:src/pyrualean/recovery.py:failure_details",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/recovery.py",
+      "target": "function:src/pyrualean/recovery.py:failure_details",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/recovery.py",
+      "target": "function:src/pyrualean/recovery.py:result_is_error",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/recovery.py",
+      "target": "function:src/pyrualean/recovery.py:result_is_error",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/recovery.py",
+      "target": "file:src/pyrualean/_backend.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/recovery.py",
+      "target": "file:src/pyrualean/execution.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/strategies.py",
+      "target": "function:src/pyrualean/strategies.py:_verdict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/strategies.py",
+      "target": "function:src/pyrualean/strategies.py:_verdict",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/strategies.py",
+      "target": "function:src/pyrualean/strategies.py:verify_grasp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/strategies.py",
+      "target": "function:src/pyrualean/strategies.py:verify_grasp",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/strategies.py",
+      "target": "function:src/pyrualean/strategies.py:_count",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/strategies.py",
+      "target": "function:src/pyrualean/strategies.py:_count",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/strategies.py",
+      "target": "function:src/pyrualean/strategies.py:relocalize",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/strategies.py",
+      "target": "function:src/pyrualean/strategies.py:relocalize",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/strategies.py",
+      "target": "function:src/pyrualean/strategies.py:correct",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/strategies.py",
+      "target": "function:src/pyrualean/strategies.py:correct",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/strategies.py",
+      "target": "class:src/pyrualean/strategies.py:StrategyResult",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/strategies.py",
+      "target": "class:src/pyrualean/strategies.py:StrategyResult",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/strategies.py",
+      "target": "class:src/pyrualean/strategies.py:GraspObservation",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/strategies.py",
+      "target": "class:src/pyrualean/strategies.py:GraspObservation",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/strategies.py",
+      "target": "function:src/pyrualean/strategies.py:GraspObservation.__post_init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/strategies.py:GraspObservation",
+      "target": "function:src/pyrualean/strategies.py:GraspObservation.__post_init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/strategies.py",
+      "target": "function:src/pyrualean/strategies.py:GraspObservation.from_evidence",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/strategies.py:GraspObservation",
+      "target": "function:src/pyrualean/strategies.py:GraspObservation.from_evidence",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/strategies.py",
+      "target": "class:src/pyrualean/strategies.py:GraspResult",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/strategies.py",
+      "target": "class:src/pyrualean/strategies.py:GraspResult",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/strategies.py:GraspObservation.__post_init__",
+      "target": "function:src/pyrualean/strategies.py:_verdict",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/strategies.py:verify_grasp",
+      "target": "function:src/pyrualean/strategies.py:_count",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/strategies.py:verify_grasp",
+      "target": "class:src/pyrualean/strategies.py:GraspResult",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/strategies.py:verify_grasp",
+      "target": "function:src/pyrualean/strategies.py:_verdict",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/strategies.py:relocalize",
+      "target": "function:src/pyrualean/strategies.py:_count",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/strategies.py:relocalize",
+      "target": "class:src/pyrualean/strategies.py:StrategyResult",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/strategies.py:correct",
+      "target": "function:src/pyrualean/strategies.py:_count",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/strategies.py:correct",
+      "target": "class:src/pyrualean/strategies.py:StrategyResult",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/stuck_recovery.py",
+      "target": "function:src/pyrualean/stuck_recovery.py:add_stuck_recovery_arguments",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/stuck_recovery.py",
+      "target": "function:src/pyrualean/stuck_recovery.py:add_stuck_recovery_arguments",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/stuck_recovery.py",
+      "target": "function:src/pyrualean/stuck_recovery.py:stuck_recovery_config",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/stuck_recovery.py",
+      "target": "function:src/pyrualean/stuck_recovery.py:stuck_recovery_config",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/stuck_recovery.py",
+      "target": "function:src/pyrualean/stuck_recovery.py:recovery_instructions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/stuck_recovery.py",
+      "target": "function:src/pyrualean/stuck_recovery.py:recovery_instructions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/stuck_recovery.py",
+      "target": "class:src/pyrualean/stuck_recovery.py:StuckRecoveryConfig",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/stuck_recovery.py",
+      "target": "class:src/pyrualean/stuck_recovery.py:StuckRecoveryConfig",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/stuck_recovery.py",
+      "target": "function:src/pyrualean/stuck_recovery.py:StuckRecoveryConfig.record",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/stuck_recovery.py:StuckRecoveryConfig",
+      "target": "function:src/pyrualean/stuck_recovery.py:StuckRecoveryConfig.record",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/stuck_recovery.py",
+      "target": "function:src/pyrualean/stuck_recovery.py:StuckRecoveryConfig.prompt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/stuck_recovery.py:StuckRecoveryConfig",
+      "target": "function:src/pyrualean/stuck_recovery.py:StuckRecoveryConfig.prompt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:src/pyrualean/stuck_recovery.py:stuck_recovery_config",
+      "target": "function:src/pyrualean/stuck_recovery.py:recovery_instructions",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/stuck_recovery.py:stuck_recovery_config",
+      "target": "class:src/pyrualean/stuck_recovery.py:StuckRecoveryConfig",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

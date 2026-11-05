@@ -1,0 +1,3211 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "type": "file",
+      "name": "sort_nesting_dolls_by_size.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "实现离线 RoboDojo 任务程序：融合俯视面积和斜视高度给套娃排序，模拟搬运代价安排目标行，并通过中转与复查完成排列。通过执行环境注入的 robo 接口完成任务，不在评测时调用规划模型。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:say",
+      "type": "function",
+      "name": "say",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "打印任务执行进度和诊断信息。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        119,
+        120
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:r3",
+      "type": "function",
+      "name": "r3",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "格式化向量或测量数据以便打印诊断信息。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        123,
+        124
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:count",
+      "type": "function",
+      "name": "count",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "累计底层动作消耗并处理任务终止或预算状态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        127,
+        132
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:mv",
+      "type": "function",
+      "name": "mv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "调用机器人位姿运动接口并处理本任务的运动结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        136,
+        147
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:mv_try",
+      "type": "function",
+      "name": "mv_try",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "先尝试直线运动，失败后回退到自动路径。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        150,
+        157
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:ok",
+      "type": "function",
+      "name": "ok",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "依据运动到达标志或距离容差判断动作是否可接受。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        160,
+        161
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:grip",
+      "type": "function",
+      "name": "grip",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "发送夹爪开合命令并记录执行步数或状态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        164,
+        181
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:to_survey",
+      "type": "function",
+      "name": "to_survey",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "先抬升清障再把机械臂移到扫描姿态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        184,
+        195
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:retreat",
+      "type": "function",
+      "name": "retreat",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "放置后在当前位置抬升到清障高度。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        201,
+        206
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:use_arm",
+      "type": "function",
+      "name": "use_arm",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "将另一机械臂移到观察姿态后启用当前机械臂。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        209,
+        214
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:go_home",
+      "type": "function",
+      "name": "go_home",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "将指定机械臂返回起始姿态并处理返回结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        217,
+        225
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:cam_mats",
+      "type": "function",
+      "name": "cam_mats",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "读取相机标定并转为数值矩阵供投影计算。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        229,
+        231
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:project",
+      "type": "function",
+      "name": "project",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "把世界坐标点投影到标定相机图像平面。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        234,
+        241
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:ray_plane",
+      "type": "function",
+      "name": "ray_plane",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "将像素视线与给定高度平面相交以恢复世界坐标。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        244,
+        253
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:in_zone",
+      "type": "function",
+      "name": "in_zone",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "判断目标坐标是否处于套娃工作区域。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        304,
+        305
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:sight_ok",
+      "type": "function",
+      "name": "sight_ok",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "检验检测结果的位置和尺寸是否可信。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        308,
+        319
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:obs_of",
+      "type": "function",
+      "name": "obs_of",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "把目标定位结果整理成观测记录。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        322,
+        324
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:add_obs",
+      "type": "function",
+      "name": "add_obs",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "将新套娃观测并入已有空间候选。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        327,
+        343
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:safe_locate",
+      "type": "function",
+      "name": "safe_locate",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "调用目标定位并把感知异常转为未检测结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        346,
+        351
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:safe_segment",
+      "type": "function",
+      "name": "safe_segment",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "调用图像分割并捕获感知异常。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        354,
+        359
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:choose_kind",
+      "type": "function",
+      "name": "choose_kind",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "通过不同物体提示词确定套娃模型种类。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        362,
+        373
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:saliency_candidates",
+      "type": "function",
+      "name": "saliency_candidates",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "从未被已知目标解释的颜色区域补充套娃候选。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        376,
+        439
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:sweep",
+      "type": "function",
+      "name": "sweep",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "扫描头部和腕部相机以汇总套娃候选。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        442,
+        461
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:blob_at",
+      "type": "function",
+      "name": "blob_at",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "从俯视图中测量目标非桌面色块的面积与质心。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        467,
+        509
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:look",
+      "type": "function",
+      "name": "look",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "读取相机图像并进行任务所需的目标识别或位姿估计。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        512,
+        575
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:blob_plausible",
+      "type": "function",
+      "name": "blob_plausible",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "根据套娃类型与尺寸先验判断掩码面积是否合理。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        578,
+        584
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:tile_search",
+      "type": "function",
+      "name": "tile_search",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "按网格移动腕部俯视相机搜索遗漏套娃。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        587,
+        631
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:oblique",
+      "type": "function",
+      "name": "oblique",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "从斜上方测量套娃包围盒高度辅助尺寸排序。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        634,
+        693
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:fit_table",
+      "type": "function",
+      "name": "fit_table",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "拟合观测尺寸与模型尺寸表的共同尺度和等级对应。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        696,
+        706
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:fit_ranks",
+      "type": "function",
+      "name": "fit_ranks",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "拟合观测尺寸与模型尺寸表的共同尺度和等级对应。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        710,
+        724
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:area_ok",
+      "type": "function",
+      "name": "area_ok",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "根据套娃类型与尺寸先验判断掩码面积是否合理。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        727,
+        731
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:rank_dolls",
+      "type": "function",
+      "name": "rank_dolls",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "融合俯视面积、斜视高度和三维高度确定五个套娃的顺序。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        734,
+        810
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:rect_clear",
+      "type": "function",
+      "name": "rect_clear",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "检查两个矩形轮廓是否保持给定间隙。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        814,
+        815
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:slot_blockers",
+      "type": "function",
+      "name": "slot_blockers",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "查找阻挡目标槽位或未来夹指通道的套娃。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        818,
+        828
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:direct_ok",
+      "type": "function",
+      "name": "direct_ok",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "判断同一机械臂是否同时覆盖搬运起点和终点。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        831,
+        832
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:sim_moves",
+      "type": "function",
+      "name": "sim_moves",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "模拟当前排列方案所需直接搬运、中转与暂存次数。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        835,
+        876
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:row_offsets",
+      "type": "function",
+      "name": "row_offsets",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "根据相邻套娃宽度和间距生成目标行横向偏移。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        883,
+        888
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:plan_row",
+      "type": "function",
+      "name": "plan_row",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "搜索搬运次数较少且夹指空间充足的目标排列行。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        891,
+        912
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:zcap",
+      "type": "function",
+      "name": "zcap",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "插值机械臂可达性表估计当前位置最高可达高度。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        928,
+        940
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:zcap_path",
+      "type": "function",
+      "name": "zcap_path",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "采样搬运路径上的最高可达高度限制。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        943,
+        944
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:approach_z",
+      "type": "function",
+      "name": "approach_z",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "依据套娃高度和抓取几何计算接近高度。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        947,
+        949
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:can",
+      "type": "function",
+      "name": "can",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "检查套娃抓取接近点是否满足机械臂可达条件。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        952,
+        956
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:arms_for",
+      "type": "function",
+      "name": "arms_for",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "筛选能够完成起终点抓放并避开障碍高度的机械臂。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        959,
+        960
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:good_arms",
+      "type": "function",
+      "name": "good_arms",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "筛选能够完成起终点抓放并避开障碍高度的机械臂。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        963,
+        971
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:build_clutter",
+      "type": "function",
+      "name": "build_clutter",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "从头部图像建立桌面杂物占据网格。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        977,
+        1005
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:clutter_gap",
+      "type": "function",
+      "name": "clutter_gap",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "计算候选物体轮廓距杂物网格的最小间隙。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1008,
+        1013
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:carry_height",
+      "type": "function",
+      "name": "carry_height",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "计算使抓持套娃越过沿途已知物体的最低搬运高度。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1016,
+        1030
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:free_spot",
+      "type": "function",
+      "name": "free_spot",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "搜索留有足够障碍间隙的临时放置位置。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1033,
+        1052
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:body_r",
+      "type": "function",
+      "name": "body_r",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "依据套娃尺寸等级估计其横向半径。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1062,
+        1067
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:plan_carry",
+      "type": "function",
+      "name": "plan_carry",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "结合障碍物和可达高度规划套娃搬运路径。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1074,
+        1184
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:grasp_geom",
+      "type": "function",
+      "name": "grasp_geom",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "按套娃尺寸选择抓取高度和夹爪开度。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1187,
+        1199
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:head_refine",
+      "type": "function",
+      "name": "head_refine",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "在预测位置附近利用头部掩码精化套娃位置。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1205,
+        1229
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:pick",
+      "type": "function",
+      "name": "pick",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "执行接近、闭合和抬升步骤，并依据本任务的视觉或夹爪反馈处理抓取结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1232,
+        1270
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:place",
+      "type": "function",
+      "name": "place",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "按目标位置与抓持几何完成物体放置和释放。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1273,
+        1323
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:arm_for",
+      "type": "function",
+      "name": "arm_for",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "按目标位置或起终点选择适合的机械臂。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1327,
+        1328
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:run_moves",
+      "type": "function",
+      "name": "run_moves",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "优先直接搬运，必要时中转或暂存阻挡物以完成排序。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1334,
+        1480
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:finish",
+      "type": "function",
+      "name": "finish",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "整理夹爪与双臂归位状态结束任务流程。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1489,
+        1504
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:verify_doll",
+      "type": "function",
+      "name": "verify_doll",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "复测已放置套娃的位置和尺度以检查目标槽位。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1507,
+        1529
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:head_candidates",
+      "type": "function",
+      "name": "head_candidates",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "从头部图像寻找套娃相关候选。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1532,
+        1551
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:check_and_repair",
+      "type": "function",
+      "name": "check_and_repair",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "在剩余预算内复查排列并修复错位或遗漏目标。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1554,
+        1611
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "融合俯视面积和斜视高度给套娃排序，模拟搬运代价安排目标行，并通过中转与复查完成排列。统筹观察、运动和任务检查。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1613,
+        1711
+      ]
+    },
+    {
+      "id": "class:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:Doll",
+      "type": "class",
+      "name": "Doll",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "保存套娃的观测、尺寸等级与目标槽位，并提供尺寸估计。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        257,
+        301
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:Doll.__init__",
+      "type": "function",
+      "name": "Doll.__init__",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "初始化套娃位置、观测集合和排序状态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        258,
+        275
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:Doll.size3",
+      "type": "function",
+      "name": "Doll.size3",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "按模型类型与尺寸等级返回三维尺度。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        277,
+        281
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:Doll.hx",
+      "type": "function",
+      "name": "Doll.hx",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "返回套娃横向半宽估计。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        283,
+        286
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:Doll.hy",
+      "type": "function",
+      "name": "Doll.hy",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "返回套娃纵向半宽估计。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        288,
+        291
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:Doll.height",
+      "type": "function",
+      "name": "Doll.height",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "返回套娃高度估计。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        293,
+        296
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:Doll.__repr__",
+      "type": "function",
+      "name": "Doll.__repr__",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "格式化套娃编号、尺寸与位置状态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        298,
+        301
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:plan_carry.seg_ok",
+      "type": "function",
+      "name": "plan_carry.seg_ok",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "沿规划线段采样检查网格障碍，并排除起终点附近无需计入的区域。",
+      "tags": [
+        "离线策略",
+        "局部规划",
+        "机器人控制"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1164,
+        1174
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:main.qual",
+      "type": "function",
+      "name": "main.qual",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "summary": "融合检测分数、斜视高度、掩码面积及来源，给套娃候选质量打分。",
+      "tags": [
+        "离线策略",
+        "局部规划",
+        "机器人控制"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1658,
+        1668
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:say",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:say",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:r3",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:r3",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:count",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:count",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:mv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:mv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:mv_try",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:mv_try",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:ok",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:ok",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:grip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:grip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:to_survey",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:to_survey",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:retreat",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:retreat",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:use_arm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:use_arm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:go_home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:go_home",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:cam_mats",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:cam_mats",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:project",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:ray_plane",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:ray_plane",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:in_zone",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:in_zone",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:sight_ok",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:sight_ok",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:obs_of",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:obs_of",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:add_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:add_obs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:safe_locate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:safe_locate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:safe_segment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:safe_segment",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:choose_kind",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:choose_kind",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:saliency_candidates",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:saliency_candidates",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:sweep",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:sweep",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:blob_at",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:blob_at",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:look",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:look",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:blob_plausible",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:blob_plausible",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:tile_search",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:tile_search",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:oblique",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:oblique",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:fit_table",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:fit_table",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:fit_ranks",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:fit_ranks",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:area_ok",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:area_ok",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:rank_dolls",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:rank_dolls",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:rect_clear",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:rect_clear",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:slot_blockers",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:slot_blockers",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:direct_ok",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:direct_ok",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:sim_moves",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:sim_moves",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:row_offsets",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:row_offsets",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:plan_row",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:plan_row",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:zcap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:zcap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:zcap_path",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:zcap_path",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:approach_z",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:approach_z",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:can",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:can",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:arms_for",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:arms_for",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:good_arms",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:good_arms",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:build_clutter",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:build_clutter",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:clutter_gap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:clutter_gap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:carry_height",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:carry_height",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:free_spot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:free_spot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:body_r",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:body_r",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:plan_carry",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:plan_carry",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:grasp_geom",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:grasp_geom",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:head_refine",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:head_refine",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:pick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:pick",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:place",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:place",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:arm_for",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:arm_for",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:run_moves",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:run_moves",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:finish",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:finish",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:verify_doll",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:verify_doll",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:head_candidates",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:head_candidates",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:check_and_repair",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:check_and_repair",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:Doll",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:Doll",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:Doll.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:Doll",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:Doll.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:Doll.size3",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:Doll",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:Doll.size3",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:Doll.hx",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:Doll",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:Doll.hx",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:Doll.hy",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:Doll",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:Doll.hy",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:Doll.height",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:Doll",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:Doll.height",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:Doll.__repr__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:Doll",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:Doll.__repr__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:count",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:mv_try",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:grip",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:count",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:grip",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:to_survey",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:to_survey",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:to_survey",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:count",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:retreat",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:use_arm",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:to_survey",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:go_home",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:go_home",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:count",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:sight_ok",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:in_zone",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:add_obs",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:obs_of",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:safe_locate",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:safe_segment",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:choose_kind",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:safe_locate",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:choose_kind",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:in_zone",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:choose_kind",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:saliency_candidates",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:cam_mats",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:saliency_candidates",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:saliency_candidates",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:saliency_candidates",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:sweep",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:safe_locate",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:sweep",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:sight_ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:sweep",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:add_obs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:sweep",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:sweep",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:mv_try",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:cam_mats",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:safe_segment",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:blob_at",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:blob_plausible",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:ray_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:blob_plausible",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:area_ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:tile_search",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:tile_search",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:mv_try",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:tile_search",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:tile_search",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:tile_search",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:cam_mats",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:tile_search",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:safe_segment",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:tile_search",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:ray_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:tile_search",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:in_zone",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:tile_search",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:area_ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:oblique",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:mv_try",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:oblique",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:oblique",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:oblique",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:oblique",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:cam_mats",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:oblique",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:oblique",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:safe_segment",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:oblique",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:ray_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:rank_dolls",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:rank_dolls",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:fit_table",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:rank_dolls",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:fit_ranks",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:sim_moves",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:slot_blockers",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:sim_moves",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:direct_ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:plan_row",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:row_offsets",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:plan_row",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:sim_moves",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:plan_row",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:clutter_gap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:plan_row",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:zcap_path",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:zcap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:approach_z",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:grasp_geom",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:can",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:zcap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:can",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:approach_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:arms_for",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:can",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:good_arms",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:grasp_geom",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:good_arms",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:arms_for",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:good_arms",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:carry_height",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:good_arms",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:zcap_path",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:build_clutter",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:cam_mats",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:build_clutter",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:build_clutter",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:free_spot",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:clutter_gap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:plan_carry",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:body_r",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:plan_carry",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:zcap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:head_refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:cam_mats",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:head_refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:head_refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:head_refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:safe_segment",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:head_refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:ray_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:grasp_geom",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:head_refine",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:look",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:oblique",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:mv_try",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:plan_carry",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:run_moves",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:run_moves",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:slot_blockers",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:run_moves",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:use_arm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:run_moves",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:pick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:run_moves",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:to_survey",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:run_moves",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:place",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:run_moves",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:retreat",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:run_moves",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:arm_for",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:run_moves",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:can",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:run_moves",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:free_spot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:finish",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:finish",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:to_survey",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:finish",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:go_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:finish",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:count",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:finish",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:verify_doll",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:arm_for",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:verify_doll",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:oblique",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:verify_doll",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:look",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:head_candidates",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:cam_mats",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:head_candidates",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:head_candidates",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:safe_segment",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:head_candidates",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:ray_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:check_and_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:check_and_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:to_survey",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:check_and_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:verify_doll",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:check_and_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:head_candidates",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:check_and_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:oblique",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:check_and_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:arm_for",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:check_and_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:look",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:check_and_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:run_moves",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:check_and_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:finish",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:to_survey",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:choose_kind",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:sweep",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:oblique",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:look",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:tile_search",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:saliency_candidates",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:arm_for",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:rank_dolls",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:build_clutter",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:plan_row",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:run_moves",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:finish",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:check_and_repair",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:plan_carry.seg_ok",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:plan_carry",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:plan_carry.seg_ok",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:main.qual",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sort_nesting_dolls_by_size.py:main.qual",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    }
+  ]
+}

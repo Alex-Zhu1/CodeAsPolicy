@@ -1,0 +1,976 @@
+{
+  "nodes": [
+    {
+      "id": "document:docs/design/parts/capabilities-manual.md",
+      "type": "document",
+      "name": "capabilities-manual.md",
+      "filePath": "docs/design/parts/capabilities-manual.md",
+      "summary": "梳理机器人手册、有效动作原语和协调能力的现有入口，提出统一能力清单与动作契约。强调模型只能使用环境实际暴露的能力。",
+      "tags": [
+        "文档",
+        "架构设计",
+        "演进规划"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/design/parts/code-runtime.md",
+      "type": "document",
+      "name": "code-runtime.md",
+      "filePath": "docs/design/parts/code-runtime.md",
+      "summary": "分析持久 Python 单元与完整程序的执行、反馈、沙箱和预算边界，以及故障后真实副作用与命名空间的保留。提出完整工具项的计时、编译、去重和派发准入契约，要求排队后重新核查期限、会话与证据依赖，不执行流式代码前缀。",
+      "tags": [
+        "文档",
+        "架构设计",
+        "演进规划"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/design/parts/execution-control.md",
+      "type": "document",
+      "name": "execution-control.md",
+      "filePath": "docs/design/parts/execution-control.md",
+      "summary": "分析动作从机器人接口经后端到原生环境的执行与取消路径，以及协调控制检查点。提出动作凭据等契约，并指出取消请求与完成等待之间的语义差异。",
+      "tags": [
+        "文档",
+        "架构设计",
+        "演进规划"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/design/parts/knowledge-skills.md",
+      "type": "document",
+      "name": "knowledge-skills.md",
+      "filePath": "docs/design/parts/knowledge-skills.md",
+      "summary": "区分随运行注入的机器人知识、监督与恢复核心，以及仓库中的开发技能文档。提出知识清单和版本追踪方案，说明卡住恢复知识只在确认交接后注入。",
+      "tags": [
+        "文档",
+        "架构设计",
+        "演进规划"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/design/parts/observation-perception.md",
+      "type": "document",
+      "name": "observation-perception.md",
+      "filePath": "docs/design/parts/observation-perception.md",
+      "summary": "梳理状态、图像、相机信息和感知工具的来源，区分历史观测与重新获取的证据。提出携带坐标系、标定和新鲜度信息的统一观测表示。",
+      "tags": [
+        "文档",
+        "架构设计",
+        "演进规划"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/design/parts/planner-context.md",
+      "type": "document",
+      "name": "planner-context.md",
+      "filePath": "docs/design/parts/planner-context.md",
+      "summary": "分析提示构建、在线模型循环与持久辅助函数，提出版本化决策上下文和失败交接内容。新增出码延迟与判断粒度设计：按实际运行路径记录推理配置和缓存，比较本地规则与模型往返，拒绝直接派发依赖过期证据的候选。",
+      "tags": [
+        "文档",
+        "架构设计",
+        "演进规划"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/design/parts/records-evaluation.md",
+      "type": "document",
+      "name": "records-evaluation.md",
+      "filePath": "docs/design/parts/records-evaluation.md",
+      "summary": "分析调用、观测、监督、恢复和评估记录的现有基础，提出跨层因果事件与分层判定协议。新增反馈就绪到完整代码就绪的计时和分组统计设计，要求保留失败、重试、断流、压缩与缺失时点，避免把总策略时间解释为模型推理时间。",
+      "tags": [
+        "文档",
+        "架构设计",
+        "演进规划"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/design/parts/recovery-handoff.md",
+      "type": "document",
+      "name": "recovery-handoff.md",
+      "filePath": "docs/design/parts/recovery-handoff.md",
+      "summary": "区分有界局部修正与上层模型重新规划，梳理故障观测、持久命名空间和剩余预算的交接。提出统一交接契约，强调保留真实场景而不回滚或恢复已中断调用栈。",
+      "tags": [
+        "文档",
+        "架构设计",
+        "演进规划"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/design/parts/task-session.md",
+      "type": "document",
+      "name": "task-session.md",
+      "filePath": "docs/design/parts/task-session.md",
+      "summary": "梳理权威任务、环境生命周期、分散预算及模型与原生判定，提出统一任务和预算快照。新增每次决策的身份、交互目标与期限，区分取消生成、动作在途与设备停止确认，并明确迟到代码不得恢复原派发许可。",
+      "tags": [
+        "文档",
+        "架构设计",
+        "演进规划"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/design/parts/verification-evidence.md",
+      "type": "document",
+      "name": "verification-evidence.md",
+      "filePath": "docs/design/parts/verification-evidence.md",
+      "summary": "分析 Valen 原子视觉事实、前置条件和宿主执行门控的协作方式，强调证据新鲜度与独立验证。提出证据协议统一方案，区分已实现逻辑与未来契约。",
+      "tags": [
+        "文档",
+        "架构设计",
+        "演进规划"
+      ],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "document:docs/design/parts/capabilities-manual.md",
+      "target": "file:src/pyrualean/_robot.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/capabilities-manual.md",
+      "target": "file:src/pyrualean/arms.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/capabilities-manual.md",
+      "target": "file:src/pyrualean/coordination.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/capabilities-manual.md",
+      "target": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/capabilities-manual.md",
+      "target": "file:src/pyrualean/prompt.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/capabilities-manual.md",
+      "target": "document:docs/design/index.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/capabilities-manual.md",
+      "target": "document:docs/design/architecture.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/capabilities-manual.md",
+      "target": "document:docs/design/roadmap.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/capabilities-manual.md",
+      "target": "document:docs/design/parts/execution-control.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/capabilities-manual.md",
+      "target": "document:docs/design/parts/observation-perception.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/capabilities-manual.md",
+      "target": "document:docs/design/parts/recovery-handoff.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/code-runtime.md",
+      "target": "file:src/pyrualean/arms.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/code-runtime.md",
+      "target": "file:src/pyrualean/execution.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/code-runtime.md",
+      "target": "file:src/pyrualean/runner.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/code-runtime.md",
+      "target": "file:src/pyrualean/sandbox.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/code-runtime.md",
+      "target": "document:docs/design/index.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/code-runtime.md",
+      "target": "document:docs/design/architecture.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/code-runtime.md",
+      "target": "document:docs/design/roadmap.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/code-runtime.md",
+      "target": "document:docs/design/parts/execution-control.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/code-runtime.md",
+      "target": "document:docs/design/parts/observation-perception.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/code-runtime.md",
+      "target": "document:docs/design/parts/verification-evidence.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/code-runtime.md",
+      "target": "document:docs/design/interaction-latency.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/code-runtime.md",
+      "target": "document:docs/design/parts/recovery-handoff.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/execution-control.md",
+      "target": "file:src/pyrualean/_backend.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/execution-control.md",
+      "target": "file:src/pyrualean/_robot.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/execution-control.md",
+      "target": "file:src/pyrualean/coordination.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/execution-control.md",
+      "target": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/execution-control.md",
+      "target": "file:src/pyrualean/hosts/robodojo_native.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/execution-control.md",
+      "target": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/execution-control.md",
+      "target": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/execution-control.md",
+      "target": "document:docs/design/index.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/execution-control.md",
+      "target": "document:docs/design/architecture.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/execution-control.md",
+      "target": "document:docs/design/roadmap.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/execution-control.md",
+      "target": "document:docs/design/parts/capabilities-manual.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/execution-control.md",
+      "target": "document:docs/design/parts/code-runtime.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/execution-control.md",
+      "target": "document:docs/design/parts/recovery-handoff.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/execution-control.md",
+      "target": "document:docs/design/parts/verification-evidence.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/knowledge-skills.md",
+      "target": "document:skills/astra-stuck-recovery/SKILL.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/knowledge-skills.md",
+      "target": "document:skills/astra-valen-supervision/SKILL.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/knowledge-skills.md",
+      "target": "file:src/pyrualean/arms.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/knowledge-skills.md",
+      "target": "file:src/pyrualean/play.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/knowledge-skills.md",
+      "target": "file:src/pyrualean/prompt.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/knowledge-skills.md",
+      "target": "file:src/pyrualean/stuck_recovery.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/knowledge-skills.md",
+      "target": "file:src/pyrualean/supervision.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/knowledge-skills.md",
+      "target": "document:docs/design/index.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/knowledge-skills.md",
+      "target": "document:docs/design/architecture.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/knowledge-skills.md",
+      "target": "document:docs/design/roadmap.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/knowledge-skills.md",
+      "target": "document:docs/design/parts/task-session.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/knowledge-skills.md",
+      "target": "document:docs/design/parts/planner-context.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/knowledge-skills.md",
+      "target": "document:docs/design/parts/records-evaluation.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/observation-perception.md",
+      "target": "file:src/pyrualean/_robot.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/observation-perception.md",
+      "target": "file:src/pyrualean/arms.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/observation-perception.md",
+      "target": "file:src/pyrualean/coordination.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/observation-perception.md",
+      "target": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/observation-perception.md",
+      "target": "file:src/pyrualean/hosts/robodojo_native.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/observation-perception.md",
+      "target": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/observation-perception.md",
+      "target": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/observation-perception.md",
+      "target": "file:src/pyrualean/robodojo.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/observation-perception.md",
+      "target": "file:src/pyrualean/robodojo_xpl_rgb.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/observation-perception.md",
+      "target": "file:src/pyrualean/supervision.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/observation-perception.md",
+      "target": "document:docs/design/index.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/observation-perception.md",
+      "target": "document:docs/design/architecture.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/observation-perception.md",
+      "target": "document:docs/design/roadmap.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/observation-perception.md",
+      "target": "document:docs/design/parts/verification-evidence.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/planner-context.md",
+      "target": "file:src/pyrualean/arms.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/planner-context.md",
+      "target": "file:src/pyrualean/openai_runtime.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/planner-context.md",
+      "target": "file:src/pyrualean/play.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/planner-context.md",
+      "target": "file:src/pyrualean/prompt.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/planner-context.md",
+      "target": "document:docs/design/index.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/planner-context.md",
+      "target": "document:docs/design/architecture.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/planner-context.md",
+      "target": "document:docs/design/roadmap.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/planner-context.md",
+      "target": "document:docs/design/interaction-latency.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/planner-context.md",
+      "target": "document:docs/design/parts/task-session.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/planner-context.md",
+      "target": "document:docs/design/parts/knowledge-skills.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/planner-context.md",
+      "target": "document:docs/design/parts/records-evaluation.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/records-evaluation.md",
+      "target": "file:src/pyrualean/_backend.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/records-evaluation.md",
+      "target": "file:src/pyrualean/arms.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/records-evaluation.md",
+      "target": "file:src/pyrualean/evaluation/metrics.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/records-evaluation.md",
+      "target": "file:src/pyrualean/evaluation/valen.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/records-evaluation.md",
+      "target": "file:src/pyrualean/play.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/records-evaluation.md",
+      "target": "file:src/pyrualean/stuck_recovery.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/records-evaluation.md",
+      "target": "document:docs/design/index.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/records-evaluation.md",
+      "target": "document:docs/design/architecture.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/records-evaluation.md",
+      "target": "document:docs/design/roadmap.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/records-evaluation.md",
+      "target": "document:docs/design/interaction-latency.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/records-evaluation.md",
+      "target": "document:docs/design/parts/task-session.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/records-evaluation.md",
+      "target": "document:docs/design/parts/planner-context.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/records-evaluation.md",
+      "target": "document:docs/design/parts/knowledge-skills.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/recovery-handoff.md",
+      "target": "file:src/pyrualean/arms.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/recovery-handoff.md",
+      "target": "file:src/pyrualean/coordination.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/recovery-handoff.md",
+      "target": "file:src/pyrualean/recovery.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/recovery-handoff.md",
+      "target": "file:src/pyrualean/stuck_recovery.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/recovery-handoff.md",
+      "target": "document:docs/design/index.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/recovery-handoff.md",
+      "target": "document:docs/design/architecture.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/recovery-handoff.md",
+      "target": "document:docs/design/roadmap.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/recovery-handoff.md",
+      "target": "document:docs/design/parts/execution-control.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/recovery-handoff.md",
+      "target": "document:docs/design/parts/observation-perception.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/recovery-handoff.md",
+      "target": "document:docs/design/parts/verification-evidence.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/recovery-handoff.md",
+      "target": "document:docs/design/parts/code-runtime.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/task-session.md",
+      "target": "file:integrations/xpolicylab/PyRUA_RSI/model.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/task-session.md",
+      "target": "file:src/pyrualean/arms.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/task-session.md",
+      "target": "file:src/pyrualean/play.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/task-session.md",
+      "target": "file:src/pyrualean/prompt.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/task-session.md",
+      "target": "file:src/pyrualean/robots.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/task-session.md",
+      "target": "document:docs/design/index.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/task-session.md",
+      "target": "document:docs/design/architecture.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/task-session.md",
+      "target": "document:docs/design/roadmap.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/task-session.md",
+      "target": "document:docs/design/interaction-latency.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/task-session.md",
+      "target": "document:docs/design/parts/planner-context.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/task-session.md",
+      "target": "document:docs/design/parts/knowledge-skills.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/task-session.md",
+      "target": "document:docs/design/parts/records-evaluation.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/verification-evidence.md",
+      "target": "file:src/pyrualean/_robot.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/verification-evidence.md",
+      "target": "file:src/pyrualean/evaluation/valen.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/verification-evidence.md",
+      "target": "file:src/pyrualean/evidence.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/verification-evidence.md",
+      "target": "file:src/pyrualean/strategies.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/verification-evidence.md",
+      "target": "file:src/pyrualean/supervision.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/verification-evidence.md",
+      "target": "document:docs/design/index.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/verification-evidence.md",
+      "target": "document:docs/design/architecture.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/verification-evidence.md",
+      "target": "document:docs/design/roadmap.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/parts/verification-evidence.md",
+      "target": "document:docs/design/parts/observation-perception.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

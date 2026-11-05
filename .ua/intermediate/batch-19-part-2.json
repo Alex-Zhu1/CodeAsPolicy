@@ -1,0 +1,169 @@
+{
+  "nodes": [
+    {
+      "id": "document:runs/_empty-memory/MEMORY.md",
+      "type": "document",
+      "name": "MEMORY.md",
+      "filePath": "runs/_empty-memory/MEMORY.md",
+      "summary": "声明零样本运行使用空记忆语料，不包含既有回合经验。",
+      "tags": [
+        "文档",
+        "空记忆",
+        "零样本"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:skills/astra-stuck-recovery/SKILL.md",
+      "type": "document",
+      "name": "SKILL.md",
+      "filePath": "skills/astra-stuck-recovery/SKILL.md",
+      "summary": "定义规划者确认卡住后才触发的恢复流程，重新检查因果前提、推迟尚不需要的条件，并在存活回合中选择有界推进或信息获取动作。",
+      "tags": [
+        "技能文档",
+        "卡住恢复",
+        "规划"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:skills/astra-stuck-recovery/agents/openai.yaml",
+      "type": "config",
+      "name": "openai.yaml",
+      "filePath": "skills/astra-stuck-recovery/agents/openai.yaml",
+      "summary": "配置卡住恢复技能的显示名称、简短说明和默认调用提示。",
+      "tags": [
+        "技能配置",
+        "入口说明",
+        "卡住恢复"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:skills/astra-stuck-recovery/references/recovery-cases.md",
+      "type": "document",
+      "name": "recovery-cases.md",
+      "filePath": "skills/astra-stuck-recovery/references/recovery-cases.md",
+      "summary": "以钥匙抓取与锁孔对齐等案例说明阶段前置条件重分类、延期和恢复后的契约修订。",
+      "tags": [
+        "参考文档",
+        "恢复案例",
+        "阶段契约"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:skills/astra-valen-supervision/SKILL.md",
+      "type": "document",
+      "name": "SKILL.md",
+      "filePath": "skills/astra-valen-supervision/SKILL.md",
+      "summary": "说明 Astra 负责策略分解、Valen 提供视觉事实、宿主执行和门控的职责，并指导声明动作前提、处理未知与核对完成证据。",
+      "tags": [
+        "技能文档",
+        "视觉监督",
+        "任务规划"
+      ],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "document:skills/astra-stuck-recovery/SKILL.md",
+      "target": "document:skills/astra-valen-supervision/SKILL.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:skills/astra-stuck-recovery/SKILL.md",
+      "target": "document:skills/astra-stuck-recovery/references/recovery-cases.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:skills/astra-stuck-recovery/SKILL.md",
+      "target": "document:src/pyrualean/knowledge/astra_stuck_recovery.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:skills/astra-stuck-recovery/SKILL.md",
+      "target": "document:docs/guide/strategies.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:skills/astra-valen-supervision/SKILL.md",
+      "target": "document:src/pyrualean/knowledge/astra_valen_supervision.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:skills/astra-valen-supervision/SKILL.md",
+      "target": "document:skills/astra-valen-supervision/references/contracts.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:skills/astra-valen-supervision/SKILL.md",
+      "target": "document:docs/guide/coordination.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:skills/astra-valen-supervision/SKILL.md",
+      "target": "document:docs/visual-supervision.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:skills/astra-valen-supervision/SKILL.md",
+      "target": "document:skills/astra-stuck-recovery/SKILL.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:skills/astra-valen-supervision/SKILL.md",
+      "target": "document:docs/guide/valen-evaluation.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:skills/astra-stuck-recovery/agents/openai.yaml",
+      "target": "document:skills/astra-stuck-recovery/SKILL.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:skills/astra-stuck-recovery/SKILL.md",
+      "target": "file:src/pyrualean/stuck_recovery.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:skills/astra-stuck-recovery/SKILL.md",
+      "target": "file:src/pyrualean/arms.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:skills/astra-valen-supervision/SKILL.md",
+      "target": "file:src/pyrualean/supervision.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

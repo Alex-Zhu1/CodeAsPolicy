@@ -1,0 +1,2363 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "type": "file",
+      "name": "solve_equation.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "实现离线 RoboDojo 任务程序：校正桌面图像、识别数字块和运算符，求出缺失项后抓放到对应垫片并纠偏。通过执行环境注入的 robo 接口完成任务，不在评测时调用规划模型。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:unpack",
+      "type": "function",
+      "name": "unpack",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "将压缩数字模板解码为图像数组。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        52,
+        57
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:project",
+      "type": "function",
+      "name": "project",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "把世界坐标点投影到标定相机图像平面。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        64,
+        72
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:rectify",
+      "type": "function",
+      "name": "rectify",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "依据相机几何将数字卡图像校正为正视图。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        75,
+        88
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:g2xy",
+      "type": "function",
+      "name": "g2xy",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "转换桌面校正图网格索引与世界平面坐标。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        91,
+        92
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:xy2g",
+      "type": "function",
+      "name": "xy2g",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "转换桌面校正图网格索引与世界平面坐标。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        95,
+        96
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:colour_masks",
+      "type": "function",
+      "name": "colour_masks",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "根据图像颜色阈值筛选目标或背景像素区域。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        99,
+        115
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:crop",
+      "type": "function",
+      "name": "crop",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "按中心提取定尺寸图像裁剪并填充边界。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        118,
+        126
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:rot",
+      "type": "function",
+      "name": "rot",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "在平面内旋转二维向量。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        129,
+        132
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:prepared",
+      "type": "function",
+      "name": "prepared",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "预生成并缓存不同旋转角度的数字模板。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        135,
+        142
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:match",
+      "type": "function",
+      "name": "match",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "匹配二值数字形状并选择最优类别与旋转角。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        145,
+        158
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:digit_blobs",
+      "type": "function",
+      "name": "digit_blobs",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "提取不被暗色遮挡的数字块连通区域。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        161,
+        186
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:classify_symbol",
+      "type": "function",
+      "name": "classify_symbol",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "依据白色笔画布局辨别圆盘上的运算符。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        189,
+        221
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:find_discs",
+      "type": "function",
+      "name": "find_discs",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "从灰色区域检测运算符圆盘。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        224,
+        242
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pad_fraction",
+      "type": "function",
+      "name": "pad_fraction",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "测量目标周围落在垫片颜色区域的比例。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        245,
+        255
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:camera",
+      "type": "function",
+      "name": "camera",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "读取相机标定并转为数值矩阵供投影计算。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        258,
+        260
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:analyse",
+      "type": "function",
+      "name": "analyse",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "校正单个相机图像并识别数字、运算符和目标垫。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        263,
+        279
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:joint_mat_digits",
+      "type": "function",
+      "name": "joint_mat_digits",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "融合两腕部视图掩码交集以排除数字块侧面影响。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        282,
+        293
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:say",
+      "type": "function",
+      "name": "say",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "打印任务执行进度和诊断信息。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        302,
+        303
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:spent",
+      "type": "function",
+      "name": "spent",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "累计底层动作消耗并处理任务终止或预算状态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        306,
+        307
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:left_budget",
+      "type": "function",
+      "name": "left_budget",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "计算当前任务剩余原生动作预算。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        310,
+        311
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:mv",
+      "type": "function",
+      "name": "mv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "调用机器人位姿运动接口并处理本任务的运动结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        314,
+        321
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:grip",
+      "type": "function",
+      "name": "grip",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "发送夹爪开合命令并记录执行步数或状态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        324,
+        327
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:home",
+      "type": "function",
+      "name": "home",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "将指定机械臂返回起始姿态并处理返回结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        330,
+        336
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:other",
+      "type": "function",
+      "name": "other",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "返回与当前机械臂相对的另一侧机械臂。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        339,
+        340
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:calc",
+      "type": "function",
+      "name": "calc",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "计算给定数字与运算符的运算结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        345,
+        354
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:acceptable",
+      "type": "function",
+      "name": "acceptable",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "枚举使当前等式成立的缺失数字或运算符。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        357,
+        372
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:x_reach_right",
+      "type": "function",
+      "name": "x_reach_right",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "按桌面纵向位置插值右臂向下抓取的横向边界。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        377,
+        385
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:reachable",
+      "type": "function",
+      "name": "reachable",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "判断目标点是否落在选定机械臂的近桌面可达区域。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        388,
+        391
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:wrap180",
+      "type": "function",
+      "name": "wrap180",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "把角度规范到一个完整周期的对称区间。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        394,
+        395
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:finger_yaw",
+      "type": "function",
+      "name": "finger_yaw",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "由腕部四元数计算夹指闭合方向。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        399,
+        406
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:down",
+      "type": "function",
+      "name": "down",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "以向下或倾斜姿态移动到指定抓点。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        409,
+        411
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:merge_free",
+      "type": "function",
+      "name": "merge_free",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "合并多视角中的空闲数字块候选并保留可靠观测。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        421,
+        433
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:read_scene",
+      "type": "function",
+      "name": "read_scene",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "读取多相机图像并组装等式内容、空垫和候选物体。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        436,
+        494
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:look",
+      "type": "function",
+      "name": "look",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "读取相机图像并进行任务所需的目标识别或位姿估计。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        505,
+        517
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:grasp_here",
+      "type": "function",
+      "name": "grasp_here",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "下降闭合并抬升，依据夹爪开度返回抓持结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        522,
+        539
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_digit",
+      "type": "function",
+      "name": "pick_digit",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "沿数字块窄边或长边抓取并返回抓持姿态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        545,
+        568
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:from_above",
+      "type": "function",
+      "name": "from_above",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "先到更高位置再直线下降，减少摆动扫碰。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        571,
+        580
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_disc",
+      "type": "function",
+      "name": "pick_disc",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "从上方接近并抓住运算符圆盘。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        583,
+        603
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:carry",
+      "type": "function",
+      "name": "carry",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "保持抓持搬运，直线不可行时回退到自动路径。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        606,
+        611
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:held",
+      "type": "function",
+      "name": "held",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "读取夹爪开度并据此判断或报告抓持状态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        614,
+        615
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:put_down",
+      "type": "function",
+      "name": "put_down",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "将抓持物体降到目标位置并释放。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        618,
+        630
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pad_arms",
+      "type": "function",
+      "name": "pad_arms",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "根据目标垫位置确定可服务的机械臂。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        633,
+        639
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:check_and_fix",
+      "type": "function",
+      "name": "check_and_fix",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "视觉检查垫片上的放置误差并有限次数重抓纠偏。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        642,
+        685
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:mat_arm",
+      "type": "function",
+      "name": "mat_arm",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "根据目标垫位置确定可服务的机械臂。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        688,
+        693
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:spot",
+      "type": "function",
+      "name": "spot",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "搜索留有足够障碍间隙的临时放置位置。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        696,
+        705
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:finish",
+      "type": "function",
+      "name": "finish",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "整理夹爪与双臂归位状态结束任务流程。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        708,
+        718
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:rescan",
+      "type": "function",
+      "name": "rescan",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "双臂归位后重新扫描所需数字或圆盘位置。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        721,
+        741
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:place_operator",
+      "type": "function",
+      "name": "place_operator",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "选择能使等式成立的运算符并放置到空垫。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        746,
+        781
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_and_hold",
+      "type": "function",
+      "name": "pick_and_hold",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "选择服务目标垫的机械臂抓住数字块，必要时中转。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        784,
+        832
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:place_digit",
+      "type": "function",
+      "name": "place_digit",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "选择正确数字候选并执行抓放及误差修复。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        835,
+        877
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:run",
+      "type": "function",
+      "name": "run",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "summary": "校正桌面图像、识别数字块和运算符，求出缺失项后抓放到对应垫片并纠偏。统筹观察、运动和任务检查。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        880,
+        917
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:unpack",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:unpack",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:project",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:rectify",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:rectify",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:g2xy",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:g2xy",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:xy2g",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:xy2g",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:colour_masks",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:colour_masks",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:crop",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:crop",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:rot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:rot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:prepared",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:prepared",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:match",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:match",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:digit_blobs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:digit_blobs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:classify_symbol",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:classify_symbol",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:find_discs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:find_discs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pad_fraction",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pad_fraction",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:camera",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:camera",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:analyse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:analyse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:joint_mat_digits",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:joint_mat_digits",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:say",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:say",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:spent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:spent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:left_budget",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:left_budget",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:mv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:mv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:grip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:grip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:home",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:other",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:other",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:calc",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:calc",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:acceptable",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:acceptable",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:x_reach_right",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:x_reach_right",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:reachable",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:reachable",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:wrap180",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:wrap180",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:finger_yaw",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:finger_yaw",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:down",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:down",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:merge_free",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:merge_free",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:read_scene",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:read_scene",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:look",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:look",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:grasp_here",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:grasp_here",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_digit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_digit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:from_above",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:from_above",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_disc",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_disc",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:carry",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:carry",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:held",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:held",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:put_down",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:put_down",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pad_arms",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pad_arms",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:check_and_fix",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:check_and_fix",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:mat_arm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:mat_arm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:spot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:spot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:finish",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:finish",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:rescan",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:rescan",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:place_operator",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:place_operator",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_and_hold",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_and_hold",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:place_digit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:place_digit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:run",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:run",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:rectify",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:prepared",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:rot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:match",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:prepared",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:digit_blobs",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:match",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:digit_blobs",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:crop",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:digit_blobs",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:g2xy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:find_discs",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:g2xy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:find_discs",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:classify_symbol",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pad_fraction",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:xy2g",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:analyse",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:rectify",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:analyse",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:colour_masks",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:analyse",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:digit_blobs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:analyse",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:find_discs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:analyse",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pad_fraction",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:joint_mat_digits",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:digit_blobs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:spent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:grip",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:spent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:home",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:spent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:acceptable",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:calc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:reachable",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:x_reach_right",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:read_scene",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:camera",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:read_scene",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:down",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:read_scene",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:read_scene",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:finger_yaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:read_scene",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:analyse",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:read_scene",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:merge_free",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:camera",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:analyse",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:grasp_here",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:down",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:grasp_here",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:grasp_here",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:grasp_here",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:finger_yaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_digit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_digit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:down",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_digit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:look",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_digit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_digit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:grasp_here",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:from_above",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:down",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_disc",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_disc",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:from_above",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_disc",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:down",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_disc",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:look",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_disc",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_disc",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:grasp_here",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_disc",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:left_budget",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:carry",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:down",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:put_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:carry",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:put_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:put_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:held",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:put_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:down",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:put_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:check_and_fix",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:look",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:check_and_fix",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:check_and_fix",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:left_budget",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:check_and_fix",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:finger_yaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:check_and_fix",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:check_and_fix",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:check_and_fix",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:down",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:finish",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:finish",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:finish",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:finish",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:rescan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:rescan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:camera",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:rescan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:analyse",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:rescan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:place_operator",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:place_operator",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:left_budget",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:place_operator",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:place_operator",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:other",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:place_operator",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_disc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:place_operator",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:spot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:place_operator",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:put_down",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:place_operator",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:finger_yaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:place_operator",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:held",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:place_operator",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:rescan",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:place_operator",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:check_and_fix",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_and_hold",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:mat_arm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_and_hold",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:reachable",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_and_hold",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:other",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_and_hold",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_and_hold",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_digit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_and_hold",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:left_budget",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_and_hold",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:look",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_and_hold",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_and_hold",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:finger_yaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_and_hold",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:spot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_and_hold",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:put_down",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_and_hold",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_and_hold",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_and_hold",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:from_above",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:place_digit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:place_digit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:left_budget",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:place_digit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:pick_and_hold",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:place_digit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:rescan",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:place_digit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:finger_yaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:place_digit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:put_down",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:place_digit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:place_digit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:check_and_fix",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:place_digit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:other",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:place_digit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:place_digit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:down",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:read_scene",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:acceptable",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:place_operator",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/solve_equation.py:place_digit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

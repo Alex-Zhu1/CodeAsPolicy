@@ -1,0 +1,1362 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "type": "file",
+      "name": "plug_in_charger.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "summary": "实现离线 RoboDojo 任务程序：定位充电器和插座，通过插孔几何拟合、抓取、探触和压入完成插接。通过执行环境注入的 robo 接口完成任务，不在评测时调用规划模型。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:say",
+      "type": "function",
+      "name": "say",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "summary": "打印任务执行进度和诊断信息。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        30,
+        31
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:wrap180",
+      "type": "function",
+      "name": "wrap180",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "summary": "把角度规范到一个完整周期的对称区间。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        34,
+        35
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:wrap90",
+      "type": "function",
+      "name": "wrap90",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "summary": "按物体或夹爪的旋转对称性规范偏航角。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        38,
+        39
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:used",
+      "type": "function",
+      "name": "used",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "summary": "累计底层动作消耗并处理任务终止或预算状态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        42,
+        47
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:mv",
+      "type": "function",
+      "name": "mv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "summary": "调用机器人位姿运动接口并处理本任务的运动结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        50,
+        56
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:grip",
+      "type": "function",
+      "name": "grip",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "summary": "发送夹爪开合命令并记录执行步数或状态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        59,
+        62
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:wrist",
+      "type": "function",
+      "name": "wrist",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "summary": "选择指定机械臂对应的腕部相机名称。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        65,
+        66
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:dvec",
+      "type": "function",
+      "name": "dvec",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "summary": "由平面方向角构造单位向量。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        69,
+        71
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:rot",
+      "type": "function",
+      "name": "rot",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "summary": "在平面内旋转二维向量。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        74,
+        76
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:tcp",
+      "type": "function",
+      "name": "tcp",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "summary": "读取机械臂当前抓取点位置。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        79,
+        80
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:locate",
+      "type": "function",
+      "name": "locate",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "summary": "尝试多个提示词并选择符合几何约束的目标定位。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        83,
+        99
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:fmt",
+      "type": "function",
+      "name": "fmt",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "summary": "格式化向量或测量数据以便打印诊断信息。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        102,
+        107
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:near_yaw",
+      "type": "function",
+      "name": "near_yaw",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "summary": "在等价方向中选择靠近当前值且满足腕部角度范围的偏航角。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        114,
+        115
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:charger_yaw",
+      "type": "function",
+      "name": "charger_yaw",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "summary": "从充电器形状估计抓取朝向。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        118,
+        123
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:cam",
+      "type": "function",
+      "name": "cam",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "summary": "读取相机标定并转为数值矩阵供投影计算。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        127,
+        129
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:proj",
+      "type": "function",
+      "name": "proj",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "summary": "把世界坐标点投影到标定相机图像平面。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        132,
+        135
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:bilinear",
+      "type": "function",
+      "name": "bilinear",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "summary": "对图像浮点坐标做双线性采样。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        138,
+        146
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:model_points",
+      "type": "function",
+      "name": "model_points",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "summary": "生成插座插孔几何模型采样点。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        149,
+        161
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:fit_slots",
+      "type": "function",
+      "name": "fit_slots",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "summary": "在图像中拟合插孔模型以估计插座位置和角度。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        167,
+        193
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:measure_strip",
+      "type": "function",
+      "name": "measure_strip",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "summary": "从腕部图像精化插线板位置和插孔朝向。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        196,
+        221
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:home_arm",
+      "type": "function",
+      "name": "home_arm",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "summary": "将指定机械臂返回起始姿态并处理返回结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        225,
+        234
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:look_head",
+      "type": "function",
+      "name": "look_head",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "summary": "用头部相机和多个描述定位指定目标。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        237,
+        239
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:arms_aside",
+      "type": "function",
+      "name": "arms_aside",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "summary": "移开闲置机械臂以减少遮挡和运动干涉。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        242,
+        244
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:move_socket",
+      "type": "function",
+      "name": "move_socket",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "summary": "移动插座到便于双臂协作的插接位置。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        248,
+        278
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:grasp_charger",
+      "type": "function",
+      "name": "grasp_charger",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "summary": "根据视觉测量抓住充电器并保留插接几何参数。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        282,
+        311
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:probe_down",
+      "type": "function",
+      "name": "probe_down",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "summary": "分段下探目标高度并监测接触阻挡。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        314,
+        325
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:insert",
+      "type": "function",
+      "name": "insert",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "summary": "按插孔对准结果下探并执行插头插入。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        328,
+        358
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:seat",
+      "type": "function",
+      "name": "seat",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "summary": "在接触位置继续压入并修正插接深度。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        361,
+        386
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "summary": "定位充电器和插座，通过插孔几何拟合、抓取、探触和压入完成插接。统筹观察、运动和任务检查。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        389,
+        447
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:fit_slots.scores",
+      "type": "function",
+      "name": "fit_slots.scores",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "summary": "批量投影不同平面位姿的插孔亮暗模型，以图像响应差评分。",
+      "tags": [
+        "离线策略",
+        "局部规划",
+        "机器人控制"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        168,
+        180
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:say",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:say",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:wrap180",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:wrap180",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:wrap90",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:wrap90",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:used",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:used",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:mv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:mv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:grip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:grip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:wrist",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:wrist",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:dvec",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:dvec",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:rot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:rot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:tcp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:tcp",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:locate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:locate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:fmt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:fmt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:near_yaw",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:near_yaw",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:charger_yaw",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:charger_yaw",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:cam",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:cam",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:proj",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:proj",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:bilinear",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:bilinear",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:model_points",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:model_points",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:fit_slots",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:fit_slots",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:measure_strip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:measure_strip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:home_arm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:home_arm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:look_head",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:look_head",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:arms_aside",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:arms_aside",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:move_socket",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:move_socket",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:grasp_charger",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:grasp_charger",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:probe_down",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:probe_down",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:insert",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:insert",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:seat",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:seat",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:used",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:grip",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:used",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:locate",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:near_yaw",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:charger_yaw",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:wrap90",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:measure_strip",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:measure_strip",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:measure_strip",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:locate",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:measure_strip",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:wrist",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:measure_strip",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:measure_strip",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:measure_strip",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:near_yaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:measure_strip",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:measure_strip",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:fit_slots",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:measure_strip",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:rot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:home_arm",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:home_arm",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:used",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:look_head",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:locate",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:arms_aside",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:move_socket",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:near_yaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:move_socket",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:move_socket",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:move_socket",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:move_socket",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:grasp_charger",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:charger_yaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:grasp_charger",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:grasp_charger",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:grasp_charger",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:locate",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:grasp_charger",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:wrist",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:grasp_charger",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:grasp_charger",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:grasp_charger",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:probe_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:tcp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:probe_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:insert",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:dvec",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:insert",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:insert",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:tcp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:insert",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:insert",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:probe_down",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:seat",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:seat",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:tcp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:seat",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:seat",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:look_head",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:arms_aside",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:home_arm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:move_socket",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:measure_strip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:rot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:grasp_charger",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:insert",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:seat",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:tcp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:used",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:fit_slots.scores",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:fit_slots",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/plug_in_charger.py:fit_slots.scores",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    }
+  ]
+}

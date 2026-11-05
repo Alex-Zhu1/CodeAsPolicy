@@ -1,0 +1,2760 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "type": "file",
+      "name": "make_toast.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "拟合烤面包机与面包架几何，按片间缝隙抓取切片并插入槽口，处理浅夹持、跨臂交接与未坐到底的修正后按下杠杆。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "视觉定位",
+        "运动控制"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:P",
+      "type": "function",
+      "name": "P",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "输出面包机操作与几何测量诊断。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        102,
+        103
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:f3",
+      "type": "function",
+      "name": "f3",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "把坐标向量格式化为三位小数的诊断文本。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        106,
+        107
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:mv",
+      "type": "function",
+      "name": "mv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "执行指定机械臂的笛卡尔运动并返回控制反馈。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        114,
+        127
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:moved",
+      "type": "function",
+      "name": "moved",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "检查运动结果存在、已采用有效路径且位置误差低于容差。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        130,
+        131
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:cam_mats",
+      "type": "function",
+      "name": "cam_mats",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "读取相机内外参并转换为数值矩阵。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        134,
+        136
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:to_plane",
+      "type": "function",
+      "name": "to_plane",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "把像素射线批量投影到已知高度平面。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        139,
+        145
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:balanced",
+      "type": "function",
+      "name": "balanced",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "按估计通道增益对白平衡图像进行颜色校正。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        148,
+        149
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:bread_mask",
+      "type": "function",
+      "name": "bread_mask",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "用校正后的颜色阈值提取面包片亮黄色区域。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        152,
+        155
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:white_mask",
+      "type": "function",
+      "name": "white_mask",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "以亮度和通道差阈值提取烤面包机等近白色区域。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        158,
+        161
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:ang",
+      "type": "function",
+      "name": "ang",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "计算二维方向向量相对世界 X 轴的角度。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        164,
+        165
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:wrap90",
+      "type": "function",
+      "name": "wrap90",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "利用物体轴线半周对称性归一方向角。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        168,
+        173
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:yaw_of_heading",
+      "type": "function",
+      "name": "yaw_of_heading",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "把水平前指向量转换为夹爪偏航。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        176,
+        177
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:unit",
+      "type": "function",
+      "name": "unit",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "把平面方向角转换为二维单位向量。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        180,
+        182
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:heading_of_yaw",
+      "type": "function",
+      "name": "heading_of_yaw",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "把夹爪偏航转换为水平前指方向。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        185,
+        187
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:head_rough",
+      "type": "function",
+      "name": "head_rough",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "从初始头部图像估计颜色增益、烤面包机和面包架的大致位置。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        191,
+        260
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:sam_box",
+      "type": "function",
+      "name": "sam_box",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "容错获取指定提示在相机中的分割框。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        275,
+        287
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:toaster_fit",
+      "type": "function",
+      "name": "toaster_fit",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "在目标区域内用亮色像素拟合烤面包机平面尺寸与主方向。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        290,
+        335
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:classify",
+      "type": "function",
+      "name": "classify",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "根据拟合宽度或亮度区分烤面包机资产型号。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        341,
+        344
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:toaster_look",
+      "type": "function",
+      "name": "toaster_look",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "尝试多个腕部观察姿态获取清晰的烤面包机顶部视图。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        347,
+        352
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:measure_toaster",
+      "type": "function",
+      "name": "measure_toaster",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "迭代观察和拟合烤面包机，细化位置、朝向与槽口几何。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        355,
+        406
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:press_lever",
+      "type": "function",
+      "name": "press_lever",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "用闭合手指从前方接近杠杆，分步向下按到行程末端后退出。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        409,
+        465
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:find_bands",
+      "type": "function",
+      "name": "find_bands",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "扫描候选角度，把面包掩码分解为平行切片条带。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        469,
+        507
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:look_at",
+      "type": "function",
+      "name": "look_at",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "将腕相机移动到面包片上方，并让夹爪沿切片方向观察缝隙。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        510,
+        529
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:box_bright_mask",
+      "type": "function",
+      "name": "box_bright_mask",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "颜色检测失败时，用 SAM3 框内亮像素构造面包片备选掩码。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        535,
+        552
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:view",
+      "type": "function",
+      "name": "view",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "读取相机图像并投影面包区域，提取各片的条带几何。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        555,
+        596
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:band_centre",
+      "type": "function",
+      "name": "band_centre",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "将条带法向位置与纵向范围转换为面包片中心。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        599,
+        600
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:measure_target",
+      "type": "function",
+      "name": "measure_target",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "从目标外侧干净边缘测量最外片的位置与片间间隙。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        606,
+        654
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:set_open",
+      "type": "function",
+      "name": "set_open",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "当开度不符时先闭合再调整到精确部分开度。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        664,
+        669
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:grasp",
+      "type": "function",
+      "name": "grasp",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "根据切片内外边缘为手指保留间隙，下降夹住面包顶缘并检查夹持。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        672,
+        733
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:rz",
+      "type": "function",
+      "name": "rz",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "构造绕 Z 轴旋转的三维矩阵。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        737,
+        739
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:ry",
+      "type": "function",
+      "name": "ry",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "构造绕 Y 轴旋转的三维矩阵。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        742,
+        744
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:rx",
+      "type": "function",
+      "name": "rx",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "构造绕 X 轴旋转的三维矩阵。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        747,
+        749
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:orient",
+      "type": "function",
+      "name": "orient",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "组合偏航、俯仰和滚转矩阵以表达夹爪朝向。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        752,
+        753
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:wrap180",
+      "type": "function",
+      "name": "wrap180",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "把角度归一到以零为中心的一个完整圆周区间。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        756,
+        761
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:angles_of",
+      "type": "function",
+      "name": "angles_of",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "从姿态矩阵恢复机器人俯仰、偏航和滚转参数。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        764,
+        771
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:tilted",
+      "type": "function",
+      "name": "tilted",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "构造与倾斜面包片所在平面一致的抓取姿态。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        774,
+        791
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:project",
+      "type": "function",
+      "name": "project",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "使用相机内外参把三维世界坐标投影为图像坐标。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        794,
+        802
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:front_view",
+      "type": "function",
+      "name": "front_view",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "从面包架正前方观察片间缝隙，并把切片前缘投影到统一平面。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        809,
+        834
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:analyze_front",
+      "type": "function",
+      "name": "analyze_front",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "分析前视条带的明暗游程，分辨目标片、暗缝和邻片边缘。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        837,
+        906
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:finger_t",
+      "type": "function",
+      "name": "finger_t",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "按距指尖高度估计手指实体厚度，用于缝隙净空判断。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        909,
+        911
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:front_grasp",
+      "type": "function",
+      "name": "front_grasp",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "根据前视测得的倾斜缝隙安排手指方向与深度，尽可能深夹目标片。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        914,
+        1007
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:lift",
+      "type": "function",
+      "name": "lift",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "结合夹持强弱选择抬升路径，避免浅夹持面包片滑落。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1014,
+        1028
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:slice_geometry",
+      "type": "function",
+      "name": "slice_geometry",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "依据抓取和搬运俯仰计算切片中心偏移与最低角高度。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1031,
+        1039
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:gentle",
+      "type": "function",
+      "name": "gentle",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "把弱夹持切片的搬运分成短直线小段，失败时回退一次自动路径。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1042,
+        1057
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:reseat",
+      "type": "function",
+      "name": "reseat",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "将高于槽底的切片稍抬后沿槽和横槽小幅偏移重降，保留最深结果。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1063,
+        1096
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:place",
+      "type": "function",
+      "name": "place",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "保持切片与槽口平面对齐，补偿持片几何下降入槽并释放。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1099,
+        1200
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:left_place_pitch",
+      "type": "function",
+      "name": "left_place_pitch",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "探测左臂能到达槽口上方的最陡俯仰。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1207,
+        1220
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:put_back",
+      "type": "function",
+      "name": "put_back",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "对无法入槽的切片恢复原抓取位置，避免随意丢到桌面。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1223,
+        1237
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:safe_home",
+      "type": "function",
+      "name": "safe_home",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "先抬升到障碍物上方，再移到初始工具位置归位，避免扫到面包机。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1240,
+        1259
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:left_slot_pitch",
+      "type": "function",
+      "name": "left_slot_pitch",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "在未占槽中寻找左臂可达的放置俯仰与目标槽。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1275,
+        1282
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:ho_turn_back_and_put",
+      "type": "function",
+      "name": "ho_turn_back_and_put",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "右臂未接住时让左臂把切片转回并放回面包架。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1285,
+        1291
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:ho_spot",
+      "type": "function",
+      "name": "ho_spot",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "选择离面包机足够远的中转点，考虑竖片和右夹爪的伸出范围。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1294,
+        1303
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:handover",
+      "type": "function",
+      "name": "handover",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "左臂取出右臂无法接近的切片，转为竖立暂存后由右臂接取。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1306,
+        1413
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:slice_pass",
+      "type": "function",
+      "name": "slice_pass",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "完成一轮面包架观察与取片插槽，后续轮用于补足遗漏切片。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1417,
+        1576
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "记录初始双臂姿态，测量面包机和面包架后组织两片入槽与按杆。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1581,
+        1604
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:finished",
+      "type": "function",
+      "name": "finished",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "以一次空闲夹爪指令检查原生截断反馈，等待延迟的成功判定。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1613,
+        1621
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:steps_left",
+      "type": "function",
+      "name": "steps_left",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "summary": "从最新夹爪反馈读取控制步数和上限，计算剩余回合预算。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1624,
+        1635
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:P",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:P",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:f3",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:f3",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:mv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:mv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:moved",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:moved",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:cam_mats",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:cam_mats",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:to_plane",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:to_plane",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:balanced",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:balanced",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:bread_mask",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:bread_mask",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:white_mask",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:white_mask",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:ang",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:ang",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:wrap90",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:wrap90",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:yaw_of_heading",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:yaw_of_heading",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:unit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:unit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:heading_of_yaw",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:heading_of_yaw",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:head_rough",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:head_rough",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:sam_box",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:sam_box",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:toaster_fit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:toaster_fit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:classify",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:classify",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:toaster_look",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:toaster_look",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:measure_toaster",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:measure_toaster",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:press_lever",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:press_lever",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:find_bands",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:find_bands",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:look_at",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:look_at",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:box_bright_mask",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:box_bright_mask",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:view",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:view",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:band_centre",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:band_centre",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:measure_target",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:measure_target",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:set_open",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:set_open",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:grasp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:grasp",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:rz",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:rz",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:ry",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:ry",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:rx",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:rx",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:orient",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:orient",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:wrap180",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:wrap180",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:angles_of",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:angles_of",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:tilted",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:tilted",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:project",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:front_view",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:front_view",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:analyze_front",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:analyze_front",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:finger_t",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:finger_t",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:front_grasp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:front_grasp",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:lift",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:lift",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:slice_geometry",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:slice_geometry",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:gentle",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:gentle",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:reseat",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:reseat",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:place",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:place",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:left_place_pitch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:left_place_pitch",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:put_back",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:put_back",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:safe_home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:safe_home",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:left_slot_pitch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:left_slot_pitch",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:ho_turn_back_and_put",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:ho_turn_back_and_put",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:ho_spot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:ho_spot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:handover",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:handover",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:slice_pass",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:slice_pass",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:finished",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:finished",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:steps_left",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:steps_left",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:bread_mask",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:balanced",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:white_mask",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:balanced",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:head_rough",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:cam_mats",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:head_rough",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:head_rough",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:bread_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:head_rough",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:to_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:head_rough",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:white_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:sam_box",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:toaster_fit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:white_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:toaster_fit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:to_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:toaster_fit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:unit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:toaster_look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:toaster_look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:moved",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:measure_toaster",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:toaster_look",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:measure_toaster",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:cam_mats",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:measure_toaster",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:sam_box",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:measure_toaster",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:measure_toaster",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:toaster_fit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:measure_toaster",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:classify",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:measure_toaster",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:ang",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:press_lever",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:yaw_of_heading",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:press_lever",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:press_lever",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:moved",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:press_lever",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:find_bands",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:unit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:look_at",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:heading_of_yaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:look_at",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:look_at",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:moved",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:box_bright_mask",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:sam_box",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:box_bright_mask",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:balanced",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:box_bright_mask",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:view",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:cam_mats",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:view",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:bread_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:view",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:to_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:view",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:view",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:box_bright_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:view",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:find_bands",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:measure_target",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:unit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:measure_target",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:look_at",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:measure_target",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:view",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:measure_target",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:set_open",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:wrap90",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:set_open",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:moved",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:orient",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:rz",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:orient",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:ry",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:orient",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:rx",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:angles_of",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:orient",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:angles_of",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:tilted",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:angles_of",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:front_view",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:wrap90",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:front_view",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:yaw_of_heading",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:front_view",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:heading_of_yaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:front_view",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:front_view",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:front_view",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:moved",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:front_view",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:cam_mats",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:front_view",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:front_view",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:analyze_front",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:analyze_front",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:analyze_front",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:balanced",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:analyze_front",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:front_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:front_view",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:front_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:front_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:finger_t",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:front_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:set_open",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:front_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:tilted",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:front_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:front_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:moved",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:front_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:wrap90",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:front_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:lift",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:lift",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:lift",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:gentle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:gentle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:moved",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:gentle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:reseat",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:reseat",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:wrap90",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:ang",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:heading_of_yaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:slice_geometry",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:moved",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:gentle",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:reseat",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:left_place_pitch",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:wrap90",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:left_place_pitch",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:ang",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:left_place_pitch",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:slice_geometry",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:left_place_pitch",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:left_place_pitch",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:moved",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:left_place_pitch",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:safe_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:put_back",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:put_back",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:safe_home",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:safe_home",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:left_slot_pitch",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:left_place_pitch",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:ho_turn_back_and_put",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:ho_turn_back_and_put",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:put_back",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:ho_spot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:measure_target",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:grasp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:lift",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:gentle",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:moved",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:ho_turn_back_and_put",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:set_open",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:safe_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:place",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:slice_pass",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:look_at",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:slice_pass",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:view",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:slice_pass",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:safe_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:slice_pass",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:slice_pass",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:band_centre",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:slice_pass",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:steps_left",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:slice_pass",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:measure_target",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:slice_pass",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:handover",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:slice_pass",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:left_slot_pitch",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:slice_pass",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:left_place_pitch",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:slice_pass",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:front_grasp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:slice_pass",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:grasp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:slice_pass",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:lift",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:slice_pass",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:place",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:slice_pass",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:put_back",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:head_rough",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:measure_toaster",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:safe_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:slice_pass",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_toast.py:press_lever",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

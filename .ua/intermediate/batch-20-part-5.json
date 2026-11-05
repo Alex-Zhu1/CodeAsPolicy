@@ -1,0 +1,6222 @@
+{
+  "nodes": [
+    {
+      "id": "file:tests/test_robodojo.py",
+      "type": "file",
+      "name": "test_robodojo.py",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接。通过固定输入、模拟后端或临时资源检查正常行为及失败边界。",
+      "tags": [
+        "测试",
+        "回归验证",
+        "行为契约"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:tests/test_robodojo.py:_axis_quat",
+      "type": "function",
+      "name": "_axis_quat",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "由指定轴和角度生成测试四元数。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        46,
+        50
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:_mul",
+      "type": "function",
+      "name": "_mul",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "计算两个四元数的乘积。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        53,
+        61
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:_quat",
+      "type": "function",
+      "name": "_quat",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "按库约定组合俯仰、偏航和滚转为四元数。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        64,
+        66
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:_pointing",
+      "type": "function",
+      "name": "_pointing",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "由四元数计算末端指向向量。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        69,
+        71
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:rd_backend",
+      "type": "function",
+      "name": "rd_backend",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "创建带双臂、瓶子和垃圾桶的 RoboDojo 模拟后端。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        474,
+        475
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:rd",
+      "type": "function",
+      "name": "rd",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "把模拟后端包装为 RoboDojo 机器人接口。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        479,
+        480
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_state_reads_both_arms_and_never_reports_success",
+      "type": "function",
+      "name": "test_state_reads_both_arms_and_never_reports_success",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证双臂状态可读且不泄露任务成功判定。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        486,
+        500
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_gripper_angles_follow_the_documented_convention",
+      "type": "function",
+      "name": "test_gripper_angles_follow_the_documented_convention",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证夹爪角度遵循公开坐标约定。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        503,
+        514
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_there_is_no_done_and_the_backend_is_never_asked",
+      "type": "function",
+      "name": "test_there_is_no_done_and_the_backend_is_never_asked",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证不公开 done 属性也不向后端查询完成状态。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        517,
+        525
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_absent_members_are_declared_by_robodojo_only",
+      "type": "function",
+      "name": "test_absent_members_are_declared_by_robodojo_only",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证只有 RoboDojo 声明缺失的完成和世界坐标图接口。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        528,
+        536
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_live_envelopes_carry_numpy_arrays",
+      "type": "function",
+      "name": "test_live_envelopes_carry_numpy_arrays",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证实时 NumPy 数组响应可转换为双臂状态。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        539,
+        554
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_images_camera_meta_and_no_world_map",
+      "type": "function",
+      "name": "test_images_camera_meta_and_no_world_map",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证读取图像与相机标定且拒绝不存在的世界坐标图。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        557,
+        573
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_segment_then_back_project_localises_the_object",
+      "type": "function",
+      "name": "test_segment_then_back_project_localises_the_object",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证分割加反投影可定位目标。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        579,
+        594
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_locate_measures_the_object_without_moving",
+      "type": "function",
+      "name": "test_locate_measures_the_object_without_moving",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证定位接口测量目标而不移动机器人。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        597,
+        613
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_perception_errors_and_argument_checks",
+      "type": "function",
+      "name": "test_perception_errors_and_argument_checks",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证感知错误与非法参数获得明确反馈。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        616,
+        635
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_move_to_drives_the_grasp_point_and_sends_only_the_angles_given",
+      "type": "function",
+      "name": "test_move_to_drives_the_grasp_point_and_sends_only_the_angles_given",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证位姿运动控制抓取点且仅发送明确指定的角度。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        641,
+        673
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_move_to_out_of_reach_is_a_result_and_spends_nothing",
+      "type": "function",
+      "name": "test_move_to_out_of_reach_is_a_result_and_spends_nothing",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证不可达运动作为结果返回且不消耗动作步数。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        676,
+        681
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_motion_argument_checks_reach_nothing",
+      "type": "function",
+      "name": "test_motion_argument_checks_reach_nothing",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证运动参数检查失败不下发任何动作。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        684,
+        708
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_home_returns_the_named_arm_and_keeps_its_gripper",
+      "type": "function",
+      "name": "test_home_returns_the_named_arm_and_keeps_its_gripper",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证指定机械臂归位且保持夹爪状态。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        711,
+        736
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_home_checks_its_argument_and_reports_a_return_the_budget_cut_short",
+      "type": "function",
+      "name": "test_home_checks_its_argument_and_reports_a_return_the_budget_cut_short",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证归位接口校验参数并报告预算截断。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        739,
+        749
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_set_gripper_runs_a_full_stroke_and_says_whether_it_holds",
+      "type": "function",
+      "name": "test_set_gripper_runs_a_full_stroke_and_says_whether_it_holds",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证夹爪完整行程返回实际抓持状态。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        752,
+        770
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_pi0_pick_reports_both_arms_and_a_provisional_success",
+      "type": "function",
+      "name": "test_pi0_pick_reports_both_arms_and_a_provisional_success",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证VLA 抓取返回双臂信息和暂定成功反馈。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        776,
+        791
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_pi0_pick_without_a_policy_service_is_a_tool_error",
+      "type": "function",
+      "name": "test_pi0_pick_without_a_policy_service_is_a_tool_error",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证缺少策略服务时 VLA 调用返回工具错误。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        794,
+        798
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_no_vla_set_refuses_the_pick",
+      "type": "function",
+      "name": "test_no_vla_set_refuses_the_pick",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证禁用 VLA 的原语集合拒绝抓取策略。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        801,
+        806
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_locate_grasp_carry_and_release_over_the_bin",
+      "type": "function",
+      "name": "test_locate_grasp_carry_and_release_over_the_bin",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证从定位到抓持、搬运和桶上释放的链路正确。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        812,
+        830
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_budget_truncates_the_episode_without_a_success",
+      "type": "function",
+      "name": "test_budget_truncates_the_episode_without_a_success",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证动作预算截断回合但不伪造成功。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        833,
+        844
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_cancelled_motion_ends_the_episode",
+      "type": "function",
+      "name": "test_cancelled_motion_ends_the_episode",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证取消运动终止回合。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        847,
+        858
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_ledger_marks_stateful_calls_and_counts_native_actions",
+      "type": "function",
+      "name": "test_ledger_marks_stateful_calls_and_counts_native_actions",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证账本标注状态改变调用并累计原生动作。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        861,
+        881
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_api_reference_lists_every_public_method_and_result_type",
+      "type": "function",
+      "name": "test_api_reference_lists_every_public_method_and_result_type",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证API 参考覆盖公开接口且不包含未提供能力。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        889,
+        926
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_adapter_and_prompt_say_that_nothing_reports_success",
+      "type": "function",
+      "name": "test_adapter_and_prompt_say_that_nothing_reports_success",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证适配器与提示明确没有成功查询能力。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        929,
+        997
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_live_scoring_contract_is_the_default_wording",
+      "type": "function",
+      "name": "test_live_scoring_contract_is_the_default_wording",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证默认契约采用实时评分约定且保留其他机器人措辞。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1000,
+        1018
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_arm_toolkit_attaches_the_three_views_and_never_terminates",
+      "type": "function",
+      "name": "test_arm_toolkit_attaches_the_three_views_and_never_terminates",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证工具反馈附三视图且不自行判定回合成功。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1021,
+        1054
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_cell_and_argument_helpers",
+      "type": "function",
+      "name": "test_cell_and_argument_helpers",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证任务单元和命令行参数转换正确。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1100,
+        1138
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_dump_card_writes_json_images_and_facts",
+      "type": "function",
+      "name": "test_dump_card_writes_json_images_and_facts",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证导出任务卡 JSON、图像与状态事实。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1141,
+        1163
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_backend_reads_the_native_counter_and_the_final_verdict",
+      "type": "function",
+      "name": "test_backend_reads_the_native_counter_and_the_final_verdict",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证后端读取原生动作计数和最终判定。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1166,
+        1178
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_home_tool_commands_the_starting_joints_and_holds_everything_else",
+      "type": "function",
+      "name": "test_home_tool_commands_the_starting_joints_and_holds_everything_else",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证归位工具恢复起始关节并保持另一侧状态。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1222,
+        1247
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_home_tool_stops_at_its_own_limit_and_at_the_step_limit",
+      "type": "function",
+      "name": "test_home_tool_stops_at_its_own_limit_and_at_the_step_limit",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证归位工具遵守自身动作上限与回合上限。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1250,
+        1260
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_register_home_reads_the_starting_joints_and_adds_a_recorded_tool",
+      "type": "function",
+      "name": "test_register_home_reads_the_starting_joints_and_adds_a_recorded_tool",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证注册归位工具时保存起始关节并记录调用。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1263,
+        1282
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_connect_without_reset_patches_rpents_client_and_restores_it",
+      "type": "function",
+      "name": "test_connect_without_reset_patches_rpents_client_and_restores_it",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证跳过重复重置的补丁仅在上下文内生效。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1285,
+        1333
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:_fake_bridge",
+      "type": "function",
+      "name": "_fake_bridge",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "构造与真实运行桥接模块形状一致的测试替身。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1339,
+        1391
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_third_arm_is_queued_replayed_and_given_its_turn",
+      "type": "function",
+      "name": "test_third_arm_is_queued_replayed_and_given_its_turn",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证第三机械臂动作被排队重放且获得执行时机。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1394,
+        1410
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_tasks_without_a_third_arm_run_as_before",
+      "type": "function",
+      "name": "test_tasks_without_a_third_arm_run_as_before",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证无需第三臂的任务保持原有行为。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1413,
+        1420
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_collect_env_gets_the_eval_seed_its_seed_manager_chose",
+      "type": "function",
+      "name": "test_collect_env_gets_the_eval_seed_its_seed_manager_chose",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证收集环境采用种子管理器选出的评估种子。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1423,
+        1444
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_host_starts_the_env_server_through_this_library",
+      "type": "function",
+      "name": "test_host_starts_the_env_server_through_this_library",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证宿主经本库启动环境服务器且恢复临时补丁。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1447,
+        1490
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_env_server_entry_runs_rpents_script_with_its_arguments",
+      "type": "function",
+      "name": "test_env_server_entry_runs_rpents_script_with_its_arguments",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "验证环境服务入口保留参数并运行 RPent 脚本。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1493,
+        1507
+      ]
+    },
+    {
+      "id": "class:tests/test_robodojo.py:_ToolResult",
+      "type": "class",
+      "name": "_ToolResult",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "模拟 RPent 工具返回对象，仅保存工具名与结果负载。",
+      "tags": [
+        "测试",
+        "测试替身",
+        "状态模拟"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        74,
+        79
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:_ToolResult.__init__",
+      "type": "function",
+      "name": "_ToolResult.__init__",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "初始化该测试替身的输入、状态与调用记录，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        77,
+        79
+      ]
+    },
+    {
+      "id": "class:tests/test_robodojo.py:FakeRobodojoBackend",
+      "type": "class",
+      "name": "FakeRobodojoBackend",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "模拟双臂、瓶子和垃圾桶，复现状态改变与只读工具响应，成功判定不进入机器人公开状态。",
+      "tags": [
+        "测试",
+        "测试替身",
+        "状态模拟"
+      ],
+      "complexity": "complex",
+      "lineRange": [
+        82,
+        470
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:FakeRobodojoBackend.__init__",
+      "type": "function",
+      "name": "FakeRobodojoBackend.__init__",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "初始化该测试替身的输入、状态与调用记录，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        103,
+        122
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:FakeRobodojoBackend.execute_tool",
+      "type": "function",
+      "name": "FakeRobodojoBackend.execute_tool",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "记录请求并将工具名分发到模拟处理器，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        126,
+        155
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:FakeRobodojoBackend.solved",
+      "type": "function",
+      "name": "FakeRobodojoBackend.solved",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "返回测试后端保存的最终任务成功判定，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        157,
+        159
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:FakeRobodojoBackend.artifact",
+      "type": "function",
+      "name": "FakeRobodojoBackend.artifact",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "按名称和步数提供模拟图像、数组或文本产物，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        161,
+        168
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:FakeRobodojoBackend.env_steps",
+      "type": "function",
+      "name": "FakeRobodojoBackend.env_steps",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "返回已消耗的原生环境动作数，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        170,
+        171
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:FakeRobodojoBackend.cancel",
+      "type": "function",
+      "name": "FakeRobodojoBackend.cancel",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "设置取消标志供后续执行检查，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        173,
+        174
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:FakeRobodojoBackend._spent",
+      "type": "function",
+      "name": "FakeRobodojoBackend._spent",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "检查模拟回合是否耗尽动作上限，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        178,
+        179
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:FakeRobodojoBackend._tick",
+      "type": "function",
+      "name": "FakeRobodojoBackend._tick",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "受剩余预算约束推进原生动作计数，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        181,
+        184
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:FakeRobodojoBackend._summary",
+      "type": "function",
+      "name": "FakeRobodojoBackend._summary",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "整理双臂位姿和夹爪状态为响应数据，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        186,
+        210
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:FakeRobodojoBackend._record",
+      "type": "function",
+      "name": "FakeRobodojoBackend._record",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "保存当前模拟状态及最近工具执行结果，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        212,
+        220
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:FakeRobodojoBackend._view",
+      "type": "function",
+      "name": "FakeRobodojoBackend._view",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "把指定历史记录转换为宿主状态响应，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        222,
+        238
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:FakeRobodojoBackend._angles",
+      "type": "function",
+      "name": "FakeRobodojoBackend._angles",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "返回指定机械臂的俯仰、偏航和滚转，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        240,
+        242
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:FakeRobodojoBackend._gripper",
+      "type": "function",
+      "name": "FakeRobodojoBackend._gripper",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "在运动时应用夹爪保持或释放规则，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        244,
+        251
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:FakeRobodojoBackend._release",
+      "type": "function",
+      "name": "FakeRobodojoBackend._release",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "更新物体释放位置并判定是否进入垃圾桶，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        253,
+        256
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:FakeRobodojoBackend._do_view_env_state",
+      "type": "function",
+      "name": "FakeRobodojoBackend._do_view_env_state",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "读取保存的模拟环境状态，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        260,
+        261
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:FakeRobodojoBackend._do_segment",
+      "type": "function",
+      "name": "FakeRobodojoBackend._do_segment",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "返回指定提示词的模拟分割结果，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        263,
+        280
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:FakeRobodojoBackend._do_back_project",
+      "type": "function",
+      "name": "FakeRobodojoBackend._do_back_project",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "校验像素范围并返回模拟世界坐标，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        282,
+        293
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:FakeRobodojoBackend._do_pi0_pick",
+      "type": "function",
+      "name": "FakeRobodojoBackend._do_pi0_pick",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "模拟冻结抓取策略的分块动作和双臂反馈，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        295,
+        333
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:FakeRobodojoBackend._do_locate",
+      "type": "function",
+      "name": "FakeRobodojoBackend._do_locate",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "返回目标瓶子的模拟尺寸与抓取几何，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        337,
+        358
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:FakeRobodojoBackend._do_move_pose",
+      "type": "function",
+      "name": "FakeRobodojoBackend._do_move_pose",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "模拟抓取点位姿运动及角度保持，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        360,
+        411
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:FakeRobodojoBackend._do_grip",
+      "type": "function",
+      "name": "FakeRobodojoBackend._do_grip",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "模拟完整夹爪行程并报告实际抓持，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        413,
+        439
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:FakeRobodojoBackend._do_home",
+      "type": "function",
+      "name": "FakeRobodojoBackend._do_home",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "逐步逼近起始关节并遵守动作预算，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        441,
+        470
+      ]
+    },
+    {
+      "id": "class:tests/test_robodojo.py:_FakeState",
+      "type": "class",
+      "name": "_FakeState",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "提供模拟状态的图像或数组产物路径，支持宿主任务卡导出测试。",
+      "tags": [
+        "测试",
+        "测试替身",
+        "状态模拟"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1060,
+        1071
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:_FakeState.__init__",
+      "type": "function",
+      "name": "_FakeState.__init__",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "初始化该测试替身的输入、状态与调用记录，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1063,
+        1065
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:_FakeState.artifact_path",
+      "type": "function",
+      "name": "_FakeState.artifact_path",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "将后端产物写入临时路径供宿主读取，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1067,
+        1071
+      ]
+    },
+    {
+      "id": "class:tests/test_robodojo.py:_FakeEnv",
+      "type": "class",
+      "name": "_FakeEnv",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "向宿主返回带原生步数和回合标志的模拟环境状态。",
+      "tags": [
+        "测试",
+        "测试替身",
+        "状态模拟"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1074,
+        1084
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:_FakeEnv.__init__",
+      "type": "function",
+      "name": "_FakeEnv.__init__",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "初始化该测试替身的输入、状态与调用记录，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1075,
+        1076
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:_FakeEnv.get_status",
+      "type": "function",
+      "name": "_FakeEnv.get_status",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "返回原生步数、任务终态和测试环境状态，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1078,
+        1084
+      ]
+    },
+    {
+      "id": "class:tests/test_robodojo.py:_FakeToolkit",
+      "type": "class",
+      "name": "_FakeToolkit",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "把测试后端和状态产物封装成宿主需要的工具包接口。",
+      "tags": [
+        "测试",
+        "测试替身",
+        "状态模拟"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1087,
+        1097
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:_FakeToolkit.__init__",
+      "type": "function",
+      "name": "_FakeToolkit.__init__",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "初始化该测试替身的输入、状态与调用记录，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1088,
+        1091
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:_FakeToolkit.execute_tool",
+      "type": "function",
+      "name": "_FakeToolkit.execute_tool",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "记录请求并将工具名分发到模拟处理器，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1093,
+        1094
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:_FakeToolkit.solved",
+      "type": "function",
+      "name": "_FakeToolkit.solved",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "返回测试后端保存的最终任务成功判定，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1096,
+        1097
+      ]
+    },
+    {
+      "id": "class:tests/test_robodojo.py:_JointEnv",
+      "type": "class",
+      "name": "_JointEnv",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "模拟每步按固定比例逼近目标关节的双臂环境，用于归位与预算测试。",
+      "tags": [
+        "测试",
+        "测试替身",
+        "状态模拟"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1181,
+        1209
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:_JointEnv.__init__",
+      "type": "function",
+      "name": "_JointEnv.__init__",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "初始化该测试替身的输入、状态与调用记录，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1186,
+        1190
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:_JointEnv.get_obs",
+      "type": "function",
+      "name": "_JointEnv.get_obs",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "组合当前机器人状态与相机观测，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1192,
+        1197
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:_JointEnv.step",
+      "type": "function",
+      "name": "_JointEnv.step",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "应用一次模拟关节或夹爪动作并返回观测，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1199,
+        1209
+      ]
+    },
+    {
+      "id": "class:tests/test_robodojo.py:_JointPrimitives",
+      "type": "class",
+      "name": "_JointPrimitives",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "包装关节环境并统计取消检查次数。",
+      "tags": [
+        "测试",
+        "测试替身",
+        "状态模拟"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1212,
+        1219
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:_JointPrimitives.__init__",
+      "type": "function",
+      "name": "_JointPrimitives.__init__",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "初始化该测试替身的输入、状态与调用记录，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1213,
+        1216
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:_JointPrimitives._check_cancelled",
+      "type": "function",
+      "name": "_JointPrimitives._check_cancelled",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "记录工具执行时的取消检查，服务于RoboDojo 双臂接口、隐藏成功判定与宿主环境桥接的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1218,
+        1219
+      ]
+    },
+    {
+      "id": "file:tests/test_robodojo_colour.py",
+      "type": "file",
+      "name": "test_robodojo_colour.py",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证纯彩色几何测量、深度分支、异步客户端桥接与图像时序。通过固定输入、模拟后端或临时资源检查正常行为及失败边界。",
+      "tags": [
+        "测试",
+        "回归验证",
+        "行为契约"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:_sibling",
+      "type": "function",
+      "name": "_sibling",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "独立加载同目录的其他测试模块以复用图形辅助工具。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        38,
+        44
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:_ee_pose",
+      "type": "function",
+      "name": "_ee_pose",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "用正运动学构造末端位置与四元数观测。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        56,
+        58
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:world",
+      "type": "function",
+      "name": "world",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "创建测试场景、分割器与原生工具包。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        136,
+        140
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:_off",
+      "type": "function",
+      "name": "_off",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "计算测量中心与已知几何中心的平面误差。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        143,
+        144
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_locate_measures_from_colour_images_when_there_is_no_depth",
+      "type": "function",
+      "name": "test_locate_measures_from_colour_images_when_there_is_no_depth",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证无深度时从彩色多视图测量物体位置。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        147,
+        160
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_colour_only_is_what_the_host_says_or_what_the_observation_lacks",
+      "type": "function",
+      "name": "test_colour_only_is_what_the_host_says_or_what_the_observation_lacks",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证宿主声明或观测字段决定纯彩色模式。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        163,
+        171
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_a_height_two_cameras_agreed_on_is_kept_for_when_one_sees_the_object",
+      "type": "function",
+      "name": "test_a_height_two_cameras_agreed_on_is_kept_for_when_one_sees_the_object",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证双相机确认的高度可供后续单视图复用。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        174,
+        187
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_a_pixel_is_answered_by_the_object_under_it_or_by_the_table",
+      "type": "function",
+      "name": "test_a_pixel_is_answered_by_the_object_under_it_or_by_the_table",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证像素查询返回对应物体表面或桌面坐标。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        190,
+        210
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_the_toolkit_records_steps_and_wraps_what_changes_the_scene",
+      "type": "function",
+      "name": "test_the_toolkit_records_steps_and_wraps_what_changes_the_scene",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证工具包记录步数并包装会改变场景的调用。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        213,
+        233
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_the_colour_robot_reads_the_same_api_without_depth",
+      "type": "function",
+      "name": "test_the_colour_robot_reads_the_same_api_without_depth",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证纯彩色机器人在无深度时提供一致 API。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        236,
+        257
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_the_reference_and_the_knowledge_of_the_colour_robot_promise_no_depth",
+      "type": "function",
+      "name": "test_the_reference_and_the_knowledge_of_the_colour_robot_promise_no_depth",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证纯彩色参考文档和知识不承诺深度能力。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        260,
+        268
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:_deploy",
+      "type": "function",
+      "name": "_deploy",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "从实际集成目录加载部署适配模块供协议测试。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        274,
+        279
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:_episode",
+      "type": "function",
+      "name": "_episode",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "构造桥接服务、策略客户端和测试回合环境。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        328,
+        336
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_the_tools_step_roboDojos_client_through_the_bridge",
+      "type": "function",
+      "name": "test_the_tools_step_roboDojos_client_through_the_bridge",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证工具通过桥接协议推进 RoboDojo 客户端。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        339,
+        372
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_the_client_ends_the_episode_itself_when_the_task_is_solved",
+      "type": "function",
+      "name": "test_the_client_ends_the_episode_itself_when_the_task_is_solved",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证客户端在任务完成时自行结束回合。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        375,
+        393
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_get_action_does_not_keep_the_client_waiting_while_the_program_thinks",
+      "type": "function",
+      "name": "test_get_action_does_not_keep_the_client_waiting_while_the_program_thinks",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证程序思考期间动作查询及时返回等待状态。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        396,
+        404
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:_adapter_model",
+      "type": "function",
+      "name": "_adapter_model",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "基于 XPolicyLab 模板加载实际策略模型适配器。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        410,
+        451
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_the_adapters_model_runs_an_episode_for_each_reset",
+      "type": "function",
+      "name": "test_the_adapters_model_runs_an_episode_for_each_reset",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证适配模型每次重置启动独立回合。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        454,
+        504
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_an_episode_under_the_adapter_runs_the_real_loop",
+      "type": "function",
+      "name": "test_an_episode_under_the_adapter_runs_the_real_loop",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证适配器下的回合运行真实规划循环。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        507,
+        591
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_a_trial_the_client_ends_is_wrapped_up_without_another_request",
+      "type": "function",
+      "name": "test_a_trial_the_client_ends_is_wrapped_up_without_another_request",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证客户端中途结束后无需再请求模型即可收尾。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        594,
+        638
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_the_clients_trial_stands_when_the_verdict_cannot_be_delivered",
+      "type": "function",
+      "name": "test_the_clients_trial_stands_when_the_verdict_cannot_be_delivered",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证最终判定无法送达时保留客户端的完成判定。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        641,
+        659
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_the_adapter_runs_the_colour_robot_whatever_the_client_sends",
+      "type": "function",
+      "name": "test_the_adapter_runs_the_colour_robot_whatever_the_client_sends",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证适配器遵循部署配置的机器人模式。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        662,
+        696
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_a_reset_does_not_rewrite_a_verdict_the_client_gave",
+      "type": "function",
+      "name": "test_a_reset_does_not_rewrite_a_verdict_the_client_gave",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证重置不会覆盖客户端已给出的最终判定。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        699,
+        708
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:_swing",
+      "type": "function",
+      "name": "_swing",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "生成使右臂及腕相机转动的原生动作。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        743,
+        748
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_pictures_one_observation_late_are_read_with_the_state_they_show",
+      "type": "function",
+      "name": "test_pictures_one_observation_late_are_read_with_the_state_they_show",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证延迟一帧图像使用其实际拍摄时刻状态。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        751,
+        764
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_the_bridge_says_which_state_the_pictures_show",
+      "type": "function",
+      "name": "test_the_bridge_says_which_state_the_pictures_show",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证桥接观测明确携带图像对应的历史状态。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        767,
+        785
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_deploy_tells_an_older_client_from_one_that_renders_before_it_captures",
+      "type": "function",
+      "name": "test_deploy_tells_an_older_client_from_one_that_renders_before_it_captures",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证部署适配检测客户端渲染与采集先后关系。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        788,
+        805
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_a_mask_on_the_robots_own_gripper_is_not_measured_as_an_object",
+      "type": "function",
+      "name": "test_a_mask_on_the_robots_own_gripper_is_not_measured_as_an_object",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证机器人自身夹爪掩码不被当作外部物体。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        824,
+        840
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_what_is_not_on_the_table_is_not_located",
+      "type": "function",
+      "name": "test_what_is_not_on_the_table_is_not_located",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证不在桌面的掩码不输出错误物体位置。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        843,
+        849
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_a_height_the_cameras_agreed_on_better_stands_against_a_poorer_look",
+      "type": "function",
+      "name": "test_a_height_the_cameras_agreed_on_better_stands_against_a_poorer_look",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证较好双视图高度估计不被低质量新观测覆盖。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        852,
+        876
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_cameras_that_agree_only_roughly_say_so",
+      "type": "function",
+      "name": "test_cameras_that_agree_only_roughly_say_so",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证相机间仅粗略一致时明确标记估计不确定。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        892,
+        899
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_an_object_the_arm_now_hides_part_of_gives_no_wrong_place",
+      "type": "function",
+      "name": "test_an_object_the_arm_now_hides_part_of_gives_no_wrong_place",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证机械臂部分遮挡目标时避免输出错误位置。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        902,
+        936
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_a_height_is_not_kept_from_a_rough_reading_nor_used_where_a_taller_thing_fits",
+      "type": "function",
+      "name": "test_a_height_is_not_kept_from_a_rough_reading_nor_used_where_a_taller_thing_fits",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证不缓存粗略高度且不将旧高度套用更高物体。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        939,
+        961
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:_depth",
+      "type": "function",
+      "name": "_depth",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "以射线几何渲染桌面物体的相机轴向深度。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        967,
+        990
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_with_depth_in_the_observation_the_tools_read_it",
+      "type": "function",
+      "name": "test_with_depth_in_the_observation_the_tools_read_it",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证观测带深度时工具使用深度路径。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1015,
+        1043
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_the_xpolicylab_robot_is_the_robodojo_robot_and_asks_for_depth",
+      "type": "function",
+      "name": "test_the_xpolicylab_robot_is_the_robodojo_robot_and_asks_for_depth",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证深度版 XPolicyLab 适配沿用 RoboDojo API 并请求深度。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1046,
+        1069
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:_checkout",
+      "type": "function",
+      "name": "_checkout",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "在临时目录构造评估宿主需要的 RoboDojo 项目布局。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1072,
+        1104
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_the_host_switches_depth_on_in_its_own_copy_of_the_config",
+      "type": "function",
+      "name": "test_the_host_switches_depth_on_in_its_own_copy_of_the_config",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证宿主在自身配置副本中开启深度而不改变源配置。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1107,
+        1144
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_the_host_picks_one_layout_the_way_xpolicylab_does",
+      "type": "function",
+      "name": "test_the_host_picks_one_layout_the_way_xpolicylab_does",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证宿主按 XPolicyLab 方式选择单个布局。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1147,
+        1173
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_a_root_with_depth_can_write_its_results_into_the_checkout",
+      "type": "function",
+      "name": "test_a_root_with_depth_can_write_its_results_into_the_checkout",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证支持深度的隔离目录仍可把结果写回评估目录。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1176,
+        1190
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_the_adapter_starts_the_client_as_robodojo_configures_it",
+      "type": "function",
+      "name": "test_the_adapter_starts_the_client_as_robodojo_configures_it",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证适配器按 RoboDojo 配置启动原始客户端。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1193,
+        1202
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_a_late_picture_gets_the_camera_pose_it_was_taken_from",
+      "type": "function",
+      "name": "test_a_late_picture_gets_the_camera_pose_it_was_taken_from",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证延迟图像关联实际拍摄时相机外参。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1205,
+        1220
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_the_adapter_holds_still_in_xpolicylabs_debug_loop",
+      "type": "function",
+      "name": "test_the_adapter_holds_still_in_xpolicylabs_debug_loop",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "验证调试循环保持静止且不启动模型回合。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1223,
+        1255
+      ]
+    },
+    {
+      "id": "class:tests/test_robodojo_colour.py:Scene",
+      "type": "class",
+      "name": "Scene",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "模拟桌面几何、双臂状态和三路彩色相机，供无需真实模拟器的视觉与桥接测试。",
+      "tags": [
+        "测试",
+        "测试替身",
+        "状态模拟"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        61,
+        109
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:Scene.__init__",
+      "type": "function",
+      "name": "Scene.__init__",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "初始化该测试替身的输入、状态与调用记录，服务于纯彩色几何测量、深度分支、异步客户端桥接与图像时序的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        66,
+        71
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:Scene.state",
+      "type": "function",
+      "name": "Scene.state",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "生成当前双臂位姿和夹爪状态字典，服务于纯彩色几何测量、深度分支、异步客户端桥接与图像时序的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        73,
+        79
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:Scene.view",
+      "type": "function",
+      "name": "Scene.view",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "根据机器人状态构造头部或腕部相机位姿，服务于纯彩色几何测量、深度分支、异步客户端桥接与图像时序的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        81,
+        85
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:Scene.get_obs",
+      "type": "function",
+      "name": "Scene.get_obs",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "组合当前机器人状态与相机观测，服务于纯彩色几何测量、深度分支、异步客户端桥接与图像时序的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        87,
+        94
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:Scene.get_status",
+      "type": "function",
+      "name": "Scene.get_status",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "返回原生步数、任务终态和测试环境状态，服务于纯彩色几何测量、深度分支、异步客户端桥接与图像时序的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        96,
+        97
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:Scene.step",
+      "type": "function",
+      "name": "Scene.step",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "应用一次模拟关节或夹爪动作并返回观测，服务于纯彩色几何测量、深度分支、异步客户端桥接与图像时序的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        99,
+        109
+      ]
+    },
+    {
+      "id": "class:tests/test_robodojo_colour.py:Segmenter",
+      "type": "class",
+      "name": "Segmenter",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "以射线投射场景模拟 SAM3，支持文字提示和像素提示的目标掩码查询。",
+      "tags": [
+        "测试",
+        "测试替身",
+        "状态模拟"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        112,
+        132
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:Segmenter.__init__",
+      "type": "function",
+      "name": "Segmenter.__init__",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "初始化该测试替身的输入、状态与调用记录，服务于纯彩色几何测量、深度分支、异步客户端桥接与图像时序的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        115,
+        117
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:Segmenter.segment",
+      "type": "function",
+      "name": "Segmenter.segment",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "按测试场景或预置掩码返回模拟 SAM3 分割结果，服务于纯彩色几何测量、深度分支、异步客户端桥接与图像时序的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        119,
+        132
+      ]
+    },
+    {
+      "id": "class:tests/test_robodojo_colour.py:TaskEnv",
+      "type": "class",
+      "name": "TaskEnv",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "模拟部署适配器使用的评估环境、动作计数和客户端终态判定。",
+      "tags": [
+        "测试",
+        "测试替身",
+        "状态模拟"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        282,
+        311
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:TaskEnv.__init__",
+      "type": "function",
+      "name": "TaskEnv.__init__",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "初始化该测试替身的输入、状态与调用记录，服务于纯彩色几何测量、深度分支、异步客户端桥接与图像时序的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        285,
+        289
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:TaskEnv.get_obs",
+      "type": "function",
+      "name": "TaskEnv.get_obs",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "组合当前机器人状态与相机观测，服务于纯彩色几何测量、深度分支、异步客户端桥接与图像时序的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        291,
+        292
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:TaskEnv.take_action",
+      "type": "function",
+      "name": "TaskEnv.take_action",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "推进评估环境动作数并更新回合终态，服务于纯彩色几何测量、深度分支、异步客户端桥接与图像时序的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        294,
+        297
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:TaskEnv.get_running_env_idx_list",
+      "type": "function",
+      "name": "TaskEnv.get_running_env_idx_list",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "返回仍在运行的环境索引，服务于纯彩色几何测量、深度分支、异步客户端桥接与图像时序的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        299,
+        300
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:TaskEnv.is_episode_end",
+      "type": "function",
+      "name": "TaskEnv.is_episode_end",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "结合成功条件和步数上限锁定回合结束，服务于纯彩色几何测量、深度分支、异步客户端桥接与图像时序的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        302,
+        311
+      ]
+    },
+    {
+      "id": "class:tests/test_robodojo_colour.py:Client",
+      "type": "class",
+      "name": "Client",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "在同一进程模拟 XPolicyLab 模型客户端协议并记录调用。",
+      "tags": [
+        "测试",
+        "测试替身",
+        "状态模拟"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        314,
+        325
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:Client.__init__",
+      "type": "function",
+      "name": "Client.__init__",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "初始化该测试替身的输入、状态与调用记录，服务于纯彩色几何测量、深度分支、异步客户端桥接与图像时序的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        317,
+        319
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:Client.call",
+      "type": "function",
+      "name": "Client.call",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "分发 XPolicyLab 客户端协议到策略模型方法，服务于纯彩色几何测量、深度分支、异步客户端桥接与图像时序的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        321,
+        325
+      ]
+    },
+    {
+      "id": "class:tests/test_robodojo_colour.py:LateScene",
+      "type": "class",
+      "name": "LateScene",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "模拟图像落后状态一帧的观测，并可显式提供图像对应状态。",
+      "tags": [
+        "测试",
+        "测试替身",
+        "状态模拟"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        714,
+        740
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:LateScene.__init__",
+      "type": "function",
+      "name": "LateScene.__init__",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "初始化该测试替身的输入、状态与调用记录，服务于纯彩色几何测量、深度分支、异步客户端桥接与图像时序的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        718,
+        722
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:LateScene.step",
+      "type": "function",
+      "name": "LateScene.step",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "应用一次模拟关节或夹爪动作并返回观测，服务于纯彩色几何测量、深度分支、异步客户端桥接与图像时序的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        724,
+        727
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:LateScene.view",
+      "type": "function",
+      "name": "LateScene.view",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "根据机器人状态构造头部或腕部相机位姿，服务于纯彩色几何测量、深度分支、异步客户端桥接与图像时序的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        729,
+        734
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:LateScene.get_obs",
+      "type": "function",
+      "name": "LateScene.get_obs",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "组合当前机器人状态与相机观测，服务于纯彩色几何测量、深度分支、异步客户端桥接与图像时序的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        736,
+        740
+      ]
+    },
+    {
+      "id": "class:tests/test_robodojo_colour.py:Told",
+      "type": "class",
+      "name": "Told",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "按预设掩码和置信度覆盖特定分割响应，用于多视图质量验证。",
+      "tags": [
+        "测试",
+        "测试替身",
+        "状态模拟"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        808,
+        821
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:Told.__init__",
+      "type": "function",
+      "name": "Told.__init__",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "初始化该测试替身的输入、状态与调用记录，服务于纯彩色几何测量、深度分支、异步客户端桥接与图像时序的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        811,
+        813
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:Told.segment",
+      "type": "function",
+      "name": "Told.segment",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "按测试场景或预置掩码返回模拟 SAM3 分割结果，服务于纯彩色几何测量、深度分支、异步客户端桥接与图像时序的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        815,
+        821
+      ]
+    },
+    {
+      "id": "class:tests/test_robodojo_colour.py:HalfSeen",
+      "type": "class",
+      "name": "HalfSeen",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "模拟腕部相机只看到物体一侧的遮挡分割结果。",
+      "tags": [
+        "测试",
+        "测试替身",
+        "状态模拟"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        879,
+        889
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:HalfSeen.segment",
+      "type": "function",
+      "name": "HalfSeen.segment",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "按测试场景或预置掩码返回模拟 SAM3 分割结果，服务于纯彩色几何测量、深度分支、异步客户端桥接与图像时序的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        882,
+        889
+      ]
+    },
+    {
+      "id": "class:tests/test_robodojo_colour.py:DepthScene",
+      "type": "class",
+      "name": "DepthScene",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "在彩色测试场景上增加深度图与标定以验证深度分支。",
+      "tags": [
+        "测试",
+        "测试替身",
+        "状态模拟"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        993,
+        1011
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:DepthScene.__init__",
+      "type": "function",
+      "name": "DepthScene.__init__",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "初始化该测试替身的输入、状态与调用记录，服务于纯彩色几何测量、深度分支、异步客户端桥接与图像时序的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        996,
+        998
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:DepthScene.get_obs",
+      "type": "function",
+      "name": "DepthScene.get_obs",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "组合当前机器人状态与相机观测，服务于纯彩色几何测量、深度分支、异步客户端桥接与图像时序的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1000,
+        1011
+      ]
+    },
+    {
+      "id": "class:tests/test_robodojo.py:test_connect_without_reset_patches_rpents_client_and_restores_it.RoboDojoEnvClient",
+      "type": "class",
+      "name": "test_connect_without_reset_patches_rpents_client_and_restores_it.RoboDojoEnvClient",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "模拟连接时按公平评估模式决定是否重置的 RoboDojo 客户端。",
+      "tags": [
+        "测试",
+        "局部定义",
+        "测试替身"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1299,
+        1307
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_connect_without_reset_patches_rpents_client_and_restores_it.RoboDojoEnvClient.__init__",
+      "type": "function",
+      "name": "test_connect_without_reset_patches_rpents_client_and_restores_it.RoboDojoEnvClient.__init__",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "初始化测试替身所需状态。",
+      "tags": [
+        "测试",
+        "局部定义",
+        "测试替身"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1300,
+        1303
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:test_connect_without_reset_patches_rpents_client_and_restores_it.RoboDojoEnvClient.get_obs",
+      "type": "function",
+      "name": "test_connect_without_reset_patches_rpents_client_and_restores_it.RoboDojoEnvClient.get_obs",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "返回用于协议测试的当前观测。",
+      "tags": [
+        "测试",
+        "局部定义",
+        "测试替身"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1305,
+        1307
+      ]
+    },
+    {
+      "id": "class:tests/test_robodojo.py:_fake_bridge.CollectEnv",
+      "type": "class",
+      "name": "_fake_bridge.CollectEnv",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "模拟第三机械臂轨迹查询、稳定检查与控制展开的收集环境。",
+      "tags": [
+        "测试",
+        "局部定义",
+        "测试替身"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1352,
+        1372
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:_fake_bridge.CollectEnv.__init__",
+      "type": "function",
+      "name": "_fake_bridge.CollectEnv.__init__",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "初始化测试替身所需状态。",
+      "tags": [
+        "测试",
+        "局部定义",
+        "测试替身"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1356,
+        1360
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:_fake_bridge.CollectEnv.query_support_arm_traj",
+      "type": "function",
+      "name": "_fake_bridge.CollectEnv.query_support_arm_traj",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "仅首次查询时填入第三机械臂待执行轨迹。",
+      "tags": [
+        "测试",
+        "局部定义",
+        "测试替身"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1362,
+        1365
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:_fake_bridge.CollectEnv.check_support_arm_stable",
+      "type": "function",
+      "name": "_fake_bridge.CollectEnv.check_support_arm_stable",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "记录第三机械臂稳定性检查。",
+      "tags": [
+        "测试",
+        "局部定义",
+        "测试替身"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1367,
+        1368
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:_fake_bridge.CollectEnv.apply_target",
+      "type": "function",
+      "name": "_fake_bridge.CollectEnv.apply_target",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "调用模块控制展开函数并记录推送动作。",
+      "tags": [
+        "测试",
+        "局部定义",
+        "测试替身"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1370,
+        1372
+      ]
+    },
+    {
+      "id": "class:tests/test_robodojo.py:_fake_bridge.NativeEnv",
+      "type": "class",
+      "name": "_fake_bridge.NativeEnv",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "为收集环境提供原生重置和动作应用包装。",
+      "tags": [
+        "测试",
+        "局部定义",
+        "测试替身"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1378,
+        1386
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:_fake_bridge.NativeEnv.__init__",
+      "type": "function",
+      "name": "_fake_bridge.NativeEnv.__init__",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "初始化测试替身所需状态。",
+      "tags": [
+        "测试",
+        "局部定义",
+        "测试替身"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1379,
+        1380
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:_fake_bridge.NativeEnv.reset",
+      "type": "function",
+      "name": "_fake_bridge.NativeEnv.reset",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "调用桥接模块标准重置或执行空重置契约。",
+      "tags": [
+        "测试",
+        "局部定义",
+        "测试替身"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1382,
+        1383
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo.py:_fake_bridge.NativeEnv.apply_action",
+      "type": "function",
+      "name": "_fake_bridge.NativeEnv.apply_action",
+      "filePath": "tests/test_robodojo.py",
+      "summary": "把原生动作转交底层收集环境。",
+      "tags": [
+        "测试",
+        "局部定义",
+        "测试替身"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1385,
+        1386
+      ]
+    },
+    {
+      "id": "class:tests/test_robodojo_colour.py:_adapter_model.ModelTemplate",
+      "type": "class",
+      "name": "_adapter_model.ModelTemplate",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "模拟 XPolicyLab 的策略模型基类契约。",
+      "tags": [
+        "测试",
+        "局部定义",
+        "测试替身"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        419,
+        430
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:_adapter_model.ModelTemplate.__init__",
+      "type": "function",
+      "name": "_adapter_model.ModelTemplate.__init__",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "初始化测试替身所需状态。",
+      "tags": [
+        "测试",
+        "局部定义",
+        "测试替身"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        420,
+        421
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:_adapter_model.ModelTemplate.update_obs",
+      "type": "function",
+      "name": "_adapter_model.ModelTemplate.update_obs",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "声明模型必须实现的观测更新接口。",
+      "tags": [
+        "测试",
+        "局部定义",
+        "测试替身"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        423,
+        424
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:_adapter_model.ModelTemplate.get_action",
+      "type": "function",
+      "name": "_adapter_model.ModelTemplate.get_action",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "声明模型必须实现的动作查询接口。",
+      "tags": [
+        "测试",
+        "局部定义",
+        "测试替身"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        426,
+        427
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:_adapter_model.ModelTemplate.reset",
+      "type": "function",
+      "name": "_adapter_model.ModelTemplate.reset",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "调用桥接模块标准重置或执行空重置契约。",
+      "tags": [
+        "测试",
+        "局部定义",
+        "测试替身"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        429,
+        430
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_the_adapters_model_runs_an_episode_for_each_reset.play_episode",
+      "type": "function",
+      "name": "test_the_adapters_model_runs_an_episode_for_each_reset.play_episode",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "模拟单次宿主启动、实际后端运动与收尾，记录适配器传入的机器人配置和原生结果。",
+      "tags": [
+        "测试",
+        "局部定义",
+        "测试替身"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        459,
+        478
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_an_episode_under_the_adapter_runs_the_real_loop.reply",
+      "type": "function",
+      "name": "test_an_episode_under_the_adapter_runs_the_real_loop.reply",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "构造带函数调用编号和令牌统计的模型响应，用于真实规划循环的集成测试。",
+      "tags": [
+        "测试",
+        "局部定义",
+        "测试替身"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        515,
+        525
+      ]
+    },
+    {
+      "id": "class:tests/test_robodojo_colour.py:test_the_adapter_holds_still_in_xpolicylabs_debug_loop.DebugEnv",
+      "type": "class",
+      "name": "test_the_adapter_holds_still_in_xpolicylabs_debug_loop.DebugEnv",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "模拟 XPolicyLab 调试环境的观测、动作计数和回合上限。",
+      "tags": [
+        "测试",
+        "局部定义",
+        "测试替身"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1231,
+        1246
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_the_adapter_holds_still_in_xpolicylabs_debug_loop.DebugEnv.get_obs",
+      "type": "function",
+      "name": "test_the_adapter_holds_still_in_xpolicylabs_debug_loop.DebugEnv.get_obs",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "返回用于协议测试的当前观测。",
+      "tags": [
+        "测试",
+        "局部定义",
+        "测试替身"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1235,
+        1239
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_the_adapter_holds_still_in_xpolicylabs_debug_loop.DebugEnv.take_action",
+      "type": "function",
+      "name": "test_the_adapter_holds_still_in_xpolicylabs_debug_loop.DebugEnv.take_action",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "记录动作并推进调试回合步数。",
+      "tags": [
+        "测试",
+        "局部定义",
+        "测试替身"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1241,
+        1243
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_colour.py:test_the_adapter_holds_still_in_xpolicylabs_debug_loop.DebugEnv.is_episode_end",
+      "type": "function",
+      "name": "test_the_adapter_holds_still_in_xpolicylabs_debug_loop.DebugEnv.is_episode_end",
+      "filePath": "tests/test_robodojo_colour.py",
+      "summary": "按调试步数上限返回回合终止标志。",
+      "tags": [
+        "测试",
+        "局部定义",
+        "测试替身"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1245,
+        1246
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:_axis_quat",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:_axis_quat",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:_mul",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:_mul",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:_quat",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:_quat",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:_pointing",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:_pointing",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:rd_backend",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:rd_backend",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:rd",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:rd",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_state_reads_both_arms_and_never_reports_success",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_state_reads_both_arms_and_never_reports_success",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_gripper_angles_follow_the_documented_convention",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_gripper_angles_follow_the_documented_convention",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_there_is_no_done_and_the_backend_is_never_asked",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_there_is_no_done_and_the_backend_is_never_asked",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_absent_members_are_declared_by_robodojo_only",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_absent_members_are_declared_by_robodojo_only",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_live_envelopes_carry_numpy_arrays",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_live_envelopes_carry_numpy_arrays",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_images_camera_meta_and_no_world_map",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_images_camera_meta_and_no_world_map",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_segment_then_back_project_localises_the_object",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_segment_then_back_project_localises_the_object",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_locate_measures_the_object_without_moving",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_locate_measures_the_object_without_moving",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_perception_errors_and_argument_checks",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_perception_errors_and_argument_checks",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_move_to_drives_the_grasp_point_and_sends_only_the_angles_given",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_move_to_drives_the_grasp_point_and_sends_only_the_angles_given",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_move_to_out_of_reach_is_a_result_and_spends_nothing",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_move_to_out_of_reach_is_a_result_and_spends_nothing",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_motion_argument_checks_reach_nothing",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_motion_argument_checks_reach_nothing",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_home_returns_the_named_arm_and_keeps_its_gripper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_home_returns_the_named_arm_and_keeps_its_gripper",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_home_checks_its_argument_and_reports_a_return_the_budget_cut_short",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_home_checks_its_argument_and_reports_a_return_the_budget_cut_short",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_set_gripper_runs_a_full_stroke_and_says_whether_it_holds",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_set_gripper_runs_a_full_stroke_and_says_whether_it_holds",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_pi0_pick_reports_both_arms_and_a_provisional_success",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_pi0_pick_reports_both_arms_and_a_provisional_success",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_pi0_pick_without_a_policy_service_is_a_tool_error",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_pi0_pick_without_a_policy_service_is_a_tool_error",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_no_vla_set_refuses_the_pick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_no_vla_set_refuses_the_pick",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_locate_grasp_carry_and_release_over_the_bin",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_locate_grasp_carry_and_release_over_the_bin",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_budget_truncates_the_episode_without_a_success",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_budget_truncates_the_episode_without_a_success",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_cancelled_motion_ends_the_episode",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_cancelled_motion_ends_the_episode",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_ledger_marks_stateful_calls_and_counts_native_actions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_ledger_marks_stateful_calls_and_counts_native_actions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_api_reference_lists_every_public_method_and_result_type",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_api_reference_lists_every_public_method_and_result_type",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_adapter_and_prompt_say_that_nothing_reports_success",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_adapter_and_prompt_say_that_nothing_reports_success",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_live_scoring_contract_is_the_default_wording",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_live_scoring_contract_is_the_default_wording",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_arm_toolkit_attaches_the_three_views_and_never_terminates",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_arm_toolkit_attaches_the_three_views_and_never_terminates",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_cell_and_argument_helpers",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_cell_and_argument_helpers",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_dump_card_writes_json_images_and_facts",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_dump_card_writes_json_images_and_facts",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_backend_reads_the_native_counter_and_the_final_verdict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_backend_reads_the_native_counter_and_the_final_verdict",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_home_tool_commands_the_starting_joints_and_holds_everything_else",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_home_tool_commands_the_starting_joints_and_holds_everything_else",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_home_tool_stops_at_its_own_limit_and_at_the_step_limit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_home_tool_stops_at_its_own_limit_and_at_the_step_limit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_register_home_reads_the_starting_joints_and_adds_a_recorded_tool",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_register_home_reads_the_starting_joints_and_adds_a_recorded_tool",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_connect_without_reset_patches_rpents_client_and_restores_it",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_connect_without_reset_patches_rpents_client_and_restores_it",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:_fake_bridge",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:_fake_bridge",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_third_arm_is_queued_replayed_and_given_its_turn",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_third_arm_is_queued_replayed_and_given_its_turn",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_tasks_without_a_third_arm_run_as_before",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_tasks_without_a_third_arm_run_as_before",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_collect_env_gets_the_eval_seed_its_seed_manager_chose",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_collect_env_gets_the_eval_seed_its_seed_manager_chose",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_host_starts_the_env_server_through_this_library",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_host_starts_the_env_server_through_this_library",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_env_server_entry_runs_rpents_script_with_its_arguments",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_env_server_entry_runs_rpents_script_with_its_arguments",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "class:tests/test_robodojo.py:_ToolResult",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "class:tests/test_robodojo.py:_ToolResult",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:_ToolResult.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:_ToolResult",
+      "target": "function:tests/test_robodojo.py:_ToolResult.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "class:tests/test_robodojo.py:FakeRobodojoBackend",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "class:tests/test_robodojo.py:FakeRobodojoBackend",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:FakeRobodojoBackend",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend.execute_tool",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:FakeRobodojoBackend",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend.execute_tool",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend.solved",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:FakeRobodojoBackend",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend.solved",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend.artifact",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:FakeRobodojoBackend",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend.artifact",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend.env_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:FakeRobodojoBackend",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend.env_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend.cancel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:FakeRobodojoBackend",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend.cancel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend._spent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:FakeRobodojoBackend",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend._spent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend._tick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:FakeRobodojoBackend",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend._tick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend._summary",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:FakeRobodojoBackend",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend._summary",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend._record",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:FakeRobodojoBackend",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend._record",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend._view",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:FakeRobodojoBackend",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend._view",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend._angles",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:FakeRobodojoBackend",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend._angles",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend._gripper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:FakeRobodojoBackend",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend._gripper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend._release",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:FakeRobodojoBackend",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend._release",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend._do_view_env_state",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:FakeRobodojoBackend",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend._do_view_env_state",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend._do_segment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:FakeRobodojoBackend",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend._do_segment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend._do_back_project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:FakeRobodojoBackend",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend._do_back_project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend._do_pi0_pick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:FakeRobodojoBackend",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend._do_pi0_pick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend._do_locate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:FakeRobodojoBackend",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend._do_locate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend._do_move_pose",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:FakeRobodojoBackend",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend._do_move_pose",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend._do_grip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:FakeRobodojoBackend",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend._do_grip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend._do_home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:FakeRobodojoBackend",
+      "target": "function:tests/test_robodojo.py:FakeRobodojoBackend._do_home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "class:tests/test_robodojo.py:_FakeState",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "class:tests/test_robodojo.py:_FakeState",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:_FakeState.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:_FakeState",
+      "target": "function:tests/test_robodojo.py:_FakeState.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:_FakeState.artifact_path",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:_FakeState",
+      "target": "function:tests/test_robodojo.py:_FakeState.artifact_path",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "class:tests/test_robodojo.py:_FakeEnv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "class:tests/test_robodojo.py:_FakeEnv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:_FakeEnv.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:_FakeEnv",
+      "target": "function:tests/test_robodojo.py:_FakeEnv.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:_FakeEnv.get_status",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:_FakeEnv",
+      "target": "function:tests/test_robodojo.py:_FakeEnv.get_status",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "class:tests/test_robodojo.py:_FakeToolkit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "class:tests/test_robodojo.py:_FakeToolkit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:_FakeToolkit.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:_FakeToolkit",
+      "target": "function:tests/test_robodojo.py:_FakeToolkit.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:_FakeToolkit.execute_tool",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:_FakeToolkit",
+      "target": "function:tests/test_robodojo.py:_FakeToolkit.execute_tool",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:_FakeToolkit.solved",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:_FakeToolkit",
+      "target": "function:tests/test_robodojo.py:_FakeToolkit.solved",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "class:tests/test_robodojo.py:_JointEnv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "class:tests/test_robodojo.py:_JointEnv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:_JointEnv.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:_JointEnv",
+      "target": "function:tests/test_robodojo.py:_JointEnv.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:_JointEnv.get_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:_JointEnv",
+      "target": "function:tests/test_robodojo.py:_JointEnv.get_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:_JointEnv.step",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:_JointEnv",
+      "target": "function:tests/test_robodojo.py:_JointEnv.step",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "class:tests/test_robodojo.py:_JointPrimitives",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "class:tests/test_robodojo.py:_JointPrimitives",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:_JointPrimitives.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:_JointPrimitives",
+      "target": "function:tests/test_robodojo.py:_JointPrimitives.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:_JointPrimitives._check_cancelled",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:_JointPrimitives",
+      "target": "function:tests/test_robodojo.py:_JointPrimitives._check_cancelled",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:tests/test_robodojo.py:_quat",
+      "target": "function:tests/test_robodojo.py:_mul",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo.py:_quat",
+      "target": "function:tests/test_robodojo.py:_axis_quat",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo.py:test_gripper_angles_follow_the_documented_convention",
+      "target": "function:tests/test_robodojo.py:_quat",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo.py:test_third_arm_is_queued_replayed_and_given_its_turn",
+      "target": "function:tests/test_robodojo.py:_fake_bridge",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo.py:test_tasks_without_a_third_arm_run_as_before",
+      "target": "function:tests/test_robodojo.py:_fake_bridge",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo.py:test_collect_env_gets_the_eval_seed_its_seed_manager_chose",
+      "target": "function:tests/test_robodojo.py:_fake_bridge",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "file:tests/test_robodojo.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/hosts/__init__.py",
+      "target": "file:tests/test_robodojo.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "file:tests/test_robodojo.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_env_server.py",
+      "target": "file:tests/test_robodojo.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "file:tests/test_robodojo.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "file:tests/test_robodojo.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "file:tests/test_robodojo.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "file:tests/test_robodojo.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/robots.py",
+      "target": "file:tests/test_robodojo.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:_sibling",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:_sibling",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:_ee_pose",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:_ee_pose",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:world",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:world",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:_off",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:_off",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_locate_measures_from_colour_images_when_there_is_no_depth",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_locate_measures_from_colour_images_when_there_is_no_depth",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_colour_only_is_what_the_host_says_or_what_the_observation_lacks",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_colour_only_is_what_the_host_says_or_what_the_observation_lacks",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_a_height_two_cameras_agreed_on_is_kept_for_when_one_sees_the_object",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_a_height_two_cameras_agreed_on_is_kept_for_when_one_sees_the_object",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_a_pixel_is_answered_by_the_object_under_it_or_by_the_table",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_a_pixel_is_answered_by_the_object_under_it_or_by_the_table",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_the_toolkit_records_steps_and_wraps_what_changes_the_scene",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_the_toolkit_records_steps_and_wraps_what_changes_the_scene",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_the_colour_robot_reads_the_same_api_without_depth",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_the_colour_robot_reads_the_same_api_without_depth",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_the_reference_and_the_knowledge_of_the_colour_robot_promise_no_depth",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_the_reference_and_the_knowledge_of_the_colour_robot_promise_no_depth",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:_deploy",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:_deploy",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:_episode",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:_episode",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_the_tools_step_roboDojos_client_through_the_bridge",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_the_tools_step_roboDojos_client_through_the_bridge",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_the_client_ends_the_episode_itself_when_the_task_is_solved",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_the_client_ends_the_episode_itself_when_the_task_is_solved",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_get_action_does_not_keep_the_client_waiting_while_the_program_thinks",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_get_action_does_not_keep_the_client_waiting_while_the_program_thinks",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:_adapter_model",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:_adapter_model",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_the_adapters_model_runs_an_episode_for_each_reset",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_the_adapters_model_runs_an_episode_for_each_reset",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_an_episode_under_the_adapter_runs_the_real_loop",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_an_episode_under_the_adapter_runs_the_real_loop",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_a_trial_the_client_ends_is_wrapped_up_without_another_request",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_a_trial_the_client_ends_is_wrapped_up_without_another_request",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_the_clients_trial_stands_when_the_verdict_cannot_be_delivered",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_the_clients_trial_stands_when_the_verdict_cannot_be_delivered",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_the_adapter_runs_the_colour_robot_whatever_the_client_sends",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_the_adapter_runs_the_colour_robot_whatever_the_client_sends",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_a_reset_does_not_rewrite_a_verdict_the_client_gave",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_a_reset_does_not_rewrite_a_verdict_the_client_gave",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:_swing",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:_swing",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_pictures_one_observation_late_are_read_with_the_state_they_show",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_pictures_one_observation_late_are_read_with_the_state_they_show",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_the_bridge_says_which_state_the_pictures_show",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_the_bridge_says_which_state_the_pictures_show",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_deploy_tells_an_older_client_from_one_that_renders_before_it_captures",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_deploy_tells_an_older_client_from_one_that_renders_before_it_captures",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_a_mask_on_the_robots_own_gripper_is_not_measured_as_an_object",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_a_mask_on_the_robots_own_gripper_is_not_measured_as_an_object",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_what_is_not_on_the_table_is_not_located",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_what_is_not_on_the_table_is_not_located",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_a_height_the_cameras_agreed_on_better_stands_against_a_poorer_look",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_a_height_the_cameras_agreed_on_better_stands_against_a_poorer_look",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_cameras_that_agree_only_roughly_say_so",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_cameras_that_agree_only_roughly_say_so",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_an_object_the_arm_now_hides_part_of_gives_no_wrong_place",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_an_object_the_arm_now_hides_part_of_gives_no_wrong_place",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_a_height_is_not_kept_from_a_rough_reading_nor_used_where_a_taller_thing_fits",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_a_height_is_not_kept_from_a_rough_reading_nor_used_where_a_taller_thing_fits",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:_depth",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:_depth",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_with_depth_in_the_observation_the_tools_read_it",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_with_depth_in_the_observation_the_tools_read_it",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_the_xpolicylab_robot_is_the_robodojo_robot_and_asks_for_depth",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_the_xpolicylab_robot_is_the_robodojo_robot_and_asks_for_depth",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:_checkout",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:_checkout",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_the_host_switches_depth_on_in_its_own_copy_of_the_config",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_the_host_switches_depth_on_in_its_own_copy_of_the_config",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_the_host_picks_one_layout_the_way_xpolicylab_does",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_the_host_picks_one_layout_the_way_xpolicylab_does",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_a_root_with_depth_can_write_its_results_into_the_checkout",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_a_root_with_depth_can_write_its_results_into_the_checkout",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_the_adapter_starts_the_client_as_robodojo_configures_it",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_the_adapter_starts_the_client_as_robodojo_configures_it",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_a_late_picture_gets_the_camera_pose_it_was_taken_from",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_a_late_picture_gets_the_camera_pose_it_was_taken_from",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_the_adapter_holds_still_in_xpolicylabs_debug_loop",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_the_adapter_holds_still_in_xpolicylabs_debug_loop",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "class:tests/test_robodojo_colour.py:Scene",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "class:tests/test_robodojo_colour.py:Scene",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:Scene.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:Scene",
+      "target": "function:tests/test_robodojo_colour.py:Scene.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:Scene.state",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:Scene",
+      "target": "function:tests/test_robodojo_colour.py:Scene.state",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:Scene.view",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:Scene",
+      "target": "function:tests/test_robodojo_colour.py:Scene.view",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:Scene.get_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:Scene",
+      "target": "function:tests/test_robodojo_colour.py:Scene.get_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:Scene.get_status",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:Scene",
+      "target": "function:tests/test_robodojo_colour.py:Scene.get_status",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:Scene.step",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:Scene",
+      "target": "function:tests/test_robodojo_colour.py:Scene.step",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "class:tests/test_robodojo_colour.py:Segmenter",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "class:tests/test_robodojo_colour.py:Segmenter",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:Segmenter.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:Segmenter",
+      "target": "function:tests/test_robodojo_colour.py:Segmenter.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:Segmenter.segment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:Segmenter",
+      "target": "function:tests/test_robodojo_colour.py:Segmenter.segment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "class:tests/test_robodojo_colour.py:TaskEnv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "class:tests/test_robodojo_colour.py:TaskEnv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:TaskEnv.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:TaskEnv",
+      "target": "function:tests/test_robodojo_colour.py:TaskEnv.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:TaskEnv.get_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:TaskEnv",
+      "target": "function:tests/test_robodojo_colour.py:TaskEnv.get_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:TaskEnv.take_action",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:TaskEnv",
+      "target": "function:tests/test_robodojo_colour.py:TaskEnv.take_action",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:TaskEnv.get_running_env_idx_list",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:TaskEnv",
+      "target": "function:tests/test_robodojo_colour.py:TaskEnv.get_running_env_idx_list",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:TaskEnv.is_episode_end",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:TaskEnv",
+      "target": "function:tests/test_robodojo_colour.py:TaskEnv.is_episode_end",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "class:tests/test_robodojo_colour.py:Client",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "class:tests/test_robodojo_colour.py:Client",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:Client.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:Client",
+      "target": "function:tests/test_robodojo_colour.py:Client.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:Client.call",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:Client",
+      "target": "function:tests/test_robodojo_colour.py:Client.call",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "class:tests/test_robodojo_colour.py:LateScene",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "class:tests/test_robodojo_colour.py:LateScene",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:LateScene.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:LateScene",
+      "target": "function:tests/test_robodojo_colour.py:LateScene.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:LateScene.step",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:LateScene",
+      "target": "function:tests/test_robodojo_colour.py:LateScene.step",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:LateScene.view",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:LateScene",
+      "target": "function:tests/test_robodojo_colour.py:LateScene.view",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:LateScene.get_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:LateScene",
+      "target": "function:tests/test_robodojo_colour.py:LateScene.get_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:LateScene",
+      "target": "class:tests/test_robodojo_colour.py:Scene",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "class:tests/test_robodojo_colour.py:Told",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "class:tests/test_robodojo_colour.py:Told",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:Told.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:Told",
+      "target": "function:tests/test_robodojo_colour.py:Told.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:Told.segment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:Told",
+      "target": "function:tests/test_robodojo_colour.py:Told.segment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:Told",
+      "target": "class:tests/test_robodojo_colour.py:Segmenter",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "class:tests/test_robodojo_colour.py:HalfSeen",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "class:tests/test_robodojo_colour.py:HalfSeen",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:HalfSeen.segment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:HalfSeen",
+      "target": "function:tests/test_robodojo_colour.py:HalfSeen.segment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:HalfSeen",
+      "target": "class:tests/test_robodojo_colour.py:Segmenter",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "class:tests/test_robodojo_colour.py:DepthScene",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "class:tests/test_robodojo_colour.py:DepthScene",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:DepthScene.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:DepthScene",
+      "target": "function:tests/test_robodojo_colour.py:DepthScene.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:DepthScene.get_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:DepthScene",
+      "target": "function:tests/test_robodojo_colour.py:DepthScene.get_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:DepthScene",
+      "target": "class:tests/test_robodojo_colour.py:Scene",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "function:tests/test_robodojo_colour.py:test_locate_measures_from_colour_images_when_there_is_no_depth",
+      "target": "function:tests/test_robodojo_colour.py:_off",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_colour.py:test_a_height_two_cameras_agreed_on_is_kept_for_when_one_sees_the_object",
+      "target": "function:tests/test_robodojo_colour.py:_off",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_colour.py:test_a_pixel_is_answered_by_the_object_under_it_or_by_the_table",
+      "target": "function:tests/test_robodojo_colour.py:_off",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_colour.py:test_the_toolkit_records_steps_and_wraps_what_changes_the_scene",
+      "target": "function:tests/test_robodojo_colour.py:_ee_pose",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_colour.py:test_the_colour_robot_reads_the_same_api_without_depth",
+      "target": "function:tests/test_robodojo_colour.py:_off",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_colour.py:_episode",
+      "target": "function:tests/test_robodojo_colour.py:_deploy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_colour.py:test_the_tools_step_roboDojos_client_through_the_bridge",
+      "target": "function:tests/test_robodojo_colour.py:_episode",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_colour.py:test_the_client_ends_the_episode_itself_when_the_task_is_solved",
+      "target": "function:tests/test_robodojo_colour.py:_episode",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_colour.py:test_get_action_does_not_keep_the_client_waiting_while_the_program_thinks",
+      "target": "function:tests/test_robodojo_colour.py:_deploy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_colour.py:test_the_adapters_model_runs_an_episode_for_each_reset",
+      "target": "function:tests/test_robodojo_colour.py:_adapter_model",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_colour.py:test_the_adapters_model_runs_an_episode_for_each_reset",
+      "target": "function:tests/test_robodojo_colour.py:_deploy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_colour.py:test_an_episode_under_the_adapter_runs_the_real_loop",
+      "target": "function:tests/test_robodojo_colour.py:_adapter_model",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_colour.py:test_an_episode_under_the_adapter_runs_the_real_loop",
+      "target": "function:tests/test_robodojo_colour.py:_deploy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_colour.py:test_a_trial_the_client_ends_is_wrapped_up_without_another_request",
+      "target": "function:tests/test_robodojo_colour.py:_adapter_model",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_colour.py:test_a_trial_the_client_ends_is_wrapped_up_without_another_request",
+      "target": "function:tests/test_robodojo_colour.py:_deploy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_colour.py:test_the_clients_trial_stands_when_the_verdict_cannot_be_delivered",
+      "target": "function:tests/test_robodojo_colour.py:_deploy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_colour.py:test_the_adapter_runs_the_colour_robot_whatever_the_client_sends",
+      "target": "function:tests/test_robodojo_colour.py:_adapter_model",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_colour.py:test_pictures_one_observation_late_are_read_with_the_state_they_show",
+      "target": "function:tests/test_robodojo_colour.py:_swing",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_colour.py:test_pictures_one_observation_late_are_read_with_the_state_they_show",
+      "target": "function:tests/test_robodojo_colour.py:_off",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_colour.py:test_deploy_tells_an_older_client_from_one_that_renders_before_it_captures",
+      "target": "function:tests/test_robodojo_colour.py:_deploy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_colour.py:test_cameras_that_agree_only_roughly_say_so",
+      "target": "function:tests/test_robodojo_colour.py:_off",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_colour.py:test_with_depth_in_the_observation_the_tools_read_it",
+      "target": "function:tests/test_robodojo_colour.py:_off",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_colour.py:test_the_host_switches_depth_on_in_its_own_copy_of_the_config",
+      "target": "function:tests/test_robodojo_colour.py:_checkout",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_colour.py:test_the_host_picks_one_layout_the_way_xpolicylab_does",
+      "target": "function:tests/test_robodojo_colour.py:_checkout",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_colour.py:test_a_root_with_depth_can_write_its_results_into_the_checkout",
+      "target": "function:tests/test_robodojo_colour.py:_checkout",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_colour.py:test_the_adapter_holds_still_in_xpolicylabs_debug_loop",
+      "target": "function:tests/test_robodojo_colour.py:_adapter_model",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_colour.py:test_the_adapter_holds_still_in_xpolicylabs_debug_loop",
+      "target": "function:tests/test_robodojo_colour.py:_deploy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "file:tests/test_robodojo_colour.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_Lean/deploy.py",
+      "target": "file:tests/test_robodojo_colour.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/hosts/sam3_local.py",
+      "target": "file:tests/test_robodojo_colour.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/hosts/__init__.py",
+      "target": "file:tests/test_robodojo_colour.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "file:tests/test_robodojo_colour.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "file:tests/test_robodojo_colour.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "file:tests/test_robodojo_colour.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/robodojo_xpl.py",
+      "target": "file:tests/test_robodojo_colour.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "file:tests/test_robodojo_colour.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "file:tests/test_robodojo_colour.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "file:tests/test_robodojo_colour.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "file:tests/test_robodojo_colour.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "file:tests/test_robodojo_colour.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/robots.py",
+      "target": "file:tests/test_robodojo_colour.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_robodojo.py",
+      "target": "file:tests/test_robodojo_colour.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_Lean/model.py",
+      "target": "file:tests/test_robodojo_colour.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "file:tests/test_robodojo_colour.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/robodojo_xpl_rgb.py",
+      "target": "file:tests/test_robodojo_colour.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/openai_runtime.py",
+      "target": "file:tests/test_robodojo_colour.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "class:tests/test_robodojo.py:test_connect_without_reset_patches_rpents_client_and_restores_it.RoboDojoEnvClient",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:tests/test_robodojo.py:test_connect_without_reset_patches_rpents_client_and_restores_it",
+      "target": "class:tests/test_robodojo.py:test_connect_without_reset_patches_rpents_client_and_restores_it.RoboDojoEnvClient",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_connect_without_reset_patches_rpents_client_and_restores_it.RoboDojoEnvClient.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:test_connect_without_reset_patches_rpents_client_and_restores_it.RoboDojoEnvClient",
+      "target": "function:tests/test_robodojo.py:test_connect_without_reset_patches_rpents_client_and_restores_it.RoboDojoEnvClient.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:test_connect_without_reset_patches_rpents_client_and_restores_it.RoboDojoEnvClient.get_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:test_connect_without_reset_patches_rpents_client_and_restores_it.RoboDojoEnvClient",
+      "target": "function:tests/test_robodojo.py:test_connect_without_reset_patches_rpents_client_and_restores_it.RoboDojoEnvClient.get_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "class:tests/test_robodojo.py:_fake_bridge.CollectEnv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:tests/test_robodojo.py:_fake_bridge",
+      "target": "class:tests/test_robodojo.py:_fake_bridge.CollectEnv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:_fake_bridge.CollectEnv.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:_fake_bridge.CollectEnv",
+      "target": "function:tests/test_robodojo.py:_fake_bridge.CollectEnv.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:_fake_bridge.CollectEnv.query_support_arm_traj",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:_fake_bridge.CollectEnv",
+      "target": "function:tests/test_robodojo.py:_fake_bridge.CollectEnv.query_support_arm_traj",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:_fake_bridge.CollectEnv.check_support_arm_stable",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:_fake_bridge.CollectEnv",
+      "target": "function:tests/test_robodojo.py:_fake_bridge.CollectEnv.check_support_arm_stable",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:_fake_bridge.CollectEnv.apply_target",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:_fake_bridge.CollectEnv",
+      "target": "function:tests/test_robodojo.py:_fake_bridge.CollectEnv.apply_target",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "class:tests/test_robodojo.py:_fake_bridge.NativeEnv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:tests/test_robodojo.py:_fake_bridge",
+      "target": "class:tests/test_robodojo.py:_fake_bridge.NativeEnv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:_fake_bridge.NativeEnv.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:_fake_bridge.NativeEnv",
+      "target": "function:tests/test_robodojo.py:_fake_bridge.NativeEnv.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:_fake_bridge.NativeEnv.reset",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:_fake_bridge.NativeEnv",
+      "target": "function:tests/test_robodojo.py:_fake_bridge.NativeEnv.reset",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo.py",
+      "target": "function:tests/test_robodojo.py:_fake_bridge.NativeEnv.apply_action",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo.py:_fake_bridge.NativeEnv",
+      "target": "function:tests/test_robodojo.py:_fake_bridge.NativeEnv.apply_action",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "class:tests/test_robodojo_colour.py:_adapter_model.ModelTemplate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:tests/test_robodojo_colour.py:_adapter_model",
+      "target": "class:tests/test_robodojo_colour.py:_adapter_model.ModelTemplate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:_adapter_model.ModelTemplate.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:_adapter_model.ModelTemplate",
+      "target": "function:tests/test_robodojo_colour.py:_adapter_model.ModelTemplate.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:_adapter_model.ModelTemplate.update_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:_adapter_model.ModelTemplate",
+      "target": "function:tests/test_robodojo_colour.py:_adapter_model.ModelTemplate.update_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:_adapter_model.ModelTemplate.get_action",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:_adapter_model.ModelTemplate",
+      "target": "function:tests/test_robodojo_colour.py:_adapter_model.ModelTemplate.get_action",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:_adapter_model.ModelTemplate.reset",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:_adapter_model.ModelTemplate",
+      "target": "function:tests/test_robodojo_colour.py:_adapter_model.ModelTemplate.reset",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_the_adapters_model_runs_an_episode_for_each_reset.play_episode",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:tests/test_robodojo_colour.py:test_the_adapters_model_runs_an_episode_for_each_reset",
+      "target": "function:tests/test_robodojo_colour.py:test_the_adapters_model_runs_an_episode_for_each_reset.play_episode",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_an_episode_under_the_adapter_runs_the_real_loop.reply",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:tests/test_robodojo_colour.py:test_an_episode_under_the_adapter_runs_the_real_loop",
+      "target": "function:tests/test_robodojo_colour.py:test_an_episode_under_the_adapter_runs_the_real_loop.reply",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "class:tests/test_robodojo_colour.py:test_the_adapter_holds_still_in_xpolicylabs_debug_loop.DebugEnv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:tests/test_robodojo_colour.py:test_the_adapter_holds_still_in_xpolicylabs_debug_loop",
+      "target": "class:tests/test_robodojo_colour.py:test_the_adapter_holds_still_in_xpolicylabs_debug_loop.DebugEnv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_the_adapter_holds_still_in_xpolicylabs_debug_loop.DebugEnv.get_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:test_the_adapter_holds_still_in_xpolicylabs_debug_loop.DebugEnv",
+      "target": "function:tests/test_robodojo_colour.py:test_the_adapter_holds_still_in_xpolicylabs_debug_loop.DebugEnv.get_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_the_adapter_holds_still_in_xpolicylabs_debug_loop.DebugEnv.take_action",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:test_the_adapter_holds_still_in_xpolicylabs_debug_loop.DebugEnv",
+      "target": "function:tests/test_robodojo_colour.py:test_the_adapter_holds_still_in_xpolicylabs_debug_loop.DebugEnv.take_action",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_colour.py",
+      "target": "function:tests/test_robodojo_colour.py:test_the_adapter_holds_still_in_xpolicylabs_debug_loop.DebugEnv.is_episode_end",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_colour.py:test_the_adapter_holds_still_in_xpolicylabs_debug_loop.DebugEnv",
+      "target": "function:tests/test_robodojo_colour.py:test_the_adapter_holds_still_in_xpolicylabs_debug_loop.DebugEnv.is_episode_end",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    }
+  ]
+}

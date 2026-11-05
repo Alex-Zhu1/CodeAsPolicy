@@ -1,0 +1,2128 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "type": "file",
+      "name": "fill_egg_holder.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "用 RGB 几何识别篮内鸡蛋和蛋托杯位，按篮沿净空选择抓取并绕开打开的盖子搬运，修正高置或掉落的鸡蛋。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "视觉定位",
+        "运动控制"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:P",
+      "type": "function",
+      "name": "P",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "即时输出鸡蛋搬运诊断信息。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        85,
+        86
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:f3",
+      "type": "function",
+      "name": "f3",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "把坐标向量格式化为三位小数的诊断文本。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        89,
+        90
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:cam",
+      "type": "function",
+      "name": "cam",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "读取指定相机的内外参数，用于图像与世界坐标转换。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        93,
+        95
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:ray_z",
+      "type": "function",
+      "name": "ray_z",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "将像素射线与给定高度的水平面求交。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        98,
+        102
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:wrap",
+      "type": "function",
+      "name": "wrap",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "将角度归一到正负 180 度范围。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        105,
+        106
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:near_equiv",
+      "type": "function",
+      "name": "near_equiv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "从相差半周的目标方向中选择最接近当前偏航的姿态。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        109,
+        115
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:a180",
+      "type": "function",
+      "name": "a180",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "按半周对称性将方向归一到正负 90 度范围。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        123,
+        124
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:prior_fold",
+      "type": "function",
+      "name": "prior_fold",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "把未扰动鸡蛋的夹持方向限制到任务初始姿态允许区间。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        127,
+        133
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:untouched",
+      "type": "function",
+      "name": "untouched",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "依据已操作位置记录判断当前鸡蛋是否仍未被扰动。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        136,
+        137
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:note_steps",
+      "type": "function",
+      "name": "note_steps",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "从原语结果同步环境步数和预算状态。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        140,
+        145
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:mv",
+      "type": "function",
+      "name": "mv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "执行指定机械臂的笛卡尔运动并返回控制反馈。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        148,
+        154
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grip",
+      "type": "function",
+      "name": "grip",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "执行指定机械臂的夹爪指令并返回夹持反馈。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        160,
+        170
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:holder_from_head",
+      "type": "function",
+      "name": "holder_from_head",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "从头部图像的蛋托外观估计蛋托位置与杯位。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        173,
+        198
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:seg_point",
+      "type": "function",
+      "name": "seg_point",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "容错调用语义分割并提取有效掩码中心。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        201,
+        210
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:loc",
+      "type": "function",
+      "name": "loc",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "尝试用视觉提示词定位目标，并对失败或无效结果作容错处理。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        213,
+        220
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:find_egg",
+      "type": "function",
+      "name": "find_egg",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "轮流尝试鸡蛋提示词，返回篮内鸡蛋的中心及可能的抓取方向。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        223,
+        233
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:refine",
+      "type": "function",
+      "name": "refine",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "融合局部分割与三维定位，在估计位置附近细化鸡蛋位置和方向。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        236,
+        244
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:head_cam",
+      "type": "function",
+      "name": "head_cam",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "缓存头部相机标定，供重复图像几何计算使用。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        251,
+        255
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:proj",
+      "type": "function",
+      "name": "proj",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "使用相机内外参把三维世界坐标投影为像素坐标。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        258,
+        261
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:sil_zc",
+      "type": "function",
+      "name": "sil_zc",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "用已知鸡蛋近似球半径和轮廓顶端像素反推中心高度。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        264,
+        278
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:egg_blobs",
+      "type": "function",
+      "name": "egg_blobs",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "检测蛋托上的鸡蛋颜色区域，估计所属杯位、几何和高度。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        281,
+        321
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:report_blobs",
+      "type": "function",
+      "name": "report_blobs",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "把蛋托上的鸡蛋检测结果格式化为紧凑诊断。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        324,
+        326
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:regrasp",
+      "type": "function",
+      "name": "regrasp",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "从蛋托上重新抓取姿态不佳的鸡蛋并验证抬升。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        329,
+        353
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:drop_upright",
+      "type": "function",
+      "name": "drop_upright",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "将竖直夹持的鸡蛋对准杯位并略偏向蛋托中心下降释放。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        356,
+        364
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:back_yaw",
+      "type": "function",
+      "name": "back_yaw",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "选择腕壳朝机器人一侧的等价方向，避免碰到蛋托打开的盖子。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        367,
+        371
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:press",
+      "type": "function",
+      "name": "press",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "以闭合指尖垂直按压指定位置到蛋托上方高度。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        374,
+        385
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:hover_basket",
+      "type": "function",
+      "name": "hover_basket",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "选择接近当前腕角的观察姿态，移动到篮子上方。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        388,
+        393
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:table_eggs",
+      "type": "function",
+      "name": "table_eggs",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "从头部颜色区域检测掉落在桌面上的鸡蛋。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        396,
+        419
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:egg_width_angle",
+      "type": "function",
+      "name": "egg_width_angle",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "根据测得的夹持宽度和椭圆尺寸反推鸡蛋长轴与闭合轴夹角。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        422,
+        427
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:templates",
+      "type": "function",
+      "name": "templates",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "生成并缓存不同方向的鸡蛋椭圆模板。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        438,
+        449
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:find_eggs",
+      "type": "function",
+      "name": "find_eggs",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "提取亮而平滑的鸡蛋像素并在投影网格中用椭圆模板定位多个鸡蛋。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        452,
+        519
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:rim_fit",
+      "type": "function",
+      "name": "rim_fit",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "根据已知篮口半径拟合远侧篮沿纹理边界以估计篮子中心。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        522,
+        566
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:basket_centre",
+      "type": "function",
+      "name": "basket_centre",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "结合篮沿圆弧和最紧凑的四枚鸡蛋分布估计固定篮心。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        573,
+        607
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:open_full",
+      "type": "function",
+      "name": "open_full",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "仅在夹爪未完全张开时执行全开指令。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        610,
+        619
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:look_eggs",
+      "type": "function",
+      "name": "look_eggs",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "完全张开夹爪获取腕部图像，检测篮中所有可见鸡蛋。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        622,
+        630
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:a_spawn",
+      "type": "function",
+      "name": "a_spawn",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "把未触碰鸡蛋的长轴方向限制在任务初始旋转范围。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        639,
+        642
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:clearance",
+      "type": "function",
+      "name": "clearance",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "计算鸡蛋抓取时两指相对篮底边缘的净空。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        645,
+        663
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:choose_egg",
+      "type": "function",
+      "name": "choose_egg",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "综合篮沿净空与中心位置选择更易成功抬升的鸡蛋。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        666,
+        683
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:egg_yaw",
+      "type": "function",
+      "name": "egg_yaw",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "选择横跨鸡蛋窄边且腕壳远离机器人侧的垂直抓取偏航。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        686,
+        693
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:roll_in",
+      "type": "function",
+      "name": "roll_in",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "用闭合指尖压住靠篮沿鸡蛋的外肩并向内拖动，使其滚向篮心。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        699,
+        717
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grip_to",
+      "type": "function",
+      "name": "grip_to",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "把夹爪准确调整到指定部分开度，避免宽开状态的快捷跳过。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        720,
+        730
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grasp_egg",
+      "type": "function",
+      "name": "grasp_egg",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "有限次观察和选择鸡蛋，按实际到达角度下降抓取并抬到搬运高度。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        733,
+        870
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:wrist_egg",
+      "type": "function",
+      "name": "wrist_egg",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "统计腕图中央的鸡蛋色像素数与平均行位置，辅助检查夹持。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        874,
+        885
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:seg_box",
+      "type": "function",
+      "name": "seg_box",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "采样二维线段并检查是否穿过指定矩形障碍区域。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        889,
+        897
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:carry_to",
+      "type": "function",
+      "name": "carry_to",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "规划绕过蛋托开启盖子的搬运路径，从杯前方接近目标。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        900,
+        926
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:place",
+      "type": "function",
+      "name": "place",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "把鸡蛋转为低俯仰携带姿态并在杯上释放，侧向退出后检查是否脱离夹爪。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        929,
+        991
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:regrab_h",
+      "type": "function",
+      "name": "regrab_h",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "summary": "重新夹住杯中站得过高的鸡蛋，略抬后再次插入释放。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        994,
+        1023
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:P",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:P",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:f3",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:f3",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:cam",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:cam",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:ray_z",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:ray_z",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:wrap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:wrap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:near_equiv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:near_equiv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:a180",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:a180",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:prior_fold",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:prior_fold",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:untouched",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:untouched",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:note_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:note_steps",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:mv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:mv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:holder_from_head",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:holder_from_head",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:seg_point",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:seg_point",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:loc",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:loc",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:find_egg",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:find_egg",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:refine",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:refine",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:head_cam",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:head_cam",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:proj",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:proj",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:sil_zc",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:sil_zc",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:egg_blobs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:egg_blobs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:report_blobs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:report_blobs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:regrasp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:regrasp",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:drop_upright",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:drop_upright",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:back_yaw",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:back_yaw",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:press",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:press",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:hover_basket",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:hover_basket",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:table_eggs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:table_eggs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:egg_width_angle",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:egg_width_angle",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:templates",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:templates",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:find_eggs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:find_eggs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:rim_fit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:rim_fit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:basket_centre",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:basket_centre",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:open_full",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:open_full",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:look_eggs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:look_eggs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:a_spawn",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:a_spawn",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:clearance",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:clearance",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:choose_egg",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:choose_egg",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:egg_yaw",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:egg_yaw",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:roll_in",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:roll_in",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grip_to",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grip_to",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grasp_egg",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grasp_egg",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:wrist_egg",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:wrist_egg",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:seg_box",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:seg_box",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:carry_to",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:carry_to",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:place",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:place",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:regrab_h",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:regrab_h",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:near_equiv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:prior_fold",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:a180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:note_steps",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grip",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:note_steps",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:holder_from_head",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:holder_from_head",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:ray_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:seg_point",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:seg_point",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:ray_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:find_egg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:seg_point",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:find_egg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:loc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:seg_point",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:loc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:head_cam",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:proj",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:head_cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:sil_zc",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:head_cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:sil_zc",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:proj",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:egg_blobs",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:head_cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:egg_blobs",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:proj",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:egg_blobs",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:ray_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:egg_blobs",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:sil_zc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:regrasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:regrasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:back_yaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:regrasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:regrasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:loc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:regrasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:drop_upright",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:drop_upright",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:back_yaw",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:press",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:back_yaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:press",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:press",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:press",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:note_steps",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:press",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:hover_basket",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:table_eggs",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:head_cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:table_eggs",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:ray_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:find_eggs",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:templates",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:basket_centre",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:open_full",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:basket_centre",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:basket_centre",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:find_eggs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:basket_centre",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:rim_fit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:basket_centre",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:open_full",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:note_steps",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:look_eggs",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:open_full",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:look_eggs",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:look_eggs",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:find_eggs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:look_eggs",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:a_spawn",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:a180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:choose_egg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:untouched",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:choose_egg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:a_spawn",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:choose_egg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:clearance",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:egg_yaw",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:roll_in",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:roll_in",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:roll_in",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:roll_in",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grip_to",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:note_steps",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grasp_egg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:hover_basket",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grasp_egg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:basket_centre",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grasp_egg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:look_eggs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grasp_egg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:choose_egg",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grasp_egg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:egg_yaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grasp_egg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:roll_in",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grasp_egg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grasp_egg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grip_to",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grasp_egg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:find_egg",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grasp_egg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:table_eggs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grasp_egg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:untouched",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grasp_egg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:prior_fold",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grasp_egg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:near_equiv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grasp_egg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grasp_egg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:refine",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grasp_egg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grasp_egg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:a180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grasp_egg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:open_full",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grasp_egg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grasp_egg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:egg_width_angle",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:carry_to",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:seg_box",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:carry_to",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:carry_to",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:note_steps",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:regrab_h",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:regrab_h",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:carry_to",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:regrab_h",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:note_steps",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:regrab_h",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:regrab_h",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:regrab_h",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fill_egg_holder.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

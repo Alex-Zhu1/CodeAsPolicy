@@ -1,0 +1,2517 @@
+{
+  "nodes": [
+    {
+      "id": "file:tests/test_supervised_batch.py",
+      "type": "file",
+      "name": "test_supervised_batch.py",
+      "filePath": "tests/test_supervised_batch.py",
+      "summary": "验证批量任务结果分类、续跑与进程所有权。通过固定输入、模拟后端或临时资源检查正常行为及失败边界。",
+      "tags": [
+        "测试",
+        "回归验证",
+        "行为契约"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_supervised_batch.py:test_missing_or_boot_error_is_not_task_failure",
+      "type": "function",
+      "name": "test_missing_or_boot_error_is_not_task_failure",
+      "filePath": "tests/test_supervised_batch.py",
+      "summary": "验证缺失结果或启动错误归入基础设施错误而非任务失败。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        17,
+        24
+      ]
+    },
+    {
+      "id": "function:tests/test_supervised_batch.py:test_native_verdict_wins_over_planner_stuck",
+      "type": "function",
+      "name": "test_native_verdict_wins_over_planner_stuck",
+      "filePath": "tests/test_supervised_batch.py",
+      "summary": "验证原生成功判定优先于规划器的卡住报告。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        27,
+        44
+      ]
+    },
+    {
+      "id": "function:tests/test_supervised_batch.py:test_summary_excludes_pending_and_errors_from_evaluated_rate",
+      "type": "function",
+      "name": "test_summary_excludes_pending_and_errors_from_evaluated_rate",
+      "filePath": "tests/test_supervised_batch.py",
+      "summary": "验证成功率分母排除未完成和错误任务。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        47,
+        59
+      ]
+    },
+    {
+      "id": "function:tests/test_supervised_batch.py:test_resume_preserves_finished_and_reconciles_dead_running",
+      "type": "function",
+      "name": "test_resume_preserves_finished_and_reconciles_dead_running",
+      "filePath": "tests/test_supervised_batch.py",
+      "summary": "验证恢复运行保留已完成结果并协调失效的运行中任务。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        62,
+        80
+      ]
+    },
+    {
+      "id": "function:tests/test_supervised_batch.py:test_queue_continues_after_error_and_finishes_every_job",
+      "type": "function",
+      "name": "test_queue_continues_after_error_and_finishes_every_job",
+      "filePath": "tests/test_supervised_batch.py",
+      "summary": "验证队列遇错继续并最终处理全部任务。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        83,
+        129
+      ]
+    },
+    {
+      "id": "function:tests/test_supervised_batch.py:test_process_capture_rejects_reused_parent_pid",
+      "type": "function",
+      "name": "test_process_capture_rejects_reused_parent_pid",
+      "filePath": "tests/test_supervised_batch.py",
+      "summary": "验证进程所有权捕获拒绝复用的父进程编号。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        132,
+        143
+      ]
+    },
+    {
+      "id": "file:tests/test_supervision.py",
+      "type": "file",
+      "name": "test_supervision.py",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证视觉监督契约、证据新鲜度、依赖门槛与暂停。通过固定输入、模拟后端或临时资源检查正常行为及失败边界。",
+      "tags": [
+        "测试",
+        "回归验证",
+        "行为契约"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:tests/test_supervision.py:answer",
+      "type": "function",
+      "name": "answer",
+      "filePath": "tests/test_supervision.py",
+      "summary": "构造带概率与谓词结果的 Valen 响应。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        26,
+        34
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:setup",
+      "type": "function",
+      "name": "setup",
+      "filePath": "tests/test_supervision.py",
+      "summary": "组装脚本化 Valen 客户端、视觉监督器与工具包。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        50,
+        62
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_alert_stops_remainder_preserves_episode_and_can_replan",
+      "type": "function",
+      "name": "test_alert_stops_remainder_preserves_episode_and_can_replan",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证警报暂停剩余动作但保留回合供重新规划。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        65,
+        82
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_plain_exception_handler_cannot_swallow_pause",
+      "type": "function",
+      "name": "test_plain_exception_handler_cannot_swallow_pause",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证普通异常处理不能吞掉监督暂停。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        85,
+        90
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_bare_except_cannot_resume_or_change_contract_in_same_cell",
+      "type": "function",
+      "name": "test_bare_except_cannot_resume_or_change_contract_in_same_cell",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证裸捕获不能在同一单元内恢复运动或更换契约。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        93,
+        98
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_pause_latch_blocks_motion_even_when_exception_was_caught",
+      "type": "function",
+      "name": "test_pause_latch_blocks_motion_even_when_exception_was_caught",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证即便捕获异常暂停闩锁仍阻止运动。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        101,
+        106
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_shadow_records_alert_but_executes_all_actions",
+      "type": "function",
+      "name": "test_shadow_records_alert_but_executes_all_actions",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证影子模式记录警报但继续执行动作。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        109,
+        115
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_missing_contract_blocks_before_motion_and_resets_each_cell",
+      "type": "function",
+      "name": "test_missing_contract_blocks_before_motion_and_resets_each_cell",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证缺失契约在运动前阻断且每单元重新声明。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        118,
+        124
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_phase_changes_do_not_reuse_old_evidence",
+      "type": "function",
+      "name": "test_phase_changes_do_not_reuse_old_evidence",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证阶段变化不复用旧证据。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        127,
+        137
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_critical_unknowns_pause_and_noncritical_unknowns_do_not",
+      "type": "function",
+      "name": "test_critical_unknowns_pause_and_noncritical_unknowns_do_not",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证关键未知证据暂停而非关键未知不暂停。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        140,
+        148
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_completion_is_a_review_not_episode_success",
+      "type": "function",
+      "name": "test_completion_is_a_review_not_episode_success",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证完成谓词触发复核而不等于环境成功。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        151,
+        160
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_rule_requires_consecutive_evidence_and_unknown_is_neither_no_nor_yes",
+      "type": "function",
+      "name": "test_rule_requires_consecutive_evidence_and_unknown_is_neither_no_nor_yes",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证连续证据规则区分未知、否定与肯定。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        163,
+        167
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_monitor_errors_stop_next_motion",
+      "type": "function",
+      "name": "test_monitor_errors_stop_next_motion",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证监控错误阻断下一次动作。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        171,
+        175
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_backend_failure_cannot_be_swallowed_to_continue_motion",
+      "type": "function",
+      "name": "test_backend_failure_cannot_be_swallowed_to_continue_motion",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证后端失败不能被捕获后继续运动。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        178,
+        186
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_zero_step_actions_do_not_count_as_new_evidence",
+      "type": "function",
+      "name": "test_zero_step_actions_do_not_count_as_new_evidence",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证零步动作不能产生新证据。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        189,
+        194
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_max_actions_survives_phase_changes",
+      "type": "function",
+      "name": "test_max_actions_survives_phase_changes",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证跨阶段变化仍累计动作上限。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        197,
+        201
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_input_is_images_and_questions_without_actions_or_truth",
+      "type": "function",
+      "name": "test_input_is_images_and_questions_without_actions_or_truth",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证监控输入仅含图像和问题而不泄露动作或真值。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        204,
+        214
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_reject_invalid_probabilities",
+      "type": "function",
+      "name": "test_reject_invalid_probabilities",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证非法概率分布被拒绝。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        218,
+        222
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_diffuse_prediction_is_unknown",
+      "type": "function",
+      "name": "test_diffuse_prediction_is_unknown",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证分散预测映射为未知。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        225,
+        228
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_controller_refusal_can_return_locally_but_unclassified_partial_pauses",
+      "type": "function",
+      "name": "test_controller_refusal_can_return_locally_but_unclassified_partial_pauses",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证控制器拒绝可局部处理而不明部分执行会暂停。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        232,
+        260
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_derived_arrival_failure_stops_before_more_actions",
+      "type": "function",
+      "name": "test_derived_arrival_failure_stops_before_more_actions",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证推导出的到达失败在后续动作前暂停。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        263,
+        282
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_monitor_timeout_reports_original_cause",
+      "type": "function",
+      "name": "test_monitor_timeout_reports_original_cause",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证监控超时保留原始错误原因。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        285,
+        288
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_feedback_distinguishes_model_abstention_from_threshold",
+      "type": "function",
+      "name": "test_feedback_distinguishes_model_abstention_from_threshold",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证反馈区分模型主动弃权与概率阈值不足。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        291,
+        300
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_injected_grasp_helper_stops_transport_on_unknown_support",
+      "type": "function",
+      "name": "test_injected_grasp_helper_stops_transport_on_unknown_support",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证抓持辅助函数在支撑未知时阻止运输。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        303,
+        320
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_large_policy_output_cannot_hide_review_reason",
+      "type": "function",
+      "name": "test_large_policy_output_cannot_hide_review_reason",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证大体积策略输出不能遮蔽监督复核原因。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        323,
+        330
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_malformed_replacement_invalidates_old_contract",
+      "type": "function",
+      "name": "test_malformed_replacement_invalidates_old_contract",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证非法替换契约使旧契约失效。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        333,
+        339
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_http_protocol_against_local_valen_compatible_server",
+      "type": "function",
+      "name": "test_http_protocol_against_local_valen_compatible_server",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证兼容本地 Valen 服务的 HTTP 请求响应协议。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        342,
+        368
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_program_arm_rejected_before_execution",
+      "type": "function",
+      "name": "test_program_arm_rejected_before_execution",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证完整程序模式在执行前被监督配置拒绝。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        371,
+        374
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_invalid_configuration",
+      "type": "function",
+      "name": "test_invalid_configuration",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证非法监督配置被拒绝。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        388,
+        390
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_cli_forwards_monitor_configuration",
+      "type": "function",
+      "name": "test_cli_forwards_monitor_configuration",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证顶层 CLI 完整传递监控配置。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        393,
+        436
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_host_cli_receives_monitor_configuration",
+      "type": "function",
+      "name": "test_host_cli_receives_monitor_configuration",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证宿主 CLI 接收监督模式和未知上限。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        439,
+        470
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_supervision_prompt_is_opt_in",
+      "type": "function",
+      "name": "test_supervision_prompt_is_opt_in",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证监督提示只在显式启用时注入。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        473,
+        492
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_missing_camera_pauses_with_partial_evidence",
+      "type": "function",
+      "name": "test_missing_camera_pauses_with_partial_evidence",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证缺失相机时暂停并保留部分证据信息。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        495,
+        508
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_duplicate_critical_ids_are_rejected",
+      "type": "function",
+      "name": "test_duplicate_critical_ids_are_rejected",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证关键谓词编号重复时拒绝契约。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        511,
+        520
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_replay_is_read_only_and_uses_native_control_steps",
+      "type": "function",
+      "name": "test_replay_is_read_only_and_uses_native_control_steps",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证回放保持只读且依据原生控制步数。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        523,
+        567
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_single_unresolved_fact_blocks_dependency_before_motion",
+      "type": "function",
+      "name": "test_single_unresolved_fact_blocks_dependency_before_motion",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证单个未解决事实在依赖动作前触发阻断。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        577,
+        586
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_unobserved_dependency_blocks_first_motion",
+      "type": "function",
+      "name": "test_unobserved_dependency_blocks_first_motion",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证从未观察的依赖在首次运动前阻断。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        589,
+        593
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_deferred_gate_survives_cells_contract_reset_and_then_recovers",
+      "type": "function",
+      "name": "test_deferred_gate_survives_cells_contract_reset_and_then_recovers",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证延后证据门槛跨单元和契约重置保留后仍可恢复。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        596,
+        617
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_each_motion_requires_evidence_even_after_clear_unknown",
+      "type": "function",
+      "name": "test_each_motion_requires_evidence_even_after_clear_unknown",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证未知已清除后每次运动仍要求适用证据。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        620,
+        626
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_stale_evidence_cannot_pass_even_when_last_value_was_yes",
+      "type": "function",
+      "name": "test_stale_evidence_cannot_pass_even_when_last_value_was_yes",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证旧值为肯定也不能用过期证据放行动作。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        629,
+        638
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_explicit_invalidators_preserve_only_unaffected_evidence",
+      "type": "function",
+      "name": "test_explicit_invalidators_preserve_only_unaffected_evidence",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证显式失效规则只保留未受影响的事实。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        641,
+        651
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_failures_and_unobserved_state_changes_invalidate_preserved_facts",
+      "type": "function",
+      "name": "test_failures_and_unobserved_state_changes_invalidate_preserved_facts",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证失败和未观察状态变化使保留事实失效。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        655,
+        670
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_question_change_invalidates_evidence_and_pinned_question_is_stable",
+      "type": "function",
+      "name": "test_question_change_invalidates_evidence_and_pinned_question_is_stable",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证问题改写使证据失效且固定问题保持稳定。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        673,
+        683
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_evidence_snapshot_cannot_forge_a_gate_and_helpers_are_rebound",
+      "type": "function",
+      "name": "test_evidence_snapshot_cannot_forge_a_gate_and_helpers_are_rebound",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证证据快照不能伪造门槛并重新绑定辅助函数。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        686,
+        694
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_shadow_records_prerequisite_but_does_not_block",
+      "type": "function",
+      "name": "test_shadow_records_prerequisite_but_does_not_block",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证影子模式记录前置条件复核但不阻断。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        697,
+        702
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_declared_negative_prerequisite_accepts_only_fresh_no",
+      "type": "function",
+      "name": "test_declared_negative_prerequisite_accepts_only_fresh_no",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证否定前置条件只接受新鲜否定证据。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        705,
+        709
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_scene_changes_during_prediction_do_not_establish_evidence",
+      "type": "function",
+      "name": "test_scene_changes_during_prediction_do_not_establish_evidence",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证预测期间场景变化不能建立有效证据。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        712,
+        725
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_large_output_retains_prerequisite_blockers",
+      "type": "function",
+      "name": "test_large_output_retains_prerequisite_blockers",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证长输出保留阻断前置条件的信息。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        728,
+        736
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_interruption_invalidates_preservation_claims",
+      "type": "function",
+      "name": "test_interruption_invalidates_preservation_claims",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证执行中断使证据保留声明失效。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        740,
+        761
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_supervision_skill_is_frozen_and_hashed_even_if_boot_fails",
+      "type": "function",
+      "name": "test_supervision_skill_is_frozen_and_hashed_even_if_boot_fails",
+      "filePath": "tests/test_supervision.py",
+      "summary": "验证即使启动失败也冻结监督技能内容并记录哈希。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        764,
+        796
+      ]
+    },
+    {
+      "id": "class:tests/test_supervision.py:ScriptedValen",
+      "type": "class",
+      "name": "ScriptedValen",
+      "filePath": "tests/test_supervision.py",
+      "summary": "按预设序列返回视觉谓词结果或异常，同时记录监督输入包。",
+      "tags": [
+        "测试",
+        "测试替身",
+        "状态模拟"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        37,
+        47
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:ScriptedValen.__init__",
+      "type": "function",
+      "name": "ScriptedValen.__init__",
+      "filePath": "tests/test_supervision.py",
+      "summary": "初始化该测试替身的输入、状态与调用记录，服务于视觉监督契约、证据新鲜度、依赖门槛与暂停的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        38,
+        40
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:ScriptedValen.predict",
+      "type": "function",
+      "name": "ScriptedValen.predict",
+      "filePath": "tests/test_supervision.py",
+      "summary": "保存监督请求并返回下一条预设响应或异常，服务于视觉监督契约、证据新鲜度、依赖门槛与暂停的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        42,
+        47
+      ]
+    },
+    {
+      "id": "function:tests/test_supervised_batch.py:test_queue_continues_after_error_and_finishes_every_job.launch",
+      "type": "function",
+      "name": "test_queue_continues_after_error_and_finishes_every_job.launch",
+      "filePath": "tests/test_supervised_batch.py",
+      "summary": "模拟批量任务启动与结果落盘，注册可立即完成的进程替身以检查队列遇错继续。",
+      "tags": [
+        "测试",
+        "局部定义",
+        "测试替身"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        98,
+        117
+      ]
+    },
+    {
+      "id": "class:tests/test_supervision.py:test_http_protocol_against_local_valen_compatible_server.Handler",
+      "type": "class",
+      "name": "test_http_protocol_against_local_valen_compatible_server.Handler",
+      "filePath": "tests/test_supervision.py",
+      "summary": "提供测试用 Valen HTTP 服务，保存请求并返回固定预测。",
+      "tags": [
+        "测试",
+        "局部定义",
+        "测试替身"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        345,
+        355
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_http_protocol_against_local_valen_compatible_server.Handler.do_POST",
+      "type": "function",
+      "name": "test_http_protocol_against_local_valen_compatible_server.Handler.do_POST",
+      "filePath": "tests/test_supervision.py",
+      "summary": "读取并记录 JSON 请求，响应固定 Valen 预测。",
+      "tags": [
+        "测试",
+        "局部定义",
+        "测试替身"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        346,
+        352
+      ]
+    },
+    {
+      "id": "function:tests/test_supervision.py:test_http_protocol_against_local_valen_compatible_server.Handler.log_message",
+      "type": "function",
+      "name": "test_http_protocol_against_local_valen_compatible_server.Handler.log_message",
+      "filePath": "tests/test_supervision.py",
+      "summary": "抑制测试 HTTP 服务的默认日志。",
+      "tags": [
+        "测试",
+        "局部定义",
+        "测试替身"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        354,
+        355
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:tests/test_supervised_batch.py",
+      "target": "function:tests/test_supervised_batch.py:test_missing_or_boot_error_is_not_task_failure",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervised_batch.py",
+      "target": "function:tests/test_supervised_batch.py:test_missing_or_boot_error_is_not_task_failure",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervised_batch.py",
+      "target": "function:tests/test_supervised_batch.py:test_native_verdict_wins_over_planner_stuck",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervised_batch.py",
+      "target": "function:tests/test_supervised_batch.py:test_native_verdict_wins_over_planner_stuck",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervised_batch.py",
+      "target": "function:tests/test_supervised_batch.py:test_summary_excludes_pending_and_errors_from_evaluated_rate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervised_batch.py",
+      "target": "function:tests/test_supervised_batch.py:test_summary_excludes_pending_and_errors_from_evaluated_rate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervised_batch.py",
+      "target": "function:tests/test_supervised_batch.py:test_resume_preserves_finished_and_reconciles_dead_running",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervised_batch.py",
+      "target": "function:tests/test_supervised_batch.py:test_resume_preserves_finished_and_reconciles_dead_running",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervised_batch.py",
+      "target": "function:tests/test_supervised_batch.py:test_queue_continues_after_error_and_finishes_every_job",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervised_batch.py",
+      "target": "function:tests/test_supervised_batch.py:test_queue_continues_after_error_and_finishes_every_job",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervised_batch.py",
+      "target": "function:tests/test_supervised_batch.py:test_process_capture_rejects_reused_parent_pid",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervised_batch.py",
+      "target": "function:tests/test_supervised_batch.py:test_process_capture_rejects_reused_parent_pid",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:examples/run_supervised_batch.py",
+      "target": "file:tests/test_supervised_batch.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:answer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:answer",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_alert_stops_remainder_preserves_episode_and_can_replan",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_alert_stops_remainder_preserves_episode_and_can_replan",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_plain_exception_handler_cannot_swallow_pause",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_plain_exception_handler_cannot_swallow_pause",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_bare_except_cannot_resume_or_change_contract_in_same_cell",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_bare_except_cannot_resume_or_change_contract_in_same_cell",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_pause_latch_blocks_motion_even_when_exception_was_caught",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_pause_latch_blocks_motion_even_when_exception_was_caught",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_shadow_records_alert_but_executes_all_actions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_shadow_records_alert_but_executes_all_actions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_missing_contract_blocks_before_motion_and_resets_each_cell",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_missing_contract_blocks_before_motion_and_resets_each_cell",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_phase_changes_do_not_reuse_old_evidence",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_phase_changes_do_not_reuse_old_evidence",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_critical_unknowns_pause_and_noncritical_unknowns_do_not",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_critical_unknowns_pause_and_noncritical_unknowns_do_not",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_completion_is_a_review_not_episode_success",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_completion_is_a_review_not_episode_success",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_rule_requires_consecutive_evidence_and_unknown_is_neither_no_nor_yes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_rule_requires_consecutive_evidence_and_unknown_is_neither_no_nor_yes",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_monitor_errors_stop_next_motion",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_monitor_errors_stop_next_motion",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_backend_failure_cannot_be_swallowed_to_continue_motion",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_backend_failure_cannot_be_swallowed_to_continue_motion",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_zero_step_actions_do_not_count_as_new_evidence",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_zero_step_actions_do_not_count_as_new_evidence",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_max_actions_survives_phase_changes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_max_actions_survives_phase_changes",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_input_is_images_and_questions_without_actions_or_truth",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_input_is_images_and_questions_without_actions_or_truth",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_reject_invalid_probabilities",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_reject_invalid_probabilities",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_diffuse_prediction_is_unknown",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_diffuse_prediction_is_unknown",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_controller_refusal_can_return_locally_but_unclassified_partial_pauses",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_controller_refusal_can_return_locally_but_unclassified_partial_pauses",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_derived_arrival_failure_stops_before_more_actions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_derived_arrival_failure_stops_before_more_actions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_monitor_timeout_reports_original_cause",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_monitor_timeout_reports_original_cause",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_feedback_distinguishes_model_abstention_from_threshold",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_feedback_distinguishes_model_abstention_from_threshold",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_injected_grasp_helper_stops_transport_on_unknown_support",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_injected_grasp_helper_stops_transport_on_unknown_support",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_large_policy_output_cannot_hide_review_reason",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_large_policy_output_cannot_hide_review_reason",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_malformed_replacement_invalidates_old_contract",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_malformed_replacement_invalidates_old_contract",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_http_protocol_against_local_valen_compatible_server",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_http_protocol_against_local_valen_compatible_server",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_program_arm_rejected_before_execution",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_program_arm_rejected_before_execution",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_invalid_configuration",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_invalid_configuration",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_cli_forwards_monitor_configuration",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_cli_forwards_monitor_configuration",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_host_cli_receives_monitor_configuration",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_host_cli_receives_monitor_configuration",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_supervision_prompt_is_opt_in",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_supervision_prompt_is_opt_in",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_missing_camera_pauses_with_partial_evidence",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_missing_camera_pauses_with_partial_evidence",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_duplicate_critical_ids_are_rejected",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_duplicate_critical_ids_are_rejected",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_replay_is_read_only_and_uses_native_control_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_replay_is_read_only_and_uses_native_control_steps",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_single_unresolved_fact_blocks_dependency_before_motion",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_single_unresolved_fact_blocks_dependency_before_motion",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_unobserved_dependency_blocks_first_motion",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_unobserved_dependency_blocks_first_motion",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_deferred_gate_survives_cells_contract_reset_and_then_recovers",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_deferred_gate_survives_cells_contract_reset_and_then_recovers",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_each_motion_requires_evidence_even_after_clear_unknown",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_each_motion_requires_evidence_even_after_clear_unknown",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_stale_evidence_cannot_pass_even_when_last_value_was_yes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_stale_evidence_cannot_pass_even_when_last_value_was_yes",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_explicit_invalidators_preserve_only_unaffected_evidence",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_explicit_invalidators_preserve_only_unaffected_evidence",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_failures_and_unobserved_state_changes_invalidate_preserved_facts",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_failures_and_unobserved_state_changes_invalidate_preserved_facts",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_question_change_invalidates_evidence_and_pinned_question_is_stable",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_question_change_invalidates_evidence_and_pinned_question_is_stable",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_evidence_snapshot_cannot_forge_a_gate_and_helpers_are_rebound",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_evidence_snapshot_cannot_forge_a_gate_and_helpers_are_rebound",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_shadow_records_prerequisite_but_does_not_block",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_shadow_records_prerequisite_but_does_not_block",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_declared_negative_prerequisite_accepts_only_fresh_no",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_declared_negative_prerequisite_accepts_only_fresh_no",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_scene_changes_during_prediction_do_not_establish_evidence",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_scene_changes_during_prediction_do_not_establish_evidence",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_large_output_retains_prerequisite_blockers",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_large_output_retains_prerequisite_blockers",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_interruption_invalidates_preservation_claims",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_interruption_invalidates_preservation_claims",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_supervision_skill_is_frozen_and_hashed_even_if_boot_fails",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_supervision_skill_is_frozen_and_hashed_even_if_boot_fails",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "class:tests/test_supervision.py:ScriptedValen",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "class:tests/test_supervision.py:ScriptedValen",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:ScriptedValen.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_supervision.py:ScriptedValen",
+      "target": "function:tests/test_supervision.py:ScriptedValen.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:ScriptedValen.predict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_supervision.py:ScriptedValen",
+      "target": "function:tests/test_supervision.py:ScriptedValen.predict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_alert_stops_remainder_preserves_episode_and_can_replan",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_alert_stops_remainder_preserves_episode_and_can_replan",
+      "target": "function:tests/test_supervision.py:answer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_plain_exception_handler_cannot_swallow_pause",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_plain_exception_handler_cannot_swallow_pause",
+      "target": "function:tests/test_supervision.py:answer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_bare_except_cannot_resume_or_change_contract_in_same_cell",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_bare_except_cannot_resume_or_change_contract_in_same_cell",
+      "target": "function:tests/test_supervision.py:answer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_pause_latch_blocks_motion_even_when_exception_was_caught",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_pause_latch_blocks_motion_even_when_exception_was_caught",
+      "target": "function:tests/test_supervision.py:answer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_shadow_records_alert_but_executes_all_actions",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_shadow_records_alert_but_executes_all_actions",
+      "target": "function:tests/test_supervision.py:answer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_missing_contract_blocks_before_motion_and_resets_each_cell",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_missing_contract_blocks_before_motion_and_resets_each_cell",
+      "target": "function:tests/test_supervision.py:answer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_phase_changes_do_not_reuse_old_evidence",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_phase_changes_do_not_reuse_old_evidence",
+      "target": "function:tests/test_supervision.py:answer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_critical_unknowns_pause_and_noncritical_unknowns_do_not",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_critical_unknowns_pause_and_noncritical_unknowns_do_not",
+      "target": "function:tests/test_supervision.py:answer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_completion_is_a_review_not_episode_success",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_completion_is_a_review_not_episode_success",
+      "target": "function:tests/test_supervision.py:answer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_rule_requires_consecutive_evidence_and_unknown_is_neither_no_nor_yes",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_rule_requires_consecutive_evidence_and_unknown_is_neither_no_nor_yes",
+      "target": "function:tests/test_supervision.py:answer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_monitor_errors_stop_next_motion",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_backend_failure_cannot_be_swallowed_to_continue_motion",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_zero_step_actions_do_not_count_as_new_evidence",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_max_actions_survives_phase_changes",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_max_actions_survives_phase_changes",
+      "target": "function:tests/test_supervision.py:answer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_input_is_images_and_questions_without_actions_or_truth",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_input_is_images_and_questions_without_actions_or_truth",
+      "target": "function:tests/test_supervision.py:answer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_reject_invalid_probabilities",
+      "target": "function:tests/test_supervision.py:answer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_diffuse_prediction_is_unknown",
+      "target": "function:tests/test_supervision.py:answer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_controller_refusal_can_return_locally_but_unclassified_partial_pauses",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_derived_arrival_failure_stops_before_more_actions",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_monitor_timeout_reports_original_cause",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_feedback_distinguishes_model_abstention_from_threshold",
+      "target": "function:tests/test_supervision.py:answer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_feedback_distinguishes_model_abstention_from_threshold",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_injected_grasp_helper_stops_transport_on_unknown_support",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_injected_grasp_helper_stops_transport_on_unknown_support",
+      "target": "function:tests/test_supervision.py:answer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_large_policy_output_cannot_hide_review_reason",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_large_policy_output_cannot_hide_review_reason",
+      "target": "function:tests/test_supervision.py:answer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_malformed_replacement_invalidates_old_contract",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_http_protocol_against_local_valen_compatible_server",
+      "target": "function:tests/test_supervision.py:answer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_program_arm_rejected_before_execution",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_missing_camera_pauses_with_partial_evidence",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_duplicate_critical_ids_are_rejected",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_replay_is_read_only_and_uses_native_control_steps",
+      "target": "function:tests/test_supervision.py:answer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_single_unresolved_fact_blocks_dependency_before_motion",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_single_unresolved_fact_blocks_dependency_before_motion",
+      "target": "function:tests/test_supervision.py:answer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_unobserved_dependency_blocks_first_motion",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_deferred_gate_survives_cells_contract_reset_and_then_recovers",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_deferred_gate_survives_cells_contract_reset_and_then_recovers",
+      "target": "function:tests/test_supervision.py:answer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_each_motion_requires_evidence_even_after_clear_unknown",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_each_motion_requires_evidence_even_after_clear_unknown",
+      "target": "function:tests/test_supervision.py:answer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_stale_evidence_cannot_pass_even_when_last_value_was_yes",
+      "target": "function:tests/test_supervision.py:answer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_stale_evidence_cannot_pass_even_when_last_value_was_yes",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_explicit_invalidators_preserve_only_unaffected_evidence",
+      "target": "function:tests/test_supervision.py:answer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_explicit_invalidators_preserve_only_unaffected_evidence",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_failures_and_unobserved_state_changes_invalidate_preserved_facts",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_failures_and_unobserved_state_changes_invalidate_preserved_facts",
+      "target": "function:tests/test_supervision.py:answer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_question_change_invalidates_evidence_and_pinned_question_is_stable",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_question_change_invalidates_evidence_and_pinned_question_is_stable",
+      "target": "function:tests/test_supervision.py:answer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_evidence_snapshot_cannot_forge_a_gate_and_helpers_are_rebound",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_shadow_records_prerequisite_but_does_not_block",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_shadow_records_prerequisite_but_does_not_block",
+      "target": "function:tests/test_supervision.py:answer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_declared_negative_prerequisite_accepts_only_fresh_no",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_declared_negative_prerequisite_accepts_only_fresh_no",
+      "target": "function:tests/test_supervision.py:answer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_scene_changes_during_prediction_do_not_establish_evidence",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_large_output_retains_prerequisite_blockers",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_interruption_invalidates_preservation_claims",
+      "target": "function:tests/test_supervision.py:setup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_interruption_invalidates_preservation_claims",
+      "target": "function:tests/test_supervision.py:answer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "file:tests/test_supervision.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "file:tests/test_supervision.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "file:tests/test_supervision.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "file:tests/test_supervision.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "file:tests/test_supervision.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:examples/replay_supervision.py",
+      "target": "file:tests/test_supervision.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/robots.py",
+      "target": "file:tests/test_supervision.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:tests/test_supervised_batch.py",
+      "target": "function:tests/test_supervised_batch.py:test_queue_continues_after_error_and_finishes_every_job.launch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:tests/test_supervised_batch.py:test_queue_continues_after_error_and_finishes_every_job",
+      "target": "function:tests/test_supervised_batch.py:test_queue_continues_after_error_and_finishes_every_job.launch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "class:tests/test_supervision.py:test_http_protocol_against_local_valen_compatible_server.Handler",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:tests/test_supervision.py:test_http_protocol_against_local_valen_compatible_server",
+      "target": "class:tests/test_supervision.py:test_http_protocol_against_local_valen_compatible_server.Handler",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_http_protocol_against_local_valen_compatible_server.Handler.do_POST",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_supervision.py:test_http_protocol_against_local_valen_compatible_server.Handler",
+      "target": "function:tests/test_supervision.py:test_http_protocol_against_local_valen_compatible_server.Handler.do_POST",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_supervision.py",
+      "target": "function:tests/test_supervision.py:test_http_protocol_against_local_valen_compatible_server.Handler.log_message",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_supervision.py:test_http_protocol_against_local_valen_compatible_server.Handler",
+      "target": "function:tests/test_supervision.py:test_http_protocol_against_local_valen_compatible_server.Handler.log_message",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    }
+  ]
+}

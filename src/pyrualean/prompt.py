@@ -28,6 +28,7 @@ from typing import Any
 
 from ._robot import PRIMITIVE_SETS, RobotBase, effective_primitives
 from .libero import RESULT_TYPES, LiberoRobot
+from .task_acceptance import normalize_acceptance, render_acceptance
 
 _HOST_ONLY = frozenset({"ledger", "backend"})
 _LINE = 88
@@ -397,6 +398,12 @@ class TaskCard:
     initial_state: dict[str, Any] = field(default_factory=dict)
     #: Source identifiers, clock domains and artifact digests retained in card.json.
     provenance: dict[str, Any] = field(default_factory=dict)
+    #: Supplemental public requirements and their coverage/source, never hidden scoring rules.
+    #: The original task_language remains authoritative; an empty list means unspecified.
+    acceptance: dict[str, Any] = field(default_factory=dict)
+
+    def __post_init__(self):
+        self.acceptance = normalize_acceptance(self.acceptance)
 
     def to_json(self) -> str:
         return json.dumps(self.__dict__, indent=2, ensure_ascii=False)
@@ -446,6 +453,7 @@ class TaskCard:
                     "turned into world coordinates at runtime with "
                     "`robo.back_project(row, col, step=0)`."
                 )
+        lines.extend(render_acceptance(self.acceptance))
         return "\n".join(lines)
 
     def _render_generic(self, *, compact: bool = False) -> str:
@@ -500,6 +508,7 @@ class TaskCard:
                     f"- attached images: {names}. They are step 0 of your run, "
                     f"exactly what {cameras} return before any motion."
                 )
+        lines.extend(render_acceptance(self.acceptance))
         return "\n".join(lines)
 
     @staticmethod

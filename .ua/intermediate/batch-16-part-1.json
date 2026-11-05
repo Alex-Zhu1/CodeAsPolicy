@@ -1,0 +1,133 @@
+{
+  "nodes": [
+    {
+      "id": "file:NOTICE",
+      "type": "file",
+      "name": "NOTICE",
+      "filePath": "NOTICE",
+      "summary": "说明 Apache 2.0 授权、RPent 依赖来源和派生修改范围，区分本仓库接口与外部机器人栈。",
+      "tags": [
+        "版权",
+        "授权",
+        "来源说明"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:docs/getting-started/how-it-works.md",
+      "type": "document",
+      "name": "how-it-works.md",
+      "filePath": "docs/getting-started/how-it-works.md",
+      "summary": "解释持久 Python 单元如何组合机器人原语，并描述执行限制、结构化反馈、提示词和闭环恢复契约。",
+      "tags": [
+        "文档",
+        "架构",
+        "闭环执行"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/getting-started/quickstart.md",
+      "type": "document",
+      "name": "quickstart.md",
+      "filePath": "docs/getting-started/quickstart.md",
+      "summary": "提供 LIBERO-PRO 环境安装、模型资产配置、首个交互回合及结果查看流程，并指向 RoboDojo 独立接入方式。",
+      "tags": [
+        "文档",
+        "快速开始",
+        "环境配置"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:docs/hooks/api_reference.py",
+      "type": "file",
+      "name": "api_reference.py",
+      "filePath": "docs/hooks/api_reference.py",
+      "summary": "在 MkDocs 构建时把页面中的 API 标记替换为机器人类生成的实时接口文档，保持文档与模型提示词一致。",
+      "tags": [
+        "文档",
+        "mkdocs",
+        "代码生成"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:docs/hooks/api_reference.py:_render",
+      "type": "function",
+      "name": "_render",
+      "filePath": "docs/hooks/api_reference.py",
+      "summary": "根据页面标记选择机器人适配器与原语集合，生成保留缩进的接口代码块。",
+      "tags": [
+        "文档",
+        "mkdocs",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        21,
+        25
+      ]
+    },
+    {
+      "id": "function:docs/hooks/api_reference.py:on_page_markdown",
+      "type": "function",
+      "name": "on_page_markdown",
+      "filePath": "docs/hooks/api_reference.py",
+      "summary": "在 MkDocs 页面 Markdown 中替换所有 API 引用标记。",
+      "tags": [
+        "文档",
+        "mkdocs",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        28,
+        29
+      ]
+    },
+    {
+      "id": "document:docs/index.md",
+      "type": "document",
+      "name": "index.md",
+      "filePath": "docs/index.md",
+      "summary": "介绍 Python 机器人代理框架、RoboDojo 评测和 Coder 模型，并组织安装与架构文档入口。",
+      "tags": [
+        "文档",
+        "入口点",
+        "项目概览"
+      ],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:docs/hooks/api_reference.py",
+      "target": "function:docs/hooks/api_reference.py:_render",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:docs/hooks/api_reference.py",
+      "target": "function:docs/hooks/api_reference.py:_render",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:docs/hooks/api_reference.py",
+      "target": "function:docs/hooks/api_reference.py:on_page_markdown",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:docs/hooks/api_reference.py",
+      "target": "function:docs/hooks/api_reference.py:on_page_markdown",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

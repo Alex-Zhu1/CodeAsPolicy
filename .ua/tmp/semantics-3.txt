@@ -1,0 +1,131 @@
+@src/pyrualean/arms.py|将机器人封装为持续命名空间的 Python 单元或独立完整程序两种执行接口，并统一返回调用记录、当前状态、图像及恢复反馈。|代码执行,工具接口,反馈
+_to_png|将数组、PIL 图像或已有 PNG 字节规范为 PNG 数据。
+_trim|在保留文本首尾的同时截去超长中段并标注省略字符数。
+_state_dict|读取机器人状态摘要，状态读取异常转为可反馈的错误信息。
+_blocked_message|解释因使用禁止反射名称而拒绝执行的原因。
+arm_contract|按执行方式、图像策略和预算生成模型运行契约，并可附加操作指南说明。
+robot_words|从机器人适配器获取契约措辞，关闭 VLA 时只列剩余服务。
+_arm_contract|组合预算、评分、反馈与图像策略，生成对应执行方式的完整契约文本。
+ArmResult|封装工具返回数据与多模态内容块，并统一标记执行失败。
+ArmResult.is_error|按公共错误判据判断工具结果是否失败。
+ArmResult.content_blocks|生成合法且受长度限制的 JSON 文本与图像块，优先保留监督和卡住恢复关键信息。
+ArmToolkit|管理机器人、持久代码环境、执行预算、视觉监督与完成工具，对运行时提供统一工具接口。
+ArmToolkit.__init__|验证执行方式，建立工作目录和持久命名空间，并配置预算、图像、监督与卡住恢复状态。
+ArmToolkit._display|编码模型主动展示的图像并加入当前单元输出。
+ArmToolkit.get_tools_spec|生成 python 或 run_program 与 finish 工具规范，并注入执行限制和恢复协议。
+ArmToolkit.execute_tool|在互斥锁中分发工具调用，记录执行耗时与前后原语状态。
+ArmToolkit._finish|处理完成或卡住声明；启用恢复时可返回恢复指令而保留当前回合。
+ArmToolkit._observe_result|为成功、失败、程序与完成调用建立统一的观测证据封装。
+ArmToolkit._failure_feedback|返回异常位置和当前现场证据，帮助规划者从现状修复而不自动重放动作。
+ArmToolkit._feedback|汇总新增原语记录、机器人状态、协调和视觉监督信息，生成当前调用的反馈。
+ArmToolkit._attach_images|按运动或按需策略采集相机图像，附加观测标识并合并显式展示的图像。
+ArmToolkit._python|在持久命名空间执行单元，保存源码并应用审计、执行预算、视觉监督与结构化异常处理。
+ArmToolkit._run_program|检查调用预算和程序数量，以独立命名空间加载完整策略并保存产物和反馈。
+@src/pyrualean/claude_runtime.py|用 Claude Agent SDK 驱动同一机器人代码工具，并保存完整事件、错误和词元审计。提示和初始图像与其他运行时共享。|运行时,模型调用,用量审计
+sdk_max_turns|把回合预算映射为 Claude Code 的最大模型请求轮数。
+arm_tools|返回对应执行方式在 Claude Code 中的 MCP 工具名称。
+allowed_tools|合并允许的只读内置工具和当前机器人工具。
+resolve_cli|解析 Claude CLI 的绝对路径，缺省时使用 SDK 自带可执行文件。
+cli_version|运行版本查询并返回 Claude CLI 版本文本。
+image_block|读取图片并编码为 Claude 支持的 base64 图像内容块。
+initial_message|构造包含完整提示和任务卡图片的首条流式用户消息。
+build_options|建立隔离用户配置且仅启用当前 MCP 服务的 SDK 选项，设置工具、模型与推理参数。
+_kind|返回消息对象的运行时类型名称。
+_jsonable|将消息负载转换为 JSON 可保存结构，并把图片内容压缩为尺寸信息。
+message_to_json|把数据类或对象形式的 SDK 消息转换为带类型标签的审计记录。
+_int|将可选用量值转换为整数，非法值归零。
+_prompt_tokens|合并普通输入、缓存读取和缓存创建，得到可与 Codex 比较的请求输入量。
+_thinking_tokens|从输出用量明细提取可用的推理词元数。
+_named|重建具有指定消息类型名和字段的轻量对象。
+_revive_block|根据字段集合恢复文本、工具或思考块的消息类型。
+_revive|从已保存事件重建消息形态，供离线审计重放。
+replay_events|重新读取 Claude 事件文件并按当前映射生成用量审计。
+usage_from_events|按唯一助手消息统计请求输入画像，同时保留最终结果中的各模型总用量。
+_prompt_stream|以异步流形式提供单条初始用户消息。
+_drive|消费 SDK 查询流并执行墙钟限制，返回完成、超时或错误状态。
+run_claude_agent|启动 Claude 回合，保存消息事件、stderr、最终回复和用量，并在超时后取消代理运行。
+_Audit|累积 SDK 消息中的请求、延迟、工具调用、错误与最终用量。
+_Audit.__init__|初始化请求索引、时间序列、工具统计和会话审计状态。
+_Audit.observe|按助手、用户、系统或结果消息类型更新审计状态。
+_Audit._system|记录初始化会话配置、MCP 服务与系统诊断信息。
+_Audit._assistant|按消息标识去重助手请求，积累输入用量、延迟及工具调用，排除子代理消息。
+_Audit._result|保存终态结果、会话标识和服务端错误信息。
+_Audit.usage|将 SDK 统计映射为统一用量；无最终结果时保留已知输入而将输出标为未知。
+_Audit.generation|生成模型、请求画像、工具统计和告警组成的统一生成记录。
+@src/pyrualean/execution.py|为生成代码设置单元时间、动作和输出预算，并用 Python tracing 中断工作目录代码中的循环，保持持久命名空间可继续使用。|执行限制,超时控制,输出控制
+add_execution_arguments|注册代码执行超时、动作次数与输出大小限制参数。
+execution_limits|把解析后的命令行参数转换为执行限制对象。
+ExecutionLimit|表示应交回规划者的执行预算异常，避免被普通策略异常重试逻辑吞掉。
+ExecutionLimit.__init__|保存预算失败类别和可读说明。
+ExecutionLimits|定义单次代码调用的时间、运动尝试、文本和展示图像上限。
+ExecutionLimits.record|将执行限制序列化为结果记录。
+ExecutionLimits.prompt|生成面向规划者的代码时间、动作和输出预算说明。
+BoundedOutput|在写入时限制输出内存，记录保留与省略字符数量。
+BoundedOutput.__init__|初始化文本上限、保留计数和分块缓冲。
+BoundedOutput.writable|声明输出接收器支持写入。
+BoundedOutput.write|只保存预算内文本并累积省略数量，同时报告原始写入长度。
+BoundedOutput.getvalue|拼接已保留的输出片段。
+ExecutionBudget|协调代码截止时间、机器人停止状态、动作次数和工作目录帧追踪。
+ExecutionBudget.__init__|保存限制、工作目录和机器人，并初始化动作计数及追踪缓存。
+ExecutionBudget.check|检查回合停止与既有预算失败，超过截止时间时触发执行限制异常。
+ExecutionBudget.before_action|在动作前检查时间和次数预算，再登记本次运动尝试。
+ExecutionBudget._trace|只跟踪策略工作目录内的 Python 帧，并定期检查预算以打断循环。
+@src/pyrualean/mcp_server.py|用低层 MCP Server 和后台 uvicorn 线程发布机器人代码工具，支持 streamable HTTP、工具注解及统一错误内容转换。|工具服务,MCP,异步服务
+_result_to_mcp|将工具文本与图像块转换为 MCP 内容，并沿用统一执行错误判据。
+_build_asgi_app|建立工具列表和调用处理器，将工具包包装为无状态 streamable HTTP ASGI 应用。
+_free_port|临时绑定端口零以取得可用本地 TCP 端口。
+ArmMcpServer|管理后台线程中的机器人 MCP 服务及其启动、地址和关闭流程。
+ArmMcpServer.__init__|保存工具包、监听地址、端口和工具注解配置。
+ArmMcpServer.url|返回当前服务的 MCP HTTP 入口地址。
+ArmMcpServer.start|创建 uvicorn 后台线程并通过初始化请求等待服务可用。
+ArmMcpServer.stop|通知 uvicorn 退出并有界等待后台线程结束。
+@src/pyrualean/openai_runtime.py|实现兼容 Chat Completions 的进程内代理循环，直接调用机器人工具并将图像以用户消息补回上下文，记录完整对话与用量。|运行时,模型调用,多模态
+_resize_png|将图片按最长边限制缩小并返回 PNG 数据与缩放比例。
+image_part|把 PNG 数据封装为 OpenAI image_url 数据 URI 内容块。
+openai_tools|将 MCP 风格工具输入规范转换为 OpenAI 函数工具格式。
+httpx_transport|建立使用 Bearer 认证的 HTTP 客户端，发送 JSON 请求并返回 JSON 响应。
+_usage_fields|规范化服务端返回的输入、输出、缓存和推理词元计数。
+_tool_result_text|生成与 MCP 一致的工具文本返回内容。
+_execute_with_deadline|在执行工具期间保留墙钟定时器，超时先停止回合，使后续原语立即退出。
+_parse_arguments|接受对象或解析 JSON 工具参数，格式错误转成可反馈的说明。
+run_openai_agent|执行模型请求、重试和顺序工具调用循环，处理图像反馈、预算和完成状态并保存生成记录。
+OpenAIRuntimeError|表示模型服务在重试后仍然失败。
+_Transcript|同时维护模型实际消息与将图片替换为本地文件引用的审计副本。
+_Transcript.__init__|初始化消息列表和图片目录。
+_Transcript.add|追加消息，将工具图像保存到磁盘并加入可发送的图像内容块。
+@src/pyrualean/play.py|统筹单个机器人回合的宿主启动、提示、工具接口与 Codex、Claude 或 OpenAI 运行时，负责预算、审计、最终结果和清理。|回合编排,运行时,结果记录
+_recordable|将宿主启动选项转成可记录形式，对运行时对象只保存类型信息。
+_conclude|在策略结束时通知需要延迟裁决的后端完成本回合。
+_make_backend|优先使用宿主专属后端工厂，否则采用公共 RPent 适配器。
+copy_guides|复制选定操作指南并返回每份内容的 SHA-256，用于记录模型实际可读知识。
+build_prompt|组合执行契约、实际 API、机器人知识和任务卡，按原语配置过滤 VLA 内容。
+_codex_argv|组装 Codex exec 命令、模型配置、MCP 服务和图像参数。
+_agent_environment|构建允许列表限定的代理环境，避免继承外部会话、记忆目录和无关配置。
+_usage_from_rollouts|从 Codex 本地会话记录恢复累计词元用量，补足被预算中断时缺少的完成事件。
+_is_warning|识别已知可降级处理的诊断文本。
+_codex_context_config|解析实际生效的上下文窗口和自动压缩配置，并记录到回合结果。
+_audit_events|汇总 Codex JSON 事件中的请求、工具、错误与词元统计。
+play_episode|启动指定机器人及执行方式，连接所选代理运行时并施加预算，最终保存原始证据和统一 result.json。
+_openai_options|把 OpenAI 运行时参数转换为进程内代理循环所需的关键字选项。
+main|先识别机器人适配器，再注册其宿主参数与公共执行选项，启动单回合交互运行。
+@src/pyrualean/recovery.py|定义代码工具与代理运行时共享的结构化失败信息，保留生成代码位置并统一执行错误判据。|错误处理,恢复反馈,执行审计
+failure_details|提取原始异常、traceback 和生成代码位置，形成可用于现场修复的失败说明。
+result_is_error|统一判断工具结果中的执行失败，保证 MCP、运行时事件和审计一致。
+@src/pyrualean/strategies.py|提供机器人无关的有限反馈循环，用最新观测完成重定位、误差修正和抓取验证；不自动重放失败代码或推断任务成功。|反馈控制,抓取验证,重规划
+_verdict|要求判断回调只返回布尔值或未知值。
+verify_grasp|闭合夹爪后执行一次安全探测，用新的配对观测验证目标物体跟随且稳定，证据不足交回规划者。
+_count|验证尝试次数为规定范围内的正整数。
+relocalize|有限次重新观测，必要时先改变视角；只有明确有效的观测才返回通过。
+correct|每次有限修正后重新验证完成条件，未知或连续无进展时停止并请求重规划。
+StrategyResult|保存验证或重规划状态、原因、尝试次数和当前观测，不代表环境任务成功。
+GraspObservation|保存夹爪接触、目标物体持有、新鲜度和观测身份，用于区分接触与目标抓取成立。
+GraspObservation.__post_init__|验证抓取判断、观测标识和状态版本字段类型。
+GraspObservation.from_evidence|从独立证据快照提取目标抓取状态，拒绝将过期或未知证据提升为肯定。
+GraspResult|保存已验证、失败或不确定的抓取结论及探测前后观测。
+@src/pyrualean/stuck_recovery.py|在规划者主动确认卡住后提供专用恢复指令，并记录指令版本及最大恢复轮数。|卡住恢复,执行配置,规划
+add_stuck_recovery_arguments|注册恢复技能路径、关闭开关和最大恢复轮数等互斥参数。
+stuck_recovery_config|根据执行方式和开关选择包内或指定的恢复说明，只允许受支持的单元执行方式。
+recovery_instructions|读取包内卡住恢复核心说明，使安装后的包无需仓库即可使用。
+StuckRecoveryConfig|保存卡住恢复指令与允许轮数。
+StuckRecoveryConfig.record|记录恢复轮数和指令内容摘要，便于复核执行协议版本。
+StuckRecoveryConfig.prompt|生成 finish(status='stuck') 的确认与恢复协议提示。

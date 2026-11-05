@@ -1,0 +1,1873 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "type": "file",
+      "name": "match_and_pick_from_conveyor.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "识别参考物体类别并跟踪传送带上的对应目标，结合步数运动预测和按类别定制的视觉抓点完成取物抬升。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "视觉定位",
+        "运动控制"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:log",
+      "type": "function",
+      "name": "log",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "输出程序执行与识别诊断。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        45,
+        46
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:on_plane",
+      "type": "function",
+      "name": "on_plane",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "用头部标定把目标像素投影到指定高度的传送带平面。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        49,
+        51
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:mv",
+      "type": "function",
+      "name": "mv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "执行指定机械臂的笛卡尔运动并返回控制反馈。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        54,
+        57
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:grip",
+      "type": "function",
+      "name": "grip",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "执行指定机械臂的夹爪指令并返回夹持反馈。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        60,
+        63
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:tick",
+      "type": "function",
+      "name": "tick",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "在夹爪已张开时发送空闲指令，让传送带推进两个原生控制步。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        66,
+        68
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:go_home",
+      "type": "function",
+      "name": "go_home",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "打开或归位机械臂，并通过有限次重试完成收尾。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        71,
+        74
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:seg",
+      "type": "function",
+      "name": "seg",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "容错调用语义分割并返回有效结果。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        80,
+        89
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:loc",
+      "type": "function",
+      "name": "loc",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "尝试用视觉提示词定位目标，并对失败或无效结果作容错处理。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        92,
+        101
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:nyaw",
+      "type": "function",
+      "name": "nyaw",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "把夹爪闭合线方向归一到半周区间。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        104,
+        105
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:good2",
+      "type": "function",
+      "name": "good2",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "检查定位是否为可靠双视角结果且未标记为粗略估计。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        108,
+        109
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:in_ref_zone",
+      "type": "function",
+      "name": "in_ref_zone",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "检查像素是否处于固定参考物体展示区域。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        132,
+        133
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:near",
+      "type": "function",
+      "name": "near",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "比较两个分割目标的边框或中心，判断它们是否指向同一物体。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        182,
+        188
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:validate",
+      "type": "function",
+      "name": "validate",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "用其他类别提示交叉检查当前目标，检测类别混淆。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        191,
+        205
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:thr",
+      "type": "function",
+      "name": "thr",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "根据参考图中的提示得分计算目标匹配阈值。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        208,
+        209
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:zc_for",
+      "type": "function",
+      "name": "zc_for",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "按物体高度选择掩码质心射线对应的轴线高度。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        212,
+        214
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:consider",
+      "type": "function",
+      "name": "consider",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "检查候选在图像与传送带中的范围，组合类别和几何证据生成目标记录。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        217,
+        244
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:find_target",
+      "type": "function",
+      "name": "find_target",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "在控制步数期限内持续推进传送带并搜索匹配参考类别的目标。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        247,
+        265
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:grasp_spec",
+      "type": "function",
+      "name": "grasp_spec",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "按物体类别指定抓法、抓取高度、偏航模式及相对中心偏移。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        269,
+        296
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:yaw_for",
+      "type": "function",
+      "name": "yaw_for",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "将类别指定的方向模式转换为夹爪偏航。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        302,
+        309
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:measure",
+      "type": "function",
+      "name": "measure",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "在预测目标位置附近用腕相机与头相机提示重测物体。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        312,
+        334
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:held",
+      "type": "function",
+      "name": "held",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "根据当前夹爪开度判断是否可能夹持物体。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        337,
+        341
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:lift",
+      "type": "function",
+      "name": "lift",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "保持夹持先直线抬升，再根据任务是否结束提高持物高度。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        344,
+        386
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:cam_tip",
+      "type": "function",
+      "name": "cam_tip",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "从头部图像中的相机物体区域识别镜头端部抓点。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        396,
+        421
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:cam_tip_measure",
+      "type": "function",
+      "name": "cam_tip_measure",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "随传送带推进收集多个镜头端部拟合，获得更稳定的位置估计。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        424,
+        446
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:lens_wrist",
+      "type": "function",
+      "name": "lens_wrist",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "用腕相机分割镜头并反投影其轴线横向位置。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        449,
+        466
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:attempt",
+      "type": "function",
+      "name": "attempt",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "根据预测到达时间和物体类型选择抓点，执行悬停、重测、抓取和抬升。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        472,
+        641
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:white_px",
+      "type": "function",
+      "name": "white_px",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "用亮度与低饱和规则选择白色物体像素。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        652,
+        654
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:circle_fit",
+      "type": "function",
+      "name": "circle_fit",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "用已知半径迭代拟合轮廓圆，抑制离群点。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        657,
+        682
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:cup_fit",
+      "type": "function",
+      "name": "cup_fit",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "从杯子底部近侧弧线拟合圆心，获得传送带上的杯中心。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        685,
+        711
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:cup_measure",
+      "type": "function",
+      "name": "cup_measure",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "在多个推进时刻累积杯底圆拟合，估计稳定的带坐标。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        714,
+        736
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:coarse",
+      "type": "function",
+      "name": "coarse",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "等待目标进入可靠双视角范围后获取头部粗定位。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        739,
+        756
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:dark_px",
+      "type": "function",
+      "name": "dark_px",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "提取深色或青色像素，用于识别人偶底座。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        772,
+        776
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:base_fit",
+      "type": "function",
+      "name": "base_fit",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "把人偶底座的近侧暗轮廓投影到带面并拟合已知半径圆。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        779,
+        836
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:g_seg_near",
+      "type": "function",
+      "name": "g_seg_near",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "用多个人偶提示寻找预测底座位置附近的掩码。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        839,
+        848
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:g_measure",
+      "type": "function",
+      "name": "g_measure",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "从多帧底座圆拟合估计消除传送带速度影响后的固定带坐标。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        851,
+        869
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:g_held",
+      "type": "function",
+      "name": "g_held",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "通过夹爪开度判断人偶是否仍被夹住。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        872,
+        876
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:g_attempt",
+      "type": "function",
+      "name": "g_attempt",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "以低俯仰从人偶躯干侧面接近并水平闭合夹持。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        879,
+        935
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:garage_main",
+      "type": "function",
+      "name": "garage_main",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "等待人偶底座完全可见，测量运动轨迹后尝试躯干侧抓。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        938,
+        965
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "summary": "按参考类别选择通用抓取或人偶专用流程，重测目标运动后有限次尝试抬升。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        968,
+        1057
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:log",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:log",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:on_plane",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:on_plane",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:mv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:mv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:grip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:grip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:tick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:tick",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:go_home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:go_home",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:seg",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:seg",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:loc",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:loc",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:nyaw",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:nyaw",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:good2",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:good2",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:in_ref_zone",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:in_ref_zone",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:near",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:near",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:validate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:validate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:thr",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:thr",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:zc_for",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:zc_for",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:consider",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:consider",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:find_target",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:find_target",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:grasp_spec",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:grasp_spec",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:yaw_for",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:yaw_for",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:measure",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:measure",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:held",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:held",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:lift",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:lift",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:cam_tip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:cam_tip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:cam_tip_measure",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:cam_tip_measure",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:lens_wrist",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:lens_wrist",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:attempt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:attempt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:white_px",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:white_px",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:circle_fit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:circle_fit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:cup_fit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:cup_fit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:cup_measure",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:cup_measure",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:coarse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:coarse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:dark_px",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:dark_px",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:base_fit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:base_fit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:g_seg_near",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:g_seg_near",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:g_measure",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:g_measure",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:g_held",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:g_held",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:g_attempt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:g_attempt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:garage_main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:garage_main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:tick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:seg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:loc",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:validate",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:seg",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:validate",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:near",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:consider",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:consider",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:zc_for",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:consider",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:thr",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:consider",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:validate",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:consider",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:find_target",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:tick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:find_target",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:seg",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:find_target",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:consider",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:yaw_for",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:nyaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:loc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:good2",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:lift",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:lift",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:lift",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:held",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:lift",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:lift",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:go_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:cam_tip",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:cam_tip",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:cam_tip_measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:seg",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:cam_tip_measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:cam_tip_measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:zc_for",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:cam_tip_measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:cam_tip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:cam_tip_measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:tick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:lens_wrist",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:seg",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:lens_wrist",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:attempt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:good2",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:attempt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:grasp_spec",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:attempt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:attempt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:attempt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:cam_tip_measure",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:attempt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:yaw_for",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:attempt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:measure",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:attempt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:nyaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:attempt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:tick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:attempt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:attempt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:lift",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:attempt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:held",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:attempt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:go_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:circle_fit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:cup_fit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:white_px",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:cup_fit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:cup_fit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:circle_fit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:cup_measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:seg",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:cup_measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:cup_measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:zc_for",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:cup_measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:cup_fit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:cup_measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:tick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:coarse",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:loc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:coarse",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:good2",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:coarse",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:tick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:base_fit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:dark_px",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:base_fit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:base_fit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:g_seg_near",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:seg",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:g_seg_near",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:g_seg_near",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:zc_for",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:g_measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:g_seg_near",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:g_measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:base_fit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:g_measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:tick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:g_attempt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:g_attempt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:g_attempt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:tick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:g_attempt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:g_attempt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:g_held",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:g_attempt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:go_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:garage_main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:tick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:garage_main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:g_measure",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:garage_main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:garage_main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:g_attempt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:garage_main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:g_seg_near",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:garage_main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:base_fit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:seg",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:base_fit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:cup_fit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:find_target",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:garage_main",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:cup_measure",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:coarse",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:good2",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:attempt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:zc_for",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:thr",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:tick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/match_and_pick_from_conveyor.py:loc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

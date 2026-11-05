@@ -45,6 +45,10 @@ Astra 可以提出阶段和假设，但不能把这些派生内容自动升级�
 
 - `src/pyrualean/prompt.py`：`TaskCard` 保存任务指令、对象名、初始图像、机器人事实和步数预算；`render()` 区分实际初始图与 transfer 示例图。
 - `TaskCard.sources` 保存组装、原始指令、初始观测、预算及能力的来源说明；旧 JSON 缺少此字段时按空字典读取。
+- `TaskCard.acceptance`（2026-11-04 新增）保存有来源的公开验收要求，schema 为 `pyrualean.task_acceptance.v1`。每项包含 `id`、`kind`、`condition`、`source`；kind 区分结果 `outcome`、顺序 `order`、持续约束 `invariant` 和收尾状态 `final_state`。这是原始指令的补充，不替换 `task_language`。
+- 验收要求的覆盖范围 `coverage` 默认 `unknown`；任务提供方声明 `partial` 或 `complete` 时必须同时提供 `coverage_source`。空列表表示未提供补充要求，不能声明完整覆盖。提供了完整要求也不表示现场已经满足要求。
+- `acceptance.verdict_authority` 默认 `environment`；任务卡不装载验收结果。RoboDojo 现有公开观测没有提供详细验收要求，因此各 host 默认保留空列表和未知覆盖范围，不读取隐藏判分、对象真值，也不从任务名推导补充要求。
+- 全量与精简任务卡均展示验收要求及来源。结束前的提示要求核对完整原始指令、结果、顺序、持续约束和收尾状态，并区分观测证据、模型假设与权威验收。`plan(..., status="done")` 仍只记录子目标声明。这是上下文与数据契约的改动，没有新增自动验收器、强制完成门禁或未知覆盖时停止执行的规则。
 - 审查期间新增 `initial_state` / `provenance`，保存未舍入测量、观测标识、时钟、产物摘要和创建时预算；完整审计数据在 `card.json`，模型入口用 `render(compact=True)` 的启动摘要。该并行增量的验证状态见仓库审查记录。
 - `hosts/robodojo_card.py::build_card` 供 RPent 与 XPL RGB-D/RGB 共用：原始任务指令不改写，缺失或无效初始位姿/开度标为 unknown，预算回退标明配置来源，不从任务名或隐藏状态推导任务事实。
 - RoboDojo 任务卡保存启动时的执行能力快照；运行中能力应重新调用 `motion_capabilities()` 查询。来源字段和能力快照尚未构成版本化的统一任务协议。
@@ -54,7 +58,7 @@ Astra 可以提出阶段和假设，但不能把这些派生内容自动升级�
 - `src/pyrualean/arms.py`：`ArmToolkit.execute_tool()` 拒绝最终 finish 之后的代码；`_finish()` 保持最终决定幂等。
 - `integrations/xpolicylab/PyRUA_RSI/model.py`：`Model._play()` 调用 cells 通道执行固定程序；不能据此认为 RSI 有在线规划器。
 
-当前 `TaskCard.facts` 是通用字典，尚未结构化区分设备说明、初始事实、任务限制和模型假设。
+当前 `TaskCard.facts` 仍是通用字典；公开任务验收要求可放入独立的 `acceptance`，模型假设保留在规划便笺中。
 `finish(status="success")` 是模型声明；`play_episode()` 另外读取 backend 的任务结果。
 
 ## 待补齐的契约

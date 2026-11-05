@@ -1,0 +1,1571 @@
+[
+  {
+    "path": "src/pyrualean/hosts/common.py",
+    "category": "code",
+    "moduleDoc": "What every RPent-backed host shares: locating the checkout and adapting\nan RPent ``Toolkit`` to the :class:`pyrualean.Backend` contract.\n\nA host module (``rpent_libero``, ``rpent_robocasa``, ``rpent_robotwin``,\n``rpent_robodojo``) exposes ``Cell``, ``add_cell_args(parser)``,\n``add_boot_args(parser)``, ``cell_from_args(args)``, ``boot_options(args)``,\n``boot(cell, out_dir, *, rpent_root=None, env_only=False, **options)`` and\n``dump_card(toolkit, cell, out_dir)``; ``pyrualean.play`` drives any of\nthem through the robot's adapter.  A host may also define\n``make_backend(toolkit)`` returning a :class:`RpentBackend` subclass when\nRPent's toolkit lacks ``solved()`` / ``primitives`` or counts steps in\nanother unit than frames.",
+    "symbols": [
+      {
+        "name": "resolve_rpent_root",
+        "kind": "function",
+        "range": [
+          33,
+          55
+        ],
+        "owner": null,
+        "doc": "Locate the RPent checkout and make it importable.",
+        "body": "candidates = [explicit, os.environ.get(\"RPENT_ROOT\"), os.environ.get(\"RPENT_REPO_ROOT\")]\nfor value in candidates:\n        if value:\n            root = Path(value).expanduser().resolve()\ntry:\n        import rpent  # type: ignore[import-not-found]"
+      },
+      {
+        "name": "stop_all",
+        "kind": "function",
+        "range": [
+          108,
+          118
+        ],
+        "owner": null,
+        "doc": "Close the toolkit and stop its servers, ignoring errors.",
+        "body": "import contextlib\nif toolkit is not None:\n        with contextlib.suppress(Exception):\n            toolkit.close()\nfor daemon in reversed(daemons):\n        with contextlib.suppress(Exception):\n            daemon.stop()"
+      },
+      {
+        "name": "RpentBackend",
+        "kind": "class",
+        "range": [
+          58,
+          105
+        ],
+        "owner": null,
+        "doc": "Adapt an RPent ``Toolkit`` to the :class:`pyrualean.Backend` contract.",
+        "body": ""
+      },
+      {
+        "name": "RpentBackend.__init__",
+        "kind": "function",
+        "range": [
+          61,
+          62
+        ],
+        "owner": "RpentBackend",
+        "doc": "",
+        "body": "self._toolkit = toolkit"
+      },
+      {
+        "name": "RpentBackend.toolkit",
+        "kind": "function",
+        "range": [
+          65,
+          66
+        ],
+        "owner": "RpentBackend",
+        "doc": "",
+        "body": "return self._toolkit"
+      },
+      {
+        "name": "RpentBackend.execute_tool",
+        "kind": "function",
+        "range": [
+          68,
+          69
+        ],
+        "owner": "RpentBackend",
+        "doc": "",
+        "body": "return self._toolkit.execute_tool(name, input_dict)"
+      },
+      {
+        "name": "RpentBackend.solved",
+        "kind": "function",
+        "range": [
+          71,
+          83
+        ],
+        "owner": "RpentBackend",
+        "doc": "The environment's own success flag (never the agent's claim).\n\nRPent toolkits normally implement ``solved()``; one that leaves the\nbase method unimplemented (RoboTwin) keeps the latest\n``episode_status`` in ``_latest_status``, whose ``eval_success`` is\nthe same flag.  Cheap on purpose: ``robo.done`` asks every turn.",
+        "body": "try:\n            return bool(self._toolkit.solved())\n        except NotImplementedError:"
+      },
+      {
+        "name": "RpentBackend.artifact",
+        "kind": "function",
+        "range": [
+          85,
+          86
+        ],
+        "owner": "RpentBackend",
+        "doc": "",
+        "body": "return self._toolkit.state.load_bytes(name, step=step)"
+      },
+      {
+        "name": "RpentBackend.env_steps",
+        "kind": "function",
+        "range": [
+          88,
+          102
+        ],
+        "owner": "RpentBackend",
+        "doc": "Frames recorded so far, from ``toolkit.primitives`` (or RPent's\nprivate ``_primitives``); ``None`` when the toolkit offers neither.\n\nThis is a *frame* count.  A host whose step unit differs (RoboTwin\ncounts native VLA actions) returns its own backend from\n``make_backend(toolkit)`` and overrides this method.",
+        "body": "primitives = getattr(self._toolkit, \"primitives\", None)\nif primitives is None:\n            primitives = getattr(self._toolkit, \"_primitives\", None)\ntry:\n            return int(primitives.recorded_frame_count())\n        except Exception:  # noqa: BLE001 - optional metadata"
+      },
+      {
+        "name": "RpentBackend.cancel",
+        "kind": "function",
+        "range": [
+          104,
+          105
+        ],
+        "owner": "RpentBackend",
+        "doc": "",
+        "body": "self._toolkit.cancel_active_and_wait()"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import os",
+      "import sys",
+      "from pathlib import Path",
+      "from typing import Any",
+      "import contextlib",
+      "import rpent"
+    ]
+  },
+  {
+    "path": "src/pyrualean/hosts/rpent_libero.py",
+    "category": "code",
+    "moduleDoc": "RPent-backed LIBERO host.\n\nBoots RPent's own LIBERO stack (env server, Pi0.5 server, SAM3 server), builds\nthe same ``LiberoToolkit`` its planners use, wraps it as a :class:`Backend`\nand runs one policy file against it.  Because every primitive still goes\nthrough ``Toolkit.execute_tool``, the run produces RPent's native artifacts\n(``states.json``, ``episode.mp4``, per-step images) and is judged by the same\n``toolkit.solved()`` predicate as an RPent agent run.\n\nThis module needs RPent and its ``libero-pro`` extra importable; run it with\nRPent's interpreter after sourcing its environment (see docs/guide.md).  One\nepisode per process: ``python -m pyrualean.hosts.rpent_libero run ...``.",
+    "symbols": [
+      {
+        "name": "add_cell_args",
+        "kind": "function",
+        "range": [
+          65,
+          71
+        ],
+        "owner": null,
+        "doc": "LIBERO cell identifiers (``pyrualean play --robot libero`` and the host CLI).",
+        "body": "parser.add_argument(\"--suite\", required=True, help=\"e.g. libero_object_swap\")\nparser.add_argument(\"--task\", type=int, required=True, help=\"task index within the suite\")\nparser.add_argument(\"--seed\", type=int, default=0)\nparser.add_argument(\"--libero-type\", default=\"pro\")"
+      },
+      {
+        "name": "add_boot_args",
+        "kind": "function",
+        "range": [
+          74,
+          78
+        ],
+        "owner": null,
+        "doc": "Options of :func:`boot` that are LIBERO-specific.",
+        "body": "parser.add_argument(\"--vla-endpoint\", default=None, help=\"host:port of a shared Pi0.5 server\")\nparser.add_argument(\"--sam3-endpoint\", default=None, help=\"host:port of a shared SAM3 server\")"
+      },
+      {
+        "name": "cell_from_args",
+        "kind": "function",
+        "range": [
+          81,
+          89
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return Cell(\n        suite=str(args.suite),\n        task=int(args.task),"
+      },
+      {
+        "name": "boot_options",
+        "kind": "function",
+        "range": [
+          92,
+          96
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return {\n        \"vla_endpoint\": getattr(args, \"vla_endpoint\", None),\n        \"sam3_endpoint\": getattr(args, \"sam3_endpoint\", None),"
+      },
+      {
+        "name": "boot",
+        "kind": "function",
+        "range": [
+          99,
+          176
+        ],
+        "owner": null,
+        "doc": "Start RPent's servers and return ``(toolkit, daemons)``.\n\n``env_only`` boots just the simulator (enough to dump a task card); the\nVLA and SAM3 clients are then ``None`` and their primitives unusable.\n``vla_endpoint`` / ``sam3_endpoint`` (``host:port``) attach to shared,\nalready running Pi0.5 / SAM3 servers instead of spawning private ones\n(RPent's own ``--vla-endpoint`` / ``--sam3-endpoint``); the simulator is\nalways private to the episode.",
+        "body": "resolve_rpent_root(rpent_root)\nfrom robots.libero.robot_spec import get_robot_spec, get_toolkit\nfrom rpent.dashboard.events import NullDashboardEventSink\nfrom rpent.robots.robot_spec import RunConfig\nfrom rpent.utils.logging import init_output_dir\nout_dir.mkdir(parents=True, exist_ok=True)\ninit_output_dir(out_dir, verbose=False)\nevents = NullDashboardEventSink()\nargs = Namespace(\n        suite=cell.suite,\n        task=cell.task,\nspec = get_robot_spec()\ncomponents = {\"env\"} if env_only else None\ndaemons, runtime_kwargs = spec.init_runtime(args, out_dir, events, components)\nif env_only:\n        runtime_kwargs.setdefault(\"model\", None)\n        runtime_kwargs.setdefault(\"sam3_client\", None)\nmemory_dir = out_dir / \"_memory\"\nmemory_dir.mkdir(exist_ok=True)\nconfig = RunConfig(\n        recipe_tag=cell.tag,\n        output_dir=out_dir,\ntry:\n        toolkit = get_toolkit(\n            runtime_kwargs=runtime_kwargs,\nreturn toolkit, daemons"
+      },
+      {
+        "name": "dump_card",
+        "kind": "function",
+        "range": [
+          179,
+          210
+        ],
+        "owner": null,
+        "doc": "Write ``card.json`` plus the step-0 images and return the card.",
+        "body": "view = toolkit.execute_tool(\"view_env_state\", {\"step\": 0}).result\nraw = view.get(\"state\") or {}\nqpos = [float(v) for v in raw.get(\"robot0_gripper_qpos\", (0.0, 0.0))]\ncard_dir = out_dir / \"card\"\ncard_dir.mkdir(exist_ok=True)\nimages: dict[str, str] = {}\nfor name in CARD_IMAGES:\n        try:\n            source = toolkit.state.artifact_path(name, step=0)\ncard = TaskCard(\n        suite=cell.suite,\n        task=cell.task,\n(out_dir / \"card.json\").write_text(card.to_json() + \"\\n\", encoding=\"utf-8\")\nreturn card"
+      },
+      {
+        "name": "_sha256_text",
+        "kind": "function",
+        "range": [
+          213,
+          214
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return hashlib.sha256(text.encode(\"utf-8\")).hexdigest()"
+      },
+      {
+        "name": "run_episode",
+        "kind": "function",
+        "range": [
+          217,
+          338
+        ],
+        "owner": null,
+        "doc": "Run one policy file for one cell and write ``result.json``.",
+        "body": "out_dir.mkdir(parents=True, exist_ok=True)\nstarted = time.perf_counter()\ncreated_at = time.strftime(\"%Y-%m-%dT%H:%M:%S%z\")\nresult: dict[str, Any] = {\n        \"schema\": RESULT_SCHEMA,\n        \"system\": \"pyrualean\",\nshutil.copyfile(policy_path, out_dir / \"policy.py\")\ntoolkit = None\ndaemons: list[Any] = []\nledger = Ledger()\ntry:\n        toolkit, daemons = boot(cell, out_dir, rpent_root=rpent_root)\n        result[\"host\"][\"rpent_root\"] = str(resolve_rpent_root(rpent_root))\nreturn result"
+      },
+      {
+        "name": "_install_sigterm",
+        "kind": "function",
+        "range": [
+          341,
+          346
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "with contextlib.suppress(ValueError):  # not in the main thread\n        signal.signal(signal.SIGTERM, handler)"
+      },
+      {
+        "name": "card_only",
+        "kind": "function",
+        "range": [
+          349,
+          360
+        ],
+        "owner": null,
+        "doc": "Boot only the simulator, dump the task card and shut down.",
+        "body": "toolkit, daemons = boot(cell, out_dir, rpent_root=rpent_root, env_only=True)\ntry:\n        return dump_card(toolkit, cell, out_dir)\n    finally:"
+      },
+      {
+        "name": "_add_cell_args",
+        "kind": "function",
+        "range": [
+          363,
+          368
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "add_cell_args(parser)\nparser.add_argument(\"--out\", type=Path, required=True)\nparser.add_argument(\"--cuda-device\", type=int, default=None)\nparser.add_argument(\"--max-episode-steps\", type=int, default=10000)\nparser.add_argument(\"--rpent-root\", default=None)"
+      },
+      {
+        "name": "_cell",
+        "kind": "function",
+        "range": [
+          371,
+          372
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return cell_from_args(args)"
+      },
+      {
+        "name": "main",
+        "kind": "function",
+        "range": [
+          375,
+          414
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "parser = argparse.ArgumentParser(\n        prog=\"python -m pyrualean.hosts.rpent_libero\", description=__doc__\n    )\nsub = parser.add_subparsers(dest=\"command\", required=True)\nrun = sub.add_parser(\"run\", help=\"run one policy file for one cell\")\nrun.add_argument(\"--policy\", type=Path, required=True)\nrun.add_argument(\"--timeout-s\", type=float, default=1200.0)\n_add_cell_args(run)\ncard = sub.add_parser(\"card\", help=\"dump the task card for one cell\")\n_add_cell_args(card)\nargs = parser.parse_args(argv)\nif args.command == \"run\":\n        result = run_episode(\n            args.policy.resolve(),\ncard_obj = card_only(_cell(args), args.out.resolve(), rpent_root=args.rpent_root)\nprint(card_obj.to_json())\nreturn 0"
+      },
+      {
+        "name": "Cell",
+        "kind": "class",
+        "range": [
+          50,
+          62
+        ],
+        "owner": null,
+        "doc": "One LIBERO evaluation cell.",
+        "body": "suite: str\ntask: int\nseed: int\nmax_episode_steps: int = 10000\nlibero_type: str = \"pro\"\ncuda_device: int | None = None"
+      },
+      {
+        "name": "Cell.tag",
+        "kind": "function",
+        "range": [
+          61,
+          62
+        ],
+        "owner": "Cell",
+        "doc": "",
+        "body": "return f\"{self.suite.replace('libero_', '')}_t{self.task}_s{self.seed}\""
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import argparse",
+      "import contextlib",
+      "import hashlib",
+      "import json",
+      "import shutil",
+      "import signal",
+      "import sys",
+      "import time",
+      "from argparse import Namespace",
+      "from dataclasses import dataclass",
+      "from pathlib import Path",
+      "from typing import Any",
+      "from .._backend import Ledger",
+      "from ..libero import LiberoRobot",
+      "from ..prompt import TaskCard, render_prompt",
+      "from ..runner import PolicyLoadError, load_policy, policy_sha256, run_policy",
+      "from ..sandbox import DESCRIPTION as SANDBOX_DESCRIPTION",
+      "from ..sandbox import audit_source, make_builtins",
+      "from .common import RESULT_SCHEMA, RpentBackend, resolve_rpent_root",
+      "from robots.libero.robot_spec import get_robot_spec, get_toolkit",
+      "from rpent.dashboard.events import NullDashboardEventSink",
+      "from rpent.robots.robot_spec import RunConfig",
+      "from rpent.utils.logging import init_output_dir"
+    ]
+  },
+  {
+    "path": "src/pyrualean/hosts/rpent_robocasa.py",
+    "category": "code",
+    "moduleDoc": "RPent-backed RoboCasa365 host.\n\nBoots RPent's own RoboCasa stack (robosuite kitchen env server, RLDX-1 VLA\nserver), builds the same ``RoboCasaToolkit`` its planners use, wraps it as a\n:class:`Backend` and runs one policy file against it.  Because every\nprimitive still goes through ``Toolkit.execute_tool``, the run produces\nRPent's native artifacts (``states.json``, ``episode.mp4``,\n``success_criteria.md``, per-step images and world maps) and is judged by\nthe same ``toolkit.solved()`` predicate (the env's own ``_check_success``,\nrecorded as ``success``) as an RPent agent run.\n\n``RoboCasaToolkit`` implements ``solved()`` and counts env steps as recorded\nagentview frames (one per ``env.step``, calibration and VLA steps included),\nthe same unit as LIBERO, so the generic :class:`RpentBackend` is used\nunchanged and this module defines no ``make_backend``.\n\nThis module needs RPent and its ``robocasa`` extra importable; run it with\nthat interpreter and the RoboCasa environment variables set\n(``docs/setup.md``).  One episode per process:\n``python -m pyrualean.hosts.rpent_robocasa run ...``.",
+    "symbols": [
+      {
+        "name": "add_cell_args",
+        "kind": "function",
+        "range": [
+          86,
+          101
+        ],
+        "owner": null,
+        "doc": "RoboCasa cell identifiers (``pyrualean play --robot robocasa`` and the host CLI).",
+        "body": "parser.add_argument(\"--task\", required=True, help=\"RoboCasa365 task name, e.g. OpenDrawer\")\nparser.add_argument(\n        \"--suite\",\n        default=\"target\",\nparser.add_argument(\n        \"--seed\",\n        type=int,"
+      },
+      {
+        "name": "add_boot_args",
+        "kind": "function",
+        "range": [
+          104,
+          129
+        ],
+        "owner": null,
+        "doc": "Options of :func:`boot` that are RoboCasa-specific (env-var defaults as in RPent).",
+        "body": "parser.add_argument(\n        \"--vla-endpoint\",\n        default=None,\nparser.add_argument(\n        \"--env-endpoint\", default=None, help=\"http://host:port of an already running env server\"\n    )\nparser.add_argument(\n        \"--vla-model-path\",\n        default=os.environ.get(\"RLDX_MODEL_PATH\"),\nparser.add_argument(\n        \"--robocasa-assets-path\",\n        default=os.environ.get(\"ROBOCASA_ASSETS_PATH\"),\nparser.add_argument(\n        \"--memory-dir\",\n        default=None,"
+      },
+      {
+        "name": "cell_from_args",
+        "kind": "function",
+        "range": [
+          132,
+          139
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return Cell(\n        suite=str(getattr(args, \"suite\", None) or \"target\"),\n        task=str(args.task),"
+      },
+      {
+        "name": "boot_options",
+        "kind": "function",
+        "range": [
+          142,
+          149
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return {\n        \"vla_endpoint\": getattr(args, \"vla_endpoint\", None),\n        \"env_endpoint\": getattr(args, \"env_endpoint\", None),"
+      },
+      {
+        "name": "memory_root",
+        "kind": "function",
+        "range": [
+          152,
+          171
+        ],
+        "owner": null,
+        "doc": "An empty, read-only memory corpus for the toolkit (zero-shot: nothing is read).\n\n``memory_dir`` when given, else the tracked ``runs/_empty-memory-robocasa``\nwhen this package runs from its repository, else a private empty corpus\nunder the run directory.  RPent's toolkit only binds its file tools to\nit; PyRUA-Lean never exposes those, so nothing is read or written.",
+        "body": "if memory_dir:\n        root = Path(memory_dir).expanduser().resolve()\n    elif (EMPTY_MEMORY / \"MEMORY.md\").is_file():\nif not (root / \"MEMORY.md\").is_file():\n        raise FileNotFoundError(f\"memory corpus without a MEMORY.md: {root}\")\nreturn root"
+      },
+      {
+        "name": "boot",
+        "kind": "function",
+        "range": [
+          174,
+          269
+        ],
+        "owner": null,
+        "doc": "Start RPent's servers and return ``(toolkit, daemons)``.\n\n``env_only`` boots just the simulator (enough to dump a task card); the\nVLA client is then ``None`` and ``rldx_skill`` / ``rldx_arm`` unusable.\n``vla_endpoint`` attaches to a shared, already running RLDX-1 server\ninstead of spawning a private one (RPent's own ``--vla-endpoint``; the\nserver keeps one session per client); ``env_endpoint`` likewise for the\nsimulator, which is otherwise private to the episode (it is task/seed\nspecific).  ``vla_model_path`` defaults to ``RLDX_MODEL_PATH``,\n``robocasa_assets_path`` is exported as ``ROBOCASA_ASSETS_PATH`` for the\nenv server (the only way robocasa finds its assets).\n\nA private VLA server resolves its backbone support files from the local\nHugging Face cache: RLDX asks for revision ``main`` regardless of the\npinned backbone, evaluation runs with no proxy, and each online retry\nwould cost the child its whole boot budget, so ``HF_HUB_OFFLINE`` /\n``TRANSFORMERS_OFFLINE`` are set (when unset) before spawning it.",
+        "body": "resolve_rpent_root(rpent_root)\nfrom robots.robocasa.robot_spec import get_robot_spec, get_toolkit\nfrom rpent.dashboard.events import NullDashboardEventSink\nfrom rpent.robots.robot_spec import RunConfig\nfrom rpent.utils.logging import init_output_dir\nvla_model_path = vla_model_path or os.environ.get(\"RLDX_MODEL_PATH\")\nif robocasa_assets_path:\n        os.environ[\"ROBOCASA_ASSETS_PATH\"] = str(Path(robocasa_assets_path).expanduser())\nif not env_only and vla_endpoint is None:\n        if not vla_model_path:\n            raise ValueError(\nos.environ[\"PYTHONHASHSEED\"] = \"0\"\nout_dir.mkdir(parents=True, exist_ok=True)\ninit_output_dir(out_dir, verbose=False)\nmemory = memory_root(out_dir, memory_dir)\nevents = NullDashboardEventSink()\nargs = Namespace(\n        task_name=cell.task,\n        split=cell.suite,\nspec = get_robot_spec()\ncomponents = {\"env\"} if env_only else None\ndaemons, runtime_kwargs = spec.init_runtime(args, out_dir, events, components)\nif env_only:\n        runtime_kwargs.setdefault(\"vla_client\", None)\nconfig = RunConfig(\n        recipe_tag=cell.tag,\n        output_dir=out_dir,\ntry:\n        toolkit = get_toolkit(runtime_kwargs=runtime_kwargs, dashboard_events=events, config=config)\n    except BaseException:\nreturn toolkit, daemons"
+      },
+      {
+        "name": "_floats",
+        "kind": "function",
+        "range": [
+          272,
+          277
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "try:\n        out = [float(v) for v in value]\n    except (TypeError, ValueError):\nreturn out if len(out) == n else [0.0] * n"
+      },
+      {
+        "name": "_fmt",
+        "kind": "function",
+        "range": [
+          280,
+          281
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return \"[\" + \", \".join(f\"{v:.3f}\" for v in values) + \"]\""
+      },
+      {
+        "name": "_yaw",
+        "kind": "function",
+        "range": [
+          284,
+          286
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "x, y, z, w = quat_xyzw\nreturn math.atan2(2.0 * (w * z + x * y), 1.0 - 2.0 * (y * y + z * z))"
+      },
+      {
+        "name": "dump_card",
+        "kind": "function",
+        "range": [
+          289,
+          344
+        ],
+        "owner": null,
+        "doc": "Write ``card.json`` plus the step-0 images and return the card.\n\nThe facts are what RPent's agent also sees in its first\n``view_env_state``: the initial base and gripper poses, the finger\nopening and the step-0 ``task_progress``.  Nothing privileged (no object\nposes; RoboCasa names no objects).",
+        "body": "view = toolkit.execute_tool(\"view_env_state\", {\"step\": 0}).result\nraw = view.get(\"state\") or {}\ncard_dir = out_dir / \"card\"\ncard_dir.mkdir(exist_ok=True)\nimages: dict[str, str] = {}\nfor camera, name in CARD_IMAGES.items():\n        try:\n            source = toolkit.state.artifact_path(name, step=0)\nbase = _floats(raw.get(\"robot0_base_pos\"), 3)\nbase_quat = _floats(raw.get(\"robot0_base_quat\"), 4)\neef = _floats(raw.get(\"robot0_eef_pos\"), 3)\neef_quat = _floats(raw.get(\"robot0_eef_quat\"), 4)\nqpos = _floats(raw.get(\"robot0_gripper_qpos\"), 2)\nyaw = _yaw(base_quat)\nfacts: dict[str, Any] = {\n        \"initial base position [x, y, z]\": f\"{_fmt(base)} m\",\n        \"initial base heading (yaw about world z)\": f\"{yaw:.3f} rad ({math.degrees(yaw):.1f} deg)\",\nprogress = view.get(\"task_progress\")\nif isinstance(progress, dict):\n        facts[\"task_progress at step 0 (the success predicate's live values)\"] = json.dumps(\n            progress, sort_keys=True\ncard = TaskCard(\n        suite=cell.suite,\n        task=cell.task,\n(out_dir / \"card.json\").write_text(card.to_json() + \"\\n\", encoding=\"utf-8\")\nreturn card"
+      },
+      {
+        "name": "_sha256_text",
+        "kind": "function",
+        "range": [
+          347,
+          348
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return hashlib.sha256(text.encode(\"utf-8\")).hexdigest()"
+      },
+      {
+        "name": "run_episode",
+        "kind": "function",
+        "range": [
+          351,
+          471
+        ],
+        "owner": null,
+        "doc": "Run one policy file for one cell and write ``result.json``.",
+        "body": "out_dir.mkdir(parents=True, exist_ok=True)\nstarted = time.perf_counter()\ncreated_at = time.strftime(\"%Y-%m-%dT%H:%M:%S%z\")\noptions = dict(boot_options or {})\nresult: dict[str, Any] = {\n        \"schema\": RESULT_SCHEMA,\n        \"system\": \"pyrualean\",\nshutil.copyfile(policy_path, out_dir / \"policy.py\")\ntoolkit = None\ndaemons: list[Any] = []\nledger = Ledger()\ntry:\n        toolkit, daemons = boot(cell, out_dir, rpent_root=rpent_root, **options)\n        result[\"host\"][\"rpent_root\"] = str(resolve_rpent_root(rpent_root))\nreturn result"
+      },
+      {
+        "name": "_install_sigterm",
+        "kind": "function",
+        "range": [
+          474,
+          479
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "with contextlib.suppress(ValueError):  # not in the main thread\n        signal.signal(signal.SIGTERM, handler)"
+      },
+      {
+        "name": "card_only",
+        "kind": "function",
+        "range": [
+          482,
+          496
+        ],
+        "owner": null,
+        "doc": "Boot only the simulator, dump the task card and shut down.",
+        "body": "options = {k: v for k, v in (boot_options or {}).items() if k != \"vla_endpoint\"}\ntoolkit, daemons = boot(cell, out_dir, rpent_root=rpent_root, env_only=True, **options)\ntry:\n        return dump_card(toolkit, cell, out_dir)\n    finally:"
+      },
+      {
+        "name": "_add_cell_args",
+        "kind": "function",
+        "range": [
+          499,
+          505
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "add_cell_args(parser)\nadd_boot_args(parser)\nparser.add_argument(\"--out\", type=Path, required=True)\nparser.add_argument(\"--cuda-device\", type=int, default=None)\nparser.add_argument(\"--max-episode-steps\", type=int, default=10000)\nparser.add_argument(\"--rpent-root\", default=None)"
+      },
+      {
+        "name": "main",
+        "kind": "function",
+        "range": [
+          508,
+          553
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "parser = argparse.ArgumentParser(\n        prog=\"python -m pyrualean.hosts.rpent_robocasa\", description=__doc__\n    )\nsub = parser.add_subparsers(dest=\"command\", required=True)\nrun = sub.add_parser(\"run\", help=\"run one policy file for one cell\")\nrun.add_argument(\"--policy\", type=Path, required=True)\nrun.add_argument(\"--timeout-s\", type=float, default=1200.0)\n_add_cell_args(run)\ncard = sub.add_parser(\"card\", help=\"dump the task card for one cell\")\n_add_cell_args(card)\nargs = parser.parse_args(argv)\nif args.command == \"run\":\n        result = run_episode(\n            args.policy.resolve(),\ncard_obj = card_only(\n        cell_from_args(args),\n        args.out.resolve(),\nprint(card_obj.to_json())\nreturn 0"
+      },
+      {
+        "name": "Cell",
+        "kind": "class",
+        "range": [
+          67,
+          83
+        ],
+        "owner": null,
+        "doc": "One RoboCasa365 evaluation cell: a task name, a data split and an exact scene seed.\n\n``max_episode_steps`` is nominal: RPent enforces no simulator step budget\nfor this robot (``truncated`` never fires); the host's wall-clock and\ndecision budgets end an episode.",
+        "body": "suite: str\ntask: str\nseed: int\nmax_episode_steps: int = 10000\ncuda_device: int | None = None"
+      },
+      {
+        "name": "Cell.tag",
+        "kind": "function",
+        "range": [
+          82,
+          83
+        ],
+        "owner": "Cell",
+        "doc": "",
+        "body": "return f\"{self.task}_{self.suite}_s{self.seed}\""
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import argparse",
+      "import contextlib",
+      "import hashlib",
+      "import json",
+      "import math",
+      "import os",
+      "import shutil",
+      "import signal",
+      "import sys",
+      "import time",
+      "from argparse import Namespace",
+      "from dataclasses import dataclass",
+      "from pathlib import Path",
+      "from typing import Any",
+      "from .._backend import Ledger",
+      "from ..prompt import TaskCard, render_prompt",
+      "from ..robocasa import RobocasaRobot",
+      "from ..runner import PolicyLoadError, load_policy, policy_sha256, run_policy",
+      "from ..sandbox import DESCRIPTION as SANDBOX_DESCRIPTION",
+      "from ..sandbox import audit_source, make_builtins",
+      "from .common import RESULT_SCHEMA, RpentBackend, resolve_rpent_root, stop_all",
+      "from robots.robocasa.robot_spec import get_robot_spec, get_toolkit",
+      "from rpent.dashboard.events import NullDashboardEventSink",
+      "from rpent.robots.robot_spec import RunConfig",
+      "from rpent.utils.logging import init_output_dir"
+    ]
+  },
+  {
+    "path": "src/pyrualean/hosts/rpent_robodojo.py",
+    "category": "code",
+    "moduleDoc": "RPent-backed RoboDojo host.\n\nBoots RPent's own RoboDojo stack (Isaac Sim env server, Pi0.5 VLA server, SAM3\nserver), builds the same ``RoboDojoToolkit`` its planners use in development\nmode, wraps it as a :class:`Backend` and runs one policy file against it.\nBecause every primitive still goes through ``Toolkit.execute_tool``, the run\nproduces RPent's native artifacts (``states.json``, the per-step camera\nimages, one video per camera) and is judged by the same ``env.is_success``\ncall RPent's runner makes after its planner has finished.\n\nA RoboDojo cell is a task name and a layout id (the environment seed):\n``Cell.seed`` is the layout, ``Cell.suite`` the environment config\n(``arx_x5``).  The episode's native-action budget is the task's own\n``step_lim``; ``Cell.max_episode_steps`` is only handed to RPent's env server,\nwhose agent path does not enforce it.\n\nRPent's toolkit counts no frames, so this host provides\n:class:`RobodojoBackend` through ``make_backend(toolkit)``: its ``env_steps``\nis the simulator's native-action counter.\n\nFour tools are this library's own (:mod:`.robodojo_tools`, registered on RPent's\ntoolkit at boot by :func:`register_home`): ``move_pose`` (position and\norientation with the host's IK), ``grip`` (a full gripper stroke that reports\nwhat it holds), ``locate`` (an object's 3D extent from its mask and the depth\nimage) and ``home`` (the joints the episode started with).\nRPent's toolset moves by position only, and its IK lets the wrist drift.\n\nThe host attaches to the simulator without RPent's second reset\n(:func:`_connect_without_reset`): tasks with an articulated object do not\nsurvive it.  ``ROBODOJO_CONNECT_RESET=1`` gives RPent's behaviour back.  It\nstarts the simulator through :mod:`.robodojo_env_server`, which drives the\nbenchmark's third arm (the opponent or demonstrator of three tasks) as\nRoboDojo's own evaluation client does; ``ROBODOJO_SUPPORT_ARM=upstream`` runs\nRPent's server as it is.\n\nThis module needs RPent (a revision with ``robots/robodojo``, i.e. ``d08d712``\nor later) and its ``robodojo`` extra importable; run it with that interpreter\nand the RoboDojo environment variables set (``docs/setup.md``).  One episode\nper process: ``python -m pyrualean.hosts.rpent_robodojo run ...``.",
+    "symbols": [
+      {
+        "name": "add_cell_args",
+        "kind": "function",
+        "range": [
+          111,
+          120
+        ],
+        "owner": null,
+        "doc": "RoboDojo cell identifiers (``pyrualean play --robot robodojo`` and the host CLI).",
+        "body": "parser.add_argument(\n        \"--task\", required=True, help=\"RoboDojo task name, e.g. put_bottles_into_dustbin\"\n    )\nparser.add_argument(\n        \"--suite\", default=\"arx_x5\", choices=ENV_CONFIGS, help=\"RoboDojo environment config\"\n    )\nparser.add_argument(\"--seed\", type=int, default=0, help=\"layout id (RPent's --layout)\")"
+      },
+      {
+        "name": "add_boot_args",
+        "kind": "function",
+        "range": [
+          123,
+          171
+        ],
+        "owner": null,
+        "doc": "Options of :func:`boot` that are RoboDojo-specific (env-var defaults).",
+        "body": "parser.add_argument(\n        \"--vla-endpoint\", default=None, help=\"[http://]host:port of a running Pi0.5 server\"\n    )\nparser.add_argument(\n        \"--sam3-endpoint\", default=None, help=\"[http://]host:port of a running SAM3 server\"\n    )\nparser.add_argument(\n        \"--env-endpoint\", default=None, help=\"[http://]host:port of a running env server\"\n    )\nparser.add_argument(\n        \"--source-root\",\n        default=os.environ.get(\"ROBODOJO_SOURCE_ROOT\"),\nparser.add_argument(\n        \"--xpolicylab-root\",\n        default=os.environ.get(\"ROBODOJO_XPOLICYLAB_ROOT\"),\nparser.add_argument(\n        \"--sim-python\",\n        default=os.environ.get(\"ROBODOJO_SIM_PYTHON\"),\nparser.add_argument(\n        \"--pi05-python\",\n        default=os.environ.get(\"ROBODOJO_PI05_PYTHON\"),\nparser.add_argument(\n        \"--policy-backend\",\n        default=os.environ.get(\"ROBODOJO_POLICY_BACKEND\", \"rlinf\"),\nparser.add_argument(\n        \"--action-type\", default=\"joint\", choices=ACTION_TYPES, help=\"VLA action representation\"\n    )\nparser.add_argument(\n        \"--connect-reset\",\n        action=argparse.BooleanOptionalAction,"
+      },
+      {
+        "name": "cell_from_args",
+        "kind": "function",
+        "range": [
+          174,
+          181
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return Cell(\n        suite=str(getattr(args, \"suite\", None) or \"arx_x5\"),\n        task=str(args.task),"
+      },
+      {
+        "name": "_connect_reset_default",
+        "kind": "function",
+        "range": [
+          184,
+          185
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return os.environ.get(\"ROBODOJO_CONNECT_RESET\", \"0\").strip().lower() in (\"1\", \"true\", \"yes\")"
+      },
+      {
+        "name": "_connect_without_reset",
+        "kind": "function",
+        "range": [
+          189,
+          218
+        ],
+        "owner": null,
+        "doc": "Make RPent's RoboDojo client attach to the simulator without resetting it again.\n\nThe env server resets to the requested layout while it starts.  RPent's\ndevelopment-mode client then resets once more on connect (its eval-fair\nclient does not), and that second reset fails for every scene that holds\nan articulated object: the layout manager gives the object a new instance\nname while the stage keeps the one it spawned (``Object toaster_4_33 of\ntype articulation not found in env 0``), so the stability check raises.\nSeven of the 54 tasks at layout 0 cannot boot for this reason (RPent\n068cd64).  Skipping the second reset starts the episode from the state the\neval-fair client starts from.",
+        "body": "from robots.robodojo import env_client\nfrom rpent.robots.components.env_client_base import BaseEnvClient\noriginal = env_client.RoboDojoEnvClient.__init__\nenv_client.RoboDojoEnvClient.__init__ = connect\ntry:\n        yield\n    finally:"
+      },
+      {
+        "name": "_support_arm_default",
+        "kind": "function",
+        "range": [
+          221,
+          222
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return os.environ.get(\"ROBODOJO_SUPPORT_ARM\", \"\").strip().lower() != \"upstream\""
+      },
+      {
+        "name": "_env_server_through_pyrualean",
+        "kind": "function",
+        "range": [
+          226,
+          260
+        ],
+        "owner": null,
+        "doc": "Start RPent's RoboDojo env server through :mod:`.robodojo_env_server`.\n\nRPent spawns ``robots/robodojo/env_server.py`` with its simulator interpreter; inside this\ncontext the same command runs that script through ``python -m\npyrualean.hosts.robodojo_env_server``, which first attaches what RoboDojo's own evaluation\nclient does for the benchmark's third arm (an opponent, a demonstrator) and then runs the\nscript unchanged.  Every argument and environment variable RPent gives the server is kept;\nthis library's ``src`` is put on its ``PYTHONPATH``.",
+        "body": "from robots.robodojo import robot_spec\noriginal = robot_spec.ProcessDaemon\nscript = os.path.join(\"robots\", \"robodojo\", \"env_server.py\")\nsrc = str(Path(__file__).resolve().parents[2])\nrobot_spec.ProcessDaemon = daemon\ntry:\n        yield\n    finally:"
+      },
+      {
+        "name": "boot_options",
+        "kind": "function",
+        "range": [
+          263,
+          275
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return {\n        \"vla_endpoint\": getattr(args, \"vla_endpoint\", None),\n        \"sam3_endpoint\": getattr(args, \"sam3_endpoint\", None),"
+      },
+      {
+        "name": "_status",
+        "kind": "function",
+        "range": [
+          278,
+          285
+        ],
+        "owner": null,
+        "doc": "The env server's episode status (``step``, ``step_limit``); ``{}`` if unreadable.",
+        "body": "try:\n        status = toolkit._primitives.env.get_status()\n    except Exception:  # noqa: BLE001 - optional metadata\nreturn status if isinstance(status, dict) else {}"
+      },
+      {
+        "name": "make_backend",
+        "kind": "function",
+        "range": [
+          305,
+          308
+        ],
+        "owner": null,
+        "doc": "The backend ``pyrualean.play`` wraps a booted RoboDojo toolkit in.",
+        "body": "return RobodojoBackend(toolkit)"
+      },
+      {
+        "name": "boot",
+        "kind": "function",
+        "range": [
+          316,
+          415
+        ],
+        "owner": null,
+        "doc": "Start RPent's servers and return ``(toolkit, daemons)``.\n\n``env_only`` boots just the simulator (enough to dump a task card); the\nVLA and SAM3 clients are then ``None`` and ``pi0_pick`` / ``segment``\nanswer with an error.  ``vla_endpoint`` / ``sam3_endpoint`` /\n``env_endpoint`` attach to already running servers instead of spawning\nprivate ones (RPent's own flags).  ``sim_python`` / ``pi05_python`` name\nthe interpreters of the simulator and the policy server when they are not\nthis one; ``source_root`` overrides the RoboDojo tree the runtime wheel\nships.  The toolkit is RPent's development-mode toolkit (every robot tool,\nno scoring or safety diagnostics), not the eval-fair replay toolkit.\n``connect_reset`` (default: off; on with ``ROBODOJO_CONNECT_RESET=1``, as\nRPent's development mode) is the client's second reset of an already\nreset episode, which tasks with an articulated object do not survive: see\n:func:`_connect_without_reset`.",
+        "body": "if policy_backend not in POLICY_BACKENDS:\n        raise ValueError(f\"policy_backend must be one of {POLICY_BACKENDS}\")\nif action_type not in ACTION_TYPES:\n        raise ValueError(f\"action_type must be one of {ACTION_TYPES}\")\nresolve_rpent_root(rpent_root)\nfrom robots.robodojo.robot_spec import get_robot_spec\nfrom rpent.dashboard.events import NullDashboardEventSink\nfrom rpent.memory import MemoryManager\nfrom rpent.utils.logging import init_output_dir\nout_dir.mkdir(parents=True, exist_ok=True)\ninit_output_dir(out_dir, verbose=False)\nmemory_dir = out_dir / \"_memory\"\nmemory_dir.mkdir(exist_ok=True)\n(memory_dir / \"MEMORY.md\").touch()\nevents = NullDashboardEventSink()\nargs = Namespace(\n        task=cell.task,\n        layout=cell.seed,\nspec = get_robot_spec()\ncomponents = {\"env\"} if env_only else None\nif connect_reset is None:\n        connect_reset = _connect_reset_default()\nwith (\n        contextlib.nullcontext() if connect_reset else _connect_without_reset(),\n        _env_server_through_pyrualean() if _support_arm_default() else contextlib.nullcontext(),\nfrom robots.robodojo.toolkit import RoboDojoToolkit\ntry:\n        # What RPent's ``get_toolkit`` does, minus the RunConfig it only reads\n        # ``memory_dir`` and the mode from.\nreturn toolkit, daemons"
+      },
+      {
+        "name": "_fmt",
+        "kind": "function",
+        "range": [
+          418,
+          419
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return \"[\" + \", \".join(f\"{v:.3f}\" for v in values) + \"]\""
+      },
+      {
+        "name": "_opening",
+        "kind": "function",
+        "range": [
+          422,
+          434
+        ],
+        "owner": null,
+        "doc": "A gripper opening recorded as ``[0.97]`` (or a one-value numpy array).",
+        "body": "for _ in range(4):\n        if value is None or isinstance(value, (int, float)):\n            break\ntry:\n        return float(value)\n    except (TypeError, ValueError):"
+      },
+      {
+        "name": "dump_card",
+        "kind": "function",
+        "range": [
+          437,
+          490
+        ],
+        "owner": null,
+        "doc": "Write ``card.json`` plus the step-0 images and return the card.\n\nThe facts are what RPent's agent also sees in its first\n``view_env_state``, in the terms ``move_to`` takes: both arms' initial\ngrasp points, gripper angles and openings.  The native-action budget is\nthe simulator's ``step_lim`` (RPent's agent meets it as ``step_limit`` in\nits tool results).  Nothing\nprivileged: no object poses, no score.",
+        "body": "view = toolkit.execute_tool(\"view_env_state\", {\"step\": 0}).result\nsummary = view.get(\"state\") or {}\nraw = summary.get(\"state\") or {}\ncard_dir = out_dir / \"card\"\ncard_dir.mkdir(exist_ok=True)\nimages: dict[str, str] = {}\nfor camera, name in CARD_IMAGES.items():\n        try:\n            source = toolkit.state.artifact_path(name, step=0)\nfacts: dict[str, Any] = {}\nfor arm in (\"left\", \"right\"):\n        start = _arm_state(raw, arm)\n        facts[f\"{arm} arm initial grasp point [x, y, z]\"] = f\"{_fmt(start.tcp_pos)} m\"\nlimit = _status(toolkit).get(\"step_limit\")\ntry:\n        budget = int(limit)\n    except (TypeError, ValueError):\nfacts[\"native action budget\"] = f\"{budget} (a motion call spends one or more)\"\ncard = TaskCard(\n        suite=cell.suite,\n        task=cell.task,\n(out_dir / \"card.json\").write_text(card.to_json() + \"\\n\", encoding=\"utf-8\")\nreturn card"
+      },
+      {
+        "name": "_sha256_text",
+        "kind": "function",
+        "range": [
+          493,
+          494
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return hashlib.sha256(text.encode(\"utf-8\")).hexdigest()"
+      },
+      {
+        "name": "run_episode",
+        "kind": "function",
+        "range": [
+          497,
+          620
+        ],
+        "owner": null,
+        "doc": "Run one policy file for one cell and write ``result.json``.",
+        "body": "out_dir.mkdir(parents=True, exist_ok=True)\nstarted = time.perf_counter()\ncreated_at = time.strftime(\"%Y-%m-%dT%H:%M:%S%z\")\noptions = dict(boot_options or {})\nresult: dict[str, Any] = {\n        \"schema\": RESULT_SCHEMA,\n        \"system\": \"pyrualean\",\nshutil.copyfile(policy_path, out_dir / \"policy.py\")\ntoolkit = None\ndaemons: list[Any] = []\nledger = Ledger()\ntry:\n        toolkit, daemons = boot(cell, out_dir, rpent_root=rpent_root, **options)\n        result[\"host\"][\"rpent_root\"] = str(resolve_rpent_root(rpent_root))\nreturn result"
+      },
+      {
+        "name": "_install_sigterm",
+        "kind": "function",
+        "range": [
+          623,
+          628
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "with contextlib.suppress(ValueError):  # not in the main thread\n        signal.signal(signal.SIGTERM, handler)"
+      },
+      {
+        "name": "card_only",
+        "kind": "function",
+        "range": [
+          631,
+          646
+        ],
+        "owner": null,
+        "doc": "Boot only the simulator, dump the task card and shut down.",
+        "body": "skip = (\"vla_endpoint\", \"sam3_endpoint\")\noptions = {k: v for k, v in (boot_options or {}).items() if k not in skip}\ntoolkit, daemons = boot(cell, out_dir, rpent_root=rpent_root, env_only=True, **options)\ntry:\n        return dump_card(toolkit, cell, out_dir)\n    finally:"
+      },
+      {
+        "name": "_add_cell_args",
+        "kind": "function",
+        "range": [
+          649,
+          655
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "add_cell_args(parser)\nadd_boot_args(parser)\nparser.add_argument(\"--out\", type=Path, required=True)\nparser.add_argument(\"--cuda-device\", type=int, default=None)\nparser.add_argument(\"--max-episode-steps\", type=int, default=DEFAULT_MAX_EPISODE_STEPS)\nparser.add_argument(\"--rpent-root\", default=None)"
+      },
+      {
+        "name": "main",
+        "kind": "function",
+        "range": [
+          658,
+          703
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "parser = argparse.ArgumentParser(\n        prog=\"python -m pyrualean.hosts.rpent_robodojo\", description=__doc__\n    )\nsub = parser.add_subparsers(dest=\"command\", required=True)\nrun = sub.add_parser(\"run\", help=\"run one policy file for one cell\")\nrun.add_argument(\"--policy\", type=Path, required=True)\nrun.add_argument(\"--timeout-s\", type=float, default=1200.0)\n_add_cell_args(run)\ncard = sub.add_parser(\"card\", help=\"dump the task card for one cell\")\n_add_cell_args(card)\nargs = parser.parse_args(argv)\nif args.command == \"run\":\n        result = run_episode(\n            args.policy.resolve(),\ncard_obj = card_only(\n        cell_from_args(args),\n        args.out.resolve(),\nprint(card_obj.to_json())\nreturn 0"
+      },
+      {
+        "name": "Cell",
+        "kind": "class",
+        "range": [
+          91,
+          108
+        ],
+        "owner": null,
+        "doc": "One RoboDojo evaluation cell: a task name, an env config and a layout id.\n\n``seed`` is RoboDojo's layout id (``rpent --layout``, which is also the\nenvironment seed).  ``max_episode_steps`` is nominal for an agent run: the\nbudget the simulator enforces is the task's own ``step_lim``, which\n``dump_card`` reads from the live environment.",
+        "body": "suite: str\ntask: str\nseed: int\nmax_episode_steps: int = DEFAULT_MAX_EPISODE_STEPS\ncuda_device: int | None = None"
+      },
+      {
+        "name": "Cell.tag",
+        "kind": "function",
+        "range": [
+          107,
+          108
+        ],
+        "owner": "Cell",
+        "doc": "",
+        "body": "return f\"{self.task}_l{self.seed}\""
+      },
+      {
+        "name": "RobodojoBackend",
+        "kind": "class",
+        "range": [
+          288,
+          302
+        ],
+        "owner": null,
+        "doc": "RPent's RoboDojo toolkit as a :class:`pyrualean.Backend`.\n\n``solved()`` is the toolkit's own (``env.is_success``, the call RPent's\nrunner makes once its planner is done); the host reads it after the\nepisode, the robot class never does.  ``env_steps`` is the simulator's\nnative-action counter: RoboDojo's toolkit records no frame count.",
+        "body": ""
+      },
+      {
+        "name": "RobodojoBackend.env_steps",
+        "kind": "function",
+        "range": [
+          297,
+          302
+        ],
+        "owner": "RobodojoBackend",
+        "doc": "",
+        "body": "step = _status(self._toolkit).get(\"step\")\ntry:\n            return int(step)\n        except (TypeError, ValueError):"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import argparse",
+      "import contextlib",
+      "import hashlib",
+      "import json",
+      "import os",
+      "import shutil",
+      "import signal",
+      "import sys",
+      "import time",
+      "from argparse import Namespace",
+      "from dataclasses import dataclass",
+      "from pathlib import Path",
+      "from typing import Any",
+      "from .._backend import Ledger",
+      "from ..prompt import TaskCard, render_prompt",
+      "from ..robodojo import RobodojoRobot, _arm_state",
+      "from ..runner import PolicyLoadError, load_policy, policy_sha256, run_policy",
+      "from ..sandbox import DESCRIPTION as SANDBOX_DESCRIPTION",
+      "from ..sandbox import audit_source, make_builtins",
+      "from . import robodojo_tools as tools",
+      "from .common import RESULT_SCHEMA, RpentBackend, resolve_rpent_root, stop_all",
+      "from robots.robodojo import env_client",
+      "from rpent.robots.components.env_client_base import BaseEnvClient",
+      "from robots.robodojo import robot_spec",
+      "from robots.robodojo.robot_spec import get_robot_spec",
+      "from rpent.dashboard.events import NullDashboardEventSink",
+      "from rpent.memory import MemoryManager",
+      "from rpent.utils.logging import init_output_dir",
+      "from robots.robodojo.toolkit import RoboDojoToolkit"
+    ]
+  },
+  {
+    "path": "src/pyrualean/hosts/rpent_robotwin.py",
+    "category": "code",
+    "moduleDoc": "RPent-backed RoboTwin host.\n\nBoots RPent's own RoboTwin stack (SAPIEN env server, LingBot-VLA server),\nbuilds the same ``RoboTwinToolkit`` its planners use, wraps it as a\n:class:`Backend` and runs one policy file against it.  Because every\nprimitive still goes through ``Toolkit.execute_tool``, the run produces\nRPent's native artifacts (``states.json``, ``episode.mp4``, per-step images\nand world maps) and is judged by the same ``TASK_ENV.eval_success`` predicate\nas an RPent agent run.\n\nRPent's ``RoboTwinToolkit`` leaves ``solved()`` unimplemented and counts\nnative VLA actions rather than frames, so this host provides\n:class:`RobotwinBackend` through ``make_backend(toolkit)``; ``pyrualean.play``\nand :func:`run_episode` wrap the plain toolkit in it.\n\nThis module needs RPent and its ``robotwin`` extra importable; run it with\nthat interpreter and the RoboTwin environment variables set (``docs/setup.md``).\nOne episode per process: ``python -m pyrualean.hosts.rpent_robotwin run ...``.",
+    "symbols": [
+      {
+        "name": "add_cell_args",
+        "kind": "function",
+        "range": [
+          75,
+          90
+        ],
+        "owner": null,
+        "doc": "RoboTwin cell identifiers (``pyrualean play --robot robotwin`` and the host CLI).",
+        "body": "parser.add_argument(\"--task\", required=True, help=\"RoboTwin task name, e.g. beat_block_hammer\")\nparser.add_argument(\n        \"--suite\",\n        default=\"demo_randomized\",\nparser.add_argument(\n        \"--seed\",\n        type=int,"
+      },
+      {
+        "name": "add_boot_args",
+        "kind": "function",
+        "range": [
+          93,
+          116
+        ],
+        "owner": null,
+        "doc": "Options of :func:`boot` that are RoboTwin-specific (env-var defaults as in RPent).",
+        "body": "parser.add_argument(\n        \"--vla-endpoint\", default=None, help=\"[ws://]host:port of a shared LingBot-VLA server\"\n    )\nparser.add_argument(\n        \"--env-endpoint\", default=None, help=\"http://host:port of an already running env server\"\n    )\nparser.add_argument(\n        \"--vla-model-path\",\n        default=os.environ.get(\"LINGBOT_MODEL_PATH\"),\nparser.add_argument(\n        \"--robotwin-assets-path\",\n        default=os.environ.get(\"ROBOTWIN_ASSETS_PATH\"),\nparser.add_argument(\n        \"--lingbot-robot-config\",\n        default=os.environ.get(\"LINGBOT_ROBOT_CONFIG\"),"
+      },
+      {
+        "name": "cell_from_args",
+        "kind": "function",
+        "range": [
+          119,
+          126
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return Cell(\n        suite=str(getattr(args, \"suite\", None) or \"demo_randomized\"),\n        task=str(args.task),"
+      },
+      {
+        "name": "boot_options",
+        "kind": "function",
+        "range": [
+          129,
+          136
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return {\n        \"vla_endpoint\": getattr(args, \"vla_endpoint\", None),\n        \"env_endpoint\": getattr(args, \"env_endpoint\", None),"
+      },
+      {
+        "name": "_eval_success",
+        "kind": "function",
+        "range": [
+          139,
+          145
+        ],
+        "owner": null,
+        "doc": "RoboTwin's native success flag, read from the toolkit without an RPC.",
+        "body": "try:\n        return bool(toolkit._primitives.status().get(\"eval_success\"))\n    except Exception:  # noqa: BLE001 - fall back to the last recorded status"
+      },
+      {
+        "name": "make_backend",
+        "kind": "function",
+        "range": [
+          165,
+          168
+        ],
+        "owner": null,
+        "doc": "The backend ``pyrualean.play`` wraps a booted RoboTwin toolkit in.",
+        "body": "return RobotwinBackend(toolkit)"
+      },
+      {
+        "name": "boot",
+        "kind": "function",
+        "range": [
+          171,
+          244
+        ],
+        "owner": null,
+        "doc": "Start RPent's servers and return ``(toolkit, daemons)``.\n\n``env_only`` boots just the simulator (enough to dump a task card); the\nVLA client is then ``None`` and ``lingbot_act`` unusable.\n``vla_endpoint`` (``[ws://]host:port``) attaches to a shared, already\nrunning LingBot server instead of spawning a private one (RPent's own\n``--vla-endpoint``); ``env_endpoint`` likewise for the simulator, which is\notherwise private to the episode.  ``vla_model_path`` /\n``robotwin_assets_path`` default to ``LINGBOT_MODEL_PATH`` /\n``ROBOTWIN_ASSETS_PATH``.",
+        "body": "resolve_rpent_root(rpent_root)\nfrom robots.robotwin.robot_spec import get_robot_spec\nfrom rpent.dashboard.events import NullDashboardEventSink\nfrom rpent.memory import MemoryManager\nfrom rpent.utils.logging import init_output_dir\nout_dir.mkdir(parents=True, exist_ok=True)\ninit_output_dir(out_dir, verbose=False)\nmemory_dir = out_dir / \"_memory\"\nmemory_dir.mkdir(exist_ok=True)\n(memory_dir / \"MEMORY.md\").touch()\nevents = NullDashboardEventSink()\nargs = Namespace(\n        task_name=cell.task,\n        task_config=cell.suite,\nspec = get_robot_spec()\ncomponents = {\"env\"} if env_only else None\ndaemons, runtime_kwargs = spec.init_runtime(args, out_dir, events, components)\nif env_only:\n        runtime_kwargs.setdefault(\"model\", None)\nfrom robots.robotwin.toolkit import RoboTwinToolkit\ntry:\n        # What RPent's ``get_toolkit`` does, minus the RunConfig it only reads\n        # ``memory_dir`` from.\nreturn toolkit, daemons"
+      },
+      {
+        "name": "_floats",
+        "kind": "function",
+        "range": [
+          247,
+          252
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "try:\n        out = [float(v) for v in value]\n    except (TypeError, ValueError):\nreturn out if len(out) == n else [0.0] * n"
+      },
+      {
+        "name": "_fmt",
+        "kind": "function",
+        "range": [
+          255,
+          256
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return \"[\" + \", \".join(f\"{v:.3f}\" for v in values) + \"]\""
+      },
+      {
+        "name": "_table_height",
+        "kind": "function",
+        "range": [
+          259,
+          269
+        ],
+        "owner": null,
+        "doc": "Median z of the head world map at step 0 (the table fills most of the view).",
+        "body": "try:\n        import numpy as np\nreturn value if value == value else None  # NaN check"
+      },
+      {
+        "name": "dump_card",
+        "kind": "function",
+        "range": [
+          272,
+          323
+        ],
+        "owner": null,
+        "doc": "Write ``card.json`` plus the step-0 images and return the card.\n\nThe facts are what RPent's agent also sees in its first\n``view_env_state``: both arms' initial EEF / TCP poses and gripper values,\nthe native-action budget and the table height measured from the head\nworld map.  Nothing privileged (no object poses).",
+        "body": "view = toolkit.execute_tool(\"view_env_state\", {\"step\": 0}).result\nraw = view.get(\"state\") or {}\nrobot = raw.get(\"robot_state\") or {}\nstatus = raw.get(\"episode_status\") or {}\ncard_dir = out_dir / \"card\"\ncard_dir.mkdir(exist_ok=True)\nimages: dict[str, str] = {}\nfor camera, name in CARD_IMAGES.items():\n        try:\n            source = toolkit.state.artifact_path(name, step=0)\nfacts: dict[str, Any] = {}\nfor arm in (\"left\", \"right\"):\n        eef = _floats(robot.get(f\"{arm}_eef_pose\"), 7)\n        tcp = _floats(robot.get(f\"{arm}_tcp_pose\"), 7)\ntable = _table_height(toolkit)\nif table is not None:\n        facts[\"table surface height (median z of the head world map at step 0)\"] = f\"{table:.3f} m\"\nif status.get(\"step_lim\") is not None:\n        facts[\"native action budget (step_lim)\"] = int(status[\"step_lim\"])\ncard = TaskCard(\n        suite=cell.suite,\n        task=cell.task,\n(out_dir / \"card.json\").write_text(card.to_json() + \"\\n\", encoding=\"utf-8\")\nreturn card"
+      },
+      {
+        "name": "_sha256_text",
+        "kind": "function",
+        "range": [
+          326,
+          327
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return hashlib.sha256(text.encode(\"utf-8\")).hexdigest()"
+      },
+      {
+        "name": "run_episode",
+        "kind": "function",
+        "range": [
+          330,
+          450
+        ],
+        "owner": null,
+        "doc": "Run one policy file for one cell and write ``result.json``.",
+        "body": "out_dir.mkdir(parents=True, exist_ok=True)\nstarted = time.perf_counter()\ncreated_at = time.strftime(\"%Y-%m-%dT%H:%M:%S%z\")\noptions = dict(boot_options or {})\nresult: dict[str, Any] = {\n        \"schema\": RESULT_SCHEMA,\n        \"system\": \"pyrualean\",\nshutil.copyfile(policy_path, out_dir / \"policy.py\")\ntoolkit = None\ndaemons: list[Any] = []\nledger = Ledger()\ntry:\n        toolkit, daemons = boot(cell, out_dir, rpent_root=rpent_root, **options)\n        result[\"host\"][\"rpent_root\"] = str(resolve_rpent_root(rpent_root))\nreturn result"
+      },
+      {
+        "name": "_install_sigterm",
+        "kind": "function",
+        "range": [
+          453,
+          458
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "with contextlib.suppress(ValueError):  # not in the main thread\n        signal.signal(signal.SIGTERM, handler)"
+      },
+      {
+        "name": "card_only",
+        "kind": "function",
+        "range": [
+          461,
+          475
+        ],
+        "owner": null,
+        "doc": "Boot only the simulator, dump the task card and shut down.",
+        "body": "options = {k: v for k, v in (boot_options or {}).items() if k != \"vla_endpoint\"}\ntoolkit, daemons = boot(cell, out_dir, rpent_root=rpent_root, env_only=True, **options)\ntry:\n        return dump_card(toolkit, cell, out_dir)\n    finally:"
+      },
+      {
+        "name": "_add_cell_args",
+        "kind": "function",
+        "range": [
+          478,
+          484
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "add_cell_args(parser)\nadd_boot_args(parser)\nparser.add_argument(\"--out\", type=Path, required=True)\nparser.add_argument(\"--cuda-device\", type=int, default=None)\nparser.add_argument(\"--max-episode-steps\", type=int, default=10000)\nparser.add_argument(\"--rpent-root\", default=None)"
+      },
+      {
+        "name": "main",
+        "kind": "function",
+        "range": [
+          487,
+          532
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "parser = argparse.ArgumentParser(\n        prog=\"python -m pyrualean.hosts.rpent_robotwin\", description=__doc__\n    )\nsub = parser.add_subparsers(dest=\"command\", required=True)\nrun = sub.add_parser(\"run\", help=\"run one policy file for one cell\")\nrun.add_argument(\"--policy\", type=Path, required=True)\nrun.add_argument(\"--timeout-s\", type=float, default=1200.0)\n_add_cell_args(run)\ncard = sub.add_parser(\"card\", help=\"dump the task card for one cell\")\n_add_cell_args(card)\nargs = parser.parse_args(argv)\nif args.command == \"run\":\n        result = run_episode(\n            args.policy.resolve(),\ncard_obj = card_only(\n        cell_from_args(args),\n        args.out.resolve(),\nprint(card_obj.to_json())\nreturn 0"
+      },
+      {
+        "name": "Cell",
+        "kind": "class",
+        "range": [
+          61,
+          72
+        ],
+        "owner": null,
+        "doc": "One RoboTwin evaluation cell: a task name, a task config and an exact scene seed.",
+        "body": "suite: str\ntask: str\nseed: int\nmax_episode_steps: int = 10000\ncuda_device: int | None = None"
+      },
+      {
+        "name": "Cell.tag",
+        "kind": "function",
+        "range": [
+          71,
+          72
+        ],
+        "owner": "Cell",
+        "doc": "",
+        "body": "return f\"{self.task}_{self.suite.replace('demo_', '')}_s{self.seed}\""
+      },
+      {
+        "name": "RobotwinBackend",
+        "kind": "class",
+        "range": [
+          148,
+          162
+        ],
+        "owner": null,
+        "doc": "RPent's RoboTwin toolkit as a :class:`pyrualean.Backend`.\n\n``RoboTwinToolkit`` implements neither ``solved()`` nor a public\n``primitives`` attribute, which the generic adapter relies on.",
+        "body": ""
+      },
+      {
+        "name": "RobotwinBackend.solved",
+        "kind": "function",
+        "range": [
+          155,
+          156
+        ],
+        "owner": "RobotwinBackend",
+        "doc": "",
+        "body": "return _eval_success(self._toolkit)"
+      },
+      {
+        "name": "RobotwinBackend.env_steps",
+        "kind": "function",
+        "range": [
+          158,
+          162
+        ],
+        "owner": "RobotwinBackend",
+        "doc": "",
+        "body": "try:\n            return int(self._toolkit._primitives.native_actions)\n        except Exception:  # noqa: BLE001 - optional metadata"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import argparse",
+      "import contextlib",
+      "import hashlib",
+      "import json",
+      "import os",
+      "import shutil",
+      "import signal",
+      "import sys",
+      "import time",
+      "from argparse import Namespace",
+      "from dataclasses import dataclass",
+      "from pathlib import Path",
+      "from typing import Any",
+      "from .._backend import Ledger",
+      "from ..prompt import TaskCard, render_prompt",
+      "from ..robotwin import RobotwinRobot",
+      "from ..runner import PolicyLoadError, load_policy, policy_sha256, run_policy",
+      "from ..sandbox import DESCRIPTION as SANDBOX_DESCRIPTION",
+      "from ..sandbox import audit_source, make_builtins",
+      "from .common import RESULT_SCHEMA, RpentBackend, resolve_rpent_root, stop_all",
+      "from robots.robotwin.robot_spec import get_robot_spec",
+      "from rpent.dashboard.events import NullDashboardEventSink",
+      "from rpent.memory import MemoryManager",
+      "from rpent.utils.logging import init_output_dir",
+      "from robots.robotwin.toolkit import RoboTwinToolkit",
+      "import numpy as np"
+    ]
+  },
+  {
+    "path": "src/pyrualean/prompt.py",
+    "category": "code",
+    "moduleDoc": "Model-facing prompt built from the live library.\n\nThe API reference is generated from :class:`pyrualean.libero.LiberoRobot`'s\nsignatures and docstrings (``inspect``), so the model always sees exactly the\nfunctions the host will inject.  The operating knowledge is a hand-written\nmarkdown file that carries the same manipulation lessons RPent gives its\ntool-calling agent, rewritten for someone who writes a program instead of\nissuing one call per turn.",
+    "symbols": [
+      {
+        "name": "_annotation",
+        "kind": "function",
+        "range": [
+          36,
+          43
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "if value is inspect.Parameter.empty:\n        return \"\"\nif isinstance(value, str):\n        return value\nif isinstance(value, type):\n        return value.__name__\nreturn str(value).replace(\"typing.\", \"\")"
+      },
+      {
+        "name": "_format_parameters",
+        "kind": "function",
+        "range": [
+          46,
+          62
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "parts: list[str] = []\nseen_kw_only = False\nfor name, param in sig.parameters.items():\n        if name == \"self\":\n            continue\nreturn parts"
+      },
+      {
+        "name": "_render_callable",
+        "kind": "function",
+        "range": [
+          65,
+          75
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "sig = inspect.signature(fn)\nparams = _format_parameters(sig)\nret = _annotation(sig.return_annotation)\nsuffix = f\" -> {ret}\" if ret else \"\"\nhead = f\"{owner}.{name}({', '.join(params)}){suffix}\"\nif len(head) > _LINE:\n        joined = \",\\n    \".join(params)\n        head = f\"{owner}.{name}(\\n    {joined},\\n){suffix}\"\ndoc = inspect.getdoc(fn) or \"\"\nreturn head + \"\\n\" + textwrap.indent(doc, \"    \") if doc else head"
+      },
+      {
+        "name": "_render_property",
+        "kind": "function",
+        "range": [
+          78,
+          85
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "fn = prop.fget\nret = \"\"\nif fn is not None:\n        ret = _annotation(inspect.signature(fn).return_annotation)\nhead = f\"{owner}.{name}\" + (f\" -> {ret}\" if ret else \"\") + \"  (read-only attribute)\"\ndoc = inspect.getdoc(fn) if fn is not None else \"\"\nreturn head + (\"\\n\" + textwrap.indent(doc, \"    \") if doc else \"\")"
+      },
+      {
+        "name": "_render_result_type",
+        "kind": "function",
+        "range": [
+          88,
+          103
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "parts = []\nfor item in fields(cls):\n        parts.append(f\"{item.name}: {_annotation(item.type)}\")\nhead = f\"class {cls.__name__}({', '.join(parts)})\"\nif len(head) > _LINE:\n        head = f\"class {cls.__name__}(\\n    \" + \",\\n    \".join(parts) + \",\\n)\"\nextra = []\nfor name, member in vars(cls).items():\n        if isinstance(member, property) and not name.startswith(\"_\"):\n            ret = _annotation(inspect.signature(member.fget).return_annotation)\ndoc = inspect.getdoc(cls) or \"\"\nbody = textwrap.indent(doc, \"    \") if doc else \"\"\nreturn \"\\n\".join(part for part in [head, body, *extra] if part)"
+      },
+      {
+        "name": "_public_members",
+        "kind": "function",
+        "range": [
+          106,
+          125
+        ],
+        "owner": null,
+        "doc": "Public methods and properties in definition order, base classes first.\n\nAn override keeps the position of the member it overrides, so a robot\nthat re-documents ``image`` for its own cameras does not reorder the\nreference.  ``RobotBase``'s configuration attributes never show, and\nneither do the members the robot declares absent (``ABSENT_MEMBERS``).",
+        "body": "absent = frozenset(getattr(robot_cls, \"ABSENT_MEMBERS\", ()))\nmembers: dict[str, Any] = {}\nfor klass in reversed(robot_cls.__mro__):\n        if klass is object:\n            continue\nreturn members"
+      },
+      {
+        "name": "_return_type_name",
+        "kind": "function",
+        "range": [
+          128,
+          135
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "fn = member.fget if isinstance(member, property) else member\nif fn is None:\n        return None\nannotation = inspect.signature(fn).return_annotation\nif annotation is inspect.Signature.empty:\n        return None\nreturn annotation if isinstance(annotation, str) else getattr(annotation, \"__name__\", None)"
+      },
+      {
+        "name": "vla_hidden",
+        "kind": "function",
+        "range": [
+          138,
+          153
+        ],
+        "owner": null,
+        "doc": "What the ``no-vla`` primitive set hides: ``(member names, result type names)``.\n\nThe members are ``robot_cls.VLA_PRIMITIVES`` (methods, or constants of\nthat name); the result types are those returned by a hidden method and\nby no remaining public member. ``full`` is intersected with host capabilities.",
+        "body": "primitives = effective_primitives(robot_cls, primitives)\nif primitives == \"full\":\n        return frozenset(), frozenset()\nnames = frozenset(getattr(robot_cls, \"VLA_PRIMITIVES\", ()))\nmembers = _public_members(robot_cls)\nreturned_by_vla = {_return_type_name(members[n]) for n in names if n in members}\nreturned_by_rest = {_return_type_name(m) for n, m in members.items() if n not in names}\nreturn names, frozenset(t for t in returned_by_vla - returned_by_rest if t)"
+      },
+      {
+        "name": "_apply_edits",
+        "kind": "function",
+        "range": [
+          156,
+          162
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "for old, new in edits:\n        found = text.count(old)\n        if found != 1:\nreturn text"
+      },
+      {
+        "name": "api_reference",
+        "kind": "function",
+        "range": [
+          165,
+          257
+        ],
+        "owner": null,
+        "doc": "Render the policy-facing API of ``robot_cls`` from its live definition.\n\n``primitives=\"no-vla\"`` leaves out the robot's ``VLA_PRIMITIVES``, the\nresult types only they return, and (through ``VLA_REFERENCE_EDITS``) the\nsentences of the other docstrings that describe the VLA.",
+        "body": "primitives = effective_primitives(robot_cls, primitives)\nvla_members, vla_types = vla_hidden(robot_cls, primitives)\nsections: list[str] = []\nclass_doc = inspect.getdoc(robot_cls) or \"\"\nsections.append(f\"class {robot_cls.__name__}\\n{textwrap.indent(class_doc, '    ')}\")\nhidden = set(vars(RobotBase)) | {\"RESULT_TYPES\"} | set(vla_members)\nlineage = [cls for cls in reversed(robot_cls.__mro__) if not issubclass(RobotBase, cls)]\ndefined: dict[str, Any] = {}\nfor cls in lineage:\n        hidden |= {\n            name\nconstants = [\n        f\"{var}.{name} = {value!r}\"\n        for name, value in defined.items()\nif constants:\n        sections.append(\"Constants:\\n\" + \"\\n\".join(f\"    {c}\" for c in constants))\nmembers: list[str] = []\nfor name, member in _public_members(robot_cls).items():\n        if name in vla_members:\n            continue\nsections.append(\"Methods and attributes of `robo`:\\n\\n\" + \"\\n\\n\".join(members))\nresult_types = tuple(getattr(robot_cls, \"RESULT_TYPES\", ()) or RESULT_TYPES)\nresults = [\n        _render_result_type(cls)\n        for cls in result_types\nsections.append(\n        \"Result types (frozen dataclasses; access fields as attributes):\\n\\n\" + \"\\n\\n\".join(results)\n    )\nif getattr(robot_cls, \"COORDINATION_API\", False):\n        from .coordination import RESULT_TYPES as MOTION_TYPES\n        from .coordination import Pose\nabsent = frozenset(getattr(robot_cls, \"ABSENT_MEMBERS\""
+      },
+      {
+        "name": "knowledge_stem",
+        "kind": "function",
+        "range": [
+          260,
+          265
+        ],
+        "owner": null,
+        "doc": "Knowledge file stem: ``<name>`` for the full primitive set, ``<name>-novla`` otherwise.",
+        "body": "if primitives not in PRIMITIVE_SETS:\n        raise ValueError(f\"primitives must be one of {PRIMITIVE_SETS}, got {primitives!r}\")\nreturn name if primitives == \"full\" else f\"{name}-novla\""
+      },
+      {
+        "name": "knowledge_text",
+        "kind": "function",
+        "range": [
+          268,
+          276
+        ],
+        "owner": null,
+        "doc": "Return the packaged operating-knowledge markdown for a backend.\n\n``primitives=\"no-vla\"`` reads ``knowledge/<name>-novla.md``: the same\ndocument with the sections and sentences about the VLA removed.",
+        "body": "stem = knowledge_stem(name, primitives)\nreturn resources.files(\"pyrualean\").joinpath(f\"knowledge/{stem}.md\").read_text(encoding=\"utf-8\")"
+      },
+      {
+        "name": "render_prompt",
+        "kind": "function",
+        "range": [
+          474,
+          526
+        ],
+        "owner": null,
+        "doc": "Assemble the generation prompt for one cell (or a cell-less preview).\n\nThe robot comes from ``card.robot`` (``libero`` when there is no card):\nits class supplies the API reference, its knowledge file the operating\nknowledge and its adapter the wording of the contract.  ``primitives``\nis the primitive set (:data:`pyrualean._robot.PRIMITIVE_SETS`).",
+        "body": "from .robots import get_adapter\nadapter = get_adapter(card.robot if card is not None else \"libero\")\nprimitives = effective_primitives(robot_cls or adapter.robot_cls, primitives)\nmax_env_steps = card.max_env_steps if card is not None else 10000\nservices = adapter.services if primitives == \"full\" else adapter.services_novla\nscoring_head, scoring_limits, scoring_tail = SCORING_NOTES[bool(adapter.live_success)]\ncontract = CONTRACT.format(\n        budget_s=budget_s,\n        max_env_steps=max_env_steps,\nreference = api_reference(robot_cls or adapter.robot_cls, primitives=primitives)\nknow = (\n        knowledge\n        if knowledge is not None\nsystem = \"\\n\\n\".join(\n        [\n            contract.rstrip(),\nif card is None:\n        user = \"# Task card\\n(no cell selected; render with a TaskCard for a real run)\"\n        images: tuple[str, ...] = ()\nreturn PromptBundle(system=system, user=user, images=images)"
+      },
+      {
+        "name": "TaskCard",
+        "kind": "class",
+        "range": [
+          280,
+          393
+        ],
+        "owner": null,
+        "doc": "What the policy author is told about one evaluation cell.\n\nEverything here is available to RPent's agent too (through its first\n``view_env_state`` call); nothing privileged such as object poses is\nincluded.",
+        "body": "suite: str\ntask: int | str\nseed: int\ntask_language: str\nobject_names: list[str]\neef_pos: list[float] | None = None\neef_quat: list[float] | None = None\ngripper_opening: float | None = None\nimages: dict[str, str] = field(default_factory=dict)\nmax_env_steps: int = 10000\ntransfer: bool = False\nrobot: str = \"libero\"\nfacts: dict[str, Any] = field(default_factory=dict)"
+      },
+      {
+        "name": "TaskCard.to_json",
+        "kind": "function",
+        "range": [
+          310,
+          311
+        ],
+        "owner": "TaskCard",
+        "doc": "",
+        "body": "return json.dumps(self.__dict__, indent=2, ensure_ascii=False)"
+      },
+      {
+        "name": "TaskCard.from_json",
+        "kind": "function",
+        "range": [
+          314,
+          317
+        ],
+        "owner": "TaskCard",
+        "doc": "",
+        "body": "data = json.loads(Path(path).read_text(encoding=\"utf-8\"))\nknown = {f.name for f in fields(cls)}\nreturn cls(**{k: v for k, v in data.items() if k in known})"
+      },
+      {
+        "name": "TaskCard.render",
+        "kind": "function",
+        "range": [
+          319,
+          357
+        ],
+        "owner": "TaskCard",
+        "doc": "",
+        "body": "if self.robot != \"libero\" or self.eef_pos is None or self.gripper_opening is None:\n            return self._render_generic()\neef = \", \".join(f\"{v:.3f}\" for v in self.eef_pos)\nlines = [\n            \"# Task card\",\n            f\"- suite: {self.suite}\",\nif self.images:\n            names = \", \".join(f\"{k} ({Path(v).name})\" for k, v in self.images.items())\n            if self.transfer:\nreturn \"\\n\".join(lines)"
+      },
+      {
+        "name": "TaskCard._render_generic",
+        "kind": "function",
+        "range": [
+          359,
+          393
+        ],
+        "owner": "TaskCard",
+        "doc": "Card of a non-LIBERO robot: identifiers, instruction, facts, images.",
+        "body": "lines = [\n            \"# Task card\",\n            f\"- robot: {self.robot}\",\nif self.suite:\n            lines.append(f\"- variant: {self.suite}\")\nlines += [\n            f\"- seed: {self.seed}\",\n            f\"- task instruction (authoritative): {self.task_language!r}\",\nif self.object_names:\n            lines.append(f\"- objects named by the benchmark: {', '.join(self.object_names)}\")\nfor key, value in self.facts.items():\n            lines.append(f\"- {key}: {value}\")\nlines.append(f\"- simulator step budget: {self.max_env_steps}\")\nif self.images:\n            names = \", \".join(f\"{k} ({Path(v).name})\" for k, v in self.images.items())\n            cameras = \", \".join(f\"`robo.image({k!r})`\" for k in self.images)\nreturn \"\\n\".join(lines)"
+      },
+      {
+        "name": "PromptBundle",
+        "kind": "class",
+        "range": [
+          397,
+          411
+        ],
+        "owner": null,
+        "doc": "System text, task text and image attachments for one generation.",
+        "body": "system: str\nuser: str\nimages: tuple[str, ...] = ()"
+      },
+      {
+        "name": "PromptBundle.messages",
+        "kind": "function",
+        "range": [
+          404,
+          408
+        ],
+        "owner": "PromptBundle",
+        "doc": "",
+        "body": "return [\n            {\"role\": \"system\", \"content\": self.system},\n            {\"role\": \"user\", \"content\": self.user},"
+      },
+      {
+        "name": "PromptBundle.text",
+        "kind": "function",
+        "range": [
+          410,
+          411
+        ],
+        "owner": "PromptBundle",
+        "doc": "",
+        "body": "return self.system + \"\\n\\n\" + self.user"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import inspect",
+      "import json",
+      "import textwrap",
+      "from dataclasses import dataclass, field, fields, is_dataclass",
+      "from importlib import resources",
+      "from pathlib import Path",
+      "from typing import Any",
+      "from ._robot import PRIMITIVE_SETS, RobotBase, effective_primitives",
+      "from .libero import RESULT_TYPES, LiberoRobot",
+      "from .robots import get_adapter",
+      "from .coordination import RESULT_TYPES as MOTION_TYPES",
+      "from .coordination import Pose"
+    ]
+  },
+  {
+    "path": "src/pyrualean/runner.py",
+    "category": "code",
+    "moduleDoc": "Load a generated policy file and execute it against a robot.\n\n``load_policy`` imports a file under a unique module name every time, so two\ngenerated programs that both call themselves ``policy.py`` never collide.\n``run_policy`` calls ``run(robo)`` with a wall-clock watchdog that stops the\nepisode through the library (every further motion call raises\n``EpisodeFinished``) and interrupts the primitive in flight through the\nbackend.  Neither function sandboxes the code: evaluations run one episode\nper subprocess (see :mod:`pyrualean.hosts.rpent_libero`) and the parent\nkills the whole process group when the child ignores the watchdog.",
+    "symbols": [
+      {
+        "name": "policy_sha256",
+        "kind": "function",
+        "range": [
+          50,
+          51
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return hashlib.sha256(Path(path).read_bytes()).hexdigest()"
+      },
+      {
+        "name": "load_policy",
+        "kind": "function",
+        "range": [
+          54,
+          95
+        ],
+        "owner": null,
+        "doc": "Import ``path`` as a fresh module and return its ``entrypoint`` callable.\n\n``builtins`` (see :func:`pyrualean.sandbox.make_builtins`) becomes the\nmodule's ``__builtins__``, so the program's imports and ``open`` calls\ngo through the sandbox guards.",
+        "body": "location = Path(path).expanduser().resolve()\nif not location.is_file() or location.suffix != \".py\":\n        raise PolicyLoadError(f\"policy must be an existing .py file: {location}\")\nmodule_name = f\"pyrualean_policy_{location.stem}_{uuid.uuid4().hex}\"\nspec = importlib.util.spec_from_file_location(module_name, location)\nif spec is None or spec.loader is None:\n        raise PolicyLoadError(f\"cannot create an import spec for {location}\")\nmodule = importlib.util.module_from_spec(spec)\nif builtins is not None:\n        module.__dict__[\"__builtins__\"] = builtins\nif bindings:\n        module.__dict__.update(bindings)\nsys.modules[module_name] = module\nparent = str(location.parent)\nif parent not in sys.path:\n        sys.path.insert(0, parent)\ntry:\n        spec.loader.exec_module(module)\n    except (ExecutionLimit, EpisodeFinished):\npolicy = getattr(module, entrypoint, None)\nif not callable(policy):\n        raise PolicyLoadError(f\"{location} does not define a callable {entrypoint!r}\")\nreturn policy"
+      },
+      {
+        "name": "run_policy",
+        "kind": "function",
+        "range": [
+          114,
+          171
+        ],
+        "owner": null,
+        "doc": "Call ``policy(robo)`` once under a wall-clock watchdog.\n\n``timeout_s`` stops the episode via the library and the backend; the\ncall then ends with status ``\"timeout\"``.  Exceptions raised by the\npolicy are captured (status ``\"error\"``) with their traceback; an\n``EpisodeFinished`` unwinding is a normal end (status ``\"finished\"``).",
+        "body": "timer: threading.Timer | None = None\ntimed_out = threading.Event()\nif timeout_s is not None and timeout_s > 0:\n        timer = threading.Timer(timeout_s, on_timeout)\n        timer.daemon = True\nstarted = time.perf_counter()\ntry:\n        result = policy(robo)\n        if inspect.isawaitable(result):\noutcome.elapsed_s = time.perf_counter() - started\nif timed_out.is_set():\n        outcome.status = \"timeout\"\n        outcome.reason = \"timeout\"\nreturn outcome"
+      },
+      {
+        "name": "run_host",
+        "kind": "function",
+        "range": [
+          174,
+          225
+        ],
+        "owner": null,
+        "doc": "Run a host command in its own process group and enforce a hard timeout.\n\nOn timeout the group receives SIGTERM, then SIGKILL after ``grace_s``.\nSIGTERM/SIGHUP received by the caller while the host runs are forwarded\nto the host's group, so killing the CLI never leaves an orphaned\nsimulator behind.  Returns the exit code (``-signal`` when killed).",
+        "body": "log_handle = None\nif log_path is not None:\n        Path(log_path).parent.mkdir(parents=True, exist_ok=True)\n        log_handle = open(log_path, \"ab\")  # noqa: SIM115 - closed below\nprevious: dict[int, Any] = {}\ntry:\n        proc = subprocess.Popen(\n            list(argv),"
+      },
+      {
+        "name": "_kill_group",
+        "kind": "function",
+        "range": [
+          228,
+          232
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "try:\n        os.killpg(proc.pid, sig)\n    except ProcessLookupError:"
+      },
+      {
+        "name": "PolicyLoadError",
+        "kind": "class",
+        "range": [
+          46,
+          47
+        ],
+        "owner": null,
+        "doc": "The policy file could not be imported or has no ``run`` callable.",
+        "body": ""
+      },
+      {
+        "name": "PolicyOutcome",
+        "kind": "class",
+        "range": [
+          99,
+          111
+        ],
+        "owner": null,
+        "doc": "How one ``run(robo)`` call ended (independent of task success).",
+        "body": "status: str  # completed | paused | finished | error | timeout\nreason: str | None = None\nerror_type: str | None = None\nerror_message: str | None = None\ntraceback: str | None = None\nelapsed_s: float = 0.0\nfailure: dict[str, Any] | None = None"
+      },
+      {
+        "name": "PolicyOutcome.to_dict",
+        "kind": "function",
+        "range": [
+          110,
+          111
+        ],
+        "owner": "PolicyOutcome",
+        "doc": "",
+        "body": "return asdict(self)"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import hashlib",
+      "import importlib.util",
+      "import inspect",
+      "import os",
+      "import signal",
+      "import subprocess",
+      "import sys",
+      "import threading",
+      "import time",
+      "import traceback",
+      "import uuid",
+      "from collections.abc import Callable, Sequence",
+      "from dataclasses import asdict, dataclass",
+      "from pathlib import Path",
+      "from typing import Any",
+      "from ._backend import EpisodeFinished",
+      "from .coordination import CoordinationPause",
+      "from .execution import ExecutionLimit",
+      "from .libero import LiberoRobot",
+      "from .recovery import failure_details",
+      "import asyncio"
+    ]
+  },
+  {
+    "path": "src/pyrualean/sandbox.py",
+    "category": "code",
+    "moduleDoc": "Execution sandbox and audit for model-written policy code.\n\nIn-process Python cannot be sealed, so the sandbox does three things: it\nremoves the convenient routes out of the documented ``robo`` API (importing\n``os`` / ``subprocess`` / ``pathlib``, opening files outside the workspace,\n``eval`` / ``exec`` with fresh builtins), it refuses to run code that names\nPython's introspection routes (``__globals__``, ``__func__``,\n``__subclasses__``, ...: :data:`BLOCKED_NAMES`, checked by\n``blocked_names``), and it records what a cell *tried* (``audit_source``),\nso an episode that reached for the simulator's internals is visible in\n``result.json`` instead of silently counting as a success.",
+    "symbols": [
+      {
+        "name": "_workspace_module",
+        "kind": "function",
+        "range": [
+          108,
+          109
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return bool(top) and ((root / f\"{top}.py\").is_file() or (root / top / \"__init__.py\").is_file())"
+      },
+      {
+        "name": "make_builtins",
+        "kind": "function",
+        "range": [
+          112,
+          148
+        ],
+        "owner": null,
+        "doc": "Return a ``__builtins__`` mapping for code that runs on behalf of the model.",
+        "body": "root = Path(workspace).resolve()\nreal_import = _builtins.__import__\nreal_open = _builtins.open\nnamespace = {k: v for k, v in vars(_builtins).items() if k not in REMOVED_BUILTINS}\nnamespace[\"__import__\"] = guarded_import\nnamespace[\"open\"] = guarded_open\nreturn namespace"
+      },
+      {
+        "name": "audit_source",
+        "kind": "function",
+        "range": [
+          179,
+          234
+        ],
+        "owner": null,
+        "doc": "Static flags for code that leaves the documented API.\n\nCategories: ``import:<module>`` (not allowed), ``host-attr:<name>`` (the\nhost's handles), ``private-attr:<name>``, ``escape:<name>`` (introspection\nthat reaches other objects), ``probe:<name>`` (``dir``/``getattr``...),\n``path:<text>`` (absolute, parent-relative or artifact paths).  Flags are\ninformational: the runtime guards decide what actually runs.",
+        "body": "try:\n        tree = ast.parse(code)\n    except SyntaxError:\nroot = Path(workspace).resolve() if workspace is not None else None\nflags: list[str] = []\nfor node in ast.walk(tree):\n        if isinstance(node, ast.Import):\n            for alias in node.names:\nreturn flags"
+      },
+      {
+        "name": "blocked_names",
+        "kind": "function",
+        "range": [
+          237,
+          261
+        ],
+        "owner": null,
+        "doc": "Members of :data:`BLOCKED_NAMES` that ``code`` reads, in first-seen order.\n\nAttribute access, bare names and string constants all count (the last\ncovers ``getattr(obj, \"__globals__\")``).  Unparsable code returns ``[]``\nso the caller reports the ``SyntaxError`` instead.",
+        "body": "try:\n        tree = ast.parse(code)\n    except SyntaxError:\nfound: list[str] = []\nfor node in ast.walk(tree):\n        if isinstance(node, ast.Attribute):\n            name: Any = node.attr\nreturn found"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import ast",
+      "import builtins as _builtins",
+      "import os",
+      "from pathlib import Path",
+      "from typing import Any"
+    ]
+  }
+]

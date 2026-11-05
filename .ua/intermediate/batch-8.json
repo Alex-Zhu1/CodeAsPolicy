@@ -1,0 +1,387 @@
+{
+  "nodes": [
+    {
+      "id": "document:docs/design/architecture.md",
+      "type": "document",
+      "name": "architecture.md",
+      "filePath": "docs/design/architecture.md",
+      "summary": "梳理现有在线执行链、cells/program/RSI 模式边界和三类闭环，并提出任务、观测、动作、证据及恢复的公共契约。新增完整代码就绪计时、决策期限与流式完整工具项的跨模块要求，均明确为待补设计。",
+      "tags": [
+        "文档",
+        "架构设计",
+        "演进规划"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/design/index.md",
+      "type": "document",
+      "name": "index.md",
+      "filePath": "docs/design/index.md",
+      "summary": "作为框架设计入口，连接总体架构、交互延迟专题、十个职责切面与推进路线。明确现有实现、部分实现、待补契约和未来验收的区别，并注明当前内容包含未提交工作区实现。",
+      "tags": [
+        "文档",
+        "架构设计",
+        "演进规划"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:docs/design/interaction-latency.md",
+      "type": "document",
+      "name": "interaction-latency.md",
+      "filePath": "docs/design/interaction-latency.md",
+      "summary": "分析已有 Astra/Codex 日志中反馈到下一段代码的等待，区分历史代理指标、总策略时间与尚未实现的统一分项计时。提出决策与请求身份、派发前期限及证据复查、流式完整工具项边界，以及同时衡量响应时间和任务质量的对照实验。",
+      "tags": [
+        "文档",
+        "架构设计",
+        "演进规划"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/design/roadmap.md",
+      "type": "document",
+      "name": "roadmap.md",
+      "filePath": "docs/design/roadmap.md",
+      "summary": "提出从公共契约到观测、动作回执、独立验证、恢复和上下文的分阶段推进路线。将交互延迟基线与接口兼容性核查前移到 P0，并明确流式派发和候选预计算所依赖的基础契约；阶段与验收均为规划。",
+      "tags": [
+        "文档",
+        "架构设计",
+        "演进规划"
+      ],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "document:docs/design/architecture.md",
+      "target": "file:src/pyrualean/_backend.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/architecture.md",
+      "target": "file:src/pyrualean/_robot.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/architecture.md",
+      "target": "file:src/pyrualean/arms.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/architecture.md",
+      "target": "file:src/pyrualean/play.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/architecture.md",
+      "target": "document:docs/design/index.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/architecture.md",
+      "target": "document:docs/design/roadmap.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/architecture.md",
+      "target": "document:docs/design/interaction-latency.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/index.md",
+      "target": "document:docs/design/architecture.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/index.md",
+      "target": "document:docs/design/interaction-latency.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/index.md",
+      "target": "document:docs/design/roadmap.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/index.md",
+      "target": "document:docs/getting-started/how-it-works.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/index.md",
+      "target": "document:docs/guide/recovery.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/index.md",
+      "target": "document:docs/guide/coordination.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/index.md",
+      "target": "document:docs/visual-supervision.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/index.md",
+      "target": "document:docs/design/parts/task-session.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/index.md",
+      "target": "document:docs/design/parts/capabilities-manual.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/index.md",
+      "target": "document:docs/design/parts/observation-perception.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/index.md",
+      "target": "document:docs/design/parts/planner-context.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/index.md",
+      "target": "document:docs/design/parts/code-runtime.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/index.md",
+      "target": "document:docs/design/parts/execution-control.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/index.md",
+      "target": "document:docs/design/parts/verification-evidence.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/index.md",
+      "target": "document:docs/design/parts/knowledge-skills.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/index.md",
+      "target": "document:docs/design/parts/recovery-handoff.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/index.md",
+      "target": "document:docs/design/parts/records-evaluation.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/interaction-latency.md",
+      "target": "file:src/pyrualean/play.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/interaction-latency.md",
+      "target": "file:src/pyrualean/cli.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/interaction-latency.md",
+      "target": "file:src/pyrualean/generate.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/interaction-latency.md",
+      "target": "file:src/pyrualean/openai_runtime.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/interaction-latency.md",
+      "target": "file:src/pyrualean/claude_runtime.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/interaction-latency.md",
+      "target": "file:src/pyrualean/arms.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/interaction-latency.md",
+      "target": "config:integrations/xpolicylab/PyRUA_Lean/deploy.yml",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/interaction-latency.md",
+      "target": "document:docs/design/index.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/interaction-latency.md",
+      "target": "document:docs/design/architecture.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/interaction-latency.md",
+      "target": "document:docs/design/roadmap.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/roadmap.md",
+      "target": "document:docs/design/index.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/roadmap.md",
+      "target": "document:docs/design/architecture.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/roadmap.md",
+      "target": "document:docs/design/interaction-latency.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/roadmap.md",
+      "target": "document:docs/design/parts/observation-perception.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/roadmap.md",
+      "target": "document:docs/design/parts/capabilities-manual.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/roadmap.md",
+      "target": "document:docs/design/parts/execution-control.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/roadmap.md",
+      "target": "document:docs/design/parts/code-runtime.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/roadmap.md",
+      "target": "document:docs/design/parts/recovery-handoff.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/roadmap.md",
+      "target": "document:docs/design/parts/verification-evidence.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/roadmap.md",
+      "target": "document:docs/design/parts/task-session.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/roadmap.md",
+      "target": "document:docs/design/parts/planner-context.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/roadmap.md",
+      "target": "document:docs/design/parts/knowledge-skills.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design/roadmap.md",
+      "target": "document:docs/design/parts/records-evaluation.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

@@ -1,0 +1,755 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "type": "file",
+      "name": "press_by_number.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "summary": "实现离线 RoboDojo 任务程序：校正数字卡图像并匹配字形，按卡片次数循环抓拉按钮帽，满足计数与双臂归位要求。通过执行环境注入的 robo 接口完成任务，不在评测时调用规划模型。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:tmpl_arrays",
+      "type": "function",
+      "name": "tmpl_arrays",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "summary": "将压缩数字模板解码为图像数组。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        72,
+        78
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:project",
+      "type": "function",
+      "name": "project",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "summary": "把世界坐标点投影到标定相机图像平面。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        81,
+        88
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:card_corners",
+      "type": "function",
+      "name": "card_corners",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "summary": "计算数字卡面四角的世界坐标。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        90,
+        93
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:rectify",
+      "type": "function",
+      "name": "rectify",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "summary": "依据相机几何将数字卡图像校正为正视图。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        95,
+        106
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:normalise",
+      "type": "function",
+      "name": "normalise",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "summary": "按比例缩放数字掩码并放入统一模板画布。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        108,
+        115
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:count_holes",
+      "type": "function",
+      "name": "count_holes",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "summary": "统计数字掩码的内部孔洞用于字形区分。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        117,
+        127
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:read_digit",
+      "type": "function",
+      "name": "read_digit",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "summary": "结合模板相似度和字形结构读取数字卡。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        129,
+        179
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:look",
+      "type": "function",
+      "name": "look",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "summary": "读取相机图像并进行任务所需的目标识别或位姿估计。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        183,
+        204
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:decide",
+      "type": "function",
+      "name": "decide",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "summary": "融合多次观测的数字评分选择卡面数字。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        206,
+        220
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:mv",
+      "type": "function",
+      "name": "mv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "summary": "调用机器人位姿运动接口并处理本任务的运动结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        223,
+        229
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:fine",
+      "type": "function",
+      "name": "fine",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "summary": "执行短距离保持夹持的修正运动。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        231,
+        236
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:grip_cap",
+      "type": "function",
+      "name": "grip_cap",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "summary": "围绕按钮帽下降并夹住帽缘。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        238,
+        277
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:cap_up",
+      "type": "function",
+      "name": "cap_up",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "summary": "保持夹住按钮帽并上拉到触发复位的位置。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        279,
+        282
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:cap_down",
+      "type": "function",
+      "name": "cap_down",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "summary": "保持夹住按钮帽并下降完成一次按压。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        284,
+        286
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:cycles",
+      "type": "function",
+      "name": "cycles",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "summary": "循环执行按钮帽上拉复位与下压计数。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        288,
+        298
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:release",
+      "type": "function",
+      "name": "release",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "summary": "松开按钮帽并撤离到安全高度。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        300,
+        303
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:quat_angle_deg",
+      "type": "function",
+      "name": "quat_angle_deg",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "summary": "计算两个四元数表示的姿态夹角。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        305,
+        307
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:home_margin",
+      "type": "function",
+      "name": "home_margin",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "summary": "比较当前末端位置和朝向与初始归位姿态的差值。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        309,
+        314
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:run",
+      "type": "function",
+      "name": "run",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "summary": "校正数字卡图像并匹配字形，按卡片次数循环抓拉按钮帽，满足计数与双臂归位要求。统筹观察、运动和任务检查。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        316,
+        401
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:tmpl_arrays",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:tmpl_arrays",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:project",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:card_corners",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:card_corners",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:rectify",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:rectify",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:normalise",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:normalise",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:count_holes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:count_holes",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:read_digit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:read_digit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:look",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:look",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:decide",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:decide",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:mv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:mv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:fine",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:fine",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:grip_cap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:grip_cap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:cap_up",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:cap_up",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:cap_down",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:cap_down",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:cycles",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:cycles",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:release",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:release",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:quat_angle_deg",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:quat_angle_deg",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:home_margin",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:home_margin",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:run",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:run",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:rectify",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:rectify",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:card_corners",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:read_digit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:normalise",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:read_digit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:count_holes",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:rectify",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:read_digit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:grip_cap",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:cap_up",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:fine",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:cap_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:fine",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:cycles",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:cap_up",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:cycles",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:cap_down",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:release",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:home_margin",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:quat_angle_deg",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:look",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:decide",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:grip_cap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:cycles",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:release",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/press_by_number.py:home_margin",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

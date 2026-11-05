@@ -1,0 +1,2053 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/pyrualean/_robot.py",
+      "type": "file",
+      "name": "_robot.py",
+      "filePath": "src/pyrualean/_robot.py",
+      "summary": "实现各机器人共享的后端派发、调用账本、回合终止守卫和图像访问。运动调用同时接入执行预算、视觉监督和动作版本跟踪。",
+      "tags": [
+        "机器人核心",
+        "工具派发",
+        "状态管理"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/_robot.py:effective_primitives",
+      "type": "function",
+      "name": "effective_primitives",
+      "filePath": "src/pyrualean/_robot.py",
+      "lineRange": [
+        46,
+        50
+      ],
+      "summary": "将请求的原语集与机器人适配器实际能力求交。",
+      "tags": [
+        "机器人核心",
+        "工具派发",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/_robot.py:RobotBase",
+      "type": "class",
+      "name": "RobotBase",
+      "filePath": "src/pyrualean/_robot.py",
+      "lineRange": [
+        53,
+        380
+      ],
+      "summary": "为具体机器人提供统一状态、观测、动作派发和回合守卫机制。",
+      "tags": [
+        "机器人核心",
+        "工具派发",
+        "数据模型"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/_robot.py:RobotBase.__init__",
+      "type": "function",
+      "name": "RobotBase.__init__",
+      "filePath": "src/pyrualean/_robot.py",
+      "lineRange": [
+        104,
+        126
+      ],
+      "summary": "保存后端与账本，初始化状态、回合标志、观测请求以及执行监督钩子。",
+      "tags": [
+        "机器人核心",
+        "工具派发",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/_robot.py:RobotBase.task",
+      "type": "function",
+      "name": "RobotBase.task",
+      "filePath": "src/pyrualean/_robot.py",
+      "lineRange": [
+        180,
+        182
+      ],
+      "summary": "返回基准提供的权威任务指令。",
+      "tags": [
+        "机器人核心",
+        "工具派发",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/_robot.py:RobotBase.done",
+      "type": "function",
+      "name": "RobotBase.done",
+      "filePath": "src/pyrualean/_robot.py",
+      "lineRange": [
+        185,
+        187
+      ],
+      "summary": "读取并锁存环境原生任务成功状态。",
+      "tags": [
+        "机器人核心",
+        "工具派发",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/_robot.py:RobotBase.state",
+      "type": "function",
+      "name": "RobotBase.state",
+      "filePath": "src/pyrualean/_robot.py",
+      "lineRange": [
+        189,
+        195
+      ],
+      "summary": "读取指定记录步骤的机器人本体状态和回合标志。",
+      "tags": [
+        "机器人核心",
+        "工具派发",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/_robot.py:RobotBase.image",
+      "type": "function",
+      "name": "RobotBase.image",
+      "filePath": "src/pyrualean/_robot.py",
+      "lineRange": [
+        197,
+        209
+      ],
+      "summary": "读取指定相机及记录步骤的 RGB 图像数组。",
+      "tags": [
+        "机器人核心",
+        "工具派发",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/_robot.py:RobotBase.world_map",
+      "type": "function",
+      "name": "RobotBase.world_map",
+      "filePath": "src/pyrualean/_robot.py",
+      "lineRange": [
+        211,
+        232
+      ],
+      "summary": "读取图像对应的逐像素世界坐标图，供策略计算几何关系。",
+      "tags": [
+        "机器人核心",
+        "工具派发",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/_robot.py:RobotBase.show",
+      "type": "function",
+      "name": "RobotBase.show",
+      "filePath": "src/pyrualean/_robot.py",
+      "lineRange": [
+        234,
+        244
+      ],
+      "summary": "登记当前相机图像，让本轮工具反馈将其展示给规划者。",
+      "tags": [
+        "机器人核心",
+        "工具派发",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/_robot.py:RobotBase.artifact",
+      "type": "function",
+      "name": "RobotBase.artifact",
+      "filePath": "src/pyrualean/_robot.py",
+      "lineRange": [
+        246,
+        259
+      ],
+      "summary": "读取指定记录产物的原始字节。",
+      "tags": [
+        "机器人核心",
+        "工具派发",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/_robot.py:RobotBase._absorb",
+      "type": "function",
+      "name": "RobotBase._absorb",
+      "filePath": "src/pyrualean/_robot.py",
+      "lineRange": [
+        286,
+        302
+      ],
+      "summary": "吸收后端观测并锁存成功或预算终止标志。",
+      "tags": [
+        "机器人核心",
+        "工具派发",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/_robot.py:RobotBase._readonly",
+      "type": "function",
+      "name": "RobotBase._readonly",
+      "filePath": "src/pyrualean/_robot.py",
+      "lineRange": [
+        309,
+        330
+      ],
+      "summary": "记录并派发只读工具，解包负载、吸收观测和捕获错误。",
+      "tags": [
+        "机器人核心",
+        "工具派发",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/_robot.py:RobotBase._stateful",
+      "type": "function",
+      "name": "RobotBase._stateful",
+      "filePath": "src/pyrualean/_robot.py",
+      "lineRange": [
+        332,
+        380
+      ],
+      "summary": "在运动前检查回合、执行预算和监督条件，执行后更新状态、账本及视觉证据。",
+      "tags": [
+        "机器人核心",
+        "工具派发",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "file:src/pyrualean/libero.py",
+      "type": "file",
+      "name": "libero.py",
+      "filePath": "src/pyrualean/libero.py",
+      "summary": "提供 LIBERO 单臂机器人的强类型 Python API，逐一映射 RPent 的位置姿态伺服、Pi0.5 操作和 SAM3 几何感知原语。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "操作原语"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/libero.py:_quat_to_matrix",
+      "type": "function",
+      "name": "_quat_to_matrix",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        43,
+        49
+      ],
+      "summary": "把 xyzw 四元数转换为旋转矩阵。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/libero.py:_xyz",
+      "type": "function",
+      "name": "_xyz",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        296,
+        303
+      ],
+      "summary": "验证目标为三个有限数值并转换为坐标元组。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/libero.py:_tuple3",
+      "type": "function",
+      "name": "_tuple3",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        306,
+        312
+      ],
+      "summary": "将可用坐标转换为三元素浮点元组，缺失或长度不符时返回空。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/libero.py:_gripper",
+      "type": "function",
+      "name": "_gripper",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        315,
+        322
+      ],
+      "summary": "验证夹爪命令处于负一到正一之间，负一张开、正一闭合。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/libero.py:State",
+      "type": "class",
+      "name": "State",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        53,
+        89
+      ],
+      "summary": "保存 LIBERO 的末端位姿、手指状态、物体名称和回合标志。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "数据模型"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/libero.py:State.eef_yaw",
+      "type": "function",
+      "name": "State.eef_yaw",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        80,
+        83
+      ],
+      "summary": "由末端四元数计算夹爪的世界坐标偏航角。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/libero.py:State.eef_pitch",
+      "type": "function",
+      "name": "State.eef_pitch",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        86,
+        89
+      ],
+      "summary": "由末端四元数计算相对垂直向下姿态的俯仰角。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "class:src/pyrualean/libero.py:Move",
+      "type": "class",
+      "name": "Move",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        93,
+        112
+      ],
+      "summary": "保存位置伺服目标、实际终点、残差、步数和是否到达。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/libero.py:MovePose",
+      "type": "class",
+      "name": "MovePose",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        116,
+        129
+      ],
+      "summary": "保存同时调整位置和姿态的伺服结果，包括最终俯仰角。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/libero.py:Rotation",
+      "type": "class",
+      "name": "Rotation",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        133,
+        146
+      ],
+      "summary": "保存腕部旋转的起始角、目标角、最终误差和到达状态。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/libero.py:Gripper",
+      "type": "class",
+      "name": "Gripper",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        150,
+        156
+      ],
+      "summary": "保存夹爪保持命令及执行步数。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/libero.py:Release",
+      "type": "class",
+      "name": "Release",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        160,
+        172
+      ],
+      "summary": "记录释放后的最大开度及环境终止标志。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/libero.py:Pick",
+      "type": "class",
+      "name": "Pick",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        176,
+        197
+      ],
+      "summary": "保存 Pi0.5 抓取的启发式抬升判断和消耗，提示仍需用观测验证持物。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/libero.py:Contact",
+      "type": "class",
+      "name": "Contact",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        201,
+        213
+      ],
+      "summary": "保存 Pi0.5 接触技能结果，其成功字段仅对应环境终止。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/libero.py:Segment",
+      "type": "class",
+      "name": "Segment",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        217,
+        237
+      ],
+      "summary": "保存 SAM3 分割置信度、掩膜表面世界坐标和可视化产物。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/libero.py:BackProjection",
+      "type": "class",
+      "name": "BackProjection",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        241,
+        249
+      ],
+      "summary": "表示单个图像像素反投影得到的世界表面坐标。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/libero.py:RegionCenter",
+      "type": "class",
+      "name": "RegionCenter",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        253,
+        265
+      ],
+      "summary": "保存像素窗口的世界范围中心、中位坐标和有效深度点数。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/libero.py:LiberoRobot",
+      "type": "class",
+      "name": "LiberoRobot",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        330,
+        938
+      ],
+      "summary": "封装桌面 Franka 单臂操作，把阻塞原语结果转换为可供 Python 分支判断的数据类。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "数据模型"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/libero.py:LiberoRobot.task",
+      "type": "function",
+      "name": "LiberoRobot.task",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        374,
+        376
+      ],
+      "summary": "返回基准提供的权威任务指令。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/libero.py:LiberoRobot.done",
+      "type": "function",
+      "name": "LiberoRobot.done",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        379,
+        381
+      ],
+      "summary": "读取并锁存环境原生任务成功状态。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/libero.py:LiberoRobot.state",
+      "type": "function",
+      "name": "LiberoRobot.state",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        383,
+        397
+      ],
+      "summary": "读取指定记录步骤的机器人本体状态和回合标志。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/libero.py:LiberoRobot.image",
+      "type": "function",
+      "name": "LiberoRobot.image",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        399,
+        411
+      ],
+      "summary": "读取指定相机及记录步骤的 RGB 图像数组。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/libero.py:LiberoRobot.world_map",
+      "type": "function",
+      "name": "LiberoRobot.world_map",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        413,
+        423
+      ],
+      "summary": "读取图像对应的逐像素世界坐标图，供策略计算几何关系。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/libero.py:LiberoRobot.show",
+      "type": "function",
+      "name": "LiberoRobot.show",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        425,
+        433
+      ],
+      "summary": "登记当前相机图像，让本轮工具反馈将其展示给规划者。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/libero.py:LiberoRobot.artifact",
+      "type": "function",
+      "name": "LiberoRobot.artifact",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        435,
+        441
+      ],
+      "summary": "读取指定记录产物的原始字节。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/libero.py:LiberoRobot.camera_meta",
+      "type": "function",
+      "name": "LiberoRobot.camera_meta",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        443,
+        447
+      ],
+      "summary": "读取与图像步骤对应的相机内参与外参。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/libero.py:LiberoRobot.segment",
+      "type": "function",
+      "name": "LiberoRobot.segment",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        449,
+        498
+      ],
+      "summary": "用文本或正像素提示运行 SAM3，返回掩膜可见表面的三维中位坐标。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/libero.py:LiberoRobot.back_project",
+      "type": "function",
+      "name": "LiberoRobot.back_project",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        500,
+        541
+      ],
+      "summary": "读取指定图像像素的世界表面坐标，要求相机与分辨率保持一致。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/libero.py:LiberoRobot.region_center",
+      "type": "function",
+      "name": "LiberoRobot.region_center",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        543,
+        585
+      ],
+      "summary": "在像素窗口与高度带中计算世界范围中心，减少边缘像素对定位的偏差。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/libero.py:LiberoRobot.move_to",
+      "type": "function",
+      "name": "LiberoRobot.move_to",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        589,
+        645
+      ],
+      "summary": "保持姿态将夹爪伺服到世界坐标目标，校验单次平面移动距离并返回实际误差。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/libero.py:LiberoRobot.move_pose",
+      "type": "function",
+      "name": "LiberoRobot.move_pose",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        647,
+        699
+      ],
+      "summary": "同步调整位置、俯仰和偏航，以通过固定姿态难以到达的低位或凹入目标。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/libero.py:LiberoRobot.rotate_wrist",
+      "type": "function",
+      "name": "LiberoRobot.rotate_wrist",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        701,
+        729
+      ],
+      "summary": "在保持位置时调整绝对或相对世界偏航角。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/libero.py:LiberoRobot.rotate_pitch",
+      "type": "function",
+      "name": "LiberoRobot.rotate_pitch",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        731,
+        759
+      ],
+      "summary": "在保持位置与偏航时调整绝对或相对俯仰角。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/libero.py:LiberoRobot.set_gripper",
+      "type": "function",
+      "name": "LiberoRobot.set_gripper",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        761,
+        777
+      ],
+      "summary": "保持末端位姿并持续执行夹爪开合命令。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/libero.py:LiberoRobot.release",
+      "type": "function",
+      "name": "LiberoRobot.release",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        779,
+        797
+      ],
+      "summary": "原地张开夹爪并释放物体，环境成功时可提前终止。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/libero.py:LiberoRobot.pi0_pick",
+      "type": "function",
+      "name": "LiberoRobot.pi0_pick",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        801,
+        849
+      ],
+      "summary": "调用冻结 Pi0.5 闭环抓取，并按下降、手指与抬升启发式提前停止。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/libero.py:LiberoRobot.pi0_doubled",
+      "type": "function",
+      "name": "LiberoRobot.pi0_doubled",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        851,
+        870
+      ],
+      "summary": "调用 Pi0.5 执行旋钮、抽屉等非抓取接触技能，返回原生环境成功状态。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/libero.py:LiberoRobot._rotation",
+      "type": "function",
+      "name": "LiberoRobot._rotation",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        875,
+        886
+      ],
+      "summary": "把后端角度误差与目标信息转换为 Rotation 结果。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/libero.py:LiberoRobot._state_from_envelope",
+      "type": "function",
+      "name": "LiberoRobot._state_from_envelope",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        888,
+        909
+      ],
+      "summary": "解析 RPent 末端位姿、夹爪和回合字段，构造 LIBERO 状态对象。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/libero.py:LiberoRobot._summary_dict",
+      "type": "function",
+      "name": "LiberoRobot._summary_dict",
+      "filePath": "src/pyrualean/libero.py",
+      "lineRange": [
+        911,
+        922
+      ],
+      "summary": "生成包含当前本体状态和回合信息的紧凑工具反馈。",
+      "tags": [
+        "机器人接口",
+        "LIBERO",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/pyrualean/_robot.py",
+      "target": "function:src/pyrualean/_robot.py:effective_primitives",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_robot.py",
+      "target": "function:src/pyrualean/_robot.py:effective_primitives",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/_robot.py",
+      "target": "class:src/pyrualean/_robot.py:RobotBase",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_robot.py",
+      "target": "class:src/pyrualean/_robot.py:RobotBase",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/_robot.py",
+      "target": "function:src/pyrualean/_robot.py:RobotBase.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/_robot.py:RobotBase",
+      "target": "function:src/pyrualean/_robot.py:RobotBase.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_robot.py",
+      "target": "function:src/pyrualean/_robot.py:RobotBase.task",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/_robot.py:RobotBase",
+      "target": "function:src/pyrualean/_robot.py:RobotBase.task",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_robot.py",
+      "target": "function:src/pyrualean/_robot.py:RobotBase.done",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/_robot.py:RobotBase",
+      "target": "function:src/pyrualean/_robot.py:RobotBase.done",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_robot.py",
+      "target": "function:src/pyrualean/_robot.py:RobotBase.state",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/_robot.py:RobotBase",
+      "target": "function:src/pyrualean/_robot.py:RobotBase.state",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_robot.py",
+      "target": "function:src/pyrualean/_robot.py:RobotBase.image",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/_robot.py:RobotBase",
+      "target": "function:src/pyrualean/_robot.py:RobotBase.image",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_robot.py",
+      "target": "function:src/pyrualean/_robot.py:RobotBase.world_map",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/_robot.py:RobotBase",
+      "target": "function:src/pyrualean/_robot.py:RobotBase.world_map",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_robot.py",
+      "target": "function:src/pyrualean/_robot.py:RobotBase.show",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/_robot.py:RobotBase",
+      "target": "function:src/pyrualean/_robot.py:RobotBase.show",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_robot.py",
+      "target": "function:src/pyrualean/_robot.py:RobotBase.artifact",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/_robot.py:RobotBase",
+      "target": "function:src/pyrualean/_robot.py:RobotBase.artifact",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_robot.py",
+      "target": "function:src/pyrualean/_robot.py:RobotBase._absorb",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/_robot.py:RobotBase",
+      "target": "function:src/pyrualean/_robot.py:RobotBase._absorb",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_robot.py",
+      "target": "function:src/pyrualean/_robot.py:RobotBase._readonly",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/_robot.py:RobotBase",
+      "target": "function:src/pyrualean/_robot.py:RobotBase._readonly",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_robot.py",
+      "target": "function:src/pyrualean/_robot.py:RobotBase._stateful",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/_robot.py:RobotBase",
+      "target": "function:src/pyrualean/_robot.py:RobotBase._stateful",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_robot.py",
+      "target": "file:src/pyrualean/_backend.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:src/pyrualean/_robot.py:RobotBase.__init__",
+      "target": "function:src/pyrualean/_robot.py:effective_primitives",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/_robot.py:RobotBase.__init__",
+      "target": "class:src/pyrualean/_backend.py:Ledger",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/_robot.py:RobotBase.state",
+      "target": "function:src/pyrualean/_robot.py:RobotBase._readonly",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/_robot.py:RobotBase.image",
+      "target": "function:src/pyrualean/_robot.py:RobotBase.artifact",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/_robot.py:RobotBase.world_map",
+      "target": "function:src/pyrualean/_robot.py:RobotBase.artifact",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/_robot.py:RobotBase._readonly",
+      "target": "function:src/pyrualean/_backend.py:unwrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/_robot.py:RobotBase._readonly",
+      "target": "function:src/pyrualean/_robot.py:RobotBase._absorb",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/_robot.py:RobotBase._readonly",
+      "target": "function:src/pyrualean/_backend.py:raise_for_error",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/_robot.py:RobotBase._stateful",
+      "target": "function:src/pyrualean/_backend.py:unwrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/_robot.py:RobotBase._stateful",
+      "target": "function:src/pyrualean/_robot.py:RobotBase._absorb",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/_robot.py:RobotBase._stateful",
+      "target": "class:src/pyrualean/_backend.py:EpisodeFinished",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/_robot.py:RobotBase._stateful",
+      "target": "function:src/pyrualean/_backend.py:raise_for_error",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "function:src/pyrualean/libero.py:_quat_to_matrix",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "function:src/pyrualean/libero.py:_quat_to_matrix",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "function:src/pyrualean/libero.py:_xyz",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "function:src/pyrualean/libero.py:_xyz",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "function:src/pyrualean/libero.py:_tuple3",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "function:src/pyrualean/libero.py:_tuple3",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "function:src/pyrualean/libero.py:_gripper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "function:src/pyrualean/libero.py:_gripper",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "class:src/pyrualean/libero.py:State",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "class:src/pyrualean/libero.py:State",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "function:src/pyrualean/libero.py:State.eef_yaw",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/libero.py:State",
+      "target": "function:src/pyrualean/libero.py:State.eef_yaw",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "function:src/pyrualean/libero.py:State.eef_pitch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/libero.py:State",
+      "target": "function:src/pyrualean/libero.py:State.eef_pitch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "class:src/pyrualean/libero.py:Move",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "class:src/pyrualean/libero.py:Move",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "class:src/pyrualean/libero.py:MovePose",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "class:src/pyrualean/libero.py:MovePose",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "class:src/pyrualean/libero.py:Rotation",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "class:src/pyrualean/libero.py:Rotation",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "class:src/pyrualean/libero.py:Gripper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "class:src/pyrualean/libero.py:Gripper",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "class:src/pyrualean/libero.py:Release",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "class:src/pyrualean/libero.py:Release",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "class:src/pyrualean/libero.py:Pick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "class:src/pyrualean/libero.py:Pick",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "class:src/pyrualean/libero.py:Contact",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "class:src/pyrualean/libero.py:Contact",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "class:src/pyrualean/libero.py:Segment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "class:src/pyrualean/libero.py:Segment",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "class:src/pyrualean/libero.py:BackProjection",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "class:src/pyrualean/libero.py:BackProjection",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "class:src/pyrualean/libero.py:RegionCenter",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "class:src/pyrualean/libero.py:RegionCenter",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "class:src/pyrualean/libero.py:LiberoRobot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "class:src/pyrualean/libero.py:LiberoRobot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.task",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/libero.py:LiberoRobot",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.task",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.done",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/libero.py:LiberoRobot",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.done",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.state",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/libero.py:LiberoRobot",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.state",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.image",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/libero.py:LiberoRobot",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.image",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.world_map",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/libero.py:LiberoRobot",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.world_map",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.show",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/libero.py:LiberoRobot",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.show",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.artifact",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/libero.py:LiberoRobot",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.artifact",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.camera_meta",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/libero.py:LiberoRobot",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.camera_meta",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.segment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/libero.py:LiberoRobot",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.segment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.back_project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/libero.py:LiberoRobot",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.back_project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.region_center",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/libero.py:LiberoRobot",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.region_center",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.move_to",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/libero.py:LiberoRobot",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.move_to",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.move_pose",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/libero.py:LiberoRobot",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.move_pose",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.rotate_wrist",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/libero.py:LiberoRobot",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.rotate_wrist",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.rotate_pitch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/libero.py:LiberoRobot",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.rotate_pitch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.set_gripper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/libero.py:LiberoRobot",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.set_gripper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.release",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/libero.py:LiberoRobot",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.release",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.pi0_pick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/libero.py:LiberoRobot",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.pi0_pick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.pi0_doubled",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/libero.py:LiberoRobot",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.pi0_doubled",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot._rotation",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/libero.py:LiberoRobot",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot._rotation",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot._state_from_envelope",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/libero.py:LiberoRobot",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot._state_from_envelope",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot._summary_dict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/libero.py:LiberoRobot",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot._summary_dict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "file:src/pyrualean/_backend.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "file:src/pyrualean/_robot.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "file:src/pyrualean/robots.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:src/pyrualean/libero.py:State.eef_yaw",
+      "target": "function:src/pyrualean/libero.py:_quat_to_matrix",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/libero.py:State.eef_pitch",
+      "target": "function:src/pyrualean/libero.py:_quat_to_matrix",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/libero.py:LiberoRobot.state",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot._state_from_envelope",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/libero.py:LiberoRobot.segment",
+      "target": "class:src/pyrualean/libero.py:Segment",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/libero.py:LiberoRobot.segment",
+      "target": "function:src/pyrualean/libero.py:_tuple3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/libero.py:LiberoRobot.back_project",
+      "target": "function:src/pyrualean/libero.py:_tuple3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/libero.py:LiberoRobot.back_project",
+      "target": "class:src/pyrualean/_backend.py:ToolError",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/libero.py:LiberoRobot.back_project",
+      "target": "class:src/pyrualean/libero.py:BackProjection",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/libero.py:LiberoRobot.region_center",
+      "target": "function:src/pyrualean/libero.py:_tuple3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/libero.py:LiberoRobot.region_center",
+      "target": "class:src/pyrualean/_backend.py:ToolError",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/libero.py:LiberoRobot.region_center",
+      "target": "class:src/pyrualean/libero.py:RegionCenter",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/libero.py:LiberoRobot.move_to",
+      "target": "function:src/pyrualean/libero.py:_xyz",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/libero.py:LiberoRobot.move_to",
+      "target": "function:src/pyrualean/libero.py:_gripper",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/libero.py:LiberoRobot.move_to",
+      "target": "class:src/pyrualean/libero.py:Move",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/libero.py:LiberoRobot.move_to",
+      "target": "function:src/pyrualean/libero.py:_tuple3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/libero.py:LiberoRobot.move_pose",
+      "target": "function:src/pyrualean/libero.py:_xyz",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/libero.py:LiberoRobot.move_pose",
+      "target": "function:src/pyrualean/libero.py:_gripper",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/libero.py:LiberoRobot.move_pose",
+      "target": "class:src/pyrualean/libero.py:MovePose",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/libero.py:LiberoRobot.move_pose",
+      "target": "function:src/pyrualean/libero.py:_tuple3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/libero.py:LiberoRobot.rotate_wrist",
+      "target": "function:src/pyrualean/libero.py:_gripper",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/libero.py:LiberoRobot.rotate_wrist",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot._rotation",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/libero.py:LiberoRobot.rotate_pitch",
+      "target": "function:src/pyrualean/libero.py:_gripper",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/libero.py:LiberoRobot.rotate_pitch",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot._rotation",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/libero.py:LiberoRobot.set_gripper",
+      "target": "function:src/pyrualean/libero.py:_gripper",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/libero.py:LiberoRobot.set_gripper",
+      "target": "class:src/pyrualean/libero.py:Gripper",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/libero.py:LiberoRobot.release",
+      "target": "class:src/pyrualean/libero.py:Release",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/libero.py:LiberoRobot.pi0_pick",
+      "target": "class:src/pyrualean/libero.py:Pick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/libero.py:LiberoRobot.pi0_doubled",
+      "target": "class:src/pyrualean/libero.py:Contact",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/libero.py:LiberoRobot._rotation",
+      "target": "class:src/pyrualean/libero.py:Rotation",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/libero.py:LiberoRobot._state_from_envelope",
+      "target": "function:src/pyrualean/libero.py:_tuple3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/libero.py:LiberoRobot._state_from_envelope",
+      "target": "class:src/pyrualean/libero.py:State",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/libero.py:LiberoRobot._summary_dict",
+      "target": "function:src/pyrualean/libero.py:LiberoRobot.state",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/pyrualean/libero.py:LiberoRobot",
+      "target": "class:src/pyrualean/_robot.py:RobotBase",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    }
+  ]
+}

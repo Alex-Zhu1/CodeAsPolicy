@@ -1,0 +1,254 @@
+@integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py|预先编写的扫块任务策略，通过纯 RGB 几何、颜色分割和公开 robo API 定位刷子、簸箕及残留物，按动作预算抓取、转移和复查。|离线策略,视觉几何,任务操作
+P|打印策略诊断信息。
+fmt|把坐标向量格式化为三位小数文本。
+wrap|将角度规范为负一百八十度到一百八十度范围。
+ang|计算二维向量的方向角。
+unit|根据角度构造二维单位向量。
+rot2|按给定角度旋转二维向量。
+cross2|计算二维向量的标量叉积。
+Rz|构造绕 z 轴的旋转矩阵。
+Ry|构造绕 y 轴的旋转矩阵。
+Rx|构造绕 x 轴的旋转矩阵。
+orient|按 RoboDojo 夹爪约定组合俯仰、偏航与滚转。
+quat_mat|把 wxyz 四元数转换为旋转矩阵。
+cam|通过公开相机接口读取内参与世界外参。
+pix_ray|由图像像素构造世界坐标相机射线。
+pix2plane|计算像素射线与指定高度平面的交点。
+proj|将世界坐标投影到相机图像的行列位置。
+plane_maps|批量计算每个图像像素与指定水平面的交点坐标。
+mv|执行公开全姿态运动，统计消耗并记录实际到达、阻塞和逆运动学反馈。
+grip|执行夹爪开合、累积动作消耗并记录接触开度。
+go_home|有限次调用复位并累计原生动作消耗。
+sfmt|将物体定位结果整理为可读几何与置信度诊断。
+loc|尝试多个文本描述，返回可用的物体定位结果。
+bud_point|用腕部图像中的宽度轮廓定位耳塞较宽主体，避免夹在细杆连接处滑出。
+split_blob|对过长图像连通块排除停放夹爪，必要时用平面点聚类分离接触物体。
+detect_objects|在平面区域内用颜色差与连通区域检测候选物体，并排除指定几何区域。
+arm_mask|投影头部视图中被指定夹爪覆盖的像素，减少把机器人当作目标的误检。
+top_grasp|尝试多个俯仰和偏航方向进行顶部接近与抓取。
+pan_axes|根据簸箕口朝向建立局部平面坐标轴。
+pan_pt|把簸箕局部坐标和高度转换为世界位置。
+pan_local|把世界平面点转换为簸箕局部坐标。
+proj_many|将一组世界点批量投影到头部相机。
+model_world|把簸箕模型点按候选中心和朝向转换到世界坐标。
+silhouette|投影簸箕本体与把手的凸包，生成候选轮廓掩膜。
+yellow_mask|在 HSV 颜色空间筛选黄色目标像素。
+ref_colour|从参考像素邻域取得平滑后的 Lab 颜色中位数。
+colour_mask|按参考 Lab 颜色距离构造像素掩膜，降低亮度差异权重。
+fit_dustpan|以投影轮廓与图像掩膜的交并比拟合簸箕中心和开口方向。
+mvq|执行运动并记录动作消耗，预算截断时终止策略。
+rect_mask|在世界平面网格上生成具有朝向与边距的矩形区域掩膜。
+xmin|根据既有逆运动学范围估计右臂低位垂直抓取的最小可达横坐标。
+compact|仅保留几何延伸不超过阈值的紧凑物体候选。
+not_gripper|移除靠近已知停放夹爪区域的候选物体。
+opening_for|根据物体宽度计算带余量且限幅的夹爪张开目标。
+main|定位并调整刷子与簸箕，结合头部及腕部观测搬运物体，按剩余预算重查残留并有限次修正。
+Done|表示策略因原生预算或回合终止而停止。
+@integrations/xpolicylab/SUBMISSION.md|说明 PyRUA_Lean 向 XPolicyLab/RoboDojo 提交的安装、资产、模型服务和评估协议，强调默认纯彩色观测及统一任务系统。|文档,提交指南,官方评估
+@runs/_empty-memory-robocasa/MEMORY.md|为空的 RoboCasa 记忆语料占位文件，供无先验记忆的运行配置使用。|文档,空记忆,实验配置
+@runs/_empty-memory-robotwin/MEMORY.md|为空的 RoboTwin 记忆语料占位文件，供无先验记忆的运行配置使用。|文档,空记忆,实验配置
+@runs/_empty-memory/MEMORY.md|声明零样本运行使用空记忆语料，不包含既有回合经验。|文档,空记忆,零样本
+@skills/astra-stuck-recovery/SKILL.md|定义规划者确认卡住后才触发的恢复流程，重新检查因果前提、推迟尚不需要的条件，并在存活回合中选择有界推进或信息获取动作。|技能文档,卡住恢复,规划
+@skills/astra-stuck-recovery/agents/openai.yaml|配置卡住恢复技能的显示名称、简短说明和默认调用提示。|技能配置,入口说明,卡住恢复
+@skills/astra-stuck-recovery/references/recovery-cases.md|以钥匙抓取与锁孔对齐等案例说明阶段前置条件重分类、延期和恢复后的契约修订。|参考文档,恢复案例,阶段契约
+@skills/astra-valen-supervision/SKILL.md|说明 Astra 负责策略分解、Valen 提供视觉事实、宿主执行和门控的职责，并指导声明动作前提、处理未知与核对完成证据。|技能文档,视觉监督,任务规划
+@skills/astra-valen-supervision/agents/openai.yaml|配置视觉监督技能的显示名称、简短说明和默认规划提示。|技能配置,入口说明,视觉监督
+@skills/astra-valen-supervision/references/contracts.md|提供任务简报和阶段契约模板，解释双臂与单臂组合、证据依赖、动作后检查以及恢复边界。|参考文档,阶段契约,双臂协调
+@src/pyrualean/codex-catalog-gpt-6-astra-fallback.json|保存运行 Codex 时可选的 gpt-6-astra 模型目录元数据，包括推理级别、上下文和指令模板，供生成器选择性注入。|模型配置,运行时,兼容目录
+@src/pyrualean/hosts/robodojo_client_root.py|构建官方 RoboDojo 评估客户端的独立运行目录，复制代码配置、链接资源，并可只在副本中开启深度和相机矩阵。|客户端准备,配置副本,资源管理
+with_depth|在配置副本中开启深度及相机矩阵相关开关。
+_assets|定位仓库内或运行环境指定的 RoboDojo 资源目录。
+lay_out|复制 RoboDojo 与 XPolicyLab 必需代码，放置所选策略并布置资源和结果目录。
+@src/pyrualean/hosts/robodojo_env_server.py|包装 RPent RoboDojo 环境服务器，在进程内补齐基准第三臂轨迹与评估种子行为，使互动任务遵循官方客户端动作序列。|环境兼容,第三臂,服务器入口
+_query|请求辅助臂下一轨迹并记录新增队列长度。
+_queue_first|在回合检查注册后排入辅助臂首段轨迹。
+_take_turn|每次动作后按官方轮次规则排队辅助臂动作并检查稳定性。
+_give_eval_seed|为缺少该字段的环境补入布局集合编号，支持示范轨迹加载。
+_replaying|在控制子步中插入已排队的辅助臂动作。
+install|幂等包装运行时桥接与延迟创建的环境类，补齐第三臂评估行为。
+main|安装进程内兼容逻辑后，以原参数执行 RPent 环境服务器脚本。
+@src/pyrualean/hosts/sam3_local.py|在策略进程内加载并缓存 SAM3，提供与 RPent 客户端一致的文本或像素分割接口及最高置信候选选择。|分割模型,模型缓存,感知适配
+_array|将张量转为 CPU 浮点数组，已有数组直接复用。
+select_top|选择达到阈值且掩膜非空的最高置信候选。
+shared|按检查点与设备复用进程中的 SAM3 实例，避免每回合重复加载。
+Segmented|保存一次分割的掩膜、分数与边界或未找到结果。
+LocalSam3|封装单 GPU 上的 SAM3 模型、图像特征缓存和交互分割。
+LocalSam3.__init__|校验模型检查点并设置设备，加载官方 SAM3 及交互像素分割组件。
+LocalSam3._state_for|为同一图片缓存图像特征，供多个提示重复使用。
+LocalSam3.segment|验证文本与像素提示互斥及阈值范围，执行分割并返回最高分有效掩膜。
+@tests/conftest.py|提供模拟 RPent 状态封装的 LIBERO 假后端和公共 pytest fixture，以离线验证机器人接口和执行流程。|测试,模拟后端,共享fixture
+backend|创建独立的假 LIBERO 后端供测试使用。
+robo|把假后端封装为实际 LiberoRobot 接口。
+_ToolResult|模拟 RPent 工具结果对象中原始负载的形状。
+_ToolResult.__init__|保存模拟工具名称和返回负载。
+FakeLiberoBackend|模拟碗与盘的简化场景，只有持碗在盘上释放才触发原生成功。
+FakeLiberoBackend.__init__|初始化末端、夹爪、物体持有、步数与错误注入状态并记录初始观测。
+FakeLiberoBackend.execute_tool|记录调用并执行读操作或模拟动作，将运动结果包装为 RPent 观测结构。
+FakeLiberoBackend.solved|返回模拟环境的原生成功状态。
+FakeLiberoBackend.artifact|按产物扩展名生成模拟图像或世界坐标数据。
+FakeLiberoBackend.env_steps|返回模拟累计帧数。
+FakeLiberoBackend.cancel|设置模拟后端取消标志。
+FakeLiberoBackend._do_move_to|模拟受限位置移动、夹爪保持、步数消耗和不可达停滞。
+FakeLiberoBackend._do_pi0_pick|根据与碗的平面距离模拟 VLA 抓取及动作块消耗。
+FakeLiberoBackend._do_release|模拟释放；仅在持碗且位于盘上时设置成功。
+FakeLiberoBackend._do_rotate_wrist|校验角度输入并返回模拟腕部旋转结果。
+FakeLiberoBackend._readonly|模拟状态、相机标定、物体分割和反投影查询。
+FakeLiberoBackend._record|保存当前模拟状态及对应命令与原语结果。
+FakeLiberoBackend._view|将指定步骤记录包装为原生观测封装。
+@tests/test_arms.py|离线验证持久 Python 单元和独立程序工具的状态、预算、图像策略、错误反馈和运行契约。|测试,代码执行,工具接口
+cells|创建持久 Python 单元模式的工具包 fixture。
+program|创建最多运行两个程序的完整程序模式 fixture。
+test_tool_specs_per_arm|验证两种执行方式暴露正确工具及程序次数说明。
+test_cells_persist_state_and_echo_trailing_expression|验证变量函数跨单元保留、尾表达式回显和运动后的图像反馈。
+test_cells_report_exceptions_and_episode_end|验证异常可反馈，环境成功后拒绝继续运动并正确记录完成状态。
+test_program_runs_fresh_namespace_and_enforces_budget|验证程序使用独立命名空间、可复用工作目录模块并严格执行次数预算。
+test_program_reports_crash_and_load_errors|验证程序异常和缺少 run 入口均返回明确错误。
+test_contracts_mention_budget_and_single_shot|验证运行契约包含墙钟预算与单次或多次程序限制。
+test_on_demand_images_only_when_shown|验证按需图像仅在显式 show 后返回且请求只消费一次。
+test_pure_feedback_returns_only_program_output|验证纯反馈模式输出受约束，同时保留内部审计和显式图像。
+test_display_and_log_helpers|验证日志保留和主动图像展示编码。
+test_arm_contract_guides_note_is_opt_in|验证操作指南提示只在显式开启时附加。
+test_copy_guides_copies_the_three_files_and_hashes_them|验证指定指南的复制、内容摘要及缺失文件错误。
+test_arm_contract_budget_modes|验证墙钟与调用次数预算使用不同提示，非法预算模式被拒绝。
+test_python_tool_call_budget|验证 Python 调用次数耗尽后持续拒绝额外执行。
+@tests/test_claude_runtime.py|以假的 Claude SDK 异步消息流验证运行时选项、图片、超时、错误分类及词元审计，无需网络。|测试,Claude运行时,用量审计
+fake_sdk|安装假的 SDK 模块并捕获查询参数及消息。
+usage|构造包含缓存和可选思考词元的模拟用量。
+episode_messages|构造读指南、执行代码和完成回合的三次请求消息序列。
+run|以模拟 SDK 和初始图片执行运行时包装，返回生成记录及捕获参数。
+test_usage_totals_from_result_and_profile_from_assistant_messages|验证最终总用量来自结果消息，而请求输入画像按助手消息去重。
+test_options_and_initial_message|验证模型、工具、环境隔离、MCP 配置与首条多模态消息。
+test_effort_none_disables_thinking_and_program_arm_tools|验证无推理模式关闭思考，并为程序执行方式选择正确工具。
+test_wall_clock_timeout_cancels_and_reports|验证墙钟超时取消查询、触发停止回调并保存正确终态。
+test_budget_subtypes_are_warnings_provider_failures_are_errors|验证轮数上限记为告警，模型服务失败记为错误。
+test_sdk_exception_and_failed_mcp_server_are_errors|验证 SDK 异常、MCP 初始化失败和缺少结果消息均留下错误。
+test_usage_falls_back_to_assistant_messages_without_a_result|验证无最终结果时保留已知输入统计且不虚构输出词元。
+test_replay_events_reproduces_the_live_audit|验证离线事件重放与实时用量审计一致。
+test_helpers|验证轮数映射、工具名称、CLI 路径和其他运行时辅助行为。
+test_play_episode_wires_the_claude_runtime|使用假宿主验证 play_episode 正确接入 Claude 并保存文件、字段和参数。
+TextBlock|模拟 Claude 文本消息块。
+ToolUseBlock|模拟含调用标识、工具名和参数的工具请求块。
+ToolResultBlock|模拟工具输出及错误标记。
+UserMessage|模拟用户消息及关联工具结果字段。
+AssistantMessage|模拟助手内容、模型、消息标识及用量。
+SystemMessage|模拟初始化等系统事件。
+ResultMessage|模拟最终结果的状态、耗时、会话和总用量字段。
+ClaudeAgentOptions|模拟可接收任意运行时选项的 SDK 配置类。
+ClaudeAgentOptions.__init__|把传入的模拟 SDK 选项保存为属性。
+@tests/test_cli.py|验证离线 API 和提示输出、指标汇总、自定义模型服务配置以及代码限制参数向宿主透传。|测试,命令行,参数传递
+test_api_and_prompt_render_offline|验证 API 与系统提示无需启动仿真即可渲染。
+test_summarize_reads_result_dirs|验证 summarize 命令可读取运行结果目录并输出聚合 JSON。
+test_provider_overrides_shape|验证自定义兼容网关参数格式与无地址时的缺省行为。
+test_execution_options_reach_the_host|验证代码超时、动作和输出限制被外层 CLI 传给宿主。
+@tests/test_cli_supervision_defaults.py|验证外层和宿主命令行的视觉监督、卡住恢复默认值、显式覆盖及不支持组合的提前拒绝。|测试,视觉监督,默认配置
+capture_episode|替换进程与回合入口，捕获外层参数传到最终执行器的配置。
+test_insert_key_defaults_enable_full_loop_and_defer_recovery_body|验证默认单元执行开启监督与卡住恢复，恢复主体只在触发时提供。
+test_explicit_modes_survive_outer_to_host_forwarding|验证显式监督模式与恢复开关通过外层命令完整传递。
+test_valen_address_parameter_overrides_environment|验证命令行 Valen 地址优先于环境设置。
+test_custom_recovery_and_rounds_override_defaults|验证自定义恢复说明和轮数覆盖内置默认值。
+test_builtin_recovery_rounds_are_forwarded|验证内置恢复的轮数参数传到宿主配置。
+test_conflicting_recovery_flags_are_rejected_before_launch|验证关闭恢复与指定恢复文件的冲突在启动前被拒绝。
+test_program_cannot_silently_accept_unsupported_features|验证程序执行方式明确拒绝不支持的监督或恢复选项。
+@tests/test_coordination.py|用可控双臂假环境验证同步运动、观测新鲜度、部分执行、故障预算、视觉监督和阶段门控的交互。|测试,双臂协调,执行边界
+station|创建假关节环境、原生工具包和纯 RGB 双臂机器人。
+lift|读取当前双臂观测并同步抬升四厘米。
+monitored|创建带假 Valen 客户端的监督单元工具包并捕获视觉请求。
+test_sync_moves_both_each_tick_and_keeps_squeeze|验证每个原生动作同时驱动双臂并保持先前闭合命令。
+test_xyz_retains_orientation_and_omitted_arm_holds|验证只给位置时保留方向，未指定手臂保持不动。
+test_python_freely_composes_single_arm_grip_and_both|验证 Python 可自由组合单臂、夹爪和双臂运动。
+test_preflight_refusal_returns_both_errors_without_actions_or_visual_vote|验证预检查拒绝返回双臂误差但不执行动作或产生视觉投票。
+test_bounded_generated_loop_changes_rejected_target_in_same_cell|验证单元内有界循环可修改被拒绝的目标并继续执行。
+test_partial_result_stops_both_but_returns_to_python|验证可恢复跟踪偏差同时停止双臂，并将部分结果交回 Python。
+test_generated_correction_after_partial_uses_actual_endpoint|验证修正以实际部分终点为起点，避免从原始轨迹重放。
+test_visual_unknown_stops_even_a_recoverable_partial_move|验证视觉未知可暂停本来可恢复的部分运动。
+test_gripper_timing_is_chosen_by_python_not_a_fixed_release_workflow|验证夹爪开闭时机由 Python 参数决定，动作开始即生效。
+test_declared_phase_gate_applies_to_all_motion|验证声明的阶段前置条件同时约束单臂与双臂动作。
+test_declared_gate_with_fresh_evidence_allows_release|验证有效且满足要求的视觉事实允许后续释放。
+test_unsupported_geometry_and_relative_preflight_return_rejection|验证未实现碰撞能力和不可满足相对姿态约束在运动前被拒绝。
+test_relative_violation_in_execution_hands_back_to_model|验证执行中的相对姿态违约触发暂停并保留部分结果。
+test_recoverable_tracking_miss_cannot_hide_relative_violation|验证可恢复跟踪偏差不能掩盖更严重的相对约束失败。
+test_native_error_after_physical_step_is_charged_and_hands_back|验证物理动作后通信失败仍计入步数并暂停依赖动作。
+test_call_deadline_stops_inside_segment|验证运动调用的时间限制可以在检查分段内部停止。
+test_interruption_between_checkpoints_reports_existing_partial_motion|验证检查点之间中断仍报告已经发生的部分运动。
+test_limits_preflight_and_episode_budget_survive_new_calls|验证过小局部预算在预检查拒绝，回合预算耗尽后新调用不能继续。
+test_host_refuses_plan_after_external_drift|验证计划执行前出现外部状态漂移时拒绝陈旧计划。
+test_keep_retains_last_close_even_if_measured_open|验证保持模式重发上次闭合命令，而不依赖实测开度。
+test_program_can_branch_on_rejected_motion|验证完整程序可根据零步拒绝结果分支处理。
+test_pose_and_generated_api_expose_the_simple_interface|验证 Pose 校验与不可变数据，并检查生成 API 暴露简洁同步接口。
+test_unknown_streak_survives_recoverable_partial_retries|验证局部重试和零步拒绝不会清除连续未知视觉证据。
+test_program_critical_fault_is_paused_with_physical_feedback|验证完整程序的关键故障返回暂停及已执行物理动作反馈。
+test_zero_step_ik_retries_still_hit_supervisor_action_budget|验证不产生物理步的逆运动学重试仍消耗监督动作预算。
+JointEnvironment|提供双臂关节、夹爪、冻结故障和动作后错误的可控测试环境。
+JointEnvironment.__init__|初始化双臂关节、夹爪、动作列表和故障注入选项。
+JointEnvironment.get_status|返回测试环境已执行动作数和动作上限。
+JointEnvironment.get_obs|用实际运动学生成双臂位姿并构造模拟相机观测。
+JointEnvironment.step|记录并更新动作，支持冻结单臂或物理步后的通信异常注入。
+@tests/test_env.py|验证统一环境变量读取语义和 Codex 重试次数配置。|测试,环境变量,运行时配置
+test_setting_reads_the_pyrualean_variable_else_the_default|验证变量缺失用默认值，而显式空字符串仍视为已设置。
+test_codex_retries_come_from_the_environment|验证请求与流式重试次数均来自统一环境设置。
+@tests/test_evaluation.py|验证跨系统回合计量、原生成功、步数重建、严格配对以及 Claude 用量归一化。|测试,评估指标,结果解析
+_result|创建具有统一结果结构的测试运行目录，并允许覆盖字段。
+test_crashed_and_timed_out_episodes_count_as_failures|验证崩溃和超时计入失败分母，并保存错误备注。
+test_env_steps_from_states_counts_chunks_and_servo_steps|验证 VLA 块与伺服动作按各自单位重建步数。
+test_parse_rpent_run_uses_native_termination_not_agent_claim|验证原生环境判据优先于智能体自报成功，并记录二者冲突。
+test_parse_rpent_run_without_finish_is_no_finish|验证缺少完成调用会明确标记 no_finish。
+test_compare_pairs_strictly_by_backend_task_seed|验证仅后端、任务、种子完全匹配的回合能够配对。
+test_env_steps_from_states_trusts_a_native_action_counter|验证存在原生动作计数时不重复累加推导步数。
+test_parse_rpent_run_reads_robotwin_transcripts|验证 RoboTwin 任务标识、原生成功和动作数的解析。
+test_env_steps_from_states_rebuilds_robocasa_runs|验证 RoboCasa VLA、脚本动作和校准开销的统一计数。
+test_parse_rpent_run_normalises_claude_sdk_token_stats|验证 Claude 普通输入、缓存读写与输出用量映射到统一指标。
+test_claude_stream_usage_counts_each_model_request_once|验证流式重复助手消息不会重复计量请求。
+test_claude_stream_usage_takes_output_from_the_transcript|验证最终输出词元优先读取完整会话记录而非流式快照。
+test_parse_rpent_run_keys_robocasa_cells_like_the_code_arm|验证 RoboCasa 工具调用与代码执行方式采用一致的任务配对键。
+@tests/test_evidence.py|验证持久证据声明的原子失败、冲突拒绝和容量边界，确保错误声明不损坏已建立依赖。|测试,证据账本,原子校验
+test_bad_watch_cannot_erase_prior_gate_or_change_fact|验证非法监督声明不能删除既有门控或修改事实。
+test_invalid_deferral_cannot_change_requirements|验证非法延期请求保持原有阶段需求不变。
+test_conflicting_gate_cannot_overwrite_existing_dependency|验证相互冲突的事实条件不能覆盖已登记依赖。
+test_episode_fact_capacity_fails_without_partial_registration|验证超出事实容量时不会部分登记新事实。
+
+@integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py|随机物体扫块策略；当前文件内容与 sweep_blocks.py 完全相同，按任务指令选择目标集合，通过纯 RGB 几何、颜色分割和公开 robo API 定位刷子、簸箕及残留物，按动作预算抓取、转移和复查。|离线策略,视觉几何,任务操作
+P|打印策略诊断信息。
+fmt|把坐标向量格式化为三位小数文本。
+wrap|将角度规范为负一百八十度到一百八十度范围。
+ang|计算二维向量的方向角。
+unit|根据角度构造二维单位向量。
+rot2|按给定角度旋转二维向量。
+cross2|计算二维向量的标量叉积。
+Rz|构造绕 z 轴的旋转矩阵。
+Ry|构造绕 y 轴的旋转矩阵。
+Rx|构造绕 x 轴的旋转矩阵。
+orient|按 RoboDojo 夹爪约定组合俯仰、偏航与滚转。
+quat_mat|把 wxyz 四元数转换为旋转矩阵。
+cam|通过公开相机接口读取内参与世界外参。
+pix_ray|由图像像素构造世界坐标相机射线。
+pix2plane|计算像素射线与指定高度平面的交点。
+proj|将世界坐标投影到相机图像的行列位置。
+plane_maps|批量计算每个图像像素与指定水平面的交点坐标。
+mv|执行公开全姿态运动，统计消耗并记录实际到达、阻塞和逆运动学反馈。
+grip|执行夹爪开合、累积动作消耗并记录接触开度。
+go_home|有限次调用复位并累计原生动作消耗。
+sfmt|将物体定位结果整理为可读几何与置信度诊断。
+loc|尝试多个文本描述，返回可用的物体定位结果。
+bud_point|用腕部图像中的宽度轮廓定位耳塞较宽主体，避免夹在细杆连接处滑出。
+split_blob|对过长图像连通块排除停放夹爪，必要时用平面点聚类分离接触物体。
+detect_objects|在平面区域内用颜色差与连通区域检测候选物体，并排除指定几何区域。
+arm_mask|投影头部视图中被指定夹爪覆盖的像素，减少把机器人当作目标的误检。
+top_grasp|尝试多个俯仰和偏航方向进行顶部接近与抓取。
+pan_axes|根据簸箕口朝向建立局部平面坐标轴。
+pan_pt|把簸箕局部坐标和高度转换为世界位置。
+pan_local|把世界平面点转换为簸箕局部坐标。
+proj_many|将一组世界点批量投影到头部相机。
+model_world|把簸箕模型点按候选中心和朝向转换到世界坐标。
+silhouette|投影簸箕本体与把手的凸包，生成候选轮廓掩膜。
+yellow_mask|在 HSV 颜色空间筛选黄色目标像素。
+ref_colour|从参考像素邻域取得平滑后的 Lab 颜色中位数。
+colour_mask|按参考 Lab 颜色距离构造像素掩膜，降低亮度差异权重。
+fit_dustpan|以投影轮廓与图像掩膜的交并比拟合簸箕中心和开口方向。
+mvq|执行运动并记录动作消耗，预算截断时终止策略。
+rect_mask|在世界平面网格上生成具有朝向与边距的矩形区域掩膜。
+xmin|根据既有逆运动学范围估计右臂低位垂直抓取的最小可达横坐标。
+compact|仅保留几何延伸不超过阈值的紧凑物体候选。
+not_gripper|移除靠近已知停放夹爪区域的候选物体。
+opening_for|根据物体宽度计算带余量且限幅的夹爪张开目标。
+main|定位并调整刷子与簸箕，结合头部及腕部观测搬运物体，按剩余预算重查残留并有限次修正。
+Done|表示策略因原生预算或回合终止而停止。

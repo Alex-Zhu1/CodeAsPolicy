@@ -1,0 +1,2520 @@
+{
+  "nodes": [
+    {
+      "id": "file:tests/test_recovery.py",
+      "type": "file",
+      "name": "test_recovery.py",
+      "filePath": "tests/test_recovery.py",
+      "summary": "验证代码预检、部分执行、失败定位和恢复反馈。通过固定输入、模拟后端或临时资源检查正常行为及失败边界。",
+      "tags": [
+        "测试",
+        "回归验证",
+        "行为契约"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_recovery.py:test_validation_rejects_entire_cell_before_motion",
+      "type": "function",
+      "name": "test_validation_rejects_entire_cell_before_motion",
+      "filePath": "tests/test_recovery.py",
+      "summary": "验证预检拒绝整个非法代码单元且不执行运动。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        15,
+        23
+      ]
+    },
+    {
+      "id": "function:tests/test_recovery.py:test_partial_execution_is_repaired_without_replaying_motion",
+      "type": "function",
+      "name": "test_partial_execution_is_repaired_without_replaying_motion",
+      "filePath": "tests/test_recovery.py",
+      "summary": "验证部分执行失败后保留进度而不重放已执行运动。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        26,
+        43
+      ]
+    },
+    {
+      "id": "function:tests/test_recovery.py:test_failed_primitive_is_an_attempt_not_a_completed_action",
+      "type": "function",
+      "name": "test_failed_primitive_is_an_attempt_not_a_completed_action",
+      "filePath": "tests/test_recovery.py",
+      "summary": "验证失败原语计为尝试而非完成动作。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        46,
+        55
+      ]
+    },
+    {
+      "id": "function:tests/test_recovery.py:test_failed_postcondition_stops_following_action",
+      "type": "function",
+      "name": "test_failed_postcondition_stops_following_action",
+      "filePath": "tests/test_recovery.py",
+      "summary": "验证后置条件失败立即阻止后续动作。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        58,
+        68
+      ]
+    },
+    {
+      "id": "function:tests/test_recovery.py:test_repeated_errors_and_failed_attempts_consume_existing_budget",
+      "type": "function",
+      "name": "test_repeated_errors_and_failed_attempts_consume_existing_budget",
+      "filePath": "tests/test_recovery.py",
+      "summary": "验证重复错误和失败尝试继续消耗既有预算。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        71,
+        82
+      ]
+    },
+    {
+      "id": "function:tests/test_recovery.py:test_single_shot_program_failures_are_reported_without_extra_attempt",
+      "type": "function",
+      "name": "test_single_shot_program_failures_are_reported_without_extra_attempt",
+      "filePath": "tests/test_recovery.py",
+      "summary": "验证单次完整程序失败仅报告而不额外重试。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        92,
+        106
+      ]
+    },
+    {
+      "id": "function:tests/test_recovery.py:test_program_runtime_error_keeps_original_location",
+      "type": "function",
+      "name": "test_program_runtime_error_keeps_original_location",
+      "filePath": "tests/test_recovery.py",
+      "summary": "验证程序运行时错误保留原始代码位置。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        109,
+        117
+      ]
+    },
+    {
+      "id": "function:tests/test_recovery.py:test_runtime_syntax_error_is_not_claimed_as_preflight_rejection",
+      "type": "function",
+      "name": "test_runtime_syntax_error_is_not_claimed_as_preflight_rejection",
+      "filePath": "tests/test_recovery.py",
+      "summary": "验证执行期动态语法错误不被误报为预检拒绝。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        120,
+        126
+      ]
+    },
+    {
+      "id": "function:tests/test_recovery.py:test_error_in_persistent_helper_points_to_its_definition",
+      "type": "function",
+      "name": "test_error_in_persistent_helper_points_to_its_definition",
+      "filePath": "tests/test_recovery.py",
+      "summary": "验证持久化辅助函数错误定位到定义处。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        129,
+        135
+      ]
+    },
+    {
+      "id": "function:tests/test_recovery.py:test_long_output_keeps_parseable_failure_and_recovery",
+      "type": "function",
+      "name": "test_long_output_keeps_parseable_failure_and_recovery",
+      "filePath": "tests/test_recovery.py",
+      "summary": "验证长输出截断后仍保留失败与恢复结构。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        138,
+        147
+      ]
+    },
+    {
+      "id": "function:tests/test_recovery.py:test_mcp_marks_execution_failures_but_not_normal_completion",
+      "type": "function",
+      "name": "test_mcp_marks_execution_failures_but_not_normal_completion",
+      "filePath": "tests/test_recovery.py",
+      "summary": "验证MCP 将执行失败标为错误而保留正常完成语义。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        150,
+        158
+      ]
+    },
+    {
+      "id": "file:tests/test_robocasa.py",
+      "type": "file",
+      "name": "test_robocasa.py",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "验证RoboCasa 导航、移动底座、夹爪及 VLA 接口。通过固定输入、模拟后端或临时资源检查正常行为及失败边界。",
+      "tags": [
+        "测试",
+        "回归验证",
+        "行为契约"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:tests/test_robocasa.py:rc_backend",
+      "type": "function",
+      "name": "rc_backend",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "创建带抽屉与罐子的 RoboCasa 模拟后端。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        596,
+        597
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:rc",
+      "type": "function",
+      "name": "rc",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "把模拟后端包装为 RoboCasa 机器人接口。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        601,
+        602
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:test_state_reads_the_envelope",
+      "type": "function",
+      "name": "test_state_reads_the_envelope",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "验证从响应读取状态与任务说明。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        608,
+        621
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:test_state_properties_on_the_recorded_smoke_pose",
+      "type": "function",
+      "name": "test_state_properties_on_the_recorded_smoke_pose",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "验证已记录真实起始姿态的方向属性符合约定。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        624,
+        644
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:test_live_envelopes_may_carry_numpy_arrays",
+      "type": "function",
+      "name": "test_live_envelopes_may_carry_numpy_arrays",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "验证实时响应中的 NumPy 数组可转换为状态字段。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        647,
+        663
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:test_summary_dict_is_compact_and_json_friendly",
+      "type": "function",
+      "name": "test_summary_dict_is_compact_and_json_friendly",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "验证状态摘要简洁且可直接序列化为 JSON。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        666,
+        672
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:test_move_to_passes_rpent_argument_names_and_returns_a_typed_result",
+      "type": "function",
+      "name": "test_move_to_passes_rpent_argument_names_and_returns_a_typed_result",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "验证位姿运动正确传递 RPent 参数并返回类型化结果。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        678,
+        701
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:test_a_stalled_servo_is_a_measured_outcome_not_an_exception",
+      "type": "function",
+      "name": "test_a_stalled_servo_is_a_measured_outcome_not_an_exception",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "验证伺服停滞作为实测未到达结果而非异常。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        704,
+        710
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:test_moves_over_0_30_m_and_bad_arguments_are_refused_before_dispatch",
+      "type": "function",
+      "name": "test_moves_over_0_30_m_and_bad_arguments_are_refused_before_dispatch",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "验证过长位移和非法参数在下发前被拒绝。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        713,
+        768
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:test_move_delta_is_relative_to_the_current_position",
+      "type": "function",
+      "name": "test_move_delta_is_relative_to_the_current_position",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "验证相对运动以当前末端位置计算目标。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        771,
+        782
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:test_rotate_pitch_is_relative_and_reports_no_angle",
+      "type": "function",
+      "name": "test_rotate_pitch_is_relative_and_reports_no_angle",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "验证俯仰旋转使用相对角且准确表达缺失测量。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        785,
+        793
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:test_gripper_commands",
+      "type": "function",
+      "name": "test_gripper_commands",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "验证夹爪开闭指令与返回开度正确。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        796,
+        804
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:test_scripted_grasp_success_and_the_stage_that_stalled",
+      "type": "function",
+      "name": "test_scripted_grasp_success_and_the_stage_that_stalled",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "验证脚本抓取区分成功与停滞阶段。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        807,
+        826
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:test_navigate_to_drives_the_base_and_moves_the_arm_with_it",
+      "type": "function",
+      "name": "test_navigate_to_drives_the_base_and_moves_the_arm_with_it",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "验证导航移动底座时同步改变机械臂世界位置。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        832,
+        857
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:test_move_base_reports_the_measured_displacement",
+      "type": "function",
+      "name": "test_move_base_reports_the_measured_displacement",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "验证底座移动报告实际位移。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        860,
+        874
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:test_the_vla_solves_the_task_and_success_ends_the_episode",
+      "type": "function",
+      "name": "test_the_vla_solves_the_task_and_success_ends_the_episode",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "验证VLA 完成任务后回合终止。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        880,
+        911
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:test_the_vla_caps_when_the_base_is_far_and_arm_mode_clamps_the_base",
+      "type": "function",
+      "name": "test_the_vla_caps_when_the_base_is_far_and_arm_mode_clamps_the_base",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "验证VLA 受步数上限约束且机械臂模式限制底座。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        914,
+        923
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:test_vla_refusals_and_backend_errors_become_tool_errors",
+      "type": "function",
+      "name": "test_vla_refusals_and_backend_errors_become_tool_errors",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "验证VLA 拒绝与后端异常转为工具错误。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        926,
+        933
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:test_state_capture_failure_is_an_infrastructure_error_not_a_step",
+      "type": "function",
+      "name": "test_state_capture_failure_is_an_infrastructure_error_not_a_step",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "验证状态采集失败作为基础设施错误而不计为普通动作。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        936,
+        945
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:test_a_reported_truncation_latches_like_success",
+      "type": "function",
+      "name": "test_a_reported_truncation_latches_like_success",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "验证截断与成功同样锁定回合终态。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        948,
+        954
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:test_cancellation_surfaces_as_episode_finished",
+      "type": "function",
+      "name": "test_cancellation_surfaces_as_episode_finished",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "验证取消执行转换为 EpisodeFinished。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        957,
+        961
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:test_back_project_batch_returns_typed_points_and_a_median",
+      "type": "function",
+      "name": "test_back_project_batch_returns_typed_points_and_a_median",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "验证批量反投影返回类型化点和中位数。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        967,
+        989
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:test_query_world_map_finds_height_bands_on_the_latest_map",
+      "type": "function",
+      "name": "test_query_world_map_finds_height_bands_on_the_latest_map",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "验证从最新世界坐标图查询高度带聚类。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        992,
+        1014
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:test_images_world_maps_depth_calibration_and_criteria_decode",
+      "type": "function",
+      "name": "test_images_world_maps_depth_calibration_and_criteria_decode",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "验证正确解码图像、世界坐标图、深度、标定和任务条件。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1017,
+        1046
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:test_world_maps_expire_after_25_steps",
+      "type": "function",
+      "name": "test_world_maps_expire_after_25_steps",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "验证世界坐标图按25步有效期淘汰。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1049,
+        1058
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:test_ledger_records_every_call_with_env_steps",
+      "type": "function",
+      "name": "test_ledger_records_every_call_with_env_steps",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "验证账本记录所有调用及环境步数。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1061,
+        1079
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:test_api_reference_lists_every_public_method_and_result_type",
+      "type": "function",
+      "name": "test_api_reference_lists_every_public_method_and_result_type",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "验证API 参考包含公开方法与结果类型。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1085,
+        1132
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:test_adapter_and_prompt_wording",
+      "type": "function",
+      "name": "test_adapter_and_prompt_wording",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "验证适配器配置和提示词符合 RoboCasa 能力。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1135,
+        1171
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:test_arm_toolkit_attaches_the_three_views",
+      "type": "function",
+      "name": "test_arm_toolkit_attaches_the_three_views",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "验证工具执行反馈附带三个相机视图。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1174,
+        1192
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:test_cell_and_argument_helpers",
+      "type": "function",
+      "name": "test_cell_and_argument_helpers",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "验证任务单元标签和命令行参数转换正确。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1222,
+        1251
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:test_memory_root_prefers_the_tracked_empty_corpus",
+      "type": "function",
+      "name": "test_memory_root_prefers_the_tracked_empty_corpus",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "验证记忆目录优先选择受版本控制的空语料目录。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1254,
+        1265
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:test_dump_card_writes_json_images_and_facts",
+      "type": "function",
+      "name": "test_dump_card_writes_json_images_and_facts",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "验证导出任务卡 JSON、图像和事实摘要。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1268,
+        1293
+      ]
+    },
+    {
+      "id": "class:tests/test_robocasa.py:_ToolResult",
+      "type": "class",
+      "name": "_ToolResult",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "模拟 RPent 工具返回对象，仅保存工具名与结果负载。",
+      "tags": [
+        "测试",
+        "测试替身",
+        "状态模拟"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        48,
+        53
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:_ToolResult.__init__",
+      "type": "function",
+      "name": "_ToolResult.__init__",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "初始化该测试替身的输入、状态与调用记录，服务于RoboCasa 导航、移动底座、夹爪及 VLA 接口的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        51,
+        53
+      ]
+    },
+    {
+      "id": "class:tests/test_robocasa.py:FakeRobocasaBackend",
+      "type": "class",
+      "name": "FakeRobocasaBackend",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "模拟厨房抽屉、罐子、底座和夹爪；按 RoboCasa 响应封装返回运动、导航及 VLA 结果。",
+      "tags": [
+        "测试",
+        "测试替身",
+        "状态模拟"
+      ],
+      "complexity": "complex",
+      "lineRange": [
+        56,
+        592
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:FakeRobocasaBackend.__init__",
+      "type": "function",
+      "name": "FakeRobocasaBackend.__init__",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "初始化该测试替身的输入、状态与调用记录，服务于RoboCasa 导航、移动底座、夹爪及 VLA 接口的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        81,
+        100
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:FakeRobocasaBackend.execute_tool",
+      "type": "function",
+      "name": "FakeRobocasaBackend.execute_tool",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "记录请求并将工具名分发到模拟处理器，服务于RoboCasa 导航、移动底座、夹爪及 VLA 接口的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        104,
+        145
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:FakeRobocasaBackend.solved",
+      "type": "function",
+      "name": "FakeRobocasaBackend.solved",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "返回测试后端保存的最终任务成功判定，服务于RoboCasa 导航、移动底座、夹爪及 VLA 接口的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        147,
+        148
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:FakeRobocasaBackend.artifact",
+      "type": "function",
+      "name": "FakeRobocasaBackend.artifact",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "按名称和步数提供模拟图像、数组或文本产物，服务于RoboCasa 导航、移动底座、夹爪及 VLA 接口的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        150,
+        187
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:FakeRobocasaBackend.env_steps",
+      "type": "function",
+      "name": "FakeRobocasaBackend.env_steps",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "返回已消耗的原生环境动作数，服务于RoboCasa 导航、移动底座、夹爪及 VLA 接口的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        189,
+        190
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:FakeRobocasaBackend.cancel",
+      "type": "function",
+      "name": "FakeRobocasaBackend.cancel",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "设置取消标志供后续执行检查，服务于RoboCasa 导航、移动底座、夹爪及 VLA 接口的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        192,
+        193
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:FakeRobocasaBackend._map",
+      "type": "function",
+      "name": "FakeRobocasaBackend._map",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "生成并缓存模拟世界坐标图，服务于RoboCasa 导航、移动底座、夹爪及 VLA 接口的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        197,
+        226
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:FakeRobocasaBackend._yaw",
+      "type": "function",
+      "name": "FakeRobocasaBackend._yaw",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "由底座四元数求偏航角，服务于RoboCasa 导航、移动底座、夹爪及 VLA 接口的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        228,
+        230
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:FakeRobocasaBackend._set_yaw",
+      "type": "function",
+      "name": "FakeRobocasaBackend._set_yaw",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "把底座偏航角写回四元数状态，服务于RoboCasa 导航、移动底座、夹爪及 VLA 接口的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        232,
+        233
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:FakeRobocasaBackend._eef_quat",
+      "type": "function",
+      "name": "FakeRobocasaBackend._eef_quat",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "根据测试俯仰状态生成末端四元数，服务于RoboCasa 导航、移动底座、夹爪及 VLA 接口的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        235,
+        237
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:FakeRobocasaBackend._success",
+      "type": "function",
+      "name": "FakeRobocasaBackend._success",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "按抽屉关节开度判断模拟任务成功，服务于RoboCasa 导航、移动底座、夹爪及 VLA 接口的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        239,
+        240
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:FakeRobocasaBackend._step",
+      "type": "function",
+      "name": "FakeRobocasaBackend._step",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "推进模拟原生控制步数，服务于RoboCasa 导航、移动底座、夹爪及 VLA 接口的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        242,
+        243
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:FakeRobocasaBackend._apply_gripper",
+      "type": "function",
+      "name": "FakeRobocasaBackend._apply_gripper",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "应用夹爪命令并维护抓持状态，服务于RoboCasa 导航、移动底座、夹爪及 VLA 接口的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        245,
+        253
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:FakeRobocasaBackend._do_move_to",
+      "type": "function",
+      "name": "FakeRobocasaBackend._do_move_to",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "模拟绝对位姿运动并返回到达、步数与受阻信息，服务于RoboCasa 导航、移动底座、夹爪及 VLA 接口的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        257,
+        285
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:FakeRobocasaBackend._do_move_delta",
+      "type": "function",
+      "name": "FakeRobocasaBackend._do_move_delta",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "由当前位姿计算相对目标并复用绝对运动，服务于RoboCasa 导航、移动底座、夹爪及 VLA 接口的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        287,
+        289
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:FakeRobocasaBackend._do_rotate_pitch",
+      "type": "function",
+      "name": "FakeRobocasaBackend._do_rotate_pitch",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "模拟相对俯仰调整并同步姿态状态，服务于RoboCasa 导航、移动底座、夹爪及 VLA 接口的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        291,
+        296
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:FakeRobocasaBackend._do_set_gripper",
+      "type": "function",
+      "name": "FakeRobocasaBackend._do_set_gripper",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "模拟夹爪开合和对应动作消耗，服务于RoboCasa 导航、移动底座、夹爪及 VLA 接口的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        298,
+        302
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:FakeRobocasaBackend._do_release",
+      "type": "function",
+      "name": "FakeRobocasaBackend._do_release",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "复用张开夹爪动作模拟释放物体，服务于RoboCasa 导航、移动底座、夹爪及 VLA 接口的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        304,
+        305
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:FakeRobocasaBackend._do_scripted_grasp",
+      "type": "function",
+      "name": "FakeRobocasaBackend._do_scripted_grasp",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "模拟接近、闭合和抬升组成的脚本抓取，服务于RoboCasa 导航、移动底座、夹爪及 VLA 接口的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        307,
+        321
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:FakeRobocasaBackend._do_navigate_to",
+      "type": "function",
+      "name": "FakeRobocasaBackend._do_navigate_to",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "模拟移动底座导航、校准和目标到达，服务于RoboCasa 导航、移动底座、夹爪及 VLA 接口的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        323,
+        356
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:FakeRobocasaBackend._do_move_base",
+      "type": "function",
+      "name": "FakeRobocasaBackend._do_move_base",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "模拟底座平移并返回实测位移，服务于RoboCasa 导航、移动底座、夹爪及 VLA 接口的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        358,
+        372
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:FakeRobocasaBackend._do_rldx_skill",
+      "type": "function",
+      "name": "FakeRobocasaBackend._do_rldx_skill",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "模拟 RoboCasa VLA 分块执行与任务进度，服务于RoboCasa 导航、移动底座、夹爪及 VLA 接口的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        374,
+        431
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:FakeRobocasaBackend._do_rldx_arm",
+      "type": "function",
+      "name": "FakeRobocasaBackend._do_rldx_arm",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "以受限底座参数执行机械臂 VLA，服务于RoboCasa 导航、移动底座、夹爪及 VLA 接口的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        433,
+        434
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:FakeRobocasaBackend._readonly",
+      "type": "function",
+      "name": "FakeRobocasaBackend._readonly",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "返回状态、反投影或世界图查询的只读结果，服务于RoboCasa 导航、移动底座、夹爪及 VLA 接口的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        438,
+        544
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:FakeRobocasaBackend._record",
+      "type": "function",
+      "name": "FakeRobocasaBackend._record",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "保存当前模拟状态及最近工具执行结果，服务于RoboCasa 导航、移动底座、夹爪及 VLA 接口的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        546,
+        564
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:FakeRobocasaBackend._view",
+      "type": "function",
+      "name": "FakeRobocasaBackend._view",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "把指定历史记录转换为宿主状态响应，服务于RoboCasa 导航、移动底座、夹爪及 VLA 接口的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        566,
+        592
+      ]
+    },
+    {
+      "id": "class:tests/test_robocasa.py:_FakeState",
+      "type": "class",
+      "name": "_FakeState",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "提供模拟状态的图像或数组产物路径，支持宿主任务卡导出测试。",
+      "tags": [
+        "测试",
+        "测试替身",
+        "状态模拟"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1198,
+        1210
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:_FakeState.__init__",
+      "type": "function",
+      "name": "_FakeState.__init__",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "初始化该测试替身的输入、状态与调用记录，服务于RoboCasa 导航、移动底座、夹爪及 VLA 接口的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1201,
+        1203
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:_FakeState.artifact_path",
+      "type": "function",
+      "name": "_FakeState.artifact_path",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "将后端产物写入临时路径供宿主读取，服务于RoboCasa 导航、移动底座、夹爪及 VLA 接口的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1205,
+        1210
+      ]
+    },
+    {
+      "id": "class:tests/test_robocasa.py:_FakeToolkit",
+      "type": "class",
+      "name": "_FakeToolkit",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "把测试后端和状态产物封装成宿主需要的工具包接口。",
+      "tags": [
+        "测试",
+        "测试替身",
+        "状态模拟"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1213,
+        1219
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:_FakeToolkit.__init__",
+      "type": "function",
+      "name": "_FakeToolkit.__init__",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "初始化该测试替身的输入、状态与调用记录，服务于RoboCasa 导航、移动底座、夹爪及 VLA 接口的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1214,
+        1216
+      ]
+    },
+    {
+      "id": "function:tests/test_robocasa.py:_FakeToolkit.execute_tool",
+      "type": "function",
+      "name": "_FakeToolkit.execute_tool",
+      "filePath": "tests/test_robocasa.py",
+      "summary": "记录请求并将工具名分发到模拟处理器，服务于RoboCasa 导航、移动底座、夹爪及 VLA 接口的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1218,
+        1219
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:tests/test_recovery.py",
+      "target": "function:tests/test_recovery.py:test_validation_rejects_entire_cell_before_motion",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_recovery.py",
+      "target": "function:tests/test_recovery.py:test_validation_rejects_entire_cell_before_motion",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_recovery.py",
+      "target": "function:tests/test_recovery.py:test_partial_execution_is_repaired_without_replaying_motion",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_recovery.py",
+      "target": "function:tests/test_recovery.py:test_partial_execution_is_repaired_without_replaying_motion",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_recovery.py",
+      "target": "function:tests/test_recovery.py:test_failed_primitive_is_an_attempt_not_a_completed_action",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_recovery.py",
+      "target": "function:tests/test_recovery.py:test_failed_primitive_is_an_attempt_not_a_completed_action",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_recovery.py",
+      "target": "function:tests/test_recovery.py:test_failed_postcondition_stops_following_action",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_recovery.py",
+      "target": "function:tests/test_recovery.py:test_failed_postcondition_stops_following_action",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_recovery.py",
+      "target": "function:tests/test_recovery.py:test_repeated_errors_and_failed_attempts_consume_existing_budget",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_recovery.py",
+      "target": "function:tests/test_recovery.py:test_repeated_errors_and_failed_attempts_consume_existing_budget",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_recovery.py",
+      "target": "function:tests/test_recovery.py:test_single_shot_program_failures_are_reported_without_extra_attempt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_recovery.py",
+      "target": "function:tests/test_recovery.py:test_single_shot_program_failures_are_reported_without_extra_attempt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_recovery.py",
+      "target": "function:tests/test_recovery.py:test_program_runtime_error_keeps_original_location",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_recovery.py",
+      "target": "function:tests/test_recovery.py:test_program_runtime_error_keeps_original_location",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_recovery.py",
+      "target": "function:tests/test_recovery.py:test_runtime_syntax_error_is_not_claimed_as_preflight_rejection",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_recovery.py",
+      "target": "function:tests/test_recovery.py:test_runtime_syntax_error_is_not_claimed_as_preflight_rejection",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_recovery.py",
+      "target": "function:tests/test_recovery.py:test_error_in_persistent_helper_points_to_its_definition",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_recovery.py",
+      "target": "function:tests/test_recovery.py:test_error_in_persistent_helper_points_to_its_definition",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_recovery.py",
+      "target": "function:tests/test_recovery.py:test_long_output_keeps_parseable_failure_and_recovery",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_recovery.py",
+      "target": "function:tests/test_recovery.py:test_long_output_keeps_parseable_failure_and_recovery",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_recovery.py",
+      "target": "function:tests/test_recovery.py:test_mcp_marks_execution_failures_but_not_normal_completion",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_recovery.py",
+      "target": "function:tests/test_recovery.py:test_mcp_marks_execution_failures_but_not_normal_completion",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/mcp_server.py",
+      "target": "file:tests/test_recovery.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "file:tests/test_recovery.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:rc_backend",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:rc_backend",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:rc",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:rc",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_state_reads_the_envelope",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_state_reads_the_envelope",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_state_properties_on_the_recorded_smoke_pose",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_state_properties_on_the_recorded_smoke_pose",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_live_envelopes_may_carry_numpy_arrays",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_live_envelopes_may_carry_numpy_arrays",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_summary_dict_is_compact_and_json_friendly",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_summary_dict_is_compact_and_json_friendly",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_move_to_passes_rpent_argument_names_and_returns_a_typed_result",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_move_to_passes_rpent_argument_names_and_returns_a_typed_result",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_a_stalled_servo_is_a_measured_outcome_not_an_exception",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_a_stalled_servo_is_a_measured_outcome_not_an_exception",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_moves_over_0_30_m_and_bad_arguments_are_refused_before_dispatch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_moves_over_0_30_m_and_bad_arguments_are_refused_before_dispatch",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_move_delta_is_relative_to_the_current_position",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_move_delta_is_relative_to_the_current_position",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_rotate_pitch_is_relative_and_reports_no_angle",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_rotate_pitch_is_relative_and_reports_no_angle",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_gripper_commands",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_gripper_commands",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_scripted_grasp_success_and_the_stage_that_stalled",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_scripted_grasp_success_and_the_stage_that_stalled",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_navigate_to_drives_the_base_and_moves_the_arm_with_it",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_navigate_to_drives_the_base_and_moves_the_arm_with_it",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_move_base_reports_the_measured_displacement",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_move_base_reports_the_measured_displacement",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_the_vla_solves_the_task_and_success_ends_the_episode",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_the_vla_solves_the_task_and_success_ends_the_episode",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_the_vla_caps_when_the_base_is_far_and_arm_mode_clamps_the_base",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_the_vla_caps_when_the_base_is_far_and_arm_mode_clamps_the_base",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_vla_refusals_and_backend_errors_become_tool_errors",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_vla_refusals_and_backend_errors_become_tool_errors",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_state_capture_failure_is_an_infrastructure_error_not_a_step",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_state_capture_failure_is_an_infrastructure_error_not_a_step",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_a_reported_truncation_latches_like_success",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_a_reported_truncation_latches_like_success",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_cancellation_surfaces_as_episode_finished",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_cancellation_surfaces_as_episode_finished",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_back_project_batch_returns_typed_points_and_a_median",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_back_project_batch_returns_typed_points_and_a_median",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_query_world_map_finds_height_bands_on_the_latest_map",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_query_world_map_finds_height_bands_on_the_latest_map",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_images_world_maps_depth_calibration_and_criteria_decode",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_images_world_maps_depth_calibration_and_criteria_decode",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_world_maps_expire_after_25_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_world_maps_expire_after_25_steps",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_ledger_records_every_call_with_env_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_ledger_records_every_call_with_env_steps",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_api_reference_lists_every_public_method_and_result_type",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_api_reference_lists_every_public_method_and_result_type",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_adapter_and_prompt_wording",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_adapter_and_prompt_wording",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_arm_toolkit_attaches_the_three_views",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_arm_toolkit_attaches_the_three_views",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_cell_and_argument_helpers",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_cell_and_argument_helpers",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_memory_root_prefers_the_tracked_empty_corpus",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_memory_root_prefers_the_tracked_empty_corpus",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_dump_card_writes_json_images_and_facts",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:test_dump_card_writes_json_images_and_facts",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "class:tests/test_robocasa.py:_ToolResult",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "class:tests/test_robocasa.py:_ToolResult",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:_ToolResult.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robocasa.py:_ToolResult",
+      "target": "function:tests/test_robocasa.py:_ToolResult.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "class:tests/test_robocasa.py:FakeRobocasaBackend",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "class:tests/test_robocasa.py:FakeRobocasaBackend",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robocasa.py:FakeRobocasaBackend",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend.execute_tool",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robocasa.py:FakeRobocasaBackend",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend.execute_tool",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend.solved",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robocasa.py:FakeRobocasaBackend",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend.solved",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend.artifact",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robocasa.py:FakeRobocasaBackend",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend.artifact",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend.env_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robocasa.py:FakeRobocasaBackend",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend.env_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend.cancel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robocasa.py:FakeRobocasaBackend",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend.cancel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._map",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robocasa.py:FakeRobocasaBackend",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._map",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._yaw",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robocasa.py:FakeRobocasaBackend",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._yaw",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._set_yaw",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robocasa.py:FakeRobocasaBackend",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._set_yaw",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._eef_quat",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robocasa.py:FakeRobocasaBackend",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._eef_quat",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._success",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robocasa.py:FakeRobocasaBackend",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._success",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._step",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robocasa.py:FakeRobocasaBackend",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._step",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._apply_gripper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robocasa.py:FakeRobocasaBackend",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._apply_gripper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._do_move_to",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robocasa.py:FakeRobocasaBackend",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._do_move_to",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._do_move_delta",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robocasa.py:FakeRobocasaBackend",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._do_move_delta",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._do_rotate_pitch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robocasa.py:FakeRobocasaBackend",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._do_rotate_pitch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._do_set_gripper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robocasa.py:FakeRobocasaBackend",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._do_set_gripper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._do_release",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robocasa.py:FakeRobocasaBackend",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._do_release",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._do_scripted_grasp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robocasa.py:FakeRobocasaBackend",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._do_scripted_grasp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._do_navigate_to",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robocasa.py:FakeRobocasaBackend",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._do_navigate_to",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._do_move_base",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robocasa.py:FakeRobocasaBackend",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._do_move_base",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._do_rldx_skill",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robocasa.py:FakeRobocasaBackend",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._do_rldx_skill",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._do_rldx_arm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robocasa.py:FakeRobocasaBackend",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._do_rldx_arm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._readonly",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robocasa.py:FakeRobocasaBackend",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._readonly",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._record",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robocasa.py:FakeRobocasaBackend",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._record",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._view",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robocasa.py:FakeRobocasaBackend",
+      "target": "function:tests/test_robocasa.py:FakeRobocasaBackend._view",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "class:tests/test_robocasa.py:_FakeState",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "class:tests/test_robocasa.py:_FakeState",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:_FakeState.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robocasa.py:_FakeState",
+      "target": "function:tests/test_robocasa.py:_FakeState.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:_FakeState.artifact_path",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robocasa.py:_FakeState",
+      "target": "function:tests/test_robocasa.py:_FakeState.artifact_path",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "class:tests/test_robocasa.py:_FakeToolkit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "class:tests/test_robocasa.py:_FakeToolkit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:_FakeToolkit.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robocasa.py:_FakeToolkit",
+      "target": "function:tests/test_robocasa.py:_FakeToolkit.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robocasa.py",
+      "target": "function:tests/test_robocasa.py:_FakeToolkit.execute_tool",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robocasa.py:_FakeToolkit",
+      "target": "function:tests/test_robocasa.py:_FakeToolkit.execute_tool",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/prompt.py",
+      "target": "file:tests/test_robocasa.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/hosts/__init__.py",
+      "target": "file:tests/test_robocasa.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "file:tests/test_robocasa.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "file:tests/test_robocasa.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "file:tests/test_robocasa.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/robots.py",
+      "target": "file:tests/test_robocasa.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "file:tests/test_robocasa.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "file:tests/test_robocasa.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

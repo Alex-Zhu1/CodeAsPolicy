@@ -1,0 +1,1441 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "type": "file",
+      "name": "push_T_random.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "实现离线 RoboDojo 任务程序：从彩色图像拟合 T 形块和目标垫的轮廓，抓住竖杆调整位置与方向并复查误差。通过执行环境注入的 robo 接口完成任务，不在评测时调用规划模型。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:wrap180",
+      "type": "function",
+      "name": "wrap180",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "把角度规范到一个完整周期的对称区间。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        20,
+        21
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:cam_of",
+      "type": "function",
+      "name": "cam_of",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "读取相机标定并转为数值矩阵供投影计算。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        24,
+        26
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:project",
+      "type": "function",
+      "name": "project",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "把世界坐标点投影到标定相机图像平面。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        29,
+        33
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:on_plane",
+      "type": "function",
+      "name": "on_plane",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "将像素视线与给定高度平面相交以恢复世界坐标。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        36,
+        41
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:place",
+      "type": "function",
+      "name": "place",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "对二维轮廓施加平移和旋转。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        44,
+        46
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:render",
+      "type": "function",
+      "name": "render",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "将已知几何轮廓投影渲染为图像覆盖掩码。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        49,
+        67
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:colour_masks",
+      "type": "function",
+      "name": "colour_masks",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "根据图像颜色阈值筛选目标或背景像素区域。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        70,
+        78
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:solidity",
+      "type": "function",
+      "name": "solidity",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "计算区域相对于凸包的实心程度。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        81,
+        86
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:t_regions",
+      "type": "function",
+      "name": "t_regions",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "根据图像颜色阈值筛选目标或背景像素区域。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        89,
+        111
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:robot_free",
+      "type": "function",
+      "name": "robot_free",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "排除图像中属于机器人暗色部件的像素。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        114,
+        116
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:px_area_m2",
+      "type": "function",
+      "name": "px_area_m2",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "通过邻近像素反投影估计单位像素对应的桌面面积。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        119,
+        122
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:pad_regions",
+      "type": "function",
+      "name": "pad_regions",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "按颜色一致性和实际尺寸筛选目标垫区域。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        125,
+        164
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:search",
+      "type": "function",
+      "name": "search",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "多阶段搜索几何模型位姿并以掩码重叠程度选择最佳拟合。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        167,
+        185
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:components",
+      "type": "function",
+      "name": "components",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "提取满足面积阈值的连通区域。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        188,
+        191
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:fit_shape",
+      "type": "function",
+      "name": "fit_shape",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "把已知轮廓拟合到相机图像以估计 T 形块或目标垫位姿。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        194,
+        257
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:t_silhouette",
+      "type": "function",
+      "name": "t_silhouette",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "生成并膨胀 T 形块投影以遮蔽其占据区域。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        260,
+        262
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:see",
+      "type": "function",
+      "name": "see",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "读取图像并拟合指定 T 形目标或垫片。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        265,
+        268
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:say",
+      "type": "function",
+      "name": "say",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "打印任务执行进度和诊断信息。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        287,
+        288
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:see_pad",
+      "type": "function",
+      "name": "see_pad",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "读取图像并拟合指定 T 形目标或垫片。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        291,
+        295
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:see_T_head",
+      "type": "function",
+      "name": "see_T_head",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "读取图像并拟合指定 T 形目标或垫片。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        298,
+        315
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:used",
+      "type": "function",
+      "name": "used",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "累计底层动作消耗并处理任务终止或预算状态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        318,
+        323
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:unit",
+      "type": "function",
+      "name": "unit",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "由平面方向角构造单位向量。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        326,
+        327
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:j1_deg",
+      "type": "function",
+      "name": "j1_deg",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "按目标相对机械臂基座的位置计算自然接近朝向。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        330,
+        331
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:reach_ok",
+      "type": "function",
+      "name": "reach_ok",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "判断目标点是否落在选定机械臂的近桌面可达区域。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        334,
+        341
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:fmt",
+      "type": "function",
+      "name": "fmt",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "格式化向量或测量数据以便打印诊断信息。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        344,
+        345
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:pose_err",
+      "type": "function",
+      "name": "pose_err",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "计算目标与期望位姿的平移和偏航误差。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        348,
+        349
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:move",
+      "type": "function",
+      "name": "move",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "调用机器人位姿运动接口并处理本任务的运动结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        352,
+        356
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:wrist",
+      "type": "function",
+      "name": "wrist",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "选择指定机械臂对应的腕部相机名称。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        359,
+        360
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:grasp_options",
+      "type": "function",
+      "name": "grasp_options",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "根据零件形状和目标朝向生成夹持方向与抓点偏移候选。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        363,
+        377
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:look_T",
+      "type": "function",
+      "name": "look_T",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "从腕部相机精化 T 形块位姿。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        380,
+        388
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:segment",
+      "type": "function",
+      "name": "segment",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "抓住 T 形块竖杆搬到目标位姿，释放后重新观测。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        391,
+        459
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:clear_arm",
+      "type": "function",
+      "name": "clear_arm",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "移开闲置机械臂以减少遮挡和运动干涉。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        462,
+        471
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "summary": "从彩色图像拟合 T 形块和目标垫的轮廓，抓住竖杆调整位置与方向并复查误差。统筹观察、运动和任务检查。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        474,
+        567
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:wrap180",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:wrap180",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:cam_of",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:cam_of",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:project",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:on_plane",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:on_plane",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:place",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:place",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:render",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:render",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:colour_masks",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:colour_masks",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:solidity",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:solidity",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:t_regions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:t_regions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:robot_free",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:robot_free",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:px_area_m2",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:px_area_m2",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:pad_regions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:pad_regions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:search",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:search",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:components",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:components",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:fit_shape",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:fit_shape",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:t_silhouette",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:t_silhouette",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:see",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:see",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:say",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:say",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:see_pad",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:see_pad",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:see_T_head",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:see_T_head",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:used",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:used",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:unit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:unit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:j1_deg",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:j1_deg",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:reach_ok",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:reach_ok",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:fmt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:fmt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:pose_err",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:pose_err",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:move",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:move",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:wrist",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:wrist",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:grasp_options",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:grasp_options",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:look_T",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:look_T",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:segment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:segment",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:clear_arm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:clear_arm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:render",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:place",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:render",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:t_regions",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:components",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:t_regions",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:px_area_m2",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:px_area_m2",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:pad_regions",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:pad_regions",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:solidity",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:pad_regions",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:px_area_m2",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:pad_regions",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:fit_shape",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:colour_masks",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:fit_shape",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:t_regions",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:fit_shape",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:pad_regions",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:fit_shape",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:components",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:fit_shape",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:fit_shape",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:solidity",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:fit_shape",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:search",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:fit_shape",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:render",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:fit_shape",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:t_silhouette",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:render",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:see",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:cam_of",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:see",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:fit_shape",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:see_pad",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:cam_of",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:see_pad",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:t_silhouette",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:see_pad",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:fit_shape",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:see_T_head",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:see",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:pose_err",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:move",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:used",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:move",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:grasp_options",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:grasp_options",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:unit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:grasp_options",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:j1_deg",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:look_T",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:see",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:look_T",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:wrist",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:look_T",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:segment",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:grasp_options",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:segment",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:segment",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:segment",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:unit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:segment",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:used",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:segment",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:move",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:segment",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:look_T",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:segment",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:clear_arm",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:used",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:clear_arm",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:move",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:see_T_head",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:see_pad",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:move",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:unit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:reach_ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:segment",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:clear_arm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:see",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:pose_err",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/push_T_random.py:used",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

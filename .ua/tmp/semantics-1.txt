@@ -1,0 +1,289 @@
+@src/pyrualean/coordination.py|提供机器人无关的双臂同步运动 API，使用明确的世界 TCP 位姿和观测版本描述计划及真实终点，策略仍由 Python 调用方决定。|双臂协调,同步运动,观测证据
+_observation|把宿主观测转换为带动作版本、图像步骤和双臂位姿的 Observation。
+_result|将宿主同步运动报告转换为双臂误差、终点观测及恢复状态对象。
+CoordinationPause|要求终止当前局部执行并将实际场景交回规划者。
+Pose|表示世界坐标系中的 TCP 位置和单位 wxyz 四元数，禁止隐式末端偏置。
+Pose.__post_init__|验证三维位置、四元数有限性及坐标约定，并规范化不可变数据。
+Pose.shifted|在世界轴上平移当前快照位姿，同时保留方向。
+Observation|记录同一运动终点的双臂位姿、动作版本和对应图像步骤，夹爪开度不代表对象支撑成立。
+ArmMotion|保存一侧手臂相对最终运动目标的实测位姿与误差，不代表任务成功。
+DualMove|描述完成、零步拒绝或部分执行的同步运动结果，并保留实际覆盖的检查和停止原因。
+DualMove.reached|仅当双臂最终目标都到达时返回真，不推断物体状态或任务完成。
+CoordinationMixin|将宿主同步执行器转换为策略可调用的观测、位姿和双臂移动接口。
+CoordinationMixin.motion_capabilities|查询真实支持的坐标系、同步方式、反馈及碰撞检查覆盖范围。
+CoordinationMixin.pose|构造使用米制位置和 wxyz 单位四元数的世界 TCP 位姿。
+CoordinationMixin.observe|同时读取双臂，并返回可匹配相机图像的观测步骤。
+CoordinationMixin.move_both|先检查双臂路径，再用统一原生动作时钟执行目标，保留夹爪命令与真实终点反馈。
+@src/pyrualean/hosts/__init__.py|标记机器人宿主包，宿主负责启动实际仿真栈并暴露统一 Backend。|宿主包,后端接口,入口点
+@src/pyrualean/hosts/robodojo_coordination.py|在 RoboDojo 单一原生动作时钟上执行有界双臂轨迹，检查采样手臂与桌面的间隙并显式报告能力范围。|双臂协调,轨迹执行,几何校验
+_positive|检查参数为有限正数或整数且不超过上限。
+_matrix|把公开 Pose 数据转换为四维齐次变换矩阵。
+_errors|计算实际与目标位姿的位置距离和旋转角误差。
+_dispatch|分发控制器方法并将参数及状态异常转为结构化工具结果。
+_read|通过统一分发器执行控制器读取操作。
+handlers|把同一 Controller 实例的能力、观测、计划、执行与停止方法绑定为工具处理器。
+register|在工具包注册同步运动工具及其可调用处理器。
+Controller|保存有限的观测和计划，协调双臂路径检查、分段执行、版本验证与中断。
+Controller.__init__|保存原语宿主并初始化观测、计划缓存。
+Controller.capabilities|声明只支持同步世界坐标运动，以及实际提供与未提供的几何检查。
+Controller._snapshot|读取双臂关节、夹爪及原生版本，计算同一时刻的 TCP 位姿。
+Controller.observe|保存带唯一标识的双臂快照，并限制缓存观测数量。
+Controller.plan|校验预算和约束，依据新鲜观测为双臂生成兼容路径，在任何动作前拒绝不可满足的计划。
+Controller._report|读取当前快照并比较最终目标，生成实际步数、误差、恢复与停止信息。
+Controller.execute|检查计划新鲜度及预算后分段同步执行，更新预期版本并返回完成或部分执行报告。
+Controller._recoverable|区分可显式局部修正的停止原因与必须交回规划者的故障。
+Controller.discard|移除指定的已缓存运动计划。
+Controller.stop|标记计划停止，并返回其真实执行状态和当前场景。
+@src/pyrualean/hosts/robodojo_kinematics.py|在宿主侧实现 ARX-X5 双臂的正逆运动学、全姿态误差和路径采样，避免只控制位置导致手腕漂移。|运动学,逆运动学,轨迹规划
+_rot_x|构造绕 x 轴旋转的三维矩阵。
+_rot_y|构造绕 y 轴旋转的三维矩阵。
+_rot_z|构造绕 z 轴旋转的三维矩阵。
+_axis_angle|用轴角形式构造旋转矩阵。
+_homogeneous|把旋转与位置组合成齐次变换矩阵。
+_check_arm|验证手臂标识属于支持的左右臂集合。
+frames|沿关节链计算各关节旋转后坐标系与末端 link6 的世界位姿。
+fk|计算 RoboDojo 报告的 link6 末端世界位姿。
+tcp|根据 link6 位姿及夹爪偏置计算指尖之间的抓取点。
+quat_wxyz|把旋转矩阵转换为标量分量非负的单位 wxyz 四元数。
+rot_from_quat|把 wxyz 四元数转换为旋转矩阵。
+orientation|将面向策略的俯仰、偏航和滚转角转换为夹爪方向。
+angles|从夹爪方向提取角度，在垂直向下的退化位置规范滚转值。
+_wrap|将角度规范到负一百八十度到一百八十度区间。
+rotation_error|计算两个旋转矩阵之间的角距离。
+_rotvec|由旋转矩阵提取旋转向量，并处理接近零和半周的数值退化。
+jacobian|计算指定末端偏置点的世界几何雅可比及其位姿。
+clearance_violations|检测处于桌面水平范围内且低于桌面的手臂部件。
+solve|从给定关节种子以阻尼最小二乘求解目标全位姿，联合控制位置和旋转误差。
+best_solution|尝试当前姿态及多个种子，选择可达且避开桌面、关节位移较小的解。
+slerp|对两个旋转进行球面插值。
+line_path|沿 TCP 直线路径逐点求逆运动学，延续前一解以避免关节分支跳变。
+IKResult|记录逆运动学关节解、位置和角度误差、可达状态及桌面碰撞标志。
+@src/pyrualean/hosts/robodojo_native.py|在无 RPent 的原生 RoboDojo 环境上复用项目工具，保存观测步骤并构造兼容的状态封装，支持深度和纯 RGB 模式。|原生后端,观测记录,工具适配
+_png|把图像数组前三个通道编码为 PNG 字节。
+_plain|将状态中的数组和数值转换为可保存的普通列表与标量。
+segment|在当前相机图像上调用 SAM3 文本分割，并保持 RPent 工具结果形式。
+Cancelled|表示回合停止时正在运行的原语被取消。
+_Primitives|保存裸环境、SAM3 客户端、纯彩色模式和原语取消事件。
+_Primitives.__init__|绑定环境及感知客户端并初始化最后观测与取消状态。
+Steps|将回合状态保留在内存，图像与相机信息按步骤写入磁盘。
+Steps.__init__|创建步骤产物目录并初始化记录列表。
+Steps.record|记录当前图像、相机标定和机器人状态，保存原生动作预算状态。
+Steps.index|解析正负步骤索引并检查是否已有对应记录。
+Steps.artifact_path|返回指定记录步骤中某项产物的路径。
+Steps.load_bytes|读取指定步骤产物的字节。
+NativeToolkit|在裸环境上提供机器人原语、观测记录与完成判决的工具接口。
+NativeToolkit.__init__|根据环境观测确定深度能力，创建原语、步骤记录、锁和工具派发表。
+NativeToolkit._envelope|将指定记录步骤包装为 RPent 兼容的任务语言与状态封装。
+NativeToolkit.execute_tool|执行工具；改变状态的操作会记录新步骤并返回对应观测封装。
+NativeToolkit.conclude|通知环境所有者策略已完成，让其判断当前场景。
+NativeToolkit.solved|读取环境所有者提供的最终判决，未提供时返回假。
+NativeToolkit.episode_over|查询环境所有者是否已结束回合。
+NativeToolkit.cancel_active_and_wait|设置原语取消事件以中断后续动作。
+NativeToolkit.close|设置取消标志并关闭工具包的活动执行。
+NativeBackend|把 NativeToolkit 适配为统一机器人 Backend 协议。
+NativeBackend.__init__|保存原生工具包实例。
+NativeBackend.toolkit|返回被适配的原生工具包。
+NativeBackend.colour_only|报告当前感知是否仅使用彩色图像。
+NativeBackend.execute_tool|向原生工具包派发工具调用。
+NativeBackend.conclude|通知原生工具包策略执行结束。
+NativeBackend.solved|读取原生工具包提供的最终成功判决。
+NativeBackend.episode_over|查询原生工具包的回合结束状态。
+NativeBackend.artifact|从原生步骤存储读取观测产物。
+NativeBackend.env_steps|读取裸环境状态中的原生动作计数。
+NativeBackend.cancel|请求原生工具包取消当前动作。
+@src/pyrualean/hosts/robodojo_sight.py|仅利用彩色掩膜、已知相机位姿和桌面平面估计物体三维范围。多视角约束帮助确定高度，并将机器人遮挡区域视为未知。|多视角感知,纯RGB,几何估计
+head_view|构造 RoboDojo 固定头部相机的标定视图。
+_quat_matrix|规范化 wxyz 四元数并转换为旋转矩阵。
+wrist_view|根据末端位姿与固定安装关系计算腕部相机视图。
+_fill_convex|将图像点的凸包内部像素标记为覆盖区域。
+robot_pixels|根据机器人关节状态投影连杆和夹爪覆盖区域，将这些遮挡像素标记为未知。
+_march|沿像素射线寻找首次进入候选实体的光轴深度。
+_match|以 F1 比较候选实体投影与另一视角掩膜；视野或未知像素不足时不作判断。
+_rc|把世界点投影为限制在图像范围内的像素索引。
+_head_cover|计算候选直立实体覆盖头部掩膜桌面投影的比例。
+largest_part|保留掩膜最大连通区域及靠近它的碎片，兼顾遮挡分裂与多个物体分离。
+_smear_height|根据单视角掩膜在支撑平面上的投影边缘估计直立物体高度。
+_seen|计算其他视角中被候选实体射线覆盖的掩膜像素比例。
+_taller|在主体高度之外只保留能解释额外多视角掩膜的顶部延伸，避免虚增物体高度。
+seeds|沿初始掩膜中心射线取多个高度的世界种子，为其他相机提供像素分割提示。
+measure|联合初始及其他视角掩膜选择物体高度与直立或悬垂形状，返回能解释可见证据的表面。
+View|表示 Isaac 相机约定下具有已知内外参的针孔相机。
+View.__init__|保存焦距、主点、图像大小及相机世界位姿。
+View.project|把世界坐标投影为行、列和光轴深度。
+View.rays|计算图像每个像素对应的世界方向射线。
+View.on_plane|求像素射线与给定水平平面的交点及有效性。
+Sight|封装一个相机对物体的掩膜及不能判定的遮挡像素。
+Sight._sample|将世界点投影到像素场并进行双线性采样，同时检查视野有效性。
+Sight.shows|判断世界点是否投影到物体自己的掩膜像素。
+Sight.allows|允许位于掩膜、未知区域或图像外的点作为潜在物体部分。
+Sight.in_image|判断世界点是否在相机前方且落在图像范围内。
+_Grid|在物体投影周围的支撑平面上建立自适应网格。
+_Grid.__init__|根据平面范围与网格预算选择单元尺度并生成网格坐标。
+_Grid.at|把所选网格平面坐标提升到给定相对高度。
+_Grid.index|计算平面点所在的网格单元，超出范围时返回无效索引。
+_Grid.holds|判断平面点是否落入给定单元集合。
+_Solid|用每个平面单元的最低和最高高度描述候选三维实体。
+_Solid.__init__|保存网格及上下高度场并标记有效单元。
+_Solid.spans|判断给定平面坐标与高度是否属于实体。
+_Levels|逐高度计算头部掩膜允许的物体区域及连续立柱约束。
+_Levels.__init__|建立各高度的掩膜允许矩阵及连续上升、下降信息。
+_Levels.cone|生成每个单元从最低到最高允许层组成的掩膜视锥实体。
+_Levels.prism|生成从支撑平面竖起的实体，保留肩部、把手等不同高度的可见部分。
+_Levels.block|截取达到目标高度的单元构成规则直立体。
+_Levels.rise_in|计算另一视角允许每个网格柱连续上升的高度层数。
+_Levels.hang|构造从指定高度向下延伸、由掩膜约束的悬垂实体。
+_Levels.solid|按候选解释形式生成供另一视角评估的实体。
+@src/pyrualean/hosts/robodojo_tools.py|实现 RoboDojo 全姿态移动、完整夹爪行程、复位和三维物体定位工具。几何计算来自可见观测，执行沿用统一原生动作路径与预算。|机器人原语,全姿态运动,物体定位
+_obs|读取环境当前观测并缓存到原语宿主。
+_joints|从状态中提取指定手臂的浮点关节角。
+_opening|展开嵌套单值数据并读取指定夹爪的实际开度。
+_command|把开闭保持命令映射为原生夹爪目标值。
+_act|执行一个原生动作，仅更新指定手臂并保持其他手臂。
+_remember|记录指定夹爪最近一次目标命令。
+_keep|保持上一夹爪命令而非接触物体后的实测开度，并兼容 VLA 改变夹爪的情况。
+_spent|判断原生动作计数是否已达到环境上限。
+_tcp|由关节角计算并舍入抓取点世界坐标。
+_pose_summary|计算当前抓取点及面向策略的俯仰、偏航和滚转摘要。
+_target|将指定位置与缺省保持的方向分量组合为目标全位姿。
+_joint_path_clear|采样两组关节之间的插值路径，检查桌面间隙。
+_pose_of|由关节角构造方向沿 link6、位置在 TCP 的抓取位姿。
+_plan|先求目标位姿再规划直线或关节路径，区分目标不可达与路径不可达并报告近似目标。
+_unreachable|把最接近逆运动学解的位置与角度误差格式化为拒绝原因。
+_alternatives|寻找俯仰更平缓或高度稍变的可达替代位姿。
+_followable|把关节路径拆为仿真每个原生动作可以跟随的小步目标。
+move_pose|用宿主全姿态逆运动学执行单臂抓取点运动，保持未指定角度并返回真实到达与停止信息。
+grip|重复开合命令直到夹爪稳定，可指定部分张开，返回接触开度和行程消耗。
+home|将一侧或双臂驱动回初始关节角，低位时先有限抬升并保持另一臂。
+_on_robot|判断世界点是否落在机器人连杆、夹爪轨道或手指的几何包络内。
+_camera|从当前观测中取得指定相机的数据。
+depth_image|兼容米制深度和毫米近似深度字段，返回光轴方向深度图。
+extrinsic_of|兼容 RoboDojo 与 XPolicyLab 的相机外参字段命名。
+world_points|结合深度及相机矩阵反投影世界点，并给出有效深度像素掩膜。
+_cells|把点云按平面网格均匀降采样，避免高密度可见区域获得更大权重。
+_footprint|从均匀足迹估计矩形中心、长宽与方向，按形状选择主轴或最小面积包围框。
+_far_side|对共享竖直轴的圆形切片补全不可见远侧，修正瓶杯足迹偏向相机的问题。
+object_geometry|根据可见表面点云估计物体范围、朝向和顶部高度。
+colour_only|结合宿主声明和实际观测判断是否只能使用彩色感知。
+_shown|读取图片真正对应的机器人状态，兼容旧客户端图像滞后一帧的协议。
+_view|从头部固定安装或腕部状态推导相机位姿。
+_scene|缓存当前观测图像已经得到的几何测量，图像变化后失效。
+_heights|读取或初始化已经测得的物体高度缓存。
+_behind_robot|判断机器人轮廓是否贴近掩膜边缘，从而识别物体局部遮挡。
+_measure_in_colour|在其他相机通过文本和投影种子寻找同一物体，联合多视角掩膜估计三维几何。
+probe|无深度时分割像素下物体并求射线与估计表面的交点，无法测量时退回桌面交点。
+back_project|有深度时执行直接反投影，无深度时使用纯彩色物体探测。
+locate|按文本分割物体并从允许的深度或彩色观测估计三维范围与方向。
+register|将项目原语注册到刚启动的工具包，并保存回合初始关节角用于回家动作。
+@src/pyrualean/hosts/xpolicylab_bridge.py|用条件变量把 XPolicyLab 拉取动作协议转换为工具主动步进环境的接口，支持等待轮询、最终判决及旧客户端图像状态对齐。|协议桥接,并发同步,评估客户端
+serve|启动 XPolicyLab 服务，将当前 Bridge 暴露给评估客户端。
+EpisodeOver|表示评估客户端已经结束回合，不会再提供后续观测。
+Bridge|在评估客户端与同步工具之间交换单回合观测、动作、状态和最终判决。
+Bridge.__init__|初始化条件变量、观测序号、动作槽位及回合状态。
+Bridge.reset|记录客户端复位并唤醒等待线程。
+Bridge.update_obs|接收新观测与原生预算，校正图片所对应的状态并通知等待动作的工具。
+Bridge.get_action|在有限轮询时间内返回待执行动作，无动作时返回等待，完成后返回结束信号。
+Bridge.episode_end|记录客户端的最终回合信息并唤醒等待方。
+Bridge.first_obs|等待首个观测，同时检测客户端是否仍然存活。
+Bridge.get_obs|返回当前观测；尚无观测时明确报错。
+Bridge.status|返回原生状态副本并合并已经收到的回合结束信息。
+Bridge.over|返回最终回合信息副本，尚未结束时为空。
+Bridge.step|把一个原生动作交给客户端执行并等待其后的观测，回合结束时抛出 EpisodeOver。
+Bridge.finish|声明策略不再提供动作，让客户端判断最终场景并结束。
+Bridge.abandon|客户端重置或离开时结束等待，保留已收到的最终判决。
+Bridge.verdict|等待客户端最终判决，超时或客户端死亡时返回未知。
+BridgeEnv|把 Bridge 包装为机器人原语所需的环境接口。
+BridgeEnv.__init__|保存桥接器和客户端存活检测回调。
+BridgeEnv.get_obs|通过桥接器读取当前观测。
+BridgeEnv.get_status|通过桥接器读取当前原生状态。
+BridgeEnv.step|执行桥接动作并将回合结束转换为标准环境返回结构。
+BridgeEnv.episode_over|查询客户端是否已经结束回合并提交判决。
+BridgeEnv.conclude|通知客户端策略完成并等待最终判决。
+PolicyModel|实现 XPolicyLab Model 方法，将所有请求转发给同一回合桥接器。
+PolicyModel.__init__|保存当前回合桥接器。
+PolicyModel.reset|转发客户端复位通知。
+PolicyModel.update_obs|转发客户端最新观测。
+PolicyModel.get_action|取得下一原生动作或等待信号。
+PolicyModel.on_trial_end|把试验最终结果交给桥接器并确认接收。
+PolicyModel.update_obs_batch|拒绝批量观测，因为当前协议要求一个会话驱动一个环境。
+PolicyModel.get_action_batch|拒绝批量动作请求，避免混用单环境回合状态。
+Server|在独立事件循环和后台线程中运行 XPolicyLab WebSocket 策略服务。
+Server.__init__|创建策略服务、事件循环和后台线程并保存错误状态。
+Server.stop|异步停止策略服务并有界等待线程退出。
+@src/pyrualean/hosts/xpolicylab_robodojo.py|以 XPolicyLab 策略服务连接 RoboDojo 官方评估客户端，准备独立运行目录、指定布局和原生工具包，并沿用客户端的预算及最终判决。|宿主适配,官方评估,客户端管理
+add_boot_args|注册 RoboDojo 和 XPolicyLab 仓库、评估种子及客户端启动参数。
+boot_options|将 CLI 选项转换为官方客户端宿主的启动配置。
+_source_root|定位并验证 RoboDojo 源码仓库及评估客户端文件。
+_xpolicylab_root|定位显式配置或 RoboDojo 子模块中的 XPolicyLab 仓库。
+adapter_dir|定位本仓库的 XPolicyLab 提交适配器目录。
+client_root|延迟导入负责构建客户端运行目录的公共模块。
+with_depth|在环境配置副本中启用深度图和相机矩阵，不修改原仓库。
+lay_out|复制客户端代码及配置、布置 XPolicyLab 适配器并链接资源，按需要启用深度。
+only_layout|通过恢复清单排除其他布局，使客户端仅评估指定任务布局。
+_site|从可选站点根目录取得公共依赖和服务端依赖路径。
+_import_server|使 XPolicyLab 策略服务器及兼容的 WebSocket 依赖可导入。
+_free_port|选择可用的本地策略服务端口。
+lacking|列出当前观测缺失而深度模式机器人所需的字段。
+_toolkit|在桥接环境上创建原生工具包，并以客户端最终判决作为回合结果。
+boot|启动策略服务器和官方评估客户端，等待首个观测后返回工具包；已有桥接器时复用其客户端。
+make_backend|将原生工具包包装为 NativeBackend。
+dump_card|记录双臂初始 TCP、姿态、夹爪及原生预算，并保存初始图像和任务卡。
+_Client|管理官方评估客户端进程及其日志和桥接生命周期。
+_Client.__init__|保存进程、桥接器和客户端日志句柄。
+_Client.alive|检查评估客户端进程是否仍在运行。
+_Client.stop|通知策略完成并等待客户端退出，必要时处理超时后关闭日志。
+@src/pyrualean/hosts/xpolicylab_robodojo_rgb.py|复用官方评估客户端宿主但保留默认纯彩色观测配置，不请求深度图或相机矩阵。|宿主适配,纯RGB,官方评估
+boot|调用公共官方宿主启动逻辑并关闭深度观测扩展。
+dump_card|复用公共任务卡导出逻辑并标记纯 RGB 机器人类型。
+@src/pyrualean/robodojo.py|为 RoboDojo 双臂工作站提供全姿态移动、夹爪、定位、复位和同步协调接口。执行时隐藏最终任务成功判据，只报告实际动作和观测结果。|机器人接口,RoboDojo,双臂操作
+_floats|验证向量维度与数值有限性并转换为浮点元组。
+_tuple3|解析三维坐标，格式无效时返回 NaN 坐标。
+_arm|校验手臂名称为左臂或右臂。
+_camera|校验相机名称属于当前机器人支持列表。
+_command|校验夹爪开、闭、保持命令并限定保持操作的适用场景。
+_scalar|展开可能多层嵌套的单值列表或数组。
+_sequence|将列表或数组转换为浮点元组，其他输入返回空元组。
+_rotation|将 wxyz 四元数转换为三维旋转矩阵。
+_wrap|将角度规范到负一百八十度到一百八十度范围。
+gripper_angles|从末端四元数提取面向夹爪的俯仰、偏航与滚转，处理垂直向下时的退化。
+_arm_state|从原始末端位姿和关节数据计算一侧手臂 TCP、方向及开度。
+_angle|验证可选角度为有限浮点数。
+_pick_arm|从抓取结果提取指定手臂的数值诊断字段，缺失值保留为 NaN。
+ArmState|保存单臂抓取点、夹爪角度、关节与实测开度。
+State|保存同一步骤的双臂和动作预算状态，不暴露执行中成功标志。
+State.arm|根据左或右名称返回对应手臂状态。
+Move|记录抓取点运动的请求与实际终点、位置角度误差、路径及停止原因。
+Home|保存回初始关节姿态的结果、最大关节误差和动作消耗。
+Gripper|记录完整开合后的开度和持物宽度启发式，不推断所持物体身份。
+Pick|记录 Pi0.5 双臂抓取启发式及诊断，不能作为目标物体持有的充分证据。
+Segment|保存 SAM3 掩膜质心、面积、置信度和边界，用于后续同相机几何查询。
+WorldPoint|表示单像素可见表面的世界坐标与光轴深度。
+ObjectPose|描述深度掩膜估计的物体足迹中心、顶部、尺寸和方向。
+RobodojoRobot|封装双 ARX-X5 工作站，提供策略可组合的感知、全姿态运动与双臂协调原语。
+RobodojoRobot.task|返回基准为当前布局生成的任务指令。
+RobodojoRobot.done|主动抛出属性缺失，防止策略读取基准只在结束后评判的成功标志。
+RobodojoRobot.state|读取指定记录步骤的双臂位姿、开度、关节与预算状态。
+RobodojoRobot.image|读取头部或腕部相机保存的高分辨率 RGB 图像。
+RobodojoRobot.world_map|明确拒绝不存在的逐像素世界坐标图接口。
+RobodojoRobot.camera_meta|读取指定记录步骤的相机形状、内外参和深度能力。
+RobodojoRobot.show|登记当前相机图片以附加到本轮模型反馈。
+RobodojoRobot.artifact|读取相机图片等记录产物的原始字节。
+RobodojoRobot.segment|按文本提示分割当前相机物体，返回掩膜质心和置信度。
+RobodojoRobot.back_project|读取指定像素的可见表面世界坐标，要求像素与相机一致。
+RobodojoRobot.locate|用文本分割与深度估计物体中心、顶部、足迹及方向，过程不驱动机器人。
+RobodojoRobot.pi0_pick|调用冻结 Pi0.5 驱动双臂，按抓取启发式或动作块上限停止并返回诊断。
+RobodojoRobot.move_to|求完整 TCP 位姿并执行直线或受控关节路径，返回真实运动误差及是否可恢复。
+RobodojoRobot.set_gripper|重复开合命令直到手指稳定，并记录持物开度与后续保持命令。
+RobodojoRobot.home|必要时先抬升，再将指定手臂驱回回合初始关节角。
+RobodojoRobot._move|将宿主运动负载规范为强类型 Move 对象。
+RobodojoRobot._state_from_envelope|从宿主观测封装提取任务、双臂和原生预算状态。
+RobodojoRobot._absorb|只锁存动作预算耗尽，不把任何观测封装当作执行中的任务成功信号。
+RobodojoRobot._summary_dict|生成双臂姿态与夹爪等当前状态的紧凑反馈。
+@src/pyrualean/robodojo_xpl.py|在官方 XPolicyLab 评估客户端上复用 RoboDojo API，使用深度和相机矩阵但不提供 VLA，由客户端负责最终裁决。|机器人适配,官方评估,深度感知
+RobodojoOfficialRobot|继承 RoboDojo 机器人接口并选择官方客户端宿主，声明无 VLA 能力。
+@src/pyrualean/robodojo_xpl_rgb.py|为官方客户端默认纯 RGB 配置提供 RoboDojo API，通过多相机掩膜和机器人状态估计几何，运动与夹爪接口保持一致。|机器人适配,纯RGB,多视角感知
+ObjectSight|保存多彩色视角估计的物体几何、支持视角数量及测量说明。
+SeenPoint|表示像素射线与估计物体或桌面交点，并标记表面来源。
+RobodojoOfficialColourRobot|提供无需深度和相机矩阵输入的官方评估机器人，使用彩色几何估计且无 VLA。
+RobodojoOfficialColourRobot.camera_meta|从固定头部标定或手臂状态推导当前相机标定。
+RobodojoOfficialColourRobot.back_project|分割像素下目标并计算射线交点，无可测物体时使用桌面平面。
+RobodojoOfficialColourRobot.locate|在多个彩色视角寻找同一物体，选择共同支持的高度和足迹并报告视角证据。

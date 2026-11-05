@@ -1,0 +1,3855 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "type": "file",
+      "name": "sweep_blocks.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "summary": "预先编写的扫块任务策略，通过纯 RGB 几何、颜色分割和公开 robo API 定位刷子、簸箕及残留物，按动作预算抓取、转移和复查。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "任务操作"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:P",
+      "type": "function",
+      "name": "P",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        26,
+        27
+      ],
+      "summary": "打印策略诊断信息。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:fmt",
+      "type": "function",
+      "name": "fmt",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        30,
+        31
+      ],
+      "summary": "把坐标向量格式化为三位小数文本。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:wrap",
+      "type": "function",
+      "name": "wrap",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        34,
+        35
+      ],
+      "summary": "将角度规范为负一百八十度到一百八十度范围。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:ang",
+      "type": "function",
+      "name": "ang",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        38,
+        39
+      ],
+      "summary": "计算二维向量的方向角。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:unit",
+      "type": "function",
+      "name": "unit",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        42,
+        44
+      ],
+      "summary": "根据角度构造二维单位向量。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:rot2",
+      "type": "function",
+      "name": "rot2",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        47,
+        50
+      ],
+      "summary": "按给定角度旋转二维向量。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:cross2",
+      "type": "function",
+      "name": "cross2",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        53,
+        54
+      ],
+      "summary": "计算二维向量的标量叉积。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:Rz",
+      "type": "function",
+      "name": "Rz",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        58,
+        60
+      ],
+      "summary": "构造绕 z 轴的旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:Ry",
+      "type": "function",
+      "name": "Ry",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        63,
+        65
+      ],
+      "summary": "构造绕 y 轴的旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:Rx",
+      "type": "function",
+      "name": "Rx",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        68,
+        70
+      ],
+      "summary": "构造绕 x 轴的旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:orient",
+      "type": "function",
+      "name": "orient",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        73,
+        74
+      ],
+      "summary": "按 RoboDojo 夹爪约定组合俯仰、偏航与滚转。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:quat_mat",
+      "type": "function",
+      "name": "quat_mat",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        77,
+        81
+      ],
+      "summary": "把 wxyz 四元数转换为旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:cam",
+      "type": "function",
+      "name": "cam",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        85,
+        87
+      ],
+      "summary": "通过公开相机接口读取内参与世界外参。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:pix_ray",
+      "type": "function",
+      "name": "pix_ray",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        90,
+        92
+      ],
+      "summary": "由图像像素构造世界坐标相机射线。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:pix2plane",
+      "type": "function",
+      "name": "pix2plane",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        95,
+        97
+      ],
+      "summary": "计算像素射线与指定高度平面的交点。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:proj",
+      "type": "function",
+      "name": "proj",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        100,
+        102
+      ],
+      "summary": "将世界坐标投影到相机图像的行列位置。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:plane_maps",
+      "type": "function",
+      "name": "plane_maps",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        105,
+        110
+      ],
+      "summary": "批量计算每个图像像素与指定水平面的交点坐标。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:mv",
+      "type": "function",
+      "name": "mv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        114,
+        126
+      ],
+      "summary": "执行公开全姿态运动，统计消耗并记录实际到达、阻塞和逆运动学反馈。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:grip",
+      "type": "function",
+      "name": "grip",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        129,
+        139
+      ],
+      "summary": "执行夹爪开合、累积动作消耗并记录接触开度。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:go_home",
+      "type": "function",
+      "name": "go_home",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        142,
+        152
+      ],
+      "summary": "有限次调用复位并累计原生动作消耗。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:sfmt",
+      "type": "function",
+      "name": "sfmt",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        155,
+        160
+      ],
+      "summary": "将物体定位结果整理为可读几何与置信度诊断。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:loc",
+      "type": "function",
+      "name": "loc",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        163,
+        176
+      ],
+      "summary": "尝试多个文本描述，返回可用的物体定位结果。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:bud_point",
+      "type": "function",
+      "name": "bud_point",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        179,
+        246
+      ],
+      "summary": "用腕部图像中的宽度轮廓定位耳塞较宽主体，避免夹在细杆连接处滑出。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:split_blob",
+      "type": "function",
+      "name": "split_blob",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        249,
+        274
+      ],
+      "summary": "对过长图像连通块排除停放夹爪，必要时用平面点聚类分离接触物体。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:detect_objects",
+      "type": "function",
+      "name": "detect_objects",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        278,
+        332
+      ],
+      "summary": "在平面区域内用颜色差与连通区域检测候选物体，并排除指定几何区域。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:arm_mask",
+      "type": "function",
+      "name": "arm_mask",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        335,
+        349
+      ],
+      "summary": "投影头部视图中被指定夹爪覆盖的像素，减少把机器人当作目标的误检。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:top_grasp",
+      "type": "function",
+      "name": "top_grasp",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        353,
+        371
+      ],
+      "summary": "尝试多个俯仰和偏航方向进行顶部接近与抓取。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:pan_axes",
+      "type": "function",
+      "name": "pan_axes",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        393,
+        397
+      ],
+      "summary": "根据簸箕口朝向建立局部平面坐标轴。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:pan_pt",
+      "type": "function",
+      "name": "pan_pt",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        400,
+        403
+      ],
+      "summary": "把簸箕局部坐标和高度转换为世界位置。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:pan_local",
+      "type": "function",
+      "name": "pan_local",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        406,
+        409
+      ],
+      "summary": "把世界平面点转换为簸箕局部坐标。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:proj_many",
+      "type": "function",
+      "name": "proj_many",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        412,
+        416
+      ],
+      "summary": "将一组世界点批量投影到头部相机。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:model_world",
+      "type": "function",
+      "name": "model_world",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        419,
+        425
+      ],
+      "summary": "把簸箕模型点按候选中心和朝向转换到世界坐标。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:silhouette",
+      "type": "function",
+      "name": "silhouette",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        428,
+        434
+      ],
+      "summary": "投影簸箕本体与把手的凸包，生成候选轮廓掩膜。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:yellow_mask",
+      "type": "function",
+      "name": "yellow_mask",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        437,
+        439
+      ],
+      "summary": "在 HSV 颜色空间筛选黄色目标像素。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:ref_colour",
+      "type": "function",
+      "name": "ref_colour",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        442,
+        445
+      ],
+      "summary": "从参考像素邻域取得平滑后的 Lab 颜色中位数。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:colour_mask",
+      "type": "function",
+      "name": "colour_mask",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        448,
+        452
+      ],
+      "summary": "按参考 Lab 颜色距离构造像素掩膜，降低亮度差异权重。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:fit_dustpan",
+      "type": "function",
+      "name": "fit_dustpan",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        455,
+        498
+      ],
+      "summary": "以投影轮廓与图像掩膜的交并比拟合簸箕中心和开口方向。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:mvq",
+      "type": "function",
+      "name": "mvq",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        501,
+        506
+      ],
+      "summary": "执行运动并记录动作消耗，预算截断时终止策略。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:rect_mask",
+      "type": "function",
+      "name": "rect_mask",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        509,
+        515
+      ],
+      "summary": "在世界平面网格上生成具有朝向与边距的矩形区域掩膜。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:xmin",
+      "type": "function",
+      "name": "xmin",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        522,
+        524
+      ],
+      "summary": "根据既有逆运动学范围估计右臂低位垂直抓取的最小可达横坐标。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:compact",
+      "type": "function",
+      "name": "compact",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        527,
+        528
+      ],
+      "summary": "仅保留几何延伸不超过阈值的紧凑物体候选。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:not_gripper",
+      "type": "function",
+      "name": "not_gripper",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        552,
+        553
+      ],
+      "summary": "移除靠近已知停放夹爪区域的候选物体。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:opening_for",
+      "type": "function",
+      "name": "opening_for",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        556,
+        557
+      ],
+      "summary": "根据物体宽度计算带余量且限幅的夹爪张开目标。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        560,
+        1334
+      ],
+      "summary": "定位并调整刷子与簸箕，结合头部及腕部观测搬运物体，按剩余预算重查残留并有限次修正。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:Done",
+      "type": "class",
+      "name": "Done",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "lineRange": [
+        22,
+        23
+      ],
+      "summary": "表示策略因原生预算或回合终止而停止。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "type": "file",
+      "name": "sweep_blocks_random.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "summary": "随机物体扫块策略；当前文件内容与 sweep_blocks.py 完全相同，按任务指令选择目标集合，通过纯 RGB 几何、颜色分割和公开 robo API 定位刷子、簸箕及残留物，按动作预算抓取、转移和复查。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "任务操作"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:P",
+      "type": "function",
+      "name": "P",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        26,
+        27
+      ],
+      "summary": "打印策略诊断信息。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:fmt",
+      "type": "function",
+      "name": "fmt",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        30,
+        31
+      ],
+      "summary": "把坐标向量格式化为三位小数文本。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:wrap",
+      "type": "function",
+      "name": "wrap",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        34,
+        35
+      ],
+      "summary": "将角度规范为负一百八十度到一百八十度范围。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:ang",
+      "type": "function",
+      "name": "ang",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        38,
+        39
+      ],
+      "summary": "计算二维向量的方向角。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:unit",
+      "type": "function",
+      "name": "unit",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        42,
+        44
+      ],
+      "summary": "根据角度构造二维单位向量。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:rot2",
+      "type": "function",
+      "name": "rot2",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        47,
+        50
+      ],
+      "summary": "按给定角度旋转二维向量。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:cross2",
+      "type": "function",
+      "name": "cross2",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        53,
+        54
+      ],
+      "summary": "计算二维向量的标量叉积。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:Rz",
+      "type": "function",
+      "name": "Rz",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        58,
+        60
+      ],
+      "summary": "构造绕 z 轴的旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:Ry",
+      "type": "function",
+      "name": "Ry",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        63,
+        65
+      ],
+      "summary": "构造绕 y 轴的旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:Rx",
+      "type": "function",
+      "name": "Rx",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        68,
+        70
+      ],
+      "summary": "构造绕 x 轴的旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:orient",
+      "type": "function",
+      "name": "orient",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        73,
+        74
+      ],
+      "summary": "按 RoboDojo 夹爪约定组合俯仰、偏航与滚转。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:quat_mat",
+      "type": "function",
+      "name": "quat_mat",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        77,
+        81
+      ],
+      "summary": "把 wxyz 四元数转换为旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:cam",
+      "type": "function",
+      "name": "cam",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        85,
+        87
+      ],
+      "summary": "通过公开相机接口读取内参与世界外参。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:pix_ray",
+      "type": "function",
+      "name": "pix_ray",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        90,
+        92
+      ],
+      "summary": "由图像像素构造世界坐标相机射线。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:pix2plane",
+      "type": "function",
+      "name": "pix2plane",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        95,
+        97
+      ],
+      "summary": "计算像素射线与指定高度平面的交点。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:proj",
+      "type": "function",
+      "name": "proj",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        100,
+        102
+      ],
+      "summary": "将世界坐标投影到相机图像的行列位置。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:plane_maps",
+      "type": "function",
+      "name": "plane_maps",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        105,
+        110
+      ],
+      "summary": "批量计算每个图像像素与指定水平面的交点坐标。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:mv",
+      "type": "function",
+      "name": "mv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        114,
+        126
+      ],
+      "summary": "执行公开全姿态运动，统计消耗并记录实际到达、阻塞和逆运动学反馈。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:grip",
+      "type": "function",
+      "name": "grip",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        129,
+        139
+      ],
+      "summary": "执行夹爪开合、累积动作消耗并记录接触开度。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:go_home",
+      "type": "function",
+      "name": "go_home",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        142,
+        152
+      ],
+      "summary": "有限次调用复位并累计原生动作消耗。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:sfmt",
+      "type": "function",
+      "name": "sfmt",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        155,
+        160
+      ],
+      "summary": "将物体定位结果整理为可读几何与置信度诊断。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:loc",
+      "type": "function",
+      "name": "loc",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        163,
+        176
+      ],
+      "summary": "尝试多个文本描述，返回可用的物体定位结果。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:bud_point",
+      "type": "function",
+      "name": "bud_point",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        179,
+        246
+      ],
+      "summary": "用腕部图像中的宽度轮廓定位耳塞较宽主体，避免夹在细杆连接处滑出。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:split_blob",
+      "type": "function",
+      "name": "split_blob",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        249,
+        274
+      ],
+      "summary": "对过长图像连通块排除停放夹爪，必要时用平面点聚类分离接触物体。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:detect_objects",
+      "type": "function",
+      "name": "detect_objects",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        278,
+        332
+      ],
+      "summary": "在平面区域内用颜色差与连通区域检测候选物体，并排除指定几何区域。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:arm_mask",
+      "type": "function",
+      "name": "arm_mask",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        335,
+        349
+      ],
+      "summary": "投影头部视图中被指定夹爪覆盖的像素，减少把机器人当作目标的误检。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:top_grasp",
+      "type": "function",
+      "name": "top_grasp",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        353,
+        371
+      ],
+      "summary": "尝试多个俯仰和偏航方向进行顶部接近与抓取。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:pan_axes",
+      "type": "function",
+      "name": "pan_axes",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        393,
+        397
+      ],
+      "summary": "根据簸箕口朝向建立局部平面坐标轴。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:pan_pt",
+      "type": "function",
+      "name": "pan_pt",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        400,
+        403
+      ],
+      "summary": "把簸箕局部坐标和高度转换为世界位置。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:pan_local",
+      "type": "function",
+      "name": "pan_local",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        406,
+        409
+      ],
+      "summary": "把世界平面点转换为簸箕局部坐标。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:proj_many",
+      "type": "function",
+      "name": "proj_many",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        412,
+        416
+      ],
+      "summary": "将一组世界点批量投影到头部相机。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:model_world",
+      "type": "function",
+      "name": "model_world",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        419,
+        425
+      ],
+      "summary": "把簸箕模型点按候选中心和朝向转换到世界坐标。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:silhouette",
+      "type": "function",
+      "name": "silhouette",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        428,
+        434
+      ],
+      "summary": "投影簸箕本体与把手的凸包，生成候选轮廓掩膜。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:yellow_mask",
+      "type": "function",
+      "name": "yellow_mask",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        437,
+        439
+      ],
+      "summary": "在 HSV 颜色空间筛选黄色目标像素。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:ref_colour",
+      "type": "function",
+      "name": "ref_colour",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        442,
+        445
+      ],
+      "summary": "从参考像素邻域取得平滑后的 Lab 颜色中位数。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:colour_mask",
+      "type": "function",
+      "name": "colour_mask",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        448,
+        452
+      ],
+      "summary": "按参考 Lab 颜色距离构造像素掩膜，降低亮度差异权重。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:fit_dustpan",
+      "type": "function",
+      "name": "fit_dustpan",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        455,
+        498
+      ],
+      "summary": "以投影轮廓与图像掩膜的交并比拟合簸箕中心和开口方向。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:mvq",
+      "type": "function",
+      "name": "mvq",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        501,
+        506
+      ],
+      "summary": "执行运动并记录动作消耗，预算截断时终止策略。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:rect_mask",
+      "type": "function",
+      "name": "rect_mask",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        509,
+        515
+      ],
+      "summary": "在世界平面网格上生成具有朝向与边距的矩形区域掩膜。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:xmin",
+      "type": "function",
+      "name": "xmin",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        522,
+        524
+      ],
+      "summary": "根据既有逆运动学范围估计右臂低位垂直抓取的最小可达横坐标。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:compact",
+      "type": "function",
+      "name": "compact",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        527,
+        528
+      ],
+      "summary": "仅保留几何延伸不超过阈值的紧凑物体候选。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:not_gripper",
+      "type": "function",
+      "name": "not_gripper",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        552,
+        553
+      ],
+      "summary": "移除靠近已知停放夹爪区域的候选物体。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:opening_for",
+      "type": "function",
+      "name": "opening_for",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        556,
+        557
+      ],
+      "summary": "根据物体宽度计算带余量且限幅的夹爪张开目标。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        560,
+        1334
+      ],
+      "summary": "定位并调整刷子与簸箕，结合头部及腕部观测搬运物体，按剩余预算重查残留并有限次修正。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "函数"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:Done",
+      "type": "class",
+      "name": "Done",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "lineRange": [
+        22,
+        23
+      ],
+      "summary": "表示策略因原生预算或回合终止而停止。",
+      "tags": [
+        "离线策略",
+        "视觉几何",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:integrations/xpolicylab/SUBMISSION.md",
+      "type": "document",
+      "name": "SUBMISSION.md",
+      "filePath": "integrations/xpolicylab/SUBMISSION.md",
+      "summary": "说明 PyRUA_Lean 向 XPolicyLab/RoboDojo 提交的安装、资产、模型服务和评估协议，强调默认纯彩色观测及统一任务系统。",
+      "tags": [
+        "文档",
+        "提交指南",
+        "官方评估"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:runs/_empty-memory-robocasa/MEMORY.md",
+      "type": "document",
+      "name": "MEMORY.md",
+      "filePath": "runs/_empty-memory-robocasa/MEMORY.md",
+      "summary": "为空的 RoboCasa 记忆语料占位文件，供无先验记忆的运行配置使用。",
+      "tags": [
+        "文档",
+        "空记忆",
+        "实验配置"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:runs/_empty-memory-robotwin/MEMORY.md",
+      "type": "document",
+      "name": "MEMORY.md",
+      "filePath": "runs/_empty-memory-robotwin/MEMORY.md",
+      "summary": "为空的 RoboTwin 记忆语料占位文件，供无先验记忆的运行配置使用。",
+      "tags": [
+        "文档",
+        "空记忆",
+        "实验配置"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:P",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:P",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:fmt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:fmt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:wrap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:wrap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:ang",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:ang",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:unit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:unit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:rot2",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:rot2",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:cross2",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:cross2",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:Rz",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:Rz",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:Ry",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:Ry",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:Rx",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:Rx",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:orient",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:orient",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:quat_mat",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:quat_mat",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:cam",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:cam",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:pix_ray",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:pix_ray",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:pix2plane",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:pix2plane",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:proj",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:proj",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:plane_maps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:plane_maps",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:mv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:mv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:grip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:grip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:go_home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:go_home",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:sfmt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:sfmt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:loc",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:loc",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:bud_point",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:bud_point",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:split_blob",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:split_blob",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:detect_objects",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:detect_objects",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:arm_mask",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:arm_mask",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:top_grasp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:top_grasp",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:pan_axes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:pan_axes",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:pan_pt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:pan_pt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:pan_local",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:pan_local",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:proj_many",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:proj_many",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:model_world",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:model_world",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:silhouette",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:silhouette",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:yellow_mask",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:yellow_mask",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:ref_colour",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:ref_colour",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:colour_mask",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:colour_mask",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:fit_dustpan",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:fit_dustpan",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:mvq",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:mvq",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:rect_mask",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:rect_mask",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:xmin",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:xmin",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:compact",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:compact",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:not_gripper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:not_gripper",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:opening_for",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:opening_for",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:Done",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:Done",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:orient",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:Rz",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:orient",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:Ry",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:orient",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:Rx",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:pix2plane",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:pix_ray",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:mv",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:Done",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:grip",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:grip",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:Done",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:go_home",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:go_home",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:Done",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:sfmt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:loc",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:loc",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:sfmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:bud_point",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:bud_point",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:unit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:bud_point",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:bud_point",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:detect_objects",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:unit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:detect_objects",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:split_blob",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:detect_objects",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:pix2plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:detect_objects",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:detect_objects",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:arm_mask",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:proj",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:top_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:top_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:top_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:mvq",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:top_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:pan_pt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:pan_axes",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:pan_local",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:pan_axes",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:model_world",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:pan_axes",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:silhouette",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:proj_many",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:silhouette",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:model_world",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:fit_dustpan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:yellow_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:fit_dustpan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:colour_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:fit_dustpan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:proj",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:fit_dustpan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:fit_dustpan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:silhouette",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:fit_dustpan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:mvq",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:Done",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:rect_mask",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:unit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:plane_maps",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:loc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:mvq",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:unit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:pix2plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:cross2",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:rect_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:ang",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:fit_dustpan",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:ref_colour",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:pan_pt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:arm_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:not_gripper",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:compact",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:detect_objects",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:pan_local",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:yellow_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:colour_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:silhouette",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:top_grasp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:go_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:pan_axes",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:opening_for",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py:bud_point",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:P",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:P",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:fmt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:fmt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:wrap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:wrap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:ang",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:ang",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:unit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:unit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:rot2",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:rot2",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:cross2",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:cross2",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:Rz",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:Rz",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:Ry",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:Ry",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:Rx",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:Rx",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:orient",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:orient",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:quat_mat",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:quat_mat",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:cam",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:cam",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:pix_ray",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:pix_ray",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:pix2plane",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:pix2plane",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:proj",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:proj",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:plane_maps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:plane_maps",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:mv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:mv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:grip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:grip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:go_home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:go_home",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:sfmt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:sfmt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:loc",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:loc",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:bud_point",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:bud_point",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:split_blob",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:split_blob",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:detect_objects",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:detect_objects",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:arm_mask",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:arm_mask",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:top_grasp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:top_grasp",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:pan_axes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:pan_axes",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:pan_pt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:pan_pt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:pan_local",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:pan_local",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:proj_many",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:proj_many",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:model_world",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:model_world",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:silhouette",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:silhouette",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:yellow_mask",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:yellow_mask",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:ref_colour",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:ref_colour",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:colour_mask",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:colour_mask",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:fit_dustpan",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:fit_dustpan",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:mvq",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:mvq",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:rect_mask",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:rect_mask",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:xmin",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:xmin",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:compact",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:compact",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:not_gripper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:not_gripper",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:opening_for",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:opening_for",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:Done",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:Done",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:orient",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:Rz",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:orient",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:Ry",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:orient",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:Rx",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:pix2plane",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:pix_ray",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:mv",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:Done",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:grip",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:grip",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:Done",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:go_home",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:go_home",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:Done",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:sfmt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:loc",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:loc",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:sfmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:bud_point",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:bud_point",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:unit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:bud_point",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:bud_point",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:detect_objects",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:unit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:detect_objects",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:split_blob",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:detect_objects",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:pix2plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:detect_objects",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:detect_objects",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:arm_mask",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:proj",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:top_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:top_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:top_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:mvq",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:top_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:pan_pt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:pan_axes",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:pan_local",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:pan_axes",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:model_world",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:pan_axes",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:silhouette",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:proj_many",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:silhouette",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:model_world",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:fit_dustpan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:yellow_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:fit_dustpan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:colour_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:fit_dustpan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:proj",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:fit_dustpan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:fit_dustpan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:silhouette",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:fit_dustpan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:mvq",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:Done",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:rect_mask",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:unit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:plane_maps",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:loc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:mvq",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:unit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:pix2plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:cross2",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:rect_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:ang",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:fit_dustpan",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:ref_colour",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:pan_pt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:arm_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:not_gripper",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:compact",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:detect_objects",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:pan_local",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:yellow_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:colour_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:silhouette",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:top_grasp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:go_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:pan_axes",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:opening_for",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py:bud_point",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

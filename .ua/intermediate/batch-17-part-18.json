@@ -1,0 +1,441 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "type": "file",
+      "name": "make_kong.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "summary": "观察对手弃牌后将三张对应手牌向后翻倒完成杠牌，再从牌墙取补牌并在手牌末端竖立。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "视觉定位",
+        "运动控制"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:log_",
+      "type": "function",
+      "name": "log_",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "summary": "打印带程序运行时间的麻将操作日志。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        8,
+        9
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:Rz",
+      "type": "function",
+      "name": "Rz",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "summary": "构造绕 Z 轴的三维旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        25,
+        27
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:Ry",
+      "type": "function",
+      "name": "Ry",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "summary": "构造绕 Y 轴的三维旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        28,
+        30
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:Rx",
+      "type": "function",
+      "name": "Rx",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "summary": "构造绕 X 轴的三维旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        31,
+        33
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:orient",
+      "type": "function",
+      "name": "orient",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "summary": "按机器人夹爪姿态约定组合三轴旋转。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        34,
+        35
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:wrap",
+      "type": "function",
+      "name": "wrap",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "summary": "将角度归一到正负 180 度范围。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        36,
+        37
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:angles",
+      "type": "function",
+      "name": "angles",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "summary": "从夹爪旋转矩阵恢复俯仰、偏航和滚转，并处理垂直姿态的奇异情形。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        38,
+        46
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:quat_R",
+      "type": "function",
+      "name": "quat_R",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "summary": "将归一化四元数转换为三维旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        47,
+        52
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:project",
+      "type": "function",
+      "name": "project",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "summary": "使用相机内外参把三维世界坐标投影为图像坐标。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        58,
+        61
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:box_px",
+      "type": "function",
+      "name": "box_px",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "summary": "将给定三维盒子角点投影为头部图像包围框。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        62,
+        65
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:region_diff",
+      "type": "function",
+      "name": "region_diff",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "summary": "计算两张图在指定区域的平均差异以检测牌面变化。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        66,
+        70
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:mv",
+      "type": "function",
+      "name": "mv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "summary": "执行指定机械臂的笛卡尔运动并返回控制反馈。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        72,
+        77
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:log_",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:log_",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:Rz",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:Rz",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:Ry",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:Ry",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:Rx",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:Rx",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:orient",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:orient",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:wrap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:wrap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:angles",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:angles",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:quat_R",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:quat_R",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:project",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:box_px",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:box_px",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:region_diff",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:region_diff",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:mv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:mv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:orient",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:Rz",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:orient",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:Ry",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:orient",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:Rx",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:angles",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:angles",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:orient",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:box_px",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/make_kong.py:log_",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

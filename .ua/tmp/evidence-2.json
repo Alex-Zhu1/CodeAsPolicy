@@ -1,0 +1,1183 @@
+[
+  {
+    "path": "src/pyrualean/__main__.py",
+    "category": "code",
+    "moduleDoc": "Run ``python -m pyrualean``.",
+    "symbols": [],
+    "imports": [
+      "from .cli import main"
+    ]
+  },
+  {
+    "path": "src/pyrualean/_env.py",
+    "category": "code",
+    "moduleDoc": "Settings read from the environment: ``PYRUALEAN_<NAME>``.\n\nEvery environment variable of this package is named ``PYRUALEAN_<NAME>``.",
+    "symbols": [
+      {
+        "name": "setting_var",
+        "kind": "function",
+        "range": [
+          22,
+          25
+        ],
+        "owner": null,
+        "doc": "The variable :func:`setting` reads for ``name``.",
+        "body": "return PREFIX + name"
+      },
+      {
+        "name": "setting",
+        "kind": "function",
+        "range": [
+          28,
+          34
+        ],
+        "owner": null,
+        "doc": "``$PYRUALEAN_<name>``, else ``default``.\n\nAs with ``os.environ.get``, a variable set to the empty string counts as set.",
+        "body": "return os.environ.get(setting_var(name), default)"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import os"
+    ]
+  },
+  {
+    "path": "src/pyrualean/cli.py",
+    "category": "code",
+    "moduleDoc": "Command line: render the prompt, dump a task card, generate and run policies.\n\n``card`` and ``run`` start the RPent host in a separate process (one episode\nper process, hard-killed on timeout); they must be invoked with RPent's\ninterpreter and environment.  ``api``, ``prompt``, ``summarize`` and\n``compare`` need only this package.",
+    "symbols": [
+      {
+        "name": "_cell_args",
+        "kind": "function",
+        "range": [
+          46,
+          60
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "parser.add_argument(\"--robot\", default=\"libero\", help=\"libero | robocasa | robotwin | robodojo\")\nparser.add_argument(\n        \"--suite\",\n        default=None,\nparser.add_argument(\"--task\", required=True, help=\"LIBERO task index or the robot's task name\")\nparser.add_argument(\"--seed\", type=int, default=0)\nparser.add_argument(\"--out\", type=Path, required=True)\nparser.add_argument(\"--cuda-device\", type=int, default=None)\nparser.add_argument(\"--max-episode-steps\", type=int, default=10000)\nparser.add_argument(\"--libero-type\", default=\"pro\")\nparser.add_argument(\"--rpent-root\", default=None)\nparser.add_argument(\"--python\", default=sys.executable, help=\"interpreter with RPent installed\")"
+      },
+      {
+        "name": "_host_argv",
+        "kind": "function",
+        "range": [
+          63,
+          86
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "argv = [\n        args.python,\n        \"-m\",\nif args.suite:\n        argv += [\"--suite\", args.suite]\nif args.robot == \"libero\":\n        argv += [\"--libero-type\", args.libero_type]\nif args.cuda_device is not None:\n        argv += [\"--cuda-device\", str(args.cuda_device)]\nif args.rpent_root:\n        argv += [\"--rpent-root\", args.rpent_root]\nreturn argv"
+      },
+      {
+        "name": "cmd_card",
+        "kind": "function",
+        "range": [
+          89,
+          101
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "args.out.mkdir(parents=True, exist_ok=True)\ncode = run_host(\n        _host_argv(args, \"card\"),\n        timeout_s=STARTUP_ALLOWANCE_S,\ncard = args.out / \"card.json\"\nif code != 0 or not card.is_file():\n        print(f\"card failed (exit {code}); see {args.out / 'host.log'}\", file=sys.stderr)\n        return 2\nprint(card)\nreturn 0"
+      },
+      {
+        "name": "cmd_run",
+        "kind": "function",
+        "range": [
+          104,
+          147
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "args.out.mkdir(parents=True, exist_ok=True)\npolicy = args.policy.resolve()\nargv = _host_argv(args, \"run\") + [\"--policy\", str(policy), \"--timeout-s\", str(args.timeout_s)]\nstarted = time.perf_counter()\ncode = run_host(\n        argv,\n        timeout_s=args.timeout_s + STARTUP_ALLOWANCE_S,\nresult_path = args.out / \"result.json\"\nif not result_path.is_file():\n        result: dict[str, Any] = {\n            \"schema\": \"pyrualean-episode-v2\",\ngeneration = args.generation or policy.parent / \"generation.json\"\nif Path(generation).is_file():\n        result[\"generation\"] = json.loads(Path(generation).read_text(encoding=\"utf-8\"))\nresult_path.write_text(json.dumps(result, indent=2, ensure_ascii=False) + \"\\n\")\nsummary = {\n        k: result.get(k)\n        for k in (\"status\", \"reason\", \"environment_success\", \"calls\", \"env_steps\", \"policy_wall_s\")\nprint(json.dumps(summary, ensure_ascii=False))\nreturn 0 if result[\"status\"] not in (\"killed\", \"boot_error\") else 2"
+      },
+      {
+        "name": "cmd_generate",
+        "kind": "function",
+        "range": [
+          150,
+          182
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "from .generate import generate_with_codex\ncard = TaskCard.from_json(args.card)\nif args.transfer:\n        card.transfer = True\nrecord = generate_with_codex(\n        card,\n        args.out,\nprint(\n        json.dumps(\n            {\nreturn 0"
+      },
+      {
+        "name": "cmd_play",
+        "kind": "function",
+        "range": [
+          185,
+          305
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "args.out.mkdir(parents=True, exist_ok=True)\nargv = [\n        args.python,\n        \"-m\",\nif args.suite:\n        argv += [\"--suite\", args.suite]\nif args.robot == \"libero\":\n        argv += [\"--libero-type\", args.libero_type]\nif args.cuda_device is not None:\n        argv += [\"--cuda-device\", str(args.cuda_device)]\nif args.rpent_root:\n        argv += [\"--rpent-root\", args.rpent_root]\nif args.max_programs is not None:\n        argv += [\"--max-programs\", str(args.max_programs)]\nif args.base_url:\n        argv += [\"--base-url\", args.base_url]\nif args.api_key_env:\n        argv += [\"--api-key-env\", args.api_key_env]\nargv += [\"--images\", args.images, \"--feedback\", args.feedback]\nlimits = execution_limits(args)\nargv += [\"--code-timeout-s\", str(limits.timeout_s),\n             \"--code-output-chars\", str(limits.max_output_chars)]\nif limits.max_actions is not None:\n        argv += [\"--code-max-actions\", str(limits.max_actions)]\nif args.stuck_recovery_skill is not None:\n        if args.arm != \"cells\":\n            raise ValueError(\"Stuck recovery currently supports only --arm cells\")\nconfig = monitor_config(args)\nargv += [\"--monitor-mode\", config.mode]\nif config.mode != \"off\":\n        if args.arm != \"cells\":\n            raise ValueError(\"Visual supervision currently supports only --arm cells\")\nif args.codex_home:\n        argv += [\"--codex-home\", args.codex_home]\nif args.guides:\n        argv += [\"-"
+      },
+      {
+        "name": "_load_any",
+        "kind": "function",
+        "range": [
+          308,
+          315
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "if path.is_dir():\n        if (path / \"result.json\").is_file():\n            return load_episode_result(path)\nif path.name == \"result.json\":\n        return load_episode_result(path)\nreturn parse_rpent_run(path.parent, transcript=path)"
+      },
+      {
+        "name": "cmd_summarize",
+        "kind": "function",
+        "range": [
+          318,
+          340
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "runs = [_load_any(Path(p)) for p in args.paths]\nheader = (\n        f\"{'system':17} {'task':22} {'seed':>4} {'ok':>3} {'status':10} {'turns':>5} \"\n        f\"{'calls':>5} {'steps':>6} {'wall_s':>7} {'in_tok':>9} {'cached':>9} {'out_tok':>7}\"\nprint(header)\nfor run in runs:\n        ok = \"-\" if run.environment_success is None else (\"Y\" if run.environment_success else \"N\")\n        print(\nif args.json:\n        print(json.dumps(summarize(runs), indent=2))\nreturn 0"
+      },
+      {
+        "name": "main",
+        "kind": "function",
+        "range": [
+          343,
+          485
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "parser = argparse.ArgumentParser(prog=\"pyrualean\", description=__doc__)\nparser.add_argument(\"--version\", action=\"version\", version=__version__)\nsub = parser.add_subparsers(dest=\"command\", required=True)\napi = sub.add_parser(\"api\", help=\"print the generated API reference\")\napi.add_argument(\"--primitives\", choices=PRIMITIVE_SETS, default=\"full\")\nprompt = sub.add_parser(\"prompt\", help=\"print the full generation prompt\")\nprompt.add_argument(\"--card\", type=Path, default=None)\nprompt.add_argument(\"--budget-s\", type=int, default=1200)\nprompt.add_argument(\"--system-only\", action=\"store_true\")\nprompt.add_argument(\"--transfer\", action=\"store_true\")\nprompt.add_argument(\"--primitives\", choices=PRIMITIVE_SETS, default=\"full\")\ncard = sub.add_parser(\"card\", help=\"boot the simulator and dump a task card\")\n_cell_args(card)\nrun = sub.add_parser(\"run\", help=\"run a policy file for one cell (RPent host)\")\nrun.add_argument(\"--policy\", type=Path, required=True)\nrun.add_argument(\"--timeout-s\", type=float, default=1200.0)\nrun.add_argument(\"--generation\", type=Path, default=None, help=\"generation.json to attach\")\n_cell_args(run)\ngen = sub.add_parser(\"generate\", help=\"generate policy.py from a task card with Codex\")\ngen.add_argument(\"--card\", type=Path, required=True)\ngen.add_argument(\"--out\", type=Path, required=True)\ngen.add_argument(\"--model\", default=\"gpt-6-astra\")\ngen.add_argument(\"--reasoning\", def"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import argparse",
+      "import json",
+      "import sys",
+      "import time",
+      "from pathlib import Path",
+      "from typing import Any",
+      "from . import __version__",
+      "from ._env import setting",
+      "from ._robot import PRIMITIVE_SETS",
+      "from .evaluation.compare import main as compare_main",
+      "from .evaluation.metrics import load_episode_result, summarize",
+      "from .evaluation.rpent import parse_rpent_run",
+      "from .evaluation.valen import add_arguments as add_valen_eval_arguments",
+      "from .evaluation.valen import run as run_valen_eval",
+      "from .execution import add_execution_arguments, execution_limits",
+      "from .prompt import TaskCard, api_reference, render_prompt",
+      "from .runner import run_host",
+      "from .stuck_recovery import add_stuck_recovery_arguments",
+      "from .supervision import add_monitor_arguments, monitor_config",
+      "from .generate import generate_with_codex"
+    ]
+  },
+  {
+    "path": "src/pyrualean/evaluation/__init__.py",
+    "category": "code",
+    "moduleDoc": "Episode records, RPent artifact parsing and strict paired comparison.",
+    "symbols": [],
+    "imports": [
+      "from .compare import compare_metric_files, compare_runs, load_metrics_file",
+      "from .metrics import PI0_CHUNK_STEPS, EpisodeMetrics, env_steps_from_states, load_episode_result, summarize",
+      "from .rpent import parse_rpent_run"
+    ]
+  },
+  {
+    "path": "src/pyrualean/evaluation/compare.py",
+    "category": "code",
+    "moduleDoc": "Strict paired comparison of two systems on identical (backend, task, seed) cells.\n\nA pair is only formed when both systems have exactly one episode for a key;\nduplicate or unmatched keys invalidate the report instead of being averaged.",
+    "symbols": [
+      {
+        "name": "_extract_records",
+        "kind": "function",
+        "range": [
+          41,
+          56
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "if isinstance(value, list):\n        out: list[EpisodeMetrics] = []\n        for index, item in enumerate(value):\nif not isinstance(value, dict):\n        raise ValueError(f\"expected a metrics object or list in {source}\")\nif value.get(\"schema\") == \"pyrualean-episode-v2\":\n        return [load_episode_result(Path(source.split(\"[\")[0]))]\nif \"backend\" in value and \"task\" in value:\n        return [EpisodeMetrics.from_dict(value, source=source)]\nfor key in (\"metrics\", \"runs\", \"episodes\"):\n        if key in value:\n            return _extract_records(value[key], source=f\"{source}.{key}\")\nraise ValueError(f\"no episode metrics found in {source}\")"
+      },
+      {
+        "name": "load_metrics_file",
+        "kind": "function",
+        "range": [
+          59,
+          64
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "location = Path(path).expanduser().resolve()\nif location.is_dir():\n        location = location / \"result.json\"\nvalue = json.loads(location.read_text(encoding=\"utf-8\"))\nreturn _extract_records(value, source=str(location))"
+      },
+      {
+        "name": "_key",
+        "kind": "function",
+        "range": [
+          67,
+          68
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return (record.backend, record.task, record.seed)"
+      },
+      {
+        "name": "_delta",
+        "kind": "function",
+        "range": [
+          71,
+          77
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "if left is None or right is None:\n        return None\ntry:\n        return right - left\n    except TypeError:"
+      },
+      {
+        "name": "compare_runs",
+        "kind": "function",
+        "range": [
+          80,
+          135
+        ],
+        "owner": null,
+        "doc": "Pair episodes by (backend, task, seed); ``delta`` = right minus left.",
+        "body": "if len(systems) != 2 or systems[0] == systems[1]:\n        raise ValueError(\"systems must contain two distinct names\")\nindexed: dict[tuple[str, str, int | None], dict[str, list[EpisodeMetrics]]] = defaultdict(\n        lambda: defaultdict(list)\n    )\nall_runs = list(runs)\nfor run in all_runs:\n        indexed[_key(run)][run.system].append(run)\nduplicates: list[dict[str, Any]] = []\nunmatched: list[dict[str, Any]] = []\npairs: list[dict[str, Any]] = []\nfor key in sorted(indexed, key=lambda k: (k[0], k[1], k[2] is None, k[2] or 0)):\n        by_system = indexed[key]\n        left, right = by_system.get(systems[0], []), by_system.get(systems[1], [])\npaired_left = [EpisodeMetrics.from_dict(p[systems[0]]) for p in pairs]\npaired_right = [EpisodeMetrics.from_dict(p[systems[1]]) for p in pairs]\nreturn {\n        \"protocol\": \"pyrualean-paired-v2\",\n        \"systems\": list(systems),"
+      },
+      {
+        "name": "compare_metric_files",
+        "kind": "function",
+        "range": [
+          138,
+          144
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "runs: list[EpisodeMetrics] = []\nfor path in paths:\n        runs.extend(load_metrics_file(path))\nreturn compare_runs(runs, systems=systems)"
+      },
+      {
+        "name": "main",
+        "kind": "function",
+        "range": [
+          147,
+          160
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "parser = argparse.ArgumentParser(description=__doc__)\nparser.add_argument(\"metrics\", nargs=\"+\", type=Path)\nparser.add_argument(\"--output\", type=Path)\nparser.add_argument(\"--left-system\", default=PAIR_SYSTEMS[0])\nparser.add_argument(\"--right-system\", default=PAIR_SYSTEMS[1])\nargs = parser.parse_args(argv)\nreport = compare_metric_files(args.metrics, systems=(args.left_system, args.right_system))\nencoded = json.dumps(report, indent=2, ensure_ascii=False) + \"\\n\"\nif args.output is not None:\n        args.output.parent.mkdir(parents=True, exist_ok=True)\n        args.output.write_text(encoded, encoding=\"utf-8\")\nprint(encoded, end=\"\")\nreturn 0 if report[\"pairing\"][\"valid\"] else 2"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import argparse",
+      "import json",
+      "from collections import defaultdict",
+      "from collections.abc import Iterable",
+      "from pathlib import Path",
+      "from typing import Any",
+      "from .metrics import EpisodeMetrics, load_episode_result, summarize"
+    ]
+  },
+  {
+    "path": "src/pyrualean/evaluation/metrics.py",
+    "category": "code",
+    "moduleDoc": "Episode records shared by the code arm and the RPent arm.\n\n``environment_success`` is the benchmark's own predicate.  On the code arm it\nis always a boolean (a crash, a timeout or a boot failure is a failed\nepisode); on the RPent arm it is ``None`` only when the artifacts do not\ncontain a ``states.json``, and such episodes are reported as *unknown*, never\nsilently dropped or counted as failures.",
+    "symbols": [
+      {
+        "name": "env_steps_from_states",
+        "kind": "function",
+        "range": [
+          73,
+          108
+        ],
+        "owner": null,
+        "doc": "Reconstruct simulator steps from RPent ``states.json`` step records.\n\nA runtime that counts its own native actions (RoboTwin's\n``episode_status.take_action_cnt``) is trusted as is; otherwise the steps\nare rebuilt from each LIBERO primitive's ``steps_used`` / ``chunks_used``.",
+        "body": "steps = list(steps)\nnative = [n for n in map(_native_count, steps) if n is not None]\nif native:\n        return max(native)\nif _is_robocasa(steps):\n        return _robocasa_env_steps(steps)\ntotal = 0\nfor step in steps:\n        command = step.get(\"command\") or {}\n        result = step.get(\"result\") or {}\nreturn total"
+      },
+      {
+        "name": "_is_robocasa",
+        "kind": "function",
+        "range": [
+          119,
+          120
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return any(\"vla_desync\" in (s.get(\"extras\") or {}) for s in steps)"
+      },
+      {
+        "name": "_robocasa_command_steps",
+        "kind": "function",
+        "range": [
+          123,
+          136
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "action = command.get(\"action\")\nif action in (\"rldx_skill\", \"rldx_arm\"):\n        return int(result.get(\"steps_applied\", 0))\nif action in (\"move_to\", \"move_delta\", \"navigate_to\"):\n        return int(result.get(\"steps\", 0))  # exact: steps to convergence, or max_steps\nif action in (\"set_gripper\", \"release\", \"move_base\"):\n        return int(command.get(\"steps\", 10))\nif action == \"rotate_pitch\":\n        return int(command.get(\"n\", 12))\nif action == \"scripted_grasp\":\n        # open (4) + hover + descent + close (14) + lift: only the last servo is recorded\n        return 18 + int(result.get(\"steps\", 0))\nreturn 0"
+      },
+      {
+        "name": "_robocasa_env_steps",
+        "kind": "function",
+        "range": [
+          139,
+          160
+        ],
+        "owner": null,
+        "doc": "Simulator steps of an RPent RoboCasa run, the code arm's frame-counter unit.",
+        "body": "total = 0\narm_calibrated = False\nheading_calibrated = False\nfor step in steps:\n        command = step.get(\"command\") or {}\n        result = step.get(\"result\") or {}\nreturn total"
+      },
+      {
+        "name": "_native_count",
+        "kind": "function",
+        "range": [
+          163,
+          167
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "status = (step.get(\"state\") or {}).get(\"episode_status\")\nif isinstance(status, dict) and status.get(\"take_action_cnt\") is not None:\n        return int(status[\"take_action_cnt\"])\nreturn None"
+      },
+      {
+        "name": "_converged",
+        "kind": "function",
+        "range": [
+          170,
+          179
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "if action in (\"move_to\", \"move_pose\"):\n        tol = float(command.get(\"tol\", 0.012))\n        dist = result.get(\"final_dist_m\")\nif action in (\"rotate_wrist\", \"rotate_pitch\"):\n        tol = float(command.get(\"tol\", 0.02))\n        err = result.get(\"final_err\")\nreturn False"
+      },
+      {
+        "name": "_int",
+        "kind": "function",
+        "range": [
+          182,
+          186
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "try:\n        return None if value is None else int(value)\n    except (TypeError, ValueError):"
+      },
+      {
+        "name": "_float",
+        "kind": "function",
+        "range": [
+          189,
+          193
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "try:\n        return None if value is None else float(value)\n    except (TypeError, ValueError):"
+      },
+      {
+        "name": "load_episode_result",
+        "kind": "function",
+        "range": [
+          196,
+          239
+        ],
+        "owner": null,
+        "doc": "Read a ``result.json`` written by :mod:`pyrualean.hosts.rpent_libero`.",
+        "body": "location = Path(path)\nif location.is_dir():\n        location = location / \"result.json\"\ndata = json.loads(location.read_text(encoding=\"utf-8\"))\nnotes = [str(n) for n in data.get(\"notes\", [])]\nif data.get(\"error\"):\n        err = data[\"error\"]\n        notes.append(f\"{err.get('type')}: {str(err.get('message'))[:200]}\")\ngeneration = data.get(\"generation\") or {}\narm = data.get(\"arm\")\nsystem = str(data.get(\"system\", \"pyrualean\"))\nif arm:\n        system = f\"{system}:{arm}\"\nreturn EpisodeMetrics(\n        system=system,\n        backend=str(data.get(\"backend\", \"libero\")),"
+      },
+      {
+        "name": "summarize",
+        "kind": "function",
+        "range": [
+          242,
+          273
+        ],
+        "owner": null,
+        "doc": "Aggregate episodes; unknown native outcomes are reported, not hidden.",
+        "body": "known = [r for r in runs if r.environment_success is not None]\nstatuses: dict[str, int] = {}\nfor run in runs:\n        statuses[str(run.status)] = statuses.get(str(run.status), 0) + 1\nreturn {\n        \"episodes\": len(runs),\n        \"native_sr\": ("
+      },
+      {
+        "name": "EpisodeMetrics",
+        "kind": "class",
+        "range": [
+          33,
+          70
+        ],
+        "owner": null,
+        "doc": "One episode, comparable across systems.",
+        "body": "system: str\nbackend: str\ntask: str\nseed: int | None = None\nenvironment_success: bool | None = None\nstatus: str | None = None\ncalls: int | None = None\nstateful_calls: int | None = None\nenv_steps: int | None = None\nturns: int | None = None\nwall_time_s: float | None = None\nstartup_s: float | None = None\ninput_tokens: int | None = None\ncached_input_tokens: int | None = None\noutput_tokens: int | None = None\nreasoning_output_tokens: int | None = None\ntotal_tokens: int | None = None\nsource: str | None = None\nnotes: tuple[str, ...] = field(default_factory=tuple)"
+      },
+      {
+        "name": "EpisodeMetrics.to_dict",
+        "kind": "function",
+        "range": [
+          56,
+          57
+        ],
+        "owner": "EpisodeMetrics",
+        "doc": "",
+        "body": "return asdict(self)"
+      },
+      {
+        "name": "EpisodeMetrics.from_dict",
+        "kind": "function",
+        "range": [
+          60,
+          70
+        ],
+        "owner": "EpisodeMetrics",
+        "doc": "",
+        "body": "allowed = {f.name for f in fields(cls)}\npayload = {k: value[k] for k in allowed if k in value}\npayload.setdefault(\"system\", \"unknown\")\npayload.setdefault(\"backend\", \"unknown\")\npayload.setdefault(\"task\", \"unknown\")\nif source is not None and not payload.get(\"source\"):\n            payload[\"source\"] = source\nif isinstance(payload.get(\"notes\"), list):\n            payload[\"notes\"] = tuple(str(n) for n in payload[\"notes\"])\nreturn cls(**payload)"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import json",
+      "from collections.abc import Iterable",
+      "from dataclasses import asdict, dataclass, field, fields",
+      "from pathlib import Path",
+      "from typing import Any"
+    ]
+  },
+  {
+    "path": "src/pyrualean/evaluation/rpent.py",
+    "category": "code",
+    "moduleDoc": "Read-only parser for RPent run artifacts (the tool-calling arm).\n\nReads ``transcript_*.json`` and ``states.json`` without importing RPent.\nNative success is the final recorded ``terminated`` flag; the agent's own\n``finish.status`` is kept separately as ``status``.",
+    "symbols": [
+      {
+        "name": "_load_json",
+        "kind": "function",
+        "range": [
+          25,
+          29
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "value = json.loads(path.read_text(encoding=\"utf-8\"))\nif not isinstance(value, dict):\n        raise ValueError(f\"expected a JSON object in {path}\")\nreturn value"
+      },
+      {
+        "name": "_single_match",
+        "kind": "function",
+        "range": [
+          32,
+          36
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "matches = sorted(directory.glob(pattern))\nif len(matches) != 1:\n        raise ValueError(f\"expected exactly one {pattern} under {directory}; found {len(matches)}\")\nreturn matches[0]"
+      },
+      {
+        "name": "parse_rpent_run",
+        "kind": "function",
+        "range": [
+          39,
+          151
+        ],
+        "owner": null,
+        "doc": "Parse one RPent output directory into :class:`EpisodeMetrics`.",
+        "body": "root = Path(run_dir).expanduser().resolve()\ntranscript_path = Path(transcript) if transcript else _single_match(root, \"transcript_*.json\")\nif not transcript_path.is_absolute():\n        transcript_path = root / transcript_path\nrecord = _load_json(transcript_path)\nstats = record.get(\"stats\") if isinstance(record.get(\"stats\"), dict) else {}\nfinish = record.get(\"finish\") if isinstance(record.get(\"finish\"), dict) else {}\nstates_path = Path(states) if states is not None else root / \"states.json\"\nif not states_path.is_absolute():\n        states_path = root / states_path\nsteps: list[dict[str, Any]] = []\nif states_path.is_file():\n        raw_steps = _load_json(states_path).get(\"steps\")\n        if isinstance(raw_steps, list):\nnotes: list[str] = []\nterminated = [s.get(\"terminated\") for s in steps]\nif terminated and terminated[-1] is not None:\n        environment_success: bool | None = bool(any(bool(t) for t in terminated))\n    else:\nif finish.get(\"status\") == \"success\" and environment_success is not True:\n        notes.append(\"agent claimed success but the environment did not terminate\")\nstatus = str(finish[\"status\"]) if \"status\" in finish else None\nif status is None and steps:\n        # The planner session ended without calling ``finish`` (timeout,\n        # provider error, crash): the episode still counts, with its outcome\nif task is None:\n        # LIBERO transcripts name the cell suit"
+      },
+      {
+        "name": "claude_stream_usage",
+        "kind": "function",
+        "range": [
+          154,
+          201
+        ],
+        "owner": null,
+        "doc": "Token usage of a Claude Agent SDK run, one count per model request.\n\nReads ``claude_*.stream.jsonl`` (every SDK message as JSON) and takes each\nassistant message id once (blocks of one response stream with the same\nusage).  Prompt tokens are exact there; the stream's ``output_tokens`` are\npartial snapshots, so the output count comes from Claude Code's own\ntranscript of the session when one is found (``claude_*.transcript.jsonl``\nbeside the stream, else ``~/.claude/projects/*/<session>.jsonl``) and\n``exact_output`` says whether it was.  ``None`` when the run has no stream.",
+        "body": "streams = sorted(Path(run_dir).glob(\"claude_*.stream.jsonl\"))\nif not streams:\n        return None\nper_message: dict[str, dict[str, int]] = {}\nsession_id = \"\"\nfor line in streams[0].read_text(encoding=\"utf-8\", errors=\"replace\").splitlines():\n        try:\n            event = json.loads(line)\nif not per_message:\n        return None\nexact_output = claude_transcript_output(run_dir, session_id)\nfor message_id, output in exact_output.items():\n        if message_id in per_message:\n            per_message[message_id][\"output\"] = output\nkeys = (\"input\", \"cache_read\", \"cache_creation\", \"output\")\ntotals = {key: sum(entry[key] for entry in per_message.values()) for key in keys}\ntotals[\"requests\"] = len(per_message)\ntotals[\"exact_output\"] = int(bool(exact_output))\nreturn totals"
+      },
+      {
+        "name": "claude_transcript_output",
+        "kind": "function",
+        "range": [
+          204,
+          232
+        ],
+        "owner": null,
+        "doc": "Final output tokens per assistant message id from Claude Code's transcript.\n\nLooks for ``claude_*.transcript.jsonl`` under ``run_dir`` (a snapshot of\nthe session transcript kept with the run), then for the live session file\nunder ``~/.claude/projects``.  Empty when neither exists.",
+        "body": "candidates = sorted(Path(run_dir).glob(\"claude_*.transcript.jsonl\"))\nif not candidates and session_id:\n        projects = Path.home() / \".claude\" / \"projects\"\n        candidates = sorted(projects.glob(f\"*/{session_id}.jsonl\")) if projects.is_dir() else []\nif not candidates:\n        return {}\noutput: dict[str, int] = {}\nfor line in candidates[0].read_text(encoding=\"utf-8\", errors=\"replace\").splitlines():\n        try:\n            entry = json.loads(line)\nreturn output"
+      },
+      {
+        "name": "_moves",
+        "kind": "function",
+        "range": [
+          235,
+          239
+        ],
+        "owner": null,
+        "doc": "A recorded step that moved the robot (RoboTwin also records the reset).",
+        "body": "command = step.get(\"command\")\nreturn bool(command) and (command or {}).get(\"action\") != \"reset\""
+      },
+      {
+        "name": "_int",
+        "kind": "function",
+        "range": [
+          242,
+          246
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "try:\n        return None if value is None else int(value)\n    except (TypeError, ValueError):"
+      },
+      {
+        "name": "_float",
+        "kind": "function",
+        "range": [
+          249,
+          253
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "try:\n        return None if value is None else float(value)\n    except (TypeError, ValueError):"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import json",
+      "from pathlib import Path",
+      "from typing import Any",
+      "from .metrics import EpisodeMetrics, env_steps_from_states"
+    ]
+  },
+  {
+    "path": "src/pyrualean/evaluation/valen.py",
+    "category": "code",
+    "moduleDoc": "Replay saved visual checks and evaluate abstention without running a robot.",
+    "symbols": [
+      {
+        "name": "_read",
+        "kind": "function",
+        "range": [
+          15,
+          16
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return json.loads(Path(path).read_text(encoding=\"utf-8\"))"
+      },
+      {
+        "name": "load_samples",
+        "kind": "function",
+        "range": [
+          19,
+          37
+        ],
+        "owner": null,
+        "doc": "Use saved successful checks; error events are not additional observations.",
+        "body": "audit = Path(audit).resolve()\nsamples, seen = [], set()\nfor line in (audit / \"events.jsonl\").read_text(encoding=\"utf-8\").splitlines():\n        event = json.loads(line)\n        if not event.get(\"values\"):\nif not samples:\n        raise ValueError(\"No successful saved visual checks in this audit\")\nreturn samples"
+      },
+      {
+        "name": "_variant_packet",
+        "kind": "function",
+        "range": [
+          40,
+          78
+        ],
+        "owner": null,
+        "doc": "Keep full scenes, appending explicitly selected, labelled local crops.",
+        "body": "packet = copy.deepcopy(packet)\nfor fact, question in variant.get(\"questions\", {}).items():\n        if fact in packet[\"questions\"]:\n            packet[\"questions\"][fact][\"instructions\"] = question\ncontent = packet[\"state\"][\"messages\"][0][\"content\"]\nexpanded, caption = [], \"\"\nfor block in content:\n        if block.get(\"type\") == \"text\":\n            caption = block[\"text\"]\npacket[\"state\"][\"messages\"][0][\"content\"] = expanded\nreturn packet"
+      },
+      {
+        "name": "_validate_variant",
+        "kind": "function",
+        "range": [
+          81,
+          102
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "if not isinstance(variant, dict) or set(variant) - {\"questions\", \"crops\"}:\n        raise ValueError(\"Variant accepts only questions and crops mappings\")\nquestions, crops = variant.get(\"questions\", {}), variant.get(\"crops\", {})\nif not isinstance(questions, dict) or not isinstance(crops, dict):\n        raise ValueError(\"questions and crops must be mappings\")\nknown_facts = {fact for s in samples for fact in s[\"packet\"][\"questions\"]}\nif set(questions) - known_facts:\n        raise ValueError(\"Variant refers to an unknown fact ID\")\nif any(not isinstance(q, str) or not q.strip() or len(q) > 1000\n           for q in questions.values()):\n        raise ValueError(\"Variant questions must contain 1..1000 characters\")\nimages = {\n        Path(b[\"image_url\"][\"url\"]).name for s in samples\n        for b in s[\"packet\"][\"state\"][\"messages\"][0][\"content\"]\nif set(crops) - images:\n        raise ValueError(\"Variant refers to an unknown image basename\")\nfor box in crops.values():\n        if not isinstance(box, list) or len(box) != 4 or any(type(x) is not int for x in box):\n            raise ValueError(\"Crop boxes must be [left, top, right, bottom] integer pixels\")"
+      },
+      {
+        "name": "threshold_metrics",
+        "kind": "function",
+        "range": [
+          105,
+          131
+        ],
+        "owner": null,
+        "doc": "No accuracy estimate without independent, question-matched human labels.",
+        "body": "reports = []\nfor threshold in thresholds:\n        counts, confusion = Counter(), Counter()\n        for row in rows:\nreturn reports"
+      },
+      {
+        "name": "evaluate",
+        "kind": "function",
+        "range": [
+          134,
+          214
+        ],
+        "owner": null,
+        "doc": "Cached evaluation by default; explicit replay calls only Valen, never a robot.\n\nLabels are independent human annotations for a specific sample/fact/question.\nChanged questions need matching annotations; labels are never copied from the\nold model's predictions or from the benchmark evaluator.",
+        "body": "if not thresholds or any(isinstance(t, bool) or not math.isfinite(t) or not 0.5 < t <= 1\n                             for t in thresholds):\n        raise ValueError(\"Thresholds must be finite numbers in (0.5, 1]\")\naudit, output = Path(audit).resolve(), Path(output).resolve()\nsamples = load_samples(audit)\nvariant = variant or {}\n_validate_variant(variant, samples)\nreplay = bool(replay_url or client is not None)\nif variant and not replay:\n        raise ValueError(\"Question/crop variants require --replay-url\")\nif labels is not None and not isinstance(labels, list):\n        raise ValueError(\"Labels must be a list of sample/fact/question/label records\")\nannotations = {}\nfor item in labels or []:\n        if (not isinstance(item, dict)\n                or not {\"sample_id\", \"fact\", \"question\", \"label\"} <= item.keys()\navailable = {(s[\"sample_id\"], fact): variant.get(\"questions\", {}).get(\n        fact, question[\"instructions\"])\n        for s in samples for fact, question in s[\"packet\"][\"questions\"].items()}\nfor key, item in annotations.items():\n        if key not in available or item.get(\"question\") != available[key]:\n            raise ValueError(f\"Label does not match this sample and question: {key}\")\nif replay and client is None:\n        client = ValenClient(MonitorConfig(mode=\"shadow\", url=replay_url, timeout_s=timeout_s))\noutput.mkdir(parents=True, exist_ok=False)\nrows, templates, lat"
+      },
+      {
+        "name": "add_arguments",
+        "kind": "function",
+        "range": [
+          217,
+          224
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "parser.add_argument(\"--audit\", type=Path, required=True, help=\"episode/supervision directory\")\nparser.add_argument(\"--out\", type=Path, required=True, help=\"new evaluation directory\")\nparser.add_argument(\"--thresholds\", nargs=\"+\", type=float, default=[0.6, 0.7, 0.8, 0.9])\nparser.add_argument(\"--labels\", type=Path, help=\"human-edited labels.json from a prior export\")\nparser.add_argument(\"--replay-url\", help=\"Valen /predict URL; otherwise use saved scores\")\nparser.add_argument(\"--variant\", type=Path, help=\"JSON questions/crops overrides for replay\")\nparser.add_argument(\"--timeout-s\", type=float, default=30)"
+      },
+      {
+        "name": "run",
+        "kind": "function",
+        "range": [
+          227,
+          235
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "summary = evaluate(\n        args.audit, args.out, thresholds=args.thresholds,\n        labels=_read(args.labels) if args.labels else None,\nprint(json.dumps({k: summary[k] for k in (\"mode\", \"visual_checks\", \"thresholds\")}, indent=2))\nreturn 0"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import copy",
+      "import json",
+      "import math",
+      "import time",
+      "from collections import Counter",
+      "from pathlib import Path",
+      "from ..supervision import MonitorConfig, ValenClient, answer_diagnostics, decode_answers",
+      "from PIL import Image"
+    ]
+  },
+  {
+    "path": "src/pyrualean/evidence.py",
+    "category": "code",
+    "moduleDoc": "Episode-local visual evidence and declared phase prerequisites.\n\nThe planner names dependencies and invalidators; the host preserves them and\nchecks their evidence. This is not inference of physical action dependencies.",
+    "symbols": [
+      {
+        "name": "EvidenceLedger",
+        "kind": "class",
+        "range": [
+          12,
+          126
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "MAX_FACTS = 64\nMAX_PHASES = 64"
+      },
+      {
+        "name": "EvidenceLedger.__init__",
+        "kind": "function",
+        "range": [
+          16,
+          18
+        ],
+        "owner": "EvidenceLedger",
+        "doc": "",
+        "body": "self.facts: dict = {}\nself.requirements: dict = {}"
+      },
+      {
+        "name": "EvidenceLedger.configure",
+        "kind": "function",
+        "range": [
+          20,
+          64
+        ],
+        "owner": "EvidenceLedger",
+        "doc": "Validate the entire declaration before changing persistent records.",
+        "body": "requires = {} if requires is None else requires\nknown = set(self.facts) | set(facts)\nif len(known) > self.MAX_FACTS:\n            raise ValueError(f\"At most {self.MAX_FACTS} visual facts per episode\")\nif (\n            not isinstance(requires, dict)\n            or len(requires) > 12\nif invalidates is not None and (\n            not isinstance(invalidates, (list, tuple))\n            or any(not isinstance(key, str) or key not in known for key in invalidates)\ngates = copy.deepcopy(self.requirements.get(phase, {}))\nfor key, expected in requires.items():\n            if key in gates and gates[key][\"expected\"] != expected:\n                raise ValueError(f\"Conflicting prerequisite for {phase}: {key}\")\nself._validate_gates(phase, gates)\npinned = {key for requirements in self.requirements.values() for key in requirements}\nfor key, question in facts.items():\n            old = self.facts.get(key)\n            if old and old[\"question\"] != question and key in pinned:\nfor key, question in facts.items():\n            old = self.facts.get(key)\n            if old is None or old[\"question\"] != question:\nif gates:\n            self.requirements[phase] = gates"
+      },
+      {
+        "name": "EvidenceLedger.defer",
+        "kind": "function",
+        "range": [
+          72,
+          87
+        ],
+        "owner": "EvidenceLedger",
+        "doc": "Register a persistent gate at the named future phase; never change truth.",
+        "body": "if not isinstance(fact, str) or fact not in self.facts:\n            raise ValueError(\"defer_fact requires a known fact ID\")\nif not isinstance(until, str) or not 1 <= len(until) <= 200:\n            raise ValueError(\"until must name a phase (1..200 characters)\")\nif not isinstance(reason, str) or not reason.strip() or len(reason) > 500:\n            raise ValueError(\"Deferral needs a concrete reason (1..500 characters)\")\nif expected not in (\"yes\", \"no\"):\n            raise ValueError(\"expected must be yes or no\")\ngates = copy.deepcopy(self.requirements.get(until, {}))\nif fact in gates and gates[fact][\"expected\"] != expected:\n            raise ValueError(f\"Conflicting prerequisite for {until}: {fact}\")\ngates[fact] = dict(expected=expected, reason=reason)\nself._validate_gates(until, gates)\nself.requirements[until] = gates"
+      },
+      {
+        "name": "EvidenceLedger.invalidate",
+        "kind": "function",
+        "range": [
+          89,
+          92
+        ],
+        "owner": "EvidenceLedger",
+        "doc": "",
+        "body": "for key in self.facts if keys is None else keys:\n            self.facts[key][\"fresh\"] = False\n            self.facts[key][\"invalidated_by\"] = reason"
+      },
+      {
+        "name": "EvidenceLedger.observe",
+        "kind": "function",
+        "range": [
+          94,
+          103
+        ],
+        "owner": "EvidenceLedger",
+        "doc": "",
+        "body": "source = {key: observation.get(key) for key in (\n            \"observation_id\", \"step_id\", \"state_version\", \"captured_at\",\n        )}\nfor key, value in values.items():\n            self.facts[key].update(\n                value=value, fresh=True, observation=copy.deepcopy(source),"
+      },
+      {
+        "name": "EvidenceLedger.blockers",
+        "kind": "function",
+        "range": [
+          105,
+          114
+        ],
+        "owner": "EvidenceLedger",
+        "doc": "",
+        "body": "blocked = {}\nfor key, gate in self.requirements.get(phase, {}).items():\n            fact = self.facts[key]\n            if not fact[\"fresh\"] or fact[\"value\"] != gate[\"expected\"]:\nreturn blocked"
+      },
+      {
+        "name": "EvidenceLedger.snapshot",
+        "kind": "function",
+        "range": [
+          116,
+          117
+        ],
+        "owner": "EvidenceLedger",
+        "doc": "",
+        "body": "return copy.deepcopy(dict(facts=self.facts, phase_requirements=self.requirements))"
+      },
+      {
+        "name": "EvidenceLedger.summary",
+        "kind": "function",
+        "range": [
+          119,
+          126
+        ],
+        "owner": "EvidenceLedger",
+        "doc": "",
+        "body": "return copy.deepcopy(dict(\n            facts={key: {k: v for k, v in fact.items() if k not in (\n                \"question\", \"probabilities\","
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import copy"
+    ]
+  },
+  {
+    "path": "src/pyrualean/generate.py",
+    "category": "code",
+    "moduleDoc": "Ask a model for a policy file (single shot) through the Codex CLI.\n\nThe generation is deliberately tool-free: the prompt tells the model to\nanswer directly, the Codex session runs read-only in an empty scratch\ndirectory, and every event Codex emits is kept (``codex_events.jsonl``) so a\nrun can prove that no command or file read happened during generation.",
+    "symbols": [
+      {
+        "name": "extract_python_block",
+        "kind": "function",
+        "range": [
+          41,
+          47
+        ],
+        "owner": null,
+        "doc": "Return the largest fenced Python block in ``text``.",
+        "body": "blocks = _FENCE.findall(text)\nif not blocks:\n        raise ValueError(\"no fenced ```python block in the model response\")\nreturn max(blocks, key=len).strip() + \"\\n\""
+      },
+      {
+        "name": "_usage_from_events",
+        "kind": "function",
+        "range": [
+          50,
+          83
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "usage: dict[str, Any] = {}\ntool_events = 0\nturns = 0\nfor event in events:\n        kind = str(event.get(\"type\", \"\"))\n        if kind.endswith(\"turn.completed\"):\nout: dict[str, Any] = {\"turns\": turns or None, \"tool_events\": tool_events}\nfor target, names in (\n        (\"input_tokens\", (\"input_tokens\", \"prompt_tokens\")),\n        (\"cached_input_tokens\", (\"cached_input_tokens\", \"cached_tokens\")),\nreturn out"
+      },
+      {
+        "name": "_retries",
+        "kind": "function",
+        "range": [
+          86,
+          89
+        ],
+        "owner": null,
+        "doc": "Codex request/stream retries; large values let an episode wait out a network outage.",
+        "body": "return int(setting(\"CODEX_RETRIES\", \"10\"))"
+      },
+      {
+        "name": "provider_overrides",
+        "kind": "function",
+        "range": [
+          92,
+          124
+        ],
+        "owner": null,
+        "doc": "Codex ``-c`` overrides that point the CLI at a custom OpenAI-compatible endpoint.\n\nMirrors RPent's own Codex planner: a named ``model_providers`` entry with a\nResponses-style ``wire_api`` and an ``env_key`` naming the environment\nvariable that holds the API key.  Returns ``[]`` when no base URL is given.",
+        "body": "if not base_url:\n        return []\nnormalized = base_url.rstrip(\"/\")\nif not normalized.endswith(\"/v1\"):\n        normalized += \"/v1\"\nsettings = [\n        (\"model_provider\", provider_id),\n        (f\"model_providers.{provider_id}.name\", provider_id),\nif api_key_env:\n        settings.append((f\"model_providers.{provider_id}.env_key\", api_key_env))\nsettings.append((f\"model_providers.{provider_id}.request_max_retries\", _retries()))\nsettings.append((f\"model_providers.{provider_id}.stream_max_retries\", _retries()))\nout: list[str] = []\nfor key, value in settings:\n        out += [\"-c\", f\"{key}={json.dumps(value)}\"]\nreturn out"
+      },
+      {
+        "name": "codex_catalog_flags",
+        "kind": "function",
+        "range": [
+          127,
+          141
+        ],
+        "owner": null,
+        "doc": "``-c model_catalog_json=<CODEX_CATALOG>`` when Codex would look ``model`` up as\n``gpt-6-astra``, else ``[]`` (Codex's own catalog).\n\nCodex takes the entry whose slug the id starts with, or failing that, the one the\nid matches after a single leading ``namespace/``: ``gpt-6-astra`` and\n``openai/gpt-6-astra`` get the catalog, ``openai/openai/gpt-6-astra`` (the\ncomparison's gateway id, already on fallback metadata) and other models do not.",
+        "body": "namespace, sep, rest = model.partition(\"/\")\nunprefixed = rest if sep and \"/\" not in rest and re.fullmatch(r\"[\\w-]+\", namespace) else model\nif not (model.startswith(\"gpt-6-astra\") or unprefixed.startswith(\"gpt-6-astra\")):\n        return []\nreturn [\"-c\", f\"model_catalog_json={json.dumps(str(CODEX_CATALOG))}\"]"
+      },
+      {
+        "name": "generate_with_codex",
+        "kind": "function",
+        "range": [
+          144,
+          248
+        ],
+        "owner": null,
+        "doc": "Generate ``policy.py`` under ``out_dir`` and return the generation record.\n\n``base_url`` / ``api_key_env`` route the Codex CLI to a custom\nOpenAI-compatible gateway (the key itself is never written to disk).",
+        "body": "out_dir.mkdir(parents=True, exist_ok=True)\nbundle = bundle or render_prompt(card, budget_s=budget_s)\nprompt_text = bundle.text() + NO_TOOLS_NOTE\n(out_dir / \"prompt.txt\").write_text(prompt_text, encoding=\"utf-8\")\nlast_message = out_dir / \"response.md\"\nevents_path = out_dir / \"codex_events.jsonl\"\nrecord: dict[str, Any] = {\n        \"model\": model,\n        \"reasoning_effort\": reasoning_effort,\nwith tempfile.TemporaryDirectory(prefix=\"pyrualean-gen-\") as scratch:\n        argv = [\n            codex_bin,\nevents: list[dict[str, Any]] = []\nwith events_path.open(\"w\", encoding=\"utf-8\") as handle:\n        for line in proc.stdout.splitlines():\n            line = line.strip()\n(out_dir / \"codex_stderr.txt\").write_text(proc.stderr, encoding=\"utf-8\")\nrecord.update(_usage_from_events(events))\nresponse = last_message.read_text(encoding=\"utf-8\") if last_message.is_file() else \"\"\nif not response:\n        record[\"error\"] = f\"codex exited {proc.returncode} without a final message\"\n        (out_dir / \"generation.json\").write_text(json.dumps(record, indent=2) + \"\\n\")\ntry:\n        code = extract_python_block(response)\n    except ValueError as exc:\npolicy_path = out_dir / \"policy.py\"\npolicy_path.write_text(code, encoding=\"utf-8\")\nrecord[\"policy\"] = str(policy_path)\nrecord[\"policy_lines\"] = code.count(\"\\n\")\n(out_dir / \"generation.json\").write_text(\n        json.dumps(record, indent=2, ensure_ascii=False) "
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import json",
+      "import re",
+      "import subprocess",
+      "import tempfile",
+      "import time",
+      "from pathlib import Path",
+      "from typing import Any",
+      "from ._env import setting",
+      "from .prompt import PromptBundle, TaskCard, render_prompt"
+    ]
+  },
+  {
+    "path": "src/pyrualean/supervision.py",
+    "category": "code",
+    "moduleDoc": "Synchronous visual supervision at robot primitive boundaries.\n\nValen answers visual questions; this host evaluates phase-specific rules. No\nbenchmark truth or proposed numerical actions are sent to the visual model.\nThe HTTP protocol matches GPT-as-Jev's local Valen /predict service.",
+    "symbols": [
+      {
+        "name": "add_monitor_arguments",
+        "kind": "function",
+        "range": [
+          69,
+          82
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "parser.add_argument(\n        \"--monitor-mode\", choices=(\"off\", \"shadow\", \"pause\"), default=None,\n        help=\"visual supervision (default: pause for cells, off for program)\",\nparser.add_argument(\n        \"--valen-url\", default=setting(\"VALEN_URL\", DEFAULT_VALEN_URL),\n        help=f\"Valen /predict service (default: $PYRUALEAN_VALEN_URL or {DEFAULT_VALEN_URL}; \"\nparser.add_argument(\"--monitor-timeout-s\", type=float, default=30.0)\nparser.add_argument(\"--monitor-threshold\", type=float, default=0.8)\nparser.add_argument(\"--monitor-unknown-limit\", type=int, default=2)\nparser.add_argument(\"--monitor-max-actions\", type=int, default=8)"
+      },
+      {
+        "name": "monitor_config",
+        "kind": "function",
+        "range": [
+          85,
+          98
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "mode = args.monitor_mode\nif mode is None:\n        mode = \"pause\" if args.arm == \"cells\" else \"off\"\nif mode != \"off\" and args.arm != \"cells\":\n        raise ValueError(\"Visual supervision currently supports only --arm cells\")\nreturn MonitorConfig(\n        mode,\n        args.valen_url if mode != \"off\" else None,"
+      },
+      {
+        "name": "decode_answers",
+        "kind": "function",
+        "range": [
+          131,
+          155
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "answers = raw.get(\"answers\") if isinstance(raw, dict) else None\nif not isinstance(answers, dict) or set(answers) != set(facts):\n        raise ValueError(\"Valen must answer exactly the current phase's fact IDs\")\nvalues, probabilities = {}, {}\nfor key, answer in answers.items():\n        if not isinstance(answer, dict) or answer.get(\"type\") != \"choice\":\n            raise ValueError(\"Valen facts require choice probabilities\")\nreturn values, probabilities"
+      },
+      {
+        "name": "answer_diagnostics",
+        "kind": "function",
+        "range": [
+          158,
+          168
+        ],
+        "owner": null,
+        "doc": "Explain validated predictions without treating scores as calibrated accuracy.",
+        "body": "result = {}\nfor fact, probs in probabilities.items():\n        winner = max(probs, key=probs.get)\n        result[fact] = dict(\nreturn result"
+      },
+      {
+        "name": "_rule",
+        "kind": "function",
+        "range": [
+          171,
+          187
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "if not isinstance(value, dict) or set(value) - {\"name\", \"when\", \"confirmations\"}:\n        raise ValueError(\"A rule has name, when, and optional confirmations\")\nname, predicates = value.get(\"name\"), value.get(\"when\")\nif not isinstance(name, str) or not 1 <= len(name) <= 200:\n        raise ValueError(\"Rule name must contain 1..200 characters\")\nif (\n        not isinstance(predicates, dict)\n        or not predicates\ncount = value.get(\"confirmations\", 1)\nif type(count) is not int or not 1 <= count <= 10:\n        raise ValueError(\"Rule confirmations must be an integer in [1, 10]\")\nreturn {\"name\": name, \"when\": dict(predicates), \"confirmations\": count}"
+      },
+      {
+        "name": "monitor_prompt",
+        "kind": "function",
+        "range": [
+          563,
+          598
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return f\"\"\"# Visual execution supervision\n\nSupervision mode: {config.mode}. Valen checks images after EACH successful motion"
+      },
+      {
+        "name": "planning_instructions",
+        "kind": "function",
+        "range": [
+          601,
+          605
+        ],
+        "owner": null,
+        "doc": "Canonical, packaged runtime core of the Astra–Valen planning skill.",
+        "body": "return files(\"pyrualean\").joinpath(\"knowledge/astra_valen_supervision.md\").read_text(\n        encoding=\"utf-8\"\n    )"
+      },
+      {
+        "name": "config_record",
+        "kind": "function",
+        "range": [
+          608,
+          616
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "record = asdict(config)\nif config.mode != \"off\":\n        instructions = planning_instructions() if instructions is None else instructions\n        record[\"planning_skill\"] = dict(\nreturn record"
+      },
+      {
+        "name": "SupervisionPause",
+        "kind": "class",
+        "range": [
+          30,
+          31
+        ],
+        "owner": null,
+        "doc": "Unwind this cell, without cancelling or terminating the episode.",
+        "body": ""
+      },
+      {
+        "name": "MonitorConfig",
+        "kind": "class",
+        "range": [
+          35,
+          66
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "mode: str = \"off\"\nurl: str | None = None\ntimeout_s: float = 30.0\nthreshold: float = 0.8\nunknown_limit: int = 2\nmax_actions: int = 8"
+      },
+      {
+        "name": "MonitorConfig.__post_init__",
+        "kind": "function",
+        "range": [
+          43,
+          66
+        ],
+        "owner": "MonitorConfig",
+        "doc": "",
+        "body": "if self.mode not in (\"off\", \"shadow\", \"pause\"):\n            raise ValueError(\"monitor mode must be off, shadow or pause\")\nif self.mode != \"off\" and not self.url:\n            raise ValueError(\"monitoring requires --valen-url\")\nif self.url:\n            parsed = urlsplit(self.url)\n            if (\nfor key in (\"timeout_s\", \"threshold\"):\n            value = getattr(self, key)\n            if isinstance(value, bool) or not math.isfinite(value) or value <= 0:\nif not 0.5 < self.threshold <= 1:\n            raise ValueError(\"monitor threshold must be in (0.5, 1]\")\nfor key in (\"unknown_limit\", \"max_actions\"):\n            if type(getattr(self, key)) is not int or not 1 <= getattr(self, key) <= 100:\n                raise ValueError(f\"{key} must be an integer in [1, 100]\")"
+      },
+      {
+        "name": "_NoRedirect",
+        "kind": "class",
+        "range": [
+          101,
+          103
+        ],
+        "owner": null,
+        "doc": "",
+        "body": ""
+      },
+      {
+        "name": "_NoRedirect.redirect_request",
+        "kind": "function",
+        "range": [
+          102,
+          103
+        ],
+        "owner": "_NoRedirect",
+        "doc": "",
+        "body": "raise ValueError(\"Valen redirects are not supported\")"
+      },
+      {
+        "name": "ValenClient",
+        "kind": "class",
+        "range": [
+          106,
+          121
+        ],
+        "owner": null,
+        "doc": "",
+        "body": ""
+      },
+      {
+        "name": "ValenClient.__init__",
+        "kind": "function",
+        "range": [
+          107,
+          110
+        ],
+        "owner": "ValenClient",
+        "doc": "",
+        "body": "self.config = config\nself.opener = build_opener(ProxyHandler({}), _NoRedirect())"
+      },
+      {
+        "name": "ValenClient.predict",
+        "kind": "function",
+        "range": [
+          112,
+          121
+        ],
+        "owner": "ValenClient",
+        "doc": "",
+        "body": "data = json.dumps(packet, allow_nan=False).encode()\nif len(data) > 4 * 1024 * 1024:\n            raise ValueError(\"Valen request exceeds 4 MiB\")\nrequest = Request(self.config.url, data=data, headers={\"Content-Type\": \"application/json\"})\nwith self.opener.open(request, timeout=self.config.timeout_s) as response:\n            body = response.read(64 * 1024 + 1)\nif len(body) > 64 * 1024:\n            raise ValueError(\"Valen response exceeds 64 KiB\")\nreturn json.loads(body)"
+      },
+      {
+        "name": "VisualSupervisor",
+        "kind": "class",
+        "range": [
+          190,
+          560
+        ],
+        "owner": null,
+        "doc": "",
+        "body": ""
+      },
+      {
+        "name": "VisualSupervisor.__init__",
+        "kind": "function",
+        "range": [
+          191,
+          201
+        ],
+        "owner": "VisualSupervisor",
+        "doc": "",
+        "body": "if config.mode == \"off\":\n            raise ValueError(\"Do not instantiate a disabled supervisor\")\nself.config, self.client = config, client or ValenClient(config)\nself.directory = Path(directory).resolve()\nself.directory.mkdir(parents=True, exist_ok=True)\nself.run_id = uuid.uuid4().hex\nself.sequence = 0\nself.ledger = EvidenceLedger()\nself.last_endpoint = None\nself.begin_cell(0)"
+      },
+      {
+        "name": "VisualSupervisor.begin_cell",
+        "kind": "function",
+        "range": [
+          203,
+          213
+        ],
+        "owner": "VisualSupervisor",
+        "doc": "",
+        "body": "self.cell = cell\nself.contract = None\nself.paused = None\nself.reports = []\nself.evidence = []\nself.evidence_cameras = []\nself.previous = None\nself.actions = 0\nself.counts = {}\nself.unknowns = {}"
+      },
+      {
+        "name": "VisualSupervisor.watch",
+        "kind": "function",
+        "range": [
+          215,
+          259
+        ],
+        "owner": "VisualSupervisor",
+        "doc": "Declare checks for the following primitives; changing phase clears evidence windows.",
+        "body": "if self.paused:\n            raise SupervisionPause(self.paused)\nself.contract = None  # malformed replacements cannot leave old rules active\nif not isinstance(phase, str) or not 1 <= len(phase) <= 200:\n            raise ValueError(\"phase must contain 1..200 characters\")\nif not isinstance(facts, dict) or not 1 <= len(facts) <= 12:\n            raise ValueError(\"facts must map 1..12 IDs to atomic visual questions\")\nif any(\n            not isinstance(k, str)\n            or not 1 <= len(k) <= 64\nif len({q.strip().casefold() for q in facts.values()}) != len(facts):\n            raise ValueError(\"Visual questions must be distinct\")\nif not isinstance(alerts, (list, tuple)) or len(alerts) > 8:\n            raise ValueError(\"alerts must contain at most eight rules\")\nrules = [_rule(rule, facts) for rule in alerts]\nif len({r[\"name\"] for r in rules}) != len(rules):\n            raise ValueError(\"Alert names must be distinct\")\ncritical = list(facts) if critical is None else critical\nif not isinstance(critical, (list, tuple)) or any(\n            not isinstance(k, str) or k not in facts for k in critical\n        ):\nif len(set(critical)) != len(critical):\n            raise ValueError(\"critical fact IDs must be distinct\")\ncomplete = _rule(completion, facts) if completion is not None else None\nself.ledger.configure(phase, facts, requires, invalidates)\nself.contract = copy.deepcopy(\n            dict("
+      },
+      {
+        "name": "VisualSupervisor.read_evidence",
+        "kind": "function",
+        "range": [
+          261,
+          263
+        ],
+        "owner": "VisualSupervisor",
+        "doc": "Return a detached snapshot; editing it cannot establish a visual fact.",
+        "body": "return self.ledger.snapshot()"
+      },
+      {
+        "name": "VisualSupervisor.defer_fact",
+        "kind": "function",
+        "range": [
+          265,
+          271
+        ],
+        "owner": "VisualSupervisor",
+        "doc": "",
+        "body": "if self.paused:\n            raise SupervisionPause(self.paused)\nself.ledger.defer(fact, until=until, reason=reason, expected=expected)\nif self.contract and self.contract[\"phase\"] == until:\n            self.contract[\"requires\"][fact] = expected\nself._save_evidence(\"defer_fact\")"
+      },
+      {
+        "name": "VisualSupervisor.before_action",
+        "kind": "function",
+        "range": [
+          293,
+          314
+        ],
+        "owner": "VisualSupervisor",
+        "doc": "",
+        "body": "if self.paused:\n            raise SupervisionPause(self.paused)\nif self.contract is None:\n            if self.config.mode == \"pause\":\n                self.paused = \"missing_contract\"\nif robo is not None and self.last_endpoint is not None:\n            current = (robo._backend.env_steps(), robo._action_revision)\n            if current != self.last_endpoint:\nblocked = self.ledger.blockers(self.contract[\"phase\"])\nif blocked:\n            observation = self._review_images(robo) if robo is not None else None\n            self._record(dict(cell=self.cell, tool=tool, event=\"prerequisite_review\","
+      },
+      {
+        "name": "VisualSupervisor.begin_action",
+        "kind": "function",
+        "range": [
+          316,
+          320
+        ],
+        "owner": "VisualSupervisor",
+        "doc": "Invalidate before dispatch: a failing primitive may still change the scene.",
+        "body": "keys = self.contract[\"invalidates\"] if self.contract else None\nself.ledger.invalidate(keys, f\"motion:{tool}\")\nself._save_evidence(\"motion_started\")"
+      },
+      {
+        "name": "VisualSupervisor.action_error",
+        "kind": "function",
+        "range": [
+          322,
+          336
+        ],
+        "owner": "VisualSupervisor",
+        "doc": "",
+        "body": "self.action_interrupted(tool)\nif self.config.mode == \"pause\":\n            self.paused = \"action_error\"\nobservation = self._review_images(robo)\nself._record(\n            dict(\n                cell=self.cell,\nself._interrupt(\"action_error: inspect current state before replanning\")"
+      },
+      {
+        "name": "VisualSupervisor.action_interrupted",
+        "kind": "function",
+        "range": [
+          338,
+          340
+        ],
+        "owner": "VisualSupervisor",
+        "doc": "",
+        "body": "self.ledger.invalidate(None, f\"action_error:{tool}\")\nself._save_evidence(\"action_error\")"
+      },
+      {
+        "name": "VisualSupervisor._review_images",
+        "kind": "function",
+        "range": [
+          342,
+          360
+        ],
+        "owner": "VisualSupervisor",
+        "doc": "Host review images are context, not new Valen votes or established facts.",
+        "body": "self.evidence = []\nself.evidence_cameras = []\nobservation = dict(\n            observation_id=f\"{self.run_id}-review-{uuid.uuid4().hex}\",\n            step_id=robo._backend.env_steps(),\nfor camera in robo.CAMERAS:\n            try:\n                self.evidence.append(\nreturn observation"
+      },
+      {
+        "name": "VisualSupervisor.after_action",
+        "kind": "function",
+        "range": [
+          362,
+          532
+        ],
+        "owner": "VisualSupervisor",
+        "doc": "",
+        "body": "self.actions += 1\nself.last_endpoint = (robo._backend.env_steps(), getattr(robo, \"_action_revision\", None))\nif self.contract is None:  # shadow mode reports missing contracts but permits execution\n            return\nif self.config.mode == \"pause\":\n            self.paused = \"monitor_pending\"\nself.sequence += 1\nprefix = self.directory / f\"{self.run_id}-{self.sequence:05d}\"\nreport = dict(\n            cell=self.cell,\n            sequence=self.sequence,\nstep = report[\"step\"]\nprogressed = type(step) is int and type(steps_before) is int and step > steps_before\nmissed = (outcome or {}).get(\"reached\") is False\nno_motion = type(step) is int and type(steps_before) is int and step == steps_before\nrecoverable = missed and (\n            (outcome or {}).get(\"recoverable\") is True\n            or (no_motion and bool((outcome or {}).get(\"ik_error\")))\nif recoverable and progressed:\n            # A partial endpoint is real evidence. Check it before returning the\n            # result to a caller-written correction loop; visual pauses still win.\nstarted = time.perf_counter()\nself.evidence = []\nself.evidence_cameras = []\ntry:\n            current = dict(\n                observation_id=f\"{self.run_id}-{self.sequence}\",\nreport[\"elapsed_s\"] = round(time.perf_counter() - started, 4)\nreport[\"artifact_prefix\"] = str(prefix)\nself._save_evidence(report[\"event\"])\nself._record(report)\nself.paused = None\nif repo"
+      },
+      {
+        "name": "VisualSupervisor.feedback",
+        "kind": "function",
+        "range": [
+          539,
+          560
+        ],
+        "owner": "VisualSupervisor",
+        "doc": "",
+        "body": "recent = [\n            {k: v for k, v in report.items() if k not in (\"contract\", \"observation\")}\n            for report in self.reports[-8:]\nreturn dict(\n            mode=self.config.mode,\n            paused=self.paused is not None,"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import argparse",
+      "import copy",
+      "import hashlib",
+      "import json",
+      "import math",
+      "import time",
+      "import uuid",
+      "from dataclasses import asdict, dataclass",
+      "from importlib.resources import files",
+      "from pathlib import Path",
+      "from typing import Any",
+      "from urllib.parse import urlsplit",
+      "from urllib.request import HTTPRedirectHandler, ProxyHandler, Request, build_opener",
+      "from ._env import setting",
+      "from .evidence import EvidenceLedger"
+    ]
+  }
+]

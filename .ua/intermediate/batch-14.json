@@ -1,0 +1,79 @@
+{
+  "nodes": [
+    {
+      "id": "document:integrations/xpolicylab/evaluation/robodojo_summary_official.md",
+      "type": "document",
+      "name": "robodojo_summary_official.md",
+      "filePath": "integrations/xpolicylab/evaluation/robodojo_summary_official.md",
+      "summary": "记录 RoboDojo 官方团队任务集的历史评估协议、分维度表现和任务级结果。该报告中的结果属于所列配置和种子，不代表此次静态分析重新运行了实验。",
+      "tags": [
+        "文档",
+        "评估结果",
+        "实验协议"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:integrations/xpolicylab/evaluation/robodojo_summary_rgb.md",
+      "type": "document",
+      "name": "robodojo_summary_rgb.md",
+      "filePath": "integrations/xpolicylab/evaluation/robodojo_summary_rgb.md",
+      "summary": "记录默认 RGB 观测协议下的任务结果和当时已完成的种子覆盖情况，提供整体与任务级指标。与 RGB-D 和其他任务数量的报告分别解释。",
+      "tags": [
+        "文档",
+        "评估结果",
+        "实验协议"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:integrations/xpolicylab/evaluation/robodojo_summary_rgbd.md",
+      "type": "document",
+      "name": "robodojo_summary_rgbd.md",
+      "filePath": "integrations/xpolicylab/evaluation/robodojo_summary_rgbd.md",
+      "summary": "记录使用深度与相机矩阵的 RGB-D 历史实验，覆盖 54 个配置和多个种子。明确这与发布策略默认的 RGB 输入协议不同。",
+      "tags": [
+        "文档",
+        "评估结果",
+        "实验协议"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:integrations/xpolicylab/evaluation/robodojo_summary_rsi.md",
+      "type": "document",
+      "name": "robodojo_summary_rsi.md",
+      "filePath": "integrations/xpolicylab/evaluation/robodojo_summary_rsi.md",
+      "summary": "记录离线固定程序 RSI 的任务级和总体评估，区分开发种子与留出种子结果。描述固定程序协议，避免与在线模型策略直接混同。",
+      "tags": [
+        "文档",
+        "评估结果",
+        "实验协议"
+      ],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "document:integrations/xpolicylab/evaluation/robodojo_summary_official.md",
+      "target": "document:integrations/xpolicylab/evaluation/robodojo_summary_rgb.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:integrations/xpolicylab/evaluation/robodojo_summary_rgbd.md",
+      "target": "document:integrations/xpolicylab/evaluation/robodojo_summary_rgb.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:integrations/xpolicylab/evaluation/robodojo_summary_rsi.md",
+      "target": "document:integrations/xpolicylab/evaluation/robodojo_summary_rgb.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

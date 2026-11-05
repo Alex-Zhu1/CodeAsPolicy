@@ -1,0 +1,1239 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "type": "file",
+      "name": "play_Xylophone.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "summary": "实现离线 RoboDojo 任务程序：通过相机定位木琴与琴槌，结合自带运动学模型规划逐键敲击，并用腕部图像修正槌头偏移。通过执行环境注入的 robo 接口完成任务，不在评测时调用规划模型。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:rx",
+      "type": "function",
+      "name": "rx",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "summary": "构造绕 X 轴的旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        32,
+        34
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:ry",
+      "type": "function",
+      "name": "ry",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "summary": "构造绕 Y 轴的旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        37,
+        39
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:rz",
+      "type": "function",
+      "name": "rz",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "summary": "构造绕 Z 轴的旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        42,
+        44
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:axis_angle",
+      "type": "function",
+      "name": "axis_angle",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "summary": "按轴角表示构造三维旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        47,
+        52
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:homog",
+      "type": "function",
+      "name": "homog",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "summary": "将旋转和平移组合成齐次变换矩阵。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        55,
+        59
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:frames",
+      "type": "function",
+      "name": "frames",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "summary": "沿机械臂关节链累计各连杆的空间变换。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        67,
+        73
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:fk",
+      "type": "function",
+      "name": "fk",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "summary": "由关节角计算末端正运动学位姿。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        76,
+        77
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:tcp_of",
+      "type": "function",
+      "name": "tcp_of",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "summary": "根据末端位姿和工具偏移计算抓取点坐标。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        80,
+        82
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:orient",
+      "type": "function",
+      "name": "orient",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "summary": "将俯仰、偏航和滚转组合成夹爪目标姿态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        85,
+        86
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:rotvec",
+      "type": "function",
+      "name": "rotvec",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "summary": "将旋转矩阵转换为轴角误差向量。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        89,
+        100
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:rot_err_deg",
+      "type": "function",
+      "name": "rot_err_deg",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "summary": "计算两个旋转之间的夹角误差。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        103,
+        105
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:slerp",
+      "type": "function",
+      "name": "slerp",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "summary": "沿轴角插值连接两个旋转姿态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        108,
+        113
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:jacobian",
+      "type": "function",
+      "name": "jacobian",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "summary": "计算末端位姿与关节变化之间的雅可比矩阵。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        116,
+        125
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:collides",
+      "type": "function",
+      "name": "collides",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "summary": "检查机械臂连杆或工具点是否进入桌面碰撞区域。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        128,
+        135
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:ik",
+      "type": "function",
+      "name": "ik",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "summary": "采用阻尼最小二乘迭代求解目标位姿的逆运动学。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        142,
+        164
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:ik_ok",
+      "type": "function",
+      "name": "ik_ok",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "summary": "联合位置误差、姿态误差和碰撞检查判断逆解是否有效。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        167,
+        169
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:solve_pose",
+      "type": "function",
+      "name": "solve_pose",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "summary": "尝试多个关节种子并选择可行或误差最小的逆运动学解。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        176,
+        181
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:line_ok",
+      "type": "function",
+      "name": "line_ok",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "summary": "沿笛卡尔直线路径逐段求逆解以检查整条轨迹可行性。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        184,
+        199
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:cam",
+      "type": "function",
+      "name": "cam",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "summary": "读取相机标定并转为数值矩阵供投影计算。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        203,
+        205
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:ray",
+      "type": "function",
+      "name": "ray",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "summary": "用相机内外参将图像像素转换为世界坐标射线。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        208,
+        212
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:on_plane",
+      "type": "function",
+      "name": "on_plane",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "summary": "将像素视线与给定高度平面相交以恢复世界坐标。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        215,
+        218
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:project",
+      "type": "function",
+      "name": "project",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "summary": "把世界坐标点投影到标定相机图像平面。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        221,
+        225
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:triangulate",
+      "type": "function",
+      "name": "triangulate",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "summary": "求两条相机视线的最近点以三角测量目标位置。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        228,
+        235
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:fmt",
+      "type": "function",
+      "name": "fmt",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "summary": "格式化向量或测量数据以便打印诊断信息。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        238,
+        239
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:state_arm",
+      "type": "function",
+      "name": "state_arm",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "summary": "读取所选机械臂的当前状态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        242,
+        244
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:key_point",
+      "type": "function",
+      "name": "key_point",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "summary": "由木琴局部坐标计算琴键敲击点。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        273,
+        274
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:wrap",
+      "type": "function",
+      "name": "wrap",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "summary": "把角度规范到一个完整周期的对称区间。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        312,
+        313
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:grasp_at",
+      "type": "function",
+      "name": "grasp_at",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "summary": "在给定槌头位置与柄方向上定位夹持点并抓住琴槌。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        316,
+        325
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:wrist_correct",
+      "type": "function",
+      "name": "wrist_correct",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "summary": "使用腕部图像重新估计握持中槌头的偏移。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        360,
+        420
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:plan_key",
+      "type": "function",
+      "name": "plan_key",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "summary": "搜索可沿直线路径抵达的琴键预备与敲击姿态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        427,
+        451
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:go",
+      "type": "function",
+      "name": "go",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "summary": "调用机器人位姿运动接口并处理本任务的运动结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        454,
+        459
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:rx",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:rx",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:ry",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:ry",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:rz",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:rz",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:axis_angle",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:axis_angle",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:homog",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:homog",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:frames",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:frames",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:fk",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:fk",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:tcp_of",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:tcp_of",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:orient",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:orient",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:rotvec",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:rotvec",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:rot_err_deg",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:rot_err_deg",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:slerp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:slerp",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:jacobian",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:jacobian",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:collides",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:collides",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:ik",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:ik",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:ik_ok",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:ik_ok",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:solve_pose",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:solve_pose",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:line_ok",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:line_ok",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:cam",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:cam",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:ray",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:ray",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:on_plane",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:on_plane",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:project",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:triangulate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:triangulate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:fmt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:fmt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:state_arm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:state_arm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:key_point",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:key_point",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:wrap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:wrap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:grasp_at",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:grasp_at",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:wrist_correct",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:wrist_correct",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:plan_key",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:plan_key",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:go",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:go",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:frames",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:homog",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:frames",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:axis_angle",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:fk",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:frames",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:tcp_of",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:fk",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:orient",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:rz",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:orient",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:ry",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:orient",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:rx",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:slerp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:rotvec",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:slerp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:axis_angle",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:jacobian",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:frames",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:collides",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:frames",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:ik",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:jacobian",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:ik",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:rotvec",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:ik",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:fk",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:ik",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:rot_err_deg",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:ik_ok",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:ik",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:ik_ok",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:collides",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:solve_pose",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:ik_ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:line_ok",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:fk",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:line_ok",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:rot_err_deg",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:line_ok",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:homog",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:line_ok",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:slerp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:line_ok",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:ik_ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:on_plane",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:ray",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:triangulate",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:ray",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:grasp_at",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:grasp_at",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:wrist_correct",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:state_arm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:wrist_correct",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:wrist_correct",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:fk",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:wrist_correct",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:ry",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:plan_key",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:key_point",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:plan_key",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:plan_key",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:orient",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:plan_key",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:homog",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:plan_key",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:solve_pose",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:plan_key",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_Xylophone.py:line_ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

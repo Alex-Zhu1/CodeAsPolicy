@@ -1,0 +1,1449 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/pyrualean/evaluation/compare.py",
+      "type": "file",
+      "name": "compare.py",
+      "filePath": "src/pyrualean/evaluation/compare.py",
+      "summary": "按机器人后端、任务与种子严格配对两个系统的回合，报告缺失与重复记录并计算指标差值。",
+      "tags": [
+        "评估",
+        "配对比较",
+        "结果校验"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/compare.py:_extract_records",
+      "type": "function",
+      "name": "_extract_records",
+      "filePath": "src/pyrualean/evaluation/compare.py",
+      "lineRange": [
+        41,
+        56
+      ],
+      "summary": "从列表、统一结果或嵌套指标对象中递归提取回合记录，拒绝不支持的结构。",
+      "tags": [
+        "评估",
+        "配对比较",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/compare.py:load_metrics_file",
+      "type": "function",
+      "name": "load_metrics_file",
+      "filePath": "src/pyrualean/evaluation/compare.py",
+      "lineRange": [
+        59,
+        64
+      ],
+      "summary": "读取指标 JSON 或运行目录中的 result.json，并转换为统一记录列表。",
+      "tags": [
+        "评估",
+        "配对比较",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/compare.py:_key",
+      "type": "function",
+      "name": "_key",
+      "filePath": "src/pyrualean/evaluation/compare.py",
+      "lineRange": [
+        67,
+        68
+      ],
+      "summary": "以机器人后端、任务和随机种子构造回合配对键。",
+      "tags": [
+        "评估",
+        "配对比较",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/compare.py:_delta",
+      "type": "function",
+      "name": "_delta",
+      "filePath": "src/pyrualean/evaluation/compare.py",
+      "lineRange": [
+        71,
+        77
+      ],
+      "summary": "计算右侧减左侧的指标差值，缺失值或不兼容类型返回未知。",
+      "tags": [
+        "评估",
+        "配对比较",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/compare.py:compare_runs",
+      "type": "function",
+      "name": "compare_runs",
+      "filePath": "src/pyrualean/evaluation/compare.py",
+      "lineRange": [
+        80,
+        135
+      ],
+      "summary": "验证两个系统名称并逐键配对回合；重复或缺失会使比较报告失效。",
+      "tags": [
+        "评估",
+        "配对比较",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/compare.py:compare_metric_files",
+      "type": "function",
+      "name": "compare_metric_files",
+      "filePath": "src/pyrualean/evaluation/compare.py",
+      "lineRange": [
+        138,
+        144
+      ],
+      "summary": "合并多个指标文件中的回合记录，再执行两个系统的严格配对比较。",
+      "tags": [
+        "评估",
+        "配对比较",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/compare.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "src/pyrualean/evaluation/compare.py",
+      "lineRange": [
+        147,
+        160
+      ],
+      "summary": "提供配对比较命令行，读取输入指标并将 JSON 报告打印或保存。",
+      "tags": [
+        "评估",
+        "配对比较",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/pyrualean/evaluation/metrics.py",
+      "type": "file",
+      "name": "metrics.py",
+      "filePath": "src/pyrualean/evaluation/metrics.py",
+      "summary": "定义跨系统通用的回合指标并重建仿真步数。聚合统计明确区分环境成功、失败与产物不足导致的未知结果。",
+      "tags": [
+        "评估",
+        "数据模型",
+        "统计"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/metrics.py:env_steps_from_states",
+      "type": "function",
+      "name": "env_steps_from_states",
+      "filePath": "src/pyrualean/evaluation/metrics.py",
+      "lineRange": [
+        73,
+        108
+      ],
+      "summary": "优先采用宿主原生动作计数，否则按机器人原语记录重建仿真步数。",
+      "tags": [
+        "评估",
+        "数据模型",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/metrics.py:_is_robocasa",
+      "type": "function",
+      "name": "_is_robocasa",
+      "filePath": "src/pyrualean/evaluation/metrics.py",
+      "lineRange": [
+        119,
+        120
+      ],
+      "summary": "通过状态附加信息中的 vla_desync 标记识别 RoboCasa 记录。",
+      "tags": [
+        "评估",
+        "数据模型",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/metrics.py:_robocasa_command_steps",
+      "type": "function",
+      "name": "_robocasa_command_steps",
+      "filePath": "src/pyrualean/evaluation/metrics.py",
+      "lineRange": [
+        123,
+        136
+      ],
+      "summary": "按 RoboCasa 动作类型读取实际步数或原语约定的步数参数。",
+      "tags": [
+        "评估",
+        "数据模型",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/metrics.py:_robocasa_env_steps",
+      "type": "function",
+      "name": "_robocasa_env_steps",
+      "filePath": "src/pyrualean/evaluation/metrics.py",
+      "lineRange": [
+        139,
+        160
+      ],
+      "summary": "累积 RoboCasa 操作与首次校准开销，得到统一帧计数。",
+      "tags": [
+        "评估",
+        "数据模型",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/metrics.py:_native_count",
+      "type": "function",
+      "name": "_native_count",
+      "filePath": "src/pyrualean/evaluation/metrics.py",
+      "lineRange": [
+        163,
+        167
+      ],
+      "summary": "从 episode_status 读取宿主原生动作计数，缺失时返回未知。",
+      "tags": [
+        "评估",
+        "数据模型",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/metrics.py:_converged",
+      "type": "function",
+      "name": "_converged",
+      "filePath": "src/pyrualean/evaluation/metrics.py",
+      "lineRange": [
+        170,
+        179
+      ],
+      "summary": "根据位置或姿态误差及动作容差判断原语是否达到目标。",
+      "tags": [
+        "评估",
+        "数据模型",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/metrics.py:_int",
+      "type": "function",
+      "name": "_int",
+      "filePath": "src/pyrualean/evaluation/metrics.py",
+      "lineRange": [
+        182,
+        186
+      ],
+      "summary": "将可用值安全转换为整数，缺失或非法输入返回未知。",
+      "tags": [
+        "评估",
+        "数据模型",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/metrics.py:_float",
+      "type": "function",
+      "name": "_float",
+      "filePath": "src/pyrualean/evaluation/metrics.py",
+      "lineRange": [
+        189,
+        193
+      ],
+      "summary": "将可用值安全转换为浮点数，缺失或非法输入返回未知。",
+      "tags": [
+        "评估",
+        "数据模型",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/metrics.py:load_episode_result",
+      "type": "function",
+      "name": "load_episode_result",
+      "filePath": "src/pyrualean/evaluation/metrics.py",
+      "lineRange": [
+        196,
+        239
+      ],
+      "summary": "解析统一 result.json，合并错误备注、生成词元统计和宿主回合指标。",
+      "tags": [
+        "评估",
+        "数据模型",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/metrics.py:summarize",
+      "type": "function",
+      "name": "summarize",
+      "filePath": "src/pyrualean/evaluation/metrics.py",
+      "lineRange": [
+        242,
+        273
+      ],
+      "summary": "聚合成功率、状态分布及调用、步数、时间和词元指标，同时保留未知结果数量。",
+      "tags": [
+        "评估",
+        "数据模型",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/evaluation/metrics.py:EpisodeMetrics",
+      "type": "class",
+      "name": "EpisodeMetrics",
+      "filePath": "src/pyrualean/evaluation/metrics.py",
+      "lineRange": [
+        33,
+        70
+      ],
+      "summary": "记录系统、任务、原生成功状态、调用数、步数、时间与词元消耗，供不同执行方式比较。",
+      "tags": [
+        "评估",
+        "数据模型",
+        "数据模型"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/metrics.py:EpisodeMetrics.to_dict",
+      "type": "function",
+      "name": "EpisodeMetrics.to_dict",
+      "filePath": "src/pyrualean/evaluation/metrics.py",
+      "lineRange": [
+        56,
+        57
+      ],
+      "summary": "将回合指标数据类转换为字典。",
+      "tags": [
+        "评估",
+        "数据模型",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/metrics.py:EpisodeMetrics.from_dict",
+      "type": "function",
+      "name": "EpisodeMetrics.from_dict",
+      "filePath": "src/pyrualean/evaluation/metrics.py",
+      "lineRange": [
+        60,
+        70
+      ],
+      "summary": "仅接收指标模型支持的字段，补齐来源和默认标识并规范化备注。",
+      "tags": [
+        "评估",
+        "数据模型",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "file:src/pyrualean/evaluation/rpent.py",
+      "type": "file",
+      "name": "rpent.py",
+      "filePath": "src/pyrualean/evaluation/rpent.py",
+      "summary": "只读解析 RPent 的对话、状态和 Claude 流式产物，无需导入 RPent。环境终止标志与智能体自报完成状态分别统计。",
+      "tags": [
+        "评估",
+        "产物解析",
+        "只读"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/rpent.py:_load_json",
+      "type": "function",
+      "name": "_load_json",
+      "filePath": "src/pyrualean/evaluation/rpent.py",
+      "lineRange": [
+        25,
+        29
+      ],
+      "summary": "读取 JSON 并要求顶层为对象，避免静默接受错误格式。",
+      "tags": [
+        "评估",
+        "产物解析",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/rpent.py:_single_match",
+      "type": "function",
+      "name": "_single_match",
+      "filePath": "src/pyrualean/evaluation/rpent.py",
+      "lineRange": [
+        32,
+        36
+      ],
+      "summary": "要求目录下给定产物模式恰好匹配一个文件。",
+      "tags": [
+        "评估",
+        "产物解析",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/rpent.py:parse_rpent_run",
+      "type": "function",
+      "name": "parse_rpent_run",
+      "filePath": "src/pyrualean/evaluation/rpent.py",
+      "lineRange": [
+        39,
+        151
+      ],
+      "summary": "合并 RPent 对话统计与环境状态，转换为统一回合指标并记录缺失或矛盾证据。",
+      "tags": [
+        "评估",
+        "产物解析",
+        "函数"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/rpent.py:claude_stream_usage",
+      "type": "function",
+      "name": "claude_stream_usage",
+      "filePath": "src/pyrualean/evaluation/rpent.py",
+      "lineRange": [
+        154,
+        201
+      ],
+      "summary": "按助手消息标识去重 Claude 流式用量，并优先用完整会话记录补足最终输出词元数。",
+      "tags": [
+        "评估",
+        "产物解析",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/rpent.py:claude_transcript_output",
+      "type": "function",
+      "name": "claude_transcript_output",
+      "filePath": "src/pyrualean/evaluation/rpent.py",
+      "lineRange": [
+        204,
+        232
+      ],
+      "summary": "查找运行目录或本地 Claude 会话记录，按消息提取最终输出词元数量。",
+      "tags": [
+        "评估",
+        "产物解析",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/rpent.py:_moves",
+      "type": "function",
+      "name": "_moves",
+      "filePath": "src/pyrualean/evaluation/rpent.py",
+      "lineRange": [
+        235,
+        239
+      ],
+      "summary": "识别真正移动机器人的步骤，排除复位记录。",
+      "tags": [
+        "评估",
+        "产物解析",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/rpent.py:_int",
+      "type": "function",
+      "name": "_int",
+      "filePath": "src/pyrualean/evaluation/rpent.py",
+      "lineRange": [
+        242,
+        246
+      ],
+      "summary": "安全转换可选整数统计，非法值返回未知。",
+      "tags": [
+        "评估",
+        "产物解析",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/rpent.py:_float",
+      "type": "function",
+      "name": "_float",
+      "filePath": "src/pyrualean/evaluation/rpent.py",
+      "lineRange": [
+        249,
+        253
+      ],
+      "summary": "安全转换可选浮点统计，非法值返回未知。",
+      "tags": [
+        "评估",
+        "产物解析",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/pyrualean/evaluation/valen.py",
+      "type": "file",
+      "name": "valen.py",
+      "filePath": "src/pyrualean/evaluation/valen.py",
+      "summary": "从保存的视觉监督审计中重放判断并评估弃答阈值。支持问题或裁剪变体，准确率计算要求独立且问题匹配的人工标签。",
+      "tags": [
+        "评估",
+        "视觉监督",
+        "审计"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/valen.py:_read",
+      "type": "function",
+      "name": "_read",
+      "filePath": "src/pyrualean/evaluation/valen.py",
+      "lineRange": [
+        15,
+        16
+      ],
+      "summary": "从 UTF-8 文件读取 JSON 数据。",
+      "tags": [
+        "评估",
+        "视觉监督",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/valen.py:load_samples",
+      "type": "function",
+      "name": "load_samples",
+      "filePath": "src/pyrualean/evaluation/valen.py",
+      "lineRange": [
+        19,
+        37
+      ],
+      "summary": "读取并去重已成功的视觉检查，错误事件不会被计为额外观测。",
+      "tags": [
+        "评估",
+        "视觉监督",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/valen.py:_variant_packet",
+      "type": "function",
+      "name": "_variant_packet",
+      "filePath": "src/pyrualean/evaluation/valen.py",
+      "lineRange": [
+        40,
+        78
+      ],
+      "summary": "在保留完整场景的基础上替换指定问题并追加带标签的局部裁剪。",
+      "tags": [
+        "评估",
+        "视觉监督",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/valen.py:_validate_variant",
+      "type": "function",
+      "name": "_validate_variant",
+      "filePath": "src/pyrualean/evaluation/valen.py",
+      "lineRange": [
+        81,
+        102
+      ],
+      "summary": "校验问题和裁剪变体的字段、事实标识、图片名称及坐标范围。",
+      "tags": [
+        "评估",
+        "视觉监督",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/valen.py:threshold_metrics",
+      "type": "function",
+      "name": "threshold_metrics",
+      "filePath": "src/pyrualean/evaluation/valen.py",
+      "lineRange": [
+        105,
+        131
+      ],
+      "summary": "逐阈值统计确定判断与弃答；仅在有独立匹配标签时计算混淆与准确性指标。",
+      "tags": [
+        "评估",
+        "视觉监督",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/valen.py:evaluate",
+      "type": "function",
+      "name": "evaluate",
+      "filePath": "src/pyrualean/evaluation/valen.py",
+      "lineRange": [
+        134,
+        214
+      ],
+      "summary": "加载审计样本、校验人工标签并运行缓存评估或显式 Valen 重放，输出可复查报告。",
+      "tags": [
+        "评估",
+        "视觉监督",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/valen.py:add_arguments",
+      "type": "function",
+      "name": "add_arguments",
+      "filePath": "src/pyrualean/evaluation/valen.py",
+      "lineRange": [
+        217,
+        224
+      ],
+      "summary": "注册审计目录、阈值、人工标签与重放变体等评估参数。",
+      "tags": [
+        "评估",
+        "视觉监督",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/evaluation/valen.py:run",
+      "type": "function",
+      "name": "run",
+      "filePath": "src/pyrualean/evaluation/valen.py",
+      "lineRange": [
+        227,
+        235
+      ],
+      "summary": "将命令行参数传入视觉评估器并打印核心统计。",
+      "tags": [
+        "评估",
+        "视觉监督",
+        "函数"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/pyrualean/evaluation/compare.py",
+      "target": "function:src/pyrualean/evaluation/compare.py:_extract_records",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/compare.py",
+      "target": "function:src/pyrualean/evaluation/compare.py:_extract_records",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/compare.py",
+      "target": "function:src/pyrualean/evaluation/compare.py:load_metrics_file",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/compare.py",
+      "target": "function:src/pyrualean/evaluation/compare.py:load_metrics_file",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/compare.py",
+      "target": "function:src/pyrualean/evaluation/compare.py:_key",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/compare.py",
+      "target": "function:src/pyrualean/evaluation/compare.py:_key",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/compare.py",
+      "target": "function:src/pyrualean/evaluation/compare.py:_delta",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/compare.py",
+      "target": "function:src/pyrualean/evaluation/compare.py:_delta",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/compare.py",
+      "target": "function:src/pyrualean/evaluation/compare.py:compare_runs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/compare.py",
+      "target": "function:src/pyrualean/evaluation/compare.py:compare_runs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/compare.py",
+      "target": "function:src/pyrualean/evaluation/compare.py:compare_metric_files",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/compare.py",
+      "target": "function:src/pyrualean/evaluation/compare.py:compare_metric_files",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/compare.py",
+      "target": "function:src/pyrualean/evaluation/compare.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/compare.py",
+      "target": "function:src/pyrualean/evaluation/compare.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/compare.py",
+      "target": "file:src/pyrualean/evaluation/metrics.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/compare.py:_extract_records",
+      "target": "function:src/pyrualean/evaluation/metrics.py:load_episode_result",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/compare.py:load_metrics_file",
+      "target": "function:src/pyrualean/evaluation/compare.py:_extract_records",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/compare.py:compare_runs",
+      "target": "function:src/pyrualean/evaluation/compare.py:_key",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/compare.py:compare_runs",
+      "target": "function:src/pyrualean/evaluation/compare.py:_delta",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/compare.py:compare_runs",
+      "target": "function:src/pyrualean/evaluation/metrics.py:summarize",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/compare.py:compare_metric_files",
+      "target": "function:src/pyrualean/evaluation/compare.py:load_metrics_file",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/compare.py:compare_metric_files",
+      "target": "function:src/pyrualean/evaluation/compare.py:compare_runs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/compare.py:main",
+      "target": "function:src/pyrualean/evaluation/compare.py:compare_metric_files",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/metrics.py",
+      "target": "function:src/pyrualean/evaluation/metrics.py:env_steps_from_states",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/metrics.py",
+      "target": "function:src/pyrualean/evaluation/metrics.py:env_steps_from_states",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/metrics.py",
+      "target": "function:src/pyrualean/evaluation/metrics.py:_is_robocasa",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/metrics.py",
+      "target": "function:src/pyrualean/evaluation/metrics.py:_is_robocasa",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/metrics.py",
+      "target": "function:src/pyrualean/evaluation/metrics.py:_robocasa_command_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/metrics.py",
+      "target": "function:src/pyrualean/evaluation/metrics.py:_robocasa_command_steps",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/metrics.py",
+      "target": "function:src/pyrualean/evaluation/metrics.py:_robocasa_env_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/metrics.py",
+      "target": "function:src/pyrualean/evaluation/metrics.py:_robocasa_env_steps",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/metrics.py",
+      "target": "function:src/pyrualean/evaluation/metrics.py:_native_count",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/metrics.py",
+      "target": "function:src/pyrualean/evaluation/metrics.py:_native_count",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/metrics.py",
+      "target": "function:src/pyrualean/evaluation/metrics.py:_converged",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/metrics.py",
+      "target": "function:src/pyrualean/evaluation/metrics.py:_converged",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/metrics.py",
+      "target": "function:src/pyrualean/evaluation/metrics.py:_int",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/metrics.py",
+      "target": "function:src/pyrualean/evaluation/metrics.py:_int",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/metrics.py",
+      "target": "function:src/pyrualean/evaluation/metrics.py:_float",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/metrics.py",
+      "target": "function:src/pyrualean/evaluation/metrics.py:_float",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/metrics.py",
+      "target": "function:src/pyrualean/evaluation/metrics.py:load_episode_result",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/metrics.py",
+      "target": "function:src/pyrualean/evaluation/metrics.py:load_episode_result",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/metrics.py",
+      "target": "function:src/pyrualean/evaluation/metrics.py:summarize",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/metrics.py",
+      "target": "function:src/pyrualean/evaluation/metrics.py:summarize",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/metrics.py",
+      "target": "class:src/pyrualean/evaluation/metrics.py:EpisodeMetrics",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/metrics.py",
+      "target": "class:src/pyrualean/evaluation/metrics.py:EpisodeMetrics",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/metrics.py",
+      "target": "function:src/pyrualean/evaluation/metrics.py:EpisodeMetrics.to_dict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/evaluation/metrics.py:EpisodeMetrics",
+      "target": "function:src/pyrualean/evaluation/metrics.py:EpisodeMetrics.to_dict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/metrics.py",
+      "target": "function:src/pyrualean/evaluation/metrics.py:EpisodeMetrics.from_dict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/evaluation/metrics.py:EpisodeMetrics",
+      "target": "function:src/pyrualean/evaluation/metrics.py:EpisodeMetrics.from_dict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/metrics.py:env_steps_from_states",
+      "target": "function:src/pyrualean/evaluation/metrics.py:_is_robocasa",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/metrics.py:env_steps_from_states",
+      "target": "function:src/pyrualean/evaluation/metrics.py:_robocasa_env_steps",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/metrics.py:env_steps_from_states",
+      "target": "function:src/pyrualean/evaluation/metrics.py:_converged",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/metrics.py:_robocasa_env_steps",
+      "target": "function:src/pyrualean/evaluation/metrics.py:_robocasa_command_steps",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/metrics.py:load_episode_result",
+      "target": "class:src/pyrualean/evaluation/metrics.py:EpisodeMetrics",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/metrics.py:load_episode_result",
+      "target": "function:src/pyrualean/evaluation/metrics.py:_int",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/metrics.py:load_episode_result",
+      "target": "function:src/pyrualean/evaluation/metrics.py:_float",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/rpent.py",
+      "target": "function:src/pyrualean/evaluation/rpent.py:_load_json",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/rpent.py",
+      "target": "function:src/pyrualean/evaluation/rpent.py:_load_json",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/rpent.py",
+      "target": "function:src/pyrualean/evaluation/rpent.py:_single_match",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/rpent.py",
+      "target": "function:src/pyrualean/evaluation/rpent.py:_single_match",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/rpent.py",
+      "target": "function:src/pyrualean/evaluation/rpent.py:parse_rpent_run",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/rpent.py",
+      "target": "function:src/pyrualean/evaluation/rpent.py:parse_rpent_run",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/rpent.py",
+      "target": "function:src/pyrualean/evaluation/rpent.py:claude_stream_usage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/rpent.py",
+      "target": "function:src/pyrualean/evaluation/rpent.py:claude_stream_usage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/rpent.py",
+      "target": "function:src/pyrualean/evaluation/rpent.py:claude_transcript_output",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/rpent.py",
+      "target": "function:src/pyrualean/evaluation/rpent.py:claude_transcript_output",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/rpent.py",
+      "target": "function:src/pyrualean/evaluation/rpent.py:_moves",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/rpent.py",
+      "target": "function:src/pyrualean/evaluation/rpent.py:_moves",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/rpent.py",
+      "target": "function:src/pyrualean/evaluation/rpent.py:_int",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/rpent.py",
+      "target": "function:src/pyrualean/evaluation/rpent.py:_int",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/rpent.py",
+      "target": "function:src/pyrualean/evaluation/rpent.py:_float",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/rpent.py",
+      "target": "function:src/pyrualean/evaluation/rpent.py:_float",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/rpent.py",
+      "target": "file:src/pyrualean/evaluation/metrics.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/rpent.py:parse_rpent_run",
+      "target": "function:src/pyrualean/evaluation/rpent.py:_single_match",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/rpent.py:parse_rpent_run",
+      "target": "function:src/pyrualean/evaluation/rpent.py:_load_json",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/rpent.py:parse_rpent_run",
+      "target": "function:src/pyrualean/evaluation/rpent.py:_int",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/rpent.py:parse_rpent_run",
+      "target": "function:src/pyrualean/evaluation/rpent.py:claude_stream_usage",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/rpent.py:parse_rpent_run",
+      "target": "class:src/pyrualean/evaluation/metrics.py:EpisodeMetrics",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/rpent.py:parse_rpent_run",
+      "target": "function:src/pyrualean/evaluation/rpent.py:_moves",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/rpent.py:parse_rpent_run",
+      "target": "function:src/pyrualean/evaluation/metrics.py:env_steps_from_states",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/rpent.py:parse_rpent_run",
+      "target": "function:src/pyrualean/evaluation/rpent.py:_float",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/rpent.py:claude_stream_usage",
+      "target": "function:src/pyrualean/evaluation/rpent.py:claude_transcript_output",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/valen.py",
+      "target": "function:src/pyrualean/evaluation/valen.py:_read",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/valen.py",
+      "target": "function:src/pyrualean/evaluation/valen.py:_read",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/valen.py",
+      "target": "function:src/pyrualean/evaluation/valen.py:load_samples",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/valen.py",
+      "target": "function:src/pyrualean/evaluation/valen.py:load_samples",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/valen.py",
+      "target": "function:src/pyrualean/evaluation/valen.py:_variant_packet",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/valen.py",
+      "target": "function:src/pyrualean/evaluation/valen.py:_variant_packet",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/valen.py",
+      "target": "function:src/pyrualean/evaluation/valen.py:_validate_variant",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/valen.py",
+      "target": "function:src/pyrualean/evaluation/valen.py:_validate_variant",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/valen.py",
+      "target": "function:src/pyrualean/evaluation/valen.py:threshold_metrics",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/valen.py",
+      "target": "function:src/pyrualean/evaluation/valen.py:threshold_metrics",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/valen.py",
+      "target": "function:src/pyrualean/evaluation/valen.py:evaluate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/valen.py",
+      "target": "function:src/pyrualean/evaluation/valen.py:evaluate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/valen.py",
+      "target": "function:src/pyrualean/evaluation/valen.py:add_arguments",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/valen.py",
+      "target": "function:src/pyrualean/evaluation/valen.py:add_arguments",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/valen.py",
+      "target": "function:src/pyrualean/evaluation/valen.py:run",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/valen.py",
+      "target": "function:src/pyrualean/evaluation/valen.py:run",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/valen.py",
+      "target": "file:src/pyrualean/supervision.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/valen.py:load_samples",
+      "target": "function:src/pyrualean/evaluation/valen.py:_read",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/valen.py:load_samples",
+      "target": "function:src/pyrualean/supervision.py:decode_answers",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/valen.py:evaluate",
+      "target": "function:src/pyrualean/evaluation/valen.py:load_samples",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/valen.py:evaluate",
+      "target": "function:src/pyrualean/evaluation/valen.py:_validate_variant",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/valen.py:evaluate",
+      "target": "class:src/pyrualean/supervision.py:ValenClient",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/valen.py:evaluate",
+      "target": "class:src/pyrualean/supervision.py:MonitorConfig",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/valen.py:evaluate",
+      "target": "function:src/pyrualean/evaluation/valen.py:_variant_packet",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/valen.py:evaluate",
+      "target": "function:src/pyrualean/supervision.py:decode_answers",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/valen.py:evaluate",
+      "target": "function:src/pyrualean/supervision.py:answer_diagnostics",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/valen.py:evaluate",
+      "target": "function:src/pyrualean/evaluation/valen.py:threshold_metrics",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/valen.py:run",
+      "target": "function:src/pyrualean/evaluation/valen.py:evaluate",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/evaluation/valen.py:run",
+      "target": "function:src/pyrualean/evaluation/valen.py:_read",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

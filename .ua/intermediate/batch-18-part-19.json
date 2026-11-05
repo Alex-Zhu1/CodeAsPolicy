@@ -1,0 +1,3023 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "type": "file",
+      "name": "stack_bowls.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "实现离线 RoboDojo 任务程序：识别碗口并评估双臂可达性，选择侧缘或倾斜抓法，通过直接搬运或中转叠碗并修正顶碗。通过执行环境注入的 robo 接口完成任务，不在评测时调用规划模型。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:f3",
+      "type": "function",
+      "name": "f3",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "格式化向量或测量数据以便打印诊断信息。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        92,
+        93
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:say",
+      "type": "function",
+      "name": "say",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "打印任务执行进度和诊断信息。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        96,
+        97
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:grip_depth",
+      "type": "function",
+      "name": "grip_depth",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "依据碗高决定夹持点相对碗口的下探深度。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        100,
+        102
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:_interp",
+      "type": "function",
+      "name": "_interp",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "在预采样可达性表中进行双线性插值。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        120,
+        129
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:reach_margin",
+      "type": "function",
+      "name": "reach_margin",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "计算机械臂抓点距离估计可达边界的裕量。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        132,
+        140
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:arm_st",
+      "type": "function",
+      "name": "arm_st",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "读取所选机械臂的当前状态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        144,
+        146
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:mv",
+      "type": "function",
+      "name": "mv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "调用机器人位姿运动接口并处理本任务的运动结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        149,
+        163
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:mv_seg",
+      "type": "function",
+      "name": "mv_seg",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "把较长平移拆成满足接口长度限制的短段运动。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        166,
+        178
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:grip",
+      "type": "function",
+      "name": "grip",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "发送夹爪开合命令并记录执行步数或状态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        181,
+        188
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:go_home",
+      "type": "function",
+      "name": "go_home",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "将指定机械臂返回起始姿态并处理返回结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        191,
+        201
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:cam_meta",
+      "type": "function",
+      "name": "cam_meta",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "读取相机标定并转为数值矩阵供投影计算。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        205,
+        207
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:ray_plane",
+      "type": "function",
+      "name": "ray_plane",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "将像素视线与给定高度平面相交以恢复世界坐标。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        210,
+        214
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:find_bowls_head",
+      "type": "function",
+      "name": "find_bowls_head",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "通过头部相机提示词检测并合并碗目标。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        224,
+        254
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:arms_aside",
+      "type": "function",
+      "name": "arms_aside",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "移开闲置机械臂以减少遮挡和运动干涉。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        257,
+        263
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:model_estimates",
+      "type": "function",
+      "name": "model_estimates",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "从可靠多视角检测汇总碗口高度和直径先验。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        266,
+        275
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:eff_top",
+      "type": "function",
+      "name": "eff_top",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "按精化结果、覆盖值和先验选择有效碗口高度或直径。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        278,
+        285
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:eff_D",
+      "type": "function",
+      "name": "eff_D",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "按精化结果、覆盖值和先验选择有效碗口高度或直径。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        288,
+        297
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:best_view_arm",
+      "type": "function",
+      "name": "best_view_arm",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "选择能够到达腕部观察位姿且余量较大的机械臂。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        300,
+        306
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:view_pose",
+      "type": "function",
+      "name": "view_pose",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "根据碗口中心与相机偏移计算观察位姿。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        309,
+        310
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:wrist_box",
+      "type": "function",
+      "name": "wrist_box",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "将腕部图像中的碗口包围盒投影到碗口平面测量中心和直径。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        313,
+        350
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:refine",
+      "type": "function",
+      "name": "refine",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "通过近距离观察更新目标位置或几何估计。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        353,
+        390
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:carry_z",
+      "type": "function",
+      "name": "carry_z",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "根据搬运目标和可达上限计算安全搬运高度。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        394,
+        401
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:plan_zc",
+      "type": "function",
+      "name": "plan_zc",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "根据当前抓法和目标碗口高度规划搬运高度。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        404,
+        407
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:grasp_point",
+      "type": "function",
+      "name": "grasp_point",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "按碗口半径和夹持深度计算近侧抓点。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        410,
+        412
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:job_viol_side",
+      "type": "function",
+      "name": "job_viol_side",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "评估搬运碗到目标位置的可达性违反量与距离代价。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        415,
+        429
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:job_viol",
+      "type": "function",
+      "name": "job_viol",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "评估搬运碗到目标位置的可达性违反量与距离代价。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        432,
+        448
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:plan",
+      "type": "function",
+      "name": "plan",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "搜索底碗选择、堆叠顺序和执行机械臂的组合。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        451,
+        470
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:head_project",
+      "type": "function",
+      "name": "head_project",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "把世界坐标点投影到标定相机图像平面。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        473,
+        475
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:spot_free",
+      "type": "function",
+      "name": "spot_free",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "利用头部图像检查候选碗中转点是否空闲。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        481,
+        506
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:plan_spot",
+      "type": "function",
+      "name": "plan_spot",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "规划先把一个碗移到中央位置的堆叠方案。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        509,
+        535
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:choose_arm",
+      "type": "function",
+      "name": "choose_arm",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "按可达性违反量和成本选择搬运机械臂。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        538,
+        546
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:note_budget",
+      "type": "function",
+      "name": "note_budget",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "从夹爪结果同步原生步数与上限。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        550,
+        554
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:left_budget",
+      "type": "function",
+      "name": "left_budget",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "计算当前任务剩余原生动作预算。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        557,
+        558
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick_side",
+      "type": "function",
+      "name": "pick_side",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "沿碗侧缘下探夹持并按开度必要时加深重抓。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        561,
+        623
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:yaw_of",
+      "type": "function",
+      "name": "yaw_of",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "把水平指向向量转换为机器人偏航角约定。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        630,
+        632
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:blocked_short",
+      "type": "function",
+      "name": "blocked_short",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "识别因阻挡而未到达目标的运动结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        635,
+        636
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick",
+      "type": "function",
+      "name": "pick",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "执行接近、闭合和抬升步骤，并依据本任务的视觉或夹爪反馈处理抓取结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        639,
+        725
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:vt_depth",
+      "type": "function",
+      "name": "vt_depth",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "依据碗高决定夹持点相对碗口的下探深度。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        734,
+        735
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick_vtilt",
+      "type": "function",
+      "name": "pick_vtilt",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "竖直夹住近侧碗壁并在抬升后调整倾角保持抓持。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        738,
+        803
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:lift_to",
+      "type": "function",
+      "name": "lift_to",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "沿直线提升，必要时退向机器人再提升以保持可达。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        806,
+        820
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:tilt_vec",
+      "type": "function",
+      "name": "tilt_vec",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "计算碗绕抓取轴倾转后的几何点偏移。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        823,
+        827
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:est_tilt",
+      "type": "function",
+      "name": "est_tilt",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "比较腕部掩码质心与模型投影以估计抓持碗倾角。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        830,
+        859
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:place_side",
+      "type": "function",
+      "name": "place_side",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "按侧缘抓持几何将碗对准目标堆叠并释放。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        862,
+        905
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:place",
+      "type": "function",
+      "name": "place",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "按目标位置与抓持几何完成物体放置和释放。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        908,
+        953
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:transfer",
+      "type": "function",
+      "name": "transfer",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "精化碗的位置，选择抓法并搬运到目标位置。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        956,
+        1008
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:relay",
+      "type": "function",
+      "name": "relay",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "通过共享空位中转，让另一机械臂完成最终叠放。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1018,
+        1050
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:measure_stack",
+      "type": "function",
+      "name": "measure_stack",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "从腕部图像复测堆叠中心与顶沿高度。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1053,
+        1068
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:search",
+      "type": "function",
+      "name": "search",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "多阶段搜索几何模型位姿并以掩码重叠程度选择最佳拟合。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1072,
+        1080
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:run",
+      "type": "function",
+      "name": "run",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "识别碗口并评估双臂可达性，选择侧缘或倾斜抓法，通过直接搬运或中转叠碗并修正顶碗。统筹观察、运动和任务检查。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1083,
+        1165
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:classify",
+      "type": "function",
+      "name": "classify",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "按颜色通道规则给图像像素分配颜色类别。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1171,
+        1183
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:wrist_sweep",
+      "type": "function",
+      "name": "wrist_sweep",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "当头部观察遗漏碗时扫描腕部俯视图补找。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1190,
+        1216
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:seat",
+      "type": "function",
+      "name": "seat",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "在接触位置继续压入并修正插接深度。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1222,
+        1240
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:replace_top",
+      "type": "function",
+      "name": "replace_top",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "在全部碗已放置仍未结束时重抓顶碗并重新就位。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1246,
+        1264
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:final_passes",
+      "type": "function",
+      "name": "final_passes",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "summary": "归位检查并循环补找散碗完成最终堆叠。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1267,
+        1345
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:f3",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:f3",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:say",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:say",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:grip_depth",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:grip_depth",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:_interp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:_interp",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:reach_margin",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:reach_margin",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:arm_st",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:arm_st",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:mv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:mv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:mv_seg",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:mv_seg",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:grip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:grip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:go_home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:go_home",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:cam_meta",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:cam_meta",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:ray_plane",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:ray_plane",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:find_bowls_head",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:find_bowls_head",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:arms_aside",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:arms_aside",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:model_estimates",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:model_estimates",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:eff_top",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:eff_top",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:eff_D",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:eff_D",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:best_view_arm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:best_view_arm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:view_pose",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:view_pose",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:wrist_box",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:wrist_box",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:refine",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:refine",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:carry_z",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:carry_z",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:plan_zc",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:plan_zc",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:grasp_point",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:grasp_point",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:job_viol_side",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:job_viol_side",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:job_viol",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:job_viol",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:plan",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:plan",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:head_project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:head_project",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:spot_free",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:spot_free",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:plan_spot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:plan_spot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:choose_arm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:choose_arm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:note_budget",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:note_budget",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:left_budget",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:left_budget",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick_side",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick_side",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:yaw_of",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:yaw_of",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:blocked_short",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:blocked_short",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:vt_depth",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:vt_depth",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick_vtilt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick_vtilt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:lift_to",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:lift_to",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:tilt_vec",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:tilt_vec",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:est_tilt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:est_tilt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:place_side",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:place_side",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:place",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:place",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:transfer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:transfer",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:relay",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:relay",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:measure_stack",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:measure_stack",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:search",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:search",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:run",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:run",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:classify",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:classify",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:wrist_sweep",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:wrist_sweep",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:seat",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:seat",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:replace_top",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:replace_top",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:final_passes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:final_passes",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:reach_margin",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:_interp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:mv_seg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:arm_st",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:mv_seg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:grip",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:go_home",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:find_bowls_head",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:find_bowls_head",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:arms_aside",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:model_estimates",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:best_view_arm",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:view_pose",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:best_view_arm",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:reach_margin",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:view_pose",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:eff_top",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:wrist_box",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:wrist_box",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:cam_meta",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:wrist_box",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:ray_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:wrist_box",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:view_pose",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:reach_margin",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:mv_seg",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:eff_top",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:wrist_box",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:plan_zc",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:carry_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:plan_zc",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:grip_depth",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:grasp_point",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:grip_depth",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:job_viol_side",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:reach_margin",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:job_viol",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:job_viol_side",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:job_viol",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:grip_depth",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:job_viol",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:grasp_point",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:job_viol",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:reach_margin",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:plan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:eff_top",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:plan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:eff_D",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:plan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:plan_zc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:plan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:job_viol",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:spot_free",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:cam_meta",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:spot_free",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:head_project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:spot_free",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:spot_free",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:plan_spot",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:eff_top",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:plan_spot",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:eff_D",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:plan_spot",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:plan_zc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:plan_spot",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:job_viol",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:choose_arm",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:eff_top",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:choose_arm",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:eff_D",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:choose_arm",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:plan_zc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:choose_arm",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:job_viol",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick_side",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:eff_top",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick_side",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:eff_D",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick_side",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick_side",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:note_budget",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick_side",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:mv_seg",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick_side",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick_side",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick_side",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick_side",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:arm_st",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick_side",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:refine",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:yaw_of",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:eff_top",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:eff_D",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:grip_depth",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:note_budget",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:mv_seg",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:blocked_short",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:arm_st",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:refine",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick_vtilt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:eff_top",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick_vtilt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:eff_D",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick_vtilt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:vt_depth",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick_vtilt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick_vtilt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:note_budget",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick_vtilt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:mv_seg",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick_vtilt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick_vtilt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick_vtilt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:blocked_short",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick_vtilt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:arm_st",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick_vtilt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:refine",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick_vtilt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:lift_to",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:arm_st",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:lift_to",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:est_tilt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:est_tilt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:cam_meta",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:est_tilt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:arm_st",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:est_tilt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:tilt_vec",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:place_side",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:tilt_vec",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:place_side",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:place_side",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:mv_seg",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:place_side",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:arm_st",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:place_side",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:place_side",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:go_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:place_side",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:place_side",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:place_side",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:note_budget",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:place_side",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:mv_seg",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:arm_st",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:go_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:note_budget",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:transfer",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:refine",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:transfer",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:eff_top",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:transfer",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:transfer",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick_side",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:transfer",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:transfer",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:eff_D",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:transfer",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:pick_vtilt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:transfer",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:carry_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:transfer",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:transfer",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:go_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:transfer",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:lift_to",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:transfer",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:arm_st",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:transfer",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:place",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:relay",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:eff_top",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:relay",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:eff_D",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:relay",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:plan_zc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:relay",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:job_viol",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:relay",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:spot_free",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:relay",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:relay",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:transfer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:measure_stack",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:refine",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:measure_stack",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:measure_stack",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:search",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:find_bowls_head",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:search",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:search",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:arms_aside",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:search",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:go_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:search",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:model_estimates",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:classify",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:plan",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:eff_top",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:eff_D",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:plan_spot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:spot_free",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:transfer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:best_view_arm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:refine",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:go_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:job_viol",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:plan_zc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:relay",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:measure_stack",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:classify",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:best_view_arm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:classify",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:refine",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:classify",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:go_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:classify",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:wrist_sweep",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:mv_seg",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:wrist_sweep",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:wrist_sweep",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:wrist_sweep",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:go_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:seat",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:seat",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:mv_seg",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:seat",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:seat",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:go_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:seat",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:seat",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:arm_st",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:replace_top",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:choose_arm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:replace_top",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:refine",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:replace_top",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:replace_top",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:go_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:replace_top",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:replace_top",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:transfer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:final_passes",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:final_passes",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:note_budget",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:final_passes",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:final_passes",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:left_budget",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:final_passes",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:search",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:final_passes",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:plan",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:final_passes",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:eff_top",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:final_passes",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:final_passes",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:replace_top",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:final_passes",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:wrist_sweep",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:final_passes",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:choose_arm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:final_passes",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:best_view_arm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:final_passes",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:refine",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:final_passes",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:go_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:final_passes",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:relay",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:final_passes",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_bowls.py:transfer",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

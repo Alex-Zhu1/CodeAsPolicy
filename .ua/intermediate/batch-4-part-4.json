@@ -1,0 +1,482 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/pyrualean/runner.py",
+      "type": "file",
+      "name": "runner.py",
+      "filePath": "src/pyrualean/runner.py",
+      "summary": "加载生成的 Python 策略并执行，记录超时和异常结果。宿主子进程使用独立进程组，支持信号转发和超时后的强制清理。",
+      "tags": [
+        "策略执行",
+        "进程管理",
+        "超时控制"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/runner.py:policy_sha256",
+      "type": "function",
+      "name": "policy_sha256",
+      "filePath": "src/pyrualean/runner.py",
+      "lineRange": [
+        50,
+        51
+      ],
+      "summary": "计算策略文件内容的 SHA-256 摘要。",
+      "tags": [
+        "策略执行",
+        "进程管理",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/runner.py:load_policy",
+      "type": "function",
+      "name": "load_policy",
+      "filePath": "src/pyrualean/runner.py",
+      "lineRange": [
+        54,
+        95
+      ],
+      "summary": "以唯一模块名加载策略并取得指定入口，可注入受限 builtins 约束导入和文件访问。",
+      "tags": [
+        "策略执行",
+        "进程管理",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/runner.py:run_policy",
+      "type": "function",
+      "name": "run_policy",
+      "filePath": "src/pyrualean/runner.py",
+      "lineRange": [
+        114,
+        171
+      ],
+      "summary": "在墙钟看门狗下执行策略，区分正常结束、回合终止、超时与异常并保留 traceback。",
+      "tags": [
+        "策略执行",
+        "进程管理",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/runner.py:run_host",
+      "type": "function",
+      "name": "run_host",
+      "filePath": "src/pyrualean/runner.py",
+      "lineRange": [
+        174,
+        225
+      ],
+      "summary": "启动独立进程组运行宿主，转发终止信号并在超时后依次发送终止和强杀信号。",
+      "tags": [
+        "策略执行",
+        "进程管理",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/runner.py:_kill_group",
+      "type": "function",
+      "name": "_kill_group",
+      "filePath": "src/pyrualean/runner.py",
+      "lineRange": [
+        228,
+        232
+      ],
+      "summary": "向宿主进程组发送信号，忽略进程已退出的情况。",
+      "tags": [
+        "策略执行",
+        "进程管理",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/runner.py:PolicyLoadError",
+      "type": "class",
+      "name": "PolicyLoadError",
+      "filePath": "src/pyrualean/runner.py",
+      "lineRange": [
+        46,
+        47
+      ],
+      "summary": "表示策略无法导入或不存在可调用入口。",
+      "tags": [
+        "策略执行",
+        "进程管理",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/runner.py:PolicyOutcome",
+      "type": "class",
+      "name": "PolicyOutcome",
+      "filePath": "src/pyrualean/runner.py",
+      "lineRange": [
+        99,
+        111
+      ],
+      "summary": "记录单次策略调用的结束原因、耗时和错误，与任务是否成功分开保存。",
+      "tags": [
+        "策略执行",
+        "进程管理",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/runner.py:PolicyOutcome.to_dict",
+      "type": "function",
+      "name": "PolicyOutcome.to_dict",
+      "filePath": "src/pyrualean/runner.py",
+      "lineRange": [
+        110,
+        111
+      ],
+      "summary": "把策略执行结果转换为字典。",
+      "tags": [
+        "策略执行",
+        "进程管理",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "file:src/pyrualean/sandbox.py",
+      "type": "file",
+      "name": "sandbox.py",
+      "filePath": "src/pyrualean/sandbox.py",
+      "summary": "为模型代码提供受限 builtins、源码审计和反射入口检查，约束工作目录外文件访问与危险导入，并记录越过公开机器人 API 的尝试。",
+      "tags": [
+        "执行约束",
+        "源码审计",
+        "文件访问"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/sandbox.py:_workspace_module",
+      "type": "function",
+      "name": "_workspace_module",
+      "filePath": "src/pyrualean/sandbox.py",
+      "lineRange": [
+        108,
+        109
+      ],
+      "summary": "判断模块名是否对应工作目录内的 Python 文件或包。",
+      "tags": [
+        "执行约束",
+        "源码审计",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/sandbox.py:make_builtins",
+      "type": "function",
+      "name": "make_builtins",
+      "filePath": "src/pyrualean/sandbox.py",
+      "lineRange": [
+        112,
+        148
+      ],
+      "summary": "构造模型执行用的 builtins，限制导入、文件打开以及动态执行入口。",
+      "tags": [
+        "执行约束",
+        "源码审计",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/sandbox.py:audit_source",
+      "type": "function",
+      "name": "audit_source",
+      "filePath": "src/pyrualean/sandbox.py",
+      "lineRange": [
+        179,
+        234
+      ],
+      "summary": "静态标记不允许的导入、宿主私有属性、反射探查和越界路径，供结果审计。",
+      "tags": [
+        "执行约束",
+        "源码审计",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/sandbox.py:blocked_names",
+      "type": "function",
+      "name": "blocked_names",
+      "filePath": "src/pyrualean/sandbox.py",
+      "lineRange": [
+        237,
+        261
+      ],
+      "summary": "从属性、名称和字符串常量中检测禁止的反射入口，语法错误留给执行器报告。",
+      "tags": [
+        "执行约束",
+        "源码审计",
+        "函数"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/pyrualean/runner.py",
+      "target": "function:src/pyrualean/runner.py:policy_sha256",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/runner.py",
+      "target": "function:src/pyrualean/runner.py:policy_sha256",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/runner.py",
+      "target": "function:src/pyrualean/runner.py:load_policy",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/runner.py",
+      "target": "function:src/pyrualean/runner.py:load_policy",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/runner.py",
+      "target": "function:src/pyrualean/runner.py:run_policy",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/runner.py",
+      "target": "function:src/pyrualean/runner.py:run_policy",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/runner.py",
+      "target": "function:src/pyrualean/runner.py:run_host",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/runner.py",
+      "target": "function:src/pyrualean/runner.py:run_host",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/runner.py",
+      "target": "function:src/pyrualean/runner.py:_kill_group",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/runner.py",
+      "target": "function:src/pyrualean/runner.py:_kill_group",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/runner.py",
+      "target": "class:src/pyrualean/runner.py:PolicyLoadError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/runner.py",
+      "target": "class:src/pyrualean/runner.py:PolicyLoadError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/runner.py",
+      "target": "class:src/pyrualean/runner.py:PolicyOutcome",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/runner.py",
+      "target": "class:src/pyrualean/runner.py:PolicyOutcome",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/runner.py",
+      "target": "function:src/pyrualean/runner.py:PolicyOutcome.to_dict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/runner.py:PolicyOutcome",
+      "target": "function:src/pyrualean/runner.py:PolicyOutcome.to_dict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/runner.py",
+      "target": "file:src/pyrualean/_backend.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/runner.py",
+      "target": "file:src/pyrualean/coordination.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/runner.py",
+      "target": "file:src/pyrualean/execution.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/runner.py",
+      "target": "file:src/pyrualean/libero.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/runner.py",
+      "target": "file:src/pyrualean/recovery.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:src/pyrualean/runner.py:load_policy",
+      "target": "class:src/pyrualean/runner.py:PolicyLoadError",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/runner.py:run_policy",
+      "target": "class:src/pyrualean/runner.py:PolicyOutcome",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/runner.py:run_policy",
+      "target": "function:src/pyrualean/recovery.py:failure_details",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/runner.py:run_host",
+      "target": "function:src/pyrualean/runner.py:_kill_group",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/sandbox.py",
+      "target": "function:src/pyrualean/sandbox.py:_workspace_module",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/sandbox.py",
+      "target": "function:src/pyrualean/sandbox.py:_workspace_module",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/sandbox.py",
+      "target": "function:src/pyrualean/sandbox.py:make_builtins",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/sandbox.py",
+      "target": "function:src/pyrualean/sandbox.py:make_builtins",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/sandbox.py",
+      "target": "function:src/pyrualean/sandbox.py:audit_source",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/sandbox.py",
+      "target": "function:src/pyrualean/sandbox.py:audit_source",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/sandbox.py",
+      "target": "function:src/pyrualean/sandbox.py:blocked_names",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/sandbox.py",
+      "target": "function:src/pyrualean/sandbox.py:blocked_names",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/sandbox.py:make_builtins",
+      "target": "function:src/pyrualean/sandbox.py:_workspace_module",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/sandbox.py:audit_source",
+      "target": "function:src/pyrualean/sandbox.py:_workspace_module",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

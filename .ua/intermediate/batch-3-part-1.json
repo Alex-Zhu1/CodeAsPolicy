@@ -1,0 +1,2852 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/pyrualean/arms.py",
+      "type": "file",
+      "name": "arms.py",
+      "filePath": "src/pyrualean/arms.py",
+      "summary": "将机器人封装为持续命名空间的 Python 单元或独立完整程序两种执行接口，并统一返回调用记录、当前状态、图像及恢复反馈。",
+      "tags": [
+        "代码执行",
+        "工具接口",
+        "反馈"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/arms.py:_to_png",
+      "type": "function",
+      "name": "_to_png",
+      "filePath": "src/pyrualean/arms.py",
+      "lineRange": [
+        168,
+        185
+      ],
+      "summary": "将数组、PIL 图像或已有 PNG 字节规范为 PNG 数据。",
+      "tags": [
+        "代码执行",
+        "工具接口",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/arms.py:_trim",
+      "type": "function",
+      "name": "_trim",
+      "filePath": "src/pyrualean/arms.py",
+      "lineRange": [
+        188,
+        195
+      ],
+      "summary": "在保留文本首尾的同时截去超长中段并标注省略字符数。",
+      "tags": [
+        "代码执行",
+        "工具接口",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/arms.py:_state_dict",
+      "type": "function",
+      "name": "_state_dict",
+      "filePath": "src/pyrualean/arms.py",
+      "lineRange": [
+        198,
+        202
+      ],
+      "summary": "读取机器人状态摘要，状态读取异常转为可反馈的错误信息。",
+      "tags": [
+        "代码执行",
+        "工具接口",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/arms.py:_blocked_message",
+      "type": "function",
+      "name": "_blocked_message",
+      "filePath": "src/pyrualean/arms.py",
+      "lineRange": [
+        205,
+        211
+      ],
+      "summary": "解释因使用禁止反射名称而拒绝执行的原因。",
+      "tags": [
+        "代码执行",
+        "工具接口",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/arms.py:arm_contract",
+      "type": "function",
+      "name": "arm_contract",
+      "filePath": "src/pyrualean/arms.py",
+      "lineRange": [
+        1133,
+        1176
+      ],
+      "summary": "按执行方式、图像策略和预算生成模型运行契约，并可附加操作指南说明。",
+      "tags": [
+        "代码执行",
+        "工具接口",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/arms.py:robot_words",
+      "type": "function",
+      "name": "robot_words",
+      "filePath": "src/pyrualean/arms.py",
+      "lineRange": [
+        1179,
+        1198
+      ],
+      "summary": "从机器人适配器获取契约措辞，关闭 VLA 时只列剩余服务。",
+      "tags": [
+        "代码执行",
+        "工具接口",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/arms.py:_arm_contract",
+      "type": "function",
+      "name": "_arm_contract",
+      "filePath": "src/pyrualean/arms.py",
+      "lineRange": [
+        1201,
+        1253
+      ],
+      "summary": "组合预算、评分、反馈与图像策略，生成对应执行方式的完整契约文本。",
+      "tags": [
+        "代码执行",
+        "工具接口",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/pyrualean/arms.py:ArmResult",
+      "type": "class",
+      "name": "ArmResult",
+      "filePath": "src/pyrualean/arms.py",
+      "lineRange": [
+        70,
+        165
+      ],
+      "summary": "封装工具返回数据与多模态内容块，并统一标记执行失败。",
+      "tags": [
+        "代码执行",
+        "工具接口",
+        "数据模型"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/arms.py:ArmResult.is_error",
+      "type": "function",
+      "name": "ArmResult.is_error",
+      "filePath": "src/pyrualean/arms.py",
+      "lineRange": [
+        77,
+        78
+      ],
+      "summary": "按公共错误判据判断工具结果是否失败。",
+      "tags": [
+        "代码执行",
+        "工具接口",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/arms.py:ArmResult.content_blocks",
+      "type": "function",
+      "name": "ArmResult.content_blocks",
+      "filePath": "src/pyrualean/arms.py",
+      "lineRange": [
+        81,
+        165
+      ],
+      "summary": "生成合法且受长度限制的 JSON 文本与图像块，优先保留监督和卡住恢复关键信息。",
+      "tags": [
+        "代码执行",
+        "工具接口",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "class:src/pyrualean/arms.py:ArmToolkit",
+      "type": "class",
+      "name": "ArmToolkit",
+      "filePath": "src/pyrualean/arms.py",
+      "lineRange": [
+        214,
+        892
+      ],
+      "summary": "管理机器人、持久代码环境、执行预算、视觉监督与完成工具，对运行时提供统一工具接口。",
+      "tags": [
+        "代码执行",
+        "工具接口",
+        "数据模型"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/arms.py:ArmToolkit.__init__",
+      "type": "function",
+      "name": "ArmToolkit.__init__",
+      "filePath": "src/pyrualean/arms.py",
+      "lineRange": [
+        217,
+        295
+      ],
+      "summary": "验证执行方式，建立工作目录和持久命名空间，并配置预算、图像、监督与卡住恢复状态。",
+      "tags": [
+        "代码执行",
+        "工具接口",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/arms.py:ArmToolkit._display",
+      "type": "function",
+      "name": "ArmToolkit._display",
+      "filePath": "src/pyrualean/arms.py",
+      "lineRange": [
+        297,
+        306
+      ],
+      "summary": "编码模型主动展示的图像并加入当前单元输出。",
+      "tags": [
+        "代码执行",
+        "工具接口",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/arms.py:ArmToolkit.get_tools_spec",
+      "type": "function",
+      "name": "ArmToolkit.get_tools_spec",
+      "filePath": "src/pyrualean/arms.py",
+      "lineRange": [
+        310,
+        371
+      ],
+      "summary": "生成 python 或 run_program 与 finish 工具规范，并注入执行限制和恢复协议。",
+      "tags": [
+        "代码执行",
+        "工具接口",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/arms.py:ArmToolkit.execute_tool",
+      "type": "function",
+      "name": "ArmToolkit.execute_tool",
+      "filePath": "src/pyrualean/arms.py",
+      "lineRange": [
+        373,
+        420
+      ],
+      "summary": "在互斥锁中分发工具调用，记录执行耗时与前后原语状态。",
+      "tags": [
+        "代码执行",
+        "工具接口",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/arms.py:ArmToolkit._finish",
+      "type": "function",
+      "name": "ArmToolkit._finish",
+      "filePath": "src/pyrualean/arms.py",
+      "lineRange": [
+        424,
+        496
+      ],
+      "summary": "处理完成或卡住声明；启用恢复时可返回恢复指令而保留当前回合。",
+      "tags": [
+        "代码执行",
+        "工具接口",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/arms.py:ArmToolkit._observe_result",
+      "type": "function",
+      "name": "ArmToolkit._observe_result",
+      "filePath": "src/pyrualean/arms.py",
+      "lineRange": [
+        509,
+        535
+      ],
+      "summary": "为成功、失败、程序与完成调用建立统一的观测证据封装。",
+      "tags": [
+        "代码执行",
+        "工具接口",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/arms.py:ArmToolkit._failure_feedback",
+      "type": "function",
+      "name": "ArmToolkit._failure_feedback",
+      "filePath": "src/pyrualean/arms.py",
+      "lineRange": [
+        555,
+        617
+      ],
+      "summary": "返回异常位置和当前现场证据，帮助规划者从现状修复而不自动重放动作。",
+      "tags": [
+        "代码执行",
+        "工具接口",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/arms.py:ArmToolkit._feedback",
+      "type": "function",
+      "name": "ArmToolkit._feedback",
+      "filePath": "src/pyrualean/arms.py",
+      "lineRange": [
+        619,
+        657
+      ],
+      "summary": "汇总新增原语记录、机器人状态、协调和视觉监督信息，生成当前调用的反馈。",
+      "tags": [
+        "代码执行",
+        "工具接口",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/arms.py:ArmToolkit._attach_images",
+      "type": "function",
+      "name": "ArmToolkit._attach_images",
+      "filePath": "src/pyrualean/arms.py",
+      "lineRange": [
+        659,
+        705
+      ],
+      "summary": "按运动或按需策略采集相机图像，附加观测标识并合并显式展示的图像。",
+      "tags": [
+        "代码执行",
+        "工具接口",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/arms.py:ArmToolkit._python",
+      "type": "function",
+      "name": "ArmToolkit._python",
+      "filePath": "src/pyrualean/arms.py",
+      "lineRange": [
+        716,
+        786
+      ],
+      "summary": "在持久命名空间执行单元，保存源码并应用审计、执行预算、视觉监督与结构化异常处理。",
+      "tags": [
+        "代码执行",
+        "工具接口",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/arms.py:ArmToolkit._run_program",
+      "type": "function",
+      "name": "ArmToolkit._run_program",
+      "filePath": "src/pyrualean/arms.py",
+      "lineRange": [
+        788,
+        892
+      ],
+      "summary": "检查调用预算和程序数量，以独立命名空间加载完整策略并保存产物和反馈。",
+      "tags": [
+        "代码执行",
+        "工具接口",
+        "类方法"
+      ],
+      "complexity": "complex",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "file:src/pyrualean/claude_runtime.py",
+      "type": "file",
+      "name": "claude_runtime.py",
+      "filePath": "src/pyrualean/claude_runtime.py",
+      "summary": "用 Claude Agent SDK 驱动同一机器人代码工具，并保存完整事件、错误和词元审计。提示和初始图像与其他运行时共享。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "用量审计"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/claude_runtime.py:sdk_max_turns",
+      "type": "function",
+      "name": "sdk_max_turns",
+      "filePath": "src/pyrualean/claude_runtime.py",
+      "lineRange": [
+        55,
+        58
+      ],
+      "summary": "把回合预算映射为 Claude Code 的最大模型请求轮数。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/claude_runtime.py:arm_tools",
+      "type": "function",
+      "name": "arm_tools",
+      "filePath": "src/pyrualean/claude_runtime.py",
+      "lineRange": [
+        61,
+        65
+      ],
+      "summary": "返回对应执行方式在 Claude Code 中的 MCP 工具名称。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/claude_runtime.py:allowed_tools",
+      "type": "function",
+      "name": "allowed_tools",
+      "filePath": "src/pyrualean/claude_runtime.py",
+      "lineRange": [
+        68,
+        69
+      ],
+      "summary": "合并允许的只读内置工具和当前机器人工具。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/claude_runtime.py:resolve_cli",
+      "type": "function",
+      "name": "resolve_cli",
+      "filePath": "src/pyrualean/claude_runtime.py",
+      "lineRange": [
+        72,
+        81
+      ],
+      "summary": "解析 Claude CLI 的绝对路径，缺省时使用 SDK 自带可执行文件。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/claude_runtime.py:cli_version",
+      "type": "function",
+      "name": "cli_version",
+      "filePath": "src/pyrualean/claude_runtime.py",
+      "lineRange": [
+        84,
+        93
+      ],
+      "summary": "运行版本查询并返回 Claude CLI 版本文本。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/claude_runtime.py:image_block",
+      "type": "function",
+      "name": "image_block",
+      "filePath": "src/pyrualean/claude_runtime.py",
+      "lineRange": [
+        96,
+        106
+      ],
+      "summary": "读取图片并编码为 Claude 支持的 base64 图像内容块。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/claude_runtime.py:initial_message",
+      "type": "function",
+      "name": "initial_message",
+      "filePath": "src/pyrualean/claude_runtime.py",
+      "lineRange": [
+        109,
+        125
+      ],
+      "summary": "构造包含完整提示和任务卡图片的首条流式用户消息。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/claude_runtime.py:build_options",
+      "type": "function",
+      "name": "build_options",
+      "filePath": "src/pyrualean/claude_runtime.py",
+      "lineRange": [
+        128,
+        169
+      ],
+      "summary": "建立隔离用户配置且仅启用当前 MCP 服务的 SDK 选项，设置工具、模型与推理参数。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/claude_runtime.py:_kind",
+      "type": "function",
+      "name": "_kind",
+      "filePath": "src/pyrualean/claude_runtime.py",
+      "lineRange": [
+        175,
+        176
+      ],
+      "summary": "返回消息对象的运行时类型名称。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/claude_runtime.py:_jsonable",
+      "type": "function",
+      "name": "_jsonable",
+      "filePath": "src/pyrualean/claude_runtime.py",
+      "lineRange": [
+        179,
+        199
+      ],
+      "summary": "将消息负载转换为 JSON 可保存结构，并把图片内容压缩为尺寸信息。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/claude_runtime.py:message_to_json",
+      "type": "function",
+      "name": "message_to_json",
+      "filePath": "src/pyrualean/claude_runtime.py",
+      "lineRange": [
+        202,
+        209
+      ],
+      "summary": "把数据类或对象形式的 SDK 消息转换为带类型标签的审计记录。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/claude_runtime.py:_int",
+      "type": "function",
+      "name": "_int",
+      "filePath": "src/pyrualean/claude_runtime.py",
+      "lineRange": [
+        215,
+        219
+      ],
+      "summary": "将可选用量值转换为整数，非法值归零。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/claude_runtime.py:_prompt_tokens",
+      "type": "function",
+      "name": "_prompt_tokens",
+      "filePath": "src/pyrualean/claude_runtime.py",
+      "lineRange": [
+        222,
+        229
+      ],
+      "summary": "合并普通输入、缓存读取和缓存创建，得到可与 Codex 比较的请求输入量。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/claude_runtime.py:_thinking_tokens",
+      "type": "function",
+      "name": "_thinking_tokens",
+      "filePath": "src/pyrualean/claude_runtime.py",
+      "lineRange": [
+        232,
+        236
+      ],
+      "summary": "从输出用量明细提取可用的推理词元数。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/claude_runtime.py:_named",
+      "type": "function",
+      "name": "_named",
+      "filePath": "src/pyrualean/claude_runtime.py",
+      "lineRange": [
+        450,
+        451
+      ],
+      "summary": "重建具有指定消息类型名和字段的轻量对象。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/claude_runtime.py:_revive_block",
+      "type": "function",
+      "name": "_revive_block",
+      "filePath": "src/pyrualean/claude_runtime.py",
+      "lineRange": [
+        454,
+        461
+      ],
+      "summary": "根据字段集合恢复文本、工具或思考块的消息类型。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/claude_runtime.py:_revive",
+      "type": "function",
+      "name": "_revive",
+      "filePath": "src/pyrualean/claude_runtime.py",
+      "lineRange": [
+        464,
+        470
+      ],
+      "summary": "从已保存事件重建消息形态，供离线审计重放。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/claude_runtime.py:replay_events",
+      "type": "function",
+      "name": "replay_events",
+      "filePath": "src/pyrualean/claude_runtime.py",
+      "lineRange": [
+        473,
+        486
+      ],
+      "summary": "重新读取 Claude 事件文件并按当前映射生成用量审计。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/claude_runtime.py:usage_from_events",
+      "type": "function",
+      "name": "usage_from_events",
+      "filePath": "src/pyrualean/claude_runtime.py",
+      "lineRange": [
+        507,
+        515
+      ],
+      "summary": "按唯一助手消息统计请求输入画像，同时保留最终结果中的各模型总用量。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/claude_runtime.py:_prompt_stream",
+      "type": "function",
+      "name": "_prompt_stream",
+      "filePath": "src/pyrualean/claude_runtime.py",
+      "lineRange": [
+        521,
+        522
+      ],
+      "summary": "以异步流形式提供单条初始用户消息。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/claude_runtime.py:_drive",
+      "type": "function",
+      "name": "_drive",
+      "filePath": "src/pyrualean/claude_runtime.py",
+      "lineRange": [
+        525,
+        574
+      ],
+      "summary": "消费 SDK 查询流并执行墙钟限制，返回完成、超时或错误状态。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/claude_runtime.py:run_claude_agent",
+      "type": "function",
+      "name": "run_claude_agent",
+      "filePath": "src/pyrualean/claude_runtime.py",
+      "lineRange": [
+        577,
+        666
+      ],
+      "summary": "启动 Claude 回合，保存消息事件、stderr、最终回复和用量，并在超时后取消代理运行。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/pyrualean/claude_runtime.py:_Audit",
+      "type": "class",
+      "name": "_Audit",
+      "filePath": "src/pyrualean/claude_runtime.py",
+      "lineRange": [
+        239,
+        436
+      ],
+      "summary": "累积 SDK 消息中的请求、延迟、工具调用、错误与最终用量。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "数据模型"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/claude_runtime.py:_Audit.__init__",
+      "type": "function",
+      "name": "_Audit.__init__",
+      "filePath": "src/pyrualean/claude_runtime.py",
+      "lineRange": [
+        242,
+        260
+      ],
+      "summary": "初始化请求索引、时间序列、工具统计和会话审计状态。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/claude_runtime.py:_Audit.observe",
+      "type": "function",
+      "name": "_Audit.observe",
+      "filePath": "src/pyrualean/claude_runtime.py",
+      "lineRange": [
+        262,
+        271
+      ],
+      "summary": "按助手、用户、系统或结果消息类型更新审计状态。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/claude_runtime.py:_Audit._system",
+      "type": "function",
+      "name": "_Audit._system",
+      "filePath": "src/pyrualean/claude_runtime.py",
+      "lineRange": [
+        273,
+        287
+      ],
+      "summary": "记录初始化会话配置、MCP 服务与系统诊断信息。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/claude_runtime.py:_Audit._assistant",
+      "type": "function",
+      "name": "_Audit._assistant",
+      "filePath": "src/pyrualean/claude_runtime.py",
+      "lineRange": [
+        289,
+        320
+      ],
+      "summary": "按消息标识去重助手请求，积累输入用量、延迟及工具调用，排除子代理消息。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/claude_runtime.py:_Audit._result",
+      "type": "function",
+      "name": "_Audit._result",
+      "filePath": "src/pyrualean/claude_runtime.py",
+      "lineRange": [
+        331,
+        345
+      ],
+      "summary": "保存终态结果、会话标识和服务端错误信息。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/claude_runtime.py:_Audit.usage",
+      "type": "function",
+      "name": "_Audit.usage",
+      "filePath": "src/pyrualean/claude_runtime.py",
+      "lineRange": [
+        349,
+        393
+      ],
+      "summary": "将 SDK 统计映射为统一用量；无最终结果时保留已知输入而将输出标为未知。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/claude_runtime.py:_Audit.generation",
+      "type": "function",
+      "name": "_Audit.generation",
+      "filePath": "src/pyrualean/claude_runtime.py",
+      "lineRange": [
+        395,
+        436
+      ],
+      "summary": "生成模型、请求画像、工具统计和告警组成的统一生成记录。",
+      "tags": [
+        "运行时",
+        "模型调用",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "file:src/pyrualean/execution.py",
+      "type": "file",
+      "name": "execution.py",
+      "filePath": "src/pyrualean/execution.py",
+      "summary": "为生成代码设置单元时间、动作和输出预算，并用 Python tracing 中断工作目录代码中的循环，保持持久命名空间可继续使用。",
+      "tags": [
+        "执行限制",
+        "超时控制",
+        "输出控制"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/execution.py:add_execution_arguments",
+      "type": "function",
+      "name": "add_execution_arguments",
+      "filePath": "src/pyrualean/execution.py",
+      "lineRange": [
+        146,
+        152
+      ],
+      "summary": "注册代码执行超时、动作次数与输出大小限制参数。",
+      "tags": [
+        "执行限制",
+        "超时控制",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/execution.py:execution_limits",
+      "type": "function",
+      "name": "execution_limits",
+      "filePath": "src/pyrualean/execution.py",
+      "lineRange": [
+        155,
+        157
+      ],
+      "summary": "把解析后的命令行参数转换为执行限制对象。",
+      "tags": [
+        "执行限制",
+        "超时控制",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/execution.py:ExecutionLimit",
+      "type": "class",
+      "name": "ExecutionLimit",
+      "filePath": "src/pyrualean/execution.py",
+      "lineRange": [
+        21,
+        26
+      ],
+      "summary": "表示应交回规划者的执行预算异常，避免被普通策略异常重试逻辑吞掉。",
+      "tags": [
+        "执行限制",
+        "超时控制",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/execution.py:ExecutionLimit.__init__",
+      "type": "function",
+      "name": "ExecutionLimit.__init__",
+      "filePath": "src/pyrualean/execution.py",
+      "lineRange": [
+        24,
+        26
+      ],
+      "summary": "保存预算失败类别和可读说明。",
+      "tags": [
+        "执行限制",
+        "超时控制",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "class:src/pyrualean/execution.py:ExecutionLimits",
+      "type": "class",
+      "name": "ExecutionLimits",
+      "filePath": "src/pyrualean/execution.py",
+      "lineRange": [
+        30,
+        62
+      ],
+      "summary": "定义单次代码调用的时间、运动尝试、文本和展示图像上限。",
+      "tags": [
+        "执行限制",
+        "超时控制",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/execution.py:ExecutionLimits.record",
+      "type": "function",
+      "name": "ExecutionLimits.record",
+      "filePath": "src/pyrualean/execution.py",
+      "lineRange": [
+        46,
+        47
+      ],
+      "summary": "将执行限制序列化为结果记录。",
+      "tags": [
+        "执行限制",
+        "超时控制",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/execution.py:ExecutionLimits.prompt",
+      "type": "function",
+      "name": "ExecutionLimits.prompt",
+      "filePath": "src/pyrualean/execution.py",
+      "lineRange": [
+        49,
+        62
+      ],
+      "summary": "生成面向规划者的代码时间、动作和输出预算说明。",
+      "tags": [
+        "执行限制",
+        "超时控制",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "class:src/pyrualean/execution.py:BoundedOutput",
+      "type": "class",
+      "name": "BoundedOutput",
+      "filePath": "src/pyrualean/execution.py",
+      "lineRange": [
+        65,
+        88
+      ],
+      "summary": "在写入时限制输出内存，记录保留与省略字符数量。",
+      "tags": [
+        "执行限制",
+        "超时控制",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/execution.py:BoundedOutput.__init__",
+      "type": "function",
+      "name": "BoundedOutput.__init__",
+      "filePath": "src/pyrualean/execution.py",
+      "lineRange": [
+        68,
+        72
+      ],
+      "summary": "初始化文本上限、保留计数和分块缓冲。",
+      "tags": [
+        "执行限制",
+        "超时控制",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/execution.py:BoundedOutput.writable",
+      "type": "function",
+      "name": "BoundedOutput.writable",
+      "filePath": "src/pyrualean/execution.py",
+      "lineRange": [
+        74,
+        75
+      ],
+      "summary": "声明输出接收器支持写入。",
+      "tags": [
+        "执行限制",
+        "超时控制",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/execution.py:BoundedOutput.write",
+      "type": "function",
+      "name": "BoundedOutput.write",
+      "filePath": "src/pyrualean/execution.py",
+      "lineRange": [
+        77,
+        85
+      ],
+      "summary": "只保存预算内文本并累积省略数量，同时报告原始写入长度。",
+      "tags": [
+        "执行限制",
+        "超时控制",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/execution.py:BoundedOutput.getvalue",
+      "type": "function",
+      "name": "BoundedOutput.getvalue",
+      "filePath": "src/pyrualean/execution.py",
+      "lineRange": [
+        87,
+        88
+      ],
+      "summary": "拼接已保留的输出片段。",
+      "tags": [
+        "执行限制",
+        "超时控制",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "class:src/pyrualean/execution.py:ExecutionBudget",
+      "type": "class",
+      "name": "ExecutionBudget",
+      "filePath": "src/pyrualean/execution.py",
+      "lineRange": [
+        91,
+        143
+      ],
+      "summary": "协调代码截止时间、机器人停止状态、动作次数和工作目录帧追踪。",
+      "tags": [
+        "执行限制",
+        "超时控制",
+        "数据模型"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/execution.py:ExecutionBudget.__init__",
+      "type": "function",
+      "name": "ExecutionBudget.__init__",
+      "filePath": "src/pyrualean/execution.py",
+      "lineRange": [
+        92,
+        100
+      ],
+      "summary": "保存限制、工作目录和机器人，并初始化动作计数及追踪缓存。",
+      "tags": [
+        "执行限制",
+        "超时控制",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/execution.py:ExecutionBudget.check",
+      "type": "function",
+      "name": "ExecutionBudget.check",
+      "filePath": "src/pyrualean/execution.py",
+      "lineRange": [
+        102,
+        109
+      ],
+      "summary": "检查回合停止与既有预算失败，超过截止时间时触发执行限制异常。",
+      "tags": [
+        "执行限制",
+        "超时控制",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/execution.py:ExecutionBudget.before_action",
+      "type": "function",
+      "name": "ExecutionBudget.before_action",
+      "filePath": "src/pyrualean/execution.py",
+      "lineRange": [
+        111,
+        116
+      ],
+      "summary": "在动作前检查时间和次数预算，再登记本次运动尝试。",
+      "tags": [
+        "执行限制",
+        "超时控制",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/execution.py:ExecutionBudget._trace",
+      "type": "function",
+      "name": "ExecutionBudget._trace",
+      "filePath": "src/pyrualean/execution.py",
+      "lineRange": [
+        118,
+        131
+      ],
+      "summary": "只跟踪策略工作目录内的 Python 帧，并定期检查预算以打断循环。",
+      "tags": [
+        "执行限制",
+        "超时控制",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "function:src/pyrualean/arms.py:_to_png",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "function:src/pyrualean/arms.py:_to_png",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "function:src/pyrualean/arms.py:_trim",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "function:src/pyrualean/arms.py:_trim",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "function:src/pyrualean/arms.py:_state_dict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "function:src/pyrualean/arms.py:_state_dict",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "function:src/pyrualean/arms.py:_blocked_message",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "function:src/pyrualean/arms.py:_blocked_message",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "function:src/pyrualean/arms.py:arm_contract",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "function:src/pyrualean/arms.py:arm_contract",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "function:src/pyrualean/arms.py:robot_words",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "function:src/pyrualean/arms.py:robot_words",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "function:src/pyrualean/arms.py:_arm_contract",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "function:src/pyrualean/arms.py:_arm_contract",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "class:src/pyrualean/arms.py:ArmResult",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "class:src/pyrualean/arms.py:ArmResult",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "function:src/pyrualean/arms.py:ArmResult.is_error",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/arms.py:ArmResult",
+      "target": "function:src/pyrualean/arms.py:ArmResult.is_error",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "function:src/pyrualean/arms.py:ArmResult.content_blocks",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/arms.py:ArmResult",
+      "target": "function:src/pyrualean/arms.py:ArmResult.content_blocks",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "class:src/pyrualean/arms.py:ArmToolkit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "class:src/pyrualean/arms.py:ArmToolkit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "function:src/pyrualean/arms.py:ArmToolkit.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/arms.py:ArmToolkit",
+      "target": "function:src/pyrualean/arms.py:ArmToolkit.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "function:src/pyrualean/arms.py:ArmToolkit._display",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/arms.py:ArmToolkit",
+      "target": "function:src/pyrualean/arms.py:ArmToolkit._display",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "function:src/pyrualean/arms.py:ArmToolkit.get_tools_spec",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/arms.py:ArmToolkit",
+      "target": "function:src/pyrualean/arms.py:ArmToolkit.get_tools_spec",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "function:src/pyrualean/arms.py:ArmToolkit.execute_tool",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/arms.py:ArmToolkit",
+      "target": "function:src/pyrualean/arms.py:ArmToolkit.execute_tool",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "function:src/pyrualean/arms.py:ArmToolkit._finish",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/arms.py:ArmToolkit",
+      "target": "function:src/pyrualean/arms.py:ArmToolkit._finish",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "function:src/pyrualean/arms.py:ArmToolkit._observe_result",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/arms.py:ArmToolkit",
+      "target": "function:src/pyrualean/arms.py:ArmToolkit._observe_result",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "function:src/pyrualean/arms.py:ArmToolkit._failure_feedback",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/arms.py:ArmToolkit",
+      "target": "function:src/pyrualean/arms.py:ArmToolkit._failure_feedback",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "function:src/pyrualean/arms.py:ArmToolkit._feedback",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/arms.py:ArmToolkit",
+      "target": "function:src/pyrualean/arms.py:ArmToolkit._feedback",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "function:src/pyrualean/arms.py:ArmToolkit._attach_images",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/arms.py:ArmToolkit",
+      "target": "function:src/pyrualean/arms.py:ArmToolkit._attach_images",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "function:src/pyrualean/arms.py:ArmToolkit._python",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/arms.py:ArmToolkit",
+      "target": "function:src/pyrualean/arms.py:ArmToolkit._python",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "function:src/pyrualean/arms.py:ArmToolkit._run_program",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/arms.py:ArmToolkit",
+      "target": "function:src/pyrualean/arms.py:ArmToolkit._run_program",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "file:src/pyrualean/_backend.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "file:src/pyrualean/_robot.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "file:src/pyrualean/coordination.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "file:src/pyrualean/execution.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "file:src/pyrualean/recovery.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "file:src/pyrualean/runner.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "file:src/pyrualean/sandbox.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "file:src/pyrualean/strategies.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "file:src/pyrualean/stuck_recovery.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "file:src/pyrualean/supervision.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmResult.content_blocks",
+      "target": "function:src/pyrualean/arms.py:_trim",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit.__init__",
+      "target": "class:src/pyrualean/execution.py:ExecutionLimits",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit.__init__",
+      "target": "function:src/pyrualean/sandbox.py:make_builtins",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit._display",
+      "target": "class:src/pyrualean/execution.py:ExecutionLimit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit._display",
+      "target": "function:src/pyrualean/arms.py:_to_png",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit.execute_tool",
+      "target": "function:src/pyrualean/arms.py:ArmToolkit._finish",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit.execute_tool",
+      "target": "class:src/pyrualean/arms.py:ArmResult",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit.execute_tool",
+      "target": "function:src/pyrualean/arms.py:ArmToolkit._python",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit.execute_tool",
+      "target": "function:src/pyrualean/arms.py:ArmToolkit._run_program",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit.execute_tool",
+      "target": "function:src/pyrualean/arms.py:ArmToolkit._observe_result",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit._finish",
+      "target": "class:src/pyrualean/arms.py:ArmResult",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit._finish",
+      "target": "function:src/pyrualean/arms.py:_state_dict",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit._failure_feedback",
+      "target": "function:src/pyrualean/arms.py:ArmToolkit._feedback",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit._failure_feedback",
+      "target": "function:src/pyrualean/arms.py:_state_dict",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit._feedback",
+      "target": "function:src/pyrualean/arms.py:_state_dict",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit._feedback",
+      "target": "function:src/pyrualean/arms.py:ArmToolkit._attach_images",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit._attach_images",
+      "target": "function:src/pyrualean/arms.py:_to_png",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit._attach_images",
+      "target": "class:src/pyrualean/arms.py:ArmResult",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit._python",
+      "target": "class:src/pyrualean/arms.py:ArmResult",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit._python",
+      "target": "function:src/pyrualean/sandbox.py:audit_source",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit._python",
+      "target": "class:src/pyrualean/execution.py:BoundedOutput",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit._python",
+      "target": "function:src/pyrualean/sandbox.py:blocked_names",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit._python",
+      "target": "function:src/pyrualean/arms.py:_blocked_message",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit._python",
+      "target": "function:src/pyrualean/arms.py:ArmToolkit._failure_feedback",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit._python",
+      "target": "class:src/pyrualean/execution.py:ExecutionBudget",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit._python",
+      "target": "function:src/pyrualean/arms.py:_trim",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit._python",
+      "target": "function:src/pyrualean/arms.py:ArmToolkit._feedback",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit._run_program",
+      "target": "class:src/pyrualean/arms.py:ArmResult",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit._run_program",
+      "target": "function:src/pyrualean/arms.py:_state_dict",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit._run_program",
+      "target": "function:src/pyrualean/sandbox.py:audit_source",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit._run_program",
+      "target": "function:src/pyrualean/sandbox.py:blocked_names",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit._run_program",
+      "target": "function:src/pyrualean/arms.py:_blocked_message",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit._run_program",
+      "target": "function:src/pyrualean/arms.py:ArmToolkit._failure_feedback",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit._run_program",
+      "target": "class:src/pyrualean/execution.py:BoundedOutput",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit._run_program",
+      "target": "class:src/pyrualean/execution.py:ExecutionBudget",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit._run_program",
+      "target": "function:src/pyrualean/runner.py:load_policy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit._run_program",
+      "target": "function:src/pyrualean/runner.py:run_policy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit._run_program",
+      "target": "function:src/pyrualean/arms.py:ArmToolkit._feedback",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:ArmToolkit._run_program",
+      "target": "function:src/pyrualean/arms.py:_trim",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:arm_contract",
+      "target": "function:src/pyrualean/arms.py:_arm_contract",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/arms.py:robot_words",
+      "target": "function:src/pyrualean/_robot.py:effective_primitives",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:sdk_max_turns",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:sdk_max_turns",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:arm_tools",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:arm_tools",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:allowed_tools",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:allowed_tools",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:resolve_cli",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:resolve_cli",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:cli_version",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:cli_version",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:image_block",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:image_block",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:initial_message",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:initial_message",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:build_options",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:build_options",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:_kind",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:_kind",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:_jsonable",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:_jsonable",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:message_to_json",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:message_to_json",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:_int",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:_int",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:_prompt_tokens",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:_prompt_tokens",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:_thinking_tokens",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:_thinking_tokens",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:_named",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:_named",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:_revive_block",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:_revive_block",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:_revive",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:_revive",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:replay_events",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:replay_events",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:usage_from_events",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:usage_from_events",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:_prompt_stream",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:_prompt_stream",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:_drive",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:_drive",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:run_claude_agent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:run_claude_agent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "class:src/pyrualean/claude_runtime.py:_Audit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "class:src/pyrualean/claude_runtime.py:_Audit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:_Audit.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/claude_runtime.py:_Audit",
+      "target": "function:src/pyrualean/claude_runtime.py:_Audit.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:_Audit.observe",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/claude_runtime.py:_Audit",
+      "target": "function:src/pyrualean/claude_runtime.py:_Audit.observe",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:_Audit._system",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/claude_runtime.py:_Audit",
+      "target": "function:src/pyrualean/claude_runtime.py:_Audit._system",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:_Audit._assistant",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/claude_runtime.py:_Audit",
+      "target": "function:src/pyrualean/claude_runtime.py:_Audit._assistant",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:_Audit._result",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/claude_runtime.py:_Audit",
+      "target": "function:src/pyrualean/claude_runtime.py:_Audit._result",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:_Audit.usage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/claude_runtime.py:_Audit",
+      "target": "function:src/pyrualean/claude_runtime.py:_Audit.usage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "function:src/pyrualean/claude_runtime.py:_Audit.generation",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/claude_runtime.py:_Audit",
+      "target": "function:src/pyrualean/claude_runtime.py:_Audit.generation",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/claude_runtime.py",
+      "target": "file:src/pyrualean/mcp_server.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:src/pyrualean/claude_runtime.py:allowed_tools",
+      "target": "function:src/pyrualean/claude_runtime.py:arm_tools",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/claude_runtime.py:initial_message",
+      "target": "function:src/pyrualean/claude_runtime.py:image_block",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/claude_runtime.py:build_options",
+      "target": "function:src/pyrualean/claude_runtime.py:sdk_max_turns",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/claude_runtime.py:build_options",
+      "target": "function:src/pyrualean/claude_runtime.py:allowed_tools",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/claude_runtime.py:message_to_json",
+      "target": "function:src/pyrualean/claude_runtime.py:_kind",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/claude_runtime.py:message_to_json",
+      "target": "function:src/pyrualean/claude_runtime.py:_jsonable",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/claude_runtime.py:_prompt_tokens",
+      "target": "function:src/pyrualean/claude_runtime.py:_int",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/claude_runtime.py:_thinking_tokens",
+      "target": "function:src/pyrualean/claude_runtime.py:_int",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/claude_runtime.py:_Audit.observe",
+      "target": "function:src/pyrualean/claude_runtime.py:_kind",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/claude_runtime.py:_Audit.observe",
+      "target": "function:src/pyrualean/claude_runtime.py:_Audit._assistant",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/claude_runtime.py:_Audit.observe",
+      "target": "function:src/pyrualean/claude_runtime.py:_Audit._result",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/claude_runtime.py:_Audit.observe",
+      "target": "function:src/pyrualean/claude_runtime.py:_Audit._system",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/claude_runtime.py:_Audit._system",
+      "target": "function:src/pyrualean/claude_runtime.py:_jsonable",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/claude_runtime.py:_Audit._assistant",
+      "target": "function:src/pyrualean/claude_runtime.py:_kind",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/claude_runtime.py:_Audit.usage",
+      "target": "function:src/pyrualean/claude_runtime.py:_prompt_tokens",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/claude_runtime.py:_Audit.usage",
+      "target": "function:src/pyrualean/claude_runtime.py:_int",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/claude_runtime.py:_Audit.usage",
+      "target": "function:src/pyrualean/claude_runtime.py:_thinking_tokens",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/claude_runtime.py:_Audit.generation",
+      "target": "function:src/pyrualean/claude_runtime.py:_Audit.usage",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/claude_runtime.py:_revive_block",
+      "target": "function:src/pyrualean/claude_runtime.py:_named",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/claude_runtime.py:_revive",
+      "target": "function:src/pyrualean/claude_runtime.py:_revive_block",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/claude_runtime.py:_revive",
+      "target": "function:src/pyrualean/claude_runtime.py:_named",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/claude_runtime.py:replay_events",
+      "target": "class:src/pyrualean/claude_runtime.py:_Audit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/claude_runtime.py:replay_events",
+      "target": "function:src/pyrualean/claude_runtime.py:_revive",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/claude_runtime.py:usage_from_events",
+      "target": "function:src/pyrualean/claude_runtime.py:replay_events",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/claude_runtime.py:_drive",
+      "target": "function:src/pyrualean/claude_runtime.py:_prompt_stream",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/claude_runtime.py:_drive",
+      "target": "function:src/pyrualean/claude_runtime.py:message_to_json",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/claude_runtime.py:run_claude_agent",
+      "target": "class:src/pyrualean/claude_runtime.py:_Audit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/claude_runtime.py:run_claude_agent",
+      "target": "function:src/pyrualean/claude_runtime.py:build_options",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/claude_runtime.py:run_claude_agent",
+      "target": "function:src/pyrualean/claude_runtime.py:initial_message",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/claude_runtime.py:run_claude_agent",
+      "target": "function:src/pyrualean/claude_runtime.py:_drive",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/claude_runtime.py:run_claude_agent",
+      "target": "function:src/pyrualean/claude_runtime.py:allowed_tools",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/claude_runtime.py:run_claude_agent",
+      "target": "function:src/pyrualean/claude_runtime.py:cli_version",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/execution.py",
+      "target": "function:src/pyrualean/execution.py:add_execution_arguments",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/execution.py",
+      "target": "function:src/pyrualean/execution.py:add_execution_arguments",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/execution.py",
+      "target": "function:src/pyrualean/execution.py:execution_limits",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/execution.py",
+      "target": "function:src/pyrualean/execution.py:execution_limits",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/execution.py",
+      "target": "class:src/pyrualean/execution.py:ExecutionLimit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/execution.py",
+      "target": "class:src/pyrualean/execution.py:ExecutionLimit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/execution.py",
+      "target": "function:src/pyrualean/execution.py:ExecutionLimit.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/execution.py:ExecutionLimit",
+      "target": "function:src/pyrualean/execution.py:ExecutionLimit.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/execution.py",
+      "target": "class:src/pyrualean/execution.py:ExecutionLimits",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/execution.py",
+      "target": "class:src/pyrualean/execution.py:ExecutionLimits",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/execution.py",
+      "target": "function:src/pyrualean/execution.py:ExecutionLimits.record",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/execution.py:ExecutionLimits",
+      "target": "function:src/pyrualean/execution.py:ExecutionLimits.record",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/execution.py",
+      "target": "function:src/pyrualean/execution.py:ExecutionLimits.prompt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/execution.py:ExecutionLimits",
+      "target": "function:src/pyrualean/execution.py:ExecutionLimits.prompt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/execution.py",
+      "target": "class:src/pyrualean/execution.py:BoundedOutput",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/execution.py",
+      "target": "class:src/pyrualean/execution.py:BoundedOutput",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/execution.py",
+      "target": "function:src/pyrualean/execution.py:BoundedOutput.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/execution.py:BoundedOutput",
+      "target": "function:src/pyrualean/execution.py:BoundedOutput.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/execution.py",
+      "target": "function:src/pyrualean/execution.py:BoundedOutput.writable",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/execution.py:BoundedOutput",
+      "target": "function:src/pyrualean/execution.py:BoundedOutput.writable",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/execution.py",
+      "target": "function:src/pyrualean/execution.py:BoundedOutput.write",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/execution.py:BoundedOutput",
+      "target": "function:src/pyrualean/execution.py:BoundedOutput.write",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/execution.py",
+      "target": "function:src/pyrualean/execution.py:BoundedOutput.getvalue",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/execution.py:BoundedOutput",
+      "target": "function:src/pyrualean/execution.py:BoundedOutput.getvalue",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/execution.py",
+      "target": "class:src/pyrualean/execution.py:ExecutionBudget",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/execution.py",
+      "target": "class:src/pyrualean/execution.py:ExecutionBudget",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/execution.py",
+      "target": "function:src/pyrualean/execution.py:ExecutionBudget.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/execution.py:ExecutionBudget",
+      "target": "function:src/pyrualean/execution.py:ExecutionBudget.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/execution.py",
+      "target": "function:src/pyrualean/execution.py:ExecutionBudget.check",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/execution.py:ExecutionBudget",
+      "target": "function:src/pyrualean/execution.py:ExecutionBudget.check",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/execution.py",
+      "target": "function:src/pyrualean/execution.py:ExecutionBudget.before_action",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/execution.py:ExecutionBudget",
+      "target": "function:src/pyrualean/execution.py:ExecutionBudget.before_action",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/execution.py",
+      "target": "function:src/pyrualean/execution.py:ExecutionBudget._trace",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/execution.py:ExecutionBudget",
+      "target": "function:src/pyrualean/execution.py:ExecutionBudget._trace",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/execution.py",
+      "target": "file:src/pyrualean/_backend.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:src/pyrualean/execution.py:ExecutionBudget.check",
+      "target": "class:src/pyrualean/_backend.py:EpisodeFinished",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/execution.py:ExecutionBudget.check",
+      "target": "class:src/pyrualean/execution.py:ExecutionLimit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/execution.py:ExecutionBudget.before_action",
+      "target": "function:src/pyrualean/execution.py:ExecutionBudget.check",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/execution.py:ExecutionBudget.before_action",
+      "target": "class:src/pyrualean/execution.py:ExecutionLimit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/execution.py:ExecutionBudget._trace",
+      "target": "function:src/pyrualean/execution.py:ExecutionBudget.check",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/execution.py:execution_limits",
+      "target": "class:src/pyrualean/execution.py:ExecutionLimits",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

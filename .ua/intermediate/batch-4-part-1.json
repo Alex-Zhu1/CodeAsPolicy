@@ -1,0 +1,1032 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/pyrualean/hosts/common.py",
+      "type": "file",
+      "name": "common.py",
+      "filePath": "src/pyrualean/hosts/common.py",
+      "summary": "定义 RPent 宿主共享的启动位置解析、清理流程和工具包到 Backend 的适配协议。",
+      "tags": [
+        "宿主适配",
+        "后端接口",
+        "进程清理"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/common.py:resolve_rpent_root",
+      "type": "function",
+      "name": "resolve_rpent_root",
+      "filePath": "src/pyrualean/hosts/common.py",
+      "lineRange": [
+        33,
+        55
+      ],
+      "summary": "定位 RPent 仓库并加入 Python 导入路径，缺失时明确报错。",
+      "tags": [
+        "宿主适配",
+        "后端接口",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/common.py:stop_all",
+      "type": "function",
+      "name": "stop_all",
+      "filePath": "src/pyrualean/hosts/common.py",
+      "lineRange": [
+        108,
+        118
+      ],
+      "summary": "关闭工具包并停止其后台服务，清理时容忍个别关闭失败。",
+      "tags": [
+        "宿主适配",
+        "后端接口",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/hosts/common.py:RpentBackend",
+      "type": "class",
+      "name": "RpentBackend",
+      "filePath": "src/pyrualean/hosts/common.py",
+      "lineRange": [
+        58,
+        105
+      ],
+      "summary": "把 RPent Toolkit 的工具执行、成功状态、产物和取消操作适配为统一机器人后端。",
+      "tags": [
+        "宿主适配",
+        "后端接口",
+        "数据模型"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/common.py:RpentBackend.__init__",
+      "type": "function",
+      "name": "RpentBackend.__init__",
+      "filePath": "src/pyrualean/hosts/common.py",
+      "lineRange": [
+        61,
+        62
+      ],
+      "summary": "保存被适配的 RPent 工具包实例。",
+      "tags": [
+        "宿主适配",
+        "后端接口",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/common.py:RpentBackend.toolkit",
+      "type": "function",
+      "name": "RpentBackend.toolkit",
+      "filePath": "src/pyrualean/hosts/common.py",
+      "lineRange": [
+        65,
+        66
+      ],
+      "summary": "返回当前 RPent 工具包。",
+      "tags": [
+        "宿主适配",
+        "后端接口",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/common.py:RpentBackend.execute_tool",
+      "type": "function",
+      "name": "RpentBackend.execute_tool",
+      "filePath": "src/pyrualean/hosts/common.py",
+      "lineRange": [
+        68,
+        69
+      ],
+      "summary": "把工具名称和输入参数交给 RPent 工具包执行。",
+      "tags": [
+        "宿主适配",
+        "后端接口",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/common.py:RpentBackend.solved",
+      "type": "function",
+      "name": "RpentBackend.solved",
+      "filePath": "src/pyrualean/hosts/common.py",
+      "lineRange": [
+        71,
+        83
+      ],
+      "summary": "读取环境原生成功标志，兼容未实现 solved 的工具包状态缓存。",
+      "tags": [
+        "宿主适配",
+        "后端接口",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/common.py:RpentBackend.artifact",
+      "type": "function",
+      "name": "RpentBackend.artifact",
+      "filePath": "src/pyrualean/hosts/common.py",
+      "lineRange": [
+        85,
+        86
+      ],
+      "summary": "从工具包状态存储读取指定步骤的二进制产物。",
+      "tags": [
+        "宿主适配",
+        "后端接口",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/common.py:RpentBackend.env_steps",
+      "type": "function",
+      "name": "RpentBackend.env_steps",
+      "filePath": "src/pyrualean/hosts/common.py",
+      "lineRange": [
+        88,
+        102
+      ],
+      "summary": "从公开或私有原语对象读取累计帧数，后端不提供时返回未知。",
+      "tags": [
+        "宿主适配",
+        "后端接口",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/common.py:RpentBackend.cancel",
+      "type": "function",
+      "name": "RpentBackend.cancel",
+      "filePath": "src/pyrualean/hosts/common.py",
+      "lineRange": [
+        104,
+        105
+      ],
+      "summary": "取消正在运行的工具调用并等待其结束。",
+      "tags": [
+        "宿主适配",
+        "后端接口",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "file:src/pyrualean/hosts/rpent_libero.py",
+      "type": "file",
+      "name": "rpent_libero.py",
+      "filePath": "src/pyrualean/hosts/rpent_libero.py",
+      "summary": "启动 LIBERO 的 RPent 服务栈，导出初始任务卡并执行单回合策略，保存原生产物与统一结果。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "回合执行"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_libero.py:add_cell_args",
+      "type": "function",
+      "name": "add_cell_args",
+      "filePath": "src/pyrualean/hosts/rpent_libero.py",
+      "lineRange": [
+        65,
+        71
+      ],
+      "summary": "注册LIBERO任务单元的标识、配置与随机种子参数。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_libero.py:add_boot_args",
+      "type": "function",
+      "name": "add_boot_args",
+      "filePath": "src/pyrualean/hosts/rpent_libero.py",
+      "lineRange": [
+        74,
+        78
+      ],
+      "summary": "注册LIBERO宿主服务启动和已有服务连接参数。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_libero.py:cell_from_args",
+      "type": "function",
+      "name": "cell_from_args",
+      "filePath": "src/pyrualean/hosts/rpent_libero.py",
+      "lineRange": [
+        81,
+        89
+      ],
+      "summary": "将命令行参数规范化为LIBERO任务单元。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_libero.py:boot_options",
+      "type": "function",
+      "name": "boot_options",
+      "filePath": "src/pyrualean/hosts/rpent_libero.py",
+      "lineRange": [
+        92,
+        96
+      ],
+      "summary": "从命令行提取LIBERO启动选项和服务端点。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_libero.py:boot",
+      "type": "function",
+      "name": "boot",
+      "filePath": "src/pyrualean/hosts/rpent_libero.py",
+      "lineRange": [
+        99,
+        176
+      ],
+      "summary": "启动或连接LIBERO仿真与模型服务，创建 RPent 工具包并返回待清理的后台进程。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_libero.py:dump_card",
+      "type": "function",
+      "name": "dump_card",
+      "filePath": "src/pyrualean/hosts/rpent_libero.py",
+      "lineRange": [
+        179,
+        210
+      ],
+      "summary": "保存LIBERO初始图像及任务卡，仅提供规划者允许观察的初始状态。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_libero.py:_sha256_text",
+      "type": "function",
+      "name": "_sha256_text",
+      "filePath": "src/pyrualean/hosts/rpent_libero.py",
+      "lineRange": [
+        213,
+        214
+      ],
+      "summary": "计算文本的 SHA-256 摘要，用于记录策略版本。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_libero.py:run_episode",
+      "type": "function",
+      "name": "run_episode",
+      "filePath": "src/pyrualean/hosts/rpent_libero.py",
+      "lineRange": [
+        217,
+        338
+      ],
+      "summary": "为单个LIBERO任务启动宿主并执行策略，保存统一 result.json 后清理服务。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_libero.py:_install_sigterm",
+      "type": "function",
+      "name": "_install_sigterm",
+      "filePath": "src/pyrualean/hosts/rpent_libero.py",
+      "lineRange": [
+        341,
+        346
+      ],
+      "summary": "安装终止信号处理器，使宿主可以清理当前回合。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_libero.py:card_only",
+      "type": "function",
+      "name": "card_only",
+      "filePath": "src/pyrualean/hosts/rpent_libero.py",
+      "lineRange": [
+        349,
+        360
+      ],
+      "summary": "仅启动LIBERO仿真以导出任务卡，完成后停止服务。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_libero.py:_add_cell_args",
+      "type": "function",
+      "name": "_add_cell_args",
+      "filePath": "src/pyrualean/hosts/rpent_libero.py",
+      "lineRange": [
+        363,
+        368
+      ],
+      "summary": "为宿主命令补充输出目录、设备、步数和 RPent 路径等参数。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_libero.py:_cell",
+      "type": "function",
+      "name": "_cell",
+      "filePath": "src/pyrualean/hosts/rpent_libero.py",
+      "lineRange": [
+        371,
+        372
+      ],
+      "summary": "把解析参数转换为 LIBERO 任务单元。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_libero.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "src/pyrualean/hosts/rpent_libero.py",
+      "lineRange": [
+        375,
+        414
+      ],
+      "summary": "提供LIBERO宿主命令行，在任务卡导出与策略执行之间分发。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/pyrualean/hosts/rpent_libero.py:Cell",
+      "type": "class",
+      "name": "Cell",
+      "filePath": "src/pyrualean/hosts/rpent_libero.py",
+      "lineRange": [
+        50,
+        62
+      ],
+      "summary": "描述一个LIBERO评估任务的配置、种子与执行预算。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_libero.py:Cell.tag",
+      "type": "function",
+      "name": "Cell.tag",
+      "filePath": "src/pyrualean/hosts/rpent_libero.py",
+      "lineRange": [
+        61,
+        62
+      ],
+      "summary": "根据任务、配置和种子生成输出目录标识。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/pyrualean/hosts/common.py",
+      "target": "function:src/pyrualean/hosts/common.py:resolve_rpent_root",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/common.py",
+      "target": "function:src/pyrualean/hosts/common.py:resolve_rpent_root",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/common.py",
+      "target": "function:src/pyrualean/hosts/common.py:stop_all",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/common.py",
+      "target": "function:src/pyrualean/hosts/common.py:stop_all",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/common.py",
+      "target": "class:src/pyrualean/hosts/common.py:RpentBackend",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/common.py",
+      "target": "class:src/pyrualean/hosts/common.py:RpentBackend",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/common.py",
+      "target": "function:src/pyrualean/hosts/common.py:RpentBackend.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/common.py:RpentBackend",
+      "target": "function:src/pyrualean/hosts/common.py:RpentBackend.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/common.py",
+      "target": "function:src/pyrualean/hosts/common.py:RpentBackend.toolkit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/common.py:RpentBackend",
+      "target": "function:src/pyrualean/hosts/common.py:RpentBackend.toolkit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/common.py",
+      "target": "function:src/pyrualean/hosts/common.py:RpentBackend.execute_tool",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/common.py:RpentBackend",
+      "target": "function:src/pyrualean/hosts/common.py:RpentBackend.execute_tool",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/common.py",
+      "target": "function:src/pyrualean/hosts/common.py:RpentBackend.solved",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/common.py:RpentBackend",
+      "target": "function:src/pyrualean/hosts/common.py:RpentBackend.solved",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/common.py",
+      "target": "function:src/pyrualean/hosts/common.py:RpentBackend.artifact",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/common.py:RpentBackend",
+      "target": "function:src/pyrualean/hosts/common.py:RpentBackend.artifact",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/common.py",
+      "target": "function:src/pyrualean/hosts/common.py:RpentBackend.env_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/common.py:RpentBackend",
+      "target": "function:src/pyrualean/hosts/common.py:RpentBackend.env_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/common.py",
+      "target": "function:src/pyrualean/hosts/common.py:RpentBackend.cancel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/common.py:RpentBackend",
+      "target": "function:src/pyrualean/hosts/common.py:RpentBackend.cancel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:add_cell_args",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:add_cell_args",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:add_boot_args",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:add_boot_args",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:cell_from_args",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:cell_from_args",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:boot_options",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:boot_options",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:boot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:boot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:dump_card",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:dump_card",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:_sha256_text",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:_sha256_text",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:run_episode",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:run_episode",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:_install_sigterm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:_install_sigterm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:card_only",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:card_only",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:_add_cell_args",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:_add_cell_args",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:_cell",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:_cell",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "class:src/pyrualean/hosts/rpent_libero.py:Cell",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "class:src/pyrualean/hosts/rpent_libero.py:Cell",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:Cell.tag",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/rpent_libero.py:Cell",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:Cell.tag",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "file:src/pyrualean/_backend.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "file:src/pyrualean/hosts/common.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "file:src/pyrualean/libero.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "file:src/pyrualean/prompt.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "file:src/pyrualean/runner.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_libero.py",
+      "target": "file:src/pyrualean/sandbox.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_libero.py:cell_from_args",
+      "target": "class:src/pyrualean/hosts/rpent_libero.py:Cell",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_libero.py:boot",
+      "target": "function:src/pyrualean/hosts/common.py:resolve_rpent_root",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_libero.py:dump_card",
+      "target": "class:src/pyrualean/prompt.py:TaskCard",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_libero.py:run_episode",
+      "target": "function:src/pyrualean/runner.py:policy_sha256",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_libero.py:run_episode",
+      "target": "class:src/pyrualean/_backend.py:Ledger",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_libero.py:run_episode",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:boot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_libero.py:run_episode",
+      "target": "function:src/pyrualean/hosts/common.py:resolve_rpent_root",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_libero.py:run_episode",
+      "target": "class:src/pyrualean/hosts/common.py:RpentBackend",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_libero.py:run_episode",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:dump_card",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_libero.py:run_episode",
+      "target": "function:src/pyrualean/prompt.py:render_prompt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_libero.py:run_episode",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:_sha256_text",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_libero.py:run_episode",
+      "target": "class:src/pyrualean/libero.py:LiberoRobot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_libero.py:run_episode",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:_install_sigterm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_libero.py:run_episode",
+      "target": "function:src/pyrualean/sandbox.py:audit_source",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_libero.py:run_episode",
+      "target": "function:src/pyrualean/runner.py:load_policy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_libero.py:run_episode",
+      "target": "function:src/pyrualean/sandbox.py:make_builtins",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_libero.py:run_episode",
+      "target": "function:src/pyrualean/runner.py:run_policy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_libero.py:card_only",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:boot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_libero.py:card_only",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:dump_card",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_libero.py:_add_cell_args",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:add_cell_args",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_libero.py:_cell",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:cell_from_args",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_libero.py:main",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:_add_cell_args",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_libero.py:main",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:run_episode",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_libero.py:main",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:_cell",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_libero.py:main",
+      "target": "function:src/pyrualean/hosts/rpent_libero.py:card_only",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

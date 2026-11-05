@@ -1,0 +1,3675 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "type": "file",
+      "name": "pack_objects_into_box.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "定位纸箱近壁与四类物体，推断物体前端并规划避开箱壁的双臂搬运；在箱内转姿释放，检查粘夹和掉落后补装。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "视觉定位",
+        "运动控制"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:say",
+      "type": "function",
+      "name": "say",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "输出离线程序的执行诊断信息。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        39,
+        40
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:wrap",
+      "type": "function",
+      "name": "wrap",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "将角度归一到正负 180 度范围。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        43,
+        44
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:dirv",
+      "type": "function",
+      "name": "dirv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "把物体平面方向角转换为二维单位向量。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        47,
+        48
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:arm_st",
+      "type": "function",
+      "name": "arm_st",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "读取指定机械臂的状态。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        51,
+        52
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:mv",
+      "type": "function",
+      "name": "mv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "执行指定机械臂的笛卡尔运动并返回控制反馈。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        55,
+        66
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:fyaw",
+      "type": "function",
+      "name": "fyaw",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "垂直抓取时由腕部四元数提取闭合轴方向，其余姿态采用状态偏航。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        69,
+        75
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:ok",
+      "type": "function",
+      "name": "ok",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "检查运动结果是否存在且报告到达目标。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        78,
+        79
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:grip",
+      "type": "function",
+      "name": "grip",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "执行指定机械臂的夹爪指令并返回夹持反馈。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        82,
+        89
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:home",
+      "type": "function",
+      "name": "home",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "调用机械臂归位并检查返回的完成状态。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        92,
+        98
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:cam",
+      "type": "function",
+      "name": "cam",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "读取指定相机的内外参数，用于图像与世界坐标转换。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        102,
+        104
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:on_plane",
+      "type": "function",
+      "name": "on_plane",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "把像素中心光线批量投影到指定水平面。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        107,
+        112
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:box_mask",
+      "type": "function",
+      "name": "box_mask",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "根据纸板颜色阈值提取纸箱区域。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        116,
+        119
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:measure_box",
+      "type": "function",
+      "name": "measure_box",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "用近侧箱壁的最低像素投影拟合桌面直线，估计箱中心和方向。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        122,
+        173
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:locate_cat",
+      "type": "function",
+      "name": "locate_cat",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "对指定物体类别遍历视觉提示并选出最佳有效定位。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        199,
+        214
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:part_votes",
+      "type": "function",
+      "name": "part_votes",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "比较物体部件提示在长轴上的位置，为前后方向判定投票。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        217,
+        249
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:j1_deg",
+      "type": "function",
+      "name": "j1_deg",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "根据基座和目标平面位置估算第一关节朝向。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        253,
+        255
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:grasp_h",
+      "type": "function",
+      "name": "grasp_h",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "按物体类别和是否低抓重试选择相对桌面的抓取高度。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        261,
+        267
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:grasp_offset",
+      "type": "function",
+      "name": "grasp_offset",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "按锤子、刷子、车或鞋类别选择沿长轴的抓点偏移。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        270,
+        272
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:lane_point",
+      "type": "function",
+      "name": "lane_point",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "把箱内通道坐标转换成世界平面位置。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        275,
+        277
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:clear_of",
+      "type": "function",
+      "name": "clear_of",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "检查候选点与其他物体中心是否保持给定距离。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        280,
+        281
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:dark_offset",
+      "type": "function",
+      "name": "dark_offset",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "在腕部俯视图中计算窗、顶棚等深色部件沿物体长轴的偏移。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        285,
+        301
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:look_and_refine",
+      "type": "function",
+      "name": "look_and_refine",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "从垂直腕图细化物体位置，用部件提示与深色质量分布判断前端。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        304,
+        340
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:relocate",
+      "type": "function",
+      "name": "relocate",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "对无法垂直抓取的远处物体采用倾斜抓法，保持方向移到更近区域。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        344,
+        374
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:decide_front",
+      "type": "function",
+      "name": "decide_front",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "融合头部与腕部方向投票，确定物体长轴的前端。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        377,
+        380
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:find_objects",
+      "type": "function",
+      "name": "find_objects",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "用头部定位四类物体，必要时抬臂消除遮挡并从腕部补查。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        384,
+        424
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:box_from_locate",
+      "type": "function",
+      "name": "box_from_locate",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "把三维定位结果整理成箱中心、轴线和尺寸模型。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        427,
+        431
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:measure_box_all",
+      "type": "function",
+      "name": "measure_box_all",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "优先使用与语义定位一致的近壁拟合，否则通过腕部俯视测量纸箱。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        434,
+        477
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:to_pixel",
+      "type": "function",
+      "name": "to_pixel",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "把世界三维点投影到相机像素。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        483,
+        488
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:lowest_points",
+      "type": "function",
+      "name": "lowest_points",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "提取物体掩码每列最下方的轮廓点。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        491,
+        497
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:fit3",
+      "type": "function",
+      "name": "fit3",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "对底缘点做 RANSAC 直线拟合，区分近侧箱壁底缘与箱盖折片。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        500,
+        548
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:measure_box3",
+      "type": "function",
+      "name": "measure_box3",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "融合纸板颜色、SAM3 框内 GrabCut 和近壁拟合得到纸箱姿态。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        551,
+        625
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:box_local",
+      "type": "function",
+      "name": "box_local",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "把纸箱局部坐标转换为世界坐标。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        636,
+        638
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:to_local",
+      "type": "function",
+      "name": "to_local",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "把世界平面点转换为纸箱坐标。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        641,
+        643
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:clearance",
+      "type": "function",
+      "name": "clearance",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "计算平面位置到箱体足迹边界的最短距离。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        646,
+        648
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:seg_route_needed",
+      "type": "function",
+      "name": "seg_route_needed",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "判断两点之间直线是否比端点更贴近箱体，需要绕行。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        651,
+        656
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:seg_clear",
+      "type": "function",
+      "name": "seg_clear",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "检查平面线段是否始终与箱体和折片保持指定裕量。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        659,
+        670
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:corridor_y",
+      "type": "function",
+      "name": "corridor_y",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "计算纸箱近壁前方留足夹爪和物体空间的安全通道纵坐标。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        673,
+        678
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:go",
+      "type": "function",
+      "name": "go",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "在直达路径接近箱体时先退至前方通道，用分段直线绕过箱壁。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        681,
+        712
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:other",
+      "type": "function",
+      "name": "other",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "返回与给定机械臂相对的另一侧名称。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        715,
+        716
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:place_arm_for",
+      "type": "function",
+      "name": "place_arm_for",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "根据纸箱左右位置选择负责最终放置的机械臂。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        719,
+        720
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:target_dev",
+      "type": "function",
+      "name": "target_dev",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "依据箱体拟合来源限制最终物体方向的偏转量。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        723,
+        725
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:pick",
+      "type": "function",
+      "name": "pick",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "跨物体窄边垂直抓取并检查抬升，滑脱后降低下一次抓取高度。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        728,
+        789
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:s_of",
+      "type": "function",
+      "name": "s_of",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "判断当前夹爪轴向与物体前端朝向是否一致。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        792,
+        795
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:turn_to",
+      "type": "function",
+      "name": "turn_to",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "在关节六允许范围内垂直原地旋腕，将持有物体转向目标。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        798,
+        818
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:turn_spot",
+      "type": "function",
+      "name": "turn_spot",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "在机器人前方选择远离箱壁的安全转向位置。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        821,
+        825
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:low_off",
+      "type": "function",
+      "name": "low_off",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "按夹持宽度和绕长轴倾角计算物体最低点相对抓点的距离。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        828,
+        835
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:tilt",
+      "type": "function",
+      "name": "tilt",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "保持闭合夹持改变俯仰与滚转，直线失败时尝试备用路径。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        838,
+        842
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:palm_floor",
+      "type": "function",
+      "name": "palm_floor",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "计算沿物体轴倾斜时掌部最低点相对抓点的高度。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        853,
+        856
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:place_down",
+      "type": "function",
+      "name": "place_down",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "在箱内采用垂直或沿闭合轴倾斜姿态下降，让手指留在物体两侧。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        859,
+        913
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:jaw_heading",
+      "type": "function",
+      "name": "jaw_heading",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "从腕部四元数获取夹爪水平闭合线的方向。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        921,
+        925
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:rotate_release",
+      "type": "function",
+      "name": "rotate_release",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "进入箱内后绕物体长轴转回垂直夹持，避免释放时手指垫在物体下面。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        928,
+        985
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:rel_open",
+      "type": "function",
+      "name": "rel_open",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "依据抓取时的开度确定足够松开物体的释放开度。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        988,
+        994
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:release_open",
+      "type": "function",
+      "name": "release_open",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "在可靠释放开度与箱壁允许夹爪宽度之间取安全值。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        997,
+        1004
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:carried",
+      "type": "function",
+      "name": "carried",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "释放并抬升后再次闭合，检查物体是否仍随夹爪被带起。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1007,
+        1012
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:lift_up",
+      "type": "function",
+      "name": "lift_up",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "保持姿态尝试多个抬升高度，不可达时沿物体轴转向再升高。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1015,
+        1033
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:clear_release",
+      "type": "function",
+      "name": "clear_release",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "通过抬升再闭合确认物体留在箱内，仍粘夹时下降并更大幅张开。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1036,
+        1075
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:lift_out",
+      "type": "function",
+      "name": "lift_out",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "在释放后垂直升到箱壁之上再完全张爪退出。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1078,
+        1105
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:carry_place",
+      "type": "function",
+      "name": "carry_place",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "将物体倾斜越过近壁，入箱转姿释放，并检查搬运途中是否滑落。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1108,
+        1167
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:transfer_spot",
+      "type": "function",
+      "name": "transfer_spot",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "选择双臂可达、位于箱前且远离其他物体的中转桌面位置。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1170,
+        1190
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:put_down",
+      "type": "function",
+      "name": "put_down",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "将持有物体垂直放到中转点，释放后抬离。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1193,
+        1203
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:take_over",
+      "type": "function",
+      "name": "take_over",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "另一臂先视觉确认中转物体方向，再重新抓取完成接棒。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1206,
+        1239
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:place_any",
+      "type": "function",
+      "name": "place_any",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "按类别优先尝试多个垂直或倾斜入箱姿态。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1242,
+        1249
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:handle",
+      "type": "function",
+      "name": "handle",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "确定物体最终朝向和放置臂，组织抓取、转向、必要中转与入箱。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1252,
+        1318
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:survey",
+      "type": "function",
+      "name": "survey",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "用腕图复查箱内物体位置、相对箱轴方向和部件朝向，输出诊断。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1321,
+        1349
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:head_find",
+      "type": "function",
+      "name": "head_find",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "从头部相机重新定位指定类别并整理目标几何。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1356,
+        1365
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:repair_candidates",
+      "type": "function",
+      "name": "repair_candidates",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "检查头部图像中仍在箱外的物体，识别漏装、掉落或被带出的候选。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1368,
+        1392
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:repair",
+      "type": "function",
+      "name": "repair",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "在剩余预算内重新观察并补装箱外物体，每个物体限制修复次数。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1395,
+        1448
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "summary": "测量纸箱和物体，按计划完成装箱后进行诊断与终局修复。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1451,
+        1488
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:say",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:say",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:wrap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:wrap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:dirv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:dirv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:arm_st",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:arm_st",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:mv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:mv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:fyaw",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:fyaw",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:ok",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:ok",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:grip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:grip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:home",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:cam",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:cam",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:on_plane",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:on_plane",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:box_mask",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:box_mask",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:measure_box",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:measure_box",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:locate_cat",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:locate_cat",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:part_votes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:part_votes",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:j1_deg",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:j1_deg",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:grasp_h",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:grasp_h",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:grasp_offset",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:grasp_offset",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:lane_point",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:lane_point",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:clear_of",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:clear_of",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:dark_offset",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:dark_offset",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:look_and_refine",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:look_and_refine",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:relocate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:relocate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:decide_front",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:decide_front",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:find_objects",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:find_objects",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:box_from_locate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:box_from_locate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:measure_box_all",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:measure_box_all",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:to_pixel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:to_pixel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:lowest_points",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:lowest_points",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:fit3",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:fit3",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:measure_box3",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:measure_box3",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:box_local",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:box_local",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:to_local",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:to_local",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:clearance",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:clearance",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:seg_route_needed",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:seg_route_needed",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:seg_clear",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:seg_clear",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:corridor_y",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:corridor_y",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:go",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:go",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:other",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:other",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:place_arm_for",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:place_arm_for",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:target_dev",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:target_dev",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:pick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:pick",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:s_of",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:s_of",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:turn_to",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:turn_to",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:turn_spot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:turn_spot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:low_off",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:low_off",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:tilt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:tilt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:palm_floor",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:palm_floor",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:place_down",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:place_down",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:jaw_heading",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:jaw_heading",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:rotate_release",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:rotate_release",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:rel_open",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:rel_open",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:release_open",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:release_open",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:carried",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:carried",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:lift_up",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:lift_up",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:clear_release",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:clear_release",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:lift_out",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:lift_out",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:carry_place",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:carry_place",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:transfer_spot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:transfer_spot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:put_down",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:put_down",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:take_over",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:take_over",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:place_any",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:place_any",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:handle",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:handle",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:survey",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:survey",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:head_find",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:head_find",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:repair_candidates",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:repair_candidates",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:repair",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:repair",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:fyaw",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:arm_st",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:measure_box",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:measure_box",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:box_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:measure_box",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:measure_box",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:dirv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:measure_box",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:measure_box",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:part_votes",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:part_votes",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:dirv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:part_votes",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:lane_point",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:dirv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:dark_offset",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:dark_offset",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:dark_offset",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:dirv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:look_and_refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:go",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:look_and_refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:look_and_refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:locate_cat",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:look_and_refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:look_and_refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:part_votes",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:look_and_refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:dark_offset",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:relocate",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:grasp_h",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:relocate",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:relocate",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:dirv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:relocate",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:relocate",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:relocate",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:relocate",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:decide_front",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:decide_front",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:find_objects",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:locate_cat",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:find_objects",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:find_objects",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:find_objects",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:find_objects",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:part_votes",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:measure_box_all",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:measure_box",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:measure_box_all",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:measure_box_all",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:box_from_locate",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:measure_box_all",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:measure_box_all",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:measure_box_all",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:measure_box_all",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:lowest_points",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:fit3",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:dirv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:fit3",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:measure_box3",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:measure_box3",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:box_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:measure_box3",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:fit3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:measure_box3",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:lowest_points",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:measure_box3",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:measure_box3",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:measure_box_all",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:box_local",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:dirv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:to_local",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:dirv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:clearance",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:to_local",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:seg_route_needed",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:clearance",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:seg_clear",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:to_local",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:corridor_y",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:box_local",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:go",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:arm_st",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:go",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:seg_route_needed",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:go",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:corridor_y",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:go",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:go",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:go",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:seg_clear",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:go",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:target_dev",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:grasp_h",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:grasp_offset",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:dirv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:go",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:fyaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:arm_st",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:look_and_refine",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:s_of",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:fyaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:turn_to",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:arm_st",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:turn_to",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:fyaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:turn_to",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:turn_to",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:turn_to",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:turn_to",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:turn_spot",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:arm_st",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:low_off",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:grasp_h",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:tilt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:tilt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:place_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:grasp_h",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:place_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:dirv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:place_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:fyaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:place_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:place_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:palm_floor",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:place_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:arm_st",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:place_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:place_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:place_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:box_local",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:place_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:place_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:jaw_heading",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:arm_st",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:rotate_release",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:rel_open",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:rotate_release",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:dirv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:rotate_release",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:rotate_release",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:arm_st",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:rotate_release",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:jaw_heading",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:rotate_release",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:rotate_release",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:rotate_release",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:fyaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:rotate_release",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:palm_floor",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:rotate_release",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:grasp_h",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:rotate_release",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:release_open",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:rotate_release",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:rotate_release",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:rotate_release",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:clear_release",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:rotate_release",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:lift_out",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:release_open",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:to_local",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:release_open",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:rel_open",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:carried",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:lift_up",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:arm_st",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:lift_up",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:clear_release",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:lift_up",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:clear_release",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:arm_st",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:clear_release",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:clear_release",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:carried",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:clear_release",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:clear_release",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:clear_release",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:to_local",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:lift_out",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:lift_up",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:lift_out",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:arm_st",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:lift_out",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:lift_out",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:lift_out",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:lift_out",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:carry_place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:carry_place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:s_of",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:carry_place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:dirv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:carry_place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:arm_st",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:carry_place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:tilt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:carry_place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:low_off",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:carry_place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:box_local",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:carry_place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:carry_place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:carry_place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:carry_place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:carry_place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:rotate_release",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:transfer_spot",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:corridor_y",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:transfer_spot",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:put_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:grasp_h",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:put_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:go",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:put_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:put_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:put_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:put_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:take_over",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:take_over",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:dirv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:take_over",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:go",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:take_over",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:take_over",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:locate_cat",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:take_over",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:take_over",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:look_and_refine",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:take_over",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:decide_front",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:take_over",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:pick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:take_over",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:place_any",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:place_down",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:place_any",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:place_any",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:carry_place",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:target_dev",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:place_arm_for",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:other",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:look_and_refine",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:decide_front",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:pick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:relocate",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:arm_st",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:turn_spot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:go",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:s_of",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:fyaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:turn_to",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:place_any",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:transfer_spot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:put_down",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:grasp_h",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:take_over",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:survey",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:place_arm_for",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:survey",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:go",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:survey",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:survey",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:survey",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:survey",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:locate_cat",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:survey",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:to_local",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:survey",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:survey",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:part_votes",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:head_find",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:locate_cat",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:repair_candidates",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:head_find",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:repair_candidates",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:repair_candidates",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:to_local",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:repair_candidates",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:place_arm_for",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:part_votes",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:handle",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:measure_box3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:measure_box3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:find_objects",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:place_arm_for",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:handle",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:repair",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:survey",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pack_objects_into_box.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

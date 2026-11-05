@@ -1,0 +1,1400 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "type": "file",
+      "name": "store_laptop_and_headphones.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "summary": "实现离线 RoboDojo 任务程序：拟合耳机架与笔记本槽，悬挂耳机后绕铰链操作屏幕，将笔记本插入槽并合盖。通过执行环境注入的 robo 接口完成任务，不在评测时调用规划模型。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:r3",
+      "type": "function",
+      "name": "r3",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "summary": "格式化向量或测量数据以便打印诊断信息。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        32,
+        33
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:wrap",
+      "type": "function",
+      "name": "wrap",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "summary": "把角度规范到一个完整周期的对称区间。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        36,
+        37
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:camK",
+      "type": "function",
+      "name": "camK",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "summary": "读取相机标定并转为数值矩阵供投影计算。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        40,
+        44
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:at_z",
+      "type": "function",
+      "name": "at_z",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "summary": "将像素视线与给定高度平面相交以恢复世界坐标。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        60,
+        68
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:mv",
+      "type": "function",
+      "name": "mv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "summary": "调用机器人位姿运动接口并处理本任务的运动结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        71,
+        78
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:steps",
+      "type": "function",
+      "name": "steps",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "summary": "读取当前原生控制步数。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        81,
+        85
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:seg_first",
+      "type": "function",
+      "name": "seg_first",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "summary": "按提示词顺序选择首个满足分数的分割结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        88,
+        97
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:show_laptop",
+      "type": "function",
+      "name": "show_laptop",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "summary": "记录笔记本状态或相机裁剪作为执行诊断。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        100,
+        108
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:dump",
+      "type": "function",
+      "name": "dump",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "summary": "记录笔记本状态或相机裁剪作为执行诊断。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        111,
+        122
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:rack_head",
+      "type": "function",
+      "name": "rack_head",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "summary": "利用头部图像估计收纳架位置。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        125,
+        149
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:stand_fit",
+      "type": "function",
+      "name": "stand_fit",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "summary": "拟合耳机支架的几何位姿。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        162,
+        204
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:headset_info",
+      "type": "function",
+      "name": "headset_info",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "summary": "识别耳机位置、尺寸和朝向。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        208,
+        237
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:push_left",
+      "type": "function",
+      "name": "push_left",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "summary": "推动耳机向左调整便于抓取的位置。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        240,
+        251
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:stand_pose",
+      "type": "function",
+      "name": "stand_pose",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "summary": "拟合耳机支架的几何位姿。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        265,
+        278
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:pivot_hang",
+      "type": "function",
+      "name": "pivot_hang",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "summary": "围绕支点转动耳机并送到支架挂点。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        281,
+        353
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:hang_headphones",
+      "type": "function",
+      "name": "hang_headphones",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "summary": "执行耳机识别、抓取和悬挂流程。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        356,
+        383
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:headset_check",
+      "type": "function",
+      "name": "headset_check",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "summary": "观察耳机是否正确悬挂并检查偏差。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        386,
+        398
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:laptop_frame",
+      "type": "function",
+      "name": "laptop_frame",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "summary": "从图像估计笔记本前缘和铰链方向。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        402,
+        435
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:lid_point",
+      "type": "function",
+      "name": "lid_point",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "summary": "按铰链角计算屏幕上的抓取或推压点。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        438,
+        451
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:_prof",
+      "type": "function",
+      "name": "_prof",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "summary": "对图像区域按给定方向生成轮廓响应。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        455,
+        464
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:slot_view",
+      "type": "function",
+      "name": "slot_view",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "summary": "从腕部观察测量笔记本收纳槽位置与方向。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        467,
+        534
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:project",
+      "type": "function",
+      "name": "project",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "summary": "把世界坐标点投影到标定相机图像平面。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        541,
+        546
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:rack_poly",
+      "type": "function",
+      "name": "rack_poly",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "summary": "生成收纳架轮廓模型。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        549,
+        559
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:rack_fit",
+      "type": "function",
+      "name": "rack_fit",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "summary": "对灰度图拟合收纳架轮廓并补偿标定偏差。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        562,
+        600
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:look_rack",
+      "type": "function",
+      "name": "look_rack",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "summary": "移动腕部相机观察收纳槽并返回拟合结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        603,
+        613
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:twist_lid",
+      "type": "function",
+      "name": "twist_lid",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "summary": "夹住屏幕角点绕铰链弧线翻转后沿屏幕方向撤离。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        621,
+        676
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:push_lid",
+      "type": "function",
+      "name": "push_lid",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "summary": "以推压动作调整笔记本屏幕倾角。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        684,
+        707
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:carry_laptop",
+      "type": "function",
+      "name": "carry_laptop",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "summary": "抓持屏幕搬运笔记本，对准收纳槽后下探插入。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        711,
+        858
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:close_lid_down",
+      "type": "function",
+      "name": "close_lid_down",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "summary": "从上方推压已入槽笔记本的屏幕以合盖。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        861,
+        894
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:close_lid_sweep",
+      "type": "function",
+      "name": "close_lid_sweep",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "summary": "沿铰链弧线慢速扫推屏幕使其贴近机身。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        897,
+        954
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:close_lid_sweep.T",
+      "type": "function",
+      "name": "close_lid_sweep.T",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "summary": "按屏幕铰链角、推压偏移和姿态上限计算扫推抓点与夹爪俯仰。",
+      "tags": [
+        "离线策略",
+        "局部规划",
+        "机器人控制"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        907,
+        916
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:r3",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:r3",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:wrap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:wrap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:camK",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:camK",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:at_z",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:at_z",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:mv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:mv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:steps",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:seg_first",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:seg_first",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:show_laptop",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:show_laptop",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:dump",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:dump",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:rack_head",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:rack_head",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:stand_fit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:stand_fit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:headset_info",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:headset_info",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:push_left",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:push_left",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:stand_pose",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:stand_pose",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:pivot_hang",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:pivot_hang",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:hang_headphones",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:hang_headphones",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:headset_check",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:headset_check",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:laptop_frame",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:laptop_frame",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:lid_point",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:lid_point",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:_prof",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:_prof",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:slot_view",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:slot_view",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:project",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:rack_poly",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:rack_poly",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:rack_fit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:rack_fit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:look_rack",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:look_rack",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:twist_lid",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:twist_lid",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:push_lid",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:push_lid",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:carry_laptop",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:carry_laptop",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:close_lid_down",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:close_lid_down",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:close_lid_sweep",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:close_lid_sweep",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:show_laptop",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:rack_head",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:at_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:rack_head",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:stand_fit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:seg_first",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:stand_fit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:at_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:stand_fit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:headset_info",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:seg_first",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:headset_info",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:at_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:headset_info",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:push_left",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:stand_pose",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:stand_fit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:stand_pose",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:seg_first",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:stand_pose",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:at_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:stand_pose",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:pivot_hang",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:pivot_hang",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:pivot_hang",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:pivot_hang",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:steps",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:hang_headphones",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:stand_pose",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:hang_headphones",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:headset_info",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:hang_headphones",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:push_left",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:hang_headphones",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:pivot_hang",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:hang_headphones",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:steps",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:headset_check",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:seg_first",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:headset_check",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:headset_check",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:at_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:laptop_frame",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:seg_first",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:laptop_frame",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:at_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:laptop_frame",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:slot_view",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:camK",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:slot_view",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:at_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:slot_view",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:_prof",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:slot_view",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:rack_poly",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:rack_fit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:look_rack",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:look_rack",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:slot_view",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:twist_lid",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:twist_lid",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:twist_lid",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:twist_lid",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:steps",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:push_lid",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:lid_point",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:push_lid",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:push_lid",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:push_lid",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:steps",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:carry_laptop",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:lid_point",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:carry_laptop",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:carry_laptop",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:carry_laptop",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:steps",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:carry_laptop",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:show_laptop",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:carry_laptop",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:close_lid_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:close_lid_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:close_lid_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:close_lid_sweep",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:close_lid_sweep",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:close_lid_sweep",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:show_laptop",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:close_lid_sweep",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:close_lid_sweep",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:steps",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:close_lid_sweep.T",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:close_lid_sweep",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_laptop_and_headphones.py:close_lid_sweep.T",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    }
+  ]
+}

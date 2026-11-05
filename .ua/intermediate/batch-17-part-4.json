@@ -1,0 +1,1886 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "type": "file",
+      "name": "classify_objects_by_language.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "解析语言指定的三类物体与篮筐对应关系，执行视觉抓取分类，并在归位后复查错篮、篮沿和桌面遗漏物体。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "视觉定位",
+        "运动控制"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:parse_task",
+      "type": "function",
+      "name": "parse_task",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "从任务句式或已知类别出现顺序解析左、中、右篮筐的类别要求。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        57,
+        62
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:budget_left",
+      "type": "function",
+      "name": "budget_left",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "返回当前回合剩余的控制步数预算。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        80,
+        81
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:mv",
+      "type": "function",
+      "name": "mv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "执行指定机械臂的笛卡尔运动并返回控制反馈。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        84,
+        87
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:grip",
+      "type": "function",
+      "name": "grip",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "执行指定机械臂的夹爪指令并返回夹持反馈。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        90,
+        100
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:st",
+      "type": "function",
+      "name": "st",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "读取并返回指定侧机械臂的当前状态。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        103,
+        105
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:other",
+      "type": "function",
+      "name": "other",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "返回与给定机械臂相对的另一侧名称。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        108,
+        109
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:wrap180",
+      "type": "function",
+      "name": "wrap180",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "把角度归一到以零为中心的一个完整圆周区间。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        112,
+        113
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:near0",
+      "type": "function",
+      "name": "near0",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "利用夹爪半周对称性把偏航角归一到接近零的等价方向。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        116,
+        122
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:to_clear",
+      "type": "function",
+      "name": "to_clear",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "把机械臂抬离低位障碍并移到不遮挡桌面的清空姿态。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        125,
+        136
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:scan",
+      "type": "function",
+      "name": "scan",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "逐类运行视觉提示并融合检测，建立待分类物体清单。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        142,
+        171
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:lim",
+      "type": "function",
+      "name": "lim",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "对测得的运动学边界进行插值，估计当前纵坐标的跨臂可达界限。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        176,
+        183
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:can_pick",
+      "type": "function",
+      "name": "can_pick",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "依据目标平面位置与机械臂可达边界判断能否抓取。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        186,
+        187
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:plan_arm",
+      "type": "function",
+      "name": "plan_arm",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "根据目标篮筐侧别和物体位置选择能抓取的机械臂。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        190,
+        197
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:hover",
+      "type": "function",
+      "name": "hover",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "尝试多个俯仰和等价偏航，寻找目标上方可达观察姿态。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        200,
+        210
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:refine",
+      "type": "function",
+      "name": "refine",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "从腕部相机重定位已知类别物体，修正头部视图提供的初始位置。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        213,
+        227
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:grasp_z",
+      "type": "function",
+      "name": "grasp_z",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "结合类别和多个顶部估计选择抓取高度，适配薄片与较高物体。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        230,
+        239
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:grasp",
+      "type": "function",
+      "name": "grasp",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "悬停、腕部细化、下降闭合与抬升，返回成功、不可达或失败状态。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        242,
+        285
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:drop_plan",
+      "type": "function",
+      "name": "drop_plan",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "依据篮筐、机械臂与已用槽位规划释放点、搬运方向和可尝试俯仰。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        288,
+        297
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:carry_move",
+      "type": "function",
+      "name": "carry_move",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "优先使用直线路径搬运持有物体，失败时尝试中间姿态和自动路径。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        300,
+        319
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:carry_and_drop",
+      "type": "function",
+      "name": "carry_and_drop",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "先对齐夹爪闭合轴再倾斜搬运，释放到目标篮筐以降低物体甩落风险。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        322,
+        391
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:process",
+      "type": "function",
+      "name": "process",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "将一次物体分类操作串联为抓取及相应篮筐搬运释放。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        394,
+        399
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:proj",
+      "type": "function",
+      "name": "proj",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "使用相机内外参把三维世界坐标投影为像素坐标。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        407,
+        414
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:ray_table",
+      "type": "function",
+      "name": "ray_table",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "将图像像素射线投影到桌面或指定高度平面。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        417,
+        421
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:blobs",
+      "type": "function",
+      "name": "blobs",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "在投影得到的桌面区域用局部颜色差检测尚未分类的物体。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        424,
+        452
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:classify_here",
+      "type": "function",
+      "name": "classify_here",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "近距离比较类别提示的掩码与目标区域重叠，识别未命名物体。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        455,
+        473
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:try_blob",
+      "type": "function",
+      "name": "try_blob",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "筛选尚未尝试的前景区域，排除篮筐反投影伪影后尝试近看分类抓取。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        476,
+        520
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:key",
+      "type": "function",
+      "name": "key",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "用类别与量化平面位置构造物体重试索引。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        523,
+        524
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:go_home",
+      "type": "function",
+      "name": "go_home",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "打开或归位机械臂，并通过有限次重试完成收尾。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        584,
+        592
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:r_ok",
+      "type": "function",
+      "name": "r_ok",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "同时检查修复阶段剩余步数、归位预留和墙钟期限。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        595,
+        596
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:basket_of",
+      "type": "function",
+      "name": "basket_of",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "根据平面位置判断物体位于哪一个篮筐范围内。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        599,
+        603
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:basket_audit",
+      "type": "function",
+      "name": "basket_audit",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "检查篮筐中的类别检测，找出不符合所属篮筐要求的物体。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        606,
+        642
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:wrist_votes",
+      "type": "function",
+      "name": "wrist_votes",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "在预期投影位置附近收集各类别的腕部分割最高分，用于复核篮内物体。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        645,
+        661
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:fix_misplaced",
+      "type": "function",
+      "name": "fix_misplaced",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "近看确认错篮物体类别确实优于当前篮筐类别后，重新抓取送入正确篮筐。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        664,
+        689
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:wall_risk",
+      "type": "function",
+      "name": "wall_risk",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "依据抓取轴和张爪宽度判断远侧手指是否会落在篮筐前壁上。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        692,
+        697
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:drag_back",
+      "type": "function",
+      "name": "drag_back",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "以低俯仰夹爪将贴墙物体拖回桌面可抓区域，释放后重新定位。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        703,
+        733
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:rim_objects",
+      "type": "function",
+      "name": "rim_objects",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "检测靠近篮沿的残留物体，供推入篮筐的补救操作。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        736,
+        753
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:push_in",
+      "type": "function",
+      "name": "push_in",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "选择邻近机械臂闭合夹爪，将篮沿物体向篮内推动。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        756,
+        774
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:repair_blob",
+      "type": "function",
+      "name": "repair_blob",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "补查观察姿态遮挡的边缘区域，并用已放置数量为无法识别的真实物体选择类别。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        777,
+        876
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:wall_objects",
+      "type": "function",
+      "name": "wall_objects",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "检测靠在篮壁或篮沿且高于正常篮内高度的物体，排除已在正确篮中的结果。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        879,
+        906
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:take_wall",
+      "type": "function",
+      "name": "take_wall",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "根据篮沿物体实际高度选择抓取位置，将其转移到正确篮筐。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        909,
+        924
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:repair_table",
+      "type": "function",
+      "name": "repair_table",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "summary": "在剩余预算内重复扫描与处理桌面遗漏物体，限制补救轮数。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        927,
+        963
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:parse_task",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:parse_task",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:budget_left",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:budget_left",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:mv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:mv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:grip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:grip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:st",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:st",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:other",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:other",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:wrap180",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:wrap180",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:near0",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:near0",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:to_clear",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:to_clear",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:scan",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:scan",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:lim",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:lim",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:can_pick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:can_pick",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:plan_arm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:plan_arm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:hover",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:hover",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:refine",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:refine",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:grasp_z",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:grasp_z",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:grasp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:grasp",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:drop_plan",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:drop_plan",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:carry_move",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:carry_move",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:carry_and_drop",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:carry_and_drop",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:process",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:process",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:proj",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:proj",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:ray_table",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:ray_table",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:blobs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:blobs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:classify_here",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:classify_here",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:try_blob",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:try_blob",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:key",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:key",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:go_home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:go_home",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:r_ok",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:r_ok",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:basket_of",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:basket_of",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:basket_audit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:basket_audit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:wrist_votes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:wrist_votes",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:fix_misplaced",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:fix_misplaced",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:wall_risk",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:wall_risk",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:drag_back",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:drag_back",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:rim_objects",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:rim_objects",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:push_in",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:push_in",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:repair_blob",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:repair_blob",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:wall_objects",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:wall_objects",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:take_wall",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:take_wall",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:repair_table",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:repair_table",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:near0",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:to_clear",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:st",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:to_clear",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:can_pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:lim",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:plan_arm",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:can_pick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:hover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:near0",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:hover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:hover",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:refine",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:grasp_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:near0",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:st",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:carry_move",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:carry_move",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:st",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:carry_and_drop",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:drop_plan",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:carry_and_drop",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:st",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:carry_and_drop",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:carry_and_drop",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:carry_and_drop",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:carry_and_drop",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:carry_move",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:process",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:grasp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:process",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:carry_and_drop",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:blobs",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:proj",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:blobs",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:ray_table",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:classify_here",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:proj",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:try_blob",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:blobs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:try_blob",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:budget_left",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:try_blob",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:to_clear",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:try_blob",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:other",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:try_blob",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:try_blob",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:hover",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:try_blob",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:classify_here",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:try_blob",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:refine",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:try_blob",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:plan_arm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:try_blob",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:process",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:go_home",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:st",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:go_home",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:r_ok",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:budget_left",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:basket_audit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:basket_of",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:wrist_votes",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:proj",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:fix_misplaced",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:to_clear",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:fix_misplaced",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:other",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:fix_misplaced",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:fix_misplaced",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:hover",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:fix_misplaced",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:wrist_votes",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:fix_misplaced",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:grasp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:fix_misplaced",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:carry_and_drop",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:wall_risk",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:near0",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:drag_back",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:drag_back",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:grasp_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:drag_back",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:drag_back",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:refine",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:drag_back",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:st",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:push_in",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:to_clear",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:push_in",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:other",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:push_in",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:push_in",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:repair_blob",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:proj",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:repair_blob",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:ray_table",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:repair_blob",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:r_ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:repair_blob",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:to_clear",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:repair_blob",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:other",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:repair_blob",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:repair_blob",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:hover",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:repair_blob",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:classify_here",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:repair_blob",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:refine",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:repair_blob",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:plan_arm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:repair_blob",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:wall_risk",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:repair_blob",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:drag_back",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:repair_blob",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:process",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:take_wall",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:to_clear",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:take_wall",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:other",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:take_wall",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:process",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:repair_table",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:r_ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:repair_table",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:scan",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:repair_table",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:key",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:repair_table",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:repair_blob",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:repair_table",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:plan_arm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:repair_table",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:other",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:repair_table",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:to_clear",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:repair_table",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:wall_risk",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:repair_table",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:drag_back",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:repair_table",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/classify_objects_by_language.py:process",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

@@ -1,0 +1,2200 @@
+{
+  "nodes": [
+    {
+      "id": "file:tests/test_robodojo_motion.py",
+      "type": "file",
+      "name": "test_robodojo_motion.py",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "验证双臂运动学、工具执行、深度几何与自身遮挡过滤。通过固定输入、模拟后端或临时资源检查正常行为及失败边界。",
+      "tags": [
+        "测试",
+        "回归验证",
+        "行为契约"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:_pose",
+      "type": "function",
+      "name": "_pose",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "由位置与姿态角构造目标位姿矩阵。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        55,
+        59
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:test_fk_reproduces_the_poses_the_simulator_reported",
+      "type": "function",
+      "name": "test_fk_reproduces_the_poses_the_simulator_reported",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "验证正运动学重现模拟器报告的末端位姿。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        65,
+        72
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:test_angles_are_the_convention_the_robot_reports",
+      "type": "function",
+      "name": "test_angles_are_the_convention_the_robot_reports",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "验证姿态角变换遵循机器人接口约定。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        75,
+        89
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:test_ik_solves_top_grasps_in_front_of_each_arm",
+      "type": "function",
+      "name": "test_ik_solves_top_grasps_in_front_of_each_arm",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "验证逆运动学求解左右臂上方抓取目标。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        92,
+        100
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:test_line_path_keeps_the_grasp_point_on_the_line",
+      "type": "function",
+      "name": "test_line_path_keeps_the_grasp_point_on_the_line",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "验证直线路径上的抓取点保持在目标线段。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        103,
+        116
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:test_poses_in_the_table_are_flagged",
+      "type": "function",
+      "name": "test_poses_in_the_table_are_flagged",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "验证进入桌面的位姿被碰撞检查标记。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        119,
+        123
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:sim",
+      "type": "function",
+      "name": "sim",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "创建六关节双臂模拟器和原语测试上下文。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        182,
+        184
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:_now",
+      "type": "function",
+      "name": "_now",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "计算模拟器当前指定机械臂的末端位姿。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        187,
+        188
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:test_move_pose_points_down_over_a_spot_and_holds_the_other_arm",
+      "type": "function",
+      "name": "test_move_pose_points_down_over_a_spot_and_holds_the_other_arm",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "验证位姿运动向下对准目标且保持另一机械臂状态。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        191,
+        219
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:test_move_pose_takes_the_half_turned_grasp_when_it_is_nearer",
+      "type": "function",
+      "name": "test_move_pose_takes_the_half_turned_grasp_when_it_is_nearer",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "验证空夹爪可选择更近的半转等价抓法。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        222,
+        231
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:test_move_pose_never_swaps_the_fingers_of_a_gripper_that_holds_something",
+      "type": "function",
+      "name": "test_move_pose_never_swaps_the_fingers_of_a_gripper_that_holds_something",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "验证正在抓持物体时不交换夹指方向。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        234,
+        244
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:test_move_pose_refuses_what_it_cannot_do_and_moves_nothing",
+      "type": "function",
+      "name": "test_move_pose_refuses_what_it_cannot_do_and_moves_nothing",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "验证不可达目标被拒绝且不下发动作。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        247,
+        260
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:test_move_pose_names_what_is_reachable_instead_and_takes_a_near_miss",
+      "type": "function",
+      "name": "test_move_pose_names_what_is_reachable_instead_and_takes_a_near_miss",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "验证报告可达替代姿态并接受容差内目标。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        263,
+        280
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:test_move_pose_reports_an_arm_that_was_stopped",
+      "type": "function",
+      "name": "test_move_pose_reports_an_arm_that_was_stopped",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "验证运动阻挡作为未到达结果报告。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        283,
+        295
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:test_keep_squeezes_what_the_last_command_closed_on",
+      "type": "function",
+      "name": "test_keep_squeezes_what_the_last_command_closed_on",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "验证保持模式持续夹紧最近闭合抓到的物体。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        298,
+        311
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:test_grip_opens_part_way_and_keep_holds_that_opening",
+      "type": "function",
+      "name": "test_grip_opens_part_way_and_keep_holds_that_opening",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "验证部分张开与保持模式维持指定开度。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        314,
+        324
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:test_grip_runs_a_full_stroke_and_reports_what_it_holds",
+      "type": "function",
+      "name": "test_grip_runs_a_full_stroke_and_reports_what_it_holds",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "验证夹爪完整行程报告空抓和实物抓持。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        327,
+        353
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:test_home_lifts_first_then_brings_both_arms_back",
+      "type": "function",
+      "name": "test_home_lifts_first_then_brings_both_arms_back",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "验证归位先抬升再返回双臂起始关节。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        356,
+        365
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:_overhead",
+      "type": "function",
+      "name": "_overhead",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "构造俯视相机下盒体的标定、掩码和深度。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        373,
+        395
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:test_world_points_follow_rpents_back_projection",
+      "type": "function",
+      "name": "test_world_points_follow_rpents_back_projection",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "验证世界点恢复符合 RPent 深度反投影约定。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        410,
+        416
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:test_locate_measures_a_turned_block_from_its_mask_and_depth",
+      "type": "function",
+      "name": "test_locate_measures_a_turned_block_from_its_mask_and_depth",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "验证从旋转块掩码与深度测量位姿。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        419,
+        444
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:_render",
+      "type": "function",
+      "name": "_render",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "用射线投射生成盒体、圆柱和圆锥的头部相机视图。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        447,
+        509
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:_head_view",
+      "type": "function",
+      "name": "_head_view",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "生成头部视图及被物体占据的像素掩码。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        512,
+        514
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:_located",
+      "type": "function",
+      "name": "_located",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "把渲染图像和分割掩码送入实际定位工具并返回结果。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        517,
+        523
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:test_locate_finds_the_faces_of_a_cube_the_head_camera_sees_from_the_side",
+      "type": "function",
+      "name": "test_locate_finds_the_faces_of_a_cube_the_head_camera_sees_from_the_side",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "验证从侧面可见方块恢复正确面方向和中心。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        537,
+        548
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:test_locate_measures_a_long_box_the_head_camera_sees_from_the_side",
+      "type": "function",
+      "name": "test_locate_measures_a_long_box_the_head_camera_sees_from_the_side",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "验证从头部斜视图测量长方体的主轴与尺寸。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        551,
+        557
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:test_locate_completes_the_far_side_of_a_round_object",
+      "type": "function",
+      "name": "test_locate_completes_the_far_side_of_a_round_object",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "验证对圆形目标补全背面以恢复真实中心与直径。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        560,
+        579
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:_arcs",
+      "type": "function",
+      "name": "_arcs",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "生成不同高度圆形物体近侧半圆表面点。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        582,
+        595
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:test_circles_that_do_not_share_an_axis_complete_nothing",
+      "type": "function",
+      "name": "test_circles_that_do_not_share_an_axis_complete_nothing",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "验证不同高度圆弧不同轴时不错误补全。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        598,
+        609
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:test_locate_adds_nothing_behind_a_flat_sided_object",
+      "type": "function",
+      "name": "test_locate_adds_nothing_behind_a_flat_sided_object",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "验证平面侧壁物体后方不增加虚构点。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        612,
+        621
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:test_locate_lays_a_t_along_its_bar_not_along_its_smallest_rectangle",
+      "type": "function",
+      "name": "test_locate_lays_a_t_along_its_bar_not_along_its_smallest_rectangle",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "验证T 形物体朝向按横杆而非最小矩形判定。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        624,
+        636
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:test_locate_leaves_out_what_the_object_stands_on",
+      "type": "function",
+      "name": "test_locate_leaves_out_what_the_object_stands_on",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "验证定位排除物体下方支撑面。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        639,
+        659
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:test_a_footprint_of_a_few_points_in_a_row_is_still_a_rectangle",
+      "type": "function",
+      "name": "test_a_footprint_of_a_few_points_in_a_row_is_still_a_rectangle",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "验证少量共线轮廓点仍获得稳定矩形几何。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        662,
+        666
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:test_points_on_the_arms_are_told_apart_from_the_scene",
+      "type": "function",
+      "name": "test_points_on_the_arms_are_told_apart_from_the_scene",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "验证区分机械臂表面点与场景点。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        669,
+        676
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:test_points_on_the_open_fingers_and_their_rail_are_the_robots_too",
+      "type": "function",
+      "name": "test_points_on_the_open_fingers_and_their_rail_are_the_robots_too",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "验证张开夹指与横梁同样识别为机器人自身。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        679,
+        701
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:test_register_adds_motion_and_coordination_tools_with_readonly_planning",
+      "type": "function",
+      "name": "test_register_adds_motion_and_coordination_tools_with_readonly_planning",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "验证工具注册包含运动与协作功能及只读规划。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        704,
+        729
+      ]
+    },
+    {
+      "id": "class:tests/test_robodojo_motion.py:_SimArms",
+      "type": "class",
+      "name": "_SimArms",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "模拟六关节双臂的逐步运动和夹爪行程，可设置阻挡与夹持开度。",
+      "tags": [
+        "测试",
+        "测试替身",
+        "状态模拟"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        129,
+        167
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:_SimArms.__init__",
+      "type": "function",
+      "name": "_SimArms.__init__",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "初始化该测试替身的输入、状态与调用记录，服务于双臂运动学、工具执行、深度几何与自身遮挡过滤的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        136,
+        142
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:_SimArms.get_obs",
+      "type": "function",
+      "name": "_SimArms.get_obs",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "组合当前机器人状态与相机观测，服务于双臂运动学、工具执行、深度几何与自身遮挡过滤的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        144,
+        149
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:_SimArms.step",
+      "type": "function",
+      "name": "_SimArms.step",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "应用一次模拟关节或夹爪动作并返回观测，服务于双臂运动学、工具执行、深度几何与自身遮挡过滤的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        151,
+        167
+      ]
+    },
+    {
+      "id": "class:tests/test_robodojo_motion.py:_Primitives",
+      "type": "class",
+      "name": "_Primitives",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "组合模拟环境、分割客户端和取消检查，提供原生工具运行上下文。",
+      "tags": [
+        "测试",
+        "测试替身",
+        "状态模拟"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        170,
+        178
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:_Primitives.__init__",
+      "type": "function",
+      "name": "_Primitives.__init__",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "初始化该测试替身的输入、状态与调用记录，服务于双臂运动学、工具执行、深度几何与自身遮挡过滤的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        171,
+        175
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:_Primitives._check_cancelled",
+      "type": "function",
+      "name": "_Primitives._check_cancelled",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "记录工具执行时的取消检查，服务于双臂运动学、工具执行、深度几何与自身遮挡过滤的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        177,
+        178
+      ]
+    },
+    {
+      "id": "class:tests/test_robodojo_motion.py:_Sam3",
+      "type": "class",
+      "name": "_Sam3",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "保存固定掩码并记录分割请求，替代真实分割服务。",
+      "tags": [
+        "测试",
+        "测试替身",
+        "状态模拟"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        398,
+        407
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:_Sam3.__init__",
+      "type": "function",
+      "name": "_Sam3.__init__",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "初始化该测试替身的输入、状态与调用记录，服务于双臂运动学、工具执行、深度几何与自身遮挡过滤的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        399,
+        401
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_motion.py:_Sam3.segment",
+      "type": "function",
+      "name": "_Sam3.segment",
+      "filePath": "tests/test_robodojo_motion.py",
+      "summary": "按测试场景或预置掩码返回模拟 SAM3 分割结果，服务于双臂运动学、工具执行、深度几何与自身遮挡过滤的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        403,
+        407
+      ]
+    },
+    {
+      "id": "file:tests/test_robodojo_sight.py",
+      "type": "file",
+      "name": "test_robodojo_sight.py",
+      "filePath": "tests/test_robodojo_sight.py",
+      "summary": "验证彩色相机几何、多视图目标测量和掩码筛选。通过固定输入、模拟后端或临时资源检查正常行为及失败边界。",
+      "tags": [
+        "测试",
+        "回归验证",
+        "行为契约"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:tests/test_robodojo_sight.py:render",
+      "type": "function",
+      "name": "render",
+      "filePath": "tests/test_robodojo_sight.py",
+      "summary": "渲染指定相机每个像素所见的形状索引。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        35,
+        82
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_sight.py:views",
+      "type": "function",
+      "name": "views",
+      "filePath": "tests/test_robodojo_sight.py",
+      "summary": "构造头部和双腕部相机视图集合。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        85,
+        90
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_sight.py:measured",
+      "type": "function",
+      "name": "measured",
+      "filePath": "tests/test_robodojo_sight.py",
+      "summary": "对指定形状执行多相机测量并返回几何与诊断结果。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        93,
+        102
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_sight.py:off",
+      "type": "function",
+      "name": "off",
+      "filePath": "tests/test_robodojo_sight.py",
+      "summary": "计算测量结果相对形状真值的平面距离误差。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        105,
+        108
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_sight.py:test_the_cameras_are_where_the_simulator_reports_them",
+      "type": "function",
+      "name": "test_the_cameras_are_where_the_simulator_reports_them",
+      "filePath": "tests/test_robodojo_sight.py",
+      "summary": "验证相机位置和朝向符合模拟器标定。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        111,
+        131
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_sight.py:test_a_box_seen_by_two_cameras_is_measured_to_millimetres",
+      "type": "function",
+      "name": "test_a_box_seen_by_two_cameras_is_measured_to_millimetres",
+      "filePath": "tests/test_robodojo_sight.py",
+      "summary": "验证双视图盒体测量达到毫米级误差约束。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        144,
+        153
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_sight.py:test_a_can_and_a_tall_bottle_seen_by_two_cameras",
+      "type": "function",
+      "name": "test_a_can_and_a_tall_bottle_seen_by_two_cameras",
+      "filePath": "tests/test_robodojo_sight.py",
+      "summary": "验证双视图可测量罐体和高瓶。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        163,
+        168
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_sight.py:test_a_bowl_is_read_from_its_rim_once_a_second_camera_sees_it",
+      "type": "function",
+      "name": "test_a_bowl_is_read_from_its_rim_once_a_second_camera_sees_it",
+      "filePath": "tests/test_robodojo_sight.py",
+      "summary": "验证第二视角可利用碗口轮廓恢复碗几何。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        171,
+        181
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_sight.py:test_one_camera_alone_reads_a_box_or_a_can_closely",
+      "type": "function",
+      "name": "test_one_camera_alone_reads_a_box_or_a_can_closely",
+      "filePath": "tests/test_robodojo_sight.py",
+      "summary": "验证单相机对盒体或罐体也提供近似测量。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        184,
+        192
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_sight.py:test_a_height_measured_before_serves_when_only_one_camera_sees_the_object",
+      "type": "function",
+      "name": "test_a_height_measured_before_serves_when_only_one_camera_sees_the_object",
+      "filePath": "tests/test_robodojo_sight.py",
+      "summary": "验证先前可靠高度可用于单视角复测。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        195,
+        203
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_sight.py:test_a_mask_of_something_else_in_the_other_camera_is_not_taken",
+      "type": "function",
+      "name": "test_a_mask_of_something_else_in_the_other_camera_is_not_taken",
+      "filePath": "tests/test_robodojo_sight.py",
+      "summary": "验证不把另一相机的不同物体掩码作为匹配。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        206,
+        222
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_sight.py:test_seeds_fall_on_the_object_in_the_other_camera",
+      "type": "function",
+      "name": "test_seeds_fall_on_the_object_in_the_other_camera",
+      "filePath": "tests/test_robodojo_sight.py",
+      "summary": "验证跨相机提示点落在对应目标内部。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        225,
+        238
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_sight.py:test_the_largest_part_of_a_mask_is_one_object",
+      "type": "function",
+      "name": "test_the_largest_part_of_a_mask_is_one_object",
+      "filePath": "tests/test_robodojo_sight.py",
+      "summary": "验证分割掩码只保留代表一个物体的最大连通部分。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        241,
+        249
+      ]
+    },
+    {
+      "id": "function:tests/test_robodojo_sight.py:test_a_wrist_camera_knows_its_own_fingers",
+      "type": "function",
+      "name": "test_a_wrist_camera_knows_its_own_fingers",
+      "filePath": "tests/test_robodojo_sight.py",
+      "summary": "验证腕部相机识别并屏蔽自身夹指区域。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        252,
+        270
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:_pose",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:_pose",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_fk_reproduces_the_poses_the_simulator_reported",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_fk_reproduces_the_poses_the_simulator_reported",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_angles_are_the_convention_the_robot_reports",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_angles_are_the_convention_the_robot_reports",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_ik_solves_top_grasps_in_front_of_each_arm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_ik_solves_top_grasps_in_front_of_each_arm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_line_path_keeps_the_grasp_point_on_the_line",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_line_path_keeps_the_grasp_point_on_the_line",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_poses_in_the_table_are_flagged",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_poses_in_the_table_are_flagged",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:sim",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:sim",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:_now",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:_now",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_move_pose_points_down_over_a_spot_and_holds_the_other_arm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_move_pose_points_down_over_a_spot_and_holds_the_other_arm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_move_pose_takes_the_half_turned_grasp_when_it_is_nearer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_move_pose_takes_the_half_turned_grasp_when_it_is_nearer",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_move_pose_never_swaps_the_fingers_of_a_gripper_that_holds_something",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_move_pose_never_swaps_the_fingers_of_a_gripper_that_holds_something",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_move_pose_refuses_what_it_cannot_do_and_moves_nothing",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_move_pose_refuses_what_it_cannot_do_and_moves_nothing",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_move_pose_names_what_is_reachable_instead_and_takes_a_near_miss",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_move_pose_names_what_is_reachable_instead_and_takes_a_near_miss",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_move_pose_reports_an_arm_that_was_stopped",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_move_pose_reports_an_arm_that_was_stopped",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_keep_squeezes_what_the_last_command_closed_on",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_keep_squeezes_what_the_last_command_closed_on",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_grip_opens_part_way_and_keep_holds_that_opening",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_grip_opens_part_way_and_keep_holds_that_opening",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_grip_runs_a_full_stroke_and_reports_what_it_holds",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_grip_runs_a_full_stroke_and_reports_what_it_holds",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_home_lifts_first_then_brings_both_arms_back",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_home_lifts_first_then_brings_both_arms_back",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:_overhead",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:_overhead",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_world_points_follow_rpents_back_projection",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_world_points_follow_rpents_back_projection",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_locate_measures_a_turned_block_from_its_mask_and_depth",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_locate_measures_a_turned_block_from_its_mask_and_depth",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:_render",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:_render",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:_head_view",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:_head_view",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:_located",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:_located",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_locate_finds_the_faces_of_a_cube_the_head_camera_sees_from_the_side",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_locate_finds_the_faces_of_a_cube_the_head_camera_sees_from_the_side",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_locate_measures_a_long_box_the_head_camera_sees_from_the_side",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_locate_measures_a_long_box_the_head_camera_sees_from_the_side",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_locate_completes_the_far_side_of_a_round_object",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_locate_completes_the_far_side_of_a_round_object",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:_arcs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:_arcs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_circles_that_do_not_share_an_axis_complete_nothing",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_circles_that_do_not_share_an_axis_complete_nothing",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_locate_adds_nothing_behind_a_flat_sided_object",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_locate_adds_nothing_behind_a_flat_sided_object",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_locate_lays_a_t_along_its_bar_not_along_its_smallest_rectangle",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_locate_lays_a_t_along_its_bar_not_along_its_smallest_rectangle",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_locate_leaves_out_what_the_object_stands_on",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_locate_leaves_out_what_the_object_stands_on",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_a_footprint_of_a_few_points_in_a_row_is_still_a_rectangle",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_a_footprint_of_a_few_points_in_a_row_is_still_a_rectangle",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_points_on_the_arms_are_told_apart_from_the_scene",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_points_on_the_arms_are_told_apart_from_the_scene",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_points_on_the_open_fingers_and_their_rail_are_the_robots_too",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_points_on_the_open_fingers_and_their_rail_are_the_robots_too",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_register_adds_motion_and_coordination_tools_with_readonly_planning",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:test_register_adds_motion_and_coordination_tools_with_readonly_planning",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "class:tests/test_robodojo_motion.py:_SimArms",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "class:tests/test_robodojo_motion.py:_SimArms",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:_SimArms.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_motion.py:_SimArms",
+      "target": "function:tests/test_robodojo_motion.py:_SimArms.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:_SimArms.get_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_motion.py:_SimArms",
+      "target": "function:tests/test_robodojo_motion.py:_SimArms.get_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:_SimArms.step",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_motion.py:_SimArms",
+      "target": "function:tests/test_robodojo_motion.py:_SimArms.step",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "class:tests/test_robodojo_motion.py:_Primitives",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "class:tests/test_robodojo_motion.py:_Primitives",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:_Primitives.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_motion.py:_Primitives",
+      "target": "function:tests/test_robodojo_motion.py:_Primitives.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:_Primitives._check_cancelled",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_motion.py:_Primitives",
+      "target": "function:tests/test_robodojo_motion.py:_Primitives._check_cancelled",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "class:tests/test_robodojo_motion.py:_Sam3",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "class:tests/test_robodojo_motion.py:_Sam3",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:_Sam3.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_motion.py:_Sam3",
+      "target": "function:tests/test_robodojo_motion.py:_Sam3.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_motion.py",
+      "target": "function:tests/test_robodojo_motion.py:_Sam3.segment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_robodojo_motion.py:_Sam3",
+      "target": "function:tests/test_robodojo_motion.py:_Sam3.segment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:tests/test_robodojo_motion.py:test_ik_solves_top_grasps_in_front_of_each_arm",
+      "target": "function:tests/test_robodojo_motion.py:_pose",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_motion.py:test_line_path_keeps_the_grasp_point_on_the_line",
+      "target": "function:tests/test_robodojo_motion.py:_pose",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_motion.py:test_poses_in_the_table_are_flagged",
+      "target": "function:tests/test_robodojo_motion.py:_pose",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_motion.py:test_move_pose_points_down_over_a_spot_and_holds_the_other_arm",
+      "target": "function:tests/test_robodojo_motion.py:_now",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_motion.py:test_move_pose_refuses_what_it_cannot_do_and_moves_nothing",
+      "target": "function:tests/test_robodojo_motion.py:_now",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_motion.py:test_move_pose_names_what_is_reachable_instead_and_takes_a_near_miss",
+      "target": "function:tests/test_robodojo_motion.py:_pose",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_motion.py:test_world_points_follow_rpents_back_projection",
+      "target": "function:tests/test_robodojo_motion.py:_overhead",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_motion.py:test_locate_measures_a_turned_block_from_its_mask_and_depth",
+      "target": "function:tests/test_robodojo_motion.py:_overhead",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_motion.py:_head_view",
+      "target": "function:tests/test_robodojo_motion.py:_render",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_motion.py:_located",
+      "target": "function:tests/test_robodojo_motion.py:_head_view",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_motion.py:test_locate_finds_the_faces_of_a_cube_the_head_camera_sees_from_the_side",
+      "target": "function:tests/test_robodojo_motion.py:_located",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_motion.py:test_locate_measures_a_long_box_the_head_camera_sees_from_the_side",
+      "target": "function:tests/test_robodojo_motion.py:_located",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_motion.py:test_locate_completes_the_far_side_of_a_round_object",
+      "target": "function:tests/test_robodojo_motion.py:_located",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_motion.py:test_locate_completes_the_far_side_of_a_round_object",
+      "target": "function:tests/test_robodojo_motion.py:_head_view",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_motion.py:test_circles_that_do_not_share_an_axis_complete_nothing",
+      "target": "function:tests/test_robodojo_motion.py:_arcs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_motion.py:test_locate_adds_nothing_behind_a_flat_sided_object",
+      "target": "function:tests/test_robodojo_motion.py:_located",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_motion.py:test_locate_lays_a_t_along_its_bar_not_along_its_smallest_rectangle",
+      "target": "function:tests/test_robodojo_motion.py:_located",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_motion.py:test_locate_leaves_out_what_the_object_stands_on",
+      "target": "function:tests/test_robodojo_motion.py:_render",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_motion.py:test_locate_leaves_out_what_the_object_stands_on",
+      "target": "function:tests/test_robodojo_motion.py:_located",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "file:tests/test_robodojo_motion.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "file:tests/test_robodojo_motion.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/robodojo.py",
+      "target": "file:tests/test_robodojo_motion.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/hosts/__init__.py",
+      "target": "file:tests/test_robodojo_motion.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:tests/test_robodojo_sight.py",
+      "target": "function:tests/test_robodojo_sight.py:render",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_sight.py",
+      "target": "function:tests/test_robodojo_sight.py:render",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_sight.py",
+      "target": "function:tests/test_robodojo_sight.py:views",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_sight.py",
+      "target": "function:tests/test_robodojo_sight.py:views",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_sight.py",
+      "target": "function:tests/test_robodojo_sight.py:measured",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_sight.py",
+      "target": "function:tests/test_robodojo_sight.py:measured",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_sight.py",
+      "target": "function:tests/test_robodojo_sight.py:off",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_sight.py",
+      "target": "function:tests/test_robodojo_sight.py:off",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_sight.py",
+      "target": "function:tests/test_robodojo_sight.py:test_the_cameras_are_where_the_simulator_reports_them",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_sight.py",
+      "target": "function:tests/test_robodojo_sight.py:test_the_cameras_are_where_the_simulator_reports_them",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_sight.py",
+      "target": "function:tests/test_robodojo_sight.py:test_a_box_seen_by_two_cameras_is_measured_to_millimetres",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_sight.py",
+      "target": "function:tests/test_robodojo_sight.py:test_a_box_seen_by_two_cameras_is_measured_to_millimetres",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_sight.py",
+      "target": "function:tests/test_robodojo_sight.py:test_a_can_and_a_tall_bottle_seen_by_two_cameras",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_sight.py",
+      "target": "function:tests/test_robodojo_sight.py:test_a_can_and_a_tall_bottle_seen_by_two_cameras",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_sight.py",
+      "target": "function:tests/test_robodojo_sight.py:test_a_bowl_is_read_from_its_rim_once_a_second_camera_sees_it",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_sight.py",
+      "target": "function:tests/test_robodojo_sight.py:test_a_bowl_is_read_from_its_rim_once_a_second_camera_sees_it",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_sight.py",
+      "target": "function:tests/test_robodojo_sight.py:test_one_camera_alone_reads_a_box_or_a_can_closely",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_sight.py",
+      "target": "function:tests/test_robodojo_sight.py:test_one_camera_alone_reads_a_box_or_a_can_closely",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_sight.py",
+      "target": "function:tests/test_robodojo_sight.py:test_a_height_measured_before_serves_when_only_one_camera_sees_the_object",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_sight.py",
+      "target": "function:tests/test_robodojo_sight.py:test_a_height_measured_before_serves_when_only_one_camera_sees_the_object",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_sight.py",
+      "target": "function:tests/test_robodojo_sight.py:test_a_mask_of_something_else_in_the_other_camera_is_not_taken",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_sight.py",
+      "target": "function:tests/test_robodojo_sight.py:test_a_mask_of_something_else_in_the_other_camera_is_not_taken",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_sight.py",
+      "target": "function:tests/test_robodojo_sight.py:test_seeds_fall_on_the_object_in_the_other_camera",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_sight.py",
+      "target": "function:tests/test_robodojo_sight.py:test_seeds_fall_on_the_object_in_the_other_camera",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_sight.py",
+      "target": "function:tests/test_robodojo_sight.py:test_the_largest_part_of_a_mask_is_one_object",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_sight.py",
+      "target": "function:tests/test_robodojo_sight.py:test_the_largest_part_of_a_mask_is_one_object",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_robodojo_sight.py",
+      "target": "function:tests/test_robodojo_sight.py:test_a_wrist_camera_knows_its_own_fingers",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_robodojo_sight.py",
+      "target": "function:tests/test_robodojo_sight.py:test_a_wrist_camera_knows_its_own_fingers",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_sight.py:measured",
+      "target": "function:tests/test_robodojo_sight.py:views",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_sight.py:measured",
+      "target": "function:tests/test_robodojo_sight.py:render",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_sight.py:test_a_box_seen_by_two_cameras_is_measured_to_millimetres",
+      "target": "function:tests/test_robodojo_sight.py:measured",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_sight.py:test_a_box_seen_by_two_cameras_is_measured_to_millimetres",
+      "target": "function:tests/test_robodojo_sight.py:off",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_sight.py:test_a_can_and_a_tall_bottle_seen_by_two_cameras",
+      "target": "function:tests/test_robodojo_sight.py:measured",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_sight.py:test_a_can_and_a_tall_bottle_seen_by_two_cameras",
+      "target": "function:tests/test_robodojo_sight.py:off",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_sight.py:test_a_bowl_is_read_from_its_rim_once_a_second_camera_sees_it",
+      "target": "function:tests/test_robodojo_sight.py:measured",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_sight.py:test_a_bowl_is_read_from_its_rim_once_a_second_camera_sees_it",
+      "target": "function:tests/test_robodojo_sight.py:off",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_sight.py:test_one_camera_alone_reads_a_box_or_a_can_closely",
+      "target": "function:tests/test_robodojo_sight.py:measured",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_sight.py:test_one_camera_alone_reads_a_box_or_a_can_closely",
+      "target": "function:tests/test_robodojo_sight.py:off",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_sight.py:test_a_height_measured_before_serves_when_only_one_camera_sees_the_object",
+      "target": "function:tests/test_robodojo_sight.py:measured",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_sight.py:test_a_height_measured_before_serves_when_only_one_camera_sees_the_object",
+      "target": "function:tests/test_robodojo_sight.py:off",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_sight.py:test_a_mask_of_something_else_in_the_other_camera_is_not_taken",
+      "target": "function:tests/test_robodojo_sight.py:views",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_sight.py:test_a_mask_of_something_else_in_the_other_camera_is_not_taken",
+      "target": "function:tests/test_robodojo_sight.py:render",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_sight.py:test_a_mask_of_something_else_in_the_other_camera_is_not_taken",
+      "target": "function:tests/test_robodojo_sight.py:off",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_sight.py:test_seeds_fall_on_the_object_in_the_other_camera",
+      "target": "function:tests/test_robodojo_sight.py:views",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_robodojo_sight.py:test_seeds_fall_on_the_object_in_the_other_camera",
+      "target": "function:tests/test_robodojo_sight.py:render",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "file:tests/test_robodojo_sight.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "file:tests/test_robodojo_sight.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "file:tests/test_robodojo_sight.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/hosts/__init__.py",
+      "target": "file:tests/test_robodojo_sight.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

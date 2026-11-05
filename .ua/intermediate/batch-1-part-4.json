@@ -1,0 +1,2879 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "type": "file",
+      "name": "robodojo_tools.py",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "summary": "实现 RoboDojo 全姿态移动、完整夹爪行程、复位和三维物体定位工具。几何计算来自可见观测，执行沿用统一原生动作路径与预算。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "物体定位"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:_obs",
+      "type": "function",
+      "name": "_obs",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        143,
+        146
+      ],
+      "summary": "读取环境当前观测并缓存到原语宿主。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:_joints",
+      "type": "function",
+      "name": "_joints",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        149,
+        150
+      ],
+      "summary": "从状态中提取指定手臂的浮点关节角。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:_opening",
+      "type": "function",
+      "name": "_opening",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        153,
+        165
+      ],
+      "summary": "展开嵌套单值数据并读取指定夹爪的实际开度。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:_command",
+      "type": "function",
+      "name": "_command",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        168,
+        178
+      ],
+      "summary": "把开闭保持命令映射为原生夹爪目标值。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:_act",
+      "type": "function",
+      "name": "_act",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        181,
+        203
+      ],
+      "summary": "执行一个原生动作，仅更新指定手臂并保持其他手臂。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:_remember",
+      "type": "function",
+      "name": "_remember",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        206,
+        214
+      ],
+      "summary": "记录指定夹爪最近一次目标命令。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:_keep",
+      "type": "function",
+      "name": "_keep",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        217,
+        235
+      ],
+      "summary": "保持上一夹爪命令而非接触物体后的实测开度，并兼容 VLA 改变夹爪的情况。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:_spent",
+      "type": "function",
+      "name": "_spent",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        238,
+        242
+      ],
+      "summary": "判断原生动作计数是否已达到环境上限。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:_tcp",
+      "type": "function",
+      "name": "_tcp",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        245,
+        246
+      ],
+      "summary": "由关节角计算并舍入抓取点世界坐标。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:_pose_summary",
+      "type": "function",
+      "name": "_pose_summary",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        249,
+        257
+      ],
+      "summary": "计算当前抓取点及面向策略的俯仰、偏航和滚转摘要。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:_target",
+      "type": "function",
+      "name": "_target",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        265,
+        273
+      ],
+      "summary": "将指定位置与缺省保持的方向分量组合为目标全位姿。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:_joint_path_clear",
+      "type": "function",
+      "name": "_joint_path_clear",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        276,
+        280
+      ],
+      "summary": "采样两组关节之间的插值路径，检查桌面间隙。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:_pose_of",
+      "type": "function",
+      "name": "_pose_of",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        283,
+        290
+      ],
+      "summary": "由关节角构造方向沿 link6、位置在 TCP 的抓取位姿。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:_plan",
+      "type": "function",
+      "name": "_plan",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        293,
+        325
+      ],
+      "summary": "先求目标位姿再规划直线或关节路径，区分目标不可达与路径不可达并报告近似目标。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:_unreachable",
+      "type": "function",
+      "name": "_unreachable",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        328,
+        332
+      ],
+      "summary": "把最接近逆运动学解的位置与角度误差格式化为拒绝原因。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:_alternatives",
+      "type": "function",
+      "name": "_alternatives",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        335,
+        358
+      ],
+      "summary": "寻找俯仰更平缓或高度稍变的可达替代位姿。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:_followable",
+      "type": "function",
+      "name": "_followable",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        361,
+        375
+      ],
+      "summary": "把关节路径拆为仿真每个原生动作可以跟随的小步目标。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:move_pose",
+      "type": "function",
+      "name": "move_pose",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        378,
+        510
+      ],
+      "summary": "用宿主全姿态逆运动学执行单臂抓取点运动，保持未指定角度并返回真实到达与停止信息。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:grip",
+      "type": "function",
+      "name": "grip",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        513,
+        564
+      ],
+      "summary": "重复开合命令直到夹爪稳定，可指定部分张开，返回接触开度和行程消耗。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:home",
+      "type": "function",
+      "name": "home",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        567,
+        641
+      ],
+      "summary": "将一侧或双臂驱动回初始关节角，低位时先有限抬升并保持另一臂。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:_on_robot",
+      "type": "function",
+      "name": "_on_robot",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        649,
+        684
+      ],
+      "summary": "判断世界点是否落在机器人连杆、夹爪轨道或手指的几何包络内。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:_camera",
+      "type": "function",
+      "name": "_camera",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        687,
+        688
+      ],
+      "summary": "从当前观测中取得指定相机的数据。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:depth_image",
+      "type": "function",
+      "name": "depth_image",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        691,
+        711
+      ],
+      "summary": "兼容米制深度和毫米近似深度字段，返回光轴方向深度图。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:extrinsic_of",
+      "type": "function",
+      "name": "extrinsic_of",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        714,
+        719
+      ],
+      "summary": "兼容 RoboDojo 与 XPolicyLab 的相机外参字段命名。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:world_points",
+      "type": "function",
+      "name": "world_points",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        722,
+        741
+      ],
+      "summary": "结合深度及相机矩阵反投影世界点，并给出有效深度像素掩膜。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:_cells",
+      "type": "function",
+      "name": "_cells",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        744,
+        753
+      ],
+      "summary": "把点云按平面网格均匀降采样，避免高密度可见区域获得更大权重。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:_footprint",
+      "type": "function",
+      "name": "_footprint",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        756,
+        788
+      ],
+      "summary": "从均匀足迹估计矩形中心、长宽与方向，按形状选择主轴或最小面积包围框。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:_far_side",
+      "type": "function",
+      "name": "_far_side",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        791,
+        830
+      ],
+      "summary": "对共享竖直轴的圆形切片补全不可见远侧，修正瓶杯足迹偏向相机的问题。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:object_geometry",
+      "type": "function",
+      "name": "object_geometry",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        833,
+        862
+      ],
+      "summary": "根据可见表面点云估计物体范围、朝向和顶部高度。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:colour_only",
+      "type": "function",
+      "name": "colour_only",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        872,
+        883
+      ],
+      "summary": "结合宿主声明和实际观测判断是否只能使用彩色感知。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:_shown",
+      "type": "function",
+      "name": "_shown",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        886,
+        898
+      ],
+      "summary": "读取图片真正对应的机器人状态，兼容旧客户端图像滞后一帧的协议。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:_view",
+      "type": "function",
+      "name": "_view",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        901,
+        911
+      ],
+      "summary": "从头部固定安装或腕部状态推导相机位姿。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:_scene",
+      "type": "function",
+      "name": "_scene",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        914,
+        930
+      ],
+      "summary": "缓存当前观测图像已经得到的几何测量，图像变化后失效。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:_heights",
+      "type": "function",
+      "name": "_heights",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        933,
+        941
+      ],
+      "summary": "读取或初始化已经测得的物体高度缓存。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:_behind_robot",
+      "type": "function",
+      "name": "_behind_robot",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        944,
+        956
+      ],
+      "summary": "判断机器人轮廓是否贴近掩膜边缘，从而识别物体局部遮挡。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:_measure_in_colour",
+      "type": "function",
+      "name": "_measure_in_colour",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        959,
+        1059
+      ],
+      "summary": "在其他相机通过文本和投影种子寻找同一物体，联合多视角掩膜估计三维几何。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:probe",
+      "type": "function",
+      "name": "probe",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        1062,
+        1143
+      ],
+      "summary": "无深度时分割像素下物体并求射线与估计表面的交点，无法测量时退回桌面交点。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:back_project",
+      "type": "function",
+      "name": "back_project",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        1149,
+        1180
+      ],
+      "summary": "有深度时执行直接反投影，无深度时使用纯彩色物体探测。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:locate",
+      "type": "function",
+      "name": "locate",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        1186,
+        1268
+      ],
+      "summary": "按文本分割物体并从允许的深度或彩色观测估计三维范围与方向。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_tools.py:register",
+      "type": "function",
+      "name": "register",
+      "filePath": "src/pyrualean/hosts/robodojo_tools.py",
+      "lineRange": [
+        1351,
+        1372
+      ],
+      "summary": "将项目原语注册到刚启动的工具包，并保存回合初始关节角用于回家动作。",
+      "tags": [
+        "机器人原语",
+        "全姿态运动",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "type": "file",
+      "name": "xpolicylab_bridge.py",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "summary": "用条件变量把 XPolicyLab 拉取动作协议转换为工具主动步进环境的接口，支持等待轮询、最终判决及旧客户端图像状态对齐。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "评估客户端"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/xpolicylab_bridge.py:serve",
+      "type": "function",
+      "name": "serve",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        313,
+        316
+      ],
+      "summary": "启动 XPolicyLab 服务，将当前 Bridge 暴露给评估客户端。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/hosts/xpolicylab_bridge.py:EpisodeOver",
+      "type": "class",
+      "name": "EpisodeOver",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        49,
+        50
+      ],
+      "summary": "表示评估客户端已经结束回合，不会再提供后续观测。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge",
+      "type": "class",
+      "name": "Bridge",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        53,
+        220
+      ],
+      "summary": "在评估客户端与同步工具之间交换单回合观测、动作、状态和最终判决。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "数据模型"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.__init__",
+      "type": "function",
+      "name": "Bridge.__init__",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        56,
+        66
+      ],
+      "summary": "初始化条件变量、观测序号、动作槽位及回合状态。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.reset",
+      "type": "function",
+      "name": "Bridge.reset",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        70,
+        73
+      ],
+      "summary": "记录客户端复位并唤醒等待线程。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.update_obs",
+      "type": "function",
+      "name": "Bridge.update_obs",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        75,
+        107
+      ],
+      "summary": "接收新观测与原生预算，校正图片所对应的状态并通知等待动作的工具。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.get_action",
+      "type": "function",
+      "name": "Bridge.get_action",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        109,
+        116
+      ],
+      "summary": "在有限轮询时间内返回待执行动作，无动作时返回等待，完成后返回结束信号。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.episode_end",
+      "type": "function",
+      "name": "Bridge.episode_end",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        118,
+        121
+      ],
+      "summary": "记录客户端的最终回合信息并唤醒等待方。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.first_obs",
+      "type": "function",
+      "name": "Bridge.first_obs",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        125,
+        141
+      ],
+      "summary": "等待首个观测，同时检测客户端是否仍然存活。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.get_obs",
+      "type": "function",
+      "name": "Bridge.get_obs",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        143,
+        147
+      ],
+      "summary": "返回当前观测；尚无观测时明确报错。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.status",
+      "type": "function",
+      "name": "Bridge.status",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        149,
+        156
+      ],
+      "summary": "返回原生状态副本并合并已经收到的回合结束信息。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.over",
+      "type": "function",
+      "name": "Bridge.over",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        159,
+        161
+      ],
+      "summary": "返回最终回合信息副本，尚未结束时为空。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.step",
+      "type": "function",
+      "name": "Bridge.step",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        163,
+        186
+      ],
+      "summary": "把一个原生动作交给客户端执行并等待其后的观测，回合结束时抛出 EpisodeOver。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.finish",
+      "type": "function",
+      "name": "Bridge.finish",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        188,
+        193
+      ],
+      "summary": "声明策略不再提供动作，让客户端判断最终场景并结束。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.abandon",
+      "type": "function",
+      "name": "Bridge.abandon",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        195,
+        205
+      ],
+      "summary": "客户端重置或离开时结束等待，保留已收到的最终判决。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.verdict",
+      "type": "function",
+      "name": "Bridge.verdict",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        207,
+        220
+      ],
+      "summary": "等待客户端最终判决，超时或客户端死亡时返回未知。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "class:src/pyrualean/hosts/xpolicylab_bridge.py:BridgeEnv",
+      "type": "class",
+      "name": "BridgeEnv",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        223,
+        251
+      ],
+      "summary": "把 Bridge 包装为机器人原语所需的环境接口。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/xpolicylab_bridge.py:BridgeEnv.__init__",
+      "type": "function",
+      "name": "BridgeEnv.__init__",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        226,
+        228
+      ],
+      "summary": "保存桥接器和客户端存活检测回调。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/xpolicylab_bridge.py:BridgeEnv.get_obs",
+      "type": "function",
+      "name": "BridgeEnv.get_obs",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        230,
+        231
+      ],
+      "summary": "通过桥接器读取当前观测。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/xpolicylab_bridge.py:BridgeEnv.get_status",
+      "type": "function",
+      "name": "BridgeEnv.get_status",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        233,
+        234
+      ],
+      "summary": "通过桥接器读取当前原生状态。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/xpolicylab_bridge.py:BridgeEnv.step",
+      "type": "function",
+      "name": "BridgeEnv.step",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        236,
+        242
+      ],
+      "summary": "执行桥接动作并将回合结束转换为标准环境返回结构。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/xpolicylab_bridge.py:BridgeEnv.episode_over",
+      "type": "function",
+      "name": "BridgeEnv.episode_over",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        244,
+        247
+      ],
+      "summary": "查询客户端是否已经结束回合并提交判决。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/xpolicylab_bridge.py:BridgeEnv.conclude",
+      "type": "function",
+      "name": "BridgeEnv.conclude",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        249,
+        251
+      ],
+      "summary": "通知客户端策略完成并等待最终判决。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "class:src/pyrualean/hosts/xpolicylab_bridge.py:PolicyModel",
+      "type": "class",
+      "name": "PolicyModel",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        254,
+        277
+      ],
+      "summary": "实现 XPolicyLab Model 方法，将所有请求转发给同一回合桥接器。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/xpolicylab_bridge.py:PolicyModel.__init__",
+      "type": "function",
+      "name": "PolicyModel.__init__",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        257,
+        258
+      ],
+      "summary": "保存当前回合桥接器。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/xpolicylab_bridge.py:PolicyModel.reset",
+      "type": "function",
+      "name": "PolicyModel.reset",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        260,
+        261
+      ],
+      "summary": "转发客户端复位通知。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/xpolicylab_bridge.py:PolicyModel.update_obs",
+      "type": "function",
+      "name": "PolicyModel.update_obs",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        263,
+        264
+      ],
+      "summary": "转发客户端最新观测。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/xpolicylab_bridge.py:PolicyModel.get_action",
+      "type": "function",
+      "name": "PolicyModel.get_action",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        266,
+        267
+      ],
+      "summary": "取得下一原生动作或等待信号。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/xpolicylab_bridge.py:PolicyModel.on_trial_end",
+      "type": "function",
+      "name": "PolicyModel.on_trial_end",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        269,
+        271
+      ],
+      "summary": "把试验最终结果交给桥接器并确认接收。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/xpolicylab_bridge.py:PolicyModel.update_obs_batch",
+      "type": "function",
+      "name": "PolicyModel.update_obs_batch",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        273,
+        274
+      ],
+      "summary": "拒绝批量观测，因为当前协议要求一个会话驱动一个环境。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/xpolicylab_bridge.py:PolicyModel.get_action_batch",
+      "type": "function",
+      "name": "PolicyModel.get_action_batch",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        276,
+        277
+      ],
+      "summary": "拒绝批量动作请求，避免混用单环境回合状态。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "class:src/pyrualean/hosts/xpolicylab_bridge.py:Server",
+      "type": "class",
+      "name": "Server",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        280,
+        310
+      ],
+      "summary": "在独立事件循环和后台线程中运行 XPolicyLab WebSocket 策略服务。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Server.__init__",
+      "type": "function",
+      "name": "Server.__init__",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        283,
+        293
+      ],
+      "summary": "创建策略服务、事件循环和后台线程并保存错误状态。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Server.stop",
+      "type": "function",
+      "name": "Server.stop",
+      "filePath": "src/pyrualean/hosts/xpolicylab_bridge.py",
+      "lineRange": [
+        302,
+        310
+      ],
+      "summary": "异步停止策略服务并有界等待线程退出。",
+      "tags": [
+        "协议桥接",
+        "并发同步",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_obs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_joints",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_joints",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_opening",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_opening",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_command",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_command",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_act",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_act",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_remember",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_remember",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_keep",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_keep",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_spent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_spent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_tcp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_tcp",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_pose_summary",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_pose_summary",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_target",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_target",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_joint_path_clear",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_joint_path_clear",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_pose_of",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_pose_of",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_plan",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_plan",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_unreachable",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_unreachable",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_alternatives",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_alternatives",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_followable",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_followable",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:move_pose",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:move_pose",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:grip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:grip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:home",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_on_robot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_on_robot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_camera",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_camera",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:depth_image",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:depth_image",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:extrinsic_of",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:extrinsic_of",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:world_points",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:world_points",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_cells",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_cells",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_footprint",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_footprint",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_far_side",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_far_side",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:object_geometry",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:object_geometry",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:colour_only",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:colour_only",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_shown",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_shown",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_view",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_view",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_scene",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_scene",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_heights",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_heights",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_behind_robot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_behind_robot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_measure_in_colour",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_measure_in_colour",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:probe",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:probe",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:back_project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:back_project",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:locate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:locate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:register",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:register",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "file:src/pyrualean/hosts/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_tools.py",
+      "target": "file:src/pyrualean/robodojo.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:_act",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_joints",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:_act",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_keep",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:_act",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_remember",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:_act",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_obs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:_keep",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_opening",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:_plan",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_unreachable",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:_plan",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_pose_of",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:_plan",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_followable",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:_plan",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_joint_path_clear",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:move_pose",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_command",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:move_pose",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_obs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:move_pose",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_joints",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:move_pose",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_tcp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:move_pose",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_target",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:move_pose",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_opening",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:move_pose",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_plan",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:move_pose",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_alternatives",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:move_pose",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_pose_summary",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:move_pose",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_act",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:move_pose",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_spent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:grip",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_command",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:grip",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_obs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:grip",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_joints",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:grip",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_opening",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:grip",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_act",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:grip",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_spent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:home",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_joints",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:home",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_obs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:home",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_pose_of",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:home",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_followable",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:home",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_act",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:home",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_spent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:_on_robot",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_joints",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:_on_robot",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_opening",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:world_points",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:depth_image",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:world_points",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:extrinsic_of",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:_footprint",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_cells",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:object_geometry",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_footprint",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:object_geometry",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_far_side",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:colour_only",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:depth_image",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:_measure_in_colour",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_shown",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:_measure_in_colour",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_view",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:_measure_in_colour",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_heights",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:_measure_in_colour",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_behind_robot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:_measure_in_colour",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:object_geometry",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:_measure_in_colour",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_scene",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:probe",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_obs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:probe",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_camera",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:probe",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_shown",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:probe",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_view",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:probe",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_scene",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:probe",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_measure_in_colour",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:back_project",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_obs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:back_project",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_camera",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:back_project",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:colour_only",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:back_project",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:probe",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:back_project",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:depth_image",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:back_project",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:extrinsic_of",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:back_project",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:world_points",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:locate",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_obs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:locate",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_camera",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:locate",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:colour_only",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:locate",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_view",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:locate",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_shown",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:locate",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_measure_in_colour",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:locate",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:world_points",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:locate",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_on_robot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:locate",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:object_geometry",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_tools.py:register",
+      "target": "function:src/pyrualean/hosts/robodojo_tools.py:_joints",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:serve",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:serve",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "class:src/pyrualean/hosts/xpolicylab_bridge.py:EpisodeOver",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "class:src/pyrualean/hosts/xpolicylab_bridge.py:EpisodeOver",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "class:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "class:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.reset",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.reset",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.update_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.update_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.get_action",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.get_action",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.episode_end",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.episode_end",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.first_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.first_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.get_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.get_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.status",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.status",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.over",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.over",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.step",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.step",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.finish",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.finish",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.abandon",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.abandon",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.verdict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.verdict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "class:src/pyrualean/hosts/xpolicylab_bridge.py:BridgeEnv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "class:src/pyrualean/hosts/xpolicylab_bridge.py:BridgeEnv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:BridgeEnv.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/xpolicylab_bridge.py:BridgeEnv",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:BridgeEnv.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:BridgeEnv.get_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/xpolicylab_bridge.py:BridgeEnv",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:BridgeEnv.get_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:BridgeEnv.get_status",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/xpolicylab_bridge.py:BridgeEnv",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:BridgeEnv.get_status",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:BridgeEnv.step",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/xpolicylab_bridge.py:BridgeEnv",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:BridgeEnv.step",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:BridgeEnv.episode_over",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/xpolicylab_bridge.py:BridgeEnv",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:BridgeEnv.episode_over",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:BridgeEnv.conclude",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/xpolicylab_bridge.py:BridgeEnv",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:BridgeEnv.conclude",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "class:src/pyrualean/hosts/xpolicylab_bridge.py:PolicyModel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "class:src/pyrualean/hosts/xpolicylab_bridge.py:PolicyModel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:PolicyModel.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/xpolicylab_bridge.py:PolicyModel",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:PolicyModel.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:PolicyModel.reset",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/xpolicylab_bridge.py:PolicyModel",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:PolicyModel.reset",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:PolicyModel.update_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/xpolicylab_bridge.py:PolicyModel",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:PolicyModel.update_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:PolicyModel.get_action",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/xpolicylab_bridge.py:PolicyModel",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:PolicyModel.get_action",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:PolicyModel.on_trial_end",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/xpolicylab_bridge.py:PolicyModel",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:PolicyModel.on_trial_end",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:PolicyModel.update_obs_batch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/xpolicylab_bridge.py:PolicyModel",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:PolicyModel.update_obs_batch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:PolicyModel.get_action_batch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/xpolicylab_bridge.py:PolicyModel",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:PolicyModel.get_action_batch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "class:src/pyrualean/hosts/xpolicylab_bridge.py:Server",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "class:src/pyrualean/hosts/xpolicylab_bridge.py:Server",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Server.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/xpolicylab_bridge.py:Server",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Server.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/xpolicylab_bridge.py",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Server.stop",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/xpolicylab_bridge.py:Server",
+      "target": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Server.stop",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.first_obs",
+      "target": "class:src/pyrualean/hosts/xpolicylab_bridge.py:EpisodeOver",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/xpolicylab_bridge.py:Bridge.step",
+      "target": "class:src/pyrualean/hosts/xpolicylab_bridge.py:EpisodeOver",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/xpolicylab_bridge.py:serve",
+      "target": "class:src/pyrualean/hosts/xpolicylab_bridge.py:Server",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/xpolicylab_bridge.py:serve",
+      "target": "class:src/pyrualean/hosts/xpolicylab_bridge.py:PolicyModel",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

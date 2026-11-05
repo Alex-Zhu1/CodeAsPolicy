@@ -167,6 +167,13 @@ of the public leaderboard taken on October 9, 2026; the official evaluation was 
 | Qwen3.5-27B | 64.4 | **38.1** | 20.8 | 65.6 | 13.1 | 29.2 |
 | **PyRUA-Lean Coder v0.1-4B** | **71.1** | 37.4 | **52.4** | **76.7** | **19.4** | **44.1** |
 
+## Development workflow
+
+[PyRUA-Lean development RSI](skills/pyrualean-dev-rsi/SKILL.md) collects verified testing and
+debugging practices, evidence from prior experiments, and a read-only run inspector. Ask your
+development agent to read the skill before debugging or evaluating a change, then update its
+lessons with newly verified evidence.
+
 ## 📖 Citation
 
 If you use PyRUA-Lean, please cite our paper:

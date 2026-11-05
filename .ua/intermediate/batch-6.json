@@ -1,0 +1,33 @@
+{
+  "nodes": [
+    {
+      "id": "pipeline:.github/workflows/docs.yml",
+      "type": "pipeline",
+      "name": "docs.yml",
+      "filePath": ".github/workflows/docs.yml",
+      "summary": "构建 MkDocs 文档站，使用 Python 3.11 安装文档依赖并执行严格构建。主分支推送且仓库身份匹配时，将站点发布到指定页面分支。",
+      "tags": [
+        "持续集成",
+        "文档构建",
+        "部署"
+      ],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "pipeline:.github/workflows/docs.yml",
+      "target": "config:mkdocs.yml",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "pipeline:.github/workflows/docs.yml",
+      "target": "file:docs/hooks/api_reference.py",
+      "type": "triggers",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

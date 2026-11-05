@@ -1,0 +1,493 @@
+{
+  "nodes": [
+    {
+      "id": "config:skills/astra-valen-supervision/agents/openai.yaml",
+      "type": "config",
+      "name": "openai.yaml",
+      "filePath": "skills/astra-valen-supervision/agents/openai.yaml",
+      "summary": "配置视觉监督技能的显示名称、简短说明和默认规划提示。",
+      "tags": [
+        "技能配置",
+        "入口说明",
+        "视觉监督"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:skills/astra-valen-supervision/references/contracts.md",
+      "type": "document",
+      "name": "contracts.md",
+      "filePath": "skills/astra-valen-supervision/references/contracts.md",
+      "summary": "提供任务简报和阶段契约模板，解释双臂与单臂组合、证据依赖、动作后检查以及恢复边界。",
+      "tags": [
+        "参考文档",
+        "阶段契约",
+        "双臂协调"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:src/pyrualean/codex-catalog-gpt-6-astra-fallback.json",
+      "type": "config",
+      "name": "codex-catalog-gpt-6-astra-fallback.json",
+      "filePath": "src/pyrualean/codex-catalog-gpt-6-astra-fallback.json",
+      "summary": "保存运行 Codex 时可选的 gpt-6-astra 模型目录元数据，包括推理级别、上下文和指令模板，供生成器选择性注入。",
+      "tags": [
+        "模型配置",
+        "运行时",
+        "兼容目录"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/pyrualean/hosts/robodojo_client_root.py",
+      "type": "file",
+      "name": "robodojo_client_root.py",
+      "filePath": "src/pyrualean/hosts/robodojo_client_root.py",
+      "summary": "构建官方 RoboDojo 评估客户端的独立运行目录，复制代码配置、链接资源，并可只在副本中开启深度和相机矩阵。",
+      "tags": [
+        "客户端准备",
+        "配置副本",
+        "资源管理"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_client_root.py:with_depth",
+      "type": "function",
+      "name": "with_depth",
+      "filePath": "src/pyrualean/hosts/robodojo_client_root.py",
+      "lineRange": [
+        28,
+        46
+      ],
+      "summary": "在配置副本中开启深度及相机矩阵相关开关。",
+      "tags": [
+        "客户端准备",
+        "配置副本",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_client_root.py:_assets",
+      "type": "function",
+      "name": "_assets",
+      "filePath": "src/pyrualean/hosts/robodojo_client_root.py",
+      "lineRange": [
+        49,
+        55
+      ],
+      "summary": "定位仓库内或运行环境指定的 RoboDojo 资源目录。",
+      "tags": [
+        "客户端准备",
+        "配置副本",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_client_root.py:lay_out",
+      "type": "function",
+      "name": "lay_out",
+      "filePath": "src/pyrualean/hosts/robodojo_client_root.py",
+      "lineRange": [
+        58,
+        111
+      ],
+      "summary": "复制 RoboDojo 与 XPolicyLab 必需代码，放置所选策略并布置资源和结果目录。",
+      "tags": [
+        "客户端准备",
+        "配置副本",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/pyrualean/hosts/robodojo_env_server.py",
+      "type": "file",
+      "name": "robodojo_env_server.py",
+      "filePath": "src/pyrualean/hosts/robodojo_env_server.py",
+      "summary": "包装 RPent RoboDojo 环境服务器，在进程内补齐基准第三臂轨迹与评估种子行为，使互动任务遵循官方客户端动作序列。",
+      "tags": [
+        "环境兼容",
+        "第三臂",
+        "服务器入口"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_env_server.py:_query",
+      "type": "function",
+      "name": "_query",
+      "filePath": "src/pyrualean/hosts/robodojo_env_server.py",
+      "lineRange": [
+        45,
+        51
+      ],
+      "summary": "请求辅助臂下一轨迹并记录新增队列长度。",
+      "tags": [
+        "环境兼容",
+        "第三臂",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_env_server.py:_queue_first",
+      "type": "function",
+      "name": "_queue_first",
+      "filePath": "src/pyrualean/hosts/robodojo_env_server.py",
+      "lineRange": [
+        54,
+        59
+      ],
+      "summary": "在回合检查注册后排入辅助臂首段轨迹。",
+      "tags": [
+        "环境兼容",
+        "第三臂",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_env_server.py:_take_turn",
+      "type": "function",
+      "name": "_take_turn",
+      "filePath": "src/pyrualean/hosts/robodojo_env_server.py",
+      "lineRange": [
+        62,
+        70
+      ],
+      "summary": "每次动作后按官方轮次规则排队辅助臂动作并检查稳定性。",
+      "tags": [
+        "环境兼容",
+        "第三臂",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_env_server.py:_give_eval_seed",
+      "type": "function",
+      "name": "_give_eval_seed",
+      "filePath": "src/pyrualean/hosts/robodojo_env_server.py",
+      "lineRange": [
+        73,
+        84
+      ],
+      "summary": "为缺少该字段的环境补入布局集合编号，支持示范轨迹加载。",
+      "tags": [
+        "环境兼容",
+        "第三臂",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_env_server.py:_replaying",
+      "type": "function",
+      "name": "_replaying",
+      "filePath": "src/pyrualean/hosts/robodojo_env_server.py",
+      "lineRange": [
+        87,
+        104
+      ],
+      "summary": "在控制子步中插入已排队的辅助臂动作。",
+      "tags": [
+        "环境兼容",
+        "第三臂",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_env_server.py:install",
+      "type": "function",
+      "name": "install",
+      "filePath": "src/pyrualean/hosts/robodojo_env_server.py",
+      "lineRange": [
+        107,
+        143
+      ],
+      "summary": "幂等包装运行时桥接与延迟创建的环境类，补齐第三臂评估行为。",
+      "tags": [
+        "环境兼容",
+        "第三臂",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_env_server.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "src/pyrualean/hosts/robodojo_env_server.py",
+      "lineRange": [
+        146,
+        154
+      ],
+      "summary": "安装进程内兼容逻辑后，以原参数执行 RPent 环境服务器脚本。",
+      "tags": [
+        "环境兼容",
+        "第三臂",
+        "函数"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_client_root.py",
+      "target": "function:src/pyrualean/hosts/robodojo_client_root.py:with_depth",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_client_root.py",
+      "target": "function:src/pyrualean/hosts/robodojo_client_root.py:with_depth",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_client_root.py",
+      "target": "function:src/pyrualean/hosts/robodojo_client_root.py:_assets",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_client_root.py",
+      "target": "function:src/pyrualean/hosts/robodojo_client_root.py:_assets",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_client_root.py",
+      "target": "function:src/pyrualean/hosts/robodojo_client_root.py:lay_out",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_client_root.py",
+      "target": "function:src/pyrualean/hosts/robodojo_client_root.py:lay_out",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_client_root.py:lay_out",
+      "target": "function:src/pyrualean/hosts/robodojo_client_root.py:with_depth",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_client_root.py:lay_out",
+      "target": "function:src/pyrualean/hosts/robodojo_client_root.py:_assets",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_env_server.py",
+      "target": "function:src/pyrualean/hosts/robodojo_env_server.py:_query",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_env_server.py",
+      "target": "function:src/pyrualean/hosts/robodojo_env_server.py:_query",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_env_server.py",
+      "target": "function:src/pyrualean/hosts/robodojo_env_server.py:_queue_first",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_env_server.py",
+      "target": "function:src/pyrualean/hosts/robodojo_env_server.py:_queue_first",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_env_server.py",
+      "target": "function:src/pyrualean/hosts/robodojo_env_server.py:_take_turn",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_env_server.py",
+      "target": "function:src/pyrualean/hosts/robodojo_env_server.py:_take_turn",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_env_server.py",
+      "target": "function:src/pyrualean/hosts/robodojo_env_server.py:_give_eval_seed",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_env_server.py",
+      "target": "function:src/pyrualean/hosts/robodojo_env_server.py:_give_eval_seed",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_env_server.py",
+      "target": "function:src/pyrualean/hosts/robodojo_env_server.py:_replaying",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_env_server.py",
+      "target": "function:src/pyrualean/hosts/robodojo_env_server.py:_replaying",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_env_server.py",
+      "target": "function:src/pyrualean/hosts/robodojo_env_server.py:install",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_env_server.py",
+      "target": "function:src/pyrualean/hosts/robodojo_env_server.py:install",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_env_server.py",
+      "target": "function:src/pyrualean/hosts/robodojo_env_server.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_env_server.py",
+      "target": "function:src/pyrualean/hosts/robodojo_env_server.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_env_server.py:_queue_first",
+      "target": "function:src/pyrualean/hosts/robodojo_env_server.py:_query",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_env_server.py:_take_turn",
+      "target": "function:src/pyrualean/hosts/robodojo_env_server.py:_query",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_env_server.py:install",
+      "target": "function:src/pyrualean/hosts/robodojo_env_server.py:_give_eval_seed",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_env_server.py:install",
+      "target": "function:src/pyrualean/hosts/robodojo_env_server.py:_replaying",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_env_server.py:install",
+      "target": "function:src/pyrualean/hosts/robodojo_env_server.py:_take_turn",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_env_server.py:install",
+      "target": "function:src/pyrualean/hosts/robodojo_env_server.py:_queue_first",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_env_server.py:main",
+      "target": "function:src/pyrualean/hosts/robodojo_env_server.py:install",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "document:skills/astra-valen-supervision/references/contracts.md",
+      "target": "document:docs/guide/coordination.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:skills/astra-valen-supervision/references/contracts.md",
+      "target": "file:src/pyrualean/supervision.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:skills/astra-valen-supervision/references/contracts.md",
+      "target": "file:examples/replay_supervision.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:skills/astra-valen-supervision/agents/openai.yaml",
+      "target": "document:skills/astra-valen-supervision/SKILL.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:src/pyrualean/codex-catalog-gpt-6-astra-fallback.json",
+      "target": "file:src/pyrualean/generate.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:skills/astra-valen-supervision/references/contracts.md",
+      "target": "file:src/pyrualean/evidence.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:skills/astra-valen-supervision/references/contracts.md",
+      "target": "file:src/pyrualean/coordination.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

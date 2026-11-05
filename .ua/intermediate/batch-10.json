@@ -1,0 +1,348 @@
+{
+  "nodes": [
+    {
+      "id": "document:docs/guide/agents.md",
+      "type": "document",
+      "name": "agents.md",
+      "filePath": "docs/guide/agents.md",
+      "summary": "比较 Codex、Claude 和 OpenAI 运行时的配置与工具交互，解释各自如何共享机器人提示、执行预算和运行产物。",
+      "tags": [
+        "文档",
+        "使用指南",
+        "机器人"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/guide/cli.md",
+      "type": "document",
+      "name": "cli.md",
+      "filePath": "docs/guide/cli.md",
+      "summary": "说明 api、prompt、play、card、generate、run、summarize、compare 和 valen-eval 命令，以及运行参数、默认值与离线评估入口。",
+      "tags": [
+        "文档",
+        "使用指南",
+        "机器人"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/guide/coordination.md",
+      "type": "document",
+      "name": "coordination.md",
+      "filePath": "docs/guide/coordination.md",
+      "summary": "介绍双臂协调控制、Pose 目标、夹爪动作和检查点，并说明原生 move_both 的支持范围。强调能力检测和实际并行控制的环境约束。",
+      "tags": [
+        "文档",
+        "使用指南",
+        "机器人"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/guide/outputs.md",
+      "type": "document",
+      "name": "outputs.md",
+      "filePath": "docs/guide/outputs.md",
+      "summary": "列出每个运行目录中的结果、提示、工具回合、调用记录、执行单元、视频和监督审计等产物，帮助定位与复查一次机器人执行。",
+      "tags": [
+        "文档",
+        "使用指南",
+        "机器人"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:docs/guide/recovery.md",
+      "type": "document",
+      "name": "recovery.md",
+      "filePath": "docs/guide/recovery.md",
+      "summary": "说明 Python 执行失败后的结构化反馈、恢复观测与修复单元，以及已发生动作和持久命名空间的保留。介绍局部纠错和卡住交接的边界，避免盲目重放。",
+      "tags": [
+        "文档",
+        "使用指南",
+        "机器人"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/guide/running.md",
+      "type": "document",
+      "name": "running.md",
+      "filePath": "docs/guide/running.md",
+      "summary": "说明如何运行机器人任务及选择模型运行时、单元或完整程序模式、反馈方式和预算。介绍默认监督暂停与卡住恢复行为。",
+      "tags": [
+        "文档",
+        "使用指南",
+        "机器人"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/guide/strategies.md",
+      "type": "document",
+      "name": "strategies.md",
+      "filePath": "docs/guide/strategies.md",
+      "summary": "介绍 relocalize、correct 和 grasp_verified 等可组合策略，通过用户回调与有界重试处理局部不确定性；超出局部能力时将判断交回模型。",
+      "tags": [
+        "文档",
+        "使用指南",
+        "机器人"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/guide/valen-evaluation.md",
+      "type": "document",
+      "name": "valen-evaluation.md",
+      "filePath": "docs/guide/valen-evaluation.md",
+      "summary": "说明如何从保存的视觉监督审计创建标注模板、复查裁剪和问题并比较阈值。评估基于历史产物，不启动机器人任务。",
+      "tags": [
+        "文档",
+        "使用指南",
+        "机器人"
+      ],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "document:docs/guide/agents.md",
+      "target": "file:src/pyrualean/openai_runtime.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/agents.md",
+      "target": "file:src/pyrualean/claude_runtime.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/agents.md",
+      "target": "file:src/pyrualean/generate.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/agents.md",
+      "target": "file:src/pyrualean/prompt.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/agents.md",
+      "target": "document:docs/models/coder.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/cli.md",
+      "target": "file:src/pyrualean/cli.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/cli.md",
+      "target": "document:docs/guide/running.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/cli.md",
+      "target": "document:docs/guide/outputs.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/cli.md",
+      "target": "document:docs/guide/valen-evaluation.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/cli.md",
+      "target": "document:docs/robots/robodojo.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/cli.md",
+      "target": "document:docs/guide/agents.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/cli.md",
+      "target": "document:docs/visual-supervision.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/coordination.md",
+      "target": "file:src/pyrualean/coordination.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/coordination.md",
+      "target": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/coordination.md",
+      "target": "file:src/pyrualean/robodojo.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/outputs.md",
+      "target": "file:src/pyrualean/play.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/outputs.md",
+      "target": "file:src/pyrualean/_backend.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/outputs.md",
+      "target": "file:src/pyrualean/supervision.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/outputs.md",
+      "target": "document:docs/robots/robodojo.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/recovery.md",
+      "target": "file:src/pyrualean/recovery.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/recovery.md",
+      "target": "file:src/pyrualean/stuck_recovery.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/recovery.md",
+      "target": "file:src/pyrualean/arms.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/recovery.md",
+      "target": "file:tests/test_recovery.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/recovery.md",
+      "target": "document:docs/visual-supervision.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/recovery.md",
+      "target": "document:docs/guide/strategies.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/running.md",
+      "target": "file:src/pyrualean/play.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/running.md",
+      "target": "file:src/pyrualean/cli.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/running.md",
+      "target": "file:src/pyrualean/arms.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/running.md",
+      "target": "document:docs/visual-supervision.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/running.md",
+      "target": "document:docs/robots/index.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/running.md",
+      "target": "document:docs/robots/robodojo.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/strategies.md",
+      "target": "file:src/pyrualean/strategies.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/valen-evaluation.md",
+      "target": "file:src/pyrualean/evaluation/valen.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/guide/valen-evaluation.md",
+      "target": "file:src/pyrualean/cli.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

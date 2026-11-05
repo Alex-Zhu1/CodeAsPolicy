@@ -1,0 +1,2348 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "type": "file",
+      "name": "pour_balls_into_vase.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "实现离线 RoboDojo 任务程序：定位杯子和花瓶，以运动学约束规划倾倒轨迹，并回收弹落到桌面的球。通过执行环境注入的 robo 接口完成任务，不在评测时调用规划模型。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:r3",
+      "type": "function",
+      "name": "r3",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "格式化向量或测量数据以便打印诊断信息。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        44,
+        45
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:rx",
+      "type": "function",
+      "name": "rx",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "构造绕 X 轴的旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        63,
+        65
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ry",
+      "type": "function",
+      "name": "ry",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "构造绕 Y 轴的旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        68,
+        70
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:rz",
+      "type": "function",
+      "name": "rz",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "构造绕 Z 轴的旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        73,
+        75
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:axang",
+      "type": "function",
+      "name": "axang",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "按轴角表示构造三维旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        78,
+        83
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:homog",
+      "type": "function",
+      "name": "homog",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "将旋转和平移组合成齐次变换矩阵。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        86,
+        90
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:frames",
+      "type": "function",
+      "name": "frames",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "沿机械臂关节链累计各连杆的空间变换。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        98,
+        104
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:orient",
+      "type": "function",
+      "name": "orient",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "将俯仰、偏航和滚转组合成夹爪目标姿态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        107,
+        108
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:rotvec",
+      "type": "function",
+      "name": "rotvec",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "将旋转矩阵转换为轴角误差向量。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        111,
+        122
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:rot_err",
+      "type": "function",
+      "name": "rot_err",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "计算两个旋转之间的夹角误差。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        125,
+        127
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:collides",
+      "type": "function",
+      "name": "collides",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "检查机械臂连杆或工具点是否进入桌面碰撞区域。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        130,
+        137
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ik_solve",
+      "type": "function",
+      "name": "ik_solve",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "采用阻尼最小二乘迭代求解目标位姿的逆运动学。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        140,
+        165
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ik_best",
+      "type": "function",
+      "name": "ik_best",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "尝试多个关节种子并选择可行或误差最小的逆运动学解。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        168,
+        187
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:line_ok",
+      "type": "function",
+      "name": "line_ok",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "沿笛卡尔直线路径逐段求逆解以检查整条轨迹可行性。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        190,
+        207
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:pose",
+      "type": "function",
+      "name": "pose",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "组合目标位置与夹爪角度为目标变换矩阵。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        210,
+        211
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:reach",
+      "type": "function",
+      "name": "reach",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "按运动学规划估计抵达目标后的关节状态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        214,
+        225
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:joints",
+      "type": "function",
+      "name": "joints",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "读取机械臂当前关节角向量。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        229,
+        230
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:mv",
+      "type": "function",
+      "name": "mv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "调用机器人位姿运动接口并处理本任务的运动结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        233,
+        244
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:grip",
+      "type": "function",
+      "name": "grip",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "发送夹爪开合命令并记录执行步数或状态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        247,
+        257
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:go_home",
+      "type": "function",
+      "name": "go_home",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "将指定机械臂返回起始姿态并处理返回结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        260,
+        270
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:cam",
+      "type": "function",
+      "name": "cam",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "读取相机标定并转为数值矩阵供投影计算。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        274,
+        276
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ray",
+      "type": "function",
+      "name": "ray",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "用相机内外参将图像像素转换为世界坐标射线。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        279,
+        283
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ray_at_z",
+      "type": "function",
+      "name": "ray_at_z",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "将像素视线与给定高度平面相交以恢复世界坐标。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        286,
+        291
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:project",
+      "type": "function",
+      "name": "project",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "把世界坐标点投影到标定相机图像平面。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        294,
+        298
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:seg_center",
+      "type": "function",
+      "name": "seg_center",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "从分割结果提取包围盒中心并在必要时回退到质心。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        301,
+        314
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:find_vase",
+      "type": "function",
+      "name": "find_vase",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "尝试多种提示词并选择可信的花瓶检测。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        321,
+        338
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:masks",
+      "type": "function",
+      "name": "masks",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "生成图像颜色与背景类别掩码。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        342,
+        347
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:colour_blob_center",
+      "type": "function",
+      "name": "colour_blob_center",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "在估计位置附近筛选非桌面非杯体色块中心。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        350,
+        383
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:cup_region",
+      "type": "function",
+      "name": "cup_region",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "从腕部图像提取抓持杯体内部区域。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        386,
+        401
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ball_pixels",
+      "type": "function",
+      "name": "ball_pixels",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "统计杯体区域内的小球像素以判断余球情况。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        404,
+        413
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:table_balls",
+      "type": "function",
+      "name": "table_balls",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "从头部图像检测桌面上的暗色小球候选。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        416,
+        440
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:view_xy",
+      "type": "function",
+      "name": "view_xy",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "把腕部相机移到目标正上方进行俯视观测。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        444,
+        459
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:measure_from_above",
+      "type": "function",
+      "name": "measure_from_above",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "结合腕部相机标定和分割测量目标平面位置与半径。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        462,
+        499
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:refine",
+      "type": "function",
+      "name": "refine",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "通过近距离观察更新目标位置或几何估计。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        502,
+        519
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ray_passes",
+      "type": "function",
+      "name": "ray_passes",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "判断相机射线是否穿过指定竖直目标附近。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        526,
+        535
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:head_ball_candidates",
+      "type": "function",
+      "name": "head_ball_candidates",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "比较当前与初始头部图像，筛选落到桌面的球。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        538,
+        585
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ball_in_wrist",
+      "type": "function",
+      "name": "ball_in_wrist",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "在腕部图像中寻找最靠近预测投影的小球。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        588,
+        631
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:plan_ball_grasp",
+      "type": "function",
+      "name": "plan_ball_grasp",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "搜索可向下抓取小球的朝向和直线路径。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        634,
+        644
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:plan_drop",
+      "type": "function",
+      "name": "plan_drop",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "规划抓持小球到花瓶口上方的可达位姿。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        647,
+        661
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:fetch_ball",
+      "type": "function",
+      "name": "fetch_ball",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "俯视精化桌面小球、抓起后放入花瓶口。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        664,
+        725
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:recover_balls",
+      "type": "function",
+      "name": "recover_balls",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "在未完成时循环回收桌面散球并归位检查。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        728,
+        758
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:natural_yaw",
+      "type": "function",
+      "name": "natural_yaw",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "按目标相对机械臂基座的位置计算自然接近朝向。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        768,
+        770
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:corridor_clear",
+      "type": "function",
+      "name": "corridor_clear",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "检查夹爪和前臂通道与花瓶的间隙。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        773,
+        783
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:carry_z",
+      "type": "function",
+      "name": "carry_z",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "根据搬运目标和可达上限计算安全搬运高度。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        786,
+        787
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:plan_grasp",
+      "type": "function",
+      "name": "plan_grasp",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "搜索符合可达性和避碰约束的容器抓取姿态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        790,
+        807
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:cup_model",
+      "type": "function",
+      "name": "cup_model",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "把杯体中心与竖直轴转到夹爪局部坐标。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        810,
+        813
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:cup_points",
+      "type": "function",
+      "name": "cup_points",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "计算不同抓持姿态下杯口最低点和杯底位置。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        816,
+        826
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:roll_for_tilt",
+      "type": "function",
+      "name": "roll_for_tilt",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "按目标倾斜角计算夹爪滚转角。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        829,
+        833
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:stage_points",
+      "type": "function",
+      "name": "stage_points",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "构造保持杯口对准容器的分阶段倾倒抓点。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        841,
+        863
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:plan_pour",
+      "type": "function",
+      "name": "plan_pour",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "搜索腕部朝向和滚转方向以生成可行倾倒轨迹。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        866,
+        881
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:choose",
+      "type": "function",
+      "name": "choose",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "选择能够完成抓取和倾倒流程的机械臂及计划。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        884,
+        898
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "定位杯子和花瓶，以运动学约束规划倾倒轨迹，并回收弹落到桌面的球。统筹观察、运动和任务检查。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "complex",
+      "lineRange": [
+        902,
+        1084
+      ]
+    },
+    {
+      "id": "class:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:Ended",
+      "type": "class",
+      "name": "Ended",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "summary": "以专用异常中断已结束或预算耗尽的离线任务程序。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        40,
+        41
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:r3",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:r3",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:rx",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:rx",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ry",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ry",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:rz",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:rz",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:axang",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:axang",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:homog",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:homog",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:frames",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:frames",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:orient",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:orient",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:rotvec",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:rotvec",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:rot_err",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:rot_err",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:collides",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:collides",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ik_solve",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ik_solve",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ik_best",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ik_best",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:line_ok",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:line_ok",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:pose",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:pose",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:reach",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:reach",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:joints",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:joints",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:mv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:mv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:grip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:grip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:go_home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:go_home",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:cam",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:cam",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ray",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ray",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ray_at_z",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ray_at_z",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:project",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:seg_center",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:seg_center",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:find_vase",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:find_vase",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:masks",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:masks",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:colour_blob_center",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:colour_blob_center",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:cup_region",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:cup_region",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ball_pixels",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ball_pixels",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:table_balls",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:table_balls",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:view_xy",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:view_xy",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:measure_from_above",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:measure_from_above",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:refine",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:refine",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ray_passes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ray_passes",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:head_ball_candidates",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:head_ball_candidates",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ball_in_wrist",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ball_in_wrist",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:plan_ball_grasp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:plan_ball_grasp",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:plan_drop",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:plan_drop",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:fetch_ball",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:fetch_ball",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:recover_balls",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:recover_balls",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:natural_yaw",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:natural_yaw",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:corridor_clear",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:corridor_clear",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:carry_z",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:carry_z",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:plan_grasp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:plan_grasp",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:cup_model",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:cup_model",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:cup_points",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:cup_points",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:roll_for_tilt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:roll_for_tilt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:stage_points",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:stage_points",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:plan_pour",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:plan_pour",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:choose",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:choose",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:Ended",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:Ended",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:frames",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:homog",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:frames",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:axang",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:orient",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:rz",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:orient",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ry",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:orient",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:rx",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:collides",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:frames",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ik_solve",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:frames",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ik_solve",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:rotvec",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ik_solve",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:rot_err",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ik_solve",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:collides",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ik_best",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ik_solve",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:line_ok",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:frames",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:line_ok",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:rot_err",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:line_ok",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:rotvec",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:line_ok",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:axang",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:line_ok",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:homog",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:line_ok",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ik_solve",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:pose",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:homog",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:pose",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:orient",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:reach",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:pose",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:reach",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ik_best",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:reach",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:line_ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:reach",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:homog",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:reach",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:frames",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ray",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ray_at_z",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ray",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:project",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:colour_blob_center",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:masks",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:cup_region",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:masks",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ball_pixels",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:masks",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:table_balls",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ray_at_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:view_xy",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:view_xy",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:measure_from_above",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:seg_center",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:measure_from_above",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ray_at_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:measure_from_above",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:measure_from_above",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:measure_from_above",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:measure_from_above",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:colour_blob_center",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:view_xy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:measure_from_above",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:head_ball_candidates",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ray",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:head_ball_candidates",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ray_passes",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ball_in_wrist",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ball_in_wrist",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ball_in_wrist",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ray_at_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ball_in_wrist",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:plan_ball_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:natural_yaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:plan_ball_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:reach",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:plan_drop",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:natural_yaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:plan_drop",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:orient",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:plan_drop",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:reach",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:fetch_ball",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:plan_ball_grasp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:fetch_ball",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:joints",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:fetch_ball",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:fetch_ball",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:view_xy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:fetch_ball",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ball_in_wrist",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:fetch_ball",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:fetch_ball",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:fetch_ball",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:plan_drop",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:recover_balls",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:head_ball_candidates",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:recover_balls",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:fetch_ball",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:recover_balls",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:recover_balls",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:go_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:recover_balls",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:plan_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:natural_yaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:plan_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:corridor_clear",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:plan_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:reach",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:plan_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:carry_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:cup_model",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:orient",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:stage_points",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:roll_for_tilt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:stage_points",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:orient",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:stage_points",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:cup_points",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:stage_points",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:carry_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:plan_pour",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:stage_points",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:plan_pour",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:reach",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:choose",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:plan_grasp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:choose",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:cup_model",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:choose",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:plan_pour",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:find_vase",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:seg_center",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ray_at_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:refine",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:go_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:joints",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:choose",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:orient",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:cup_model",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:carry_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:cup_region",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:ball_pixels",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:plan_pour",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:stage_points",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_balls_into_vase.py:recover_balls",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

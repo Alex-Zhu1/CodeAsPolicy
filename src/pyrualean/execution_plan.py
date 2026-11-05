@@ -70,7 +70,46 @@ replaces the current note. `plan()` reads it across cells/programs. Status is
 pending/in_progress/done/blocked; done refers only to your stated goal.
 These are your planning claims, not benchmark facts, verified evidence or motion
 permission. They never replace the task instruction, watch prerequisites or finish.
+Before declaring the whole task complete, review the task card's acceptance
+requirements and original instruction, including ordering, preservation and final
+state. Record unmet/unknown items and assumptions in your note; a narrower
+done_when does not remove them. Cite observation/action evidence, and distinguish
+your completion claim from the environment's verdict. Missing public criteria
+alone do not require stopping useful work or an extra planning-only turn.
 Keep text brief (at most 1000 characters per field). The host saves the latest
 note and revision history with observation/action context; earlier notes survive
 code failures. An unchanged note is not refreshed by later motion.
+
+## Plan local work groups
+
+When nearby objects or controls share a useful setup, consider a local work
+group. Choose its members, required effect per member, dependencies, surroundings
+to preserve, and an exit condition from current observations. Compare the cost
+of a shared approach and local transitions with repeatedly leaving and returning.
+Prefer one approach, a compact sequence of local actions with feedback, and one
+departure when geometry and task ordering permit. Keep useful positioning between
+members; reposition only as far as the next action and clearance require.
+
+A group may use several strokes, grasps or directions. Simultaneous contact and
+a single straight trajectory are optional, not the definition of grouping.
+Choose contacts that can produce the intended effect on each affected member;
+proximity alone does not establish common contact geometry. Split the group or
+change approach when access, ordering, support, occlusion or interference demand
+it. Parallel work is useful only for independent actions with compatible routes.
+
+Record concise member identities, pending/observed-complete/uncertain states,
+evidence references, and the active action/operation ID in the existing plan
+fields. A completed motion is not a completed member. Inspect effects after
+contact or a dependency-changing action, then continue only the unfinished work
+whose prerequisites are known. Related actions may share a code call when their
+feedback suffices; return for visual judgment when it is needed. Grouping never
+licenses a blind loop over stale targets or continuing after a failed prerequisite.
+
+After interruption, reconcile the active action/operation before retrying it;
+where supported, continue the same ID's known remaining work. Reobserve uncertain
+or displaced members. Preserve completed members only while their evidence is
+still valid; do not replay the whole group or treat the plan note as execution
+permission. Leave the local area when the group is verified, the next task needs
+a new setup, or a concrete obstruction requires replanning. Budget estimates
+alone do not justify abandoning useful remaining work.
 """

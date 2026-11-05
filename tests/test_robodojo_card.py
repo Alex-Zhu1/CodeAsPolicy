@@ -38,6 +38,9 @@ def test_hosts_preserve_native_instruction_and_full_startup_capabilities(tmp_pat
     card = import_module(f"pyrualean.hosts.{module}").dump_card(
         toolkit, Cell("arx_x5", "example", 0), tmp_path)
     assert card.task_language == instruction and card.object_names == []
+    assert card.acceptance["requirements"] == []
+    assert card.acceptance["coverage"] == "unknown"
+    assert card.acceptance["verdict_authority"] == "environment"
     assert card.facts["right gripper opening"].startswith(
         f'{initial["right_ee_joint_state"][0]:.2f} ')
     caps = card.facts["motion capabilities at episode start"]
@@ -73,6 +76,7 @@ def test_hosts_preserve_native_instruction_and_full_startup_capabilities(tmp_pat
     assert "hidden_object_poses" not in card.to_json() and "success" not in card.to_json()
     prompt = build_prompt("cells", card, budget_s=1200, max_programs=None, primitives="no-vla")
     assert card.render(compact=True) in prompt and "robo.execute_motion(" in prompt
+    assert "Task acceptance:" in prompt and "whole original instruction" in prompt
     assert "robo.motion_profile(" not in prompt
     assert text not in prompt and "# Execution plan" in prompt
     compact = card.render(compact=True)

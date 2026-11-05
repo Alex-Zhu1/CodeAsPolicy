@@ -1,0 +1,185 @@
+@src/pyrualean/__init__.py|导出机器人类、后端协议、结果数据和执行辅助接口，定义 PyRUA-Lean 包的公开 Python API。|入口点,公开接口,导出
+@src/pyrualean/_backend.py|定义机器人后端最小协议、统一错误和单回合调用账本，使策略可在模拟后端和真实宿主之间复用。|后端接口,调用账本,错误处理
+unwrap|拆分原语返回负载与 RPent 观测封装，兼容只读工具直接返回结果。
+raise_for_error|检测负载中的后端错误并抛出携带工具信息的 ToolError。
+_jsonable|保留可 JSON 序列化的值，否则转换为对象文本表示。
+Backend|声明工具执行、原生成功状态、产物读取、步数和取消操作的最小后端协议。
+Backend.execute_tool|执行指定机器人原语并返回其原始结果。
+Backend.solved|返回环境自身的任务成功判据。
+Backend.artifact|读取保存的观测产物字节。
+Backend.env_steps|返回累计仿真步数，后端未知时允许为空。
+Backend.cancel|中断当前正在执行的机器人原语。
+ToolError|表示原语拒绝调用或执行失败；可测量的未达标结果仍通过结果字段返回。
+ToolError.__init__|保存工具名称、错误说明和原始负载。
+EpisodeFinished|表示回合因成功、预算、超时或取消而结束，继承 BaseException 避免被普通异常重试吞掉。
+EpisodeFinished.__init__|保存回合停止原因。
+CallRecord|记录单次机器人调用的参数、时间、状态、步数和结果摘要。
+CallRecord.to_dict|序列化调用记录，并规范无法直接 JSON 编码的参数与摘要值。
+Ledger|以只追加方式保存整个回合的机器人调用历史。
+Ledger.__init__|初始化空的调用记录列表。
+Ledger.records|返回调用记录列表的副本。
+Ledger.open|创建带连续编号和起始时间的调用记录并追加到账本。
+Ledger.stateful_calls|统计会改变机器人环境状态的调用数量。
+Ledger.env_steps|汇总所有已记录调用消耗的环境步数。
+Ledger.write_jsonl|将每次调用逐行写为 JSON，便于回合审计。
+@src/pyrualean/_robot.py|实现各机器人共享的后端派发、调用账本、回合终止守卫和图像访问。运动调用同时接入执行预算、视觉监督和动作版本跟踪。|机器人核心,工具派发,状态管理
+RobotBase|为具体机器人提供统一状态、观测、动作派发和回合守卫机制。
+effective_primitives|将请求的原语集与机器人适配器实际能力求交。
+RobotBase.__init__|保存后端与账本，初始化状态、回合标志、观测请求以及执行监督钩子。
+RobotBase._absorb|吸收后端观测并锁存成功或预算终止标志。
+RobotBase._readonly|记录并派发只读工具，解包负载、吸收观测和捕获错误。
+RobotBase._stateful|在运动前检查回合、执行预算和监督条件，执行后更新状态、账本及视觉证据。
+RobotBase.task|返回基准提供的权威任务指令。
+RobotBase.done|读取并锁存环境原生任务成功状态。
+RobotBase.state|读取指定记录步骤的机器人本体状态和回合标志。
+RobotBase.image|读取指定相机及记录步骤的 RGB 图像数组。
+RobotBase.world_map|读取图像对应的逐像素世界坐标图，供策略计算几何关系。
+RobotBase.show|登记当前相机图像，让本轮工具反馈将其展示给规划者。
+RobotBase.artifact|读取指定记录产物的原始字节。
+@src/pyrualean/libero.py|提供 LIBERO 单臂机器人的强类型 Python API，逐一映射 RPent 的位置姿态伺服、Pi0.5 操作和 SAM3 几何感知原语。|机器人接口,LIBERO,操作原语
+_quat_to_matrix|把 xyzw 四元数转换为旋转矩阵。
+_xyz|验证目标为三个有限数值并转换为坐标元组。
+_tuple3|将可用坐标转换为三元素浮点元组，缺失或长度不符时返回空。
+_gripper|验证夹爪命令处于负一到正一之间，负一张开、正一闭合。
+State|保存 LIBERO 的末端位姿、手指状态、物体名称和回合标志。
+State.eef_yaw|由末端四元数计算夹爪的世界坐标偏航角。
+State.eef_pitch|由末端四元数计算相对垂直向下姿态的俯仰角。
+Move|保存位置伺服目标、实际终点、残差、步数和是否到达。
+MovePose|保存同时调整位置和姿态的伺服结果，包括最终俯仰角。
+Rotation|保存腕部旋转的起始角、目标角、最终误差和到达状态。
+Gripper|保存夹爪保持命令及执行步数。
+Release|记录释放后的最大开度及环境终止标志。
+Pick|保存 Pi0.5 抓取的启发式抬升判断和消耗，提示仍需用观测验证持物。
+Contact|保存 Pi0.5 接触技能结果，其成功字段仅对应环境终止。
+Segment|保存 SAM3 分割置信度、掩膜表面世界坐标和可视化产物。
+BackProjection|表示单个图像像素反投影得到的世界表面坐标。
+RegionCenter|保存像素窗口的世界范围中心、中位坐标和有效深度点数。
+LiberoRobot|封装桌面 Franka 单臂操作，把阻塞原语结果转换为可供 Python 分支判断的数据类。
+LiberoRobot.segment|用文本或正像素提示运行 SAM3，返回掩膜可见表面的三维中位坐标。
+LiberoRobot.back_project|读取指定图像像素的世界表面坐标，要求相机与分辨率保持一致。
+LiberoRobot.region_center|在像素窗口与高度带中计算世界范围中心，减少边缘像素对定位的偏差。
+LiberoRobot.move_to|保持姿态将夹爪伺服到世界坐标目标，校验单次平面移动距离并返回实际误差。
+LiberoRobot.move_pose|同步调整位置、俯仰和偏航，以通过固定姿态难以到达的低位或凹入目标。
+LiberoRobot.rotate_wrist|在保持位置时调整绝对或相对世界偏航角。
+LiberoRobot.rotate_pitch|在保持位置与偏航时调整绝对或相对俯仰角。
+LiberoRobot.set_gripper|保持末端位姿并持续执行夹爪开合命令。
+LiberoRobot.release|原地张开夹爪并释放物体，环境成功时可提前终止。
+LiberoRobot.pi0_pick|调用冻结 Pi0.5 闭环抓取，并按下降、手指与抬升启发式提前停止。
+LiberoRobot.pi0_doubled|调用 Pi0.5 执行旋钮、抽屉等非抓取接触技能，返回原生环境成功状态。
+LiberoRobot._rotation|把后端角度误差与目标信息转换为 Rotation 结果。
+LiberoRobot._state_from_envelope|解析 RPent 末端位姿、夹爪和回合字段，构造 LIBERO 状态对象。
+LiberoRobot.task|返回基准提供的权威任务指令。
+LiberoRobot.done|读取并锁存环境原生任务成功状态。
+LiberoRobot.state|读取指定记录步骤的机器人本体状态和回合标志。
+LiberoRobot.image|读取指定相机及记录步骤的 RGB 图像数组。
+LiberoRobot.world_map|读取图像对应的逐像素世界坐标图，供策略计算几何关系。
+LiberoRobot.show|登记当前相机图像，让本轮工具反馈将其展示给规划者。
+LiberoRobot.artifact|读取指定记录产物的原始字节。
+LiberoRobot.camera_meta|读取与图像步骤对应的相机内参与外参。
+LiberoRobot._summary_dict|生成包含当前本体状态和回合信息的紧凑工具反馈。
+@src/pyrualean/robocasa.py|提供 RoboCasa365 移动机械臂 API，统一包装基座导航、手臂伺服、RLDX-1 和世界坐标图查询，并返回可检查的真实执行结果。|机器人接口,RoboCasa,移动操作
+_floats|验证向量长度和数值有限性并转换为浮点元组。
+_tuple_n|安全解析指定长度的可选浮点元组，兼容数组且容忍缺失或畸形值。
+_tuple3|解析可选三维浮点坐标。
+_gripper|规范开、闭或保持当前开度三种夹爪参数。
+_gripper_command|验证有限的数值夹爪命令处于负一到正一范围。
+_pixels|规范一个或多个行列像素坐标，并检查数量及形状。
+State|保存 RoboCasa 手臂与移动基座姿态、夹爪、任务进展和 VLA 同步状态。
+State.base_yaw|由基座四元数计算世界坐标偏航角。
+State.eef_approach|计算夹爪手指在世界坐标系中的接近方向。
+State.eef_tilt|计算夹爪接近方向相对垂直向下的倾斜角。
+Move|记录闭环 OSC 移动的实际终点、残差、步数及夹爪状态。
+Pitch|记录腕部相对俯仰命令的执行结果，实际角度需从状态中读取。
+Gripper|记录夹爪命令和实测手指位置，开度本身不构成抓住目标的证明。
+Grasp|描述开爪、悬停、下降、闭合和抬升流程结果，并指出停滞阶段。
+Navigation|记录基座导航到达、卡住、剩余距离、实际移动和步数。
+BaseMove|保存基座局部速度命令产生的世界位移与最终位置。
+Skill|记录 RLDX-1 停止原因、动作块、步数与持物启发式状态。
+Point|表示单个反投影像素的三维坐标或无效原因。
+Point.valid|判断该像素是否具有有效世界坐标。
+BackProjection|保存批量像素反投影结果、有效数量与稳健的坐标中位数。
+BackProjection.xyz|按请求顺序返回所有有效世界坐标。
+Cluster|记录高度带内一个粗网格簇的中心、边界和像素数量。
+HeightQuery|保存高度带查询的候选簇及总像素量，簇不等价于独立物体。
+RobocasaRobot|将厨房中的移动 PandaOmron 机器人包装为模型可调用的感知、导航和操作接口。
+RobocasaRobot.depth|读取肩部或腕部相机的米制深度图。
+RobocasaRobot.floor_overlay|读取用绿色标记可行驶高度带的导航视图。
+RobocasaRobot.success_criteria|读取任务成功判据源码，暴露对象名称和阈值而不提供物体坐标。
+RobocasaRobot.back_project_batch|将一组指定相机像素反投影为世界坐标，并汇总有效点中位数。
+RobocasaRobot.query_world_map|按高度带及可选平面范围筛选最新坐标图，返回粗网格聚类候选。
+RobocasaRobot.rldx_skill|用任务原始指令和当前图像驱动 RLDX-1 全身操作，成功、稳定或达到块上限时停止。
+RobocasaRobot.rldx_arm|限制基座速度，以 RLDX-1 执行靠近目标后的手臂操作。
+RobocasaRobot.move_to|固定姿态进行有距离限制的世界坐标 OSC 伺服，返回真实终点和残差。
+RobocasaRobot.move_delta|以当前位置加相对位移形成目标，执行有限范围的小步修正。
+RobocasaRobot.rotate_pitch|保持控制器位置并执行相对俯仰变化，实际倾斜需重新读取状态。
+RobocasaRobot.set_gripper|在保持夹爪位姿时执行数值开合命令并记录手指结果。
+RobocasaRobot.release|原地张开夹爪，返回释放后状态与任务终止标志。
+RobocasaRobot.scripted_grasp|按开爪、悬停、下降、闭合、抬升执行粗定位抓取，并报告失败阶段。
+RobocasaRobot.navigate_to|用闭环转向和前进接近平面目标；不提供路径规划，返回到达或卡住情况。
+RobocasaRobot.move_base|按本体坐标速度有限步驱动基座，并报告实际世界位移。
+RobocasaRobot._session_artifact|读取并记账不依附具体步骤的会话级产物。
+RobocasaRobot._skill_kwargs|验证 RLDX 动作块、稳定判据和基座限制参数，并使用当前任务原文。
+RobocasaRobot._skill|将 VLA 原始结果与最新状态合并为 Skill 对象。
+RobocasaRobot._move|根据实测末端位置与目标构造带残差的移动结果。
+RobocasaRobot._gripper|根据最新手指位置构造夹爪命令结果。
+RobocasaRobot._grasp|合并脚本抓取阶段、残差和手指状态。
+RobocasaRobot._navigation|将基座实际位置、位移和到达状态转换为导航结果。
+RobocasaRobot._state_from_envelope|解析手臂、基座、任务进展和同步字段，构造 RoboCasa 状态。
+RobocasaRobot._summary|为公共工具摘要补充当前末端位置。
+RobocasaRobot.task|返回基准提供的权威任务指令。
+RobocasaRobot.done|读取并锁存环境原生任务成功状态。
+RobocasaRobot.state|读取指定记录步骤的机器人本体状态和回合标志。
+RobocasaRobot.image|读取指定相机及记录步骤的 RGB 图像数组。
+RobocasaRobot.world_map|读取图像对应的逐像素世界坐标图，供策略计算几何关系。
+RobocasaRobot.camera_meta|读取与图像步骤对应的相机内参与外参。
+RobocasaRobot.show|登记当前相机图像，让本轮工具反馈将其展示给规划者。
+RobocasaRobot.artifact|读取指定记录产物的原始字节。
+RobocasaRobot._summary_dict|生成包含当前本体状态和回合信息的紧凑工具反馈。
+@src/pyrualean/robots.py|维护机器人适配器注册表，按需导入具体机器人与宿主，使缺少某一后端依赖不会阻断其他机器人。|适配注册,延迟加载,配置
+get_adapter|验证机器人名称并延迟加载其 ADAPTER 描述。
+RobotAdapter|保存机器人类、宿主模块、知识文件和提示契约所需信息。
+RobotAdapter.cameras|读取机器人类声明的相机列表。
+RobotAdapter.live_success|根据公开接口判断环境是否在执行过程中暴露成功判据。
+RobotAdapter.host_module|按适配器记录动态导入宿主模块。
+@src/pyrualean/robotwin.py|提供 RoboTwin 双臂 API，包装 cuRobo 碰撞感知运动、LingBot-VLA 和图像几何查询，并保留原生动作预算和实际执行结果。|机器人接口,RoboTwin,双臂操作
+_floats|验证输入向量包含指定数量的有限浮点数。
+_tuple3|解析可选三维坐标，缺失或长度不符时返回空。
+_arm|验证手臂名称只能为左臂或右臂。
+_gripper|验证夹爪命令在零到一之间，零闭合、一张开。
+_pose7|把七维位姿拆为三维坐标和 wxyz 四元数。
+ArmState|记录单臂末端与工具中心位姿、夹爪命令及接近方向。
+ArmState.approach|计算从末端腕部指向工具中心的单位向量。
+ArmState.eef_yaw|计算末端绕世界竖直轴的偏航角。
+State|记录双臂状态、任务和原生动作计数及回合标志。
+State.arm|按左或右名称选择对应手臂状态，非法名称报错。
+State.actions_left|计算达到原生动作上限前剩余的动作数。
+Move|记录碰撞感知规划是否成功、实际末端位置和残差；规划失败时不会运动。
+Gripper|记录夹爪目标、最终命令位置及动作消耗，不将命令位置视为持物证据。
+VlaRun|保存 LingBot 请求与实际动作数、停止原因和原始任务指令。
+WorldSample|保存单像素邻域的有效深度数量与世界坐标中位数。
+WorldSamples|按请求顺序保存批量像素世界坐标采样结果。
+WorldSamples.xyz|按原始请求顺序返回采样坐标。
+WorldRegion|保存像素区域世界点的极值、中位数、有效数量和有限点样本。
+RobotwinRobot|包装桌面双六自由度机械臂，明确腕部末端与夹爪工具中心的几何差异。
+RobotwinRobot.depth|读取指定相机的米制深度数组，无效深度保留为 NaN。
+RobotwinRobot.render|在不消耗原生动作的情况下记录一份新的图像和坐标图观测。
+RobotwinRobot.sample_world_xyz|从指定视图和步骤批量读取像素邻域的稳健世界坐标。
+RobotwinRobot.query_world_map|统计指定像素框的世界坐标范围并返回有限采样点。
+RobotwinRobot.lingbot_act|按原始任务指令驱动 LingBot 双臂动作块，遇原生成功或预算耗尽时提前结束。
+RobotwinRobot.move_to|规划并执行碰撞感知的末端目标运动，没有有效路径时返回未运动结果。
+RobotwinRobot.rotate_wrist|保持末端位置旋转指定手腕，工具中心会因偏置扫过弧线。
+RobotwinRobot.set_gripper|用指定动作步数线性驱动一侧夹爪到目标开度。
+RobotwinRobot.release|将指定夹爪张开并返回原生回合状态。
+RobotwinRobot._move|根据规划状态与实际末端位置构造移动结果。
+RobotwinRobot._gripper|将最新手臂状态和动作消耗转换为夹爪结果。
+RobotwinRobot._state_from_envelope|解析左右臂的腕部、工具中心和夹爪状态，并保留环境原生动作预算。
+
+RobotwinRobot.task|返回基准提供的权威任务指令。
+RobotwinRobot.done|读取并锁存环境原生任务成功状态。
+RobotwinRobot.state|读取指定记录步骤的机器人本体状态和回合标志。
+RobotwinRobot.image|读取指定相机及记录步骤的 RGB 图像数组。
+RobotwinRobot.world_map|读取图像对应的逐像素世界坐标图，供策略计算几何关系。
+RobotwinRobot.camera_meta|读取与图像步骤对应的相机内参与外参。
+RobotwinRobot.show|登记当前相机图像，让本轮工具反馈将其展示给规划者。
+RobotwinRobot.artifact|读取指定记录产物的原始字节。
+RobotwinRobot._summary_dict|生成包含当前本体状态和回合信息的紧凑工具反馈。

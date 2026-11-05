@@ -1,0 +1,1051 @@
+{
+  "nodes": [
+    {
+      "id": "file:tests/test_strategies.py",
+      "type": "file",
+      "name": "test_strategies.py",
+      "filePath": "tests/test_strategies.py",
+      "summary": "验证有界抓持验证、重定位和纠偏策略。通过固定输入、模拟后端或临时资源检查正常行为及失败边界。",
+      "tags": [
+        "测试",
+        "回归验证",
+        "行为契约"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_strategies.py:grasp_obs",
+      "type": "function",
+      "name": "grasp_obs",
+      "filePath": "tests/test_strategies.py",
+      "summary": "构造带证据版本和新鲜度的抓持观测。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        11,
+        12
+      ]
+    },
+    {
+      "id": "function:tests/test_strategies.py:test_grasp_requires_fresh_object_support_after_probe",
+      "type": "function",
+      "name": "test_grasp_requires_fresh_object_support_after_probe",
+      "filePath": "tests/test_strategies.py",
+      "summary": "验证试探后必须获得新鲜物体支撑证据才能确认抓持。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        15,
+        25
+      ]
+    },
+    {
+      "id": "function:tests/test_strategies.py:test_holding_flag_alone_and_old_frames_cannot_verify_grasp",
+      "type": "function",
+      "name": "test_holding_flag_alone_and_old_frames_cannot_verify_grasp",
+      "filePath": "tests/test_strategies.py",
+      "summary": "验证仅夹持标志或旧帧不能确认抓持成功。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        36,
+        44
+      ]
+    },
+    {
+      "id": "function:tests/test_strategies.py:test_unknown_hands_back_without_repeating_probe_or_repair",
+      "type": "function",
+      "name": "test_unknown_hands_back_without_repeating_probe_or_repair",
+      "filePath": "tests/test_strategies.py",
+      "summary": "验证未知证据立即交还控制且不重复探测或修复。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        47,
+        55
+      ]
+    },
+    {
+      "id": "function:tests/test_strategies.py:test_failed_close_can_change_grasp_but_retry_is_bounded",
+      "type": "function",
+      "name": "test_failed_close_can_change_grasp_but_retry_is_bounded",
+      "filePath": "tests/test_strategies.py",
+      "summary": "验证闭合失败允许调整抓法但重试有界。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        58,
+        66
+      ]
+    },
+    {
+      "id": "function:tests/test_strategies.py:test_grasp_budget_preserves_closed_state_and_does_not_start_probe",
+      "type": "function",
+      "name": "test_grasp_budget_preserves_closed_state_and_does_not_start_probe",
+      "filePath": "tests/test_strategies.py",
+      "summary": "验证抓持预算耗尽保留闭合状态且不再试探。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        69,
+        77
+      ]
+    },
+    {
+      "id": "function:tests/test_strategies.py:test_grasp_pause_never_retries_or_calls_next_callback",
+      "type": "function",
+      "name": "test_grasp_pause_never_retries_or_calls_next_callback",
+      "filePath": "tests/test_strategies.py",
+      "summary": "验证监督暂停不重试也不执行下一回调。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        80,
+        91
+      ]
+    },
+    {
+      "id": "function:tests/test_strategies.py:test_grasp_observation_does_not_promote_stale_ledger_fact",
+      "type": "function",
+      "name": "test_grasp_observation_does_not_promote_stale_ledger_fact",
+      "filePath": "tests/test_strategies.py",
+      "summary": "验证过期账本事实不会提升为新鲜抓持观测。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        94,
+        98
+      ]
+    },
+    {
+      "id": "function:tests/test_strategies.py:test_grasp_cannot_verify_a_different_predicate_after_probe",
+      "type": "function",
+      "name": "test_grasp_cannot_verify_a_different_predicate_after_probe",
+      "filePath": "tests/test_strategies.py",
+      "summary": "验证试探后改变谓词不能沿用旧验证。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        101,
+        107
+      ]
+    },
+    {
+      "id": "function:tests/test_strategies.py:test_relocalize_observes_after_changing_view",
+      "type": "function",
+      "name": "test_relocalize_observes_after_changing_view",
+      "filePath": "tests/test_strategies.py",
+      "summary": "验证改变视角后重新观察完成重定位。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        110,
+        122
+      ]
+    },
+    {
+      "id": "function:tests/test_strategies.py:test_correction_checks_the_last_allowed_action_and_uses_new_evidence",
+      "type": "function",
+      "name": "test_correction_checks_the_last_allowed_action_and_uses_new_evidence",
+      "filePath": "tests/test_strategies.py",
+      "summary": "验证纠偏检查最后允许动作并使用最新证据。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        125,
+        130
+      ]
+    },
+    {
+      "id": "function:tests/test_strategies.py:test_uncertainty_or_no_progress_hands_back_before_more_actions",
+      "type": "function",
+      "name": "test_uncertainty_or_no_progress_hands_back_before_more_actions",
+      "filePath": "tests/test_strategies.py",
+      "summary": "验证不确定或无进展时在额外动作前交还控制。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        136,
+        141
+      ]
+    },
+    {
+      "id": "function:tests/test_strategies.py:test_grasp_uses_observed_holding_not_the_action_return",
+      "type": "function",
+      "name": "test_grasp_uses_observed_holding_not_the_action_return",
+      "filePath": "tests/test_strategies.py",
+      "summary": "验证以实际观测抓持状态而非动作返回值做判断。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        144,
+        148
+      ]
+    },
+    {
+      "id": "function:tests/test_strategies.py:test_primitive_errors_propagate_without_replaying",
+      "type": "function",
+      "name": "test_primitive_errors_propagate_without_replaying",
+      "filePath": "tests/test_strategies.py",
+      "summary": "验证原语错误直接传播且不重放已执行动作。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        151,
+        160
+      ]
+    },
+    {
+      "id": "function:tests/test_strategies.py:test_helpers_are_available_to_generated_code",
+      "type": "function",
+      "name": "test_helpers_are_available_to_generated_code",
+      "filePath": "tests/test_strategies.py",
+      "summary": "验证生成代码可以调用内置策略辅助函数。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        164,
+        170
+      ]
+    },
+    {
+      "id": "file:tests/test_stuck_recovery.py",
+      "type": "file",
+      "name": "test_stuck_recovery.py",
+      "filePath": "tests/test_stuck_recovery.py",
+      "summary": "验证明确卡住后的恢复派发、轮次限制和证据保留。通过固定输入、模拟后端或临时资源检查正常行为及失败边界。",
+      "tags": [
+        "测试",
+        "回归验证",
+        "行为契约"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_stuck_recovery.py:toolkit",
+      "type": "function",
+      "name": "toolkit",
+      "filePath": "tests/test_stuck_recovery.py",
+      "summary": "创建启用卡住恢复的测试工具包。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        14,
+        21
+      ]
+    },
+    {
+      "id": "function:tests/test_stuck_recovery.py:stuck",
+      "type": "function",
+      "name": "stuck",
+      "filePath": "tests/test_stuck_recovery.py",
+      "summary": "提交明确卡住的结束报告以触发恢复判断。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        24,
+        25
+      ]
+    },
+    {
+      "id": "function:tests/test_stuck_recovery.py:test_dispatch_only_after_explicit_stuck_keeps_scene_namespace_and_budget",
+      "type": "function",
+      "name": "test_dispatch_only_after_explicit_stuck_keeps_scene_namespace_and_budget",
+      "filePath": "tests/test_stuck_recovery.py",
+      "summary": "验证只有明确卡住才派发恢复且保留场景、命名空间和预算。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        28,
+        45
+      ]
+    },
+    {
+      "id": "function:tests/test_stuck_recovery.py:test_supervisor_pause_does_not_dispatch_skill_or_reset_supervisor",
+      "type": "function",
+      "name": "test_supervisor_pause_does_not_dispatch_skill_or_reset_supervisor",
+      "filePath": "tests/test_stuck_recovery.py",
+      "summary": "验证监督暂停不会派发恢复技能或清空监督器。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        48,
+        59
+      ]
+    },
+    {
+      "id": "function:tests/test_stuck_recovery.py:test_recovery_dispatch_keeps_unresolved_dependencies",
+      "type": "function",
+      "name": "test_recovery_dispatch_keeps_unresolved_dependencies",
+      "filePath": "tests/test_stuck_recovery.py",
+      "summary": "验证恢复派发保留尚未解决的证据依赖。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        62,
+        77
+      ]
+    },
+    {
+      "id": "function:tests/test_stuck_recovery.py:test_round_limit_ends_episode_and_is_audited",
+      "type": "function",
+      "name": "test_round_limit_ends_episode_and_is_audited",
+      "filePath": "tests/test_stuck_recovery.py",
+      "summary": "验证恢复轮数达到上限会结束回合并写审计。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        80,
+        87
+      ]
+    },
+    {
+      "id": "function:tests/test_stuck_recovery.py:test_terminal_or_exhausted_episode_never_recovers",
+      "type": "function",
+      "name": "test_terminal_or_exhausted_episode_never_recovers",
+      "filePath": "tests/test_stuck_recovery.py",
+      "summary": "验证终止或预算耗尽的回合不进入恢复。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        93,
+        106
+      ]
+    },
+    {
+      "id": "function:tests/test_stuck_recovery.py:test_disabled_and_nonstuck_finish_remain_terminal",
+      "type": "function",
+      "name": "test_disabled_and_nonstuck_finish_remain_terminal",
+      "filePath": "tests/test_stuck_recovery.py",
+      "summary": "验证禁用恢复或非卡住结束维持终止语义。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        109,
+        117
+      ]
+    },
+    {
+      "id": "function:tests/test_stuck_recovery.py:test_large_stuck_report_preserves_skill_and_valid_json",
+      "type": "function",
+      "name": "test_large_stuck_report_preserves_skill_and_valid_json",
+      "filePath": "tests/test_stuck_recovery.py",
+      "summary": "验证大体积卡住报告仍保留技能指令与有效 JSON。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        120,
+        125
+      ]
+    },
+    {
+      "id": "function:tests/test_stuck_recovery.py:test_empty_stuck_summary_does_not_dispatch",
+      "type": "function",
+      "name": "test_empty_stuck_summary_does_not_dispatch",
+      "filePath": "tests/test_stuck_recovery.py",
+      "summary": "验证空白卡住摘要被拒绝且不派发恢复。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        128,
+        131
+      ]
+    },
+    {
+      "id": "function:tests/test_stuck_recovery.py:test_initial_prompt_contains_trigger_not_recovery_procedure",
+      "type": "function",
+      "name": "test_initial_prompt_contains_trigger_not_recovery_procedure",
+      "filePath": "tests/test_stuck_recovery.py",
+      "summary": "验证初始提示只包含恢复触发契约而非具体恢复流程。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        134,
+        147
+      ]
+    },
+    {
+      "id": "function:tests/test_stuck_recovery.py:test_invalid_config_is_rejected",
+      "type": "function",
+      "name": "test_invalid_config_is_rejected",
+      "filePath": "tests/test_stuck_recovery.py",
+      "summary": "验证非法恢复配置被拒绝。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        151,
+        153
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:tests/test_strategies.py",
+      "target": "function:tests/test_strategies.py:grasp_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_strategies.py",
+      "target": "function:tests/test_strategies.py:grasp_obs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_strategies.py",
+      "target": "function:tests/test_strategies.py:test_grasp_requires_fresh_object_support_after_probe",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_strategies.py",
+      "target": "function:tests/test_strategies.py:test_grasp_requires_fresh_object_support_after_probe",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_strategies.py",
+      "target": "function:tests/test_strategies.py:test_holding_flag_alone_and_old_frames_cannot_verify_grasp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_strategies.py",
+      "target": "function:tests/test_strategies.py:test_holding_flag_alone_and_old_frames_cannot_verify_grasp",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_strategies.py",
+      "target": "function:tests/test_strategies.py:test_unknown_hands_back_without_repeating_probe_or_repair",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_strategies.py",
+      "target": "function:tests/test_strategies.py:test_unknown_hands_back_without_repeating_probe_or_repair",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_strategies.py",
+      "target": "function:tests/test_strategies.py:test_failed_close_can_change_grasp_but_retry_is_bounded",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_strategies.py",
+      "target": "function:tests/test_strategies.py:test_failed_close_can_change_grasp_but_retry_is_bounded",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_strategies.py",
+      "target": "function:tests/test_strategies.py:test_grasp_budget_preserves_closed_state_and_does_not_start_probe",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_strategies.py",
+      "target": "function:tests/test_strategies.py:test_grasp_budget_preserves_closed_state_and_does_not_start_probe",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_strategies.py",
+      "target": "function:tests/test_strategies.py:test_grasp_pause_never_retries_or_calls_next_callback",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_strategies.py",
+      "target": "function:tests/test_strategies.py:test_grasp_pause_never_retries_or_calls_next_callback",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_strategies.py",
+      "target": "function:tests/test_strategies.py:test_grasp_observation_does_not_promote_stale_ledger_fact",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_strategies.py",
+      "target": "function:tests/test_strategies.py:test_grasp_observation_does_not_promote_stale_ledger_fact",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_strategies.py",
+      "target": "function:tests/test_strategies.py:test_grasp_cannot_verify_a_different_predicate_after_probe",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_strategies.py",
+      "target": "function:tests/test_strategies.py:test_grasp_cannot_verify_a_different_predicate_after_probe",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_strategies.py",
+      "target": "function:tests/test_strategies.py:test_relocalize_observes_after_changing_view",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_strategies.py",
+      "target": "function:tests/test_strategies.py:test_relocalize_observes_after_changing_view",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_strategies.py",
+      "target": "function:tests/test_strategies.py:test_correction_checks_the_last_allowed_action_and_uses_new_evidence",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_strategies.py",
+      "target": "function:tests/test_strategies.py:test_correction_checks_the_last_allowed_action_and_uses_new_evidence",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_strategies.py",
+      "target": "function:tests/test_strategies.py:test_uncertainty_or_no_progress_hands_back_before_more_actions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_strategies.py",
+      "target": "function:tests/test_strategies.py:test_uncertainty_or_no_progress_hands_back_before_more_actions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_strategies.py",
+      "target": "function:tests/test_strategies.py:test_grasp_uses_observed_holding_not_the_action_return",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_strategies.py",
+      "target": "function:tests/test_strategies.py:test_grasp_uses_observed_holding_not_the_action_return",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_strategies.py",
+      "target": "function:tests/test_strategies.py:test_primitive_errors_propagate_without_replaying",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_strategies.py",
+      "target": "function:tests/test_strategies.py:test_primitive_errors_propagate_without_replaying",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_strategies.py",
+      "target": "function:tests/test_strategies.py:test_helpers_are_available_to_generated_code",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_strategies.py",
+      "target": "function:tests/test_strategies.py:test_helpers_are_available_to_generated_code",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_strategies.py:test_grasp_requires_fresh_object_support_after_probe",
+      "target": "function:tests/test_strategies.py:grasp_obs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_strategies.py:test_holding_flag_alone_and_old_frames_cannot_verify_grasp",
+      "target": "function:tests/test_strategies.py:grasp_obs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_strategies.py:test_unknown_hands_back_without_repeating_probe_or_repair",
+      "target": "function:tests/test_strategies.py:grasp_obs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_strategies.py:test_failed_close_can_change_grasp_but_retry_is_bounded",
+      "target": "function:tests/test_strategies.py:grasp_obs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_strategies.py:test_grasp_budget_preserves_closed_state_and_does_not_start_probe",
+      "target": "function:tests/test_strategies.py:grasp_obs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "file:tests/test_strategies.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "file:tests/test_strategies.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/strategies.py",
+      "target": "file:tests/test_strategies.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:tests/test_stuck_recovery.py",
+      "target": "function:tests/test_stuck_recovery.py:toolkit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_stuck_recovery.py",
+      "target": "function:tests/test_stuck_recovery.py:toolkit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_stuck_recovery.py",
+      "target": "function:tests/test_stuck_recovery.py:stuck",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_stuck_recovery.py",
+      "target": "function:tests/test_stuck_recovery.py:stuck",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_stuck_recovery.py",
+      "target": "function:tests/test_stuck_recovery.py:test_dispatch_only_after_explicit_stuck_keeps_scene_namespace_and_budget",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_stuck_recovery.py",
+      "target": "function:tests/test_stuck_recovery.py:test_dispatch_only_after_explicit_stuck_keeps_scene_namespace_and_budget",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_stuck_recovery.py",
+      "target": "function:tests/test_stuck_recovery.py:test_supervisor_pause_does_not_dispatch_skill_or_reset_supervisor",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_stuck_recovery.py",
+      "target": "function:tests/test_stuck_recovery.py:test_supervisor_pause_does_not_dispatch_skill_or_reset_supervisor",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_stuck_recovery.py",
+      "target": "function:tests/test_stuck_recovery.py:test_recovery_dispatch_keeps_unresolved_dependencies",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_stuck_recovery.py",
+      "target": "function:tests/test_stuck_recovery.py:test_recovery_dispatch_keeps_unresolved_dependencies",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_stuck_recovery.py",
+      "target": "function:tests/test_stuck_recovery.py:test_round_limit_ends_episode_and_is_audited",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_stuck_recovery.py",
+      "target": "function:tests/test_stuck_recovery.py:test_round_limit_ends_episode_and_is_audited",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_stuck_recovery.py",
+      "target": "function:tests/test_stuck_recovery.py:test_terminal_or_exhausted_episode_never_recovers",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_stuck_recovery.py",
+      "target": "function:tests/test_stuck_recovery.py:test_terminal_or_exhausted_episode_never_recovers",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_stuck_recovery.py",
+      "target": "function:tests/test_stuck_recovery.py:test_disabled_and_nonstuck_finish_remain_terminal",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_stuck_recovery.py",
+      "target": "function:tests/test_stuck_recovery.py:test_disabled_and_nonstuck_finish_remain_terminal",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_stuck_recovery.py",
+      "target": "function:tests/test_stuck_recovery.py:test_large_stuck_report_preserves_skill_and_valid_json",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_stuck_recovery.py",
+      "target": "function:tests/test_stuck_recovery.py:test_large_stuck_report_preserves_skill_and_valid_json",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_stuck_recovery.py",
+      "target": "function:tests/test_stuck_recovery.py:test_empty_stuck_summary_does_not_dispatch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_stuck_recovery.py",
+      "target": "function:tests/test_stuck_recovery.py:test_empty_stuck_summary_does_not_dispatch",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_stuck_recovery.py",
+      "target": "function:tests/test_stuck_recovery.py:test_initial_prompt_contains_trigger_not_recovery_procedure",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_stuck_recovery.py",
+      "target": "function:tests/test_stuck_recovery.py:test_initial_prompt_contains_trigger_not_recovery_procedure",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_stuck_recovery.py",
+      "target": "function:tests/test_stuck_recovery.py:test_invalid_config_is_rejected",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_stuck_recovery.py",
+      "target": "function:tests/test_stuck_recovery.py:test_invalid_config_is_rejected",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_stuck_recovery.py:test_dispatch_only_after_explicit_stuck_keeps_scene_namespace_and_budget",
+      "target": "function:tests/test_stuck_recovery.py:toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_stuck_recovery.py:test_dispatch_only_after_explicit_stuck_keeps_scene_namespace_and_budget",
+      "target": "function:tests/test_stuck_recovery.py:stuck",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_stuck_recovery.py:test_supervisor_pause_does_not_dispatch_skill_or_reset_supervisor",
+      "target": "function:tests/test_stuck_recovery.py:toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_stuck_recovery.py:test_supervisor_pause_does_not_dispatch_skill_or_reset_supervisor",
+      "target": "function:tests/test_stuck_recovery.py:stuck",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_stuck_recovery.py:test_recovery_dispatch_keeps_unresolved_dependencies",
+      "target": "function:tests/test_stuck_recovery.py:toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_stuck_recovery.py:test_recovery_dispatch_keeps_unresolved_dependencies",
+      "target": "function:tests/test_stuck_recovery.py:stuck",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_stuck_recovery.py:test_round_limit_ends_episode_and_is_audited",
+      "target": "function:tests/test_stuck_recovery.py:toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_stuck_recovery.py:test_round_limit_ends_episode_and_is_audited",
+      "target": "function:tests/test_stuck_recovery.py:stuck",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_stuck_recovery.py:test_terminal_or_exhausted_episode_never_recovers",
+      "target": "function:tests/test_stuck_recovery.py:toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_stuck_recovery.py:test_terminal_or_exhausted_episode_never_recovers",
+      "target": "function:tests/test_stuck_recovery.py:stuck",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_stuck_recovery.py:test_disabled_and_nonstuck_finish_remain_terminal",
+      "target": "function:tests/test_stuck_recovery.py:stuck",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_stuck_recovery.py:test_disabled_and_nonstuck_finish_remain_terminal",
+      "target": "function:tests/test_stuck_recovery.py:toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_stuck_recovery.py:test_large_stuck_report_preserves_skill_and_valid_json",
+      "target": "function:tests/test_stuck_recovery.py:toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_stuck_recovery.py:test_empty_stuck_summary_does_not_dispatch",
+      "target": "function:tests/test_stuck_recovery.py:toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "file:tests/test_stuck_recovery.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/stuck_recovery.py",
+      "target": "file:tests/test_stuck_recovery.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "file:tests/test_stuck_recovery.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "file:tests/test_stuck_recovery.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

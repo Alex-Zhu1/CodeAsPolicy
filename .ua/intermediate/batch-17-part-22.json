@@ -1,0 +1,3688 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "type": "file",
+      "name": "organize_table.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "按对象几何分别整理鼠标、闹钟、键盘与摆件：融合多视角定位，选择抓放或小步推移，最终检查位置并执行对象专用修复。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "视觉定位",
+        "运动控制"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "function",
+      "name": "say",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "输出离线程序的执行诊断信息。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        73,
+        76
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:f3",
+      "type": "function",
+      "name": "f3",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "把坐标向量格式化为三位小数的诊断文本。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        79,
+        80
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mv",
+      "type": "function",
+      "name": "mv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "执行指定机械臂的笛卡尔运动并返回控制反馈。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        83,
+        94
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:grip",
+      "type": "function",
+      "name": "grip",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "执行指定机械臂的夹爪指令并返回夹持反馈。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        97,
+        107
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:park",
+      "type": "function",
+      "name": "park",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "将左臂停到不遮挡头部视野且不碰倒起始位置旁摆件的高位。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        113,
+        119
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:home",
+      "type": "function",
+      "name": "home",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "调用机械臂归位并检查返回的完成状态。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        122,
+        130
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:cam_mats",
+      "type": "function",
+      "name": "cam_mats",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "读取相机内外参并转换为数值矩阵。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        133,
+        135
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:pix_to_z",
+      "type": "function",
+      "name": "pix_to_z",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "读取指定相机标定并把像素射线投影到目标高度。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        138,
+        144
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:loc1",
+      "type": "function",
+      "name": "loc1",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "容错执行单个视觉定位提示并返回有效结果。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        147,
+        154
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:loc",
+      "type": "function",
+      "name": "loc",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "遍历多提示词并用任务约束筛选最佳定位。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        160,
+        182
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:inbox",
+      "type": "function",
+      "name": "inbox",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "检查目标中心是否处于给定桌面矩形范围。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        185,
+        187
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fwd",
+      "type": "function",
+      "name": "fwd",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "把夹爪偏航转换为平面前进方向。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        190,
+        192
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:rgt",
+      "type": "function",
+      "name": "rgt",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "把夹爪偏航转换为平面右侧方向。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        195,
+        197
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_pad",
+      "type": "function",
+      "name": "find_pad",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "用鼠标垫语义提示定位目标垫，必要时回退颜色几何。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        204,
+        222
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:dark_pad",
+      "type": "function",
+      "name": "dark_pad",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "从键盘右侧的深色桌面像素估计鼠标垫边界与中心。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        225,
+        250
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mouse_like",
+      "type": "function",
+      "name": "mouse_like",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "用物体长度和高度排除把右夹爪误认作鼠标的结果。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        253,
+        255
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_mouse",
+      "type": "function",
+      "name": "find_mouse",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "定位桌面鼠标，异常高度时用头部掩码质心射线重建位置。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        264,
+        283
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_mouse",
+      "type": "function",
+      "name": "do_mouse",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "放置鼠标后有限次重新检查鼠标垫位置并修正。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        289,
+        307
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_mouse1",
+      "type": "function",
+      "name": "do_mouse1",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "抓取鼠标并转正其长轴，搬到鼠标垫上释放。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        310,
+        368
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:green_share",
+      "type": "function",
+      "name": "green_share",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "统计摆件分割框内饱和绿色像素比例以辅助区分资产。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        376,
+        392
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:is_mech",
+      "type": "function",
+      "name": "is_mech",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "根据腕部足迹尺寸和绿色比例识别机甲摆件。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        396,
+        399
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:is_cactus",
+      "type": "function",
+      "name": "is_cactus",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "结合较小足迹和绿色比例识别盆栽仙人掌。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        402,
+        415
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_estimates",
+      "type": "function",
+      "name": "fig_estimates",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "在指定相机和提示组合中收集摆件位置估计。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        421,
+        436
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_read",
+      "type": "function",
+      "name": "fig_read",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "获取一条摆件位置读数并按观测来源纳入融合。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        439,
+        450
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:consensus",
+      "type": "function",
+      "name": "consensus",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "选择邻域加权一致性最高的读数簇，并用加权中值给出位置。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        453,
+        467
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:locate_fig",
+      "type": "function",
+      "name": "locate_fig",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "通过左臂三个观察姿态融合多视角读数，估计摆件底座中心。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        470,
+        502
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:ang_sep",
+      "type": "function",
+      "name": "ang_sep",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "计算桌面两条无向轴线的最小夹角。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        512,
+        514
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:grip_yaws",
+      "type": "function",
+      "name": "grip_yaws",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "根据摆件类型、足迹轴与肢体宽度生成可尝试抓取方向。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        517,
+        535
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_attempt_grasp",
+      "type": "function",
+      "name": "fig_attempt_grasp",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "在估计底座中心尝试多组俯仰、高度和偏航抓取摆件。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        538,
+        610
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_place",
+      "type": "function",
+      "name": "fig_place",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "保持摆件底座与夹持位置关系，沿避开抽屉角的路径搬到展示台放下。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        613,
+        697
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_handoff",
+      "type": "function",
+      "name": "fig_handoff",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "把倾斜夹持的摆件放到中转点并返回实际底座位置。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        708,
+        742
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_check",
+      "type": "function",
+      "name": "fig_check",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "从头部相机检查展示台附近摆件底座位置及是否保持直立。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        745,
+        760
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_fig",
+      "type": "function",
+      "name": "do_fig",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "定位摆件、选择抓取姿态并完成展示台放置或中转。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        768,
+        823
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:base_reading",
+      "type": "function",
+      "name": "base_reading",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "对多个底座提示结果按空间一致性分组，排除邻物误定位。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        832,
+        852
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:head_cam",
+      "type": "function",
+      "name": "head_cam",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "缓存头部相机内外参及逆变换。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        861,
+        865
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:tab_pt",
+      "type": "function",
+      "name": "tab_pt",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "将头部图像像素射线投影到桌面。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        868,
+        874
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:proj_head",
+      "type": "function",
+      "name": "proj_head",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "将三维世界位置投影到头部相机像素。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        877,
+        880
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:row_for_y",
+      "type": "function",
+      "name": "row_for_y",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "用二分搜索寻找对应指定桌面纵坐标的图像行。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        883,
+        891
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:centre_from_front",
+      "type": "function",
+      "name": "centre_from_front",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "根据圆形底座前缘像素与已知半径估计底座中心。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        894,
+        897
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:pot_reading",
+      "type": "function",
+      "name": "pot_reading",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "用橙色饱和区域定位展示台附近仙人掌花盆。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        900,
+        931
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:box_reading",
+      "type": "function",
+      "name": "box_reading",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "利用底座分割框最低行和资产半径估计圆底摆件位置。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        934,
+        958
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:precise_base",
+      "type": "function",
+      "name": "precise_base",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "按摆件类型选择颜色或轮廓边缘方法精测底座。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        964,
+        979
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_correct",
+      "type": "function",
+      "name": "fig_correct",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "比较精测底座与目标基准，超出阈值时修正摆件位置。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        982,
+        1017
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:lift_off",
+      "type": "function",
+      "name": "lift_off",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "放开机甲后先垂直上升再后退归位，避免夹爪沿手臂拖动摆件。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1020,
+        1028
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:back_out",
+      "type": "function",
+      "name": "back_out",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "在放置高度沿手指方向退出，避免抬升时撞上摆件外伸肢体。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1031,
+        1046
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fix_once",
+      "type": "function",
+      "name": "fix_once",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "在视觉测得底座或上次释放位置重新夹取并校正摆件。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1049,
+        1098
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:alarm_ok",
+      "type": "function",
+      "name": "alarm_ok",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "严格检查闹钟定位是否处于合理桌面范围和尺寸。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1102,
+        1110
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:alarm_loose",
+      "type": "function",
+      "name": "alarm_loose",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "以较宽松几何约束接受备用闹钟定位。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1113,
+        1121
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_alarm",
+      "type": "function",
+      "name": "find_alarm",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "抬起左臂清空视野后用多提示定位闹钟。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1124,
+        1134
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_alarm",
+      "type": "function",
+      "name": "do_alarm",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "按经过偏移校正的夹持点抓住闹钟，搬至抽屉顶部并保持立姿。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1140,
+        1200
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_kb",
+      "type": "function",
+      "name": "find_kb",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "定位键盘并检查长条几何，右端受遮挡时抬臂重新观察。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1204,
+        1218
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push",
+      "type": "function",
+      "name": "push",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "从上方接近目标侧边，用张开的手指按一厘米小步推动。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1221,
+        1244
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push2",
+      "type": "function",
+      "name": "push2",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "双臂张开手指并交替小步向前推移键盘。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1247,
+        1301
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_keyboard",
+      "type": "function",
+      "name": "do_keyboard",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "测量键盘位置并分阶段推到目标，保持与展示台摆件的净空。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1307,
+        1382
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_seen",
+      "type": "function",
+      "name": "fig_seen",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "在左臂避让时读取头部和可选腕部视图，重测预期位置附近的摆件。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1398,
+        1443
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:half_ext",
+      "type": "function",
+      "name": "half_ext",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "根据旋转矩形足迹估计摆件在推移方向上的半宽。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1446,
+        1451
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:high_approach",
+      "type": "function",
+      "name": "high_approach",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "先到推移起点正上方再下降，避免从停靠位斜穿摆件。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1454,
+        1466
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push_line",
+      "type": "function",
+      "name": "push_line",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "以垂直或可达倾斜夹爪沿直线小步推移摆件。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1469,
+        1544
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push_axis",
+      "type": "function",
+      "name": "push_axis",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "沿指定世界轴单向推摆件至目标坐标，控制横向范围与接触偏移。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1547,
+        1591
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push_fig",
+      "type": "function",
+      "name": "push_fig",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "分阶段推动宽大绿色摆件，并以视觉重测校正每段接触位置。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1594,
+        1620
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "依次处理鼠标、闹钟、摆件与键盘，并按摆件类型选择搬运或推移。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1624,
+        1810
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:item_fig",
+      "type": "function",
+      "name": "item_fig",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "检查摆件类别、位置和姿态是否符合目标状态。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1820,
+        1837
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:item_kb",
+      "type": "function",
+      "name": "item_kb",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "重新定位键盘并判断其最终位置是否合格。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1840,
+        1854
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:item_mouse",
+      "type": "function",
+      "name": "item_mouse",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "检查鼠标是否位于已知鼠标垫上。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1857,
+        1867
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:item_clock",
+      "type": "function",
+      "name": "item_clock",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "检测仍留在桌面而未放上抽屉的闹钟。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1870,
+        1878
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:items",
+      "type": "function",
+      "name": "items",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "汇总多个整理对象的终局检查结果。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1881,
+        1893
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:clock_repair",
+      "type": "function",
+      "name": "clock_repair",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "任务未结束且预算足够时，把仍在桌面的闹钟重新搬到抽屉。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1896,
+        1910
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mouse_repair",
+      "type": "function",
+      "name": "mouse_repair",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "当鼠标未在垫上且近处找不到时抬起右臂重找并重新放置。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1913,
+        1941
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:summary",
+      "type": "function",
+      "name": "summary",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "输出控制调用、原生步数和鼠标等对象的最终诊断。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1944,
+        1945
+      ]
+    },
+    {
+      "id": "class:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:Seen",
+      "type": "class",
+      "name": "Seen",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "summary": "封装由头部掩码质心重建的鼠标几何，并保留原始定位相关属性。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "数据结构"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        258,
+        261
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:f3",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:f3",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:grip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:grip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:park",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:park",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:home",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:cam_mats",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:cam_mats",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:pix_to_z",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:pix_to_z",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:loc1",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:loc1",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:loc",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:loc",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:inbox",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:inbox",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fwd",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fwd",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:rgt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:rgt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_pad",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_pad",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:dark_pad",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:dark_pad",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mouse_like",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mouse_like",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_mouse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_mouse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_mouse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_mouse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_mouse1",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_mouse1",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:green_share",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:green_share",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:is_mech",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:is_mech",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:is_cactus",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:is_cactus",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_estimates",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_estimates",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_read",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_read",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:consensus",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:consensus",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:locate_fig",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:locate_fig",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:ang_sep",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:ang_sep",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:grip_yaws",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:grip_yaws",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_attempt_grasp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_attempt_grasp",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_place",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_place",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_handoff",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_handoff",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_check",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_check",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_fig",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_fig",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:base_reading",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:base_reading",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:head_cam",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:head_cam",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:tab_pt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:tab_pt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:proj_head",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:proj_head",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:row_for_y",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:row_for_y",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:centre_from_front",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:centre_from_front",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:pot_reading",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:pot_reading",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:box_reading",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:box_reading",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:precise_base",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:precise_base",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_correct",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_correct",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:lift_off",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:lift_off",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:back_out",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:back_out",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fix_once",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fix_once",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:alarm_ok",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:alarm_ok",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:alarm_loose",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:alarm_loose",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_alarm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_alarm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_alarm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_alarm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_kb",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_kb",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push2",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push2",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_keyboard",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_keyboard",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_seen",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_seen",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:half_ext",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:half_ext",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:high_approach",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:high_approach",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push_line",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push_line",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push_axis",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push_axis",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push_fig",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push_fig",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:item_fig",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:item_fig",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:item_kb",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:item_kb",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:item_mouse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:item_mouse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:item_clock",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:item_clock",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:items",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:items",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:clock_repair",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:clock_repair",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mouse_repair",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mouse_repair",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:summary",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:summary",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:Seen",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:Seen",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:grip",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:park",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:home",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:pix_to_z",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:cam_mats",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:loc",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:loc1",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:loc",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:loc",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_pad",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:pix_to_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_pad",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_pad",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_pad",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:dark_pad",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:dark_pad",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:cam_mats",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:dark_pad",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:dark_pad",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_mouse",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:loc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_mouse",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:inbox",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_mouse",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mouse_like",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_mouse",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:loc1",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_mouse",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:pix_to_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_mouse",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_mouse",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:Seen",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_mouse",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_mouse1",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_mouse",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_mouse",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_mouse",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_mouse1",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_mouse",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_mouse1",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_pad",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_mouse1",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_mouse1",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_mouse1",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_mouse1",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_mouse1",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:loc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_mouse1",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:inbox",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_mouse1",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mouse_like",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_mouse1",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:green_share",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:is_mech",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:is_cactus",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_estimates",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:loc1",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_estimates",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_read",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:loc1",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_read",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:locate_fig",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_read",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:locate_fig",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:locate_fig",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:green_share",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:locate_fig",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:consensus",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:locate_fig",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:is_cactus",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:locate_fig",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:grip_yaws",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:is_cactus",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:grip_yaws",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:is_mech",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:grip_yaws",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:ang_sep",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_attempt_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:is_cactus",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_attempt_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:grip_yaws",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_attempt_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_attempt_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_attempt_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:ang_sep",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_attempt_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_attempt_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fwd",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:is_mech",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:back_out",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_handoff",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_handoff",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_handoff",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_check",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:loc1",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_check",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_check",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_fig",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_read",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_fig",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_fig",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:locate_fig",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_fig",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_fig",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_attempt_grasp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_fig",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_fig",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_fig",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_handoff",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_fig",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_place",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_fig",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_correct",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_fig",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:is_cactus",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_fig",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:park",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_fig",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:base_reading",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:loc1",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:base_reading",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:base_reading",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:head_cam",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:cam_mats",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:tab_pt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:head_cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:proj_head",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:head_cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:row_for_y",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:tab_pt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:centre_from_front",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:tab_pt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:centre_from_front",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:row_for_y",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:pot_reading",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:proj_head",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:pot_reading",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:centre_from_front",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:box_reading",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:centre_from_front",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:box_reading",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:tab_pt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:box_reading",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:precise_base",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:is_cactus",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:precise_base",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:pot_reading",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:precise_base",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:is_mech",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:precise_base",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:box_reading",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:precise_base",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_correct",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:is_cactus",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_correct",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:precise_base",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_correct",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:loc1",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_correct",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:base_reading",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_correct",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_correct",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fix_once",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:lift_off",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:lift_off",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:back_out",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fwd",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:back_out",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:back_out",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fix_once",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fix_once",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fix_once",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fix_once",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fix_once",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:is_mech",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fix_once",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:lift_off",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fix_once",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:back_out",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_alarm",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_alarm",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:loc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_alarm",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:alarm_ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_alarm",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_alarm",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_alarm",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_alarm",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:park",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_kb",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:loc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_kb",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:inbox",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_kb",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_kb",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push2",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push2",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push2",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:park",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push2",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push2",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_keyboard",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_kb",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_keyboard",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_keyboard",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_keyboard",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_keyboard",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_keyboard",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:park",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_keyboard",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_keyboard",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push2",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_seen",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:park",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_seen",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:loc1",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_seen",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_seen",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_seen",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:consensus",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_seen",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:box_reading",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_seen",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:high_approach",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:high_approach",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:high_approach",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push_line",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push_line",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:high_approach",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push_line",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push_line",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push_line",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push_axis",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:half_ext",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push_axis",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push_axis",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push_line",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push_axis",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_seen",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push_fig",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_seen",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push_fig",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:half_ext",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push_fig",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push_fig",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push_axis",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_mouse",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_alarm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:locate_fig",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:park",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_keyboard",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push_fig",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:is_mech",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:items",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:fig_correct",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:push_axis",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_kb",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_mouse",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_mouse1",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:clock_repair",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mouse_repair",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:summary",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:item_fig",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:is_cactus",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:item_fig",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:is_mech",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:item_fig",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:loc1",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:item_fig",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:precise_base",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:item_fig",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:base_reading",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:item_kb",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_kb",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:item_mouse",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_mouse",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:item_clock",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:loc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:item_clock",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:alarm_ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:item_clock",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:items",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:clock_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:find_alarm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:clock_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:clock_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:clock_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:clock_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_alarm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:clock_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mouse_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:loc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mouse_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mouse_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mouse_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mouse_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:do_mouse1",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:mouse_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:summary",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/organize_table.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

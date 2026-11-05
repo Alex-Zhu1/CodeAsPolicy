@@ -1,0 +1,724 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "type": "file",
+      "name": "pour_by_language.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "summary": "实现离线 RoboDojo 任务程序：解析任务描述中的瓶碗颜色顺序，识别对应容器后控制瓶口位置依次倾倒液体。通过执行环境注入的 robo 接口完成任务，不在评测时调用规划模型。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:r3",
+      "type": "function",
+      "name": "r3",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "summary": "格式化向量或测量数据以便打印诊断信息。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        33,
+        34
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:mv",
+      "type": "function",
+      "name": "mv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "summary": "调用机器人位姿运动接口并处理本任务的运动结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        37,
+        47
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:grip",
+      "type": "function",
+      "name": "grip",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "summary": "发送夹爪开合命令并记录执行步数或状态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        50,
+        56
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:wait",
+      "type": "function",
+      "name": "wait",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "summary": "保持夹持并通过重复动作等待物体或液体稳定。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        59,
+        61
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:head_cam",
+      "type": "function",
+      "name": "head_cam",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "summary": "读取相机标定并转为数值矩阵供投影计算。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        65,
+        67
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:proj",
+      "type": "function",
+      "name": "proj",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "summary": "把世界坐标点投影到标定相机图像平面。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        70,
+        73
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:patch_rgb",
+      "type": "function",
+      "name": "patch_rgb",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "summary": "计算局部图像区域的稳健颜色统计。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        76,
+        79
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:bottle_score",
+      "type": "function",
+      "name": "bottle_score",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "summary": "根据颜色通道响应给瓶或碗的颜色候选打分。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        85,
+        93
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:bowl_score",
+      "type": "function",
+      "name": "bowl_score",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "summary": "根据颜色通道响应给瓶或碗的颜色候选打分。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        96,
+        105
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:identify",
+      "type": "function",
+      "name": "identify",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "summary": "结合分割掩码和颜色统计确定容器颜色与位置对应。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        108,
+        160
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:to_home",
+      "type": "function",
+      "name": "to_home",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "summary": "保持所需夹持状态将机械臂移到归位附近。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        164,
+        166
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:grasp",
+      "type": "function",
+      "name": "grasp",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "summary": "执行接近、闭合和抬升步骤，并依据本任务的视觉或夹爪反馈处理抓取结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        169,
+        189
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:g_for",
+      "type": "function",
+      "name": "g_for",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "summary": "根据容器倾斜角与瓶口目标反推夹爪位置。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        192,
+        196
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:pour",
+      "type": "function",
+      "name": "pour",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "summary": "按预设倾倒阶段改变滚转和高度并等待排液。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        213,
+        231
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:put_down",
+      "type": "function",
+      "name": "put_down",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "summary": "将抓持物体降到目标位置并释放。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        234,
+        244
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "summary": "解析任务描述中的瓶碗颜色顺序，识别对应容器后控制瓶口位置依次倾倒液体。统筹观察、运动和任务检查。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        248,
+        313
+      ]
+    },
+    {
+      "id": "class:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:Ended",
+      "type": "class",
+      "name": "Ended",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "summary": "以专用异常中断已结束或预算耗尽的离线任务程序。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        29,
+        30
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:main.arm_for",
+      "type": "function",
+      "name": "main.arm_for",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "summary": "依据瓶、碗位置和倾倒顺序分配左右机械臂，处理中央容器竞争。",
+      "tags": [
+        "离线策略",
+        "局部规划",
+        "机器人控制"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        265,
+        280
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:r3",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:r3",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:mv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:mv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:grip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:grip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:wait",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:wait",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:head_cam",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:head_cam",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:proj",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:proj",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:patch_rgb",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:patch_rgb",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:bottle_score",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:bottle_score",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:bowl_score",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:bowl_score",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:identify",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:identify",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:to_home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:to_home",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:grasp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:grasp",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:g_for",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:g_for",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:pour",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:pour",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:put_down",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:put_down",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:Ended",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:Ended",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:wait",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:identify",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:proj",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:identify",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:patch_rgb",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:to_home",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:pour",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:g_for",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:pour",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:pour",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:wait",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:put_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:put_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:put_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:head_cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:identify",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:put_down",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:grasp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:to_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:pour",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:main.arm_for",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_by_language.py:main.arm_for",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    }
+  ]
+}

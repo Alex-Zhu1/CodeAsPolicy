@@ -1,0 +1,959 @@
+{
+  "nodes": [
+    {
+      "id": "file:examples/replay_robotwin_beat_block_hammer.py",
+      "type": "file",
+      "name": "replay_robotwin_beat_block_hammer.py",
+      "filePath": "examples/replay_robotwin_beat_block_hammer.py",
+      "summary": "重放固定 RoboTwin 锤击任务的 LingBot 调用序列，验证双臂原语接口。",
+      "tags": [
+        "示例",
+        "固定回放",
+        "robotwin"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:examples/replay_robotwin_beat_block_hammer.py:run",
+      "type": "function",
+      "name": "run",
+      "filePath": "examples/replay_robotwin_beat_block_hammer.py",
+      "summary": "先执行两段 LingBot 动作，若任务未结束再执行一段并打印状态。",
+      "tags": [
+        "示例",
+        "固定回放",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        13,
+        23
+      ]
+    },
+    {
+      "id": "file:examples/replay_supervision.py",
+      "type": "file",
+      "name": "replay_supervision.py",
+      "filePath": "examples/replay_supervision.py",
+      "summary": "把记录的控制步数和 RGB 图像按阶段契约送入 Valen，以 shadow 模式离线回放视觉监督事件。",
+      "tags": [
+        "示例",
+        "离线回放",
+        "视觉监督"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:examples/replay_supervision.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "examples/replay_supervision.py",
+      "summary": "读取清单与阶段契约，依次回放端点到 shadow 监督器并输出回放报告和错误退出码。",
+      "tags": [
+        "示例",
+        "离线回放",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        50,
+        82
+      ]
+    },
+    {
+      "id": "class:examples/replay_supervision.py:RecordedRobot",
+      "type": "class",
+      "name": "RecordedRobot",
+      "filePath": "examples/replay_supervision.py",
+      "summary": "把记录的图像与控制步数包装成 VisualSupervisor 可读取的最小机器人接口。",
+      "tags": [
+        "示例",
+        "离线回放",
+        "数据结构"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        18,
+        47
+      ]
+    },
+    {
+      "id": "function:examples/replay_supervision.py:RecordedRobot.__init__",
+      "type": "function",
+      "name": "RecordedRobot.__init__",
+      "filePath": "examples/replay_supervision.py",
+      "summary": "验证记录非空、步数严格递增、相机集合一致和图像绝对路径有效。",
+      "tags": [
+        "示例",
+        "离线回放",
+        "方法"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        19,
+        38
+      ]
+    },
+    {
+      "id": "file:examples/robodojo_check_primitives.py",
+      "type": "file",
+      "name": "robodojo_check_primitives.py",
+      "filePath": "examples/robodojo_check_primitives.py",
+      "summary": "以脚本检查 RoboDojo 定位、抓取、抬升、堆叠和按压原语，记录原生步数、工具结果及阶段图像。",
+      "tags": [
+        "示例",
+        "原语验证",
+        "robodojo"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:examples/robodojo_check_primitives.py:call",
+      "type": "function",
+      "name": "call",
+      "filePath": "examples/robodojo_check_primitives.py",
+      "summary": "执行一个工具并记录参数、原生动作消耗、耗时和关键反馈字段。",
+      "tags": [
+        "示例",
+        "原语验证",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        54,
+        106
+      ]
+    },
+    {
+      "id": "function:examples/robodojo_check_primitives.py:snapshot",
+      "type": "function",
+      "name": "snapshot",
+      "filePath": "examples/robodojo_check_primitives.py",
+      "summary": "读取头部相机 RGB 图像并保存带步骤序号的 JPEG 快照。",
+      "tags": [
+        "示例",
+        "原语验证",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        109,
+        117
+      ]
+    },
+    {
+      "id": "file:examples/robodojo_joint_limits.py",
+      "type": "file",
+      "name": "robodojo_joint_limits.py",
+      "filePath": "examples/robodojo_joint_limits.py",
+      "summary": "逐关节发送正负目标并测量停止位置，结合正运动学最低点区分关节限位与桌面碰撞。",
+      "tags": [
+        "示例",
+        "运动学",
+        "关节限位"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:examples/run_supervised_batch.py",
+      "type": "file",
+      "name": "run_supervised_batch.py",
+      "filePath": "examples/run_supervised_batch.py",
+      "summary": "按冻结任务清单和 GPU 并发上限调度监督评测，管理共享 Valen 服务、断点状态、进程清理及结果汇总。",
+      "tags": [
+        "批量评测",
+        "进程管理",
+        "视觉监督"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:examples/run_supervised_batch.py:now",
+      "type": "function",
+      "name": "now",
+      "filePath": "examples/run_supervised_batch.py",
+      "summary": "返回 UTC 时间的 ISO 格式字符串，用于持久化任务时间戳。",
+      "tags": [
+        "批量评测",
+        "进程管理",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        28,
+        29
+      ]
+    },
+    {
+      "id": "function:examples/run_supervised_batch.py:write_json",
+      "type": "function",
+      "name": "write_json",
+      "filePath": "examples/run_supervised_batch.py",
+      "summary": "先写临时 JSON 文件再原子替换目标，避免状态文件半写入。",
+      "tags": [
+        "批量评测",
+        "进程管理",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        32,
+        35
+      ]
+    },
+    {
+      "id": "function:examples/run_supervised_batch.py:read_json",
+      "type": "function",
+      "name": "read_json",
+      "filePath": "examples/run_supervised_batch.py",
+      "summary": "读取 JSON 状态，文件缺失或内容损坏时返回空值。",
+      "tags": [
+        "批量评测",
+        "进程管理",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        38,
+        42
+      ]
+    },
+    {
+      "id": "function:examples/run_supervised_batch.py:last_event",
+      "type": "function",
+      "name": "last_event",
+      "filePath": "examples/run_supervised_batch.py",
+      "summary": "从日志尾部向前寻找最后一条有效 JSON 事件。",
+      "tags": [
+        "批量评测",
+        "进程管理",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        45,
+        57
+      ]
+    },
+    {
+      "id": "function:examples/run_supervised_batch.py:collect_result",
+      "type": "function",
+      "name": "collect_result",
+      "filePath": "examples/run_supervised_batch.py",
+      "summary": "结合回合记录、基准原生判定和监督日志分类成功、失败或错误并汇总统计。",
+      "tags": [
+        "批量评测",
+        "进程管理",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        60,
+        94
+      ]
+    },
+    {
+      "id": "function:examples/run_supervised_batch.py:summary",
+      "type": "function",
+      "name": "summary",
+      "filePath": "examples/run_supervised_batch.py",
+      "summary": "按作业状态计算完成数、成功率、任务失败数和原生平均分。",
+      "tags": [
+        "批量评测",
+        "进程管理",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        97,
+        113
+      ]
+    },
+    {
+      "id": "function:examples/run_supervised_batch.py:still_running",
+      "type": "function",
+      "name": "still_running",
+      "filePath": "examples/run_supervised_batch.py",
+      "summary": "核对持久化作业 PID、创建时间及非僵尸状态，判断旧任务是否仍运行。",
+      "tags": [
+        "批量评测",
+        "进程管理",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        161,
+        169
+      ]
+    },
+    {
+      "id": "function:examples/run_supervised_batch.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "examples/run_supervised_batch.py",
+      "summary": "解析批次目录并取得非阻塞文件锁，防止同一批次被重复调度。",
+      "tags": [
+        "批量评测",
+        "进程管理",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        469,
+        475
+      ]
+    },
+    {
+      "id": "class:examples/run_supervised_batch.py:OwnedProcess",
+      "type": "class",
+      "name": "OwnedProcess",
+      "filePath": "examples/run_supervised_batch.py",
+      "summary": "跟踪子进程及其后代的 PID 与创建时间，确保清理只作用于本批次拥有的进程。",
+      "tags": [
+        "批量评测",
+        "进程管理",
+        "数据结构"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        116,
+        158
+      ]
+    },
+    {
+      "id": "class:examples/run_supervised_batch.py:Batch",
+      "type": "class",
+      "name": "Batch",
+      "filePath": "examples/run_supervised_batch.py",
+      "summary": "维护冻结任务队列、GPU 槽位、共享监督服务与可恢复状态，协调执行和结果发布。",
+      "tags": [
+        "批量评测",
+        "进程管理",
+        "数据结构"
+      ],
+      "complexity": "complex",
+      "lineRange": [
+        172,
+        466
+      ]
+    },
+    {
+      "id": "function:examples/run_supervised_batch.py:OwnedProcess.stop",
+      "type": "function",
+      "name": "OwnedProcess.stop",
+      "filePath": "examples/run_supervised_batch.py",
+      "summary": "先终止自有进程树，超时后对身份仍匹配的进程强制结束。",
+      "tags": [
+        "批量评测",
+        "进程管理",
+        "方法"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        146,
+        158
+      ]
+    },
+    {
+      "id": "function:examples/run_supervised_batch.py:Batch.__init__",
+      "type": "function",
+      "name": "Batch.__init__",
+      "filePath": "examples/run_supervised_batch.py",
+      "summary": "加载冻结配置并核对已有任务清单，收尾中断任务后初始化调度状态。",
+      "tags": [
+        "批量评测",
+        "进程管理",
+        "方法"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        173,
+        204
+      ]
+    },
+    {
+      "id": "function:examples/run_supervised_batch.py:Batch.publish",
+      "type": "function",
+      "name": "Batch.publish",
+      "filePath": "examples/run_supervised_batch.py",
+      "summary": "刷新活跃任务监督进度并原子发布状态、汇总 JSON 和 CSV。",
+      "tags": [
+        "批量评测",
+        "进程管理",
+        "方法"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        206,
+        243
+      ]
+    },
+    {
+      "id": "function:examples/run_supervised_batch.py:Batch.start_valen",
+      "type": "function",
+      "name": "Batch.start_valen",
+      "filePath": "examples/run_supervised_batch.py",
+      "summary": "选择本地端口启动共享 Valen 服务，等待就绪并使用探针图像验证响应协议。",
+      "tags": [
+        "批量评测",
+        "进程管理",
+        "方法"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        245,
+        312
+      ]
+    },
+    {
+      "id": "function:examples/run_supervised_batch.py:Batch.launch",
+      "type": "function",
+      "name": "Batch.launch",
+      "filePath": "examples/run_supervised_batch.py",
+      "summary": "准备任务工作目录和运行配置，在指定 GPU 上启动带监督与恢复参数的回合进程。",
+      "tags": [
+        "批量评测",
+        "进程管理",
+        "方法"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        314,
+        404
+      ]
+    },
+    {
+      "id": "function:examples/run_supervised_batch.py:Batch.finalize",
+      "type": "function",
+      "name": "Batch.finalize",
+      "filePath": "examples/run_supervised_batch.py",
+      "summary": "清理结束任务的进程与日志，汇总最终判定并发布更新。",
+      "tags": [
+        "批量评测",
+        "进程管理",
+        "方法"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        406,
+        427
+      ]
+    },
+    {
+      "id": "function:examples/run_supervised_batch.py:Batch.run",
+      "type": "function",
+      "name": "Batch.run",
+      "filePath": "examples/run_supervised_batch.py",
+      "summary": "按 GPU 槽位持续调度任务，处理超时和中断，并在退出时清理任务与监督服务。",
+      "tags": [
+        "批量评测",
+        "进程管理",
+        "方法"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        429,
+        466
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:examples/replay_robotwin_beat_block_hammer.py",
+      "target": "function:examples/replay_robotwin_beat_block_hammer.py:run",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/replay_robotwin_beat_block_hammer.py",
+      "target": "function:examples/replay_robotwin_beat_block_hammer.py:run",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:examples/replay_supervision.py",
+      "target": "function:examples/replay_supervision.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/replay_supervision.py",
+      "target": "function:examples/replay_supervision.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:examples/replay_supervision.py",
+      "target": "class:examples/replay_supervision.py:RecordedRobot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/replay_supervision.py",
+      "target": "class:examples/replay_supervision.py:RecordedRobot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:examples/replay_supervision.py",
+      "target": "function:examples/replay_supervision.py:RecordedRobot.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:examples/replay_supervision.py:RecordedRobot",
+      "target": "function:examples/replay_supervision.py:RecordedRobot.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/robodojo_check_primitives.py",
+      "target": "function:examples/robodojo_check_primitives.py:call",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/robodojo_check_primitives.py",
+      "target": "function:examples/robodojo_check_primitives.py:call",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:examples/robodojo_check_primitives.py",
+      "target": "function:examples/robodojo_check_primitives.py:snapshot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/robodojo_check_primitives.py",
+      "target": "function:examples/robodojo_check_primitives.py:snapshot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:examples/run_supervised_batch.py",
+      "target": "function:examples/run_supervised_batch.py:now",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/run_supervised_batch.py",
+      "target": "function:examples/run_supervised_batch.py:now",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:examples/run_supervised_batch.py",
+      "target": "function:examples/run_supervised_batch.py:write_json",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/run_supervised_batch.py",
+      "target": "function:examples/run_supervised_batch.py:write_json",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:examples/run_supervised_batch.py",
+      "target": "function:examples/run_supervised_batch.py:read_json",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/run_supervised_batch.py",
+      "target": "function:examples/run_supervised_batch.py:read_json",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:examples/run_supervised_batch.py",
+      "target": "function:examples/run_supervised_batch.py:last_event",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/run_supervised_batch.py",
+      "target": "function:examples/run_supervised_batch.py:last_event",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:examples/run_supervised_batch.py",
+      "target": "function:examples/run_supervised_batch.py:collect_result",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/run_supervised_batch.py",
+      "target": "function:examples/run_supervised_batch.py:collect_result",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:examples/run_supervised_batch.py",
+      "target": "function:examples/run_supervised_batch.py:summary",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/run_supervised_batch.py",
+      "target": "function:examples/run_supervised_batch.py:summary",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:examples/run_supervised_batch.py",
+      "target": "function:examples/run_supervised_batch.py:still_running",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/run_supervised_batch.py",
+      "target": "function:examples/run_supervised_batch.py:still_running",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:examples/run_supervised_batch.py",
+      "target": "function:examples/run_supervised_batch.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/run_supervised_batch.py",
+      "target": "function:examples/run_supervised_batch.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:examples/run_supervised_batch.py",
+      "target": "class:examples/run_supervised_batch.py:OwnedProcess",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/run_supervised_batch.py",
+      "target": "class:examples/run_supervised_batch.py:OwnedProcess",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:examples/run_supervised_batch.py",
+      "target": "class:examples/run_supervised_batch.py:Batch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/run_supervised_batch.py",
+      "target": "class:examples/run_supervised_batch.py:Batch",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:examples/run_supervised_batch.py",
+      "target": "function:examples/run_supervised_batch.py:OwnedProcess.stop",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:examples/run_supervised_batch.py:OwnedProcess",
+      "target": "function:examples/run_supervised_batch.py:OwnedProcess.stop",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/run_supervised_batch.py",
+      "target": "function:examples/run_supervised_batch.py:Batch.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:examples/run_supervised_batch.py:Batch",
+      "target": "function:examples/run_supervised_batch.py:Batch.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/run_supervised_batch.py",
+      "target": "function:examples/run_supervised_batch.py:Batch.publish",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:examples/run_supervised_batch.py:Batch",
+      "target": "function:examples/run_supervised_batch.py:Batch.publish",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/run_supervised_batch.py",
+      "target": "function:examples/run_supervised_batch.py:Batch.start_valen",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:examples/run_supervised_batch.py:Batch",
+      "target": "function:examples/run_supervised_batch.py:Batch.start_valen",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/run_supervised_batch.py",
+      "target": "function:examples/run_supervised_batch.py:Batch.launch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:examples/run_supervised_batch.py:Batch",
+      "target": "function:examples/run_supervised_batch.py:Batch.launch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/run_supervised_batch.py",
+      "target": "function:examples/run_supervised_batch.py:Batch.finalize",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:examples/run_supervised_batch.py:Batch",
+      "target": "function:examples/run_supervised_batch.py:Batch.finalize",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/run_supervised_batch.py",
+      "target": "function:examples/run_supervised_batch.py:Batch.run",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:examples/run_supervised_batch.py:Batch",
+      "target": "function:examples/run_supervised_batch.py:Batch.run",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:examples/replay_supervision.py:main",
+      "target": "class:examples/replay_supervision.py:RecordedRobot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:examples/run_supervised_batch.py:collect_result",
+      "target": "function:examples/run_supervised_batch.py:read_json",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:examples/run_supervised_batch.py:Batch.__init__",
+      "target": "function:examples/run_supervised_batch.py:read_json",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:examples/run_supervised_batch.py:Batch.__init__",
+      "target": "function:examples/run_supervised_batch.py:still_running",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:examples/run_supervised_batch.py:Batch.__init__",
+      "target": "function:examples/run_supervised_batch.py:collect_result",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:examples/run_supervised_batch.py:Batch.__init__",
+      "target": "function:examples/run_supervised_batch.py:now",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:examples/run_supervised_batch.py:Batch.publish",
+      "target": "function:examples/run_supervised_batch.py:last_event",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:examples/run_supervised_batch.py:Batch.publish",
+      "target": "function:examples/run_supervised_batch.py:summary",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:examples/run_supervised_batch.py:Batch.publish",
+      "target": "function:examples/run_supervised_batch.py:write_json",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:examples/run_supervised_batch.py:Batch.publish",
+      "target": "function:examples/run_supervised_batch.py:now",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:examples/run_supervised_batch.py:Batch.start_valen",
+      "target": "class:examples/run_supervised_batch.py:OwnedProcess",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:examples/run_supervised_batch.py:Batch.start_valen",
+      "target": "function:examples/run_supervised_batch.py:write_json",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:examples/run_supervised_batch.py:Batch.start_valen",
+      "target": "function:examples/run_supervised_batch.py:now",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:examples/run_supervised_batch.py:Batch.launch",
+      "target": "function:examples/run_supervised_batch.py:write_json",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:examples/run_supervised_batch.py:Batch.launch",
+      "target": "class:examples/run_supervised_batch.py:OwnedProcess",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:examples/run_supervised_batch.py:Batch.launch",
+      "target": "function:examples/run_supervised_batch.py:now",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:examples/run_supervised_batch.py:Batch.launch",
+      "target": "function:examples/run_supervised_batch.py:Batch.publish",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:examples/run_supervised_batch.py:Batch.finalize",
+      "target": "function:examples/run_supervised_batch.py:collect_result",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:examples/run_supervised_batch.py:Batch.finalize",
+      "target": "function:examples/run_supervised_batch.py:now",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:examples/run_supervised_batch.py:Batch.finalize",
+      "target": "function:examples/run_supervised_batch.py:Batch.publish",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:examples/run_supervised_batch.py:Batch.run",
+      "target": "function:examples/run_supervised_batch.py:Batch.publish",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:examples/run_supervised_batch.py:Batch.run",
+      "target": "function:examples/run_supervised_batch.py:Batch.start_valen",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:examples/run_supervised_batch.py:Batch.run",
+      "target": "function:examples/run_supervised_batch.py:Batch.launch",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:examples/run_supervised_batch.py:Batch.run",
+      "target": "function:examples/run_supervised_batch.py:Batch.finalize",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:examples/run_supervised_batch.py:main",
+      "target": "class:examples/run_supervised_batch.py:Batch",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

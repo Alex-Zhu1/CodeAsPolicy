@@ -1,0 +1,3140 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "type": "file",
+      "name": "put_bottles_into_dustbin.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "实现离线 RoboDojo 任务程序：多视角扫描桌面瓶子，结合运动学和双臂间距选择抓法，由左臂投桶或右臂中转。通过执行环境注入的 robo 接口完成任务，不在评测时调用规划模型。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_rx",
+      "type": "function",
+      "name": "_rx",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "构造绕 X 轴的旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        39,
+        41
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_ry",
+      "type": "function",
+      "name": "_ry",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "构造绕 Y 轴的旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        44,
+        46
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_rz",
+      "type": "function",
+      "name": "_rz",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "构造绕 Z 轴的旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        49,
+        51
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_aa",
+      "type": "function",
+      "name": "_aa",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "按轴角表示构造三维旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        54,
+        59
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_hom",
+      "type": "function",
+      "name": "_hom",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "将旋转和平移组合成齐次变换矩阵。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        62,
+        66
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_frames",
+      "type": "function",
+      "name": "k_frames",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "沿机械臂关节链累计各连杆的空间变换。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        74,
+        80
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_fk",
+      "type": "function",
+      "name": "k_fk",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "由关节角计算末端正运动学位姿。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        83,
+        84
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_tcp",
+      "type": "function",
+      "name": "k_tcp",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "根据末端位姿和工具偏移计算抓取点坐标。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        87,
+        88
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_orient",
+      "type": "function",
+      "name": "k_orient",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "将俯仰、偏航和滚转组合成夹爪目标姿态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        91,
+        92
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_wrap",
+      "type": "function",
+      "name": "_wrap",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "把角度规范到一个完整周期的对称区间。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        95,
+        96
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_angles",
+      "type": "function",
+      "name": "k_angles",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "从姿态矩阵恢复机械臂接口使用的俯仰、偏航和滚转角。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        99,
+        108
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_roterr",
+      "type": "function",
+      "name": "k_roterr",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "计算两个旋转之间的夹角误差。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        111,
+        113
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_rotvec",
+      "type": "function",
+      "name": "_rotvec",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "将旋转矩阵转换为轴角误差向量。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        116,
+        127
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_jac",
+      "type": "function",
+      "name": "_jac",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "计算末端位姿与关节变化之间的雅可比矩阵。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        130,
+        139
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_collides",
+      "type": "function",
+      "name": "k_collides",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "检查机械臂连杆或工具点是否进入桌面碰撞区域。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        142,
+        151
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_solve",
+      "type": "function",
+      "name": "k_solve",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "采用阻尼最小二乘迭代求解目标位姿的逆运动学。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        158,
+        180
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_best",
+      "type": "function",
+      "name": "k_best",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "尝试多个关节种子并选择可行或误差最小的逆运动学解。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        186,
+        204
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_slerp",
+      "type": "function",
+      "name": "_slerp",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "沿轴角插值连接两个旋转姿态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        207,
+        212
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_line",
+      "type": "function",
+      "name": "k_line",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "沿笛卡尔直线路径逐段求逆解以检查整条轨迹可行性。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        215,
+        237
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_target",
+      "type": "function",
+      "name": "k_target",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "用当前姿态补全未指定角度并构造目标变换。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        240,
+        246
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_steps",
+      "type": "function",
+      "name": "k_steps",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "估算关节路径所需的原生动作步数。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        249,
+        256
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:swing_clear",
+      "type": "function",
+      "name": "swing_clear",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "采样关节插值摆动，检查工具点对桌面或桶沿的高度间隙。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        259,
+        269
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_plan",
+      "type": "function",
+      "name": "k_plan",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "模拟库的路径选择、逆解和碰撞检查，估计末态及动作成本。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        272,
+        311
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:arm_points",
+      "type": "function",
+      "name": "arm_points",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "采样机械臂连杆和夹爪的空间点集。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        314,
+        327
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:arms_apart",
+      "type": "function",
+      "name": "arms_apart",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "检查两条机械臂采样点之间的最小距离。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        330,
+        334
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:swing_clear2",
+      "type": "function",
+      "name": "swing_clear2",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "采样关节插值摆动，检查工具点对桌面或桶沿的高度间隙。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        337,
+        348
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:say",
+      "type": "function",
+      "name": "say",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "打印任务执行进度和诊断信息。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        373,
+        374
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:f3",
+      "type": "function",
+      "name": "f3",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "格式化向量或测量数据以便打印诊断信息。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        377,
+        378
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:S",
+      "type": "function",
+      "name": "S",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "读取当前机器人状态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        381,
+        382
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:qnow",
+      "type": "function",
+      "name": "qnow",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "读取机械臂当前关节角向量。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        385,
+        386
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:other_of",
+      "type": "function",
+      "name": "other_of",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "返回与当前机械臂相对的另一侧机械臂。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        389,
+        390
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:heading",
+      "type": "function",
+      "name": "heading",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "按目标相对机械臂基座的位置计算自然接近朝向。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        393,
+        395
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:spent",
+      "type": "function",
+      "name": "spent",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "累计底层动作消耗并处理任务终止或预算状态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        398,
+        404
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:left_steps",
+      "type": "function",
+      "name": "left_steps",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "计算当前任务剩余原生动作预算。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        407,
+        408
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:path_top",
+      "type": "function",
+      "name": "path_top",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "查找搬运路径附近已知障碍物的最高表面。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        411,
+        423
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:seg_plan",
+      "type": "function",
+      "name": "seg_plan",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "把单个轨迹段转换为逆解、路径类型和预估成本。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        429,
+        448
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:chain",
+      "type": "function",
+      "name": "chain",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "连续模拟多个轨迹段并累计所需动作数。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        451,
+        467
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:go",
+      "type": "function",
+      "name": "go",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "调用机器人位姿运动接口并处理本任务的运动结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        470,
+        485
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:run",
+      "type": "function",
+      "name": "run",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "多视角扫描桌面瓶子，结合运动学和双臂间距选择抓法，由左臂投桶或右臂中转。统筹观察、运动和任务检查。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        488,
+        497
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:L",
+      "type": "function",
+      "name": "L",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "构造直线或关节摆动轨迹段参数。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        500,
+        501
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:W",
+      "type": "function",
+      "name": "W",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "构造直线或关节摆动轨迹段参数。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        504,
+        505
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:to_survey",
+      "type": "function",
+      "name": "to_survey",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "先抬升清障再把机械臂移到扫描姿态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        508,
+        531
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:robo_open",
+      "type": "function",
+      "name": "robo_open",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "张开夹爪并计入预算。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        534,
+        537
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:reading",
+      "type": "function",
+      "name": "reading",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "将有效定位结果转换成任务对象记录。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        541,
+        558
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:quality",
+      "type": "function",
+      "name": "quality",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "按多视角可靠性和置信度为检测结果排序。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        561,
+        562
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:scan",
+      "type": "function",
+      "name": "scan",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "扫描多个提示词并合并桌面物体检测。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        565,
+        588
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:variant",
+      "type": "function",
+      "name": "variant",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "轮换目标描述提示词以改进分割覆盖。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        591,
+        594
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:look_and_measure",
+      "type": "function",
+      "name": "look_and_measure",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "将腕部相机移到物体上方后重新测量几何。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        597,
+        633
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:side_plan",
+      "type": "function",
+      "name": "side_plan",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "为直立瓶体规划侧向夹持的接近和抬升。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        637,
+        654
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:top_plan",
+      "type": "function",
+      "name": "top_plan",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "为平躺瓶体规划从上方或沿长轴倾斜的抓取。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        657,
+        686
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:grasp_plan",
+      "type": "function",
+      "name": "grasp_plan",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "根据零件形状和目标朝向生成夹持方向与抓点偏移候选。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        689,
+        690
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:look_pose",
+      "type": "function",
+      "name": "look_pose",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "生成便于俯视目标的候选观察姿态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        693,
+        703
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:pickable",
+      "type": "function",
+      "name": "pickable",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "检查机械臂能否从可达观察姿态完成抓取。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        706,
+        717
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:do_grasp",
+      "type": "function",
+      "name": "do_grasp",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "按计划下降闭合并试抬，以开度确认抓持。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        720,
+        747
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:carry_options",
+      "type": "function",
+      "name": "carry_options",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "根据瓶子抓持类型选择搬运和投放高度。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        751,
+        755
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:drop_in_bin",
+      "type": "function",
+      "name": "drop_in_bin",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "左臂将瓶子送到垃圾桶沿上方并释放。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        758,
+        797
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:place_spot",
+      "type": "function",
+      "name": "place_spot",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "右臂将瓶子放到双臂共享的中转区域。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        803,
+        832
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:go_home",
+      "type": "function",
+      "name": "go_home",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "将指定机械臂返回起始姿态并处理返回结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        835,
+        841
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:left_allowed",
+      "type": "function",
+      "name": "left_allowed",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "按瓶体姿态与位置限制左臂跨侧抓取。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        845,
+        850
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:pick_arm",
+      "type": "function",
+      "name": "pick_arm",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "按可达性和偏好选择或排序执行抓取的机械臂。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        853,
+        862
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:arm_order",
+      "type": "function",
+      "name": "arm_order",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "按可达性和偏好选择或排序执行抓取的机械臂。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        865,
+        871
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:handle",
+      "type": "function",
+      "name": "handle",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "统筹单个瓶子的抓取、搬运、投桶或中转。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        874,
+        919
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:finish",
+      "type": "function",
+      "name": "finish",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "整理夹爪与双臂归位状态结束任务流程。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        922,
+        934
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "多视角扫描桌面瓶子，结合运动学和双臂间距选择抓法，由左臂投桶或右臂中转。统筹观察、运动和任务检查。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        937,
+        976
+      ]
+    },
+    {
+      "id": "class:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:Stop",
+      "type": "class",
+      "name": "Stop",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "summary": "以专用异常中断已结束或预算耗尽的离线任务程序。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        369,
+        370
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_rx",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_rx",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_ry",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_ry",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_rz",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_rz",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_aa",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_aa",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_hom",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_hom",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_frames",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_frames",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_fk",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_fk",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_tcp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_tcp",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_orient",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_orient",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_wrap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_wrap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_angles",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_angles",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_roterr",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_roterr",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_rotvec",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_rotvec",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_jac",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_jac",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_collides",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_collides",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_solve",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_solve",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_best",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_best",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_slerp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_slerp",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_line",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_line",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_target",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_target",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_steps",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:swing_clear",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:swing_clear",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_plan",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_plan",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:arm_points",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:arm_points",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:arms_apart",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:arms_apart",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:swing_clear2",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:swing_clear2",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:say",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:say",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:f3",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:f3",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:S",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:S",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:qnow",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:qnow",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:other_of",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:other_of",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:heading",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:heading",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:spent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:spent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:left_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:left_steps",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:path_top",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:path_top",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:seg_plan",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:seg_plan",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:chain",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:chain",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:go",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:go",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:run",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:run",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:L",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:L",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:W",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:W",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:to_survey",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:to_survey",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:robo_open",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:robo_open",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:reading",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:reading",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:quality",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:quality",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:scan",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:scan",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:variant",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:variant",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:look_and_measure",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:look_and_measure",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:side_plan",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:side_plan",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:top_plan",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:top_plan",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:grasp_plan",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:grasp_plan",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:look_pose",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:look_pose",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:pickable",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:pickable",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:do_grasp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:do_grasp",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:carry_options",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:carry_options",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:drop_in_bin",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:drop_in_bin",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:place_spot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:place_spot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:go_home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:go_home",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:left_allowed",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:left_allowed",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:pick_arm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:pick_arm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:arm_order",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:arm_order",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:handle",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:handle",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:finish",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:finish",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:Stop",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:Stop",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_frames",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_hom",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_frames",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_aa",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_fk",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_frames",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_orient",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_rz",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_orient",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_ry",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_orient",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_rx",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_angles",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_angles",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_orient",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_jac",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_frames",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_collides",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_frames",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_solve",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_jac",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_solve",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_rotvec",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_solve",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_fk",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_solve",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_roterr",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_solve",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_collides",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_best",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_solve",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_slerp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_rotvec",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_slerp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_aa",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_line",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_fk",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_line",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_roterr",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_line",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_slerp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_line",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_solve",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_target",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_angles",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_target",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_fk",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_target",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_orient",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:swing_clear",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_fk",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:swing_clear",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_tcp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:swing_clear",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_collides",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_plan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_target",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_plan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_best",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_plan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_fk",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_plan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_tcp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_plan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_line",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_plan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:swing_clear",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_plan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_steps",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:arm_points",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_frames",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:arms_apart",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:arm_points",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:swing_clear2",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_fk",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:swing_clear2",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_tcp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:swing_clear2",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_collides",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:qnow",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:S",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:seg_plan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_plan",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:seg_plan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:swing_clear2",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:seg_plan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_tcp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:seg_plan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_fk",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:seg_plan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:arms_apart",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:chain",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:qnow",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:chain",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:S",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:chain",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:other_of",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:chain",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:seg_plan",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:go",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:S",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:go",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:seg_plan",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:go",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:qnow",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:go",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:other_of",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:go",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:go",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:go",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:spent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:go",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:to_survey",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:S",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:to_survey",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:path_top",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:to_survey",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:W",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:to_survey",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:L",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:to_survey",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:chain",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:to_survey",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:to_survey",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:to_survey",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:spent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:robo_open",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:spent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:scan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:scan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:reading",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:scan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:quality",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:look_and_measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:S",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:look_and_measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:path_top",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:look_and_measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:look_pose",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:look_and_measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:W",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:look_and_measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:L",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:look_and_measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:chain",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:look_and_measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:look_and_measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:look_and_measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:variant",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:look_and_measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:reading",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:look_and_measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:quality",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:side_plan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:heading",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:side_plan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:W",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:side_plan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:L",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:side_plan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:chain",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:top_plan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:heading",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:top_plan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:_wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:top_plan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:W",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:top_plan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:L",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:top_plan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:chain",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:grasp_plan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:side_plan",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:grasp_plan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:top_plan",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:look_pose",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:heading",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:pickable",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:look_pose",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:pickable",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_target",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:pickable",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:k_best",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:pickable",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:qnow",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:pickable",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:arms_apart",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:pickable",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:other_of",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:pickable",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:grasp_plan",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:do_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:do_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:S",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:do_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:do_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:go",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:do_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:L",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:do_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:spent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:do_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:robo_open",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:drop_in_bin",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:carry_options",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:drop_in_bin",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:S",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:drop_in_bin",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:path_top",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:drop_in_bin",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:heading",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:drop_in_bin",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:W",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:drop_in_bin",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:L",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:drop_in_bin",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:chain",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:drop_in_bin",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:drop_in_bin",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:drop_in_bin",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:robo_open",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:drop_in_bin",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:go",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:place_spot",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:carry_options",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:place_spot",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:S",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:place_spot",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:pickable",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:place_spot",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:heading",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:place_spot",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:W",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:place_spot",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:L",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:place_spot",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:chain",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:place_spot",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:place_spot",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:robo_open",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:place_spot",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:go",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:place_spot",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:go_home",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:spent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:pick_arm",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:left_allowed",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:pick_arm",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:pickable",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:arm_order",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:pick_arm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:arm_order",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:left_allowed",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:arm_order",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:left_steps",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:pickable",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:look_and_measure",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:grasp_plan",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:to_survey",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:do_grasp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:drop_in_bin",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:S",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:go",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:L",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:robo_open",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:handle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:place_spot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:finish",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:S",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:finish",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:robo_open",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:finish",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:to_survey",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:finish",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:spent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:to_survey",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:left_steps",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:scan",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:handle",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/put_bottles_into_dustbin.py:finish",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

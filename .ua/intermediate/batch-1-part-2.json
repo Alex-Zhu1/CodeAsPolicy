@@ -1,0 +1,1621 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "type": "file",
+      "name": "robodojo_coordination.py",
+      "filePath": "src/pyrualean/hosts/robodojo_coordination.py",
+      "summary": "在 RoboDojo 单一原生动作时钟上执行有界双臂轨迹，检查采样手臂与桌面的间隙并显式报告能力范围。",
+      "tags": [
+        "双臂协调",
+        "轨迹执行",
+        "几何校验"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_coordination.py:_positive",
+      "type": "function",
+      "name": "_positive",
+      "filePath": "src/pyrualean/hosts/robodojo_coordination.py",
+      "lineRange": [
+        22,
+        27
+      ],
+      "summary": "检查参数为有限正数或整数且不超过上限。",
+      "tags": [
+        "双臂协调",
+        "轨迹执行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_coordination.py:_matrix",
+      "type": "function",
+      "name": "_matrix",
+      "filePath": "src/pyrualean/hosts/robodojo_coordination.py",
+      "lineRange": [
+        30,
+        35
+      ],
+      "summary": "把公开 Pose 数据转换为四维齐次变换矩阵。",
+      "tags": [
+        "双臂协调",
+        "轨迹执行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_coordination.py:_errors",
+      "type": "function",
+      "name": "_errors",
+      "filePath": "src/pyrualean/hosts/robodojo_coordination.py",
+      "lineRange": [
+        38,
+        42
+      ],
+      "summary": "计算实际与目标位姿的位置距离和旋转角误差。",
+      "tags": [
+        "双臂协调",
+        "轨迹执行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_coordination.py:_dispatch",
+      "type": "function",
+      "name": "_dispatch",
+      "filePath": "src/pyrualean/hosts/robodojo_coordination.py",
+      "lineRange": [
+        426,
+        430
+      ],
+      "summary": "分发控制器方法并将参数及状态异常转为结构化工具结果。",
+      "tags": [
+        "双臂协调",
+        "轨迹执行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_coordination.py:_read",
+      "type": "function",
+      "name": "_read",
+      "filePath": "src/pyrualean/hosts/robodojo_coordination.py",
+      "lineRange": [
+        433,
+        434
+      ],
+      "summary": "通过统一分发器执行控制器读取操作。",
+      "tags": [
+        "双臂协调",
+        "轨迹执行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_coordination.py:handlers",
+      "type": "function",
+      "name": "handlers",
+      "filePath": "src/pyrualean/hosts/robodojo_coordination.py",
+      "lineRange": [
+        440,
+        446
+      ],
+      "summary": "把同一 Controller 实例的能力、观测、计划、执行与停止方法绑定为工具处理器。",
+      "tags": [
+        "双臂协调",
+        "轨迹执行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_coordination.py:register",
+      "type": "function",
+      "name": "register",
+      "filePath": "src/pyrualean/hosts/robodojo_coordination.py",
+      "lineRange": [
+        449,
+        459
+      ],
+      "summary": "在工具包注册同步运动工具及其可调用处理器。",
+      "tags": [
+        "双臂协调",
+        "轨迹执行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/hosts/robodojo_coordination.py:Controller",
+      "type": "class",
+      "name": "Controller",
+      "filePath": "src/pyrualean/hosts/robodojo_coordination.py",
+      "lineRange": [
+        45,
+        423
+      ],
+      "summary": "保存有限的观测和计划，协调双臂路径检查、分段执行、版本验证与中断。",
+      "tags": [
+        "双臂协调",
+        "轨迹执行",
+        "数据模型"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller.__init__",
+      "type": "function",
+      "name": "Controller.__init__",
+      "filePath": "src/pyrualean/hosts/robodojo_coordination.py",
+      "lineRange": [
+        46,
+        49
+      ],
+      "summary": "保存原语宿主并初始化观测、计划缓存。",
+      "tags": [
+        "双臂协调",
+        "轨迹执行",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller.capabilities",
+      "type": "function",
+      "name": "Controller.capabilities",
+      "filePath": "src/pyrualean/hosts/robodojo_coordination.py",
+      "lineRange": [
+        51,
+        67
+      ],
+      "summary": "声明只支持同步世界坐标运动，以及实际提供与未提供的几何检查。",
+      "tags": [
+        "双臂协调",
+        "轨迹执行",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller._snapshot",
+      "type": "function",
+      "name": "Controller._snapshot",
+      "filePath": "src/pyrualean/hosts/robodojo_coordination.py",
+      "lineRange": [
+        74,
+        89
+      ],
+      "summary": "读取双臂关节、夹爪及原生版本，计算同一时刻的 TCP 位姿。",
+      "tags": [
+        "双臂协调",
+        "轨迹执行",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller.observe",
+      "type": "function",
+      "name": "Controller.observe",
+      "filePath": "src/pyrualean/hosts/robodojo_coordination.py",
+      "lineRange": [
+        111,
+        117
+      ],
+      "summary": "保存带唯一标识的双臂快照，并限制缓存观测数量。",
+      "tags": [
+        "双臂协调",
+        "轨迹执行",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller.plan",
+      "type": "function",
+      "name": "Controller.plan",
+      "filePath": "src/pyrualean/hosts/robodojo_coordination.py",
+      "lineRange": [
+        126,
+        267
+      ],
+      "summary": "校验预算和约束，依据新鲜观测为双臂生成兼容路径，在任何动作前拒绝不可满足的计划。",
+      "tags": [
+        "双臂协调",
+        "轨迹执行",
+        "类方法"
+      ],
+      "complexity": "complex",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller._report",
+      "type": "function",
+      "name": "Controller._report",
+      "filePath": "src/pyrualean/hosts/robodojo_coordination.py",
+      "lineRange": [
+        275,
+        302
+      ],
+      "summary": "读取当前快照并比较最终目标，生成实际步数、误差、恢复与停止信息。",
+      "tags": [
+        "双臂协调",
+        "轨迹执行",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller.execute",
+      "type": "function",
+      "name": "Controller.execute",
+      "filePath": "src/pyrualean/hosts/robodojo_coordination.py",
+      "lineRange": [
+        304,
+        392
+      ],
+      "summary": "检查计划新鲜度及预算后分段同步执行，更新预期版本并返回完成或部分执行报告。",
+      "tags": [
+        "双臂协调",
+        "轨迹执行",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller._recoverable",
+      "type": "function",
+      "name": "Controller._recoverable",
+      "filePath": "src/pyrualean/hosts/robodojo_coordination.py",
+      "lineRange": [
+        395,
+        406
+      ],
+      "summary": "区分可显式局部修正的停止原因与必须交回规划者的故障。",
+      "tags": [
+        "双臂协调",
+        "轨迹执行",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller.discard",
+      "type": "function",
+      "name": "Controller.discard",
+      "filePath": "src/pyrualean/hosts/robodojo_coordination.py",
+      "lineRange": [
+        408,
+        410
+      ],
+      "summary": "移除指定的已缓存运动计划。",
+      "tags": [
+        "双臂协调",
+        "轨迹执行",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller.stop",
+      "type": "function",
+      "name": "Controller.stop",
+      "filePath": "src/pyrualean/hosts/robodojo_coordination.py",
+      "lineRange": [
+        412,
+        423
+      ],
+      "summary": "标记计划停止，并返回其真实执行状态和当前场景。",
+      "tags": [
+        "双臂协调",
+        "轨迹执行",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "type": "file",
+      "name": "robodojo_kinematics.py",
+      "filePath": "src/pyrualean/hosts/robodojo_kinematics.py",
+      "summary": "在宿主侧实现 ARX-X5 双臂的正逆运动学、全姿态误差和路径采样，避免只控制位置导致手腕漂移。",
+      "tags": [
+        "运动学",
+        "逆运动学",
+        "轨迹规划"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_kinematics.py:_rot_x",
+      "type": "function",
+      "name": "_rot_x",
+      "filePath": "src/pyrualean/hosts/robodojo_kinematics.py",
+      "lineRange": [
+        93,
+        95
+      ],
+      "summary": "构造绕 x 轴旋转的三维矩阵。",
+      "tags": [
+        "运动学",
+        "逆运动学",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_kinematics.py:_rot_y",
+      "type": "function",
+      "name": "_rot_y",
+      "filePath": "src/pyrualean/hosts/robodojo_kinematics.py",
+      "lineRange": [
+        98,
+        100
+      ],
+      "summary": "构造绕 y 轴旋转的三维矩阵。",
+      "tags": [
+        "运动学",
+        "逆运动学",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_kinematics.py:_rot_z",
+      "type": "function",
+      "name": "_rot_z",
+      "filePath": "src/pyrualean/hosts/robodojo_kinematics.py",
+      "lineRange": [
+        103,
+        105
+      ],
+      "summary": "构造绕 z 轴旋转的三维矩阵。",
+      "tags": [
+        "运动学",
+        "逆运动学",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_kinematics.py:_axis_angle",
+      "type": "function",
+      "name": "_axis_angle",
+      "filePath": "src/pyrualean/hosts/robodojo_kinematics.py",
+      "lineRange": [
+        108,
+        117
+      ],
+      "summary": "用轴角形式构造旋转矩阵。",
+      "tags": [
+        "运动学",
+        "逆运动学",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_kinematics.py:_homogeneous",
+      "type": "function",
+      "name": "_homogeneous",
+      "filePath": "src/pyrualean/hosts/robodojo_kinematics.py",
+      "lineRange": [
+        120,
+        124
+      ],
+      "summary": "把旋转与位置组合成齐次变换矩阵。",
+      "tags": [
+        "运动学",
+        "逆运动学",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_kinematics.py:_check_arm",
+      "type": "function",
+      "name": "_check_arm",
+      "filePath": "src/pyrualean/hosts/robodojo_kinematics.py",
+      "lineRange": [
+        134,
+        136
+      ],
+      "summary": "验证手臂标识属于支持的左右臂集合。",
+      "tags": [
+        "运动学",
+        "逆运动学",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_kinematics.py:frames",
+      "type": "function",
+      "name": "frames",
+      "filePath": "src/pyrualean/hosts/robodojo_kinematics.py",
+      "lineRange": [
+        139,
+        150
+      ],
+      "summary": "沿关节链计算各关节旋转后坐标系与末端 link6 的世界位姿。",
+      "tags": [
+        "运动学",
+        "逆运动学",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_kinematics.py:fk",
+      "type": "function",
+      "name": "fk",
+      "filePath": "src/pyrualean/hosts/robodojo_kinematics.py",
+      "lineRange": [
+        153,
+        156
+      ],
+      "summary": "计算 RoboDojo 报告的 link6 末端世界位姿。",
+      "tags": [
+        "运动学",
+        "逆运动学",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_kinematics.py:tcp",
+      "type": "function",
+      "name": "tcp",
+      "filePath": "src/pyrualean/hosts/robodojo_kinematics.py",
+      "lineRange": [
+        159,
+        162
+      ],
+      "summary": "根据 link6 位姿及夹爪偏置计算指尖之间的抓取点。",
+      "tags": [
+        "运动学",
+        "逆运动学",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_kinematics.py:quat_wxyz",
+      "type": "function",
+      "name": "quat_wxyz",
+      "filePath": "src/pyrualean/hosts/robodojo_kinematics.py",
+      "lineRange": [
+        165,
+        184
+      ],
+      "summary": "把旋转矩阵转换为标量分量非负的单位 wxyz 四元数。",
+      "tags": [
+        "运动学",
+        "逆运动学",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_kinematics.py:rot_from_quat",
+      "type": "function",
+      "name": "rot_from_quat",
+      "filePath": "src/pyrualean/hosts/robodojo_kinematics.py",
+      "lineRange": [
+        187,
+        199
+      ],
+      "summary": "把 wxyz 四元数转换为旋转矩阵。",
+      "tags": [
+        "运动学",
+        "逆运动学",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_kinematics.py:orientation",
+      "type": "function",
+      "name": "orientation",
+      "filePath": "src/pyrualean/hosts/robodojo_kinematics.py",
+      "lineRange": [
+        202,
+        207
+      ],
+      "summary": "将面向策略的俯仰、偏航和滚转角转换为夹爪方向。",
+      "tags": [
+        "运动学",
+        "逆运动学",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_kinematics.py:angles",
+      "type": "function",
+      "name": "angles",
+      "filePath": "src/pyrualean/hosts/robodojo_kinematics.py",
+      "lineRange": [
+        213,
+        230
+      ],
+      "summary": "从夹爪方向提取角度，在垂直向下的退化位置规范滚转值。",
+      "tags": [
+        "运动学",
+        "逆运动学",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_kinematics.py:_wrap",
+      "type": "function",
+      "name": "_wrap",
+      "filePath": "src/pyrualean/hosts/robodojo_kinematics.py",
+      "lineRange": [
+        233,
+        234
+      ],
+      "summary": "将角度规范到负一百八十度到一百八十度区间。",
+      "tags": [
+        "运动学",
+        "逆运动学",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_kinematics.py:rotation_error",
+      "type": "function",
+      "name": "rotation_error",
+      "filePath": "src/pyrualean/hosts/robodojo_kinematics.py",
+      "lineRange": [
+        237,
+        241
+      ],
+      "summary": "计算两个旋转矩阵之间的角距离。",
+      "tags": [
+        "运动学",
+        "逆运动学",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_kinematics.py:_rotvec",
+      "type": "function",
+      "name": "_rotvec",
+      "filePath": "src/pyrualean/hosts/robodojo_kinematics.py",
+      "lineRange": [
+        244,
+        255
+      ],
+      "summary": "由旋转矩阵提取旋转向量，并处理接近零和半周的数值退化。",
+      "tags": [
+        "运动学",
+        "逆运动学",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_kinematics.py:jacobian",
+      "type": "function",
+      "name": "jacobian",
+      "filePath": "src/pyrualean/hosts/robodojo_kinematics.py",
+      "lineRange": [
+        258,
+        269
+      ],
+      "summary": "计算指定末端偏置点的世界几何雅可比及其位姿。",
+      "tags": [
+        "运动学",
+        "逆运动学",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_kinematics.py:clearance_violations",
+      "type": "function",
+      "name": "clearance_violations",
+      "filePath": "src/pyrualean/hosts/robodojo_kinematics.py",
+      "lineRange": [
+        281,
+        298
+      ],
+      "summary": "检测处于桌面水平范围内且低于桌面的手臂部件。",
+      "tags": [
+        "运动学",
+        "逆运动学",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_kinematics.py:solve",
+      "type": "function",
+      "name": "solve",
+      "filePath": "src/pyrualean/hosts/robodojo_kinematics.py",
+      "lineRange": [
+        301,
+        346
+      ],
+      "summary": "从给定关节种子以阻尼最小二乘求解目标全位姿，联合控制位置和旋转误差。",
+      "tags": [
+        "运动学",
+        "逆运动学",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_kinematics.py:best_solution",
+      "type": "function",
+      "name": "best_solution",
+      "filePath": "src/pyrualean/hosts/robodojo_kinematics.py",
+      "lineRange": [
+        349,
+        382
+      ],
+      "summary": "尝试当前姿态及多个种子，选择可达且避开桌面、关节位移较小的解。",
+      "tags": [
+        "运动学",
+        "逆运动学",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_kinematics.py:slerp",
+      "type": "function",
+      "name": "slerp",
+      "filePath": "src/pyrualean/hosts/robodojo_kinematics.py",
+      "lineRange": [
+        385,
+        392
+      ],
+      "summary": "对两个旋转进行球面插值。",
+      "tags": [
+        "运动学",
+        "逆运动学",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_kinematics.py:line_path",
+      "type": "function",
+      "name": "line_path",
+      "filePath": "src/pyrualean/hosts/robodojo_kinematics.py",
+      "lineRange": [
+        395,
+        431
+      ],
+      "summary": "沿 TCP 直线路径逐点求逆运动学，延续前一解以避免关节分支跳变。",
+      "tags": [
+        "运动学",
+        "逆运动学",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/pyrualean/hosts/robodojo_kinematics.py:IKResult",
+      "type": "class",
+      "name": "IKResult",
+      "filePath": "src/pyrualean/hosts/robodojo_kinematics.py",
+      "lineRange": [
+        273,
+        278
+      ],
+      "summary": "记录逆运动学关节解、位置和角度误差、可达状态及桌面碰撞标志。",
+      "tags": [
+        "运动学",
+        "逆运动学",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:_positive",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:_positive",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:_matrix",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:_matrix",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:_errors",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:_errors",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:_dispatch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:_dispatch",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:_read",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:_read",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:handlers",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:handlers",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:register",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:register",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "target": "class:src/pyrualean/hosts/robodojo_coordination.py:Controller",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "target": "class:src/pyrualean/hosts/robodojo_coordination.py:Controller",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_coordination.py:Controller",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller.capabilities",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_coordination.py:Controller",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller.capabilities",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller._snapshot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_coordination.py:Controller",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller._snapshot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller.observe",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_coordination.py:Controller",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller.observe",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller.plan",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_coordination.py:Controller",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller.plan",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller._report",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_coordination.py:Controller",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller._report",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller.execute",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_coordination.py:Controller",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller.execute",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller._recoverable",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_coordination.py:Controller",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller._recoverable",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller.discard",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_coordination.py:Controller",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller.discard",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller.stop",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_coordination.py:Controller",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller.stop",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "target": "file:src/pyrualean/coordination.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_coordination.py",
+      "target": "file:src/pyrualean/hosts/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_coordination.py:_matrix",
+      "target": "class:src/pyrualean/coordination.py:Pose",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller.observe",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller._snapshot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller.plan",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:_positive",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller.plan",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller._snapshot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller.plan",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:_matrix",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller.plan",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller._report",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller.plan",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:_errors",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller._report",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller._snapshot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller._report",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:_errors",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller._report",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller._recoverable",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller.execute",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller._report",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller.execute",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller._snapshot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller.execute",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:_errors",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller.stop",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:Controller._report",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_coordination.py:_read",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:_dispatch",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_coordination.py:handlers",
+      "target": "class:src/pyrualean/hosts/robodojo_coordination.py:Controller",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_coordination.py:register",
+      "target": "function:src/pyrualean/hosts/robodojo_coordination.py:handlers",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:_rot_x",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:_rot_x",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:_rot_y",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:_rot_y",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:_rot_z",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:_rot_z",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:_axis_angle",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:_axis_angle",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:_homogeneous",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:_homogeneous",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:_check_arm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:_check_arm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:frames",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:frames",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:fk",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:fk",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:tcp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:tcp",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:quat_wxyz",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:quat_wxyz",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:rot_from_quat",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:rot_from_quat",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:orientation",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:orientation",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:angles",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:angles",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:_wrap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:_wrap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:rotation_error",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:rotation_error",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:_rotvec",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:_rotvec",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:jacobian",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:jacobian",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:clearance_violations",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:clearance_violations",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:solve",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:solve",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:best_solution",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:best_solution",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:slerp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:slerp",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:line_path",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:line_path",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "class:src/pyrualean/hosts/robodojo_kinematics.py:IKResult",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "class:src/pyrualean/hosts/robodojo_kinematics.py:IKResult",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_kinematics.py",
+      "target": "file:src/pyrualean/robodojo.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_kinematics.py:frames",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:_check_arm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_kinematics.py:frames",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:_homogeneous",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_kinematics.py:frames",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:_axis_angle",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_kinematics.py:fk",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:frames",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_kinematics.py:orientation",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:_rot_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_kinematics.py:orientation",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:_rot_y",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_kinematics.py:orientation",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:_rot_x",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_kinematics.py:angles",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:_wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_kinematics.py:angles",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:orientation",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_kinematics.py:jacobian",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:frames",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_kinematics.py:clearance_violations",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:frames",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_kinematics.py:solve",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:jacobian",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_kinematics.py:solve",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:_rotvec",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_kinematics.py:solve",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:fk",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_kinematics.py:solve",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:rotation_error",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_kinematics.py:solve",
+      "target": "class:src/pyrualean/hosts/robodojo_kinematics.py:IKResult",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_kinematics.py:solve",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:clearance_violations",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_kinematics.py:best_solution",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:solve",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_kinematics.py:slerp",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:_rotvec",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_kinematics.py:slerp",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:_axis_angle",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_kinematics.py:line_path",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:fk",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_kinematics.py:line_path",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:rotation_error",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_kinematics.py:line_path",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:slerp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_kinematics.py:line_path",
+      "target": "function:src/pyrualean/hosts/robodojo_kinematics.py:solve",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

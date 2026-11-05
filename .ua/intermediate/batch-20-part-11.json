@@ -1,0 +1,350 @@
+{
+  "nodes": [
+    {
+      "id": "file:tests/test_valen_eval.py",
+      "type": "file",
+      "name": "test_valen_eval.py",
+      "filePath": "tests/test_valen_eval.py",
+      "summary": "验证Valen 缓存评估、独立标注、阈值与回放变体。通过固定输入、模拟后端或临时资源检查正常行为及失败边界。",
+      "tags": [
+        "测试",
+        "回归验证",
+        "行为契约"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_valen_eval.py:audit",
+      "type": "function",
+      "name": "audit",
+      "filePath": "tests/test_valen_eval.py",
+      "summary": "写入监督审计和图像记录供离线评估测试。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        13,
+        31
+      ]
+    },
+    {
+      "id": "function:tests/test_valen_eval.py:test_cached_cli_exports_template_without_model_or_robot",
+      "type": "function",
+      "name": "test_cached_cli_exports_template_without_model_or_robot",
+      "filePath": "tests/test_valen_eval.py",
+      "summary": "验证缓存评估 CLI 无需模型或机器人即可导出标注模板。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        34,
+        51
+      ]
+    },
+    {
+      "id": "function:tests/test_valen_eval.py:test_threshold_metrics_use_independent_labels_and_report_false_passes",
+      "type": "function",
+      "name": "test_threshold_metrics_use_independent_labels_and_report_false_passes",
+      "filePath": "tests/test_valen_eval.py",
+      "summary": "验证阈值指标使用独立标签并报告错误放行。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        54,
+        62
+      ]
+    },
+    {
+      "id": "function:tests/test_valen_eval.py:test_replay_keeps_full_scene_and_adds_labelled_crop_and_question_variant",
+      "type": "function",
+      "name": "test_replay_keeps_full_scene_and_adds_labelled_crop_and_question_variant",
+      "filePath": "tests/test_valen_eval.py",
+      "summary": "验证回放保留完整场景并添加标注裁剪和问题变体。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        65,
+        88
+      ]
+    },
+    {
+      "id": "function:tests/test_valen_eval.py:test_changed_question_cannot_reuse_old_label",
+      "type": "function",
+      "name": "test_changed_question_cannot_reuse_old_label",
+      "filePath": "tests/test_valen_eval.py",
+      "summary": "验证改写问题后不能复用旧人工标签。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        91,
+        96
+      ]
+    },
+    {
+      "id": "function:tests/test_valen_eval.py:test_variants_require_explicit_replay_and_outputs_cannot_overwrite",
+      "type": "function",
+      "name": "test_variants_require_explicit_replay_and_outputs_cannot_overwrite",
+      "filePath": "tests/test_valen_eval.py",
+      "summary": "验证问题变体必须显式回放且输出不得覆盖已有目录。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        99,
+        103
+      ]
+    },
+    {
+      "id": "function:tests/test_valen_eval.py:test_bad_threshold_cannot_produce_misleading_metrics",
+      "type": "function",
+      "name": "test_bad_threshold_cannot_produce_misleading_metrics",
+      "filePath": "tests/test_valen_eval.py",
+      "summary": "验证非法阈值被拒绝以避免产生误导指标。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        107,
+        109
+      ]
+    },
+    {
+      "id": "class:tests/test_valen_eval.py:test_replay_keeps_full_scene_and_adds_labelled_crop_and_question_variant.Client",
+      "type": "class",
+      "name": "test_replay_keeps_full_scene_and_adds_labelled_crop_and_question_variant.Client",
+      "filePath": "tests/test_valen_eval.py",
+      "summary": "保存回放评估输入并返回固定的抓持概率分布。",
+      "tags": [
+        "测试",
+        "局部定义",
+        "测试替身"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        66,
+        73
+      ]
+    },
+    {
+      "id": "function:tests/test_valen_eval.py:test_replay_keeps_full_scene_and_adds_labelled_crop_and_question_variant.Client.__init__",
+      "type": "function",
+      "name": "test_replay_keeps_full_scene_and_adds_labelled_crop_and_question_variant.Client.__init__",
+      "filePath": "tests/test_valen_eval.py",
+      "summary": "初始化测试替身所需状态。",
+      "tags": [
+        "测试",
+        "局部定义",
+        "测试替身"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        67,
+        68
+      ]
+    },
+    {
+      "id": "function:tests/test_valen_eval.py:test_replay_keeps_full_scene_and_adds_labelled_crop_and_question_variant.Client.predict",
+      "type": "function",
+      "name": "test_replay_keeps_full_scene_and_adds_labelled_crop_and_question_variant.Client.predict",
+      "filePath": "tests/test_valen_eval.py",
+      "summary": "保存输入包并返回固定视觉谓词概率。",
+      "tags": [
+        "测试",
+        "局部定义",
+        "测试替身"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        70,
+        73
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:tests/test_valen_eval.py",
+      "target": "function:tests/test_valen_eval.py:audit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_valen_eval.py",
+      "target": "function:tests/test_valen_eval.py:audit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_valen_eval.py",
+      "target": "function:tests/test_valen_eval.py:test_cached_cli_exports_template_without_model_or_robot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_valen_eval.py",
+      "target": "function:tests/test_valen_eval.py:test_cached_cli_exports_template_without_model_or_robot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_valen_eval.py",
+      "target": "function:tests/test_valen_eval.py:test_threshold_metrics_use_independent_labels_and_report_false_passes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_valen_eval.py",
+      "target": "function:tests/test_valen_eval.py:test_threshold_metrics_use_independent_labels_and_report_false_passes",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_valen_eval.py",
+      "target": "function:tests/test_valen_eval.py:test_replay_keeps_full_scene_and_adds_labelled_crop_and_question_variant",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_valen_eval.py",
+      "target": "function:tests/test_valen_eval.py:test_replay_keeps_full_scene_and_adds_labelled_crop_and_question_variant",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_valen_eval.py",
+      "target": "function:tests/test_valen_eval.py:test_changed_question_cannot_reuse_old_label",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_valen_eval.py",
+      "target": "function:tests/test_valen_eval.py:test_changed_question_cannot_reuse_old_label",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_valen_eval.py",
+      "target": "function:tests/test_valen_eval.py:test_variants_require_explicit_replay_and_outputs_cannot_overwrite",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_valen_eval.py",
+      "target": "function:tests/test_valen_eval.py:test_variants_require_explicit_replay_and_outputs_cannot_overwrite",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_valen_eval.py",
+      "target": "function:tests/test_valen_eval.py:test_bad_threshold_cannot_produce_misleading_metrics",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_valen_eval.py",
+      "target": "function:tests/test_valen_eval.py:test_bad_threshold_cannot_produce_misleading_metrics",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "file:tests/test_valen_eval.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/__init__.py",
+      "target": "file:tests/test_valen_eval.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/valen.py",
+      "target": "file:tests/test_valen_eval.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:tests/test_valen_eval.py",
+      "target": "class:tests/test_valen_eval.py:test_replay_keeps_full_scene_and_adds_labelled_crop_and_question_variant.Client",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:tests/test_valen_eval.py:test_replay_keeps_full_scene_and_adds_labelled_crop_and_question_variant",
+      "target": "class:tests/test_valen_eval.py:test_replay_keeps_full_scene_and_adds_labelled_crop_and_question_variant.Client",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_valen_eval.py",
+      "target": "function:tests/test_valen_eval.py:test_replay_keeps_full_scene_and_adds_labelled_crop_and_question_variant.Client.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_valen_eval.py:test_replay_keeps_full_scene_and_adds_labelled_crop_and_question_variant.Client",
+      "target": "function:tests/test_valen_eval.py:test_replay_keeps_full_scene_and_adds_labelled_crop_and_question_variant.Client.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_valen_eval.py",
+      "target": "function:tests/test_valen_eval.py:test_replay_keeps_full_scene_and_adds_labelled_crop_and_question_variant.Client.predict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_valen_eval.py:test_replay_keeps_full_scene_and_adds_labelled_crop_and_question_variant.Client",
+      "target": "function:tests/test_valen_eval.py:test_replay_keeps_full_scene_and_adds_labelled_crop_and_question_variant.Client.predict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    }
+  ]
+}

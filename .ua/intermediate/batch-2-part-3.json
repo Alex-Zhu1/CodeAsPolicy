@@ -1,0 +1,1636 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/pyrualean/evidence.py",
+      "type": "file",
+      "name": "evidence.py",
+      "filePath": "src/pyrualean/evidence.py",
+      "summary": "维护单回合的视觉事实、有效期和规划者声明的阶段前置条件。只检查显式声明，不推断物理动作之间的依赖。",
+      "tags": [
+        "视觉证据",
+        "状态管理",
+        "前置条件"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/pyrualean/evidence.py:EvidenceLedger",
+      "type": "class",
+      "name": "EvidenceLedger",
+      "filePath": "src/pyrualean/evidence.py",
+      "lineRange": [
+        12,
+        126
+      ],
+      "summary": "保存视觉事实及各阶段门控条件，支持失效、观测更新、延期和阻塞查询。",
+      "tags": [
+        "视觉证据",
+        "状态管理",
+        "数据模型"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/evidence.py:EvidenceLedger.__init__",
+      "type": "function",
+      "name": "EvidenceLedger.__init__",
+      "filePath": "src/pyrualean/evidence.py",
+      "lineRange": [
+        16,
+        18
+      ],
+      "summary": "初始化事实表和阶段需求表。",
+      "tags": [
+        "视觉证据",
+        "状态管理",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/evidence.py:EvidenceLedger.configure",
+      "type": "function",
+      "name": "EvidenceLedger.configure",
+      "filePath": "src/pyrualean/evidence.py",
+      "lineRange": [
+        20,
+        64
+      ],
+      "summary": "先完整验证事实、前置条件和失效声明，再更新持久证据记录。",
+      "tags": [
+        "视觉证据",
+        "状态管理",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/evidence.py:EvidenceLedger.defer",
+      "type": "function",
+      "name": "EvidenceLedger.defer",
+      "filePath": "src/pyrualean/evidence.py",
+      "lineRange": [
+        72,
+        87
+      ],
+      "summary": "为未来阶段登记具有理由的事实门控，不修改当前事实真值。",
+      "tags": [
+        "视觉证据",
+        "状态管理",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/evidence.py:EvidenceLedger.invalidate",
+      "type": "function",
+      "name": "EvidenceLedger.invalidate",
+      "filePath": "src/pyrualean/evidence.py",
+      "lineRange": [
+        89,
+        92
+      ],
+      "summary": "标记指定或全部事实过期并保存失效原因。",
+      "tags": [
+        "视觉证据",
+        "状态管理",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/evidence.py:EvidenceLedger.observe",
+      "type": "function",
+      "name": "EvidenceLedger.observe",
+      "filePath": "src/pyrualean/evidence.py",
+      "lineRange": [
+        94,
+        103
+      ],
+      "summary": "写入最新事实判断、概率和观测来源，恢复相应证据的有效状态。",
+      "tags": [
+        "视觉证据",
+        "状态管理",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/evidence.py:EvidenceLedger.blockers",
+      "type": "function",
+      "name": "EvidenceLedger.blockers",
+      "filePath": "src/pyrualean/evidence.py",
+      "lineRange": [
+        105,
+        114
+      ],
+      "summary": "列出当前阶段中证据过期或取值不满足要求的前置条件。",
+      "tags": [
+        "视觉证据",
+        "状态管理",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/evidence.py:EvidenceLedger.snapshot",
+      "type": "function",
+      "name": "EvidenceLedger.snapshot",
+      "filePath": "src/pyrualean/evidence.py",
+      "lineRange": [
+        116,
+        117
+      ],
+      "summary": "返回深拷贝的完整证据账本，防止调用方修改原始状态。",
+      "tags": [
+        "视觉证据",
+        "状态管理",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/evidence.py:EvidenceLedger.summary",
+      "type": "function",
+      "name": "EvidenceLedger.summary",
+      "filePath": "src/pyrualean/evidence.py",
+      "lineRange": [
+        119,
+        126
+      ],
+      "summary": "返回删除冗长问题与概率字段后的证据摘要，供模型反馈使用。",
+      "tags": [
+        "视觉证据",
+        "状态管理",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "file:src/pyrualean/generate.py",
+      "type": "file",
+      "name": "generate.py",
+      "filePath": "src/pyrualean/generate.py",
+      "summary": "通过 Codex CLI 单次生成 Python 策略，并保存提示、回复、事件和用量。生成会话使用只读空目录，事件记录可用于核查工具调用。",
+      "tags": [
+        "策略生成",
+        "命令行",
+        "审计"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/generate.py:extract_python_block",
+      "type": "function",
+      "name": "extract_python_block",
+      "filePath": "src/pyrualean/generate.py",
+      "lineRange": [
+        41,
+        47
+      ],
+      "summary": "从模型回复中提取最长的 Python 围栏代码块，没有代码时明确报错。",
+      "tags": [
+        "策略生成",
+        "命令行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/generate.py:_usage_from_events",
+      "type": "function",
+      "name": "_usage_from_events",
+      "filePath": "src/pyrualean/generate.py",
+      "lineRange": [
+        50,
+        83
+      ],
+      "summary": "汇总 Codex 事件中的完成轮次、工具事件与各类词元用量。",
+      "tags": [
+        "策略生成",
+        "命令行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/generate.py:_retries",
+      "type": "function",
+      "name": "_retries",
+      "filePath": "src/pyrualean/generate.py",
+      "lineRange": [
+        86,
+        89
+      ],
+      "summary": "读取 Codex 请求和流式重试次数设置。",
+      "tags": [
+        "策略生成",
+        "命令行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/generate.py:provider_overrides",
+      "type": "function",
+      "name": "provider_overrides",
+      "filePath": "src/pyrualean/generate.py",
+      "lineRange": [
+        92,
+        124
+      ],
+      "summary": "构造自定义兼容 Responses 网关的 Codex 配置，包括接口地址、密钥环境变量名和重试次数。",
+      "tags": [
+        "策略生成",
+        "命令行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/generate.py:codex_catalog_flags",
+      "type": "function",
+      "name": "codex_catalog_flags",
+      "filePath": "src/pyrualean/generate.py",
+      "lineRange": [
+        127,
+        141
+      ],
+      "summary": "仅对符合匹配规则的 gpt-6-astra 模型启用包内模型目录配置。",
+      "tags": [
+        "策略生成",
+        "命令行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/generate.py:generate_with_codex",
+      "type": "function",
+      "name": "generate_with_codex",
+      "filePath": "src/pyrualean/generate.py",
+      "lineRange": [
+        144,
+        248
+      ],
+      "summary": "构建提示并在隔离的只读临时目录运行 Codex，保存策略、回复、事件与生成统计。",
+      "tags": [
+        "策略生成",
+        "命令行",
+        "函数"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/pyrualean/supervision.py",
+      "type": "file",
+      "name": "supervision.py",
+      "filePath": "src/pyrualean/supervision.py",
+      "summary": "在机器人原语边界同步调用 Valen 获取视觉事实，由宿主规则判断继续、暂停或复查。维护阶段契约、证据新鲜度和可追溯审计产物。",
+      "tags": [
+        "视觉监督",
+        "执行控制",
+        "审计"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/supervision.py:add_monitor_arguments",
+      "type": "function",
+      "name": "add_monitor_arguments",
+      "filePath": "src/pyrualean/supervision.py",
+      "lineRange": [
+        69,
+        82
+      ],
+      "summary": "注册视觉监督模式、Valen 地址、超时、阈值及复查预算参数。",
+      "tags": [
+        "视觉监督",
+        "执行控制",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/supervision.py:monitor_config",
+      "type": "function",
+      "name": "monitor_config",
+      "filePath": "src/pyrualean/supervision.py",
+      "lineRange": [
+        85,
+        98
+      ],
+      "summary": "根据执行方式决定默认监督模式，并禁止对不支持的执行方式启用视觉监督。",
+      "tags": [
+        "视觉监督",
+        "执行控制",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/supervision.py:decode_answers",
+      "type": "function",
+      "name": "decode_answers",
+      "filePath": "src/pyrualean/supervision.py",
+      "lineRange": [
+        131,
+        155
+      ],
+      "summary": "要求 Valen 精确回答当前事实集合，验证选择概率并按阈值映射为是、否或未知。",
+      "tags": [
+        "视觉监督",
+        "执行控制",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/supervision.py:answer_diagnostics",
+      "type": "function",
+      "name": "answer_diagnostics",
+      "filePath": "src/pyrualean/supervision.py",
+      "lineRange": [
+        158,
+        168
+      ],
+      "summary": "解释各事实的最高概率、阈值和最终判断，不把模型分数当作校准准确率。",
+      "tags": [
+        "视觉监督",
+        "执行控制",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/supervision.py:_rule",
+      "type": "function",
+      "name": "_rule",
+      "filePath": "src/pyrualean/supervision.py",
+      "lineRange": [
+        171,
+        187
+      ],
+      "summary": "校验规则名称、事实条件和连续确认次数，返回规范规则对象。",
+      "tags": [
+        "视觉监督",
+        "执行控制",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/supervision.py:monitor_prompt",
+      "type": "function",
+      "name": "monitor_prompt",
+      "filePath": "src/pyrualean/supervision.py",
+      "lineRange": [
+        563,
+        598
+      ],
+      "summary": "生成视觉监督运行协议，说明阶段契约、动作检查与暂停后的处理方式。",
+      "tags": [
+        "视觉监督",
+        "执行控制",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/supervision.py:planning_instructions",
+      "type": "function",
+      "name": "planning_instructions",
+      "filePath": "src/pyrualean/supervision.py",
+      "lineRange": [
+        601,
+        605
+      ],
+      "summary": "读取包内 Astra–Valen 监督规划说明，作为运行时规范来源。",
+      "tags": [
+        "视觉监督",
+        "执行控制",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/supervision.py:config_record",
+      "type": "function",
+      "name": "config_record",
+      "filePath": "src/pyrualean/supervision.py",
+      "lineRange": [
+        608,
+        616
+      ],
+      "summary": "序列化监督配置，并在启用时记录规划说明及其内容摘要以便复核。",
+      "tags": [
+        "视觉监督",
+        "执行控制",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/supervision.py:SupervisionPause",
+      "type": "class",
+      "name": "SupervisionPause",
+      "filePath": "src/pyrualean/supervision.py",
+      "lineRange": [
+        30,
+        31
+      ],
+      "summary": "中断当前执行单元并返回规划者，同时保留机器人回合。",
+      "tags": [
+        "视觉监督",
+        "执行控制",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/supervision.py:MonitorConfig",
+      "type": "class",
+      "name": "MonitorConfig",
+      "filePath": "src/pyrualean/supervision.py",
+      "lineRange": [
+        35,
+        66
+      ],
+      "summary": "保存监督模式、服务地址、阈值、未知容忍度和动作复查预算。",
+      "tags": [
+        "视觉监督",
+        "执行控制",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/supervision.py:MonitorConfig.__post_init__",
+      "type": "function",
+      "name": "MonitorConfig.__post_init__",
+      "filePath": "src/pyrualean/supervision.py",
+      "lineRange": [
+        43,
+        66
+      ],
+      "summary": "验证监督模式、服务地址协议与有限数值参数，拒绝非法阈值和计数范围。",
+      "tags": [
+        "视觉监督",
+        "执行控制",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "class:src/pyrualean/supervision.py:_NoRedirect",
+      "type": "class",
+      "name": "_NoRedirect",
+      "filePath": "src/pyrualean/supervision.py",
+      "lineRange": [
+        101,
+        103
+      ],
+      "summary": "拒绝 Valen HTTP 重定向，保持请求目标明确。",
+      "tags": [
+        "视觉监督",
+        "执行控制",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/supervision.py:_NoRedirect.redirect_request",
+      "type": "function",
+      "name": "_NoRedirect.redirect_request",
+      "filePath": "src/pyrualean/supervision.py",
+      "lineRange": [
+        102,
+        103
+      ],
+      "summary": "遇到 HTTP 重定向时抛出错误。",
+      "tags": [
+        "视觉监督",
+        "执行控制",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "class:src/pyrualean/supervision.py:ValenClient",
+      "type": "class",
+      "name": "ValenClient",
+      "filePath": "src/pyrualean/supervision.py",
+      "lineRange": [
+        106,
+        121
+      ],
+      "summary": "封装无代理、无重定向的 Valen JSON 请求及请求响应大小限制。",
+      "tags": [
+        "视觉监督",
+        "执行控制",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/supervision.py:ValenClient.__init__",
+      "type": "function",
+      "name": "ValenClient.__init__",
+      "filePath": "src/pyrualean/supervision.py",
+      "lineRange": [
+        107,
+        110
+      ],
+      "summary": "保存监督配置并创建禁用代理和重定向的 HTTP 客户端。",
+      "tags": [
+        "视觉监督",
+        "执行控制",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/supervision.py:ValenClient.predict",
+      "type": "function",
+      "name": "ValenClient.predict",
+      "filePath": "src/pyrualean/supervision.py",
+      "lineRange": [
+        112,
+        121
+      ],
+      "summary": "按配置超时发送有限大小的 JSON 请求，限制响应大小后解析结果。",
+      "tags": [
+        "视觉监督",
+        "执行控制",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "class:src/pyrualean/supervision.py:VisualSupervisor",
+      "type": "class",
+      "name": "VisualSupervisor",
+      "filePath": "src/pyrualean/supervision.py",
+      "lineRange": [
+        190,
+        560
+      ],
+      "summary": "在动作前后管理阶段契约、视觉观测、证据账本和暂停决策，完整保存检查审计。",
+      "tags": [
+        "视觉监督",
+        "执行控制",
+        "数据模型"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/supervision.py:VisualSupervisor.__init__",
+      "type": "function",
+      "name": "VisualSupervisor.__init__",
+      "filePath": "src/pyrualean/supervision.py",
+      "lineRange": [
+        191,
+        201
+      ],
+      "summary": "创建监督目录、运行标识与证据账本，并初始化首个执行单元。",
+      "tags": [
+        "视觉监督",
+        "执行控制",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/supervision.py:VisualSupervisor.begin_cell",
+      "type": "function",
+      "name": "VisualSupervisor.begin_cell",
+      "filePath": "src/pyrualean/supervision.py",
+      "lineRange": [
+        203,
+        213
+      ],
+      "summary": "清空当前单元的契约、反馈、观测窗口和规则计数。",
+      "tags": [
+        "视觉监督",
+        "执行控制",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/supervision.py:VisualSupervisor.watch",
+      "type": "function",
+      "name": "VisualSupervisor.watch",
+      "filePath": "src/pyrualean/supervision.py",
+      "lineRange": [
+        215,
+        259
+      ],
+      "summary": "验证并登记阶段的视觉问题、警报、完成条件及前置依赖，阶段变化时重置观测窗口。",
+      "tags": [
+        "视觉监督",
+        "执行控制",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/supervision.py:VisualSupervisor.read_evidence",
+      "type": "function",
+      "name": "VisualSupervisor.read_evidence",
+      "filePath": "src/pyrualean/supervision.py",
+      "lineRange": [
+        261,
+        263
+      ],
+      "summary": "返回证据账本的独立快照，调用方编辑不会建立视觉事实。",
+      "tags": [
+        "视觉监督",
+        "执行控制",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/supervision.py:VisualSupervisor.defer_fact",
+      "type": "function",
+      "name": "VisualSupervisor.defer_fact",
+      "filePath": "src/pyrualean/supervision.py",
+      "lineRange": [
+        265,
+        271
+      ],
+      "summary": "登记事实延期门控，同步当前契约并保存证据审计。",
+      "tags": [
+        "视觉监督",
+        "执行控制",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/supervision.py:VisualSupervisor.before_action",
+      "type": "function",
+      "name": "VisualSupervisor.before_action",
+      "filePath": "src/pyrualean/supervision.py",
+      "lineRange": [
+        293,
+        314
+      ],
+      "summary": "在动作执行前检查暂停、契约和前置证据；场景改变或依赖不满足时要求复查。",
+      "tags": [
+        "视觉监督",
+        "执行控制",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/supervision.py:VisualSupervisor.begin_action",
+      "type": "function",
+      "name": "VisualSupervisor.begin_action",
+      "filePath": "src/pyrualean/supervision.py",
+      "lineRange": [
+        316,
+        320
+      ],
+      "summary": "在动作派发前使声明的事实失效，覆盖动作失败但场景已改变的情况。",
+      "tags": [
+        "视觉监督",
+        "执行控制",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/supervision.py:VisualSupervisor.action_error",
+      "type": "function",
+      "name": "VisualSupervisor.action_error",
+      "filePath": "src/pyrualean/supervision.py",
+      "lineRange": [
+        322,
+        336
+      ],
+      "summary": "处理原语错误，刷新复查图像并中断当前单元要求重新规划。",
+      "tags": [
+        "视觉监督",
+        "执行控制",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/supervision.py:VisualSupervisor.action_interrupted",
+      "type": "function",
+      "name": "VisualSupervisor.action_interrupted",
+      "filePath": "src/pyrualean/supervision.py",
+      "lineRange": [
+        338,
+        340
+      ],
+      "summary": "使全部证据失效并记录动作中断原因。",
+      "tags": [
+        "视觉监督",
+        "执行控制",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/supervision.py:VisualSupervisor._review_images",
+      "type": "function",
+      "name": "VisualSupervisor._review_images",
+      "filePath": "src/pyrualean/supervision.py",
+      "lineRange": [
+        342,
+        360
+      ],
+      "summary": "采集宿主复查图像作为上下文，不把这些图像当成新的 Valen 投票。",
+      "tags": [
+        "视觉监督",
+        "执行控制",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/supervision.py:VisualSupervisor.after_action",
+      "type": "function",
+      "name": "VisualSupervisor.after_action",
+      "filePath": "src/pyrualean/supervision.py",
+      "lineRange": [
+        362,
+        532
+      ],
+      "summary": "区分无进展、可恢复未到达和真实运动终点；采集连续图像并请求 Valen，依据警报、未知次数与预算决定暂停。",
+      "tags": [
+        "视觉监督",
+        "执行控制",
+        "类方法"
+      ],
+      "complexity": "complex",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/supervision.py:VisualSupervisor.feedback",
+      "type": "function",
+      "name": "VisualSupervisor.feedback",
+      "filePath": "src/pyrualean/supervision.py",
+      "lineRange": [
+        539,
+        560
+      ],
+      "summary": "返回有界的近期监督报告、暂停原因、证据摘要和审计位置，防止模型上下文被无限增长的记录占满。",
+      "tags": [
+        "视觉监督",
+        "执行控制",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/pyrualean/evidence.py",
+      "target": "class:src/pyrualean/evidence.py:EvidenceLedger",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evidence.py",
+      "target": "class:src/pyrualean/evidence.py:EvidenceLedger",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evidence.py",
+      "target": "function:src/pyrualean/evidence.py:EvidenceLedger.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/evidence.py:EvidenceLedger",
+      "target": "function:src/pyrualean/evidence.py:EvidenceLedger.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evidence.py",
+      "target": "function:src/pyrualean/evidence.py:EvidenceLedger.configure",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/evidence.py:EvidenceLedger",
+      "target": "function:src/pyrualean/evidence.py:EvidenceLedger.configure",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evidence.py",
+      "target": "function:src/pyrualean/evidence.py:EvidenceLedger.defer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/evidence.py:EvidenceLedger",
+      "target": "function:src/pyrualean/evidence.py:EvidenceLedger.defer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evidence.py",
+      "target": "function:src/pyrualean/evidence.py:EvidenceLedger.invalidate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/evidence.py:EvidenceLedger",
+      "target": "function:src/pyrualean/evidence.py:EvidenceLedger.invalidate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evidence.py",
+      "target": "function:src/pyrualean/evidence.py:EvidenceLedger.observe",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/evidence.py:EvidenceLedger",
+      "target": "function:src/pyrualean/evidence.py:EvidenceLedger.observe",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evidence.py",
+      "target": "function:src/pyrualean/evidence.py:EvidenceLedger.blockers",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/evidence.py:EvidenceLedger",
+      "target": "function:src/pyrualean/evidence.py:EvidenceLedger.blockers",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evidence.py",
+      "target": "function:src/pyrualean/evidence.py:EvidenceLedger.snapshot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/evidence.py:EvidenceLedger",
+      "target": "function:src/pyrualean/evidence.py:EvidenceLedger.snapshot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/evidence.py",
+      "target": "function:src/pyrualean/evidence.py:EvidenceLedger.summary",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/evidence.py:EvidenceLedger",
+      "target": "function:src/pyrualean/evidence.py:EvidenceLedger.summary",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/generate.py",
+      "target": "function:src/pyrualean/generate.py:extract_python_block",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/generate.py",
+      "target": "function:src/pyrualean/generate.py:extract_python_block",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/generate.py",
+      "target": "function:src/pyrualean/generate.py:_usage_from_events",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/generate.py",
+      "target": "function:src/pyrualean/generate.py:_usage_from_events",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/generate.py",
+      "target": "function:src/pyrualean/generate.py:_retries",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/generate.py",
+      "target": "function:src/pyrualean/generate.py:_retries",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/generate.py",
+      "target": "function:src/pyrualean/generate.py:provider_overrides",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/generate.py",
+      "target": "function:src/pyrualean/generate.py:provider_overrides",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/generate.py",
+      "target": "function:src/pyrualean/generate.py:codex_catalog_flags",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/generate.py",
+      "target": "function:src/pyrualean/generate.py:codex_catalog_flags",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/generate.py",
+      "target": "function:src/pyrualean/generate.py:generate_with_codex",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/generate.py",
+      "target": "function:src/pyrualean/generate.py:generate_with_codex",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/generate.py",
+      "target": "file:src/pyrualean/_env.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/generate.py",
+      "target": "file:src/pyrualean/prompt.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:src/pyrualean/generate.py:_retries",
+      "target": "function:src/pyrualean/_env.py:setting",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/generate.py:provider_overrides",
+      "target": "function:src/pyrualean/generate.py:_retries",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/generate.py:generate_with_codex",
+      "target": "function:src/pyrualean/prompt.py:render_prompt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/generate.py:generate_with_codex",
+      "target": "function:src/pyrualean/generate.py:codex_catalog_flags",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/generate.py:generate_with_codex",
+      "target": "function:src/pyrualean/generate.py:provider_overrides",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/generate.py:generate_with_codex",
+      "target": "function:src/pyrualean/generate.py:_usage_from_events",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/generate.py:generate_with_codex",
+      "target": "function:src/pyrualean/generate.py:extract_python_block",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "function:src/pyrualean/supervision.py:add_monitor_arguments",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "function:src/pyrualean/supervision.py:add_monitor_arguments",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "function:src/pyrualean/supervision.py:monitor_config",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "function:src/pyrualean/supervision.py:monitor_config",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "function:src/pyrualean/supervision.py:decode_answers",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "function:src/pyrualean/supervision.py:decode_answers",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "function:src/pyrualean/supervision.py:answer_diagnostics",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "function:src/pyrualean/supervision.py:answer_diagnostics",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "function:src/pyrualean/supervision.py:_rule",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "function:src/pyrualean/supervision.py:_rule",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "function:src/pyrualean/supervision.py:monitor_prompt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "function:src/pyrualean/supervision.py:monitor_prompt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "function:src/pyrualean/supervision.py:planning_instructions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "function:src/pyrualean/supervision.py:planning_instructions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "function:src/pyrualean/supervision.py:config_record",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "function:src/pyrualean/supervision.py:config_record",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "class:src/pyrualean/supervision.py:SupervisionPause",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "class:src/pyrualean/supervision.py:SupervisionPause",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "class:src/pyrualean/supervision.py:MonitorConfig",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "class:src/pyrualean/supervision.py:MonitorConfig",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "function:src/pyrualean/supervision.py:MonitorConfig.__post_init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/supervision.py:MonitorConfig",
+      "target": "function:src/pyrualean/supervision.py:MonitorConfig.__post_init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "class:src/pyrualean/supervision.py:_NoRedirect",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "class:src/pyrualean/supervision.py:_NoRedirect",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "function:src/pyrualean/supervision.py:_NoRedirect.redirect_request",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/supervision.py:_NoRedirect",
+      "target": "function:src/pyrualean/supervision.py:_NoRedirect.redirect_request",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "class:src/pyrualean/supervision.py:ValenClient",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "class:src/pyrualean/supervision.py:ValenClient",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "function:src/pyrualean/supervision.py:ValenClient.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/supervision.py:ValenClient",
+      "target": "function:src/pyrualean/supervision.py:ValenClient.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "function:src/pyrualean/supervision.py:ValenClient.predict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/supervision.py:ValenClient",
+      "target": "function:src/pyrualean/supervision.py:ValenClient.predict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "class:src/pyrualean/supervision.py:VisualSupervisor",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "class:src/pyrualean/supervision.py:VisualSupervisor",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "function:src/pyrualean/supervision.py:VisualSupervisor.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/supervision.py:VisualSupervisor",
+      "target": "function:src/pyrualean/supervision.py:VisualSupervisor.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "function:src/pyrualean/supervision.py:VisualSupervisor.begin_cell",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/supervision.py:VisualSupervisor",
+      "target": "function:src/pyrualean/supervision.py:VisualSupervisor.begin_cell",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "function:src/pyrualean/supervision.py:VisualSupervisor.watch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/supervision.py:VisualSupervisor",
+      "target": "function:src/pyrualean/supervision.py:VisualSupervisor.watch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "function:src/pyrualean/supervision.py:VisualSupervisor.read_evidence",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/supervision.py:VisualSupervisor",
+      "target": "function:src/pyrualean/supervision.py:VisualSupervisor.read_evidence",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "function:src/pyrualean/supervision.py:VisualSupervisor.defer_fact",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/supervision.py:VisualSupervisor",
+      "target": "function:src/pyrualean/supervision.py:VisualSupervisor.defer_fact",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "function:src/pyrualean/supervision.py:VisualSupervisor.before_action",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/supervision.py:VisualSupervisor",
+      "target": "function:src/pyrualean/supervision.py:VisualSupervisor.before_action",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "function:src/pyrualean/supervision.py:VisualSupervisor.begin_action",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/supervision.py:VisualSupervisor",
+      "target": "function:src/pyrualean/supervision.py:VisualSupervisor.begin_action",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "function:src/pyrualean/supervision.py:VisualSupervisor.action_error",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/supervision.py:VisualSupervisor",
+      "target": "function:src/pyrualean/supervision.py:VisualSupervisor.action_error",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "function:src/pyrualean/supervision.py:VisualSupervisor.action_interrupted",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/supervision.py:VisualSupervisor",
+      "target": "function:src/pyrualean/supervision.py:VisualSupervisor.action_interrupted",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "function:src/pyrualean/supervision.py:VisualSupervisor._review_images",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/supervision.py:VisualSupervisor",
+      "target": "function:src/pyrualean/supervision.py:VisualSupervisor._review_images",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "function:src/pyrualean/supervision.py:VisualSupervisor.after_action",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/supervision.py:VisualSupervisor",
+      "target": "function:src/pyrualean/supervision.py:VisualSupervisor.after_action",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "function:src/pyrualean/supervision.py:VisualSupervisor.feedback",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/supervision.py:VisualSupervisor",
+      "target": "function:src/pyrualean/supervision.py:VisualSupervisor.feedback",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "file:src/pyrualean/_env.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "file:src/pyrualean/evidence.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:src/pyrualean/supervision.py:add_monitor_arguments",
+      "target": "function:src/pyrualean/_env.py:setting",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/supervision.py:monitor_config",
+      "target": "class:src/pyrualean/supervision.py:MonitorConfig",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/supervision.py:ValenClient.__init__",
+      "target": "class:src/pyrualean/supervision.py:_NoRedirect",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/supervision.py:VisualSupervisor.__init__",
+      "target": "class:src/pyrualean/supervision.py:ValenClient",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/supervision.py:VisualSupervisor.__init__",
+      "target": "class:src/pyrualean/evidence.py:EvidenceLedger",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/supervision.py:VisualSupervisor.__init__",
+      "target": "function:src/pyrualean/supervision.py:VisualSupervisor.begin_cell",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/supervision.py:VisualSupervisor.watch",
+      "target": "class:src/pyrualean/supervision.py:SupervisionPause",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/supervision.py:VisualSupervisor.watch",
+      "target": "function:src/pyrualean/supervision.py:_rule",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/supervision.py:VisualSupervisor.defer_fact",
+      "target": "class:src/pyrualean/supervision.py:SupervisionPause",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/supervision.py:VisualSupervisor.before_action",
+      "target": "class:src/pyrualean/supervision.py:SupervisionPause",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/supervision.py:VisualSupervisor.before_action",
+      "target": "function:src/pyrualean/supervision.py:VisualSupervisor._review_images",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/supervision.py:VisualSupervisor.action_error",
+      "target": "function:src/pyrualean/supervision.py:VisualSupervisor.action_interrupted",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/supervision.py:VisualSupervisor.action_error",
+      "target": "function:src/pyrualean/supervision.py:VisualSupervisor._review_images",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/supervision.py:VisualSupervisor.after_action",
+      "target": "function:src/pyrualean/supervision.py:VisualSupervisor._review_images",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/supervision.py:VisualSupervisor.after_action",
+      "target": "function:src/pyrualean/supervision.py:decode_answers",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/supervision.py:VisualSupervisor.after_action",
+      "target": "function:src/pyrualean/supervision.py:answer_diagnostics",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/supervision.py:monitor_prompt",
+      "target": "function:src/pyrualean/supervision.py:planning_instructions",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/supervision.py:config_record",
+      "target": "function:src/pyrualean/supervision.py:planning_instructions",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

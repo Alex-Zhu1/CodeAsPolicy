@@ -1,0 +1,130 @@
+@src/pyrualean/hosts/common.py|定义 RPent 宿主共享的启动位置解析、清理流程和工具包到 Backend 的适配协议。|宿主适配,后端接口,进程清理
+resolve_rpent_root|定位 RPent 仓库并加入 Python 导入路径，缺失时明确报错。
+stop_all|关闭工具包并停止其后台服务，清理时容忍个别关闭失败。
+RpentBackend|把 RPent Toolkit 的工具执行、成功状态、产物和取消操作适配为统一机器人后端。
+RpentBackend.__init__|保存被适配的 RPent 工具包实例。
+RpentBackend.toolkit|返回当前 RPent 工具包。
+RpentBackend.execute_tool|把工具名称和输入参数交给 RPent 工具包执行。
+RpentBackend.solved|读取环境原生成功标志，兼容未实现 solved 的工具包状态缓存。
+RpentBackend.artifact|从工具包状态存储读取指定步骤的二进制产物。
+RpentBackend.env_steps|从公开或私有原语对象读取累计帧数，后端不提供时返回未知。
+RpentBackend.cancel|取消正在运行的工具调用并等待其结束。
+@src/pyrualean/prompt.py|根据实际机器人类的签名和说明生成模型可见 API，结合任务卡与包内操作知识组装提示，支持移除 VLA 原语的实验配置。|提示生成,接口反射,任务描述
+_annotation|将参数或返回值注解转为紧凑文本，省略缺失注解和 typing 前缀。
+_format_parameters|按函数签名生成参数列表，保留默认值和仅限关键字参数标记。
+_render_callable|把方法签名与说明渲染为 API 参考文本，长签名自动换行。
+_render_property|渲染只读属性的名称、类型和属性文档。
+_render_result_type|渲染结果数据类字段及公开辅助属性，供模型理解返回对象。
+_public_members|沿继承链按定义顺序收集公开成员，应用覆盖并排除声明不可用的接口。
+_return_type_name|提取方法或属性 getter 的返回类型名称。
+vla_hidden|计算当前原语配置隐藏的 VLA 方法及其独占返回类型。
+_apply_edits|逐项应用要求恰好出现一次的文档替换，避免静默修改错误位置。
+api_reference|从实时机器人类生成策略 API 文档，并按能力与原语配置过滤内容。
+knowledge_stem|根据后端名称和是否启用 VLA 选择操作知识文件名。
+knowledge_text|读取对应机器人与原语配置的包内 Markdown 操作知识。
+render_prompt|按任务卡选择机器人适配器，组合 API、操作知识、运行契约、任务描述和图像附件。
+TaskCard|保存规划者可见的任务标识、指令、初始状态和图像，不包含特权物体位姿。
+TaskCard.to_json|把任务卡字段序列化为可读 JSON。
+TaskCard.from_json|读取任务卡 JSON，仅接收当前数据类支持的字段。
+TaskCard.render|渲染 LIBERO 初始末端状态，其他机器人转用通用任务卡格式。
+TaskCard._render_generic|将非 LIBERO 任务的标识、指令、初始事实和图像列表渲染为模型文本。
+PromptBundle|封装一次生成所需的系统提示、用户提示和图像附件。
+PromptBundle.messages|返回系统与用户两条结构化消息。
+PromptBundle.text|将系统和用户提示拼接为单段文本。
+@src/pyrualean/runner.py|加载生成的 Python 策略并执行，记录超时和异常结果。宿主子进程使用独立进程组，支持信号转发和超时后的强制清理。|策略执行,进程管理,超时控制
+policy_sha256|计算策略文件内容的 SHA-256 摘要。
+load_policy|以唯一模块名加载策略并取得指定入口，可注入受限 builtins 约束导入和文件访问。
+run_policy|在墙钟看门狗下执行策略，区分正常结束、回合终止、超时与异常并保留 traceback。
+run_host|启动独立进程组运行宿主，转发终止信号并在超时后依次发送终止和强杀信号。
+_kill_group|向宿主进程组发送信号，忽略进程已退出的情况。
+PolicyLoadError|表示策略无法导入或不存在可调用入口。
+PolicyOutcome|记录单次策略调用的结束原因、耗时和错误，与任务是否成功分开保存。
+PolicyOutcome.to_dict|把策略执行结果转换为字典。
+@src/pyrualean/sandbox.py|为模型代码提供受限 builtins、源码审计和反射入口检查，约束工作目录外文件访问与危险导入，并记录越过公开机器人 API 的尝试。|执行约束,源码审计,文件访问
+_workspace_module|判断模块名是否对应工作目录内的 Python 文件或包。
+make_builtins|构造模型执行用的 builtins，限制导入、文件打开以及动态执行入口。
+audit_source|静态标记不允许的导入、宿主私有属性、反射探查和越界路径，供结果审计。
+blocked_names|从属性、名称和字符串常量中检测禁止的反射入口，语法错误留给执行器报告。
+@src/pyrualean/hosts/rpent_libero.py|启动 LIBERO 的 RPent 服务栈，导出初始任务卡并执行单回合策略，保存原生产物与统一结果。|宿主适配,仿真环境,回合执行
+add_cell_args|注册LIBERO任务单元的标识、配置与随机种子参数。
+add_boot_args|注册LIBERO宿主服务启动和已有服务连接参数。
+cell_from_args|将命令行参数规范化为LIBERO任务单元。
+boot_options|从命令行提取LIBERO启动选项和服务端点。
+boot|启动或连接LIBERO仿真与模型服务，创建 RPent 工具包并返回待清理的后台进程。
+dump_card|保存LIBERO初始图像及任务卡，仅提供规划者允许观察的初始状态。
+_sha256_text|计算文本的 SHA-256 摘要，用于记录策略版本。
+run_episode|为单个LIBERO任务启动宿主并执行策略，保存统一 result.json 后清理服务。
+_install_sigterm|安装终止信号处理器，使宿主可以清理当前回合。
+card_only|仅启动LIBERO仿真以导出任务卡，完成后停止服务。
+_add_cell_args|为宿主命令补充输出目录、设备、步数和 RPent 路径等参数。
+_cell|把解析参数转换为 LIBERO 任务单元。
+main|提供LIBERO宿主命令行，在任务卡导出与策略执行之间分发。
+Cell|描述一个LIBERO评估任务的配置、种子与执行预算。
+Cell.tag|根据任务、配置和种子生成输出目录标识。
+@src/pyrualean/hosts/rpent_robocasa.py|启动 RoboCasa365 的 RPent 服务栈，导出初始任务卡并执行单回合策略，保存原生产物与统一结果。|宿主适配,仿真环境,回合执行
+add_cell_args|注册RoboCasa365任务单元的标识、配置与随机种子参数。
+add_boot_args|注册RoboCasa365宿主服务启动和已有服务连接参数。
+cell_from_args|将命令行参数规范化为RoboCasa365任务单元。
+boot_options|从命令行提取RoboCasa365启动选项和服务端点。
+memory_root|选择显式指定或仓库内的空记忆目录，必要时在运行目录创建独立空语料。
+boot|启动或连接RoboCasa365仿真与模型服务，创建 RPent 工具包并返回待清理的后台进程。
+_floats|将输入规范为固定长度浮点向量，无法解析时使用零向量。
+_fmt|将数值向量格式化为三位小数的紧凑文本。
+_yaw|从 xyzw 四元数计算机器人基座偏航角。
+dump_card|保存RoboCasa365初始图像及任务卡，仅提供规划者允许观察的初始状态。
+_sha256_text|计算文本的 SHA-256 摘要，用于记录策略版本。
+run_episode|为单个RoboCasa365任务启动宿主并执行策略，保存统一 result.json 后清理服务。
+_install_sigterm|安装终止信号处理器，使宿主可以清理当前回合。
+card_only|仅启动RoboCasa365仿真以导出任务卡，完成后停止服务。
+_add_cell_args|为宿主命令补充输出目录、设备、步数和 RPent 路径等参数。
+main|提供RoboCasa365宿主命令行，在任务卡导出与策略执行之间分发。
+Cell|描述一个RoboCasa365评估任务的配置、种子与执行预算。
+Cell.tag|根据任务、配置和种子生成输出目录标识。
+@src/pyrualean/hosts/rpent_robodojo.py|启动 RoboDojo 的 RPent 服务栈，导出初始任务卡并执行单回合策略，保存原生产物与统一结果。|宿主适配,仿真环境,回合执行
+add_cell_args|注册RoboDojo任务单元的标识、配置与随机种子参数。
+add_boot_args|注册RoboDojo宿主服务启动和已有服务连接参数。
+cell_from_args|将命令行参数规范化为RoboDojo任务单元。
+_connect_reset_default|读取 RoboDojo 连接时是否再次复位的环境开关。
+_connect_without_reset|临时调整 RPent 客户端连接行为，避免场景已复位后对关节物体再次复位造成错误。
+_support_arm_default|根据环境设置决定是否启用项目提供的第三臂支持。
+_env_server_through_pyrualean|在启动期间将 RPent 环境服务器命令包装到本项目入口，以安装基准第三臂行为。
+boot_options|从命令行提取RoboDojo启动选项和服务端点。
+_status|尝试读取环境服务器的当前步数与上限，无法读取时返回空对象。
+make_backend|为已启动的RoboDojo工具包创建包含专用步数语义的后端适配器。
+boot|启动或连接RoboDojo仿真与模型服务，创建 RPent 工具包并返回待清理的后台进程。
+_fmt|将数值向量格式化为三位小数的紧凑文本。
+_opening|从单值列表或数组中解析夹爪开合量。
+dump_card|保存RoboDojo初始图像及任务卡，仅提供规划者允许观察的初始状态。
+_sha256_text|计算文本的 SHA-256 摘要，用于记录策略版本。
+run_episode|为单个RoboDojo任务启动宿主并执行策略，保存统一 result.json 后清理服务。
+_install_sigterm|安装终止信号处理器，使宿主可以清理当前回合。
+card_only|仅启动RoboDojo仿真以导出任务卡，完成后停止服务。
+_add_cell_args|为宿主命令补充输出目录、设备、步数和 RPent 路径等参数。
+main|提供RoboDojo宿主命令行，在任务卡导出与策略执行之间分发。
+Cell|描述一个RoboDojo评估任务的配置、种子与执行预算。
+Cell.tag|根据任务、配置和种子生成输出目录标识。
+RobodojoBackend|适配 RoboDojo 的原生成功判据，并用仿真原生动作计数替代帧计数。
+RobodojoBackend.env_steps|读取环境状态中的原生动作步数。
+@src/pyrualean/hosts/rpent_robotwin.py|启动 RoboTwin 的 RPent 服务栈，导出初始任务卡并执行单回合策略，保存原生产物与统一结果。|宿主适配,仿真环境,回合执行
+add_cell_args|注册RoboTwin任务单元的标识、配置与随机种子参数。
+add_boot_args|注册RoboTwin宿主服务启动和已有服务连接参数。
+cell_from_args|将命令行参数规范化为RoboTwin任务单元。
+boot_options|从命令行提取RoboTwin启动选项和服务端点。
+_eval_success|从工具包缓存读取 RoboTwin 原生成功状态，避免额外 RPC。
+make_backend|为已启动的RoboTwin工具包创建包含专用步数语义的后端适配器。
+boot|启动或连接RoboTwin仿真与模型服务，创建 RPent 工具包并返回待清理的后台进程。
+_floats|将输入规范为固定长度浮点向量，无法解析时使用零向量。
+_fmt|将数值向量格式化为三位小数的紧凑文本。
+_table_height|取初始头部相机世界坐标图的高度中位数估计桌面高度。
+dump_card|保存RoboTwin初始图像及任务卡，仅提供规划者允许观察的初始状态。
+_sha256_text|计算文本的 SHA-256 摘要，用于记录策略版本。
+run_episode|为单个RoboTwin任务启动宿主并执行策略，保存统一 result.json 后清理服务。
+_install_sigterm|安装终止信号处理器，使宿主可以清理当前回合。
+card_only|仅启动RoboTwin仿真以导出任务卡，完成后停止服务。
+_add_cell_args|为宿主命令补充输出目录、设备、步数和 RPent 路径等参数。
+main|提供RoboTwin宿主命令行，在任务卡导出与策略执行之间分发。
+Cell|描述一个RoboTwin评估任务的配置、种子与执行预算。
+Cell.tag|根据任务、配置和种子生成输出目录标识。
+RobotwinBackend|补齐 RPent RoboTwin 工具包缺少的成功状态与原生动作计数接口。
+RobotwinBackend.solved|返回工具包缓存的 RoboTwin 原生成功状态。
+RobotwinBackend.env_steps|读取 RoboTwin 原语对象累计的原生 VLA 动作数。

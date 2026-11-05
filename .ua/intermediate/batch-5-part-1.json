@@ -1,0 +1,798 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/pyrualean/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "src/pyrualean/__init__.py",
+      "summary": "导出机器人类、后端协议、结果数据和执行辅助接口，定义 PyRUA-Lean 包的公开 Python API。",
+      "tags": [
+        "入口点",
+        "公开接口",
+        "导出"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/pyrualean/_backend.py",
+      "type": "file",
+      "name": "_backend.py",
+      "filePath": "src/pyrualean/_backend.py",
+      "summary": "定义机器人后端最小协议、统一错误和单回合调用账本，使策略可在模拟后端和真实宿主之间复用。",
+      "tags": [
+        "后端接口",
+        "调用账本",
+        "错误处理"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/_backend.py:unwrap",
+      "type": "function",
+      "name": "unwrap",
+      "filePath": "src/pyrualean/_backend.py",
+      "lineRange": [
+        77,
+        95
+      ],
+      "summary": "拆分原语返回负载与 RPent 观测封装，兼容只读工具直接返回结果。",
+      "tags": [
+        "后端接口",
+        "调用账本",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/_backend.py:raise_for_error",
+      "type": "function",
+      "name": "raise_for_error",
+      "filePath": "src/pyrualean/_backend.py",
+      "lineRange": [
+        98,
+        103
+      ],
+      "summary": "检测负载中的后端错误并抛出携带工具信息的 ToolError。",
+      "tags": [
+        "后端接口",
+        "调用账本",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/_backend.py:_jsonable",
+      "type": "function",
+      "name": "_jsonable",
+      "filePath": "src/pyrualean/_backend.py",
+      "lineRange": [
+        106,
+        111
+      ],
+      "summary": "保留可 JSON 序列化的值，否则转换为对象文本表示。",
+      "tags": [
+        "后端接口",
+        "调用账本",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/_backend.py:Backend",
+      "type": "class",
+      "name": "Backend",
+      "filePath": "src/pyrualean/_backend.py",
+      "lineRange": [
+        28,
+        44
+      ],
+      "summary": "声明工具执行、原生成功状态、产物读取、步数和取消操作的最小后端协议。",
+      "tags": [
+        "后端接口",
+        "调用账本",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/_backend.py:Backend.execute_tool",
+      "type": "function",
+      "name": "Backend.execute_tool",
+      "filePath": "src/pyrualean/_backend.py",
+      "lineRange": [
+        31,
+        32
+      ],
+      "summary": "执行指定机器人原语并返回其原始结果。",
+      "tags": [
+        "后端接口",
+        "调用账本",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/_backend.py:Backend.solved",
+      "type": "function",
+      "name": "Backend.solved",
+      "filePath": "src/pyrualean/_backend.py",
+      "lineRange": [
+        34,
+        35
+      ],
+      "summary": "返回环境自身的任务成功判据。",
+      "tags": [
+        "后端接口",
+        "调用账本",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/_backend.py:Backend.artifact",
+      "type": "function",
+      "name": "Backend.artifact",
+      "filePath": "src/pyrualean/_backend.py",
+      "lineRange": [
+        37,
+        38
+      ],
+      "summary": "读取保存的观测产物字节。",
+      "tags": [
+        "后端接口",
+        "调用账本",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/_backend.py:Backend.env_steps",
+      "type": "function",
+      "name": "Backend.env_steps",
+      "filePath": "src/pyrualean/_backend.py",
+      "lineRange": [
+        40,
+        41
+      ],
+      "summary": "返回累计仿真步数，后端未知时允许为空。",
+      "tags": [
+        "后端接口",
+        "调用账本",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/_backend.py:Backend.cancel",
+      "type": "function",
+      "name": "Backend.cancel",
+      "filePath": "src/pyrualean/_backend.py",
+      "lineRange": [
+        43,
+        44
+      ],
+      "summary": "中断当前正在执行的机器人原语。",
+      "tags": [
+        "后端接口",
+        "调用账本",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "class:src/pyrualean/_backend.py:ToolError",
+      "type": "class",
+      "name": "ToolError",
+      "filePath": "src/pyrualean/_backend.py",
+      "lineRange": [
+        47,
+        60
+      ],
+      "summary": "表示原语拒绝调用或执行失败；可测量的未达标结果仍通过结果字段返回。",
+      "tags": [
+        "后端接口",
+        "调用账本",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/_backend.py:ToolError.__init__",
+      "type": "function",
+      "name": "ToolError.__init__",
+      "filePath": "src/pyrualean/_backend.py",
+      "lineRange": [
+        56,
+        60
+      ],
+      "summary": "保存工具名称、错误说明和原始负载。",
+      "tags": [
+        "后端接口",
+        "调用账本",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "class:src/pyrualean/_backend.py:EpisodeFinished",
+      "type": "class",
+      "name": "EpisodeFinished",
+      "filePath": "src/pyrualean/_backend.py",
+      "lineRange": [
+        63,
+        74
+      ],
+      "summary": "表示回合因成功、预算、超时或取消而结束，继承 BaseException 避免被普通异常重试吞掉。",
+      "tags": [
+        "后端接口",
+        "调用账本",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/_backend.py:EpisodeFinished.__init__",
+      "type": "function",
+      "name": "EpisodeFinished.__init__",
+      "filePath": "src/pyrualean/_backend.py",
+      "lineRange": [
+        72,
+        74
+      ],
+      "summary": "保存回合停止原因。",
+      "tags": [
+        "后端接口",
+        "调用账本",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "class:src/pyrualean/_backend.py:CallRecord",
+      "type": "class",
+      "name": "CallRecord",
+      "filePath": "src/pyrualean/_backend.py",
+      "lineRange": [
+        115,
+        133
+      ],
+      "summary": "记录单次机器人调用的参数、时间、状态、步数和结果摘要。",
+      "tags": [
+        "后端接口",
+        "调用账本",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/_backend.py:CallRecord.to_dict",
+      "type": "function",
+      "name": "CallRecord.to_dict",
+      "filePath": "src/pyrualean/_backend.py",
+      "lineRange": [
+        129,
+        133
+      ],
+      "summary": "序列化调用记录，并规范无法直接 JSON 编码的参数与摘要值。",
+      "tags": [
+        "后端接口",
+        "调用账本",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "class:src/pyrualean/_backend.py:Ledger",
+      "type": "class",
+      "name": "Ledger",
+      "filePath": "src/pyrualean/_backend.py",
+      "lineRange": [
+        136,
+        176
+      ],
+      "summary": "以只追加方式保存整个回合的机器人调用历史。",
+      "tags": [
+        "后端接口",
+        "调用账本",
+        "数据模型"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/_backend.py:Ledger.__init__",
+      "type": "function",
+      "name": "Ledger.__init__",
+      "filePath": "src/pyrualean/_backend.py",
+      "lineRange": [
+        139,
+        140
+      ],
+      "summary": "初始化空的调用记录列表。",
+      "tags": [
+        "后端接口",
+        "调用账本",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/_backend.py:Ledger.records",
+      "type": "function",
+      "name": "Ledger.records",
+      "filePath": "src/pyrualean/_backend.py",
+      "lineRange": [
+        149,
+        150
+      ],
+      "summary": "返回调用记录列表的副本。",
+      "tags": [
+        "后端接口",
+        "调用账本",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/_backend.py:Ledger.open",
+      "type": "function",
+      "name": "Ledger.open",
+      "filePath": "src/pyrualean/_backend.py",
+      "lineRange": [
+        152,
+        163
+      ],
+      "summary": "创建带连续编号和起始时间的调用记录并追加到账本。",
+      "tags": [
+        "后端接口",
+        "调用账本",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/_backend.py:Ledger.stateful_calls",
+      "type": "function",
+      "name": "Ledger.stateful_calls",
+      "filePath": "src/pyrualean/_backend.py",
+      "lineRange": [
+        165,
+        166
+      ],
+      "summary": "统计会改变机器人环境状态的调用数量。",
+      "tags": [
+        "后端接口",
+        "调用账本",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/_backend.py:Ledger.env_steps",
+      "type": "function",
+      "name": "Ledger.env_steps",
+      "filePath": "src/pyrualean/_backend.py",
+      "lineRange": [
+        168,
+        169
+      ],
+      "summary": "汇总所有已记录调用消耗的环境步数。",
+      "tags": [
+        "后端接口",
+        "调用账本",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/_backend.py:Ledger.write_jsonl",
+      "type": "function",
+      "name": "Ledger.write_jsonl",
+      "filePath": "src/pyrualean/_backend.py",
+      "lineRange": [
+        171,
+        176
+      ],
+      "summary": "将每次调用逐行写为 JSON，便于回合审计。",
+      "tags": [
+        "后端接口",
+        "调用账本",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/pyrualean/__init__.py",
+      "target": "file:src/pyrualean/_backend.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/__init__.py",
+      "target": "file:src/pyrualean/_robot.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/__init__.py",
+      "target": "file:src/pyrualean/libero.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/__init__.py",
+      "target": "file:src/pyrualean/prompt.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/__init__.py",
+      "target": "file:src/pyrualean/robots.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/__init__.py",
+      "target": "file:src/pyrualean/runner.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "function:src/pyrualean/_backend.py:unwrap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "function:src/pyrualean/_backend.py:unwrap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "function:src/pyrualean/_backend.py:raise_for_error",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "function:src/pyrualean/_backend.py:raise_for_error",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "function:src/pyrualean/_backend.py:_jsonable",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "function:src/pyrualean/_backend.py:_jsonable",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "class:src/pyrualean/_backend.py:Backend",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "class:src/pyrualean/_backend.py:Backend",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "function:src/pyrualean/_backend.py:Backend.execute_tool",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/_backend.py:Backend",
+      "target": "function:src/pyrualean/_backend.py:Backend.execute_tool",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "function:src/pyrualean/_backend.py:Backend.solved",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/_backend.py:Backend",
+      "target": "function:src/pyrualean/_backend.py:Backend.solved",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "function:src/pyrualean/_backend.py:Backend.artifact",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/_backend.py:Backend",
+      "target": "function:src/pyrualean/_backend.py:Backend.artifact",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "function:src/pyrualean/_backend.py:Backend.env_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/_backend.py:Backend",
+      "target": "function:src/pyrualean/_backend.py:Backend.env_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "function:src/pyrualean/_backend.py:Backend.cancel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/_backend.py:Backend",
+      "target": "function:src/pyrualean/_backend.py:Backend.cancel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "class:src/pyrualean/_backend.py:ToolError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "class:src/pyrualean/_backend.py:ToolError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "function:src/pyrualean/_backend.py:ToolError.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/_backend.py:ToolError",
+      "target": "function:src/pyrualean/_backend.py:ToolError.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "class:src/pyrualean/_backend.py:EpisodeFinished",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "class:src/pyrualean/_backend.py:EpisodeFinished",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "function:src/pyrualean/_backend.py:EpisodeFinished.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/_backend.py:EpisodeFinished",
+      "target": "function:src/pyrualean/_backend.py:EpisodeFinished.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "class:src/pyrualean/_backend.py:CallRecord",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "class:src/pyrualean/_backend.py:CallRecord",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "function:src/pyrualean/_backend.py:CallRecord.to_dict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/_backend.py:CallRecord",
+      "target": "function:src/pyrualean/_backend.py:CallRecord.to_dict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "class:src/pyrualean/_backend.py:Ledger",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "class:src/pyrualean/_backend.py:Ledger",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "function:src/pyrualean/_backend.py:Ledger.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/_backend.py:Ledger",
+      "target": "function:src/pyrualean/_backend.py:Ledger.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "function:src/pyrualean/_backend.py:Ledger.records",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/_backend.py:Ledger",
+      "target": "function:src/pyrualean/_backend.py:Ledger.records",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "function:src/pyrualean/_backend.py:Ledger.open",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/_backend.py:Ledger",
+      "target": "function:src/pyrualean/_backend.py:Ledger.open",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "function:src/pyrualean/_backend.py:Ledger.stateful_calls",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/_backend.py:Ledger",
+      "target": "function:src/pyrualean/_backend.py:Ledger.stateful_calls",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "function:src/pyrualean/_backend.py:Ledger.env_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/_backend.py:Ledger",
+      "target": "function:src/pyrualean/_backend.py:Ledger.env_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_backend.py",
+      "target": "function:src/pyrualean/_backend.py:Ledger.write_jsonl",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/_backend.py:Ledger",
+      "target": "function:src/pyrualean/_backend.py:Ledger.write_jsonl",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:src/pyrualean/_backend.py:unwrap",
+      "target": "class:src/pyrualean/_backend.py:ToolError",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/_backend.py:raise_for_error",
+      "target": "class:src/pyrualean/_backend.py:ToolError",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/_backend.py:CallRecord.to_dict",
+      "target": "function:src/pyrualean/_backend.py:_jsonable",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/_backend.py:Ledger.open",
+      "target": "class:src/pyrualean/_backend.py:CallRecord",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

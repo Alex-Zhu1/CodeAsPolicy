@@ -1,0 +1,147 @@
+{
+  "nodes": [
+    {
+      "id": "document:docs/models/coder.md",
+      "type": "document",
+      "name": "coder.md",
+      "filePath": "docs/models/coder.md",
+      "summary": "介绍 GRPO 训练的 PyRUA-Lean Coder 模型、跨基准评测结果和兼容 OpenAI 服务的运行配置。",
+      "tags": [
+        "文档",
+        "模型",
+        "评测"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:docs/stylesheets/extra.css",
+      "type": "file",
+      "name": "extra.css",
+      "filePath": "docs/stylesheets/extra.css",
+      "summary": "为 MkDocs 页面提供项目配色、字体、卡片、按钮及导航等视觉样式。",
+      "tags": [
+        "文档",
+        "css",
+        "界面样式"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:docs/visual-supervision.md",
+      "type": "document",
+      "name": "visual-supervision.md",
+      "filePath": "docs/visual-supervision.md",
+      "summary": "说明 Valen 的阶段契约、跨单元证据账本、动作前置条件、暂停恢复和离线回放协议。",
+      "tags": [
+        "文档",
+        "视觉监督",
+        "证据管理"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:examples/replay_object_swap_t2_s0.py",
+      "type": "file",
+      "name": "replay_object_swap_t2_s0.py",
+      "filePath": "examples/replay_object_swap_t2_s0.py",
+      "summary": "重放固定 LIBERO-PRO 场景中沙拉酱入篮的成功原语序列，用于验证接口连通性。",
+      "tags": [
+        "示例",
+        "固定回放",
+        "libero"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:examples/replay_object_swap_t2_s0.py:run",
+      "type": "function",
+      "name": "run",
+      "filePath": "examples/replay_object_swap_t2_s0.py",
+      "summary": "依次移动、调用 Pi0 抓取沙拉酱、保持夹持搬运并释放到篮子中。",
+      "tags": [
+        "示例",
+        "固定回放",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        12,
+        31
+      ]
+    },
+    {
+      "id": "file:examples/replay_robocasa_open_drawer.py",
+      "type": "file",
+      "name": "replay_robocasa_open_drawer.py",
+      "filePath": "examples/replay_robocasa_open_drawer.py",
+      "summary": "重放固定 RoboCasa 抽屉任务的像素反投影与 RL-DX 技能调用，验证原语执行链路。",
+      "tags": [
+        "示例",
+        "固定回放",
+        "robocasa"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:examples/replay_robocasa_open_drawer.py:run",
+      "type": "function",
+      "name": "run",
+      "filePath": "examples/replay_robocasa_open_drawer.py",
+      "summary": "记录初始状态、反投影抽屉把手像素并调用 RL-DX 抽屉技能。",
+      "tags": [
+        "示例",
+        "固定回放",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        14,
+        23
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:examples/replay_object_swap_t2_s0.py",
+      "target": "function:examples/replay_object_swap_t2_s0.py:run",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/replay_object_swap_t2_s0.py",
+      "target": "function:examples/replay_object_swap_t2_s0.py:run",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:examples/replay_robocasa_open_drawer.py",
+      "target": "function:examples/replay_robocasa_open_drawer.py:run",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/replay_robocasa_open_drawer.py",
+      "target": "function:examples/replay_robocasa_open_drawer.py:run",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "document:docs/visual-supervision.md",
+      "target": "file:examples/replay_supervision.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/visual-supervision.md",
+      "target": "file:integrations/xpolicylab/PyRUA_Lean/model.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

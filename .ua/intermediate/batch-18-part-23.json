@@ -1,0 +1,1512 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "type": "file",
+      "name": "store_tools_in_toolbox.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "summary": "实现离线 RoboDojo 任务程序：测量工具位置与尺寸，按工具特点使用平移、中转或立起抓放，将工具放入箱槽并补救错位。通过执行环境注入的 robo 接口完成任务，不在评测时调用规划模型。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:log_",
+      "type": "function",
+      "name": "log_",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "summary": "打印任务执行进度和诊断信息。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        50,
+        51
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:MOVE",
+      "type": "function",
+      "name": "MOVE",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "summary": "调用机器人位姿运动接口并处理本任务的运动结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        85,
+        88
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:GRIP",
+      "type": "function",
+      "name": "GRIP",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "summary": "发送夹爪开合命令并记录执行步数或状态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        89,
+        97
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:HOME",
+      "type": "function",
+      "name": "HOME",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "summary": "将指定机械臂返回起始姿态并处理返回结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        98,
+        101
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:steps_left",
+      "type": "function",
+      "name": "steps_left",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "summary": "计算当前任务剩余原生动作预算。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        102,
+        103
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:ymax",
+      "type": "function",
+      "name": "ymax",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "summary": "按俯仰角和横向位置插值最远可达纵向边界。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        120,
+        132
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:pick_pitch",
+      "type": "function",
+      "name": "pick_pitch",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "summary": "选择能覆盖工具抓放路径的夹爪俯仰角。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        135,
+        139
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:sight",
+      "type": "function",
+      "name": "sight",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "summary": "使用多提示词及位置尺寸约束定位工具。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        142,
+        177
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:centre",
+      "type": "function",
+      "name": "centre",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "summary": "依据完整掩码或可见远端补偿工具中心估计。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        180,
+        193
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:mv",
+      "type": "function",
+      "name": "mv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "summary": "调用机器人位姿运动接口并处理本任务的运动结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        196,
+        202
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:opening",
+      "type": "function",
+      "name": "opening",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "summary": "读取夹爪开度并据此判断或报告抓持状态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        205,
+        206
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:line",
+      "type": "function",
+      "name": "line",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "summary": "把保持抓持的直线路径分段执行并检查阻挡或丢失。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        209,
+        228
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:grasp",
+      "type": "function",
+      "name": "grasp",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "summary": "执行接近、闭合和抬升步骤，并依据本任务的视觉或夹爪反馈处理抓取结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        231,
+        246
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:release_up",
+      "type": "function",
+      "name": "release_up",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "summary": "分阶段张开夹爪后向上撤离。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        249,
+        253
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_direct",
+      "type": "function",
+      "name": "place_direct",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "summary": "直接搬运工具到箱槽，释放后沿夹指方向退出。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        256,
+        285
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:refine_from_above",
+      "type": "function",
+      "name": "refine_from_above",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "summary": "通过腕部俯视定位精化工具中心。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        288,
+        314
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_staged",
+      "type": "function",
+      "name": "place_staged",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "summary": "将工具先放到中转点重新抓取后送入槽位。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        317,
+        364
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:mvp",
+      "type": "function",
+      "name": "mvp",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "summary": "在直线目标被拒绝时尝试邻近可达俯仰角。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        389,
+        406
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:held",
+      "type": "function",
+      "name": "held",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "summary": "读取夹爪开度并据此判断或报告抓持状态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        409,
+        410
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:seg_line",
+      "type": "function",
+      "name": "seg_line",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "summary": "把保持抓持的直线路径分段执行并检查阻挡或丢失。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        413,
+        430
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:arc",
+      "type": "function",
+      "name": "arc",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "summary": "沿工具支点圆弧移动抓点以控制工具翻转。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        433,
+        446
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_stand",
+      "type": "function",
+      "name": "place_stand",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "summary": "将工具绕底端立起并搬运、落入对应箱槽。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        449,
+        568
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:pliers_staging",
+      "type": "function",
+      "name": "pliers_staging",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "summary": "计算钳子在工具箱侧壁附近的暂存与立起位置。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        577,
+        581
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:sweep_hits",
+      "type": "function",
+      "name": "sweep_hits",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "summary": "判断钳子沿给定折线路径扫过时是否碰到障碍。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        584,
+        593
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:hover_route",
+      "type": "function",
+      "name": "hover_route",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "summary": "选择避开障碍物的直线或折线悬空搬运路径。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        596,
+        601
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_pliers_hover",
+      "type": "function",
+      "name": "place_pliers_hover",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "summary": "平躺夹住钳柄低空搬到侧壁旁，再改夹钳口立起入槽。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        604,
+        649
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:slot_grip",
+      "type": "function",
+      "name": "slot_grip",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "summary": "根据工具槽偏移计算已放置工具的再抓点。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        651,
+        654
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:repair",
+      "type": "function",
+      "name": "repair",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "summary": "对已放置工具小幅抬起重放并归位检查是否就位。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        657,
+        706
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:park_tape",
+      "type": "function",
+      "name": "park_tape",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "summary": "把卷尺移出钳子中转或悬空搬运通道。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        734,
+        752
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:park_tape_cheap",
+      "type": "function",
+      "name": "park_tape_cheap",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "summary": "把卷尺移出钳子中转或悬空搬运通道。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        754,
+        773
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_stand.hits",
+      "type": "function",
+      "name": "place_stand.hits",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "summary": "对三段搬运折线采样，统计其与障碍区域相交的路径段。",
+      "tags": [
+        "离线策略",
+        "局部规划",
+        "机器人控制"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        504,
+        514
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:log_",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:log_",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:MOVE",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:MOVE",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:GRIP",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:GRIP",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:HOME",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:HOME",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:steps_left",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:steps_left",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:ymax",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:ymax",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:pick_pitch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:pick_pitch",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:sight",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:sight",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:centre",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:centre",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:mv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:mv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:opening",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:opening",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:line",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:line",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:grasp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:grasp",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:release_up",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:release_up",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_direct",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_direct",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:refine_from_above",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:refine_from_above",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_staged",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_staged",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:mvp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:mvp",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:held",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:held",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:seg_line",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:seg_line",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:arc",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:arc",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_stand",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_stand",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:pliers_staging",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:pliers_staging",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:sweep_hits",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:sweep_hits",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:hover_route",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:hover_route",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_pliers_hover",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_pliers_hover",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:slot_grip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:slot_grip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:repair",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:repair",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:park_tape",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:park_tape",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:park_tape_cheap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:park_tape_cheap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:pick_pitch",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:ymax",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:sight",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:log_",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:MOVE",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:log_",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:line",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:line",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:opening",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:line",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:log_",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:GRIP",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:log_",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:release_up",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:GRIP",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:release_up",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_direct",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:grasp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_direct",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:line",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_direct",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:GRIP",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_direct",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:log_",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_direct",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:opening",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_direct",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:refine_from_above",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:refine_from_above",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:log_",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_staged",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:pick_pitch",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_staged",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:log_",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_staged",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:grasp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_staged",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:line",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_staged",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:opening",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_staged",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:GRIP",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_staged",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:release_up",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:mvp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:MOVE",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:mvp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:log_",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:held",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:opening",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:seg_line",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:mvp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:seg_line",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:held",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:seg_line",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:log_",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:arc",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:mvp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:arc",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:held",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:arc",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:log_",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_stand",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:log_",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_stand",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:GRIP",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_stand",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:mvp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_stand",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:arc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_stand",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:opening",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_stand",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:seg_line",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:hover_route",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:sweep_hits",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_pliers_hover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:pliers_staging",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_pliers_hover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:hover_route",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_pliers_hover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:log_",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_pliers_hover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:pick_pitch",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_pliers_hover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:grasp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_pliers_hover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:line",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_pliers_hover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:opening",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_pliers_hover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:GRIP",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_pliers_hover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_pliers_hover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_stand",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_pliers_hover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:HOME",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_pliers_hover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:sight",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_pliers_hover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:centre",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:slot_grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:pick_pitch",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:sight",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:centre",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:GRIP",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:HOME",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:line",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:park_tape",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:grasp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:park_tape",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:line",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:park_tape",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:release_up",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:park_tape",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:HOME",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:park_tape",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:sight",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:park_tape",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:centre",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:park_tape",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:log_",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:park_tape_cheap",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:grasp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:park_tape_cheap",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:line",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:park_tape_cheap",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:GRIP",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:park_tape_cheap",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:park_tape_cheap",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:log_",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_stand.hits",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_stand",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/store_tools_in_toolbox.py:place_stand.hits",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    }
+  ]
+}

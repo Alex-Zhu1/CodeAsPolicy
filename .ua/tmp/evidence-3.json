@@ -1,0 +1,1547 @@
+[
+  {
+    "path": "src/pyrualean/arms.py",
+    "category": "code",
+    "moduleDoc": "Tool surfaces for the code arms, served to an agent loop through MCP.\n\nTwo arms, one contract.  Each is a tiny toolkit (``get_tools_spec`` /\n``execute_tool``) that an MCP server can expose to Codex:\n\n* ``cells``  - one tool ``python(code)``: the code runs in a *persistent*\n  namespace where ``robo`` lives, like a notebook or OpenAI's python tool.\n  Variables and functions defined in one cell are available in the next.\n* ``program`` - one tool ``run_program(code | path)``: the code is a complete\n  file defining ``run(robo)``; every program starts from a fresh namespace\n  (files in the workspace persist and can be imported).  ``max_programs=1``\n  is the single-shot protocol.\n\nBoth arms also get ``finish(status, summary)``.  Every tool result is text\n(stdout, errors, the ledger of primitive calls, the robot state) plus the two\ncurrent camera images whenever the robot moved, so the agent's per-turn\nperception matches what a tool-calling agent receives after each primitive.",
+    "symbols": [
+      {
+        "name": "_to_png",
+        "kind": "function",
+        "range": [
+          168,
+          185
+        ],
+        "owner": null,
+        "doc": "Encode a numpy array, PIL image or PNG bytes as PNG bytes.",
+        "body": "if isinstance(item, (bytes, bytearray)):\n        return bytes(item)\nfrom PIL import Image\nif hasattr(item, \"save\") and hasattr(item, \"mode\"):\n        image = item\n    else:\nbuffer = io.BytesIO()\nimage.save(buffer, format=\"PNG\")\nreturn buffer.getvalue()"
+      },
+      {
+        "name": "_trim",
+        "kind": "function",
+        "range": [
+          188,
+          195
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "if len(text) <= limit:\n        return text\nreturn (\n        text[: limit // 2]\n        + f\"\\n... [{len(text) - limit} chars omitted] ...\\n\""
+      },
+      {
+        "name": "_state_dict",
+        "kind": "function",
+        "range": [
+          198,
+          202
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "try:\n        return robo._summary_dict()\n    except Exception as exc:  # noqa: BLE001 - reported to the agent"
+      },
+      {
+        "name": "_blocked_message",
+        "kind": "function",
+        "range": [
+          205,
+          211
+        ],
+        "owner": null,
+        "doc": "Why a cell or program was not run (it named :data:`BLOCKED_NAMES` members).",
+        "body": "return (\n        f\"SandboxError: {', '.join(names)} may not be used by policy code; the {what} was not \"\n        \"run.  Stay within the documented `robo` API.\""
+      },
+      {
+        "name": "arm_contract",
+        "kind": "function",
+        "range": [
+          1133,
+          1176
+        ],
+        "owner": null,
+        "doc": "Render the arm's contract; ``guides=True`` appends :data:`GUIDES_NOTE`.\n\n``budget_mode=\"wall\"`` states the wall-clock budget; ``\"calls\"`` states\nthat the number of tool calls is limited (without the number, which the\ntool-calling arm's own prompt does not state either).  ``robot`` names\nthe robot for the contract (keys of :data:`LIBERO_ROBOT`; default LIBERO);\nits ``scoring`` key picks the scoring bullets (:data:`SCORING_NOTES`).",
+        "body": "if budget_mode not in BUDGET_MODES:\n        raise ValueError(f\"budget_mode must be one of {BUDGET_MODES}, got {budget_mode!r}\")\ntext = _arm_contract(\n        arm,\n        budget_s=budget_s,\ntext = text.rstrip() + \"\\n\\n\" + RECOVERY_NOTE\ntext += \"\\n\\n\" + strategies.PROMPT\ntext += (\n        \"\\nEvery code result includes observation metadata: observation_id, state_version \"\n        \"(motion attempts, including failed ones), step_id, action ledger indices and image \"\nif guides:\n        text = text.rstrip() + \"\\n\\n\" + GUIDES_NOTE + \"\\n\"\nreturn text"
+      },
+      {
+        "name": "robot_words",
+        "kind": "function",
+        "range": [
+          1179,
+          1198
+        ],
+        "owner": null,
+        "doc": "Contract wording for a :class:`pyrualean.robots.RobotAdapter`.\n\n``primitives=\"no-vla\"`` names the adapter's ``services_novla`` (the\nservices left once the VLA is removed) instead of ``services``.",
+        "body": "primitives = effective_primitives(adapter.robot_cls, primitives)\nkey = \"services\" if primitives == \"full\" else \"services_novla\"\nphrase = getattr(adapter, key, \"\") or \"\"\nhead, _, tail = phrase.partition(\" \")\nreturn {\n        \"robot_blurb\": adapter.blurb,\n        \"cls\": adapter.robot_cls.__name__,"
+      },
+      {
+        "name": "_arm_contract",
+        "kind": "function",
+        "range": [
+          1201,
+          1253
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "words = dict(LIBERO_ROBOT, **(robot or {}))\nimage_note = IMAGE_NOTES[images].format(show_examples=words[\"show_examples\"])\nfeedback_note = FEEDBACK_NOTES[arm][feedback]\nending_notes = ENDING_NOTES if words[\"scoring\"] == \"live\" else ENDING_NOTES_FINAL\nending_note = ending_notes[budget_mode].format(\n        budget_s=budget_s,\n        max_env_steps=max_env_steps,\nscoring_head, scoring_tail = SCORING_NOTES[words[\"scoring\"]][arm]\nif arm == \"cells\":\n        return CELLS_CONTRACT.format(\n            budget_s=budget_s,\nif max_programs == 1:\n        budget = (\n            \"You may call it EXACTLY ONCE: there is no second attempt and no \"\nreturn PROGRAM_CONTRACT.format(\n        budget_s=budget_s,\n        max_env_steps=max_env_steps,"
+      },
+      {
+        "name": "ArmResult",
+        "kind": "class",
+        "range": [
+          70,
+          165
+        ],
+        "owner": null,
+        "doc": "What the MCP server hands back: ``result`` (dict) and content blocks.",
+        "body": "result: dict[str, Any]\nimages: list[bytes] = field(default_factory=list)"
+      },
+      {
+        "name": "ArmResult.is_error",
+        "kind": "function",
+        "range": [
+          77,
+          78
+        ],
+        "owner": "ArmResult",
+        "doc": "",
+        "body": "return result_is_error(self.result)"
+      },
+      {
+        "name": "ArmResult.content_blocks",
+        "kind": "function",
+        "range": [
+          81,
+          165
+        ],
+        "owner": "ArmResult",
+        "doc": "",
+        "body": "text = json.dumps(self.result, indent=2, ensure_ascii=False, default=str)\nif (len(text) > MAX_TEXT_CHARS\n                and self.result.get(\"status\") == \"stuck_confirmed\"):\n            compact = dict(self.result)\nif len(text) > MAX_TEXT_CHARS and any(\n            key in self.result for key in (\"supervision\", \"failure\")\n        ):\nif len(text) > MAX_TEXT_CHARS:\n            # Normal outputs also need parseable JSON. Retain the envelope\n            # linking evidence to actions even if user-defined values are huge.\nblocks: list[dict[str, Any]] = [{\"type\": \"text\", \"text\": text}]\nfor data in self.images:\n            blocks.append(\n                {\nreturn blocks"
+      },
+      {
+        "name": "ArmToolkit",
+        "kind": "class",
+        "range": [
+          214,
+          892
+        ],
+        "owner": null,
+        "doc": "MCP-servable tool surface around one robot (a :class:`RobotBase`).",
+        "body": ""
+      },
+      {
+        "name": "ArmToolkit.__init__",
+        "kind": "function",
+        "range": [
+          217,
+          295
+        ],
+        "owner": "ArmToolkit",
+        "doc": "",
+        "body": "if arm not in ARMS:\n            raise ValueError(f\"arm must be one of {ARMS}, got {arm!r}\")\nif supervisor is not None and arm != \"cells\":\n            raise ValueError(\"Visual supervision currently supports only the cells arm\")\nif stuck_recovery is not None and arm != \"cells\":\n            raise ValueError(\"Stuck recovery currently supports only the cells arm\")\nself.stuck_recovery = stuck_recovery\nself.stuck_recovery_events: list[dict[str, Any]] = []\nself._recovery_started = time.perf_counter()\nself.supervisor = supervisor\nrobo._supervisor = supervisor\nif images is True:\n            images = \"on-motion\"\n        elif images is False:\nif images not in IMAGE_POLICIES:\n            raise ValueError(f\"images must be one of {IMAGE_POLICIES}, got {images!r}\")\nif feedback not in FEEDBACK_MODES:\n            raise ValueError(f\"feedback must be one of {FEEDBACK_MODES}, got {feedback!r}\")\nself.feedback = feedback\nself.execution_limits = execution_limits or ExecutionLimits()\nself._session_id = uuid.uuid4().hex\nself.robo = robo\nself.arm = arm\nself.workspace = Path(workspace)\nself.workspace.mkdir(parents=True, exist_ok=True)\nself.max_programs = max_programs\nself.program_timeout_s = program_timeout_s\nself.max_turns = max_turns\nself.turn_budget_exhausted = False\nself.images = images\nself.finish: dict[str, Any] | None = None\nself.turns: list[dict[str, Any]] = []\nself._lock = threading.Lock()\nself._"
+      },
+      {
+        "name": "ArmToolkit._display",
+        "kind": "function",
+        "range": [
+          297,
+          306
+        ],
+        "owner": "ArmToolkit",
+        "doc": "Attach an image (numpy array, PIL image or PNG bytes) to this turn's result.",
+        "body": "if len(self._displayed) >= self.execution_limits.max_display_images:\n            error = ExecutionLimit(\"output_limit\", \"Too many display images in one code call\")\n            if self.robo._execution_budget is not None:\nself._displayed.append(_to_png(image))"
+      },
+      {
+        "name": "ArmToolkit.get_tools_spec",
+        "kind": "function",
+        "range": [
+          310,
+          371
+        ],
+        "owner": "ArmToolkit",
+        "doc": "",
+        "body": "finish = {\n            \"name\": \"finish\",\n            \"description\": (\nif self.stuck_recovery is not None:\n            finish[\"description\"] = self.stuck_recovery.prompt()\nif self.arm == \"cells\":\n            main = {\n                \"name\": \"python\",\nmain[\"description\"] += \" \" + self.execution_limits.prompt()\nreturn [main, finish]"
+      },
+      {
+        "name": "ArmToolkit.execute_tool",
+        "kind": "function",
+        "range": [
+          373,
+          420
+        ],
+        "owner": "ArmToolkit",
+        "doc": "",
+        "body": "with self._lock:\n            started = time.perf_counter()\n            calls_before = len(self.robo._ledger)"
+      },
+      {
+        "name": "ArmToolkit._finish",
+        "kind": "function",
+        "range": [
+          424,
+          496
+        ],
+        "owner": "ArmToolkit",
+        "doc": "",
+        "body": "if self.finish is not None:\n            return ArmResult({\"ok\": True, **self.finish,\n                              **({\"episode_finished\": True} if self.stuck_recovery else {})})\nif self.stuck_recovery is not None and args.get(\"status\") == \"stuck\":\n            if not str(args.get(\"summary\", \"\")).strip():\n                return ArmResult({\"error\": \"Describe the confirmed blockage in summary.\"})\nself.finish = {\n            \"status\": str(args.get(\"status\", \"\")),\n            \"summary\": str(args.get(\"summary\", \"\")),\nif self._live_success():\n            self.finish[\"environment_terminated\"] = self.robo._reported_success()\nself.robo._stop_episode(self.robo._stop_reason or \"finished\")\nreturn ArmResult({\"ok\": True, **self.finish,\n                          **({\"episode_finished\": True} if self.stuck_recovery else {})})"
+      },
+      {
+        "name": "ArmToolkit._observe_result",
+        "kind": "function",
+        "range": [
+          509,
+          535
+        ],
+        "owner": "ArmToolkit",
+        "doc": "A common evidence envelope for cells, programs, errors and finish.",
+        "body": "records = self.robo._ledger.records[calls_before:]\nmotions = [r for r in records if r.stateful]\nstep = self.robo._backend.env_steps()\nimages = output.result.pop(\"_image_evidence\", [])\nif not images:\n            images = [dict(name=name, source=\"unknown\", step_id=None, state_version=None)\n                      for name in output.result.get(\"images\", [])]\noutput.result[\"observation\"] = {\n            \"observation_id\": f\"{self._session_id}-{len(self.turns) + 1}\",\n            \"observed_at\": time.time(),"
+      },
+      {
+        "name": "ArmToolkit._failure_feedback",
+        "kind": "function",
+        "range": [
+          555,
+          617
+        ],
+        "owner": "ArmToolkit",
+        "doc": "Return enough evidence to repair from the current scene, never replay it.",
+        "body": "motions = [r for r in self.robo._ledger.records[before[0]:] if r.stateful]\nused = self._cell_index if self.arm == \"cells\" else self._program_index\nlimits = [self.max_turns]\nif self.arm == \"program\":\n            limits.append(self.max_programs)\nremaining = [max(0, limit - used) for limit in limits if limit is not None]\ncalls_left = min(remaining) if remaining else None\nstopped = self.robo._stop_reason or (\"truncated\" if self.robo._truncated else None)\nif self._live_success() and self.robo._reported_success():\n            stopped = \"terminated\"\nretry_allowed = not stopped and calls_left != 0\nfingerprint = hashlib.sha256(\n            (code + repr((failure[\"kind\"], failure[\"type\"],\n                          (failure.get(\"location\") or {}).get(\"line\")))).encode()\ncount = self._failure_counts.get(fingerprint, 0) + 1\nself._failure_counts[fingerprint] = count\nnext_action = \"inspect_and_replan\" if motions else \"repair_code\"\nif count >= 3:\n            next_action = \"change_approach_or_finish\"\nif not retry_allowed:\n            next_action = \"finish\"\nextra[\"failure\"] = failure\nsteps_after = self.robo._backend.env_steps()\nextra[\"recovery\"] = {\n            \"next_action\": next_action,\n            \"retry_allowed\": bool(retry_allowed),\nresult = self._feedback(before, extra)\nresult.result[\"recovery\"][\"state\"] = (\n            result.result[\"state\"] if \"state\" in result.result else _state_dict(sel"
+      },
+      {
+        "name": "ArmToolkit._feedback",
+        "kind": "function",
+        "range": [
+          619,
+          657
+        ],
+        "owner": "ArmToolkit",
+        "doc": "",
+        "body": "calls_before, steps_before = before\nrecords = self.robo._ledger.records[calls_before:]\nmoved = any(r.stateful for r in records)\nsteps_after = self.robo._backend.env_steps()\nresult: dict[str, Any] = dict(extra)\nif self.robo._coordination_feedback is not None:\n            result[\"coordination\"] = self.robo._coordination_feedback\nif self.supervisor is not None:\n            result[\"supervision\"] = self.supervisor.feedback()\n            if self.supervisor.paused:\nif self.feedback == \"pure\":\n            return self._attach_images(result, moved, {})\nresult[\"primitive_calls\"] = [\n            {\n                \"tool\": r.tool,\nresult[\"moved\"] = moved\nresult[\"env_steps\"] = (\n            steps_after - steps_before\n            if steps_before is not None and steps_after is not None\nresult[\"state\"] = _state_dict(self.robo)\nif self._live_success():\n            result[\"episode_done\"] = self.robo._reported_success()\nreturn self._attach_images(result, moved, result)"
+      },
+      {
+        "name": "ArmToolkit._attach_images",
+        "kind": "function",
+        "range": [
+          659,
+          705
+        ],
+        "owner": "ArmToolkit",
+        "doc": "",
+        "body": "images: list[bytes] = []\nrequested = self.robo._take_show_requests()\nif self.images == \"on-motion\" and moved:\n            wanted = list(type(self.robo).ON_MOTION_IMAGES)\n        elif self.images == \"on-demand\":\nattached: list[str] = []\nevidence: list[dict[str, Any]] = []\nfor name in wanted:\n            try:\n                step, revision = self.robo._backend.env_steps(), self.robo._action_revision\ndisplayed, self._displayed = self._displayed, []\nfor index, item in enumerate(displayed):\n            try:\n                images.append(_to_png(item))\nif self.supervisor is not None and self.supervisor.paused:\n            # Return the exact evidence inspected by Valen, even if show() was\n            # never called or the normal image policy is disabled.\nif attached:\n            result[\"images\"] = attached\n            result[\"_image_evidence\"] = evidence\nreturn ArmResult(result, images)"
+      },
+      {
+        "name": "ArmToolkit._python",
+        "kind": "function",
+        "range": [
+          716,
+          786
+        ],
+        "owner": "ArmToolkit",
+        "doc": "",
+        "body": "if not self._budget_left(self._cell_index):\n            return ArmResult(\n                {\nself._cell_index += 1\nself.robo._coordination_feedback = None\nindex = self._cell_index\nif self.supervisor is not None:\n            self.supervisor.begin_cell(index)\n            self._globals[\"watch\"] = self.supervisor.watch\nsource_path = self.workspace / f\"cell_{index:03d}.py\"\nsource_path.write_text(code, encoding=\"utf-8\")\nfilename = str(source_path.resolve())\nself._last_flags = audit_source(code, workspace=self.workspace)\nbefore = self._snapshot()\nstdout = BoundedOutput(self.execution_limits.max_output_chars)\nstderr = BoundedOutput(self.execution_limits.max_output_chars)\nextra: dict[str, Any] = {\"cell\": index}\nblocked = blocked_names(code)\nif blocked:\n            extra[\"exception\"] = _blocked_message(blocked, \"cell\")\n            return self._failure_feedback(before, extra, {\nstarted = time.perf_counter()\ntry:\n            tree = ast.parse(code, filename=filename)\n            # Compile the complete cell before executing any prefix. ast.parse\nfailure = None\ntry:\n            with (ExecutionBudget(self.execution_limits, self.workspace, self.robo) as budget,\n                  contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr)):\nextra.update(self._output_fields(stdout, stderr))\nextra[\"elapsed_s\"] = round(time.perf_counter() - started, 2)\nif failure is not None:\n            "
+      },
+      {
+        "name": "ArmToolkit._run_program",
+        "kind": "function",
+        "range": [
+          788,
+          892
+        ],
+        "owner": "ArmToolkit",
+        "doc": "",
+        "body": "self.robo._coordination_feedback = None\nif not self._budget_left(self._program_index):\n            return ArmResult({\"error\": \"call budget exhausted: the episode is over, call finish\"})\nif self.max_programs is not None and self._program_index >= self.max_programs:\n            return ArmResult(\n                {\ncode = args.get(\"code\")\npath = args.get(\"path\")\nif not code and not path:\n            return ArmResult({\"error\": \"run_program needs `code` or `path`\"})\nself._program_index += 1\nindex = self._program_index\nif code:\n            target = self.workspace / f\"program_{index:02d}.py\"\n            target.write_text(str(code), encoding=\"utf-8\")\ntry:\n            source = target.read_text(encoding=\"utf-8\")\n        except OSError:\nself._last_flags = audit_source(source, workspace=self.workspace)\nbefore = self._snapshot()\nextra: dict[str, Any] = {\"program\": index, \"file\": target.name}\nblocked = blocked_names(source)\nif blocked:  # before load_policy: importing the file runs its module code\n            extra[\"exception\"] = _blocked_message(blocked, \"program\")\n            return self._failure_feedback(before, extra, {\nstdout = BoundedOutput(self.execution_limits.max_output_chars)\nstderr = BoundedOutput(self.execution_limits.max_output_chars)\ntry:\n            compile(source, str(target.resolve()), \"exec\")\n        except SyntaxError as exc:\nstarted = time.perf_counter()\nstage = \"load\"\ntry"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import ast",
+      "import base64",
+      "import contextlib",
+      "import hashlib",
+      "import io",
+      "import json",
+      "import math",
+      "import threading",
+      "import time",
+      "import traceback",
+      "import uuid",
+      "from dataclasses import dataclass, field",
+      "from pathlib import Path",
+      "from typing import Any",
+      "from . import strategies",
+      "from ._backend import EpisodeFinished",
+      "from ._robot import RobotBase, effective_primitives",
+      "from .coordination import CoordinationPause",
+      "from .execution import BoundedOutput, ExecutionBudget, ExecutionLimit, ExecutionLimits",
+      "from .recovery import failure_details, result_is_error",
+      "from .runner import PolicyLoadError, load_policy, run_policy",
+      "from .sandbox import audit_source, blocked_names, make_builtins",
+      "from .stuck_recovery import StuckRecoveryConfig",
+      "from .supervision import SupervisionPause, VisualSupervisor",
+      "from PIL import Image",
+      "import numpy as np",
+      "import numpy as np"
+    ]
+  },
+  {
+    "path": "src/pyrualean/claude_runtime.py",
+    "category": "code",
+    "moduleDoc": "Drive one code-arm episode with Claude Code through the Claude Agent SDK.\n\nThe second agent runtime of :mod:`pyrualean.play` (``--runtime claude``).\nEverything around the agent loop is the Codex runtime's: the same HTTP MCP\nserver over :class:`~pyrualean.arms.ArmToolkit`, the same prompt text and\nstep-0 card images.  Claude Code owns the loop (``claude_agent_sdk.query``)\nand keeps its default system prompt, as RPent's Claude planner does: our\nprompt is the first user message, the card images ride along as base64\nimage blocks.  This module owns the wall clock, the event dump\n(``claude_events.jsonl``) and the usage audit that becomes\n``result[\"generation\"]``.",
+    "symbols": [
+      {
+        "name": "sdk_max_turns",
+        "kind": "function",
+        "range": [
+          55,
+          58
+        ],
+        "owner": null,
+        "doc": "The ``--max-turns`` handed to Claude Code (one turn per model request).",
+        "body": "return max_turns + TURN_ALLOWANCE if max_turns else UNBOUNDED_TURNS"
+      },
+      {
+        "name": "arm_tools",
+        "kind": "function",
+        "range": [
+          61,
+          65
+        ],
+        "owner": null,
+        "doc": "The MCP tool names of ``arm`` as Claude Code sees them.",
+        "body": "main = \"python\" if arm == \"cells\" else \"run_program\"\nreturn [f\"{_MCP_PREFIX}{main}\", f\"{_MCP_PREFIX}finish\"]"
+      },
+      {
+        "name": "allowed_tools",
+        "kind": "function",
+        "range": [
+          68,
+          69
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return [*BUILTIN_TOOLS, *arm_tools(arm)]"
+      },
+      {
+        "name": "resolve_cli",
+        "kind": "function",
+        "range": [
+          72,
+          81
+        ],
+        "owner": null,
+        "doc": "Absolute path of the ``claude`` executable, ``None`` for the SDK's bundled one.",
+        "body": "if not cli:\n        return None\npath = Path(cli).expanduser()\nif path.is_file():\n        return str(path.absolute())\nfound = shutil.which(cli)\nreturn str(Path(found).absolute()) if found else None"
+      },
+      {
+        "name": "cli_version",
+        "kind": "function",
+        "range": [
+          84,
+          93
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "if not cli_path:\n        return None\ntry:\n        proc = subprocess.run(\n            [cli_path, \"--version\"], capture_output=True, text=True, timeout=30, check=False\nreturn proc.stdout.strip() or None"
+      },
+      {
+        "name": "image_block",
+        "kind": "function",
+        "range": [
+          96,
+          106
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "data = Path(path).read_bytes()\nmedia_type = mimetypes.guess_type(str(path))[0] or \"image/png\"\nreturn {\n        \"type\": \"image\",\n        \"source\": {"
+      },
+      {
+        "name": "initial_message",
+        "kind": "function",
+        "range": [
+          109,
+          125
+        ],
+        "owner": null,
+        "doc": "The episode's one user message, in the SDK's streaming-input shape.\n\nThe dict is what ``claude_agent_sdk.query`` writes verbatim to Claude\nCode's stdin (``--input-format stream-json``); ``message`` is an API\n``MessageParam`` whose content holds the prompt text and one base64\nimage block per card image.",
+        "body": "content: list[dict[str, Any]] = [{\"type\": \"text\", \"text\": prompt_text}]\ncontent += [image_block(path) for path in image_paths]\nreturn {\n        \"type\": \"user\",\n        \"session_id\": \"\","
+      },
+      {
+        "name": "build_options",
+        "kind": "function",
+        "range": [
+          128,
+          169
+        ],
+        "owner": null,
+        "doc": "``ClaudeAgentOptions`` of one episode.\n\nEffort maps like RPent's planner: ``none`` disables thinking, any other\nlevel is passed as ``effort``.  ``setting_sources=[]`` keeps user and\nproject configuration (settings, CLAUDE.md) out of the session;\n``strict_mcp_config`` keeps every MCP server but ours out.  No\n``permission_mode``: the MCP tools are pre-approved through\n``allowed_tools`` and the built-ins are read-only, so Claude Code never\nhas to ask.",
+        "body": "thinking = {\"type\": \"disabled\"} if reasoning_effort == \"none\" else None\neffort = None if reasoning_effort == \"none\" else reasoning_effort\nreturn sdk.ClaudeAgentOptions(\n        model=model,\n        cwd=str(workspace),"
+      },
+      {
+        "name": "_kind",
+        "kind": "function",
+        "range": [
+          175,
+          176
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return type(value).__name__"
+      },
+      {
+        "name": "_jsonable",
+        "kind": "function",
+        "range": [
+          179,
+          199
+        ],
+        "owner": null,
+        "doc": "JSON-ready copy of a message payload, images reduced to their size.",
+        "body": "if isinstance(value, dict):\n        source = value.get(\"source\")\n        if value.get(\"type\") == \"image\" and isinstance(source, dict) and \"data\" in source:\nif isinstance(value, list | tuple):\n        return [_jsonable(v) for v in value]\nif isinstance(value, bytes):\n        return {\"type\": \"bytes\", \"size\": len(value)}\nreturn value"
+      },
+      {
+        "name": "message_to_json",
+        "kind": "function",
+        "range": [
+          202,
+          209
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "if dataclasses.is_dataclass(message) and not isinstance(message, type):\n        data = dataclasses.asdict(message)\n    elif hasattr(message, \"__dict__\"):\nreturn {\"type\": _kind(message), **_jsonable(data)}"
+      },
+      {
+        "name": "_int",
+        "kind": "function",
+        "range": [
+          215,
+          219
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "try:\n        return int(value or 0)\n    except (TypeError, ValueError):"
+      },
+      {
+        "name": "_prompt_tokens",
+        "kind": "function",
+        "range": [
+          222,
+          229
+        ],
+        "owner": null,
+        "doc": "Prompt tokens of one request, counted the way Codex counts ``input_tokens``.",
+        "body": "return (\n        _int(usage.get(\"input_tokens\"))\n        + _int(usage.get(\"cache_read_input_tokens\"))"
+      },
+      {
+        "name": "_thinking_tokens",
+        "kind": "function",
+        "range": [
+          232,
+          236
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "details = usage.get(\"output_tokens_details\")\nif isinstance(details, dict) and details.get(\"thinking_tokens\") is not None:\n        return _int(details[\"thinking_tokens\"])\nreturn None"
+      },
+      {
+        "name": "_named",
+        "kind": "function",
+        "range": [
+          450,
+          451
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return type(name, (SimpleNamespace,), {})(**fields)"
+      },
+      {
+        "name": "_revive_block",
+        "kind": "function",
+        "range": [
+          454,
+          461
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "if not isinstance(block, dict):\n        return block\nkeys = set(block)\nfor name, needed in _BLOCK_KEYS:\n        if needed <= keys:\n            return _named(name, block)\nreturn block"
+      },
+      {
+        "name": "_revive",
+        "kind": "function",
+        "range": [
+          464,
+          470
+        ],
+        "owner": null,
+        "doc": "A message-like object from one ``claude_events.jsonl`` record.",
+        "body": "fields = {k: v for k, v in record.items() if k not in (\"type\", \"t\")}\nif isinstance(fields.get(\"content\"), list):\n        fields[\"content\"] = [_revive_block(block) for block in fields[\"content\"]]\nreturn _named(str(record.get(\"type\") or \"Unknown\"), fields)"
+      },
+      {
+        "name": "replay_events",
+        "kind": "function",
+        "range": [
+          473,
+          486
+        ],
+        "owner": null,
+        "doc": "Re-audit a ``claude_events.jsonl``: the ``generation`` record without\nthe run's ``status`` / ``returncode`` / ``options`` (which only the live\nrun knows).  Lets a recorded episode be re-audited with the current usage mapping.",
+        "body": "audit = _Audit()\nfor line in Path(path).read_text(encoding=\"utf-8\").splitlines():\n        try:\n            record = json.loads(line)\nreturn audit.generation()"
+      },
+      {
+        "name": "usage_from_events",
+        "kind": "function",
+        "range": [
+          507,
+          515
+        ],
+        "owner": null,
+        "doc": "Token accounting of a ``claude_events.jsonl``: ``request_profile`` is the\ncumulative prompt tokens (input + cache read + cache creation) over the\nunique assistant message ids, the totals come from the result message\n(``model_usage`` as-is; Claude Code's Haiku helper calls only appear\nthere).",
+        "body": "generation = replay_events(path)\nreturn {key: generation.get(key) for key in USAGE_KEYS}"
+      },
+      {
+        "name": "_prompt_stream",
+        "kind": "function",
+        "range": [
+          521,
+          522
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "yield message"
+      },
+      {
+        "name": "_drive",
+        "kind": "function",
+        "range": [
+          525,
+          574
+        ],
+        "owner": null,
+        "doc": "Consume one ``query`` under the wall clock; returns ``(status, returncode)``.",
+        "body": "started = time.perf_counter()\nstream = sdk.query(prompt=_prompt_stream(message), options=options)\nstatus, returncode = \"completed\", None\nconsumer = asyncio.ensure_future(consume())\ntry:\n        await asyncio.wait_for(asyncio.shield(consumer), timeout=budget_s)\n    except asyncio.TimeoutError:\nif status == \"completed\":\n        if audit.result is None:\n            returncode = 3\nreturn status, returncode"
+      },
+      {
+        "name": "run_claude_agent",
+        "kind": "function",
+        "range": [
+          577,
+          666
+        ],
+        "owner": null,
+        "doc": "Run one episode's agent loop; returns the ``generation`` record.\n\nEvery SDK message is appended as one JSON line to\n``out_dir/claude_events.jsonl`` (``t`` = seconds since the query\nstarted), Claude Code's stderr to ``claude_stderr.txt`` and the final\nassistant text to ``last_message.md``.  ``status`` is ``completed``,\n``timeout`` (the wall clock ``budget_s`` expired: ``on_timeout`` is\ncalled, then the query is cancelled, which terminates Claude Code) or\n``error`` (the SDK raised); ``returncode`` is 0 for a clean result, 1\nfor an ``is_error`` result, 2 after an exception, 3 when the stream\nended without a result and ``None`` on timeout.",
+        "body": "import claude_agent_sdk as sdk\nout_dir = Path(out_dir)\nout_dir.mkdir(parents=True, exist_ok=True)\nevents_path = out_dir / \"claude_events.jsonl\"\nstderr_path = out_dir / \"claude_stderr.txt\"\naudit = _Audit()\nstarted = time.perf_counter()\nwith open(stderr_path, \"a\", encoding=\"utf-8\") as stderr_file:\n\n        def stderr(line: str) -> None:\nfinal_text = getattr(audit.result, \"result\", None) or audit.last_text or \"\"\n(out_dir / \"last_message.md\").write_text(str(final_text), encoding=\"utf-8\")\ngeneration = audit.generation()\ngeneration.update(\n        {\n            \"status\": status,\nreturn generation"
+      },
+      {
+        "name": "_Audit",
+        "kind": "class",
+        "range": [
+          239,
+          436
+        ],
+        "owner": null,
+        "doc": "Accumulate usage, tool calls and errors from the SDK's message stream.",
+        "body": ""
+      },
+      {
+        "name": "_Audit.__init__",
+        "kind": "function",
+        "range": [
+          242,
+          260
+        ],
+        "owner": "_Audit",
+        "doc": "",
+        "body": "self.requests: dict[str, dict[str, Any]] = {}\nself.request_order: list[str] = []\nself.request_arrival: list[float] = []\nself.request_latency: list[float] = []\nself._boundary: float = 0.0\nself._anonymous = 0\nself.model: str | None = None\nself.session_id: str | None = None\nself.init: dict[str, Any] | None = None\nself.tool_calls: dict[str, int] = {}\nself.tool_requests: list[int] = []\nself.tool_results = 0\nself.tool_errors = 0\nself.errors: list[str] = []\nself.warnings: list[str] = []\nself.compactions = 0\nself.last_text: str | None = None\nself.result: Any = None"
+      },
+      {
+        "name": "_Audit.observe",
+        "kind": "function",
+        "range": [
+          262,
+          271
+        ],
+        "owner": "_Audit",
+        "doc": "",
+        "body": "kind = _kind(message)\nif kind == \"AssistantMessage\":\n            self._assistant(message, at)\n        elif kind == \"UserMessage\":"
+      },
+      {
+        "name": "_Audit._system",
+        "kind": "function",
+        "range": [
+          273,
+          287
+        ],
+        "owner": "_Audit",
+        "doc": "",
+        "body": "subtype = str(getattr(message, \"subtype\", \"\"))\ndata = getattr(message, \"data\", None)\ndata = data if isinstance(data, dict) else {}\nif subtype == \"init\":\n            self.session_id = data.get(\"session_id\") or self.session_id\n            keys = (\"model\", \"claude_code_version\", \"permissionMode\", \"tools\", \"mcp_servers\")"
+      },
+      {
+        "name": "_Audit._assistant",
+        "kind": "function",
+        "range": [
+          289,
+          320
+        ],
+        "owner": "_Audit",
+        "doc": "",
+        "body": "if getattr(message, \"parent_tool_use_id\", None):\n            return  # a subagent's message; none are expected (no Task tool)\nself.model = self.model or getattr(message, \"model\", None)\nkey = getattr(message, \"message_id\", None)\nif not key:\n            self._anonymous += 1\n            key = f\"anonymous-{self._anonymous}\"\nif key not in self.requests:\n            self.request_order.append(key)\n            self.request_arrival.append(at)\nusage = getattr(message, \"usage\", None)\nif isinstance(usage, dict):\n            self.requests[key] = usage\n        else:\nrequest_index = len(self.request_order)\nfor block in getattr(message, \"content\", None) or []:\n            block_kind = _kind(block)\n            if block_kind == \"TextBlock\":\nif error := getattr(message, \"error\", None):\n            self.errors.append(f\"assistant error: {error}\")"
+      },
+      {
+        "name": "_Audit._result",
+        "kind": "function",
+        "range": [
+          331,
+          345
+        ],
+        "owner": "_Audit",
+        "doc": "",
+        "body": "self.result = message\nself.session_id = getattr(message, \"session_id\", None) or self.session_id\nsubtype = str(getattr(message, \"subtype\", \"\"))\nreported = [str(e) for e in getattr(message, \"errors\", None) or []]\nif getattr(message, \"is_error\", False):\n            status = getattr(message, \"api_error_status\", None)\n            text = f\"result {subtype}\" + (f\" (http {status})\" if status else \"\")"
+      },
+      {
+        "name": "_Audit.usage",
+        "kind": "function",
+        "range": [
+          349,
+          393
+        ],
+        "owner": "_Audit",
+        "doc": "Token usage in the Codex audit's vocabulary.\n\nOne assistant message id is one model request.  Per request only the\nprompt side is trustworthy: the CLI stamps every assistant message\nwith the request's ``message_start`` usage, whose ``output_tokens``\nis a streaming placeholder.  The run totals come from the result\nmessage (verified on Claude Code 2.1.280: its top-level ``usage``\nsums the main model's requests, while ``usage.iterations`` holds a\nsingle entry for a whole tool loop, so it is ignored).  Without a\nresult (timeout, crash) the prompt sums are rebuilt from the\nassistant messages and the output side is reported as unknown.",
+        "body": "entries = [self.requests[k] for k in self.request_order]\nper_request = [_prompt_tokens(u) for u in entries]\nprofile: list[int] = []\nfor tokens in per_request:\n            profile.append(profile[-1] + tokens if profile else tokens)\nout: dict[str, Any] = {\"requests\": len(self.request_order), \"request_profile\": profile}\nresult_usage = getattr(self.result, \"usage\", None)\nif isinstance(result_usage, dict) and result_usage:\n            out[\"input_tokens\"] = _prompt_tokens(result_usage)\n            out[\"cached_input_tokens\"] = _int(result_usage.get(\"cache_read_input_tokens\"))\nout[\"total_tokens\"] = (\n            out[\"input_tokens\"] + out[\"output_tokens\"] if out[\"output_tokens\"] is not None else None\n        )\nreturn out"
+      },
+      {
+        "name": "_Audit.generation",
+        "kind": "function",
+        "range": [
+          395,
+          436
+        ],
+        "owner": "_Audit",
+        "doc": "",
+        "body": "result = self.result\nmodel_usage = getattr(result, \"model_usage\", None)\nmodel_usage = model_usage if isinstance(model_usage, dict) else {}\nmodel = self.model or next(iter(model_usage), None)\nusage = self.usage()\nwarnings = list(self.warnings)\nif usage[\"output_tokens\"] is None and usage[\"requests\"]:\n            warnings.append(\n                \"no result message: output tokens unknown (assistant usage carries only \"\nout: dict[str, Any] = {\n            \"runtime\": \"claude\",\n            \"model\": model,\nreturn out"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import asyncio",
+      "import base64",
+      "import contextlib",
+      "import dataclasses",
+      "import json",
+      "import mimetypes",
+      "import shutil",
+      "import subprocess",
+      "import time",
+      "from collections.abc import AsyncIterator, Callable",
+      "from pathlib import Path",
+      "from types import SimpleNamespace",
+      "from typing import Any",
+      "from .mcp_server import SERVER_NAME",
+      "import claude_agent_sdk as sdk"
+    ]
+  },
+  {
+    "path": "src/pyrualean/execution.py",
+    "category": "code",
+    "moduleDoc": "Limits for generated Python, without discarding its persistent namespace.\n\nTracing interrupts Python loops in policy/workspace frames, including helpers\nfrom earlier cells. Native calls are checked when they return; a process-level\nwatchdog is still required for uncooperative native code. This is an execution\nguard, not an isolation boundary against deliberately hostile Python.",
+    "symbols": [
+      {
+        "name": "add_execution_arguments",
+        "kind": "function",
+        "range": [
+          146,
+          152
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "parser.add_argument(\"--code-timeout-s\", type=float, default=120.0,\n                        help=\"execution deadline per Python cell/program (default 120 s)\")\nparser.add_argument(\"--code-max-actions\", type=int, default=None,\n                        help=\"optional maximum motion attempts per code call\")\nparser.add_argument(\"--code-output-chars\", type=int, default=8000,\n                        help=\"maximum retained characters per stdout/stderr stream\")"
+      },
+      {
+        "name": "execution_limits",
+        "kind": "function",
+        "range": [
+          155,
+          157
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return ExecutionLimits(timeout_s=args.code_timeout_s, max_actions=args.code_max_actions,\n                           max_output_chars=args.code_output_chars)"
+      },
+      {
+        "name": "ExecutionLimit",
+        "kind": "class",
+        "range": [
+          21,
+          26
+        ],
+        "owner": null,
+        "doc": "Yield to the planner; ordinary policy exception handlers must not retry.",
+        "body": ""
+      },
+      {
+        "name": "ExecutionLimit.__init__",
+        "kind": "function",
+        "range": [
+          24,
+          26
+        ],
+        "owner": "ExecutionLimit",
+        "doc": "",
+        "body": "super().__init__(message)\nself.kind = kind"
+      },
+      {
+        "name": "ExecutionLimits",
+        "kind": "class",
+        "range": [
+          30,
+          62
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "timeout_s: float = 120.0\nmax_actions: int | None = None\nmax_output_chars: int = 8000\nmax_display_images: int = 8"
+      },
+      {
+        "name": "ExecutionLimits.record",
+        "kind": "function",
+        "range": [
+          46,
+          47
+        ],
+        "owner": "ExecutionLimits",
+        "doc": "",
+        "body": "return asdict(self)"
+      },
+      {
+        "name": "ExecutionLimits.prompt",
+        "kind": "function",
+        "range": [
+          49,
+          62
+        ],
+        "owner": "ExecutionLimits",
+        "doc": "",
+        "body": "actions = (\n            f\" At most {self.max_actions} motion attempts per code call.\"\n            if self.max_actions is not None else \"\"\nreturn (\n            f\"Each code call has a {self.timeout_s:g} s execution deadline.{actions} \"\n            f\"Each output stream retains at most {self.max_output_chars} characters; \""
+      },
+      {
+        "name": "BoundedOutput",
+        "kind": "class",
+        "range": [
+          65,
+          88
+        ],
+        "owner": null,
+        "doc": "Bound memory while writing, not after StringIO has accumulated stdout.",
+        "body": ""
+      },
+      {
+        "name": "BoundedOutput.__init__",
+        "kind": "function",
+        "range": [
+          68,
+          72
+        ],
+        "owner": "BoundedOutput",
+        "doc": "",
+        "body": "self.limit = limit\nself.kept = 0\nself.omitted = 0\nself.parts: list[str] = []"
+      },
+      {
+        "name": "BoundedOutput.writable",
+        "kind": "function",
+        "range": [
+          74,
+          75
+        ],
+        "owner": "BoundedOutput",
+        "doc": "",
+        "body": "return True"
+      },
+      {
+        "name": "BoundedOutput.write",
+        "kind": "function",
+        "range": [
+          77,
+          85
+        ],
+        "owner": "BoundedOutput",
+        "doc": "",
+        "body": "if not isinstance(text, str):\n            raise TypeError(\"output must be text\")\ntake = min(len(text), self.limit - self.kept)\nif take:\n            self.parts.append(text[:take])\n            self.kept += take\nself.omitted += len(text) - take\nreturn len(text)"
+      },
+      {
+        "name": "BoundedOutput.getvalue",
+        "kind": "function",
+        "range": [
+          87,
+          88
+        ],
+        "owner": "BoundedOutput",
+        "doc": "",
+        "body": "return \"\".join(self.parts)"
+      },
+      {
+        "name": "ExecutionBudget",
+        "kind": "class",
+        "range": [
+          91,
+          143
+        ],
+        "owner": null,
+        "doc": "",
+        "body": ""
+      },
+      {
+        "name": "ExecutionBudget.__init__",
+        "kind": "function",
+        "range": [
+          92,
+          100
+        ],
+        "owner": "ExecutionBudget",
+        "doc": "",
+        "body": "self.limits = limits\nself.root = str(workspace.resolve()) + \"/\"\nself.robo = robo\nself.actions = 0\nself.failure: ExecutionLimit | None = None\nself.deadline = 0.0\nself._files: dict[str, bool] = {}\nself._ticks = 0"
+      },
+      {
+        "name": "ExecutionBudget.check",
+        "kind": "function",
+        "range": [
+          102,
+          109
+        ],
+        "owner": "ExecutionBudget",
+        "doc": "",
+        "body": "if self.robo._stop_reason:\n            raise EpisodeFinished(self.robo._stop_reason)\nif self.failure is not None:\n            raise self.failure\nif time.perf_counter() >= self.deadline:\n            self.failure = ExecutionLimit(\"timeout\", \"Code execution deadline expired\")\n            raise self.failure"
+      },
+      {
+        "name": "ExecutionBudget.before_action",
+        "kind": "function",
+        "range": [
+          111,
+          116
+        ],
+        "owner": "ExecutionBudget",
+        "doc": "",
+        "body": "self.check()\nif self.limits.max_actions is not None and self.actions >= self.limits.max_actions:\n            self.failure = ExecutionLimit(\"action_limit\", \"Code motion-attempt limit reached\")\n            raise self.failure\nself.actions += 1"
+      },
+      {
+        "name": "ExecutionBudget._trace",
+        "kind": "function",
+        "range": [
+          118,
+          131
+        ],
+        "owner": "ExecutionBudget",
+        "doc": "",
+        "body": "if event == \"call\":\n            filename = frame.f_code.co_filename\n            if filename not in self._files:\nself._ticks += 1\nif event in (\"line\", \"return\") or self._ticks % 128 == 0:\n            self.check()\nreturn self._trace"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import io",
+      "import math",
+      "import sys",
+      "import time",
+      "from dataclasses import asdict, dataclass",
+      "from pathlib import Path",
+      "from ._backend import EpisodeFinished"
+    ]
+  },
+  {
+    "path": "src/pyrualean/mcp_server.py",
+    "category": "code",
+    "moduleDoc": "In-process streamable-HTTP MCP server over an :class:`ArmToolkit`.\n\nAdapted from RPent's ``HttpMcpServer`` (same wire behaviour: a lowlevel MCP\n``Server`` served by uvicorn on a background thread) with two differences:\nit does not import RPent, and every tool is published with MCP annotations\nso an agent runtime can apply its tool-approval policy without a human or a\nreviewer model in the loop.",
+    "symbols": [
+      {
+        "name": "_result_to_mcp",
+        "kind": "function",
+        "range": [
+          30,
+          51
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "from mcp import types\nblocks = getattr(result, \"content_blocks\", None)\nif blocks is None:\n        return [types.TextContent(type=\"text\", text=str(result))], False\nout: list[Any] = []\nfor block in blocks:\n        if block.get(\"type\") == \"text\":\n            out.append(types.TextContent(type=\"text\", text=block.get(\"text\", \"\")))\npayload = getattr(result, \"result\", None)\nis_error = isinstance(payload, dict) and result_is_error(payload)\nreturn out, is_error"
+      },
+      {
+        "name": "_build_asgi_app",
+        "kind": "function",
+        "range": [
+          54,
+          107
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "from mcp import types\nfrom mcp.server.lowlevel import Server\nfrom mcp.server.streamable_http_manager import StreamableHTTPSessionManager\napp: Server = Server(SERVER_NAME, version=\"0.2.0\")\nlock = asyncio.Lock()\nmanager = StreamableHTTPSessionManager(app=app, stateless=True, json_response=True)\nreturn asgi"
+      },
+      {
+        "name": "_free_port",
+        "kind": "function",
+        "range": [
+          110,
+          113
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:\n        sock.bind((host, 0))\n        return int(sock.getsockname()[1])"
+      },
+      {
+        "name": "ArmMcpServer",
+        "kind": "class",
+        "range": [
+          116,
+          171
+        ],
+        "owner": null,
+        "doc": "Serve an :class:`ArmToolkit` over streamable HTTP on a daemon thread.",
+        "body": ""
+      },
+      {
+        "name": "ArmMcpServer.__init__",
+        "kind": "function",
+        "range": [
+          119,
+          132
+        ],
+        "owner": "ArmMcpServer",
+        "doc": "",
+        "body": "self._toolkit = toolkit\nself._host = host\nself._port = port or _free_port(host)\nself._annotations = annotations\nself._server: Any = None\nself._thread: threading.Thread | None = None"
+      },
+      {
+        "name": "ArmMcpServer.url",
+        "kind": "function",
+        "range": [
+          135,
+          136
+        ],
+        "owner": "ArmMcpServer",
+        "doc": "",
+        "body": "return f\"http://{self._host}:{self._port}/mcp/\""
+      },
+      {
+        "name": "ArmMcpServer.start",
+        "kind": "function",
+        "range": [
+          138,
+          165
+        ],
+        "owner": "ArmMcpServer",
+        "doc": "",
+        "body": "import httpx\nimport uvicorn\napp = _build_asgi_app(self._toolkit, annotations=self._annotations)\nconfig = uvicorn.Config(app, host=self._host, port=self._port, log_level=\"warning\")\nself._server = uvicorn.Server(config)\nself._thread = threading.Thread(target=self._server.run, daemon=True, name=\"arm-mcp\")\nself._thread.start()\nbody = {\n            \"jsonrpc\": \"2.0\",\n            \"id\": 1,\nwith httpx.Client(\n            transport=httpx.HTTPTransport(retries=10),\n            timeout=httpx.Timeout(ready_timeout_s, connect=2),\nreturn self.url"
+      },
+      {
+        "name": "ArmMcpServer.stop",
+        "kind": "function",
+        "range": [
+          167,
+          171
+        ],
+        "owner": "ArmMcpServer",
+        "doc": "",
+        "body": "if self._server is not None:\n            self._server.should_exit = True\nif self._thread is not None:\n            self._thread.join(timeout=timeout_s)"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import asyncio",
+      "import socket",
+      "import threading",
+      "from typing import Any",
+      "from .recovery import result_is_error",
+      "from mcp import types",
+      "from mcp import types",
+      "from mcp.server.lowlevel import Server",
+      "from mcp.server.streamable_http_manager import StreamableHTTPSessionManager",
+      "import httpx",
+      "import uvicorn"
+    ]
+  },
+  {
+    "path": "src/pyrualean/openai_runtime.py",
+    "category": "code",
+    "moduleDoc": "A plain OpenAI chat-completions agent loop for the code arms (``--runtime openai``).\n\nThe Codex and Claude runtimes hand the agent loop to a coding-agent product\nwith its own system prompt, tools and transcript format.  This runtime is the\nthird option: the loop lives here, talks to *any* OpenAI-compatible\n``/v1/chat/completions`` endpoint (a gateway, a local SGLang / vLLM server, a\ntraining framework's rollout engine) with function calling, and executes the\narm's tools in-process through :class:`pyrualean.arms.ArmToolkit` (no MCP\nserver, no subprocess).  It is what a small open model, a distillation\nteacher and an RL rollout all share.\n\nProtocol (one episode):\n\n1. The first user message carries the full prompt text and the task card\n   images as ``image_url`` data URIs (same content Codex / Claude get).\n2. Each assistant reply may carry ``tool_calls``; they are executed in order\n   through ``ArmToolkit.execute_tool`` and answered with one ``tool`` message\n   each.  Images returned by a tool (``on-motion`` or ``robo.show()``) cannot\n   travel in a ``tool`` message under the OpenAI schema, so they follow in one\n   extra ``user`` message that names the tool call they belong to.\n3. The episode ends when the agent calls ``finish``, when it replies without\n   a tool call (after ``nudges`` reminders), when the decision budget is\n   spent (``ArmToolkit`` refuses further ``python`` calls), when the wall\n   clock ``budget_s`` runs out, or when the provider keeps failing.\n\nEverything the model saw and said is written to ``messages.json`` (images\nreplaced by references to PNG files under ``images/``), every request to\n``openai_events.jsonl``, and the usual ``generation`` record (Codex's token\nconventions: ``input_tokens`` includes cached tokens) goes into\n``result.json`` by :mod:`pyrualean.play`.",
+    "symbols": [
+      {
+        "name": "_resize_png",
+        "kind": "function",
+        "range": [
+          85,
+          102
+        ],
+        "owner": null,
+        "doc": "Downscale ``data`` so its longer side is ``max_side``; returns (png, scale).",
+        "body": "if not max_side:\n        return data, 1.0\nfrom PIL import Image\nimage = Image.open(io.BytesIO(data))\nlongest = max(image.size)\nif longest <= max_side:\n        return data, 1.0\nscale = max_side / longest\nresized = image.resize(\n        (max(1, round(image.width * scale)), max(1, round(image.height * scale)))\n    )\nbuffer = io.BytesIO()\nresized.save(buffer, format=\"PNG\")\nreturn buffer.getvalue(), scale"
+      },
+      {
+        "name": "image_part",
+        "kind": "function",
+        "range": [
+          105,
+          111
+        ],
+        "owner": null,
+        "doc": "An OpenAI ``image_url`` content part holding a PNG as a data URI.",
+        "body": "return {\n        \"type\": \"image_url\",\n        \"image_url\": {\"url\": \"data:image/png;base64,\" + base64.b64encode(data).decode(\"ascii\")},"
+      },
+      {
+        "name": "openai_tools",
+        "kind": "function",
+        "range": [
+          114,
+          127
+        ],
+        "owner": null,
+        "doc": "Convert the arm's MCP-style tool specs (``input_schema``) to OpenAI ``tools``.",
+        "body": "return [\n        {\n            \"type\": \"function\","
+      },
+      {
+        "name": "httpx_transport",
+        "kind": "function",
+        "range": [
+          133,
+          151
+        ],
+        "owner": null,
+        "doc": "The default transport: one ``httpx`` client, bearer auth, JSON in and out.",
+        "body": "import httpx\nheaders = {\"Content-Type\": \"application/json\"}\nif api_key:\n        headers[\"Authorization\"] = f\"Bearer {api_key}\"\nclient = httpx.Client(headers=headers, timeout=None, trust_env=True)\nreturn post"
+      },
+      {
+        "name": "_usage_fields",
+        "kind": "function",
+        "range": [
+          202,
+          208
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "usage = usage or {}\nprompt = int(usage.get(\"prompt_tokens\") or 0)\ncompletion = int(usage.get(\"completion_tokens\") or 0)\ncached = int(((usage.get(\"prompt_tokens_details\") or {}).get(\"cached_tokens\")) or 0)\nreasoning = int(((usage.get(\"completion_tokens_details\") or {}).get(\"reasoning_tokens\")) or 0)\nreturn {\"prompt\": prompt, \"completion\": completion, \"cached\": cached, \"reasoning\": reasoning}"
+      },
+      {
+        "name": "_tool_result_text",
+        "kind": "function",
+        "range": [
+          211,
+          214
+        ],
+        "owner": null,
+        "doc": "The text block of a tool result, exactly what the MCP server would send.",
+        "body": "return result.content_blocks[0][\"text\"]"
+      },
+      {
+        "name": "_execute_with_deadline",
+        "kind": "function",
+        "range": [
+          217,
+          245
+        ],
+        "owner": null,
+        "doc": "Run one tool call, stopping the episode if it is still running at the deadline.\n\nA cell can loop over primitives for minutes; this loop *is* the host thread, so without a\ntimer the wall-clock budget would only be noticed after the cell returned (the Codex and\nClaude runtimes stop the robot from the host while the agent process keeps running).  The\ntimer fires ``on_timeout``, which makes the next primitive raise ``EpisodeFinished``.",
+        "body": "if on_timeout is None:\n        return arm_toolkit.execute_tool(name, arguments)\nif remaining_s <= 0:\n        # Already out of budget: stop first, so the cell's very first primitive raises instead of\n        # running unbounded (a timer with a non-positive delay is the same as none at all).\ntimer = threading.Timer(remaining_s, on_timeout)\ntimer.daemon = True\ntimer.start()\ntry:\n        return arm_toolkit.execute_tool(name, arguments)\n    finally:"
+      },
+      {
+        "name": "_parse_arguments",
+        "kind": "function",
+        "range": [
+          248,
+          259
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "if isinstance(raw, dict):\n        return raw, None\nif raw is None or raw == \"\":\n        return {}, None\ntry:\n        parsed = json.loads(raw)\n    except (TypeError, ValueError) as exc:\nif not isinstance(parsed, dict):\n        return None, \"tool arguments must be a JSON object\"\nreturn parsed, None"
+      },
+      {
+        "name": "run_openai_agent",
+        "kind": "function",
+        "range": [
+          262,
+          668
+        ],
+        "owner": null,
+        "doc": "Run one episode's agent loop; returns the ``generation`` record.\n\n``status`` is ``completed`` (the agent finished, stopped calling tools, or\nspent its decision budget), ``timeout`` (``budget_s`` expired:\n``on_timeout`` is called first) or ``error`` (the provider failed after\n``retries``); ``returncode`` mirrors the Claude runtime: 0 clean, 2 after\na provider error, ``None`` on timeout.  ``extra_body`` is merged into\nevery request (``reasoning_effort``, ``chat_template_kwargs`` ...).\n``tool_choice`` is OpenAI's: ``auto`` lets the model answer in text,\n``required`` makes every reply a tool call (``python`` or ``finish``),\nwhich small thinking models need (they otherwise think and emit nothing).\n``image_max_side`` downscales every image the model receives (0 keeps the\nnative 1024 px that the prompt's pixel coordinates refer to).\n``should_stop`` is asked between requests, between retries and during a rate\nlimit's wait: once it answers true the loop ends there (``completed``) without\nanother request.  It is how a host says that whoever owns the environment has\nended the episode, so that nothing the model could still write would count.",
+        "body": "out_dir = Path(out_dir)\nout_dir.mkdir(parents=True, exist_ok=True)\nevents_path = out_dir / \"openai_events.jsonl\"\nurl = base_url.rstrip(\"/\")\nif not url.endswith(\"/chat/completions\"):\n        url += \"/chat/completions\"\npost = transport or httpx_transport(api_key)\ntimeout_fired = False\ntools = openai_tools(arm_toolkit.get_tools_spec())\ntranscript = _Transcript(out_dir)\nstarted = time.perf_counter()\ncard_images: list[tuple[str, bytes]] = []\nscales: list[float] = []\nfor path in image_paths:\n        data, scale = _resize_png(Path(path).read_bytes(), image_max_side)\n        card_images.append((Path(path).name, data))\ntext = prompt_text\nif any(s != 1.0 for s in scales):\n        factor = min(scales)\n        text += (\ntranscript.add({\"role\": \"user\", \"content\": text}, card_images)\ntotals = {\"prompt\": 0, \"completion\": 0, \"cached\": 0, \"reasoning\": 0}\nrequest_profile: list[int] = []\nrequest_latency: list[float] = []\ntool_calls: dict[str, int] = {}\ntool_requests: list[dict[str, Any]] = []\nerrors: list[str] = []\nwarnings: list[str] = []\nrequests = 0\nnudges_left = max(0, nudges)\nmalformed_streak = 0\nmax_malformed_streak = 3\nstatus = \"completed\"\nreturncode: int | None = 0\nlast_text = \"\"\nfinish_reasons: list[str | None] = []\npost_budget_replies = 1\ntry:\n        while True:\n            if remaining() <= 0:\nreturn {\n        \"runtime\": \"openai\",\n        \"model\": model,"
+      },
+      {
+        "name": "OpenAIRuntimeError",
+        "kind": "class",
+        "range": [
+          78,
+          79
+        ],
+        "owner": null,
+        "doc": "The provider failed for good (after the retries).",
+        "body": ""
+      },
+      {
+        "name": "_Transcript",
+        "kind": "class",
+        "range": [
+          157,
+          199
+        ],
+        "owner": null,
+        "doc": "The messages the model sees, plus a copy with images swapped for file references.",
+        "body": ""
+      },
+      {
+        "name": "_Transcript.__init__",
+        "kind": "function",
+        "range": [
+          160,
+          165
+        ],
+        "owner": "_Transcript",
+        "doc": "",
+        "body": "self.messages: list[dict[str, Any]] = []  # what is sent to the model\nself.recorded: list[dict[str, Any]] = []  # same, images as {\"image_ref\": path}\nself.images_dir = out_dir / \"images\"\nself.images_dir.mkdir(parents=True, exist_ok=True)\nself._image_index = 0"
+      },
+      {
+        "name": "_Transcript.add",
+        "kind": "function",
+        "range": [
+          176,
+          199
+        ],
+        "owner": "_Transcript",
+        "doc": "Append ``message``; ``images`` (name, png) become content parts of a user message.",
+        "body": "sent = dict(message)\nrecorded = dict(message)\nif images:\n            parts_sent: list[dict[str, Any]] = []\n            parts_recorded: list[dict[str, Any]] = []\nself.messages.append(sent)\nself.recorded.append(recorded)"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import base64",
+      "import io",
+      "import json",
+      "import os",
+      "import random",
+      "import threading",
+      "import time",
+      "from collections.abc import Callable",
+      "from pathlib import Path",
+      "from typing import Any",
+      "from .arms import ArmResult, ArmToolkit",
+      "from PIL import Image",
+      "import httpx"
+    ]
+  },
+  {
+    "path": "src/pyrualean/play.py",
+    "category": "code",
+    "moduleDoc": "Drive one episode of a code arm with an agent runtime: Codex, Claude Code or OpenAI.\n\nThe host boots RPent's stack for the chosen robot (``--robot``), wraps it in\nthe adapter's robot class (:class:`LiberoRobot` for LIBERO),\nexposes the arm's tools (``python`` / ``run_program`` + ``finish``) through\nRPent's in-process HTTP MCP server and launches the agent against it:\n``codex exec`` (``--runtime codex``, the default), Claude Code through the\nClaude Agent SDK (``--runtime claude``, :mod:`pyrualean.claude_runtime`), or\nan in-process chat-completions loop against any OpenAI-compatible endpoint\n(``--runtime openai``, :mod:`pyrualean.openai_runtime`: the arm's tools are\ncalled directly, no MCP server is needed by the agent).\nThe runtime owns the agent loop; this module owns the budget, the audit of\nthe event stream and ``result.json``.  One episode per process.",
+    "symbols": [
+      {
+        "name": "_recordable",
+        "kind": "function",
+        "range": [
+          74,
+          85
+        ],
+        "owner": null,
+        "doc": "What of a host's boot options ``result.json`` can hold: live objects by their type.",
+        "body": "kept: dict[str, Any] = {}\nfor key, value in options.items():\n        try:\n            json.dumps(value)\nreturn kept"
+      },
+      {
+        "name": "_conclude",
+        "kind": "function",
+        "range": [
+          88,
+          98
+        ],
+        "owner": null,
+        "doc": "Tell a backend that the policy has finished, where it wants to know.\n\nRPent's toolkits can be asked for the verdict at any time.  A host that runs a benchmark's\nown evaluation loop (RoboDojo's client) lets that loop judge the scene once, when the\npolicy is done: its backend has ``conclude()``.",
+        "body": "conclude = getattr(backend, \"conclude\", None)\nif callable(conclude):\n        conclude()"
+      },
+      {
+        "name": "_make_backend",
+        "kind": "function",
+        "range": [
+          101,
+          105
+        ],
+        "owner": null,
+        "doc": "The host's own backend when it defines ``make_backend``, else :class:`RpentBackend`.",
+        "body": "factory = getattr(host, \"make_backend\", None)\nreturn factory(toolkit) if callable(factory) else RpentBackend(toolkit)"
+      },
+      {
+        "name": "copy_guides",
+        "kind": "function",
+        "range": [
+          108,
+          131
+        ],
+        "owner": null,
+        "doc": "Copy the operating guides ``names`` (default: LIBERO's three) from\n``source`` into ``target``.\n\nReturns ``{name: sha256}`` so the run records exactly which text the\nagent could read (RPent's originals live under ``robots/<robot>/guides``).\n``names=()`` copies every ``*.md`` file.",
+        "body": "source = Path(source)\nif names is None:\n        names = GUIDE_NAMES\nif not names:\n        names = tuple(sorted(path.name for path in source.glob(\"*.md\")))\nmissing = [name for name in names if not (source / name).is_file()]\nif missing or not names:\n        raise FileNotFoundError(f\"guides missing under {source}: {missing or 'no *.md'}\")\ntarget.mkdir(parents=True, exist_ok=True)\ndigests: dict[str, str] = {}\nfor name in names:\n        data = (source / name).read_bytes()\n        (target / name).write_bytes(data)\nreturn digests"
+      },
+      {
+        "name": "build_prompt",
+        "kind": "function",
+        "range": [
+          134,
+          183
+        ],
+        "owner": null,
+        "doc": "The code arm's prompt: contract, API reference, knowledge, task card.\n\n``primitives=\"no-vla\"`` renders the reference and the knowledge without\nthe robot's VLA primitives and names only the remaining services.",
+        "body": "adapter = adapter or get_adapter(getattr(card, \"robot\", \"libero\"))\nprimitives = effective_primitives(adapter.robot_cls, primitives)\ncontract = arm_contract(\n        arm,\n        budget_s=budget_s,\nreference = api_reference(adapter.robot_cls, primitives=primitives)\ncontract += \"\\n\\n# Code execution limits\\n\\n\" + (code_limits or ExecutionLimits()).prompt()\nif monitor is not None and monitor.mode != \"off\":\n        contract += \"\\n\\n\" + monitor_prompt(monitor, instructions=supervision_instructions)\nif stuck_recovery is not None:\n        contract += \"\\n\\n\" + stuck_recovery.prompt()\nreturn \"\\n\\n\".join(\n        [\n            contract.rstrip(),"
+      },
+      {
+        "name": "_codex_argv",
+        "kind": "function",
+        "range": [
+          186,
+          238
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "argv = [\n        codex_bin,\n        \"exec\",\nfor image in images:\n        argv += [\"-i\", image]\nargv.append(\"-\")\nreturn argv"
+      },
+      {
+        "name": "_agent_environment",
+        "kind": "function",
+        "range": [
+          275,
+          308
+        ],
+        "owner": null,
+        "doc": "Build a minimal, leak-free environment for the agent process.\n\nCodex: the sandbox shell Codex gives the model is a login shell; it must\nnot inherit ``ZDOTDIR``/``CODEX_HOME*`` pointers to other Codex homes\n(whose memories the model would otherwise read) nor the launcher's own\nsession variables.  ``SHELL`` is pinned to bash so the user's zsh profile\nis not sourced inside the sandbox.\n\nClaude: the same allow-list plus :data:`_CLAUDE_ENV_KEEP`.  The Claude\nAgent SDK merges this dict *over* the launcher's environment when it\nspawns ``claude`` (it cannot withhold variables), so the list is the\nexplicit contract of what the runtime needs; the agent gets no shell\nthere, so nothing else can be discovered through it.",
+        "body": "env = {k: v for k, v in os.environ.items() if k in _AGENT_ENV_KEEP}\nif api_key_env and api_key_env in os.environ:\n        env[api_key_env] = os.environ[api_key_env]\nif runtime == \"claude\":\n        env.update({k: v for k, v in os.environ.items() if k in _CLAUDE_ENV_KEEP})\n    else:\nloopback = \"localhost,127.0.0.1,::1\"\nupstream = os.environ.get(\"no_proxy\") or os.environ.get(\"NO_PROXY\") or \"\"\nenv[\"NO_PROXY\"] = env[\"no_proxy\"] = \",\".join(filter(None, [upstream, loopback]))\nreturn env"
+      },
+      {
+        "name": "_usage_from_rollouts",
+        "kind": "function",
+        "range": [
+          311,
+          364
+        ],
+        "owner": null,
+        "doc": "Recover cumulative token usage from Codex's session rollout files.\n\n``codex exec --json`` only reports usage on ``turn.completed``; a session\nthat was killed at the budget never emits it.  The rollout Codex keeps\nunder ``$CODEX_HOME/sessions`` records a ``token_count`` event after every\nmodel response, so the last one gives the total for the thread.",
+        "body": "if not codex_home or not thread_ids:\n        return None\nroot = Path(codex_home).expanduser() / \"sessions\"\nif not root.is_dir():\n        return None\ntotals: dict[str, int] = {}\nquota: Any = None\nfound = False\ncompactions = 0\nfor thread_id in thread_ids:\n        for rollout in root.rglob(f\"rollout-*{thread_id}.jsonl\"):\n            last: dict[str, Any] | None = None\nif not found:\n        return None\nout: dict[str, Any] = dict(totals)\nout[\"compactions\"] = compactions\nif quota:\n        out[\"rate_limit_used_percent\"] = quota.get(\"used_percent\")\nreturn out"
+      },
+      {
+        "name": "_is_warning",
+        "kind": "function",
+        "range": [
+          373,
+          374
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return any(pattern in message for pattern in _WARNING_PATTERNS)"
+      },
+      {
+        "name": "_codex_context_config",
+        "kind": "function",
+        "range": [
+          380,
+          404
+        ],
+        "owner": null,
+        "doc": "Effective context-window and auto-compaction settings of the agent.\n\nCodex applies ``$CODEX_HOME/config.toml`` first and ``-c`` overrides on\ntop; :func:`_codex_argv` only passes ``model_auto_compact_token_limit``\nwhen ``CODEX_AUTO_COMPACT_TOKEN_LIMIT`` is set, so the value in the home's\n``config.toml`` is what governs a run otherwise.  Recorded in\n``result.json`` because compaction changes what the model sees.",
+        "body": "values: dict[str, Any] = {key: None for key in _CONFIG_KEYS}\nvalues[\"source\"] = None\nconfig = Path(codex_home).expanduser() / \"config.toml\" if codex_home else None\nif config is not None and config.is_file():\n        text = config.read_text(encoding=\"utf-8\", errors=\"replace\")\n        for key in _CONFIG_KEYS:\noverride = os.environ.get(\"CODEX_AUTO_COMPACT_TOKEN_LIMIT\")\nif override:\n        values[\"model_auto_compact_token_limit\"] = int(override)\n        values[\"source\"] = \"CODEX_AUTO_COMPACT_TOKEN_LIMIT\"\nreturn values"
+      },
+      {
+        "name": "_audit_events",
+        "kind": "function",
+        "range": [
+          407,
+          470
+        ],
+        "owner": null,
+        "doc": "Summarise a Codex ``--json`` event stream.",
+        "body": "usage: dict[str, Any] = {}\nturns = 0\ntool_calls: dict[str, int] = {}\nshell_commands: list[str] = []\nfile_changes = 0\nerrors: list[str] = []\nwarnings: list[str] = []\nthread_ids: list[str] = []\nif not path.is_file():\n        return {\"turns\": None, \"tool_calls\": {}, \"shell_commands\": [], \"file_changes\": 0}\nfor line in path.read_text(encoding=\"utf-8\").splitlines():\n        try:\n            event = json.loads(line)\nout: dict[str, Any] = {\n        \"turns\": turns or None,\n        \"tool_calls\": tool_calls,\nfor target, names in (\n        (\"input_tokens\", (\"input_tokens\",)),\n        (\"cached_input_tokens\", (\"cached_input_tokens\",)),\nif \"input_tokens\" in out and \"output_tokens\" in out:\n        out[\"total_tokens\"] = out[\"input_tokens\"] + out[\"output_tokens\"]\nreturn out"
+      },
+      {
+        "name": "play_episode",
+        "kind": "function",
+        "range": [
+          473,
+          928
+        ],
+        "owner": null,
+        "doc": "Run one episode of ``arm`` on ``cell`` and write ``result.json``.\n\n``robot`` selects the adapter (robot class, host module, knowledge);\n``cell`` is that host's ``Cell`` and ``boot_options`` its ``boot``\nkeyword arguments (shared servers, model paths).  ``primitives`` is the\nprimitive set the policy may use (``full`` or ``no-vla``: the robot's VLA\nprimitives are hidden from the prompt and refused at call time; the\nservers boot as usual); ``result.json`` records it as\n``host.primitive_set``.\n\n``runtime`` picks the agent: ``codex`` runs ``codex exec`` in a\nsubprocess, ``claude`` runs Claude Code through the Claude Agent SDK\n(:func:`pyrualean.claude_runtime.run_claude_agent`; ``claude_cli`` names\nthe ``claude`` executable, the SDK's bundled one when it cannot be\nfound), ``openai`` runs :func:`pyrualean.openai_runtime.run_openai_agent`\nin-process against ``base_url`` (the key read from ``api_key_env``;\n``openai_options`` are its keyword arguments: ``temperature``,\n``max_tokens``, ``extra_body``, ``image_max_side``, ``nudges`` ...).\nBoot, prompt, MCP server, budgets and ``result.json`` are the same for\nall; only the event stream files (``<runtime>_events.jsonl``,\n``<runtime>_stderr.txt``) and ``generation`` are runtime-specific.\n\n``codex_home`` points Codex at a clean ``CODEX_HOME`` (no memories, no\nhistory) so nothing from earlier sessions leaks into the episode.\n``guides=True`` copies the robot's operating guides (LIBERO's three by\ndefault) into ``workspace/guides/`` and tells the agent they are there;\n``guides_dir`` names the directory (default: the adapter's guides under\nRPent's checkout).  ``max_turns`` switches the episode to a decision\nbudget: at most that many tool calls, ``budget_s`` then being only a\nsafety ceiling that the prompt does not mention.",
+        "body": "if arm not in ARMS:\n        raise ValueError(f\"arm must be one of {ARMS}\")\nmonitor = monitor or MonitorConfig()\nsupervision_instructions = planning_instructions() if monitor.mode != \"off\" else None\ncode_limits = code_limits or ExecutionLimits()\nif monitor.mode != \"off\" and arm != \"cells\":\n        raise ValueError(\"Visual supervision currently supports only --arm cells\")\nif stuck_recovery is not None and arm != \"cells\":\n        raise ValueError(\"Stuck recovery currently supports only --arm cells\")\nif runtime not in RUNTIMES:\n        raise ValueError(f\"runtime must be one of {RUNTIMES}\")\nif primitives not in PRIMITIVE_SETS:\n        raise ValueError(f\"primitives must be one of {PRIMITIVE_SETS}\")\nadapter = get_adapter(robot)\nprimitives = effective_primitives(adapter.robot_cls, primitives)\nhost = adapter.host_module()\nboot_options = dict(boot_options or {})\nout_dir.mkdir(parents=True, exist_ok=True)\nworkspace = out_dir / \"workspace\"\nif workspace.exists():\n        shutil.rmtree(workspace)\nworkspace.mkdir()\nif stuck_recovery is not None:\n        (out_dir / \"stuck_recovery_skill.md\").write_text(\n            stuck_recovery.instructions, encoding=\"utf-8\"\nif monitor.mode != \"off\":\n        (out_dir / \"supervision_skill.md\").write_text(supervision_instructions, encoding=\"utf-8\")\nguide_record: dict[str, Any] | bool = False\nif guides:\n        if guides_dir:\n            source = Path(guides_di"
+      },
+      {
+        "name": "_openai_options",
+        "kind": "function",
+        "range": [
+          931,
+          948
+        ],
+        "owner": null,
+        "doc": "Keyword arguments of :func:`run_openai_agent` from the ``openai runtime`` flags.",
+        "body": "options: dict[str, Any] = {\n        \"temperature\": args.openai_temperature,\n        \"max_tokens\": args.openai_max_tokens,\nif args.openai_extra_body:\n        extra = json.loads(args.openai_extra_body)\n        if not isinstance(extra, dict):\nif args.openai_timeout_s is not None:\n        options[\"request_timeout_s\"] = args.openai_timeout_s\nreturn options"
+      },
+      {
+        "name": "main",
+        "kind": "function",
+        "range": [
+          951,
+          1121
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "pre = argparse.ArgumentParser(add_help=False)\npre.add_argument(\"--robot\", default=\"libero\", choices=ROBOTS)\nknown, _ = pre.parse_known_args(argv)\nadapter = get_adapter(known.robot)\nhost = adapter.host_module()\nparser = argparse.ArgumentParser(prog=\"python -m pyrualean.play\", description=__doc__)\nadd_monitor_arguments(parser)\nadd_stuck_recovery_arguments(parser)\nadd_execution_arguments(parser)\nparser.add_argument(\"--robot\", default=\"libero\", help=\"libero | robocasa | robotwin | robodojo\")\nparser.add_argument(\"--arm\", choices=ARMS, default=\"cells\",\n                        help=\"code execution mode (default: cells)\")\nhost.add_cell_args(parser)\nhost.add_boot_args(parser)\nparser.add_argument(\"--out\", type=Path, required=True)\nparser.add_argument(\"--cuda-device\", type=int, default=None)\nparser.add_argument(\"--max-episode-steps\", type=int, default=10000)\nparser.add_argument(\"--rpent-root\", default=None)\nparser.add_argument(\"--model\", default=\"gpt-6-astra\")\nparser.add_argument(\"--reasoning\", default=\"xhigh\")\nparser.add_argument(\"--budget-s\", type=float, default=1200.0)\nparser.add_argument(\"--max-programs\", type=int, default=None)\nparser.add_argument(\n        \"--codex-bin\",\n        default=setting(\"CODEX_BIN\", \"codex\"),\nparser.add_argument(\"--base-url\", default=None)\nparser.add_argument(\"--api-key-env\", default=None)\nparser.add_argument(\n        \"--images\",\n        choices=(\"on-motion\","
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import argparse",
+      "import contextlib",
+      "import hashlib",
+      "import json",
+      "import os",
+      "import re",
+      "import shutil",
+      "import signal",
+      "import subprocess",
+      "import sys",
+      "import time",
+      "from pathlib import Path",
+      "from typing import Any",
+      "from ._backend import Ledger",
+      "from ._env import setting",
+      "from ._robot import PRIMITIVE_SETS, effective_primitives",
+      "from .arms import ARMS, ArmToolkit, arm_contract, robot_words",
+      "from .claude_runtime import resolve_cli, run_claude_agent, sdk_max_turns",
+      "from .execution import ExecutionLimits, add_execution_arguments, execution_limits",
+      "from .generate import codex_catalog_flags, provider_overrides",
+      "from .hosts.common import RESULT_SCHEMA, RpentBackend, resolve_rpent_root, stop_all",
+      "from .openai_runtime import run_openai_agent",
+      "from .prompt import api_reference, knowledge_text",
+      "from .robots import ROBOTS, RobotAdapter, get_adapter",
+      "from .sandbox import DESCRIPTION as SANDBOX_DESCRIPTION",
+      "from .stuck_recovery import StuckRecoveryConfig, add_stuck_recovery_arguments, stuck_recovery_config",
+      "from .supervision import MonitorConfig, VisualSupervisor, add_monitor_arguments, config_record, monitor_config, monitor_prompt, planning_instructions",
+      "from .mcp_server import ArmMcpServer"
+    ]
+  },
+  {
+    "path": "src/pyrualean/recovery.py",
+    "category": "code",
+    "moduleDoc": "Structured execution failures shared by code tools and agent runtimes.\n\nThese reports describe execution, not task success. Recovery belongs to the\nplanner: the host never replays a failed action or rolls the scene back.",
+    "symbols": [
+      {
+        "name": "failure_details",
+        "kind": "function",
+        "range": [
+          17,
+          54
+        ],
+        "owner": null,
+        "doc": "Describe the original exception, retaining its generated-code location.",
+        "body": "cause = exc\nif isinstance(cause, ExecutionLimit):\n        kind = cause.kind\n    elif isinstance(cause, SyntaxError):\nlocation = None\nif isinstance(cause, SyntaxError):\n        location = {\"file\": cause.filename, \"line\": cause.lineno, \"column\": cause.offset}\n    else:\nreturn {\n        \"kind\": kind,\n        \"stage\": stage,"
+      },
+      {
+        "name": "result_is_error",
+        "kind": "function",
+        "range": [
+          57,
+          64
+        ],
+        "owner": null,
+        "doc": "Execution failures must agree in MCP, runtime events and tool audits.",
+        "body": "return bool(\n        payload.get(\"error\")\n        or payload.get(\"exception\")"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import traceback",
+      "from pathlib import Path",
+      "from typing import Any",
+      "from ._backend import ToolError",
+      "from .execution import ExecutionLimit"
+    ]
+  },
+  {
+    "path": "src/pyrualean/strategies.py",
+    "category": "code",
+    "moduleDoc": "Small feedback loops extracted from the RSI relocalization/correction pattern.\n\nThese helpers contain no task geometry or robot-specific primitive calls.\nCallbacks use the current robot's public API. Exceptions and host pauses\npropagate to the outer model loop; no helper replays a failed code block.",
+    "symbols": [
+      {
+        "name": "_verdict",
+        "kind": "function",
+        "range": [
+          77,
+          80
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "if value is not None and type(value) is not bool:\n        raise TypeError(f\"{name} must return bool or None\")\nreturn value"
+      },
+      {
+        "name": "verify_grasp",
+        "kind": "function",
+        "range": [
+          83,
+          167
+        ],
+        "owner": null,
+        "doc": "Close, test support with one small probe, then verify fresh paired evidence.\n\nclose(attempt) returns the controller result; probe(closed, attempt) performs\none bounded, safe diagnostic movement. observe() returns GraspObservation.\ncompare(closed, after) checks whether the intended object followed the\ngripper and stayed stable relative to it, using permitted before/after data.\nIt returns bool/None. A fresh object_held=True is also required to verify.\n\nOnly a definite failed grasp can use repair(observation, next_attempt).\nFresh contact can permit a small probe while visual support is unknown.\nUnresolved support after the probe, stale evidence and refused motion exit\nwithout repair.\nOptional allow_action(kind, attempt) must return bool and is checked before\nclose/probe/repair, e.g. to reserve steps/time for handover and insertion.\nCallbacks must bound their own primitive costs; this is not a motion planner\nor a replacement for host timeouts, watch contracts and phase prerequisites.\nExceptions and supervision pauses propagate without automatic replay.",
+        "body": "_count(max_attempts, \"max_attempts\")\ncurrent = before = last = None\nfor attempt in range(1, max_attempts + 1):\n        if not permitted(\"close\", attempt):\n            return result(\"uncertain\", \"phase_budget\", attempt - 1)"
+      },
+      {
+        "name": "_count",
+        "kind": "function",
+        "range": [
+          170,
+          172
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "if type(value) is not int or not 1 <= value <= 32:\n        raise ValueError(f\"{name} must be an integer in 1..32\")"
+      },
+      {
+        "name": "relocalize",
+        "kind": "function",
+        "range": [
+          175,
+          196
+        ],
+        "owner": null,
+        "doc": "Observe up to max_attempts times; optionally change view between reads.\n\nobserve() returns a NEW observation. valid(observation) must return bool\nor None (unknown). prepare_view(previous, attempt) runs before each repeat\nread, with attempt starting at 1. It may clear occlusion or select another\ncamera. Callers must check status before using the returned observation.",
+        "body": "_count(max_attempts, \"max_attempts\")\nobservation = None\nfor attempt in range(max_attempts):\n        if attempt and prepare_view is not None:\n            prepare_view(observation, attempt)\nreturn StrategyResult(\"replan\", \"observation_uncertain\", max_attempts, observation)"
+      },
+      {
+        "name": "correct",
+        "kind": "function",
+        "range": [
+          199,
+          236
+        ],
+        "owner": null,
+        "doc": "Bounded correction or grasp attempts, verified after EVERY attempt.\n\nobserve() reads current evidence; complete(observation) returns bool/None.\nact(observation, attempt) performs one bounded correction (attempt starts\nat 1). error(observation), when supplied, is a finite nonnegative residual\nin caller-defined units. Stop after no_progress_limit insufficient\nimprovements. Unknown completion hands control back without another act.\nA holding predicate must establish the intended object, not just closure.",
+        "body": "_count(max_attempts, \"max_attempts\")\n_count(no_progress_limit, \"no_progress_limit\")\nif not math.isfinite(min_progress) or min_progress < 0:\n        raise ValueError(\"min_progress must be finite and nonnegative\")\nobservation, last, previous, stalled = observe(), None, None, 0\nfor attempt in range(max_attempts + 1):\n        verdict = complete(observation)\n        if verdict is not None and type(verdict) is not bool:"
+      },
+      {
+        "name": "StrategyResult",
+        "kind": "class",
+        "range": [
+          16,
+          21
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "status: str  # verified | replan; never an episode-success verdict\nreason: str\nattempts: int\nobservation: Any\nlast_result: Any = None"
+      },
+      {
+        "name": "GraspObservation",
+        "kind": "class",
+        "range": [
+          25,
+          64
+        ],
+        "owner": null,
+        "doc": "Current object-specific evidence, plus optional public sensor/image data.\n\nholding is fresh gripper/contact evidence, not proof of object identity.\nobject_held is a visual predicate for the intended object. Unknown is None.\nOnly fresh observations with IDs and increasing state versions can verify\na probe. Callers must not reuse a close result as a later sensor reading.",
+        "body": "observation_id: str | None\nstate_version: int | None\nholding: bool | None\nobject_held: bool | None\nfresh: bool = False\ndata: Any = None\nfact: str | None = None\nquestion_version: int | None = None"
+      },
+      {
+        "name": "GraspObservation.__post_init__",
+        "kind": "function",
+        "range": [
+          43,
+          53
+        ],
+        "owner": "GraspObservation",
+        "doc": "",
+        "body": "for name in (\"holding\", \"object_held\"):\n            _verdict(getattr(self, name), name)\nif type(self.fresh) is not bool:\n            raise TypeError(\"fresh must be bool\")\nif self.observation_id is not None and not isinstance(self.observation_id, str):\n            raise TypeError(\"observation_id must be a string or None\")\nif self.state_version is not None and (\n            type(self.state_version) is not int or self.state_version < 0\n        ):"
+      },
+      {
+        "name": "GraspObservation.from_evidence",
+        "kind": "function",
+        "range": [
+          56,
+          64
+        ],
+        "owner": "GraspObservation",
+        "doc": "Read a detached evidence() snapshot; never promote unknown/stale to yes.",
+        "body": "record = ledger.get(\"facts\", {}).get(fact, {})\nsource = record.get(\"observation\") or {}\nvalue = record.get(\"value\")\nfresh = record.get(\"fresh\") is True\nreturn cls(source.get(\"observation_id\"), source.get(\"state_version\"), holding,\n                   {\"yes\": True, \"no\": False}.get(value) if fresh else None,\n                   fresh=fresh, data=data, fact=fact, question_version=record.get(\"version\"))"
+      },
+      {
+        "name": "GraspResult",
+        "kind": "class",
+        "range": [
+          68,
+          74
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "status: str  # verified | failed | uncertain; never an episode-success verdict\nreason: str\nattempts: int\nobservation: GraspObservation | None\nbefore_probe: GraspObservation | None = None\nlast_result: Any = None"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import math",
+      "from dataclasses import dataclass",
+      "from typing import Any"
+    ]
+  },
+  {
+    "path": "src/pyrualean/stuck_recovery.py",
+    "category": "code",
+    "moduleDoc": "Recovery instructions delivered only after a planner declares stuck.",
+    "symbols": [
+      {
+        "name": "add_stuck_recovery_arguments",
+        "kind": "function",
+        "range": [
+          45,
+          62
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "selection = parser.add_mutually_exclusive_group()\nselection.add_argument(\n        \"--stuck-recovery-skill\",\n        type=Path,\nselection.add_argument(\n        \"--no-stuck-recovery\", action=\"store_true\",\n        help=\"disable confirmed-stuck recovery (enabled by default for cells)\",\nparser.add_argument(\n        \"--stuck-recovery-rounds\",\n        type=int,"
+      },
+      {
+        "name": "stuck_recovery_config",
+        "kind": "function",
+        "range": [
+          65,
+          76
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "if args.no_stuck_recovery:\n        return None\nif args.stuck_recovery_skill is not None:\n        if args.arm != \"cells\":\n            raise ValueError(\"Stuck recovery currently supports only --arm cells\")\nreturn StuckRecoveryConfig(instructions, args.stuck_recovery_rounds)"
+      },
+      {
+        "name": "recovery_instructions",
+        "kind": "function",
+        "range": [
+          79,
+          83
+        ],
+        "owner": null,
+        "doc": "Packaged core of astra-stuck-recovery, available without a repository checkout.",
+        "body": "return files(\"pyrualean\").joinpath(\"knowledge/astra_stuck_recovery.md\").read_text(\n        encoding=\"utf-8\"\n    )"
+      },
+      {
+        "name": "StuckRecoveryConfig",
+        "kind": "class",
+        "range": [
+          12,
+          42
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "instructions: str\nmax_rounds: int = 2"
+      },
+      {
+        "name": "StuckRecoveryConfig.record",
+        "kind": "function",
+        "range": [
+          22,
+          27
+        ],
+        "owner": "StuckRecoveryConfig",
+        "doc": "",
+        "body": "return {\n            \"max_rounds\": self.max_rounds,\n            \"instructions_sha256\": hashlib.sha256(self.instructions.encode()).hexdigest(),"
+      },
+      {
+        "name": "StuckRecoveryConfig.prompt",
+        "kind": "function",
+        "range": [
+          29,
+          42
+        ],
+        "owner": "StuckRecoveryConfig",
+        "doc": "",
+        "body": "return (\n            \"# Confirmed-stuck recovery\\n\\n\"\n            \"When you confirm that the current plan is stuck, call finish(status='stuck', \""
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import hashlib",
+      "from dataclasses import dataclass",
+      "from importlib.resources import files",
+      "from pathlib import Path"
+    ]
+  }
+]

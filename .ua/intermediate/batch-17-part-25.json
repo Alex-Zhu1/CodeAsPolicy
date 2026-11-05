@@ -1,0 +1,2288 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "type": "file",
+      "name": "pick_from_conveyor_by_image.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "从展示照片提取颜色与类别特征，匹配并跟踪传送带目标；右臂抓住随带移动的篮子，左臂取物后按篮体几何安全投放。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "视觉定位",
+        "运动控制"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:log",
+      "type": "function",
+      "name": "log",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "输出程序执行与识别诊断。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        145,
+        146
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:note_steps",
+      "type": "function",
+      "name": "note_steps",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "累加原语使用的控制步数，维护传送带预测时钟。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        149,
+        150
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:mv",
+      "type": "function",
+      "name": "mv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "执行指定机械臂的笛卡尔运动并返回控制反馈。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        153,
+        158
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grip",
+      "type": "function",
+      "name": "grip",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "执行指定机械臂的夹爪指令并返回夹持反馈。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        161,
+        168
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:idle",
+      "type": "function",
+      "name": "idle",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "通过已张开的夹爪空闲指令推进指定步数，直到预算或回合结束。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        171,
+        174
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:norm_yaw",
+      "type": "function",
+      "name": "norm_yaw",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "将夹爪方向归一到半周区间。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        177,
+        182
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:ray_plane_z",
+      "type": "function",
+      "name": "ray_plane_z",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "把头部图像像素光线投影到指定高度平面。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        191,
+        195
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:colour_feature",
+      "type": "function",
+      "name": "colour_feature",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "构建色相与饱和度直方图并增加深色灰色通道，排除照片白背景。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        199,
+        218
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:similarity",
+      "type": "function",
+      "name": "similarity",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "用直方图平方根乘积和计算颜色分布相似度。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        221,
+        224
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:describe",
+      "type": "function",
+      "name": "describe",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "把颜色特征最强的几个通道转换为诊断描述。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        227,
+        241
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:board_signature",
+      "type": "function",
+      "name": "board_signature",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "从展示板照片区域排除白背景后提取目标颜色、面积和分布特征。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        244,
+        267
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:bin_index",
+      "type": "function",
+      "name": "bin_index",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "把颜色类别名称映射到特征直方图通道。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        293,
+        301
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:classify_photo",
+      "type": "function",
+      "name": "classify_photo",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "综合颜色通道距离、额外颜色、像素数量和散布与照片模板匹配类别。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        304,
+        323
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:box_feature",
+      "type": "function",
+      "name": "box_feature",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "在有效边界框内部提取目标颜色特征。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        326,
+        343
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:seg_box",
+      "type": "function",
+      "name": "seg_box",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "按提示获取头部图像中满足置信阈值的分割框。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        352,
+        359
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:blob_dets",
+      "type": "function",
+      "name": "blob_dets",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "利用近期传送带图像的逐像素中值背景提取移动物体，并排除浅阴影。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        362,
+        392
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:sam_dets",
+      "type": "function",
+      "name": "sam_dets",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "按候选提示词收集头部图像中的物体分割检测。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        395,
+        430
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:on_board",
+      "type": "function",
+      "name": "on_board",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "检查像素中心是否落在展示照片区域。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        433,
+        434
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:photo_name",
+      "type": "function",
+      "name": "photo_name",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "遍历语义提示并把展示板上的分割命中用于识别照片目标类别。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        437,
+        449
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:photo_cat",
+      "type": "function",
+      "name": "photo_cat",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "返回已锁定类别或当前照片类别证据。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        452,
+        458
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:scan",
+      "type": "function",
+      "name": "scan",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "融合前景区域和可选 SAM3 检测更新物体轨迹，优先保留精确掩码颜色特征。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        461,
+        511
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:track_x",
+      "type": "function",
+      "name": "track_x",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "按传送带速度和控制步数外推轨迹横向位置。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        514,
+        515
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:good_tracks",
+      "type": "function",
+      "name": "good_tracks",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "筛选尚未放弃、时间与位置仍有效的目标轨迹。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        518,
+        528
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:yaw_from_base",
+      "type": "function",
+      "name": "yaw_from_base",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "根据机械臂基座与目标位置计算自然接近偏航。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        532,
+        534
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:basket_bar",
+      "type": "function",
+      "name": "basket_bar",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "测量浅蓝篮提手横杆中心，并用篮体尺寸和高度检查结果。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        537,
+        557
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grab_basket",
+      "type": "function",
+      "name": "grab_basket",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "预测移动提手位置，随传送带跟随闭合夹爪抓住篮子。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        563,
+        624
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:look_basket",
+      "type": "function",
+      "name": "look_basket",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "记录停靠篮子的头部视觉读数，用于扭转和偏移诊断。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        627,
+        642
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:project_world",
+      "type": "function",
+      "name": "project_world",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "用头部标定批量投影世界坐标。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        648,
+        653
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:box_corners",
+      "type": "function",
+      "name": "box_corners",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "按篮体朝向和尺寸生成三维包围盒角点。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        656,
+        666
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:blue_mask",
+      "type": "function",
+      "name": "blue_mask",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "用 HSV 与颜色范围提取浅蓝色篮体。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        669,
+        676
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:iou_of",
+      "type": "function",
+      "name": "iou_of",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "把三维篮体模型投影为凸多边形，计算与蓝色掩码的交并比。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        679,
+        685
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:fit_basket",
+      "type": "function",
+      "name": "fit_basket",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "按已知篮尺寸拟合头部蓝色掩码，估计悬挂篮中心、朝向与边沿高度。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        688,
+        734
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grab_frame",
+      "type": "function",
+      "name": "grab_frame",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "在机械臂忙于动作期间仍更新传送带背景图像模型。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        737,
+        742
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:refine",
+      "type": "function",
+      "name": "refine",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "从指定相机重新测量轨迹目标的顶部、抓取方向与长宽比。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        746,
+        767
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:held_now",
+      "type": "function",
+      "name": "held_now",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "通过当前夹爪开度判断是否仍可能持物。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        776,
+        780
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grasp_plan",
+      "type": "function",
+      "name": "grasp_plan",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "根据物体类型与几何生成俯仰、偏航、抓取高度、偏移和接近模式。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        788,
+        819
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:side_remeasure",
+      "type": "function",
+      "name": "side_remeasure",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "在侧抓接近前用一次可靠头部双视角读数修正目标位置。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        828,
+        847
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:pick",
+      "type": "function",
+      "name": "pick",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "在目标运动前方悬停等候，跟踪到达后下降抓取并缓慢抬升。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        850,
+        971
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:drop",
+      "type": "function",
+      "name": "drop",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "降低并拟合篮体位置，把持物放入近侧区域后重新抬起篮子。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        979,
+        1154
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:lower_into_basket",
+      "type": "function",
+      "name": "lower_into_basket",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "将物体降到篮内合理深度，结合夹持状态控制双臂抬升及释放。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1157,
+        1264
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:at_home",
+      "type": "function",
+      "name": "at_home",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "比较当前工具中心与记录的初始位置，判断机械臂是否已归位。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1273,
+        1276
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:near_box",
+      "type": "function",
+      "name": "near_box",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "检查候选像素是否位于分割框扩展邻域或接近其中心。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1279,
+        1285
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:wrist_scan",
+      "type": "function",
+      "name": "wrist_scan",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "利用归位左腕仅见传送带的视角搜索照片对应实例，减少照片本身与目标竞争。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1288,
+        1343
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:wrist_target",
+      "type": "function",
+      "name": "wrist_target",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "把腕部检测关联到现有轨迹，找不到时建立新轨迹。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1346,
+        1369
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:named_as",
+      "type": "function",
+      "name": "named_as",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "依据类别提示得分和同色类别竞争结果判断轨迹是否属于给定类别。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1377,
+        1394
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:decide",
+      "type": "function",
+      "name": "decide",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "融合照片类别、语义命名与颜色相似度选择最可信的可抓轨迹。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1397,
+        1460
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:ensure_prompt",
+      "type": "function",
+      "name": "ensure_prompt",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "为没有提示词的轨迹寻找能够在头部图像中命中它的语义提示。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1463,
+        1481
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:give_up",
+      "type": "function",
+      "name": "give_up",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "标记失败轨迹并清除腕部检测，把左臂归位以恢复后续扫描。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1485,
+        1499
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "summary": "识别照片目标、抓住篮子并持续匹配传送带轨迹，执行取物投篮及失败重试。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1502,
+        1593
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:log",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:log",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:note_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:note_steps",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:mv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:mv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:idle",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:idle",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:norm_yaw",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:norm_yaw",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:ray_plane_z",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:ray_plane_z",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:colour_feature",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:colour_feature",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:similarity",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:similarity",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:describe",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:describe",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:board_signature",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:board_signature",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:bin_index",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:bin_index",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:classify_photo",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:classify_photo",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:box_feature",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:box_feature",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:seg_box",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:seg_box",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:blob_dets",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:blob_dets",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:sam_dets",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:sam_dets",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:on_board",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:on_board",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:photo_name",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:photo_name",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:photo_cat",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:photo_cat",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:scan",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:scan",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:track_x",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:track_x",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:good_tracks",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:good_tracks",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:yaw_from_base",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:yaw_from_base",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:basket_bar",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:basket_bar",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grab_basket",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grab_basket",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:look_basket",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:look_basket",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:project_world",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:project_world",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:box_corners",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:box_corners",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:blue_mask",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:blue_mask",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:iou_of",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:iou_of",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:fit_basket",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:fit_basket",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grab_frame",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grab_frame",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:refine",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:refine",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:held_now",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:held_now",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grasp_plan",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grasp_plan",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:side_remeasure",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:side_remeasure",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:pick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:pick",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:drop",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:drop",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:lower_into_basket",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:lower_into_basket",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:at_home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:at_home",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:near_box",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:near_box",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:wrist_scan",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:wrist_scan",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:wrist_target",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:wrist_target",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:named_as",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:named_as",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:decide",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:decide",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:ensure_prompt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:ensure_prompt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:give_up",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:give_up",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:note_steps",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grip",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:note_steps",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:idle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:board_signature",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:board_signature",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:colour_feature",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:board_signature",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:describe",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:board_signature",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:classify_photo",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:classify_photo",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:classify_photo",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:bin_index",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:box_feature",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:colour_feature",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:seg_box",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:blob_dets",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:colour_feature",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:blob_dets",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:ray_plane_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:sam_dets",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:sam_dets",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:on_board",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:sam_dets",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:ray_plane_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:sam_dets",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:box_feature",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:photo_name",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:photo_name",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:on_board",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:scan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:blob_dets",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:scan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:seg_box",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:scan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:sam_dets",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:scan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:similarity",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:scan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:scan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:track_x",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:scan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:good_tracks",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:basket_bar",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:basket_bar",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:seg_box",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:basket_bar",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:ray_plane_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grab_basket",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:yaw_from_base",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grab_basket",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grab_basket",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grab_basket",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grab_frame",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grab_basket",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:idle",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grab_basket",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:fit_basket",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grab_basket",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grab_basket",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:basket_bar",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:look_basket",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:ray_plane_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:look_basket",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:iou_of",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:project_world",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:fit_basket",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:blue_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:fit_basket",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:project_world",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:fit_basket",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:box_corners",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:fit_basket",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:fit_basket",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:iou_of",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grab_frame",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:blob_dets",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grab_frame",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:track_x",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:norm_yaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grasp_plan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:norm_yaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:side_remeasure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:side_remeasure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:track_x",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:refine",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grasp_plan",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:track_x",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:norm_yaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:side_remeasure",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:drop",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:drop",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:drop",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:fit_basket",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:drop",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:norm_yaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:drop",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:held_now",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:drop",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:yaw_from_base",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:drop",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:lower_into_basket",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:drop",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:lower_into_basket",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:lower_into_basket",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:lower_into_basket",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:held_now",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:lower_into_basket",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:wrist_scan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:photo_cat",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:wrist_scan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:at_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:wrist_scan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:near_box",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:wrist_scan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:wrist_target",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:track_x",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:decide",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:good_tracks",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:decide",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:photo_cat",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:decide",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:named_as",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:decide",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:wrist_target",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:decide",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:track_x",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:decide",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:ensure_prompt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:ray_plane_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:ensure_prompt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:track_x",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:ensure_prompt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:give_up",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:give_up",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:give_up",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:board_signature",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:photo_name",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:basket_bar",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:idle",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grab_basket",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:wrist_scan",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:scan",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:decide",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:track_x",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:describe",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:ensure_prompt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:pick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:give_up",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pick_from_conveyor_by_image.py:drop",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

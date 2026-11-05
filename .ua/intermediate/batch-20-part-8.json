@@ -1,0 +1,515 @@
+{
+  "nodes": [
+    {
+      "id": "file:tests/test_runner.py",
+      "type": "file",
+      "name": "test_runner.py",
+      "filePath": "tests/test_runner.py",
+      "summary": "验证独立策略加载、运行结果、超时和终止传播。通过固定输入、模拟后端或临时资源检查正常行为及失败边界。",
+      "tags": [
+        "测试",
+        "回归验证",
+        "行为契约"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_runner.py:_write",
+      "type": "function",
+      "name": "_write",
+      "filePath": "tests/test_runner.py",
+      "summary": "写入临时策略文件用于模块加载与执行测试。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        12,
+        16
+      ]
+    },
+    {
+      "id": "function:tests/test_runner.py:test_two_codebases_with_the_same_module_name_do_not_collide",
+      "type": "function",
+      "name": "test_two_codebases_with_the_same_module_name_do_not_collide",
+      "filePath": "tests/test_runner.py",
+      "summary": "验证同名模块的不同策略目录互不污染。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        19,
+        24
+      ]
+    },
+    {
+      "id": "function:tests/test_runner.py:test_missing_entrypoint_and_import_errors_are_load_errors",
+      "type": "function",
+      "name": "test_missing_entrypoint_and_import_errors_are_load_errors",
+      "filePath": "tests/test_runner.py",
+      "summary": "验证缺少入口或导入失败转换为策略加载错误。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        27,
+        33
+      ]
+    },
+    {
+      "id": "function:tests/test_runner.py:test_run_policy_reports_completion_errors_and_finish",
+      "type": "function",
+      "name": "test_run_policy_reports_completion_errors_and_finish",
+      "filePath": "tests/test_runner.py",
+      "summary": "验证策略执行报告正常完成、运行错误和回合结束。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        36,
+        57
+      ]
+    },
+    {
+      "id": "function:tests/test_runner.py:test_run_policy_timeout_stops_a_busy_policy",
+      "type": "function",
+      "name": "test_run_policy_timeout_stops_a_busy_policy",
+      "filePath": "tests/test_runner.py",
+      "summary": "验证超时能中断忙循环策略。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        60,
+        72
+      ]
+    },
+    {
+      "id": "function:tests/test_runner.py:test_policy_except_exception_cannot_swallow_episode_finished",
+      "type": "function",
+      "name": "test_policy_except_exception_cannot_swallow_episode_finished",
+      "filePath": "tests/test_runner.py",
+      "summary": "验证普通 Exception 捕获不能吞掉回合结束信号。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        75,
+        89
+      ]
+    },
+    {
+      "id": "file:tests/test_sandbox.py",
+      "type": "file",
+      "name": "test_sandbox.py",
+      "filePath": "tests/test_sandbox.py",
+      "summary": "验证受限导入、文件访问边界与内省逃逸阻断。通过固定输入、模拟后端或临时资源检查正常行为及失败边界。",
+      "tags": [
+        "测试",
+        "回归验证",
+        "行为契约"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_sandbox.py:cells",
+      "type": "function",
+      "name": "cells",
+      "filePath": "tests/test_sandbox.py",
+      "summary": "创建受沙箱约束的代码单元工具包。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        13,
+        14
+      ]
+    },
+    {
+      "id": "function:tests/test_sandbox.py:test_cells_cannot_import_os_or_escape_the_workspace",
+      "type": "function",
+      "name": "test_cells_cannot_import_os_or_escape_the_workspace",
+      "filePath": "tests/test_sandbox.py",
+      "summary": "验证代码单元不能导入系统模块或访问工作区之外路径。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        17,
+        36
+      ]
+    },
+    {
+      "id": "function:tests/test_sandbox.py:test_audit_flags_reach_for_host_handles_and_paths",
+      "type": "function",
+      "name": "test_audit_flags_reach_for_host_handles_and_paths",
+      "filePath": "tests/test_sandbox.py",
+      "summary": "验证审计标记访问宿主句柄与内部路径的尝试。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        39,
+        56
+      ]
+    },
+    {
+      "id": "function:tests/test_sandbox.py:test_program_arm_is_sandboxed_but_workspace_imports_work",
+      "type": "function",
+      "name": "test_program_arm_is_sandboxed_but_workspace_imports_work",
+      "filePath": "tests/test_sandbox.py",
+      "summary": "验证完整程序受沙箱约束但可导入工作区模块。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        59,
+        70
+      ]
+    },
+    {
+      "id": "function:tests/test_sandbox.py:test_load_policy_with_sandbox_builtins",
+      "type": "function",
+      "name": "test_load_policy_with_sandbox_builtins",
+      "filePath": "tests/test_sandbox.py",
+      "summary": "验证策略加载使用受限内置对象同时允许白名单导入。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        73,
+        82
+      ]
+    },
+    {
+      "id": "function:tests/test_sandbox.py:test_cells_refuse_python_internals_before_running",
+      "type": "function",
+      "name": "test_cells_refuse_python_internals_before_running",
+      "filePath": "tests/test_sandbox.py",
+      "summary": "验证代码单元在运行前拒绝 Python 内省逃逸。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        85,
+        104
+      ]
+    },
+    {
+      "id": "function:tests/test_sandbox.py:test_program_arm_refuses_python_internals_before_import",
+      "type": "function",
+      "name": "test_program_arm_refuses_python_internals_before_import",
+      "filePath": "tests/test_sandbox.py",
+      "summary": "验证完整程序在导入前拒绝内部对象逃逸。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        107,
+        114
+      ]
+    },
+    {
+      "id": "function:tests/test_runner.py:test_policy_except_exception_cannot_swallow_episode_finished.stubborn",
+      "type": "function",
+      "name": "test_policy_except_exception_cannot_swallow_episode_finished.stubborn",
+      "filePath": "tests/test_runner.py",
+      "summary": "执行完整抓放后尝试捕获普通异常继续移动，验证结束信号不可被吞掉。",
+      "tags": [
+        "测试",
+        "局部定义",
+        "测试替身"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        76,
+        86
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:tests/test_runner.py",
+      "target": "function:tests/test_runner.py:_write",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_runner.py",
+      "target": "function:tests/test_runner.py:_write",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_runner.py",
+      "target": "function:tests/test_runner.py:test_two_codebases_with_the_same_module_name_do_not_collide",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_runner.py",
+      "target": "function:tests/test_runner.py:test_two_codebases_with_the_same_module_name_do_not_collide",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_runner.py",
+      "target": "function:tests/test_runner.py:test_missing_entrypoint_and_import_errors_are_load_errors",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_runner.py",
+      "target": "function:tests/test_runner.py:test_missing_entrypoint_and_import_errors_are_load_errors",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_runner.py",
+      "target": "function:tests/test_runner.py:test_run_policy_reports_completion_errors_and_finish",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_runner.py",
+      "target": "function:tests/test_runner.py:test_run_policy_reports_completion_errors_and_finish",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_runner.py",
+      "target": "function:tests/test_runner.py:test_run_policy_timeout_stops_a_busy_policy",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_runner.py",
+      "target": "function:tests/test_runner.py:test_run_policy_timeout_stops_a_busy_policy",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_runner.py",
+      "target": "function:tests/test_runner.py:test_policy_except_exception_cannot_swallow_episode_finished",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_runner.py",
+      "target": "function:tests/test_runner.py:test_policy_except_exception_cannot_swallow_episode_finished",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_runner.py:test_two_codebases_with_the_same_module_name_do_not_collide",
+      "target": "function:tests/test_runner.py:_write",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_runner.py:test_missing_entrypoint_and_import_errors_are_load_errors",
+      "target": "function:tests/test_runner.py:_write",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/libero.py",
+      "target": "file:tests/test_runner.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/runner.py",
+      "target": "file:tests/test_runner.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:tests/test_sandbox.py",
+      "target": "function:tests/test_sandbox.py:cells",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_sandbox.py",
+      "target": "function:tests/test_sandbox.py:cells",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_sandbox.py",
+      "target": "function:tests/test_sandbox.py:test_cells_cannot_import_os_or_escape_the_workspace",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_sandbox.py",
+      "target": "function:tests/test_sandbox.py:test_cells_cannot_import_os_or_escape_the_workspace",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_sandbox.py",
+      "target": "function:tests/test_sandbox.py:test_audit_flags_reach_for_host_handles_and_paths",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_sandbox.py",
+      "target": "function:tests/test_sandbox.py:test_audit_flags_reach_for_host_handles_and_paths",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_sandbox.py",
+      "target": "function:tests/test_sandbox.py:test_program_arm_is_sandboxed_but_workspace_imports_work",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_sandbox.py",
+      "target": "function:tests/test_sandbox.py:test_program_arm_is_sandboxed_but_workspace_imports_work",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_sandbox.py",
+      "target": "function:tests/test_sandbox.py:test_load_policy_with_sandbox_builtins",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_sandbox.py",
+      "target": "function:tests/test_sandbox.py:test_load_policy_with_sandbox_builtins",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_sandbox.py",
+      "target": "function:tests/test_sandbox.py:test_cells_refuse_python_internals_before_running",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_sandbox.py",
+      "target": "function:tests/test_sandbox.py:test_cells_refuse_python_internals_before_running",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_sandbox.py",
+      "target": "function:tests/test_sandbox.py:test_program_arm_refuses_python_internals_before_import",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_sandbox.py",
+      "target": "function:tests/test_sandbox.py:test_program_arm_refuses_python_internals_before_import",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/sandbox.py",
+      "target": "file:tests/test_sandbox.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/runner.py",
+      "target": "file:tests/test_sandbox.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "file:tests/test_sandbox.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:tests/test_runner.py",
+      "target": "function:tests/test_runner.py:test_policy_except_exception_cannot_swallow_episode_finished.stubborn",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:tests/test_runner.py:test_policy_except_exception_cannot_swallow_episode_finished",
+      "target": "function:tests/test_runner.py:test_policy_except_exception_cannot_swallow_episode_finished.stubborn",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    }
+  ]
+}

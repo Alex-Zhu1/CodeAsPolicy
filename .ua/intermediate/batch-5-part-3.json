@@ -1,0 +1,2394 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/pyrualean/robocasa.py",
+      "type": "file",
+      "name": "robocasa.py",
+      "filePath": "src/pyrualean/robocasa.py",
+      "summary": "提供 RoboCasa365 移动机械臂 API，统一包装基座导航、手臂伺服、RLDX-1 和世界坐标图查询，并返回可检查的真实执行结果。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "移动操作"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:_floats",
+      "type": "function",
+      "name": "_floats",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        377,
+        384
+      ],
+      "summary": "验证向量长度和数值有限性并转换为浮点元组。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:_tuple_n",
+      "type": "function",
+      "name": "_tuple_n",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        387,
+        395
+      ],
+      "summary": "安全解析指定长度的可选浮点元组，兼容数组且容忍缺失或畸形值。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:_tuple3",
+      "type": "function",
+      "name": "_tuple3",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        398,
+        399
+      ],
+      "summary": "解析可选三维浮点坐标。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:_gripper",
+      "type": "function",
+      "name": "_gripper",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        402,
+        408
+      ],
+      "summary": "规范开、闭或保持当前开度三种夹爪参数。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:_gripper_command",
+      "type": "function",
+      "name": "_gripper_command",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        411,
+        418
+      ],
+      "summary": "验证有限的数值夹爪命令处于负一到正一范围。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:_pixels",
+      "type": "function",
+      "name": "_pixels",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        421,
+        431
+      ],
+      "summary": "规范一个或多个行列像素坐标，并检查数量及形状。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/robocasa.py:State",
+      "type": "class",
+      "name": "State",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        57,
+        120
+      ],
+      "summary": "保存 RoboCasa 手臂与移动基座姿态、夹爪、任务进展和 VLA 同步状态。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "数据模型"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:State.base_yaw",
+      "type": "function",
+      "name": "State.base_yaw",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        105,
+        108
+      ],
+      "summary": "由基座四元数计算世界坐标偏航角。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:State.eef_approach",
+      "type": "function",
+      "name": "State.eef_approach",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        111,
+        114
+      ],
+      "summary": "计算夹爪手指在世界坐标系中的接近方向。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:State.eef_tilt",
+      "type": "function",
+      "name": "State.eef_tilt",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        117,
+        120
+      ],
+      "summary": "计算夹爪接近方向相对垂直向下的倾斜角。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "class:src/pyrualean/robocasa.py:Move",
+      "type": "class",
+      "name": "Move",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        124,
+        147
+      ],
+      "summary": "记录闭环 OSC 移动的实际终点、残差、步数及夹爪状态。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/robocasa.py:Pitch",
+      "type": "class",
+      "name": "Pitch",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        151,
+        161
+      ],
+      "summary": "记录腕部相对俯仰命令的执行结果，实际角度需从状态中读取。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/robocasa.py:Gripper",
+      "type": "class",
+      "name": "Gripper",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        165,
+        179
+      ],
+      "summary": "记录夹爪命令和实测手指位置，开度本身不构成抓住目标的证明。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/robocasa.py:Grasp",
+      "type": "class",
+      "name": "Grasp",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        183,
+        200
+      ],
+      "summary": "描述开爪、悬停、下降、闭合和抬升流程结果，并指出停滞阶段。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/robocasa.py:Navigation",
+      "type": "class",
+      "name": "Navigation",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        204,
+        225
+      ],
+      "summary": "记录基座导航到达、卡住、剩余距离、实际移动和步数。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/robocasa.py:BaseMove",
+      "type": "class",
+      "name": "BaseMove",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        229,
+        239
+      ],
+      "summary": "保存基座局部速度命令产生的世界位移与最终位置。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/robocasa.py:Skill",
+      "type": "class",
+      "name": "Skill",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        243,
+        283
+      ],
+      "summary": "记录 RLDX-1 停止原因、动作块、步数与持物启发式状态。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "数据模型"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/pyrualean/robocasa.py:Point",
+      "type": "class",
+      "name": "Point",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        287,
+        302
+      ],
+      "summary": "表示单个反投影像素的三维坐标或无效原因。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:Point.valid",
+      "type": "function",
+      "name": "Point.valid",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        300,
+        302
+      ],
+      "summary": "判断该像素是否具有有效世界坐标。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "class:src/pyrualean/robocasa.py:BackProjection",
+      "type": "class",
+      "name": "BackProjection",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        306,
+        326
+      ],
+      "summary": "保存批量像素反投影结果、有效数量与稳健的坐标中位数。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:BackProjection.xyz",
+      "type": "function",
+      "name": "BackProjection.xyz",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        324,
+        326
+      ],
+      "summary": "按请求顺序返回所有有效世界坐标。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "class:src/pyrualean/robocasa.py:Cluster",
+      "type": "class",
+      "name": "Cluster",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        330,
+        342
+      ],
+      "summary": "记录高度带内一个粗网格簇的中心、边界和像素数量。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/robocasa.py:HeightQuery",
+      "type": "class",
+      "name": "HeightQuery",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        346,
+        358
+      ],
+      "summary": "保存高度带查询的候选簇及总像素量，簇不等价于独立物体。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "type": "class",
+      "name": "RobocasaRobot",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        439,
+        1378
+      ],
+      "summary": "将厨房中的移动 PandaOmron 机器人包装为模型可调用的感知、导航和操作接口。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "数据模型"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot.task",
+      "type": "function",
+      "name": "RobocasaRobot.task",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        582,
+        587
+      ],
+      "summary": "返回基准提供的权威任务指令。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot.done",
+      "type": "function",
+      "name": "RobocasaRobot.done",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        590,
+        592
+      ],
+      "summary": "读取并锁存环境原生任务成功状态。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot.state",
+      "type": "function",
+      "name": "RobocasaRobot.state",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        594,
+        604
+      ],
+      "summary": "读取指定记录步骤的机器人本体状态和回合标志。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot.image",
+      "type": "function",
+      "name": "RobocasaRobot.image",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        606,
+        622
+      ],
+      "summary": "读取指定相机及记录步骤的 RGB 图像数组。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot.world_map",
+      "type": "function",
+      "name": "RobocasaRobot.world_map",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        624,
+        649
+      ],
+      "summary": "读取图像对应的逐像素世界坐标图，供策略计算几何关系。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot.depth",
+      "type": "function",
+      "name": "RobocasaRobot.depth",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        651,
+        663
+      ],
+      "summary": "读取肩部或腕部相机的米制深度图。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot.floor_overlay",
+      "type": "function",
+      "name": "RobocasaRobot.floor_overlay",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        665,
+        675
+      ],
+      "summary": "读取用绿色标记可行驶高度带的导航视图。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot.camera_meta",
+      "type": "function",
+      "name": "RobocasaRobot.camera_meta",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        677,
+        689
+      ],
+      "summary": "读取与图像步骤对应的相机内参与外参。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot.success_criteria",
+      "type": "function",
+      "name": "RobocasaRobot.success_criteria",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        691,
+        699
+      ],
+      "summary": "读取任务成功判据源码，暴露对象名称和阈值而不提供物体坐标。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot.show",
+      "type": "function",
+      "name": "RobocasaRobot.show",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        701,
+        709
+      ],
+      "summary": "登记当前相机图像，让本轮工具反馈将其展示给规划者。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot.artifact",
+      "type": "function",
+      "name": "RobocasaRobot.artifact",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        711,
+        719
+      ],
+      "summary": "读取指定记录产物的原始字节。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot.back_project_batch",
+      "type": "function",
+      "name": "RobocasaRobot.back_project_batch",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        723,
+        777
+      ],
+      "summary": "将一组指定相机像素反投影为世界坐标，并汇总有效点中位数。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot.query_world_map",
+      "type": "function",
+      "name": "RobocasaRobot.query_world_map",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        779,
+        844
+      ],
+      "summary": "按高度带及可选平面范围筛选最新坐标图，返回粗网格聚类候选。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot.rldx_skill",
+      "type": "function",
+      "name": "RobocasaRobot.rldx_skill",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        848,
+        890
+      ],
+      "summary": "用任务原始指令和当前图像驱动 RLDX-1 全身操作，成功、稳定或达到块上限时停止。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot.rldx_arm",
+      "type": "function",
+      "name": "RobocasaRobot.rldx_arm",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        892,
+        912
+      ],
+      "summary": "限制基座速度，以 RLDX-1 执行靠近目标后的手臂操作。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot.move_to",
+      "type": "function",
+      "name": "RobocasaRobot.move_to",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        916,
+        957
+      ],
+      "summary": "固定姿态进行有距离限制的世界坐标 OSC 伺服，返回真实终点和残差。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot.move_delta",
+      "type": "function",
+      "name": "RobocasaRobot.move_delta",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        959,
+        990
+      ],
+      "summary": "以当前位置加相对位移形成目标，执行有限范围的小步修正。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot.rotate_pitch",
+      "type": "function",
+      "name": "RobocasaRobot.rotate_pitch",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        992,
+        1020
+      ],
+      "summary": "保持控制器位置并执行相对俯仰变化，实际倾斜需重新读取状态。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot.set_gripper",
+      "type": "function",
+      "name": "RobocasaRobot.set_gripper",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        1022,
+        1035
+      ],
+      "summary": "在保持夹爪位姿时执行数值开合命令并记录手指结果。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot.release",
+      "type": "function",
+      "name": "RobocasaRobot.release",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        1037,
+        1047
+      ],
+      "summary": "原地张开夹爪，返回释放后状态与任务终止标志。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot.scripted_grasp",
+      "type": "function",
+      "name": "RobocasaRobot.scripted_grasp",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        1049,
+        1076
+      ],
+      "summary": "按开爪、悬停、下降、闭合、抬升执行粗定位抓取，并报告失败阶段。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot.navigate_to",
+      "type": "function",
+      "name": "RobocasaRobot.navigate_to",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        1080,
+        1123
+      ],
+      "summary": "用闭环转向和前进接近平面目标；不提供路径规划，返回到达或卡住情况。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot.move_base",
+      "type": "function",
+      "name": "RobocasaRobot.move_base",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        1125,
+        1164
+      ],
+      "summary": "按本体坐标速度有限步驱动基座，并报告实际世界位移。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot._session_artifact",
+      "type": "function",
+      "name": "RobocasaRobot._session_artifact",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        1173,
+        1186
+      ],
+      "summary": "读取并记账不依附具体步骤的会话级产物。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot._skill_kwargs",
+      "type": "function",
+      "name": "RobocasaRobot._skill_kwargs",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        1206,
+        1236
+      ],
+      "summary": "验证 RLDX 动作块、稳定判据和基座限制参数，并使用当前任务原文。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot._skill",
+      "type": "function",
+      "name": "RobocasaRobot._skill",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        1238,
+        1257
+      ],
+      "summary": "将 VLA 原始结果与最新状态合并为 Skill 对象。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot._move",
+      "type": "function",
+      "name": "RobocasaRobot._move",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        1259,
+        1272
+      ],
+      "summary": "根据实测末端位置与目标构造带残差的移动结果。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot._gripper",
+      "type": "function",
+      "name": "RobocasaRobot._gripper",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        1274,
+        1283
+      ],
+      "summary": "根据最新手指位置构造夹爪命令结果。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot._grasp",
+      "type": "function",
+      "name": "RobocasaRobot._grasp",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        1285,
+        1297
+      ],
+      "summary": "合并脚本抓取阶段、残差和手指状态。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot._navigation",
+      "type": "function",
+      "name": "RobocasaRobot._navigation",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        1299,
+        1315
+      ],
+      "summary": "将基座实际位置、位移和到达状态转换为导航结果。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot._state_from_envelope",
+      "type": "function",
+      "name": "RobocasaRobot._state_from_envelope",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        1317,
+        1340
+      ],
+      "summary": "解析手臂、基座、任务进展和同步字段，构造 RoboCasa 状态。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot._summary_dict",
+      "type": "function",
+      "name": "RobocasaRobot._summary_dict",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        1342,
+        1355
+      ],
+      "summary": "生成包含当前本体状态和回合信息的紧凑工具反馈。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robocasa.py:RobocasaRobot._summary",
+      "type": "function",
+      "name": "RobocasaRobot._summary",
+      "filePath": "src/pyrualean/robocasa.py",
+      "lineRange": [
+        1357,
+        1378
+      ],
+      "summary": "为公共工具摘要补充当前末端位置。",
+      "tags": [
+        "机器人接口",
+        "RoboCasa",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "file:src/pyrualean/robots.py",
+      "type": "file",
+      "name": "robots.py",
+      "filePath": "src/pyrualean/robots.py",
+      "summary": "维护机器人适配器注册表，按需导入具体机器人与宿主，使缺少某一后端依赖不会阻断其他机器人。",
+      "tags": [
+        "适配注册",
+        "延迟加载",
+        "配置"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/robots.py:get_adapter",
+      "type": "function",
+      "name": "get_adapter",
+      "filePath": "src/pyrualean/robots.py",
+      "lineRange": [
+        81,
+        90
+      ],
+      "summary": "验证机器人名称并延迟加载其 ADAPTER 描述。",
+      "tags": [
+        "适配注册",
+        "延迟加载",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/robots.py:RobotAdapter",
+      "type": "class",
+      "name": "RobotAdapter",
+      "filePath": "src/pyrualean/robots.py",
+      "lineRange": [
+        36,
+        78
+      ],
+      "summary": "保存机器人类、宿主模块、知识文件和提示契约所需信息。",
+      "tags": [
+        "适配注册",
+        "延迟加载",
+        "数据模型"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/robots.py:RobotAdapter.cameras",
+      "type": "function",
+      "name": "RobotAdapter.cameras",
+      "filePath": "src/pyrualean/robots.py",
+      "lineRange": [
+        63,
+        64
+      ],
+      "summary": "读取机器人类声明的相机列表。",
+      "tags": [
+        "适配注册",
+        "延迟加载",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robots.py:RobotAdapter.live_success",
+      "type": "function",
+      "name": "RobotAdapter.live_success",
+      "filePath": "src/pyrualean/robots.py",
+      "lineRange": [
+        67,
+        75
+      ],
+      "summary": "根据公开接口判断环境是否在执行过程中暴露成功判据。",
+      "tags": [
+        "适配注册",
+        "延迟加载",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/robots.py:RobotAdapter.host_module",
+      "type": "function",
+      "name": "RobotAdapter.host_module",
+      "filePath": "src/pyrualean/robots.py",
+      "lineRange": [
+        77,
+        78
+      ],
+      "summary": "按适配器记录动态导入宿主模块。",
+      "tags": [
+        "适配注册",
+        "延迟加载",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:_floats",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:_floats",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:_tuple_n",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:_tuple_n",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:_tuple3",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:_tuple3",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:_gripper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:_gripper",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:_gripper_command",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:_gripper_command",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:_pixels",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:_pixels",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "class:src/pyrualean/robocasa.py:State",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "class:src/pyrualean/robocasa.py:State",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:State.base_yaw",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:State",
+      "target": "function:src/pyrualean/robocasa.py:State.base_yaw",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:State.eef_approach",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:State",
+      "target": "function:src/pyrualean/robocasa.py:State.eef_approach",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:State.eef_tilt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:State",
+      "target": "function:src/pyrualean/robocasa.py:State.eef_tilt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "class:src/pyrualean/robocasa.py:Move",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "class:src/pyrualean/robocasa.py:Move",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "class:src/pyrualean/robocasa.py:Pitch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "class:src/pyrualean/robocasa.py:Pitch",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "class:src/pyrualean/robocasa.py:Gripper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "class:src/pyrualean/robocasa.py:Gripper",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "class:src/pyrualean/robocasa.py:Grasp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "class:src/pyrualean/robocasa.py:Grasp",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "class:src/pyrualean/robocasa.py:Navigation",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "class:src/pyrualean/robocasa.py:Navigation",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "class:src/pyrualean/robocasa.py:BaseMove",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "class:src/pyrualean/robocasa.py:BaseMove",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "class:src/pyrualean/robocasa.py:Skill",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "class:src/pyrualean/robocasa.py:Skill",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "class:src/pyrualean/robocasa.py:Point",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "class:src/pyrualean/robocasa.py:Point",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:Point.valid",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:Point",
+      "target": "function:src/pyrualean/robocasa.py:Point.valid",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "class:src/pyrualean/robocasa.py:BackProjection",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "class:src/pyrualean/robocasa.py:BackProjection",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:BackProjection.xyz",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:BackProjection",
+      "target": "function:src/pyrualean/robocasa.py:BackProjection.xyz",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "class:src/pyrualean/robocasa.py:Cluster",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "class:src/pyrualean/robocasa.py:Cluster",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "class:src/pyrualean/robocasa.py:HeightQuery",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "class:src/pyrualean/robocasa.py:HeightQuery",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.task",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.task",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.done",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.done",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.state",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.state",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.image",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.image",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.world_map",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.world_map",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.depth",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.depth",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.floor_overlay",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.floor_overlay",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.camera_meta",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.camera_meta",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.success_criteria",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.success_criteria",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.show",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.show",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.artifact",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.artifact",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.back_project_batch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.back_project_batch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.query_world_map",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.query_world_map",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.rldx_skill",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.rldx_skill",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.rldx_arm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.rldx_arm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.move_to",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.move_to",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.move_delta",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.move_delta",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.rotate_pitch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.rotate_pitch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.set_gripper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.set_gripper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.release",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.release",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.scripted_grasp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.scripted_grasp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.navigate_to",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.navigate_to",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.move_base",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.move_base",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot._session_artifact",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot._session_artifact",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot._skill_kwargs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot._skill_kwargs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot._skill",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot._skill",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot._move",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot._move",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot._gripper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot._gripper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot._grasp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot._grasp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot._navigation",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot._navigation",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot._state_from_envelope",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot._state_from_envelope",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot._summary_dict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot._summary_dict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot._summary",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot._summary",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "file:src/pyrualean/_backend.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "file:src/pyrualean/_robot.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/robocasa.py",
+      "target": "file:src/pyrualean/robots.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:_tuple3",
+      "target": "function:src/pyrualean/robocasa.py:_tuple_n",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:_gripper",
+      "target": "function:src/pyrualean/robocasa.py:_gripper_command",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.world_map",
+      "target": "class:src/pyrualean/_backend.py:ToolError",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.depth",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.artifact",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.floor_overlay",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.artifact",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.camera_meta",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.artifact",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.success_criteria",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot._session_artifact",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.back_project_batch",
+      "target": "function:src/pyrualean/robocasa.py:_pixels",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.back_project_batch",
+      "target": "class:src/pyrualean/robocasa.py:Point",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.back_project_batch",
+      "target": "function:src/pyrualean/robocasa.py:_tuple3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.back_project_batch",
+      "target": "class:src/pyrualean/robocasa.py:BackProjection",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.query_world_map",
+      "target": "function:src/pyrualean/robocasa.py:_floats",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.query_world_map",
+      "target": "class:src/pyrualean/robocasa.py:Cluster",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.query_world_map",
+      "target": "function:src/pyrualean/robocasa.py:_tuple3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.query_world_map",
+      "target": "class:src/pyrualean/robocasa.py:HeightQuery",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.rldx_skill",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot._skill_kwargs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.rldx_skill",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot._skill",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.rldx_arm",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot._skill_kwargs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.rldx_arm",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot._skill",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.move_to",
+      "target": "function:src/pyrualean/robocasa.py:_floats",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.move_to",
+      "target": "function:src/pyrualean/robocasa.py:_gripper",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.move_to",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot._move",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.move_delta",
+      "target": "function:src/pyrualean/robocasa.py:_floats",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.move_delta",
+      "target": "function:src/pyrualean/robocasa.py:_gripper",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.move_delta",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot._move",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.rotate_pitch",
+      "target": "function:src/pyrualean/robocasa.py:_gripper_command",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.rotate_pitch",
+      "target": "class:src/pyrualean/robocasa.py:Pitch",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.rotate_pitch",
+      "target": "function:src/pyrualean/robocasa.py:_tuple3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.set_gripper",
+      "target": "function:src/pyrualean/robocasa.py:_gripper_command",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.set_gripper",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot._gripper",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.release",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot._gripper",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.scripted_grasp",
+      "target": "function:src/pyrualean/robocasa.py:_floats",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.navigate_to",
+      "target": "function:src/pyrualean/robocasa.py:_floats",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.navigate_to",
+      "target": "function:src/pyrualean/robocasa.py:_gripper",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.navigate_to",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot._navigation",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.move_base",
+      "target": "function:src/pyrualean/robocasa.py:_gripper",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.move_base",
+      "target": "class:src/pyrualean/robocasa.py:BaseMove",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot.move_base",
+      "target": "function:src/pyrualean/robocasa.py:_tuple3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot._skill",
+      "target": "class:src/pyrualean/robocasa.py:Skill",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot._move",
+      "target": "function:src/pyrualean/robocasa.py:_tuple3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot._move",
+      "target": "class:src/pyrualean/robocasa.py:Move",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot._gripper",
+      "target": "function:src/pyrualean/robocasa.py:_tuple_n",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot._gripper",
+      "target": "class:src/pyrualean/robocasa.py:Gripper",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot._grasp",
+      "target": "function:src/pyrualean/robocasa.py:_tuple_n",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot._grasp",
+      "target": "class:src/pyrualean/robocasa.py:Grasp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot._grasp",
+      "target": "function:src/pyrualean/robocasa.py:_tuple3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot._navigation",
+      "target": "function:src/pyrualean/robocasa.py:_tuple_n",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot._navigation",
+      "target": "class:src/pyrualean/robocasa.py:Navigation",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot._navigation",
+      "target": "function:src/pyrualean/robocasa.py:_tuple3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot._state_from_envelope",
+      "target": "function:src/pyrualean/robocasa.py:_tuple3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot._state_from_envelope",
+      "target": "function:src/pyrualean/robocasa.py:_tuple_n",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot._state_from_envelope",
+      "target": "class:src/pyrualean/robocasa.py:State",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/robocasa.py:RobocasaRobot._summary_dict",
+      "target": "function:src/pyrualean/robocasa.py:RobocasaRobot.state",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "target": "class:src/pyrualean/_robot.py:RobotBase",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "file:src/pyrualean/robots.py",
+      "target": "function:src/pyrualean/robots.py:get_adapter",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robots.py",
+      "target": "function:src/pyrualean/robots.py:get_adapter",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robots.py",
+      "target": "class:src/pyrualean/robots.py:RobotAdapter",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robots.py",
+      "target": "class:src/pyrualean/robots.py:RobotAdapter",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/robots.py",
+      "target": "function:src/pyrualean/robots.py:RobotAdapter.cameras",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robots.py:RobotAdapter",
+      "target": "function:src/pyrualean/robots.py:RobotAdapter.cameras",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robots.py",
+      "target": "function:src/pyrualean/robots.py:RobotAdapter.live_success",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robots.py:RobotAdapter",
+      "target": "function:src/pyrualean/robots.py:RobotAdapter.live_success",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/robots.py",
+      "target": "function:src/pyrualean/robots.py:RobotAdapter.host_module",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/robots.py:RobotAdapter",
+      "target": "function:src/pyrualean/robots.py:RobotAdapter.host_module",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    }
+  ]
+}

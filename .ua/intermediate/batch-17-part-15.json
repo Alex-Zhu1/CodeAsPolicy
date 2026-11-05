@@ -1,0 +1,3023 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "type": "file",
+      "name": "imitate_sorting_sequence.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "观察远侧演示中物体消失的时间顺序，结合颜色、类别和高度匹配近侧物体，再按同序入篮并检查掉落后的重试。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "视觉定位",
+        "运动控制"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:P",
+      "type": "function",
+      "name": "P",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "输出带耗时和步数的执行诊断信息。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        113,
+        114
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:r3",
+      "type": "function",
+      "name": "r3",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "把数值向量舍入后转换为便于打印的列表。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        117,
+        118
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:cam_of",
+      "type": "function",
+      "name": "cam_of",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "读取指定相机的内外参数。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        122,
+        124
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:project",
+      "type": "function",
+      "name": "project",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "使用相机内外参把三维世界坐标投影为图像坐标。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        127,
+        132
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:on_plane",
+      "type": "function",
+      "name": "on_plane",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "将像素中心对应射线投影到指定高度平面。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        135,
+        140
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:box_mask",
+      "type": "function",
+      "name": "box_mask",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "把世界区域在多个高度的投影组成图像掩码。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        143,
+        151
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:nonwood",
+      "type": "function",
+      "name": "nonwood",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "通过 Lab 颜色与局部中值背景差异提取非木质桌面的物体像素。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        154,
+        164
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:lab_hist",
+      "type": "function",
+      "name": "lab_hist",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "计算物体掩码内归一化的 Lab 颜色直方图。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        167,
+        173
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:bhat",
+      "type": "function",
+      "name": "bhat",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "用 Bhattacharyya 系数计算两个颜色分布的差异。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        176,
+        177
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:mv",
+      "type": "function",
+      "name": "mv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "执行指定机械臂的笛卡尔运动并返回控制反馈。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        181,
+        191
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:mv_far",
+      "type": "function",
+      "name": "mv_far",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "把超过平面移动限长的动作切成较短的连续段。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        194,
+        204
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:rise",
+      "type": "function",
+      "name": "rise",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "在归位前先垂直抬高，避免关节摆动扫到桌面物体。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        207,
+        219
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:go_home",
+      "type": "function",
+      "name": "go_home",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "打开或归位机械臂，并通过有限次重试完成收尾。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        222,
+        234
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:wrist",
+      "type": "function",
+      "name": "wrist",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "返回指定机械臂对应的腕相机名称。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        237,
+        238
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:r_of",
+      "type": "function",
+      "name": "r_of",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "计算目标平面位置到指定机械臂基座的距离。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        241,
+        243
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:zmax",
+      "type": "function",
+      "name": "zmax",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "根据径向工作空间估算垂直抓取可达到的最高工具位置。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        246,
+        253
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:reaches",
+      "type": "function",
+      "name": "reaches",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "判断目标高度是否低于当前位置的垂直可达上限。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        256,
+        257
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:left_reaches",
+      "type": "function",
+      "name": "left_reaches",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "按高位或低位要求检查左臂能否到达目标。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        260,
+        261
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:table_area",
+      "type": "function",
+      "name": "table_area",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "把掩码像素投影到水平面估计物体实际面积。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        284,
+        293
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:step0_sam",
+      "type": "function",
+      "name": "step0_sam",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "在演示开始前用所有类别提示扫描三相机，保存近侧与远侧实例的初始证据。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        299,
+        328
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_labels",
+      "type": "function",
+      "name": "far_labels",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "把初始分类命中归属到各远侧物体并聚合类别得分。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        331,
+        358
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:spread_points",
+      "type": "function",
+      "name": "spread_points",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "先按网格稀疏化，再以最远点策略选择分散的掩码像素。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        365,
+        383
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:top_z",
+      "type": "function",
+      "name": "top_z",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "用多个高度样本中的稳健高位统计估计物体顶部，降低离群点影响。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        386,
+        391
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_heights_step0",
+      "type": "function",
+      "name": "far_heights_step0",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "在动作开始前采样远侧非木质像素的反投影高度，并排除不合理桌面高度。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        394,
+        415
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_height",
+      "type": "function",
+      "name": "far_height",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "仅采用物体自身掩码内且不属于邻居的样本估计远侧高度。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        421,
+        432
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:near_height",
+      "type": "function",
+      "name": "near_height",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "偏重掩码上半部采样反投影，稳健估计近侧物体顶部。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        435,
+        458
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:first_match_end",
+      "type": "function",
+      "name": "first_match_end",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "计算远侧每个像素持续接近最终图像或木桌颜色的首次时间。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        465,
+        502
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:retime",
+      "type": "function",
+      "name": "retime",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "当像素先变为木桌色再匹配终图时，修正物体实际被拿走的时间。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        508,
+        530
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:watch_demo",
+      "type": "function",
+      "name": "watch_demo",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "连续观察远侧演示并累计图像变化时间图，推断物体移除顺序。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        533,
+        583
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:time_modes",
+      "type": "function",
+      "name": "time_modes",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "将像素移除时间聚成连续时间簇，合并短空隙。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        586,
+        606
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_objects_peaks",
+      "type": "function",
+      "name": "far_objects_peaks",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "从变化像素的移除时间强峰识别五次演示取物事件。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        609,
+        670
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_objects",
+      "type": "function",
+      "name": "far_objects",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "优先按时间峰值重建演示物体，数量不符时回退连通域分解。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        673,
+        689
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_objects_blobs",
+      "type": "function",
+      "name": "far_objects_blobs",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "以图像变化连通域和移除时间拆分相邻物体并合并碎片。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        692,
+        767
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:sam_hits",
+      "type": "function",
+      "name": "sam_hits",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "对头部图像执行逐类别分割，只保留近侧桌面上的命中。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        771,
+        795
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:grabcut_mask",
+      "type": "function",
+      "name": "grabcut_mask",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "在给定边框邻域执行 GrabCut，提取更精确的物体前景。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        798,
+        816
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:colour_components",
+      "type": "function",
+      "name": "colour_components",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "清理非木质前景掩码，合并位置邻近且总尺寸合理的物体碎片。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        819,
+        857
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:iou",
+      "type": "function",
+      "name": "iou",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "计算两个轴对齐边界框的交并比。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        860,
+        865
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:split_box",
+      "type": "function",
+      "name": "split_box",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "把宽松分割框中的非木像素分成目标邻域与可能属于另一物体的区域。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        868,
+        900
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:near_objects",
+      "type": "function",
+      "name": "near_objects",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "融合颜色区域和类别分割构造近侧待排序物体及匹配特征。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        903,
+        959
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:norm_yaw",
+      "type": "function",
+      "name": "norm_yaw",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "把夹爪偏航归一到等价半周区间。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        963,
+        968
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:opening",
+      "type": "function",
+      "name": "opening",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "读取指定机械臂的当前夹爪开度。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        971,
+        972
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:wrist_estimate",
+      "type": "function",
+      "name": "wrist_estimate",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "在抓取上方用腕相机重新测量预期位置附近物体。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        975,
+        1003
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:hover_z",
+      "type": "function",
+      "name": "hover_z",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "在默认悬停高度与当前机械臂可达高度之间选择安全目标。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1006,
+        1008
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:unpark",
+      "type": "function",
+      "name": "unpark",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "从高位观察停靠姿态移到基座附近的垂直就绪姿态。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1011,
+        1016
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:wall_offset",
+      "type": "function",
+      "name": "wall_offset",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "将篮筐外物体的抓点略向外移动，给靠墙的张开手指留出净空。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1019,
+        1038
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:pick",
+      "type": "function",
+      "name": "pick",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "结合腕部重定位、物体高度和篮壁净空执行抓取，失败后避免重复盲抓。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1041,
+        1121
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:carry_to",
+      "type": "function",
+      "name": "carry_to",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "保持当前夹持方向，在可达高度把物体搬到指定平面位置。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1124,
+        1131
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:lift",
+      "type": "function",
+      "name": "lift",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "优先垂直抬升，远端不可达时边向基座靠近边升高。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1134,
+        1144
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:choose_slot",
+      "type": "function",
+      "name": "choose_slot",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "按物体类别和占用情况选择篮内位置，并补偿手机资产原点位于端部的差异。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1150,
+        1161
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:place_basket",
+      "type": "function",
+      "name": "place_basket",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "选择篮内槽位后由左臂搬运下降并释放物体。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1164,
+        1178
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:hand_spot",
+      "type": "function",
+      "name": "hand_spot",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "在双臂共同可达区域内选择离物体最远且靠近中心的中转点。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1181,
+        1191
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:handover",
+      "type": "function",
+      "name": "handover",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "右臂抓取后放到净空中转点，再交由左臂送入篮筐。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1194,
+        1211
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:wrap180",
+      "type": "function",
+      "name": "wrap180",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "把角度归一到以零为中心的一个完整圆周区间。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1226,
+        1227
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:park_left_high",
+      "type": "function",
+      "name": "park_left_high",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "将左臂抬至高位避让，给右臂跨侧放置留空间。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1230,
+        1235
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:seg_line",
+      "type": "function",
+      "name": "seg_line",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "将长直线运动分成平面长度有限的多段，并在首段达到要求姿态。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1238,
+        1254
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:cross_place",
+      "type": "function",
+      "name": "cross_place",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "右臂直接抓取并倾斜跨侧搬运，释放到目标篮筐右半部。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1257,
+        1318
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:still_there",
+      "type": "function",
+      "name": "still_there",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "检查记录位置处的物体是否仍存在，避免对已移动目标执行旧动作。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1321,
+        1331
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:refind",
+      "type": "function",
+      "name": "refind",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "在掉落后用原有类别提示重新定位目标。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1334,
+        1355
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:park_both",
+      "type": "function",
+      "name": "park_both",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "把双臂移出头部相机主要视野。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1361,
+        1370
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:find_lost",
+      "type": "function",
+      "name": "find_lost",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "清空视野后结合目标提示和新前景区域搜索滑落物体，包括篮筐附近。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1373,
+        1446
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:do_object",
+      "type": "function",
+      "name": "do_object",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "封装单个物体的抓取、直达或中转放置和掉落重试流程。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1449,
+        1520
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:repair",
+      "type": "function",
+      "name": "repair",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "最终归位仍未结束时重新查找篮外物体，保持演示顺序逐一补放。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1523,
+        1562
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:run",
+      "type": "function",
+      "name": "run",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "summary": "采集演示初始证据和移除顺序，匹配近远物体并依序执行入篮及终局修复。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1566,
+        1660
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:P",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:P",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:r3",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:r3",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:cam_of",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:cam_of",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:project",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:on_plane",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:on_plane",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:box_mask",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:box_mask",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:nonwood",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:nonwood",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:lab_hist",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:lab_hist",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:bhat",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:bhat",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:mv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:mv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:mv_far",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:mv_far",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:rise",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:rise",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:go_home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:go_home",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:wrist",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:wrist",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:r_of",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:r_of",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:zmax",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:zmax",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:reaches",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:reaches",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:left_reaches",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:left_reaches",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:table_area",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:table_area",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:step0_sam",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:step0_sam",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_labels",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_labels",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:spread_points",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:spread_points",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:top_z",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:top_z",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_heights_step0",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_heights_step0",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_height",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_height",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:near_height",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:near_height",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:first_match_end",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:first_match_end",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:retime",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:retime",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:watch_demo",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:watch_demo",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:time_modes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:time_modes",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_objects_peaks",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_objects_peaks",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_objects",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_objects",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_objects_blobs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_objects_blobs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:sam_hits",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:sam_hits",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:grabcut_mask",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:grabcut_mask",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:colour_components",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:colour_components",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:iou",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:iou",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:split_box",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:split_box",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:near_objects",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:near_objects",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:norm_yaw",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:norm_yaw",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:opening",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:opening",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:wrist_estimate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:wrist_estimate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:hover_z",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:hover_z",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:unpark",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:unpark",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:wall_offset",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:wall_offset",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:pick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:pick",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:carry_to",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:carry_to",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:lift",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:lift",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:choose_slot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:choose_slot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:place_basket",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:place_basket",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:hand_spot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:hand_spot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:handover",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:handover",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:wrap180",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:wrap180",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:park_left_high",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:park_left_high",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:seg_line",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:seg_line",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:cross_place",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:cross_place",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:still_there",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:still_there",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:refind",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:refind",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:park_both",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:park_both",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:find_lost",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:find_lost",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:do_object",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:do_object",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:repair",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:repair",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:run",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:run",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:box_mask",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:mv_far",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:rise",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:go_home",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:rise",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:go_home",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:zmax",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:r_of",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:reaches",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:zmax",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:left_reaches",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:reaches",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:table_area",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:step0_sam",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:cam_of",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:step0_sam",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:step0_sam",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:step0_sam",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_labels",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_heights_step0",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:nonwood",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_heights_step0",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_heights_step0",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:spread_points",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_heights_step0",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_height",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:top_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:near_height",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:spread_points",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:retime",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:retime",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:watch_demo",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:watch_demo",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_objects_peaks",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:nonwood",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_objects_peaks",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_objects",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_objects_peaks",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_objects",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_objects_blobs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_objects",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_objects",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_objects_blobs",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:nonwood",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_objects_blobs",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_objects_blobs",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:time_modes",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_objects_blobs",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:sam_hits",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:grabcut_mask",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:near_objects",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:nonwood",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:near_objects",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:sam_hits",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:near_objects",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:near_objects",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:iou",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:near_objects",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:split_box",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:near_objects",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:grabcut_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:near_objects",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:colour_components",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:near_objects",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:near_objects",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:wrist_estimate",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:wrist",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:wrist_estimate",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:wrist_estimate",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:hover_z",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:zmax",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:unpark",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:unpark",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:norm_yaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:hover_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:mv_far",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:wrist_estimate",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:zmax",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:wall_offset",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:lift",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:opening",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:carry_to",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:zmax",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:carry_to",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:mv_far",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:carry_to",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:carry_to",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:lift",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:zmax",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:lift",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:lift",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:lift",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:place_basket",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:choose_slot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:place_basket",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:carry_to",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:place_basket",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:opening",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:place_basket",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:place_basket",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:place_basket",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:hand_spot",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:r_of",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:pick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:hand_spot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:zmax",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:carry_to",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:reaches",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:go_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:park_left_high",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:seg_line",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:opening",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:cross_place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:park_left_high",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:cross_place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:pick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:cross_place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:cross_place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:opening",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:cross_place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:cross_place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:seg_line",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:cross_place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:cross_place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:reaches",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:cross_place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:mv_far",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:cross_place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:still_there",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:refind",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:refind",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:refind",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:park_both",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:park_both",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:go_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:find_lost",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:park_both",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:find_lost",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:nonwood",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:find_lost",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:lab_hist",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:find_lost",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:bhat",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:find_lost",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:find_lost",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:find_lost",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:do_object",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:do_object",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:do_object",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:zmax",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:do_object",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:cross_place",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:do_object",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:go_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:do_object",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:still_there",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:do_object",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:find_lost",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:do_object",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:refind",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:do_object",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:handover",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:do_object",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:pick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:do_object",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:place_basket",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:find_lost",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:still_there",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:do_object",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:go_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:step0_sam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_heights_step0",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:watch_demo",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:first_match_end",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:retime",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_objects",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_labels",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:near_objects",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:nonwood",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:lab_hist",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:table_area",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:far_height",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:near_height",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:bhat",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:do_object",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:go_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/imitate_sorting_sequence.py:repair",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

@@ -1,0 +1,1654 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "type": "file",
+      "name": "pour_liquid_into_cup.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "实现离线 RoboDojo 任务程序：识别瓶子和杯口，以侧抓和分阶段滚转控制瓶口低位倾倒，随后恢复直立并放回。通过执行环境注入的 robo 接口完成任务，不在评测时调用规划模型。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:rx",
+      "type": "function",
+      "name": "rx",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "构造绕 X 轴的旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        39,
+        41
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:ry",
+      "type": "function",
+      "name": "ry",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "构造绕 Y 轴的旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        44,
+        46
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:rz",
+      "type": "function",
+      "name": "rz",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "构造绕 Z 轴的旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        49,
+        51
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:axang",
+      "type": "function",
+      "name": "axang",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "按轴角表示构造三维旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        54,
+        59
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:homog",
+      "type": "function",
+      "name": "homog",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "将旋转和平移组合成齐次变换矩阵。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        62,
+        66
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:frames",
+      "type": "function",
+      "name": "frames",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "沿机械臂关节链累计各连杆的空间变换。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        74,
+        80
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:orient",
+      "type": "function",
+      "name": "orient",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "将俯仰、偏航和滚转组合成夹爪目标姿态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        83,
+        84
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:rotvec",
+      "type": "function",
+      "name": "rotvec",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "将旋转矩阵转换为轴角误差向量。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        87,
+        98
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:rot_err",
+      "type": "function",
+      "name": "rot_err",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "计算两个旋转之间的夹角误差。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        101,
+        103
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:collides",
+      "type": "function",
+      "name": "collides",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "检查机械臂连杆或工具点是否进入桌面碰撞区域。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        106,
+        113
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:ik_solve",
+      "type": "function",
+      "name": "ik_solve",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "采用阻尼最小二乘迭代求解目标位姿的逆运动学。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        116,
+        141
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:ik_best",
+      "type": "function",
+      "name": "ik_best",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "尝试多个关节种子并选择可行或误差最小的逆运动学解。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        144,
+        163
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:line_ok",
+      "type": "function",
+      "name": "line_ok",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "沿笛卡尔直线路径逐段求逆解以检查整条轨迹可行性。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        166,
+        183
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:pose",
+      "type": "function",
+      "name": "pose",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "组合目标位置与夹爪角度为目标变换矩阵。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        186,
+        187
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:reach",
+      "type": "function",
+      "name": "reach",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "按运动学规划估计抵达目标后的关节状态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        190,
+        201
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:joints",
+      "type": "function",
+      "name": "joints",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "读取机械臂当前关节角向量。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        205,
+        206
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:r3",
+      "type": "function",
+      "name": "r3",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "格式化向量或测量数据以便打印诊断信息。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        213,
+        214
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:mv",
+      "type": "function",
+      "name": "mv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "调用机器人位姿运动接口并处理本任务的运动结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        217,
+        228
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:grip",
+      "type": "function",
+      "name": "grip",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "发送夹爪开合命令并记录执行步数或状态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        231,
+        237
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:wait",
+      "type": "function",
+      "name": "wait",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "保持夹持并通过重复动作等待物体或液体稳定。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        240,
+        243
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:home",
+      "type": "function",
+      "name": "home",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "将指定机械臂返回起始姿态并处理返回结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        246,
+        254
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:cam",
+      "type": "function",
+      "name": "cam",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "读取相机标定并转为数值矩阵供投影计算。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        258,
+        260
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:proj",
+      "type": "function",
+      "name": "proj",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "把世界坐标点投影到标定相机图像平面。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        263,
+        268
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:ray",
+      "type": "function",
+      "name": "ray",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "用相机内外参将图像像素转换为世界坐标射线。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        271,
+        274
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:at_z",
+      "type": "function",
+      "name": "at_z",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "将像素视线与给定高度平面相交以恢复世界坐标。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        277,
+        280
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:box_rc",
+      "type": "function",
+      "name": "box_rc",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "规范分割包围盒的行列格式并检查质心一致性。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        283,
+        297
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:_ring",
+      "type": "function",
+      "name": "_ring",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "生成圆柱或瓶体模型的离散三维环形采样点。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        300,
+        303
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:model_boxes",
+      "type": "function",
+      "name": "model_boxes",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "投影候选几何模型并计算各自的图像包围盒。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        309,
+        314
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:fit_xy",
+      "type": "function",
+      "name": "fit_xy",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "搜索使已知物体投影包围盒贴合观测的位置。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        317,
+        331
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:fit_bottle",
+      "type": "function",
+      "name": "fit_bottle",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "利用瓶体模型与相机包围盒拟合桌面位置。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        334,
+        345
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:try_locate",
+      "type": "function",
+      "name": "try_locate",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "调用目标定位并把感知异常转为未检测结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        349,
+        354
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:best_locate",
+      "type": "function",
+      "name": "best_locate",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "尝试多个提示词并选择符合几何约束的目标定位。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        357,
+        368
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:show_sight",
+      "type": "function",
+      "name": "show_sight",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "打印目标检测质量与几何估计供诊断。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        371,
+        377
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:bottle_ok",
+      "type": "function",
+      "name": "bottle_ok",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "检查容器估计位置是否位于该任务允许区域。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        384,
+        385
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:cup_ok",
+      "type": "function",
+      "name": "cup_ok",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "检查容器估计位置是否位于该任务允许区域。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        388,
+        389
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:bottle_like",
+      "type": "function",
+      "name": "bottle_like",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "结合多视角、位置和尺寸检查检测是否符合瓶体特征。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        392,
+        396
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "识别瓶子和杯口，以侧抓和分阶段滚转控制瓶口低位倾倒，随后恢复直立并放回。统筹观察、运动和任务检查。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "complex",
+      "lineRange": [
+        399,
+        672
+      ]
+    },
+    {
+      "id": "class:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:Ended",
+      "type": "class",
+      "name": "Ended",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "以专用异常中断已结束或预算耗尽的离线任务程序。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        209,
+        210
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:main.try_grasp",
+      "type": "function",
+      "name": "main.try_grasp",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "尝试多组偏航与抓取高度，检查下降到达误差并在受阻时撤回。",
+      "tags": [
+        "离线策略",
+        "局部规划",
+        "机器人控制"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        512,
+        526
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:main.try_one",
+      "type": "function",
+      "name": "main.try_one",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "检查单个瓶体抓取候选的悬停与下降是否可达，失败时抬升退出。",
+      "tags": [
+        "离线策略",
+        "局部规划",
+        "机器人控制"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        548,
+        560
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:main.run",
+      "type": "function",
+      "name": "main.run",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "summary": "逐阶段执行倾倒轨迹，在目标不可达时调整滚转与瓶口高度，并按阶段等待排液。",
+      "tags": [
+        "离线策略",
+        "局部规划",
+        "机器人控制"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        635,
+        645
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:rx",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:rx",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:ry",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:ry",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:rz",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:rz",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:axang",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:axang",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:homog",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:homog",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:frames",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:frames",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:orient",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:orient",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:rotvec",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:rotvec",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:rot_err",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:rot_err",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:collides",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:collides",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:ik_solve",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:ik_solve",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:ik_best",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:ik_best",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:line_ok",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:line_ok",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:pose",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:pose",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:reach",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:reach",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:joints",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:joints",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:r3",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:r3",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:mv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:mv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:grip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:grip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:wait",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:wait",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:home",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:cam",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:cam",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:proj",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:proj",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:ray",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:ray",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:at_z",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:at_z",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:box_rc",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:box_rc",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:_ring",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:_ring",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:model_boxes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:model_boxes",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:fit_xy",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:fit_xy",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:fit_bottle",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:fit_bottle",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:try_locate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:try_locate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:best_locate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:best_locate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:show_sight",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:show_sight",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:bottle_ok",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:bottle_ok",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:cup_ok",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:cup_ok",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:bottle_like",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:bottle_like",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:Ended",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:Ended",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:frames",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:homog",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:frames",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:axang",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:orient",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:rz",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:orient",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:ry",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:orient",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:rx",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:collides",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:frames",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:ik_solve",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:frames",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:ik_solve",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:rotvec",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:ik_solve",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:rot_err",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:ik_solve",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:collides",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:ik_best",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:ik_solve",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:line_ok",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:frames",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:line_ok",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:rot_err",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:line_ok",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:rotvec",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:line_ok",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:axang",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:line_ok",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:homog",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:line_ok",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:ik_solve",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:pose",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:homog",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:pose",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:orient",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:reach",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:pose",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:reach",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:ik_best",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:reach",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:line_ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:reach",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:homog",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:reach",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:frames",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:wait",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:at_z",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:ray",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:model_boxes",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:proj",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:fit_xy",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:model_boxes",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:fit_bottle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:at_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:fit_bottle",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:fit_xy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:best_locate",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:try_locate",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:best_locate",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:show_sight",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:bottle_like",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:bottle_ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:best_locate",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:show_sight",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:box_rc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:fit_bottle",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:try_locate",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:cup_ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:proj",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:bottle_like",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:joints",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:reach",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:line_ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:pose",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:main.try_grasp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:main.try_grasp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:main.try_one",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:main.try_one",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:main.run",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/pour_liquid_into_cup.py:main.run",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    }
+  ]
+}

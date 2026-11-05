@@ -1,0 +1,1932 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "type": "file",
+      "name": "rpent_robocasa.py",
+      "filePath": "src/pyrualean/hosts/rpent_robocasa.py",
+      "summary": "启动 RoboCasa365 的 RPent 服务栈，导出初始任务卡并执行单回合策略，保存原生产物与统一结果。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "回合执行"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robocasa.py:add_cell_args",
+      "type": "function",
+      "name": "add_cell_args",
+      "filePath": "src/pyrualean/hosts/rpent_robocasa.py",
+      "lineRange": [
+        86,
+        101
+      ],
+      "summary": "注册RoboCasa365任务单元的标识、配置与随机种子参数。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robocasa.py:add_boot_args",
+      "type": "function",
+      "name": "add_boot_args",
+      "filePath": "src/pyrualean/hosts/rpent_robocasa.py",
+      "lineRange": [
+        104,
+        129
+      ],
+      "summary": "注册RoboCasa365宿主服务启动和已有服务连接参数。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robocasa.py:cell_from_args",
+      "type": "function",
+      "name": "cell_from_args",
+      "filePath": "src/pyrualean/hosts/rpent_robocasa.py",
+      "lineRange": [
+        132,
+        139
+      ],
+      "summary": "将命令行参数规范化为RoboCasa365任务单元。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robocasa.py:boot_options",
+      "type": "function",
+      "name": "boot_options",
+      "filePath": "src/pyrualean/hosts/rpent_robocasa.py",
+      "lineRange": [
+        142,
+        149
+      ],
+      "summary": "从命令行提取RoboCasa365启动选项和服务端点。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robocasa.py:memory_root",
+      "type": "function",
+      "name": "memory_root",
+      "filePath": "src/pyrualean/hosts/rpent_robocasa.py",
+      "lineRange": [
+        152,
+        171
+      ],
+      "summary": "选择显式指定或仓库内的空记忆目录，必要时在运行目录创建独立空语料。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robocasa.py:boot",
+      "type": "function",
+      "name": "boot",
+      "filePath": "src/pyrualean/hosts/rpent_robocasa.py",
+      "lineRange": [
+        174,
+        269
+      ],
+      "summary": "启动或连接RoboCasa365仿真与模型服务，创建 RPent 工具包并返回待清理的后台进程。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robocasa.py:_floats",
+      "type": "function",
+      "name": "_floats",
+      "filePath": "src/pyrualean/hosts/rpent_robocasa.py",
+      "lineRange": [
+        272,
+        277
+      ],
+      "summary": "将输入规范为固定长度浮点向量，无法解析时使用零向量。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robocasa.py:_fmt",
+      "type": "function",
+      "name": "_fmt",
+      "filePath": "src/pyrualean/hosts/rpent_robocasa.py",
+      "lineRange": [
+        280,
+        281
+      ],
+      "summary": "将数值向量格式化为三位小数的紧凑文本。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robocasa.py:_yaw",
+      "type": "function",
+      "name": "_yaw",
+      "filePath": "src/pyrualean/hosts/rpent_robocasa.py",
+      "lineRange": [
+        284,
+        286
+      ],
+      "summary": "从 xyzw 四元数计算机器人基座偏航角。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robocasa.py:dump_card",
+      "type": "function",
+      "name": "dump_card",
+      "filePath": "src/pyrualean/hosts/rpent_robocasa.py",
+      "lineRange": [
+        289,
+        344
+      ],
+      "summary": "保存RoboCasa365初始图像及任务卡，仅提供规划者允许观察的初始状态。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robocasa.py:_sha256_text",
+      "type": "function",
+      "name": "_sha256_text",
+      "filePath": "src/pyrualean/hosts/rpent_robocasa.py",
+      "lineRange": [
+        347,
+        348
+      ],
+      "summary": "计算文本的 SHA-256 摘要，用于记录策略版本。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robocasa.py:run_episode",
+      "type": "function",
+      "name": "run_episode",
+      "filePath": "src/pyrualean/hosts/rpent_robocasa.py",
+      "lineRange": [
+        351,
+        471
+      ],
+      "summary": "为单个RoboCasa365任务启动宿主并执行策略，保存统一 result.json 后清理服务。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robocasa.py:_install_sigterm",
+      "type": "function",
+      "name": "_install_sigterm",
+      "filePath": "src/pyrualean/hosts/rpent_robocasa.py",
+      "lineRange": [
+        474,
+        479
+      ],
+      "summary": "安装终止信号处理器，使宿主可以清理当前回合。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robocasa.py:card_only",
+      "type": "function",
+      "name": "card_only",
+      "filePath": "src/pyrualean/hosts/rpent_robocasa.py",
+      "lineRange": [
+        482,
+        496
+      ],
+      "summary": "仅启动RoboCasa365仿真以导出任务卡，完成后停止服务。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robocasa.py:_add_cell_args",
+      "type": "function",
+      "name": "_add_cell_args",
+      "filePath": "src/pyrualean/hosts/rpent_robocasa.py",
+      "lineRange": [
+        499,
+        505
+      ],
+      "summary": "为宿主命令补充输出目录、设备、步数和 RPent 路径等参数。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robocasa.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "src/pyrualean/hosts/rpent_robocasa.py",
+      "lineRange": [
+        508,
+        553
+      ],
+      "summary": "提供RoboCasa365宿主命令行，在任务卡导出与策略执行之间分发。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/pyrualean/hosts/rpent_robocasa.py:Cell",
+      "type": "class",
+      "name": "Cell",
+      "filePath": "src/pyrualean/hosts/rpent_robocasa.py",
+      "lineRange": [
+        67,
+        83
+      ],
+      "summary": "描述一个RoboCasa365评估任务的配置、种子与执行预算。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robocasa.py:Cell.tag",
+      "type": "function",
+      "name": "Cell.tag",
+      "filePath": "src/pyrualean/hosts/rpent_robocasa.py",
+      "lineRange": [
+        82,
+        83
+      ],
+      "summary": "根据任务、配置和种子生成输出目录标识。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "type": "file",
+      "name": "rpent_robodojo.py",
+      "filePath": "src/pyrualean/hosts/rpent_robodojo.py",
+      "summary": "启动 RoboDojo 的 RPent 服务栈，导出初始任务卡并执行单回合策略，保存原生产物与统一结果。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "回合执行"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robodojo.py:add_cell_args",
+      "type": "function",
+      "name": "add_cell_args",
+      "filePath": "src/pyrualean/hosts/rpent_robodojo.py",
+      "lineRange": [
+        111,
+        120
+      ],
+      "summary": "注册RoboDojo任务单元的标识、配置与随机种子参数。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robodojo.py:add_boot_args",
+      "type": "function",
+      "name": "add_boot_args",
+      "filePath": "src/pyrualean/hosts/rpent_robodojo.py",
+      "lineRange": [
+        123,
+        171
+      ],
+      "summary": "注册RoboDojo宿主服务启动和已有服务连接参数。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robodojo.py:cell_from_args",
+      "type": "function",
+      "name": "cell_from_args",
+      "filePath": "src/pyrualean/hosts/rpent_robodojo.py",
+      "lineRange": [
+        174,
+        181
+      ],
+      "summary": "将命令行参数规范化为RoboDojo任务单元。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robodojo.py:_connect_reset_default",
+      "type": "function",
+      "name": "_connect_reset_default",
+      "filePath": "src/pyrualean/hosts/rpent_robodojo.py",
+      "lineRange": [
+        184,
+        185
+      ],
+      "summary": "读取 RoboDojo 连接时是否再次复位的环境开关。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robodojo.py:_connect_without_reset",
+      "type": "function",
+      "name": "_connect_without_reset",
+      "filePath": "src/pyrualean/hosts/rpent_robodojo.py",
+      "lineRange": [
+        189,
+        218
+      ],
+      "summary": "临时调整 RPent 客户端连接行为，避免场景已复位后对关节物体再次复位造成错误。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robodojo.py:_support_arm_default",
+      "type": "function",
+      "name": "_support_arm_default",
+      "filePath": "src/pyrualean/hosts/rpent_robodojo.py",
+      "lineRange": [
+        221,
+        222
+      ],
+      "summary": "根据环境设置决定是否启用项目提供的第三臂支持。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robodojo.py:_env_server_through_pyrualean",
+      "type": "function",
+      "name": "_env_server_through_pyrualean",
+      "filePath": "src/pyrualean/hosts/rpent_robodojo.py",
+      "lineRange": [
+        226,
+        260
+      ],
+      "summary": "在启动期间将 RPent 环境服务器命令包装到本项目入口，以安装基准第三臂行为。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robodojo.py:boot_options",
+      "type": "function",
+      "name": "boot_options",
+      "filePath": "src/pyrualean/hosts/rpent_robodojo.py",
+      "lineRange": [
+        263,
+        275
+      ],
+      "summary": "从命令行提取RoboDojo启动选项和服务端点。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robodojo.py:_status",
+      "type": "function",
+      "name": "_status",
+      "filePath": "src/pyrualean/hosts/rpent_robodojo.py",
+      "lineRange": [
+        278,
+        285
+      ],
+      "summary": "尝试读取环境服务器的当前步数与上限，无法读取时返回空对象。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robodojo.py:make_backend",
+      "type": "function",
+      "name": "make_backend",
+      "filePath": "src/pyrualean/hosts/rpent_robodojo.py",
+      "lineRange": [
+        305,
+        308
+      ],
+      "summary": "为已启动的RoboDojo工具包创建包含专用步数语义的后端适配器。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robodojo.py:boot",
+      "type": "function",
+      "name": "boot",
+      "filePath": "src/pyrualean/hosts/rpent_robodojo.py",
+      "lineRange": [
+        316,
+        415
+      ],
+      "summary": "启动或连接RoboDojo仿真与模型服务，创建 RPent 工具包并返回待清理的后台进程。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robodojo.py:_fmt",
+      "type": "function",
+      "name": "_fmt",
+      "filePath": "src/pyrualean/hosts/rpent_robodojo.py",
+      "lineRange": [
+        418,
+        419
+      ],
+      "summary": "将数值向量格式化为三位小数的紧凑文本。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robodojo.py:_opening",
+      "type": "function",
+      "name": "_opening",
+      "filePath": "src/pyrualean/hosts/rpent_robodojo.py",
+      "lineRange": [
+        422,
+        434
+      ],
+      "summary": "从单值列表或数组中解析夹爪开合量。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robodojo.py:dump_card",
+      "type": "function",
+      "name": "dump_card",
+      "filePath": "src/pyrualean/hosts/rpent_robodojo.py",
+      "lineRange": [
+        437,
+        490
+      ],
+      "summary": "保存RoboDojo初始图像及任务卡，仅提供规划者允许观察的初始状态。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robodojo.py:_sha256_text",
+      "type": "function",
+      "name": "_sha256_text",
+      "filePath": "src/pyrualean/hosts/rpent_robodojo.py",
+      "lineRange": [
+        493,
+        494
+      ],
+      "summary": "计算文本的 SHA-256 摘要，用于记录策略版本。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robodojo.py:run_episode",
+      "type": "function",
+      "name": "run_episode",
+      "filePath": "src/pyrualean/hosts/rpent_robodojo.py",
+      "lineRange": [
+        497,
+        620
+      ],
+      "summary": "为单个RoboDojo任务启动宿主并执行策略，保存统一 result.json 后清理服务。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robodojo.py:_install_sigterm",
+      "type": "function",
+      "name": "_install_sigterm",
+      "filePath": "src/pyrualean/hosts/rpent_robodojo.py",
+      "lineRange": [
+        623,
+        628
+      ],
+      "summary": "安装终止信号处理器，使宿主可以清理当前回合。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robodojo.py:card_only",
+      "type": "function",
+      "name": "card_only",
+      "filePath": "src/pyrualean/hosts/rpent_robodojo.py",
+      "lineRange": [
+        631,
+        646
+      ],
+      "summary": "仅启动RoboDojo仿真以导出任务卡，完成后停止服务。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robodojo.py:_add_cell_args",
+      "type": "function",
+      "name": "_add_cell_args",
+      "filePath": "src/pyrualean/hosts/rpent_robodojo.py",
+      "lineRange": [
+        649,
+        655
+      ],
+      "summary": "为宿主命令补充输出目录、设备、步数和 RPent 路径等参数。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robodojo.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "src/pyrualean/hosts/rpent_robodojo.py",
+      "lineRange": [
+        658,
+        703
+      ],
+      "summary": "提供RoboDojo宿主命令行，在任务卡导出与策略执行之间分发。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/pyrualean/hosts/rpent_robodojo.py:Cell",
+      "type": "class",
+      "name": "Cell",
+      "filePath": "src/pyrualean/hosts/rpent_robodojo.py",
+      "lineRange": [
+        91,
+        108
+      ],
+      "summary": "描述一个RoboDojo评估任务的配置、种子与执行预算。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robodojo.py:Cell.tag",
+      "type": "function",
+      "name": "Cell.tag",
+      "filePath": "src/pyrualean/hosts/rpent_robodojo.py",
+      "lineRange": [
+        107,
+        108
+      ],
+      "summary": "根据任务、配置和种子生成输出目录标识。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "class:src/pyrualean/hosts/rpent_robodojo.py:RobodojoBackend",
+      "type": "class",
+      "name": "RobodojoBackend",
+      "filePath": "src/pyrualean/hosts/rpent_robodojo.py",
+      "lineRange": [
+        288,
+        302
+      ],
+      "summary": "适配 RoboDojo 的原生成功判据，并用仿真原生动作计数替代帧计数。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/rpent_robodojo.py:RobodojoBackend.env_steps",
+      "type": "function",
+      "name": "RobodojoBackend.env_steps",
+      "filePath": "src/pyrualean/hosts/rpent_robodojo.py",
+      "lineRange": [
+        297,
+        302
+      ],
+      "summary": "读取环境状态中的原生动作步数。",
+      "tags": [
+        "宿主适配",
+        "仿真环境",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:add_cell_args",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:add_cell_args",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:add_boot_args",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:add_boot_args",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:cell_from_args",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:cell_from_args",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:boot_options",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:boot_options",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:memory_root",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:memory_root",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:boot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:boot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:_floats",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:_floats",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:_fmt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:_fmt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:_yaw",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:_yaw",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:dump_card",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:dump_card",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:_sha256_text",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:_sha256_text",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:run_episode",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:run_episode",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:_install_sigterm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:_install_sigterm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:card_only",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:card_only",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:_add_cell_args",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:_add_cell_args",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "class:src/pyrualean/hosts/rpent_robocasa.py:Cell",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "class:src/pyrualean/hosts/rpent_robocasa.py:Cell",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:Cell.tag",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/rpent_robocasa.py:Cell",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:Cell.tag",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "file:src/pyrualean/_backend.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "file:src/pyrualean/hosts/common.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "file:src/pyrualean/prompt.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "file:src/pyrualean/robocasa.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "file:src/pyrualean/runner.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robocasa.py",
+      "target": "file:src/pyrualean/sandbox.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robocasa.py:cell_from_args",
+      "target": "class:src/pyrualean/hosts/rpent_robocasa.py:Cell",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robocasa.py:boot",
+      "target": "function:src/pyrualean/hosts/common.py:resolve_rpent_root",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robocasa.py:boot",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:memory_root",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robocasa.py:dump_card",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:_floats",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robocasa.py:dump_card",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:_yaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robocasa.py:dump_card",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:_fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robocasa.py:dump_card",
+      "target": "class:src/pyrualean/prompt.py:TaskCard",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robocasa.py:run_episode",
+      "target": "function:src/pyrualean/runner.py:policy_sha256",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robocasa.py:run_episode",
+      "target": "class:src/pyrualean/_backend.py:Ledger",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robocasa.py:run_episode",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:boot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robocasa.py:run_episode",
+      "target": "function:src/pyrualean/hosts/common.py:resolve_rpent_root",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robocasa.py:run_episode",
+      "target": "class:src/pyrualean/hosts/common.py:RpentBackend",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robocasa.py:run_episode",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:dump_card",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robocasa.py:run_episode",
+      "target": "function:src/pyrualean/prompt.py:render_prompt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robocasa.py:run_episode",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:_sha256_text",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robocasa.py:run_episode",
+      "target": "class:src/pyrualean/robocasa.py:RobocasaRobot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robocasa.py:run_episode",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:_install_sigterm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robocasa.py:run_episode",
+      "target": "function:src/pyrualean/sandbox.py:audit_source",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robocasa.py:run_episode",
+      "target": "function:src/pyrualean/runner.py:load_policy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robocasa.py:run_episode",
+      "target": "function:src/pyrualean/sandbox.py:make_builtins",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robocasa.py:run_episode",
+      "target": "function:src/pyrualean/runner.py:run_policy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robocasa.py:run_episode",
+      "target": "function:src/pyrualean/hosts/common.py:stop_all",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robocasa.py:card_only",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:boot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robocasa.py:card_only",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:dump_card",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robocasa.py:card_only",
+      "target": "function:src/pyrualean/hosts/common.py:stop_all",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robocasa.py:_add_cell_args",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:add_cell_args",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robocasa.py:_add_cell_args",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:add_boot_args",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robocasa.py:main",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:_add_cell_args",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robocasa.py:main",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:run_episode",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robocasa.py:main",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:cell_from_args",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robocasa.py:main",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:boot_options",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robocasa.py:main",
+      "target": "function:src/pyrualean/hosts/rpent_robocasa.py:card_only",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:add_cell_args",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:add_cell_args",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:add_boot_args",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:add_boot_args",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:cell_from_args",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:cell_from_args",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:_connect_reset_default",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:_connect_reset_default",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:_connect_without_reset",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:_connect_without_reset",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:_support_arm_default",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:_support_arm_default",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:_env_server_through_pyrualean",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:_env_server_through_pyrualean",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:boot_options",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:boot_options",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:_status",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:_status",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:make_backend",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:make_backend",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:boot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:boot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:_fmt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:_fmt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:_opening",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:_opening",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:dump_card",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:dump_card",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:_sha256_text",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:_sha256_text",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:run_episode",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:run_episode",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:_install_sigterm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:_install_sigterm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:card_only",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:card_only",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:_add_cell_args",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:_add_cell_args",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "class:src/pyrualean/hosts/rpent_robodojo.py:Cell",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "class:src/pyrualean/hosts/rpent_robodojo.py:Cell",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:Cell.tag",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/rpent_robodojo.py:Cell",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:Cell.tag",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "class:src/pyrualean/hosts/rpent_robodojo.py:RobodojoBackend",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "class:src/pyrualean/hosts/rpent_robodojo.py:RobodojoBackend",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:RobodojoBackend.env_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/rpent_robodojo.py:RobodojoBackend",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:RobodojoBackend.env_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "file:src/pyrualean/_backend.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "file:src/pyrualean/hosts/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "file:src/pyrualean/hosts/common.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "file:src/pyrualean/prompt.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "file:src/pyrualean/robodojo.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "file:src/pyrualean/runner.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/hosts/rpent_robodojo.py",
+      "target": "file:src/pyrualean/sandbox.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:add_boot_args",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:_connect_reset_default",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:cell_from_args",
+      "target": "class:src/pyrualean/hosts/rpent_robodojo.py:Cell",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:RobodojoBackend.env_steps",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:_status",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:make_backend",
+      "target": "class:src/pyrualean/hosts/rpent_robodojo.py:RobodojoBackend",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:boot",
+      "target": "function:src/pyrualean/hosts/common.py:resolve_rpent_root",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:boot",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:_connect_reset_default",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:boot",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:_connect_without_reset",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:boot",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:_env_server_through_pyrualean",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:boot",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:_support_arm_default",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:dump_card",
+      "target": "function:src/pyrualean/robodojo.py:_arm_state",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:dump_card",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:_fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:dump_card",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:_opening",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:dump_card",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:_status",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:dump_card",
+      "target": "class:src/pyrualean/prompt.py:TaskCard",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:run_episode",
+      "target": "function:src/pyrualean/runner.py:policy_sha256",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:run_episode",
+      "target": "class:src/pyrualean/_backend.py:Ledger",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:run_episode",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:boot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:run_episode",
+      "target": "function:src/pyrualean/hosts/common.py:resolve_rpent_root",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:run_episode",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:make_backend",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:run_episode",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:dump_card",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:run_episode",
+      "target": "function:src/pyrualean/prompt.py:render_prompt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:run_episode",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:_sha256_text",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:run_episode",
+      "target": "class:src/pyrualean/robodojo.py:RobodojoRobot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:run_episode",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:_install_sigterm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:run_episode",
+      "target": "function:src/pyrualean/sandbox.py:audit_source",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:run_episode",
+      "target": "function:src/pyrualean/runner.py:load_policy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:run_episode",
+      "target": "function:src/pyrualean/sandbox.py:make_builtins",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:run_episode",
+      "target": "function:src/pyrualean/runner.py:run_policy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:run_episode",
+      "target": "function:src/pyrualean/hosts/common.py:stop_all",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:card_only",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:boot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:card_only",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:dump_card",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:card_only",
+      "target": "function:src/pyrualean/hosts/common.py:stop_all",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:_add_cell_args",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:add_cell_args",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:_add_cell_args",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:add_boot_args",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:main",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:_add_cell_args",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:main",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:run_episode",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:main",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:cell_from_args",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:main",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:boot_options",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/rpent_robodojo.py:main",
+      "target": "function:src/pyrualean/hosts/rpent_robodojo.py:card_only",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/pyrualean/hosts/rpent_robodojo.py:RobodojoBackend",
+      "target": "class:src/pyrualean/hosts/common.py:RpentBackend",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    }
+  ]
+}

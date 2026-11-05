@@ -1,0 +1,374 @@
+{
+  "nodes": [
+    {
+      "id": "document:README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "README.md",
+      "summary": "介绍通过 Python 对象控制机器人的代码生成框架，区分在线模型执行与离线 RSI 固定程序。提供安装、机器人环境、运行入口和基准报告链接。",
+      "tags": [
+        "文档",
+        "使用指南",
+        "机器人"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:mkdocs.yml",
+      "type": "config",
+      "name": "mkdocs.yml",
+      "filePath": "mkdocs.yml",
+      "summary": "配置 Material 文档站的导航、主题、Markdown 扩展和 API 生成钩子，新增交互延迟专题并连接十个架构职责切面及演进路线。",
+      "tags": [
+        "配置",
+        "部署",
+        "构建"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:pyproject.toml",
+      "type": "config",
+      "name": "pyproject.toml",
+      "filePath": "pyproject.toml",
+      "summary": "定义 pyrualean Python 包、setuptools 构建和命令行入口，以及开发与可选工具依赖、测试和代码检查配置；包本身不声明必需运行依赖。",
+      "tags": [
+        "配置",
+        "部署",
+        "构建"
+      ],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "document:README.md",
+      "target": "file:src/pyrualean/cli.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:src/pyrualean/play.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:integrations/xpolicylab/PyRUA_Lean/model.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:integrations/xpolicylab/PyRUA_RSI/model.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:NOTICE",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "document:docs/visual-supervision.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "document:integrations/xpolicylab/evaluation/robodojo_summary_official.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "document:integrations/xpolicylab/evaluation/robodojo_summary_rsi.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "config:pyproject.toml",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "document:skills/astra-stuck-recovery/SKILL.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "document:skills/astra-valen-supervision/SKILL.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "document:docs/design/architecture.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "document:docs/design/index.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "document:docs/design/interaction-latency.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "document:docs/design/parts/capabilities-manual.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "document:docs/design/parts/code-runtime.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "document:docs/design/parts/execution-control.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "document:docs/design/parts/knowledge-skills.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "document:docs/design/parts/observation-perception.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "document:docs/design/parts/planner-context.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "document:docs/design/parts/records-evaluation.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "document:docs/design/parts/recovery-handoff.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "document:docs/design/parts/task-session.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "document:docs/design/parts/verification-evidence.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "document:docs/design/roadmap.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "document:docs/getting-started/how-it-works.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "document:docs/getting-started/quickstart.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "document:docs/guide/agents.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "document:docs/guide/cli.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "document:docs/guide/coordination.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "document:docs/guide/outputs.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "document:docs/guide/recovery.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "document:docs/guide/running.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "document:docs/guide/strategies.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "document:docs/guide/valen-evaluation.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "file:docs/hooks/api_reference.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "document:docs/index.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "document:docs/models/coder.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "document:docs/robots/adding-a-robot.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "document:docs/robots/index.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "document:docs/robots/libero.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "document:docs/robots/robocasa.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "document:docs/robots/robodojo.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "document:docs/robots/robotwin.md",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:mkdocs.yml",
+      "target": "file:docs/stylesheets/extra.css",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:pyproject.toml",
+      "target": "file:src/pyrualean/cli.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:pyproject.toml",
+      "target": "file:src/pyrualean/__init__.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

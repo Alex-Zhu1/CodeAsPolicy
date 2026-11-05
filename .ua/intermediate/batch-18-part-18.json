@@ -1,0 +1,988 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "type": "file",
+      "name": "stack_blocks_random.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "summary": "实现离线 RoboDojo 任务程序：结合多视角分割和立方体轮廓识别三个同尺寸积木，精化抓点后逐层低位释放堆叠。通过执行环境注入的 robo 接口完成任务，不在评测时调用规划模型。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:f3",
+      "type": "function",
+      "name": "f3",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "summary": "格式化向量或测量数据以便打印诊断信息。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        29,
+        30
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:say",
+      "type": "function",
+      "name": "say",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "summary": "打印任务执行进度和诊断信息。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        33,
+        34
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:zmax",
+      "type": "function",
+      "name": "zmax",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "summary": "插值机械臂可达性表估计当前位置最高可达高度。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        47,
+        58
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:arm_state",
+      "type": "function",
+      "name": "arm_state",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "summary": "读取所选机械臂的当前状态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        62,
+        64
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:mv",
+      "type": "function",
+      "name": "mv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "summary": "调用机器人位姿运动接口并处理本任务的运动结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        67,
+        72
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:grip",
+      "type": "function",
+      "name": "grip",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "summary": "发送夹爪开合命令并记录执行步数或状态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        75,
+        78
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:home_arm",
+      "type": "function",
+      "name": "home_arm",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "summary": "将指定机械臂返回起始姿态并处理返回结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        81,
+        87
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:norm90",
+      "type": "function",
+      "name": "norm90",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "summary": "按物体或夹爪的旋转对称性规范偏航角。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        90,
+        95
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:head_ke",
+      "type": "function",
+      "name": "head_ke",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "summary": "读取相机标定并转为数值矩阵供投影计算。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        99,
+        101
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:ray_plane",
+      "type": "function",
+      "name": "ray_plane",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "summary": "将像素视线与给定高度平面相交以恢复世界坐标。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        104,
+        110
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:project",
+      "type": "function",
+      "name": "project",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "summary": "把世界坐标点投影到标定相机图像平面。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        113,
+        117
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:cube_sil",
+      "type": "function",
+      "name": "cube_sil",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "summary": "投影已知尺寸立方体以估计图像包围盒与面积。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        120,
+        125
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:sweep",
+      "type": "function",
+      "name": "sweep",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "summary": "扫描头部和腕部相机以汇总套娃候选。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        133,
+        164
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:cluster",
+      "type": "function",
+      "name": "cluster",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "summary": "合并空间邻近的重复目标检测。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        167,
+        192
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:wrist_fix",
+      "type": "function",
+      "name": "wrist_fix",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "summary": "使用腕部定位结果细化积木抓取中心。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        196,
+        215
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:choose_yaw",
+      "type": "function",
+      "name": "choose_yaw",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "summary": "选择附近障碍较少的夹指闭合方向。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        219,
+        235
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:pick",
+      "type": "function",
+      "name": "pick",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "summary": "执行接近、闭合和抬升步骤，并依据本任务的视觉或夹爪反馈处理抓取结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        238,
+        313
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:place",
+      "type": "function",
+      "name": "place",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "summary": "按目标位置与抓持几何完成物体放置和释放。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        316,
+        333
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:gg_step",
+      "type": "function",
+      "name": "gg_step",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "summary": "读取当前原生控制步数。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        336,
+        340
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:step_aside",
+      "type": "function",
+      "name": "step_aside",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "summary": "保持张开夹爪侧向撤离已放置积木。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        343,
+        347
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:measure",
+      "type": "function",
+      "name": "measure",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "summary": "利用积木分割与已知尺寸估计实际平面位置。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        354,
+        383
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:run",
+      "type": "function",
+      "name": "run",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "summary": "结合多视角分割和立方体轮廓识别三个同尺寸积木，精化抓点后逐层低位释放堆叠。统筹观察、运动和任务检查。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        387,
+        462
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:f3",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:f3",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:say",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:say",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:zmax",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:zmax",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:arm_state",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:arm_state",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:mv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:mv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:grip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:grip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:home_arm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:home_arm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:norm90",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:norm90",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:head_ke",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:head_ke",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:ray_plane",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:ray_plane",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:project",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:cube_sil",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:cube_sil",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:sweep",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:sweep",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:cluster",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:cluster",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:wrist_fix",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:wrist_fix",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:choose_yaw",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:choose_yaw",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:pick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:pick",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:place",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:place",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:gg_step",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:gg_step",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:step_aside",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:step_aside",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:measure",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:measure",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:run",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:run",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:cube_sil",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:sweep",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:sweep",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:ray_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:sweep",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:cube_sil",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:sweep",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:wrist_fix",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:wrist_fix",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:choose_yaw",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:norm90",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:zmax",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:choose_yaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:wrist_fix",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:arm_state",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:zmax",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:step_aside",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:arm_state",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:step_aside",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:ray_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:cube_sil",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:head_ke",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:sweep",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:arm_state",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:cluster",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:home_arm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:pick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:place",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:step_aside",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/stack_blocks_random.py:measure",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

@@ -1,0 +1,1001 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "type": "file",
+      "name": "insert_key.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "summary": "先从上方夹住钥匙片并交接到另一臂侧夹钥匙柄，测量悬垂角后将钥匙对准孔口压入并顺时针旋转。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "视觉定位",
+        "运动控制"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:rad",
+      "type": "function",
+      "name": "rad",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "summary": "把角度转换为弧度。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        19,
+        20
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:Rz",
+      "type": "function",
+      "name": "Rz",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "summary": "构造绕 Z 轴的三维旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        23,
+        25
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:Ry",
+      "type": "function",
+      "name": "Ry",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "summary": "构造绕 Y 轴的三维旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        28,
+        30
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:Rx",
+      "type": "function",
+      "name": "Rx",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "summary": "构造绕 X 轴的三维旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        33,
+        35
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:ori",
+      "type": "function",
+      "name": "ori",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "summary": "按夹爪姿态约定组合偏航、俯仰与滚转矩阵。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        38,
+        39
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:wrap",
+      "type": "function",
+      "name": "wrap",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "summary": "将角度归一到正负 180 度范围。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        42,
+        43
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:angles",
+      "type": "function",
+      "name": "angles",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "summary": "从夹爪旋转矩阵恢复俯仰、偏航和滚转，并处理垂直姿态的奇异情形。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        46,
+        54
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:qmat",
+      "type": "function",
+      "name": "qmat",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "summary": "归一化腕部四元数并转换为旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        57,
+        63
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:arm_frame",
+      "type": "function",
+      "name": "arm_frame",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "summary": "读取工具中心及腕部方向，组成当前机械臂末端坐标系。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        66,
+        68
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:ang2",
+      "type": "function",
+      "name": "ang2",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "summary": "计算二维方向向量相对世界 X 轴的角度。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        71,
+        72
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:f3",
+      "type": "function",
+      "name": "f3",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "summary": "把坐标向量格式化为三位小数的诊断文本。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        75,
+        76
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:move",
+      "type": "function",
+      "name": "move",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "summary": "执行钥匙操作位姿并累计步数，记录未达到目标的控制反馈。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        79,
+        85
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:grip",
+      "type": "function",
+      "name": "grip",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "summary": "执行指定机械臂的夹爪指令并返回夹持反馈。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        88,
+        92
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:find",
+      "type": "function",
+      "name": "find",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "summary": "按多个提示词检索目标，并按有效性与评分选择候选。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        95,
+        112
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:dump",
+      "type": "function",
+      "name": "dump",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "summary": "把局部图像缩放并量化为紧凑字符输出，辅助几何诊断。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        115,
+        119
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:plane_points",
+      "type": "function",
+      "name": "plane_points",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "summary": "把指定图像像素投影到钥匙或孔口所在平面。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        122,
+        129
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:project",
+      "type": "function",
+      "name": "project",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "summary": "使用相机内外参把三维世界坐标投影为图像坐标。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        132,
+        137
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:keyhole",
+      "type": "function",
+      "name": "keyhole",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "summary": "检测顶部暗色钥匙孔，利用宽窄不对称确定孔口中心和插入方向。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        140,
+        191
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:dumpc",
+      "type": "function",
+      "name": "dumpc",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "summary": "以世界点投影为中心裁出相机局部图像并输出诊断。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        196,
+        204
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:key_measure",
+      "type": "function",
+      "name": "key_measure",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "summary": "提取平放钥匙的亮而低饱和像素，在已知高度平面拟合柄中心与片长。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        207,
+        255
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:key_estimate",
+      "type": "function",
+      "name": "key_estimate",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "summary": "从钥匙上方腕图估计钥匙柄中心与长度，并结合备用定位。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        258,
+        283
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:proj_pts",
+      "type": "function",
+      "name": "proj_pts",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "summary": "用相机标定批量投影三维钥匙模型点。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        288,
+        293
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:hang_fit",
+      "type": "function",
+      "name": "hang_fit",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "summary": "把悬挂钥匙拟合为从柄中心延伸的亮线，估计相对夹爪的倾斜。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        296,
+        331
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:key_ok",
+      "type": "function",
+      "name": "key_ok",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "summary": "用桌面范围和长度约束检查钥匙定位候选。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        340,
+        342
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:slot_ok",
+      "type": "function",
+      "name": "slot_ok",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "summary": "用任务区域及尺寸约束检查钥匙孔座候选。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        345,
+        347
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:zt",
+      "type": "function",
+      "name": "zt",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "summary": "返回持钥匙侧机械臂当前工具高度。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        474,
+        475
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:rad",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:rad",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:Rz",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:Rz",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:Ry",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:Ry",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:Rx",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:Rx",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:ori",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:ori",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:wrap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:wrap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:angles",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:angles",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:qmat",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:qmat",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:arm_frame",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:arm_frame",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:ang2",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:ang2",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:f3",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:f3",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:move",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:move",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:grip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:grip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:find",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:find",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:dump",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:dump",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:plane_points",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:plane_points",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:project",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:keyhole",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:keyhole",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:dumpc",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:dumpc",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:key_measure",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:key_measure",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:key_estimate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:key_estimate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:proj_pts",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:proj_pts",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:hang_fit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:hang_fit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:key_ok",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:key_ok",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:slot_ok",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:slot_ok",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:zt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:zt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:ori",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:Rz",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:ori",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:rad",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:ori",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:Ry",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:ori",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:Rx",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:angles",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:rad",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:angles",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:angles",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:ori",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:arm_frame",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:qmat",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:move",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:keyhole",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:plane_points",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:keyhole",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:ang2",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:dumpc",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:dumpc",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:dump",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:key_measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:plane_points",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:key_measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:ang2",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:key_estimate",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:key_measure",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:key_estimate",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:find",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:key_estimate",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:rad",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:key_estimate",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:key_estimate",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:ang2",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:hang_fit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:arm_frame",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:hang_fit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:rad",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:hang_fit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:proj_pts",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:hang_fit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:zt",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/insert_key.py:arm_frame",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

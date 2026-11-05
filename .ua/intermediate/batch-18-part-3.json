@@ -1,0 +1,1053 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "type": "file",
+      "name": "play_tic_tac_toe.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "summary": "实现离线 RoboDojo 任务程序：从相机识别井字棋棋盘，使用极小极大搜索选择落点并抓放圆环、等待对手。通过执行环境注入的 robo 接口完成任务，不在评测时调用规划模型。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:P",
+      "type": "function",
+      "name": "P",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "summary": "打印任务执行进度和诊断信息。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        30,
+        31
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:r3",
+      "type": "function",
+      "name": "r3",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "summary": "格式化向量或测量数据以便打印诊断信息。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        34,
+        35
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:cam_of",
+      "type": "function",
+      "name": "cam_of",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "summary": "读取相机标定并转为数值矩阵供投影计算。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        39,
+        41
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:project",
+      "type": "function",
+      "name": "project",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "summary": "把世界坐标点投影到标定相机图像平面。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        44,
+        49
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:on_plane",
+      "type": "function",
+      "name": "on_plane",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "summary": "将像素视线与给定高度平面相交以恢复世界坐标。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        52,
+        57
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:disk_mask",
+      "type": "function",
+      "name": "disk_mask",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "summary": "投影已知圆形或矩形区域生成图像掩码。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        60,
+        66
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:rect_mask",
+      "type": "function",
+      "name": "rect_mask",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "summary": "投影已知圆形或矩形区域生成图像掩码。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        69,
+        75
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:mv",
+      "type": "function",
+      "name": "mv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "summary": "调用机器人位姿运动接口并处理本任务的运动结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        79,
+        90
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:go_home",
+      "type": "function",
+      "name": "go_home",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "summary": "将指定机械臂返回起始姿态并处理返回结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        93,
+        99
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:wrist",
+      "type": "function",
+      "name": "wrist",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "summary": "选择指定机械臂对应的腕部相机名称。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        102,
+        103
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:far_mask",
+      "type": "function",
+      "name": "far_mask",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "summary": "构造远端棋盘区域的观察掩码。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        114,
+        120
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:color_report",
+      "type": "function",
+      "name": "color_report",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "summary": "统计棋盘目标区域的颜色响应。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        127,
+        136
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:cell_diffs",
+      "type": "function",
+      "name": "cell_diffs",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "summary": "计算棋盘各格子的图像差异。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        139,
+        141
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:piece_offset",
+      "type": "function",
+      "name": "piece_offset",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "summary": "估计棋子相对于目标格中心的偏移。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        144,
+        152
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:winner",
+      "type": "function",
+      "name": "winner",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "summary": "检查井字棋棋盘是否存在连线胜者。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        156,
+        160
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:minimax",
+      "type": "function",
+      "name": "minimax",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "summary": "递归搜索井字棋后续落子并缓存局面评分。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        163,
+        181
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:choose_cell",
+      "type": "function",
+      "name": "choose_cell",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "summary": "按胜负搜索结果选择机器人落子格。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        187,
+        199
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:place_params",
+      "type": "function",
+      "name": "place_params",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "summary": "根据棋盘格和机械臂配置计算放置参数。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        203,
+        209
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:release_z",
+      "type": "function",
+      "name": "release_z",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "summary": "根据夹爪俯仰角确定棋子释放高度。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        212,
+        213
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:ring_estimate",
+      "type": "function",
+      "name": "ring_estimate",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "summary": "从腕部观察估计圆环棋子位置。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        216,
+        228
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:pick",
+      "type": "function",
+      "name": "pick",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "summary": "执行接近、闭合和抬升步骤，并依据本任务的视觉或夹爪反馈处理抓取结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        231,
+        246
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:place",
+      "type": "function",
+      "name": "place",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "summary": "按目标位置与抓持几何完成物体放置和释放。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        249,
+        260
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:native_step",
+      "type": "function",
+      "name": "native_step",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "summary": "发送原生控制步以推进对手回合。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        264,
+        267
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:wait_opponent",
+      "type": "function",
+      "name": "wait_opponent",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "summary": "等待棋盘视觉变化并更新对手落子。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        270,
+        301
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:run",
+      "type": "function",
+      "name": "run",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "summary": "从相机识别井字棋棋盘，使用极小极大搜索选择落点并抓放圆环、等待对手。统筹观察、运动和任务检查。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        305,
+        347
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:P",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:P",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:r3",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:r3",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:cam_of",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:cam_of",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:project",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:on_plane",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:on_plane",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:disk_mask",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:disk_mask",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:rect_mask",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:rect_mask",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:mv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:mv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:go_home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:go_home",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:wrist",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:wrist",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:far_mask",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:far_mask",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:color_report",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:color_report",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:cell_diffs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:cell_diffs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:piece_offset",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:piece_offset",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:winner",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:winner",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:minimax",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:minimax",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:choose_cell",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:choose_cell",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:place_params",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:place_params",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:release_z",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:release_z",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:ring_estimate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:ring_estimate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:pick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:pick",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:place",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:place",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:native_step",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:native_step",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:wait_opponent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:wait_opponent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:run",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:run",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:disk_mask",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:rect_mask",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:go_home",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:far_mask",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:far_mask",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:rect_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:color_report",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:color_report",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:piece_offset",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:minimax",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:winner",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:choose_cell",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:winner",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:choose_cell",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:minimax",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:ring_estimate",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:wrist",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:ring_estimate",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:ring_estimate",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:ring_estimate",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:place_params",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:release_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:wait_opponent",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:native_step",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:wait_opponent",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:cell_diffs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:wait_opponent",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:P",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:color_report",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:choose_cell",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:pick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:go_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:place",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:piece_offset",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:r3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_tic_tac_toe.py:wait_opponent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

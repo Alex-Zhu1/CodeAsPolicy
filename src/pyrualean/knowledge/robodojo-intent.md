@@ -109,6 +109,21 @@
   this policy session. Budget pressure does not change an interaction from
   contact into free space; revise the allocation or physical strategy instead.
 
+## Execute a local work group
+- Reuse a suitable staging pose across nearby targets. Choose finger orientation,
+  opening and contact height for the affected objects and surrounding clearance.
+  The gap between fingers can miss a group member; inspect each intended effect.
+  Several short contacts and local shifts can share one approach and departure.
+- Express each changed route as a new `execute_motion` intent and inspect its
+  result before dependent motion. Resume an interrupted route under its original
+  ID. Group progress is a planner decision over existing operations; the executor
+  does not automatically choose contacts, skip members or certify their effects.
+- Between contacts, clear fingers or held objects along an observed free route
+  only as far as needed for the next local transition. Preserve orientation until
+  clear before turning; a group does not remove departure or collision checks.
+  Use combined left/right intents only when their routes and object interactions
+  are compatible. Sampled arm/table checks do not establish inter-arm clearance.
+
 ## Choose grasps for the remaining task
 - Before choosing a grasp, work backwards from the next required use: which
   object region must contact the environment, which region can be held then,

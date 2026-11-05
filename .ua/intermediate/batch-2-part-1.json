@@ -1,0 +1,700 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/pyrualean/__main__.py",
+      "type": "file",
+      "name": "__main__.py",
+      "filePath": "src/pyrualean/__main__.py",
+      "summary": "通过 python -m pyrualean 调用统一命令行入口。",
+      "tags": [
+        "入口点",
+        "命令行",
+        "模块执行"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/pyrualean/_env.py",
+      "type": "file",
+      "name": "_env.py",
+      "filePath": "src/pyrualean/_env.py",
+      "summary": "统一读取 PYRUALEAN_ 前缀的环境设置，并保留空字符串与未设置值之间的区别。",
+      "tags": [
+        "配置",
+        "环境变量",
+        "工具函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/_env.py:setting_var",
+      "type": "function",
+      "name": "setting_var",
+      "filePath": "src/pyrualean/_env.py",
+      "lineRange": [
+        22,
+        25
+      ],
+      "summary": "给设置名添加包统一使用的 PYRUALEAN_ 前缀。",
+      "tags": [
+        "配置",
+        "环境变量",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/_env.py:setting",
+      "type": "function",
+      "name": "setting",
+      "filePath": "src/pyrualean/_env.py",
+      "lineRange": [
+        28,
+        34
+      ],
+      "summary": "读取对应环境变量，变量不存在时返回默认值。",
+      "tags": [
+        "配置",
+        "环境变量",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/pyrualean/cli.py",
+      "type": "file",
+      "name": "cli.py",
+      "filePath": "src/pyrualean/cli.py",
+      "summary": "实现任务卡导出、策略生成、单次执行、交互运行和评估汇总等命令。需要仿真环境的命令通过独立宿主进程运行，并记录输出与超时。",
+      "tags": [
+        "入口点",
+        "命令行",
+        "任务调度"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/cli.py:_cell_args",
+      "type": "function",
+      "name": "_cell_args",
+      "filePath": "src/pyrualean/cli.py",
+      "lineRange": [
+        46,
+        60
+      ],
+      "summary": "注册机器人、任务、种子、输出目录和 RPent 环境相关命令行参数。",
+      "tags": [
+        "入口点",
+        "命令行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/cli.py:_host_argv",
+      "type": "function",
+      "name": "_host_argv",
+      "filePath": "src/pyrualean/cli.py",
+      "lineRange": [
+        63,
+        86
+      ],
+      "summary": "根据机器人与任务配置构造 card 或 run 宿主子进程的命令参数。",
+      "tags": [
+        "入口点",
+        "命令行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/cli.py:cmd_card",
+      "type": "function",
+      "name": "cmd_card",
+      "filePath": "src/pyrualean/cli.py",
+      "lineRange": [
+        89,
+        101
+      ],
+      "summary": "启动宿主生成任务卡，检查 card.json 是否存在并返回命令状态。",
+      "tags": [
+        "入口点",
+        "命令行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/cli.py:cmd_run",
+      "type": "function",
+      "name": "cmd_run",
+      "filePath": "src/pyrualean/cli.py",
+      "lineRange": [
+        104,
+        147
+      ],
+      "summary": "运行策略宿主并补全失败结果、生成统计和墙钟时间，保存统一结果文件。",
+      "tags": [
+        "入口点",
+        "命令行",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/cli.py:cmd_generate",
+      "type": "function",
+      "name": "cmd_generate",
+      "filePath": "src/pyrualean/cli.py",
+      "lineRange": [
+        150,
+        182
+      ],
+      "summary": "读取任务卡并调用 Codex 生成策略，将生成结果摘要输出为 JSON。",
+      "tags": [
+        "入口点",
+        "命令行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/cli.py:cmd_play",
+      "type": "function",
+      "name": "cmd_play",
+      "filePath": "src/pyrualean/cli.py",
+      "lineRange": [
+        185,
+        305
+      ],
+      "summary": "组装交互式运行配置，包括执行限制、模型网关、视觉监督和恢复设置，再启动独立宿主。",
+      "tags": [
+        "入口点",
+        "命令行",
+        "函数"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/cli.py:_load_any",
+      "type": "function",
+      "name": "_load_any",
+      "filePath": "src/pyrualean/cli.py",
+      "lineRange": [
+        308,
+        315
+      ],
+      "summary": "识别原生结果目录与 RPent 对话产物，转换为统一回合指标。",
+      "tags": [
+        "入口点",
+        "命令行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/cli.py:cmd_summarize",
+      "type": "function",
+      "name": "cmd_summarize",
+      "filePath": "src/pyrualean/cli.py",
+      "lineRange": [
+        318,
+        340
+      ],
+      "summary": "读取多次运行结果，打印逐回合指标表并按需输出聚合 JSON。",
+      "tags": [
+        "入口点",
+        "命令行",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/cli.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "src/pyrualean/cli.py",
+      "lineRange": [
+        343,
+        485
+      ],
+      "summary": "注册全部子命令及参数，解析用户输入并分发到对应处理函数。",
+      "tags": [
+        "入口点",
+        "命令行",
+        "函数"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/pyrualean/evaluation/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "src/pyrualean/evaluation/__init__.py",
+      "summary": "集中导出统一回合指标、RPent 产物解析以及严格配对比较接口。",
+      "tags": [
+        "入口点",
+        "评估",
+        "导出"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/pyrualean/__main__.py",
+      "target": "file:src/pyrualean/cli.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/_env.py",
+      "target": "function:src/pyrualean/_env.py:setting_var",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_env.py",
+      "target": "function:src/pyrualean/_env.py:setting_var",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/_env.py",
+      "target": "function:src/pyrualean/_env.py:setting",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/_env.py",
+      "target": "function:src/pyrualean/_env.py:setting",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/_env.py:setting",
+      "target": "function:src/pyrualean/_env.py:setting_var",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "function:src/pyrualean/cli.py:_cell_args",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "function:src/pyrualean/cli.py:_cell_args",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "function:src/pyrualean/cli.py:_host_argv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "function:src/pyrualean/cli.py:_host_argv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "function:src/pyrualean/cli.py:cmd_card",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "function:src/pyrualean/cli.py:cmd_card",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "function:src/pyrualean/cli.py:cmd_run",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "function:src/pyrualean/cli.py:cmd_run",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "function:src/pyrualean/cli.py:cmd_generate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "function:src/pyrualean/cli.py:cmd_generate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "function:src/pyrualean/cli.py:cmd_play",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "function:src/pyrualean/cli.py:cmd_play",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "function:src/pyrualean/cli.py:_load_any",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "function:src/pyrualean/cli.py:_load_any",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "function:src/pyrualean/cli.py:cmd_summarize",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "function:src/pyrualean/cli.py:cmd_summarize",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "function:src/pyrualean/cli.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "function:src/pyrualean/cli.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "file:src/pyrualean/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "file:src/pyrualean/_env.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "file:src/pyrualean/_robot.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "file:src/pyrualean/evaluation/compare.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "file:src/pyrualean/evaluation/metrics.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "file:src/pyrualean/evaluation/rpent.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "file:src/pyrualean/evaluation/valen.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "file:src/pyrualean/execution.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "file:src/pyrualean/prompt.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "file:src/pyrualean/runner.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "file:src/pyrualean/stuck_recovery.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/cli.py",
+      "target": "file:src/pyrualean/supervision.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:src/pyrualean/cli.py:cmd_card",
+      "target": "function:src/pyrualean/runner.py:run_host",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/cli.py:cmd_card",
+      "target": "function:src/pyrualean/cli.py:_host_argv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/cli.py:cmd_run",
+      "target": "function:src/pyrualean/cli.py:_host_argv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/cli.py:cmd_run",
+      "target": "function:src/pyrualean/runner.py:run_host",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/cli.py:cmd_play",
+      "target": "function:src/pyrualean/execution.py:execution_limits",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/cli.py:cmd_play",
+      "target": "function:src/pyrualean/supervision.py:monitor_config",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/cli.py:cmd_play",
+      "target": "function:src/pyrualean/runner.py:run_host",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/cli.py:_load_any",
+      "target": "function:src/pyrualean/evaluation/metrics.py:load_episode_result",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/cli.py:_load_any",
+      "target": "function:src/pyrualean/evaluation/rpent.py:parse_rpent_run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/cli.py:cmd_summarize",
+      "target": "function:src/pyrualean/cli.py:_load_any",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/cli.py:cmd_summarize",
+      "target": "function:src/pyrualean/evaluation/metrics.py:summarize",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/cli.py:main",
+      "target": "function:src/pyrualean/cli.py:_cell_args",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/cli.py:main",
+      "target": "function:src/pyrualean/evaluation/valen.py:add_arguments",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/cli.py:main",
+      "target": "function:src/pyrualean/supervision.py:add_monitor_arguments",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/cli.py:main",
+      "target": "function:src/pyrualean/stuck_recovery.py:add_stuck_recovery_arguments",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/cli.py:main",
+      "target": "function:src/pyrualean/execution.py:add_execution_arguments",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/cli.py:main",
+      "target": "function:src/pyrualean/_env.py:setting",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/cli.py:main",
+      "target": "function:src/pyrualean/prompt.py:api_reference",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/cli.py:main",
+      "target": "function:src/pyrualean/prompt.py:render_prompt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/cli.py:main",
+      "target": "function:src/pyrualean/cli.py:cmd_card",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/cli.py:main",
+      "target": "function:src/pyrualean/cli.py:cmd_run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/cli.py:main",
+      "target": "function:src/pyrualean/cli.py:cmd_generate",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/cli.py:main",
+      "target": "function:src/pyrualean/cli.py:cmd_summarize",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/cli.py:main",
+      "target": "function:src/pyrualean/evaluation/valen.py:run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/cli.py:main",
+      "target": "function:src/pyrualean/cli.py:cmd_play",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/cli.py:main",
+      "target": "function:src/pyrualean/evaluation/compare.py:main",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/__init__.py",
+      "target": "file:src/pyrualean/evaluation/compare.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/__init__.py",
+      "target": "file:src/pyrualean/evaluation/metrics.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/pyrualean/evaluation/__init__.py",
+      "target": "file:src/pyrualean/evaluation/rpent.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

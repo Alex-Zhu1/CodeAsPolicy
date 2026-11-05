@@ -1,0 +1,1397 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "type": "file",
+      "name": "fasten_screws.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "结合两次头部颜色观测和 SAM3 定位匹配螺母与螺栓，抓取后边旋转边下降安装，并在卡住时抬升重试。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "视觉定位",
+        "运动控制"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:say",
+      "type": "function",
+      "name": "say",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "输出离线程序的执行诊断信息。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        26,
+        27
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:summ",
+      "type": "function",
+      "name": "summ",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "记录一条紧凑执行摘要并同时打印。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        30,
+        33
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:f3",
+      "type": "function",
+      "name": "f3",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "把坐标向量格式化为三位小数的诊断文本。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        36,
+        37
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:f2",
+      "type": "function",
+      "name": "f2",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "将二维位置格式化为固定小数位诊断文本。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        40,
+        41
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:dist",
+      "type": "function",
+      "name": "dist",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "计算两个平面位置之间的欧氏距离。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        44,
+        45
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:cam",
+      "type": "function",
+      "name": "cam",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "读取指定相机的内外参数，用于图像与世界坐标转换。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        49,
+        51
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:ray",
+      "type": "function",
+      "name": "ray",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "由像素及相机标定构造归一化的世界射线。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        54,
+        57
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:ray_z",
+      "type": "function",
+      "name": "ray_z",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "将像素射线与给定高度的水平面求交。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        60,
+        62
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:project",
+      "type": "function",
+      "name": "project",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "使用相机内外参把三维世界坐标投影为图像坐标。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        65,
+        68
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:cmasks",
+      "type": "function",
+      "name": "cmasks",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "提取螺母螺栓的颜色掩码，并排除紫色高光附近的假白像素。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        72,
+        87
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:blobs",
+      "type": "function",
+      "name": "blobs",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "从颜色掩码提取连通域几何、面积和中心。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        90,
+        99
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:in_obj_region",
+      "type": "function",
+      "name": "in_obj_region",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "检查候选位置是否处于任务物体分布区域。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        102,
+        103
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:in_bolt_region",
+      "type": "function",
+      "name": "in_bolt_region",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "检查候选位置是否处于固定螺栓所在的左右条带。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        106,
+        107
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:arm_pixels",
+      "type": "function",
+      "name": "arm_pixels",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "投影双臂夹爪和腕部点，用于掩蔽机器人的白色外观。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        110,
+        124
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:head_detect",
+      "type": "function",
+      "name": "head_detect",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "从头部图像提取各色物体候选，结合机器人遮挡与场景范围过滤。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        127,
+        159
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:sam_locate",
+      "type": "function",
+      "name": "sam_locate",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "尝试多个语义提示，仅接受质心与给定图像区域一致的三维定位。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        162,
+        185
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:merge_rounds",
+      "type": "function",
+      "name": "merge_rounds",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "合并归位和抬臂后的两次检测，补齐各视角的遮挡遗漏。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        188,
+        202
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:classify",
+      "type": "function",
+      "name": "classify",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "用颜色面积、任务区域和 SAM3 高度区分同色螺栓与螺母。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        205,
+        238
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:wrist_nut_xy",
+      "type": "function",
+      "name": "wrist_nut_xy",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "从腕相机颜色区域细化待抓螺母的平面位置。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        242,
+        267
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:mv",
+      "type": "function",
+      "name": "mv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "执行指定机械臂的笛卡尔运动并返回控制反馈。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        271,
+        278
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:grip",
+      "type": "function",
+      "name": "grip",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "执行指定机械臂的夹爪指令并返回夹持反馈。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        281,
+        288
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:mv_held",
+      "type": "function",
+      "name": "mv_held",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "闭合夹爪搬运螺母，直线路径出现 IK 错误时尝试自动路径。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        291,
+        295
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:tcp",
+      "type": "function",
+      "name": "tcp",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "读取指定机械臂的工具中心位置并转换为数值数组。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        298,
+        299
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:other",
+      "type": "function",
+      "name": "other",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "返回与给定机械臂相对的另一侧名称。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        302,
+        303
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:go_home",
+      "type": "function",
+      "name": "go_home",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "打开或归位机械臂，并通过有限次重试完成收尾。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        306,
+        313
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:grasp_yaws",
+      "type": "function",
+      "name": "grasp_yaws",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "枚举沿六角螺母平面闭合的方向，按邻近物体对夹爪的干涉排序。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        317,
+        329
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:pick_nut",
+      "type": "function",
+      "name": "pick_nut",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "在目标附近观察、选择抓取方向并抬起螺母，返回实际夹持与物体中心。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        332,
+        364
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:place_on_table",
+      "type": "function",
+      "name": "place_on_table",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "把螺母放在中转桌面位置并抬离，供另一臂重新抓取。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        367,
+        371
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:turn_down",
+      "type": "function",
+      "name": "turn_down",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "把顺时针转动与高度下降分解为连续小步，执行螺纹进入动作。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        374,
+        385
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:rotate_to",
+      "type": "function",
+      "name": "rotate_to",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "将原地腕旋转分为不超过 90 度的小步，避免路径选择造成反向绕转。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        388,
+        397
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:thread",
+      "type": "function",
+      "name": "thread",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "补偿螺母相对夹爪偏移，对齐螺栓并旋转下降，卡住时抬起重试。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        400,
+        436
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "summary": "执行双视角扫描、颜色配对、螺母抓取与必要中转，逐个旋紧后归位。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        440,
+        553
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:say",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:say",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:summ",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:summ",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:f3",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:f3",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:f2",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:f2",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:dist",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:dist",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:cam",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:cam",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:ray",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:ray",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:ray_z",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:ray_z",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:project",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:cmasks",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:cmasks",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:blobs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:blobs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:in_obj_region",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:in_obj_region",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:in_bolt_region",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:in_bolt_region",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:arm_pixels",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:arm_pixels",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:head_detect",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:head_detect",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:sam_locate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:sam_locate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:merge_rounds",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:merge_rounds",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:classify",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:classify",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:wrist_nut_xy",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:wrist_nut_xy",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:mv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:mv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:grip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:grip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:mv_held",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:mv_held",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:tcp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:tcp",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:other",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:other",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:go_home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:go_home",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:grasp_yaws",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:grasp_yaws",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:pick_nut",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:pick_nut",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:place_on_table",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:place_on_table",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:turn_down",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:turn_down",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:rotate_to",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:rotate_to",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:thread",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:thread",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:ray_z",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:ray",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:arm_pixels",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:head_detect",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:head_detect",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:cmasks",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:head_detect",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:arm_pixels",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:head_detect",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:blobs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:head_detect",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:ray_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:head_detect",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:in_obj_region",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:sam_locate",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:merge_rounds",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:dist",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:classify",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:sam_locate",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:classify",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:in_bolt_region",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:classify",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:dist",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:wrist_nut_xy",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:wrist_nut_xy",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:cmasks",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:wrist_nut_xy",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:blobs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:wrist_nut_xy",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:wrist_nut_xy",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:ray_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:mv_held",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:go_home",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:pick_nut",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:pick_nut",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:grasp_yaws",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:pick_nut",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:pick_nut",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:wrist_nut_xy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:pick_nut",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:dist",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:pick_nut",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:pick_nut",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:f2",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:pick_nut",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:tcp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:place_on_table",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:mv_held",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:place_on_table",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:place_on_table",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:turn_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:rotate_to",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:thread",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:mv_held",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:thread",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:thread",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:turn_down",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:thread",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:head_detect",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:merge_rounds",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:classify",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:sam_locate",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:dist",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:summ",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:f2",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:go_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:other",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:pick_nut",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:tcp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:place_on_table",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fasten_screws.py:thread",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

@@ -1,0 +1,2794 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "type": "file",
+      "name": "deposit_coin.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "从支架上抓取硬币并视觉估计夹持偏移，定位存钱罐槽后插入；支持跨臂交接及掉落平放硬币的重新夹取修复。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "视觉定位",
+        "运动控制"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:say",
+      "type": "function",
+      "name": "say",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "输出离线程序的执行诊断信息。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        57,
+        58
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:fmt",
+      "type": "function",
+      "name": "fmt",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "按给定精度格式化向量以输出控制诊断。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        61,
+        62
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:cam",
+      "type": "function",
+      "name": "cam",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "读取指定相机的内外参数，用于图像与世界坐标转换。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        67,
+        69
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:rays",
+      "type": "function",
+      "name": "rays",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "由像素和相机内外参构造世界坐标中的光线原点与方向。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        72,
+        79
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:on_z",
+      "type": "function",
+      "name": "on_z",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "把相机光线与指定高度的水平面求交。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        82,
+        85
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:on_plane",
+      "type": "function",
+      "name": "on_plane",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "把相机光线与给定法向量和基准点的平面求交。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        88,
+        91
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:to_px",
+      "type": "function",
+      "name": "to_px",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "批量把世界坐标变换到相机坐标并投影到像素。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        94,
+        100
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:chans",
+      "type": "function",
+      "name": "chans",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "拆分 RGB 图像并转为有符号整数，避免颜色差计算溢出。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        103,
+        104
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:gold_mask",
+      "type": "function",
+      "name": "gold_mask",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "以 RGB 阈值提取亮金色硬币像素。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        107,
+        109
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:gold_loose",
+      "type": "function",
+      "name": "gold_loose",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "使用较宽松亮度阈值检测边缘或遮挡下的金色硬币。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        112,
+        114
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pink_mask",
+      "type": "function",
+      "name": "pink_mask",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "构造粉色区域掩码以识别存钱罐外表。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        117,
+        119
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:dark_mask",
+      "type": "function",
+      "name": "dark_mask",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "通过低亮度阈值检测槽口等暗区域。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        122,
+        123
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:components",
+      "type": "function",
+      "name": "components",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "提取二值掩码的连通区域及其几何信息。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        126,
+        138
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:find_bank",
+      "type": "function",
+      "name": "find_bank",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "依次用存钱罐提示词定位粉色罐体并返回有效候选。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        143,
+        162
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:slot_from",
+      "type": "function",
+      "name": "slot_from",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "在粉色区域附近寻找细长暗槽，将其投影到槽口高度并估计位置与方向。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        165,
+        208
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:coin_head",
+      "type": "function",
+      "name": "coin_head",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "结合初始头部图像的金色像素、SAM3 候选和支架范围估计硬币位置。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        211,
+        274
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:coin_wrist",
+      "type": "function",
+      "name": "coin_wrist",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "从抓取上方腕相机检测金色像素并投影到支架顶部，细化硬币位置。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        277,
+        306
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:gold_count",
+      "type": "function",
+      "name": "gold_count",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "统计支架附近图像窗口的金色像素数，辅助判断硬币是否移走。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        309,
+        312
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:grip_measure",
+      "type": "function",
+      "name": "grip_measure",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "将头部图像中的金色像素投影到硬币竖直平面，拟合圆弧估计夹持中心偏移。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        315,
+        377
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:diag",
+      "type": "function",
+      "name": "diag",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "记录夹持硬币位置、支架金色像素和控制步数的紧凑诊断。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        383,
+        396
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:grip_measure_q",
+      "type": "function",
+      "name": "grip_measure_q",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "暂时关闭诊断输出，静默调用夹持硬币位置测量后恢复日志函数。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        399,
+        406
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:mv",
+      "type": "function",
+      "name": "mv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "执行指定机械臂的笛卡尔运动并返回控制反馈。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        411,
+        418
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:wrap180",
+      "type": "function",
+      "name": "wrap180",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "把角度归一到以零为中心的一个完整圆周区间。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        421,
+        422
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:near_equiv",
+      "type": "function",
+      "name": "near_equiv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "从相差半周的目标方向中选择最接近当前偏航的姿态。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        425,
+        428
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:tcp",
+      "type": "function",
+      "name": "tcp",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "读取指定机械臂的工具中心位置并转换为数值数组。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        431,
+        432
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:zee",
+      "type": "function",
+      "name": "zee",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "计算垂直抓取时腕相机相对工具中心的水平偏移方向。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        435,
+        437
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:view_slot_from_above",
+      "type": "function",
+      "name": "view_slot_from_above",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "用空闲的存钱罐侧机械臂在槽上方观察，重新测量槽口几何。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        442,
+        451
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:view_slot_straight",
+      "type": "function",
+      "name": "view_slot_straight",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "以俯仰 60 度形成腕相机垂直视角，在多个高度精测槽口。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        454,
+        467
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:mv_line_or_auto",
+      "type": "function",
+      "name": "mv_line_or_auto",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "优先执行直线动作，若零步且路径不可用则回退自动路径。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        470,
+        474
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pick",
+      "type": "function",
+      "name": "pick",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "在支架内下降抓住直立硬币，测量夹持深度并返回硬币中心相对工具的偏移。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        477,
+        594
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:carry_off",
+      "type": "function",
+      "name": "carry_off",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "以小步沿硬币平面移出支架，保持浅夹持阶段的稳定性。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        597,
+        631
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:press",
+      "type": "function",
+      "name": "press",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "把持有硬币抵在桌面上，使其向夹爪内部重新就位到更深夹持位置。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        634,
+        645
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:insert_down",
+      "type": "function",
+      "name": "insert_down",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "对齐槽口与硬币方向，下降插入并逐步释放硬币。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        651,
+        688
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:handover",
+      "type": "function",
+      "name": "handover",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "把硬币从一臂水平送出，让另一臂从上方夹住伸出的部分完成交接。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        691,
+        755
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:insert_tilted",
+      "type": "function",
+      "name": "insert_tilted",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "以可达倾斜姿态跨侧接近槽口，重新测量硬币后对齐释放。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        758,
+        801
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:finish",
+      "type": "function",
+      "name": "finish",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "抬离操作区域、收回机械臂并以额外轻动作等待成功判定生效。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        804,
+        820
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:r_mv",
+      "type": "function",
+      "name": "r_mv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "执行补救阶段运动并累计该阶段的控制步数。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        836,
+        839
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:r_grip",
+      "type": "function",
+      "name": "r_grip",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "执行补救夹爪指令并更新消耗计数。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        842,
+        851
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:r_home",
+      "type": "function",
+      "name": "r_home",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "执行补救归位并累计原生控制步数。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        854,
+        857
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:left_steps",
+      "type": "function",
+      "name": "left_steps",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "返回动作预算减去已消耗控制步数后的余额。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        860,
+        861
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:rsay",
+      "type": "function",
+      "name": "rsay",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "把补救日志加入紧凑记录并输出诊断。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        864,
+        866
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_find_head",
+      "type": "function",
+      "name": "flat_find_head",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "在存钱罐外的桌面检测足够大的金色区域，选择邻近估计位置的平放硬币。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        869,
+        891
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_find_wrist",
+      "type": "function",
+      "name": "flat_find_wrist",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "用腕相机检查猜测位置附近的金色区域，细化掉落硬币中心。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        894,
+        916
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:look_down_at",
+      "type": "function",
+      "name": "look_down_at",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "把腕相机移动到硬币上方的垂直观察位置。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        919,
+        922
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pinch_flat",
+      "type": "function",
+      "name": "pinch_flat",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "以浅俯仰把夹爪后角降至桌面，沿硬币直径闭合夹取。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        925,
+        953
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:coin_in_grip",
+      "type": "function",
+      "name": "coin_in_grip",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "用腕相机金色区域在多个竖直候选平面的投影高度估计竖直硬币夹持位置。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        956,
+        991
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:head_check",
+      "type": "function",
+      "name": "head_check",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "从头部图像测量预期硬币平面上的沿槽位置和最低点，用于插入诊断。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        994,
+        1010
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:rot3",
+      "type": "function",
+      "name": "rot3",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "按机器人约定构造偏航、俯仰、滚转组合的夹爪旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1013,
+        1019
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_repair",
+      "type": "function",
+      "name": "flat_repair",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "检测并夹起掉落的平放硬币，绕夹爪闭合轴转成立姿后搬到槽口释放。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1022,
+        1105
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pinch_flat2",
+      "type": "function",
+      "name": "pinch_flat2",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "先设定夹爪开度避免半周翻转，再用腕相机修正落点夹取平放硬币。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1108,
+        1143
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:finish_repair",
+      "type": "function",
+      "name": "finish_repair",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "首轮归位后若任务未终止，用存钱罐侧机械臂修复掉落硬币并再次归位。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1146,
+        1158
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "summary": "定位存钱罐与硬币，选择直插、倾斜插入或交接策略，再组织最终收尾与掉落补救。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1163,
+        1243
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:say",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:say",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:fmt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:fmt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:cam",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:cam",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:rays",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:rays",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:on_z",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:on_z",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:on_plane",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:on_plane",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:to_px",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:to_px",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:chans",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:chans",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:gold_mask",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:gold_mask",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:gold_loose",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:gold_loose",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pink_mask",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pink_mask",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:dark_mask",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:dark_mask",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:components",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:components",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:find_bank",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:find_bank",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:slot_from",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:slot_from",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:coin_head",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:coin_head",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:coin_wrist",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:coin_wrist",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:gold_count",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:gold_count",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:grip_measure",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:grip_measure",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:diag",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:diag",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:grip_measure_q",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:grip_measure_q",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:mv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:mv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:wrap180",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:wrap180",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:near_equiv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:near_equiv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:tcp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:tcp",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:zee",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:zee",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:view_slot_from_above",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:view_slot_from_above",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:view_slot_straight",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:view_slot_straight",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:mv_line_or_auto",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:mv_line_or_auto",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pick",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:carry_off",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:carry_off",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:press",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:press",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:insert_down",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:insert_down",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:handover",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:handover",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:insert_tilted",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:insert_tilted",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:finish",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:finish",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:r_mv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:r_mv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:r_grip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:r_grip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:r_home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:r_home",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:left_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:left_steps",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:rsay",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:rsay",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_find_head",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_find_head",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_find_wrist",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_find_wrist",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:look_down_at",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:look_down_at",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pinch_flat",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pinch_flat",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:coin_in_grip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:coin_in_grip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:head_check",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:head_check",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:rot3",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:rot3",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_repair",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_repair",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pinch_flat2",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pinch_flat2",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:finish_repair",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:finish_repair",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:on_z",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:rays",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:on_plane",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:rays",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:gold_mask",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:chans",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:gold_loose",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:chans",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pink_mask",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:chans",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:find_bank",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:find_bank",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:find_bank",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pink_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:find_bank",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:on_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:find_bank",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:slot_from",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:slot_from",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pink_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:slot_from",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:components",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:slot_from",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:dark_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:slot_from",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:on_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:slot_from",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:slot_from",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:coin_head",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:coin_head",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:gold_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:coin_head",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:components",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:coin_head",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:on_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:coin_head",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:coin_head",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:gold_loose",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:coin_head",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:coin_wrist",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:coin_wrist",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:to_px",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:coin_wrist",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:components",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:coin_wrist",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:gold_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:coin_wrist",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:coin_wrist",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:on_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:coin_wrist",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:gold_count",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:gold_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:grip_measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:grip_measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:gold_loose",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:grip_measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:to_px",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:grip_measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:grip_measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:grip_measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:diag",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:grip_measure_q",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:diag",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:gold_count",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:diag",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:grip_measure_q",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:grip_measure",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:near_equiv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:view_slot_from_above",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:zee",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:view_slot_from_above",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:view_slot_from_above",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:slot_from",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:view_slot_straight",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:zee",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:view_slot_straight",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:view_slot_straight",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:slot_from",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:mv_line_or_auto",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:coin_wrist",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:near_equiv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:tcp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:diag",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:carry_off",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:gold_count",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:press",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:grip_measure",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:carry_off",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:zee",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:carry_off",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:tcp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:carry_off",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:carry_off",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:carry_off",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:mv_line_or_auto",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:press",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:press",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:tcp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:press",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:press",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:insert_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:near_equiv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:insert_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:zee",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:insert_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:mv_line_or_auto",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:insert_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:diag",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:insert_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:grip_measure",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:insert_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:insert_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:tcp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:insert_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:mv_line_or_auto",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:tcp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:grip_measure",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:insert_tilted",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:insert_tilted",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:insert_tilted",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:grip_measure",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:insert_tilted",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:insert_tilted",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:tcp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:insert_tilted",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:finish",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:tcp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:finish",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:finish",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:r_mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:rsay",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_find_head",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_find_head",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:components",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_find_head",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:gold_loose",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_find_head",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:on_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_find_head",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:rsay",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_find_head",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_find_wrist",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_find_wrist",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:to_px",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_find_wrist",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:components",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_find_wrist",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:gold_loose",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_find_wrist",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:rsay",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_find_wrist",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:on_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_find_wrist",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:look_down_at",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:zee",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:look_down_at",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:r_mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pinch_flat",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:r_mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pinch_flat",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:r_grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pinch_flat",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:tcp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pinch_flat",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:rsay",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:coin_in_grip",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:coin_in_grip",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:components",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:coin_in_grip",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:gold_loose",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:coin_in_grip",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:rsay",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:coin_in_grip",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:tcp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:coin_in_grip",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:head_check",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:tcp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:head_check",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:cam",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:head_check",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:to_px",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:head_check",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:gold_loose",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:head_check",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:rsay",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:left_steps",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_find_head",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pinch_flat2",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:r_grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:r_mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:tcp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:near_equiv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:rot3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:head_check",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pinch_flat2",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:r_grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pinch_flat2",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:r_mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pinch_flat2",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_find_wrist",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pinch_flat2",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:tcp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pinch_flat2",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:rot3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pinch_flat2",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:rsay",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:finish_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:flat_repair",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:finish_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:finish_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:r_home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:finish_repair",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:r_grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:find_bank",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:coin_head",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:gold_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:slot_from",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:view_slot_straight",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:view_slot_from_above",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:fmt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:pick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:finish",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:finish_repair",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:tcp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:mv_line_or_auto",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:diag",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:insert_down",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/deposit_coin.py:handover",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

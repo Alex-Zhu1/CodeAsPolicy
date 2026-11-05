@@ -1,0 +1,2606 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/pyrualean/hosts/robodojo_native.py",
+      "type": "file",
+      "name": "robodojo_native.py",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "summary": "在无 RPent 的原生 RoboDojo 环境上复用项目工具，保存观测步骤并构造兼容的状态封装，支持深度和纯 RGB 模式。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "工具适配"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_native.py:_png",
+      "type": "function",
+      "name": "_png",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "lineRange": [
+        64,
+        69
+      ],
+      "summary": "把图像数组前三个通道编码为 PNG 字节。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_native.py:_plain",
+      "type": "function",
+      "name": "_plain",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "lineRange": [
+        72,
+        83
+      ],
+      "summary": "将状态中的数组和数值转换为可保存的普通列表与标量。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_native.py:segment",
+      "type": "function",
+      "name": "segment",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "lineRange": [
+        143,
+        172
+      ],
+      "summary": "在当前相机图像上调用 SAM3 文本分割，并保持 RPent 工具结果形式。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/hosts/robodojo_native.py:Cancelled",
+      "type": "class",
+      "name": "Cancelled",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "lineRange": [
+        44,
+        45
+      ],
+      "summary": "表示回合停止时正在运行的原语被取消。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/pyrualean/hosts/robodojo_native.py:_Primitives",
+      "type": "class",
+      "name": "_Primitives",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "lineRange": [
+        48,
+        61
+      ],
+      "summary": "保存裸环境、SAM3 客户端、纯彩色模式和原语取消事件。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_native.py:_Primitives.__init__",
+      "type": "function",
+      "name": "_Primitives.__init__",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "lineRange": [
+        51,
+        57
+      ],
+      "summary": "绑定环境及感知客户端并初始化最后观测与取消状态。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "class:src/pyrualean/hosts/robodojo_native.py:Steps",
+      "type": "class",
+      "name": "Steps",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "lineRange": [
+        86,
+        140
+      ],
+      "summary": "将回合状态保留在内存，图像与相机信息按步骤写入磁盘。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "数据模型"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_native.py:Steps.__init__",
+      "type": "function",
+      "name": "Steps.__init__",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "lineRange": [
+        89,
+        92
+      ],
+      "summary": "创建步骤产物目录并初始化记录列表。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_native.py:Steps.record",
+      "type": "function",
+      "name": "Steps.record",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "lineRange": [
+        94,
+        126
+      ],
+      "summary": "记录当前图像、相机标定和机器人状态，保存原生动作预算状态。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_native.py:Steps.index",
+      "type": "function",
+      "name": "Steps.index",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "lineRange": [
+        128,
+        134
+      ],
+      "summary": "解析正负步骤索引并检查是否已有对应记录。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_native.py:Steps.artifact_path",
+      "type": "function",
+      "name": "Steps.artifact_path",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "lineRange": [
+        136,
+        137
+      ],
+      "summary": "返回指定记录步骤中某项产物的路径。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_native.py:Steps.load_bytes",
+      "type": "function",
+      "name": "Steps.load_bytes",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "lineRange": [
+        139,
+        140
+      ],
+      "summary": "读取指定步骤产物的字节。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "class:src/pyrualean/hosts/robodojo_native.py:NativeToolkit",
+      "type": "class",
+      "name": "NativeToolkit",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "lineRange": [
+        175,
+        278
+      ],
+      "summary": "在裸环境上提供机器人原语、观测记录与完成判决的工具接口。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "数据模型"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_native.py:NativeToolkit.__init__",
+      "type": "function",
+      "name": "NativeToolkit.__init__",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "lineRange": [
+        178,
+        208
+      ],
+      "summary": "根据环境观测确定深度能力，创建原语、步骤记录、锁和工具派发表。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_native.py:NativeToolkit._envelope",
+      "type": "function",
+      "name": "NativeToolkit._envelope",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "lineRange": [
+        217,
+        231
+      ],
+      "summary": "将指定记录步骤包装为 RPent 兼容的任务语言与状态封装。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_native.py:NativeToolkit.execute_tool",
+      "type": "function",
+      "name": "NativeToolkit.execute_tool",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "lineRange": [
+        233,
+        256
+      ],
+      "summary": "执行工具；改变状态的操作会记录新步骤并返回对应观测封装。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_native.py:NativeToolkit.conclude",
+      "type": "function",
+      "name": "NativeToolkit.conclude",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "lineRange": [
+        258,
+        263
+      ],
+      "summary": "通知环境所有者策略已完成，让其判断当前场景。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_native.py:NativeToolkit.solved",
+      "type": "function",
+      "name": "NativeToolkit.solved",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "lineRange": [
+        265,
+        266
+      ],
+      "summary": "读取环境所有者提供的最终判决，未提供时返回假。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_native.py:NativeToolkit.episode_over",
+      "type": "function",
+      "name": "NativeToolkit.episode_over",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "lineRange": [
+        268,
+        272
+      ],
+      "summary": "查询环境所有者是否已结束回合。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_native.py:NativeToolkit.cancel_active_and_wait",
+      "type": "function",
+      "name": "NativeToolkit.cancel_active_and_wait",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "lineRange": [
+        274,
+        275
+      ],
+      "summary": "设置原语取消事件以中断后续动作。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_native.py:NativeToolkit.close",
+      "type": "function",
+      "name": "NativeToolkit.close",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "lineRange": [
+        277,
+        278
+      ],
+      "summary": "设置取消标志并关闭工具包的活动执行。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "class:src/pyrualean/hosts/robodojo_native.py:NativeBackend",
+      "type": "class",
+      "name": "NativeBackend",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "lineRange": [
+        281,
+        318
+      ],
+      "summary": "把 NativeToolkit 适配为统一机器人 Backend 协议。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "数据模型"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_native.py:NativeBackend.__init__",
+      "type": "function",
+      "name": "NativeBackend.__init__",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "lineRange": [
+        284,
+        285
+      ],
+      "summary": "保存原生工具包实例。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_native.py:NativeBackend.toolkit",
+      "type": "function",
+      "name": "NativeBackend.toolkit",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "lineRange": [
+        288,
+        289
+      ],
+      "summary": "返回被适配的原生工具包。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_native.py:NativeBackend.colour_only",
+      "type": "function",
+      "name": "NativeBackend.colour_only",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "lineRange": [
+        292,
+        293
+      ],
+      "summary": "报告当前感知是否仅使用彩色图像。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_native.py:NativeBackend.execute_tool",
+      "type": "function",
+      "name": "NativeBackend.execute_tool",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "lineRange": [
+        295,
+        296
+      ],
+      "summary": "向原生工具包派发工具调用。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_native.py:NativeBackend.conclude",
+      "type": "function",
+      "name": "NativeBackend.conclude",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "lineRange": [
+        298,
+        299
+      ],
+      "summary": "通知原生工具包策略执行结束。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_native.py:NativeBackend.solved",
+      "type": "function",
+      "name": "NativeBackend.solved",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "lineRange": [
+        301,
+        302
+      ],
+      "summary": "读取原生工具包提供的最终成功判决。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_native.py:NativeBackend.episode_over",
+      "type": "function",
+      "name": "NativeBackend.episode_over",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "lineRange": [
+        304,
+        305
+      ],
+      "summary": "查询原生工具包的回合结束状态。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_native.py:NativeBackend.artifact",
+      "type": "function",
+      "name": "NativeBackend.artifact",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "lineRange": [
+        307,
+        308
+      ],
+      "summary": "从原生步骤存储读取观测产物。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_native.py:NativeBackend.env_steps",
+      "type": "function",
+      "name": "NativeBackend.env_steps",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "lineRange": [
+        310,
+        315
+      ],
+      "summary": "读取裸环境状态中的原生动作计数。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_native.py:NativeBackend.cancel",
+      "type": "function",
+      "name": "NativeBackend.cancel",
+      "filePath": "src/pyrualean/hosts/robodojo_native.py",
+      "lineRange": [
+        317,
+        318
+      ],
+      "summary": "请求原生工具包取消当前动作。",
+      "tags": [
+        "原生后端",
+        "观测记录",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "type": "file",
+      "name": "robodojo_sight.py",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "summary": "仅利用彩色掩膜、已知相机位姿和桌面平面估计物体三维范围。多视角约束帮助确定高度，并将机器人遮挡区域视为未知。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "几何估计"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:head_view",
+      "type": "function",
+      "name": "head_view",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        202,
+        212
+      ],
+      "summary": "构造 RoboDojo 固定头部相机的标定视图。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:_quat_matrix",
+      "type": "function",
+      "name": "_quat_matrix",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        215,
+        225
+      ],
+      "summary": "规范化 wxyz 四元数并转换为旋转矩阵。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:wrist_view",
+      "type": "function",
+      "name": "wrist_view",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        228,
+        239
+      ],
+      "summary": "根据末端位姿与固定安装关系计算腕部相机视图。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:_fill_convex",
+      "type": "function",
+      "name": "_fill_convex",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        242,
+        276
+      ],
+      "summary": "将图像点的凸包内部像素标记为覆盖区域。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:robot_pixels",
+      "type": "function",
+      "name": "robot_pixels",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        279,
+        371
+      ],
+      "summary": "根据机器人关节状态投影连杆和夹爪覆盖区域，将这些遮挡像素标记为未知。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:_march",
+      "type": "function",
+      "name": "_march",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        487,
+        527
+      ],
+      "summary": "沿像素射线寻找首次进入候选实体的光轴深度。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:_match",
+      "type": "function",
+      "name": "_match",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        530,
+        556
+      ],
+      "summary": "以 F1 比较候选实体投影与另一视角掩膜；视野或未知像素不足时不作判断。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:_rc",
+      "type": "function",
+      "name": "_rc",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        559,
+        564
+      ],
+      "summary": "把世界点投影为限制在图像范围内的像素索引。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:_head_cover",
+      "type": "function",
+      "name": "_head_cover",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        655,
+        670
+      ],
+      "summary": "计算候选直立实体覆盖头部掩膜桌面投影的比例。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:largest_part",
+      "type": "function",
+      "name": "largest_part",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        673,
+        726
+      ],
+      "summary": "保留掩膜最大连通区域及靠近它的碎片，兼顾遮挡分裂与多个物体分离。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "函数"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:_smear_height",
+      "type": "function",
+      "name": "_smear_height",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        729,
+        751
+      ],
+      "summary": "根据单视角掩膜在支撑平面上的投影边缘估计直立物体高度。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:_seen",
+      "type": "function",
+      "name": "_seen",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        754,
+        758
+      ],
+      "summary": "计算其他视角中被候选实体射线覆盖的掩膜像素比例。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:_taller",
+      "type": "function",
+      "name": "_taller",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        761,
+        786
+      ],
+      "summary": "在主体高度之外只保留能解释额外多视角掩膜的顶部延伸，避免虚增物体高度。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:seeds",
+      "type": "function",
+      "name": "seeds",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        789,
+        815
+      ],
+      "summary": "沿初始掩膜中心射线取多个高度的世界种子，为其他相机提供像素分割提示。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "函数"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:measure",
+      "type": "function",
+      "name": "measure",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        818,
+        1034
+      ],
+      "summary": "联合初始及其他视角掩膜选择物体高度与直立或悬垂形状，返回能解释可见证据的表面。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "函数"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:src/pyrualean/hosts/robodojo_sight.py:View",
+      "type": "class",
+      "name": "View",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        148,
+        199
+      ],
+      "summary": "表示 Isaac 相机约定下具有已知内外参的针孔相机。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "数据模型"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:View.__init__",
+      "type": "function",
+      "name": "View.__init__",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        151,
+        162
+      ],
+      "summary": "保存焦距、主点、图像大小及相机世界位姿。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:View.project",
+      "type": "function",
+      "name": "View.project",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        164,
+        174
+      ],
+      "summary": "把世界坐标投影为行、列和光轴深度。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:View.rays",
+      "type": "function",
+      "name": "View.rays",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        176,
+        187
+      ],
+      "summary": "计算图像每个像素对应的世界方向射线。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:View.on_plane",
+      "type": "function",
+      "name": "View.on_plane",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        189,
+        199
+      ],
+      "summary": "求像素射线与给定水平平面的交点及有效性。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "class:src/pyrualean/hosts/robodojo_sight.py:Sight",
+      "type": "class",
+      "name": "Sight",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        375,
+        429
+      ],
+      "summary": "封装一个相机对物体的掩膜及不能判定的遮挡像素。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "数据模型"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:Sight._sample",
+      "type": "function",
+      "name": "Sight._sample",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        394,
+        407
+      ],
+      "summary": "将世界点投影到像素场并进行双线性采样，同时检查视野有效性。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:Sight.shows",
+      "type": "function",
+      "name": "Sight.shows",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        409,
+        416
+      ],
+      "summary": "判断世界点是否投影到物体自己的掩膜像素。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:Sight.allows",
+      "type": "function",
+      "name": "Sight.allows",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        418,
+        424
+      ],
+      "summary": "允许位于掩膜、未知区域或图像外的点作为潜在物体部分。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:Sight.in_image",
+      "type": "function",
+      "name": "Sight.in_image",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        426,
+        429
+      ],
+      "summary": "判断世界点是否在相机前方且落在图像范围内。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "class:src/pyrualean/hosts/robodojo_sight.py:_Grid",
+      "type": "class",
+      "name": "_Grid",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        432,
+        465
+      ],
+      "summary": "在物体投影周围的支撑平面上建立自适应网格。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:_Grid.__init__",
+      "type": "function",
+      "name": "_Grid.__init__",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        435,
+        443
+      ],
+      "summary": "根据平面范围与网格预算选择单元尺度并生成网格坐标。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:_Grid.at",
+      "type": "function",
+      "name": "_Grid.at",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        445,
+        447
+      ],
+      "summary": "把所选网格平面坐标提升到给定相对高度。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:_Grid.index",
+      "type": "function",
+      "name": "_Grid.index",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        449,
+        455
+      ],
+      "summary": "计算平面点所在的网格单元，超出范围时返回无效索引。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:_Grid.holds",
+      "type": "function",
+      "name": "_Grid.holds",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        457,
+        465
+      ],
+      "summary": "判断平面点是否落入给定单元集合。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "class:src/pyrualean/hosts/robodojo_sight.py:_Solid",
+      "type": "class",
+      "name": "_Solid",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        468,
+        484
+      ],
+      "summary": "用每个平面单元的最低和最高高度描述候选三维实体。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "数据模型"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:_Solid.__init__",
+      "type": "function",
+      "name": "_Solid.__init__",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        472,
+        474
+      ],
+      "summary": "保存网格及上下高度场并标记有效单元。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:_Solid.spans",
+      "type": "function",
+      "name": "_Solid.spans",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        476,
+        484
+      ],
+      "summary": "判断给定平面坐标与高度是否属于实体。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "class:src/pyrualean/hosts/robodojo_sight.py:_Levels",
+      "type": "class",
+      "name": "_Levels",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        567,
+        652
+      ],
+      "summary": "逐高度计算头部掩膜允许的物体区域及连续立柱约束。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "数据模型"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:_Levels.__init__",
+      "type": "function",
+      "name": "_Levels.__init__",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        570,
+        588
+      ],
+      "summary": "建立各高度的掩膜允许矩阵及连续上升、下降信息。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:_Levels.cone",
+      "type": "function",
+      "name": "_Levels.cone",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        590,
+        601
+      ],
+      "summary": "生成每个单元从最低到最高允许层组成的掩膜视锥实体。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:_Levels.prism",
+      "type": "function",
+      "name": "_Levels.prism",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        603,
+        613
+      ],
+      "summary": "生成从支撑平面竖起的实体，保留肩部、把手等不同高度的可见部分。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:_Levels.block",
+      "type": "function",
+      "name": "_Levels.block",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        615,
+        623
+      ],
+      "summary": "截取达到目标高度的单元构成规则直立体。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:_Levels.rise_in",
+      "type": "function",
+      "name": "_Levels.rise_in",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        625,
+        638
+      ],
+      "summary": "计算另一视角允许每个网格柱连续上升的高度层数。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:_Levels.hang",
+      "type": "function",
+      "name": "_Levels.hang",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        640,
+        647
+      ],
+      "summary": "构造从指定高度向下延伸、由掩膜约束的悬垂实体。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    },
+    {
+      "id": "function:src/pyrualean/hosts/robodojo_sight.py:_Levels.solid",
+      "type": "function",
+      "name": "_Levels.solid",
+      "filePath": "src/pyrualean/hosts/robodojo_sight.py",
+      "lineRange": [
+        649,
+        652
+      ],
+      "summary": "按候选解释形式生成供另一视角评估的实体。",
+      "tags": [
+        "多视角感知",
+        "纯RGB",
+        "类方法"
+      ],
+      "complexity": "simple",
+      "languageNotes": "方法由官方结构列出；精确行号通过只读源码 AST 补足官方结果未提供的方法范围。"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:_png",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:_png",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:_plain",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:_plain",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:segment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:segment",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "class:src/pyrualean/hosts/robodojo_native.py:Cancelled",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "class:src/pyrualean/hosts/robodojo_native.py:Cancelled",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "class:src/pyrualean/hosts/robodojo_native.py:_Primitives",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "class:src/pyrualean/hosts/robodojo_native.py:_Primitives",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:_Primitives.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_native.py:_Primitives",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:_Primitives.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "class:src/pyrualean/hosts/robodojo_native.py:Steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "class:src/pyrualean/hosts/robodojo_native.py:Steps",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:Steps.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_native.py:Steps",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:Steps.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:Steps.record",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_native.py:Steps",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:Steps.record",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:Steps.index",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_native.py:Steps",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:Steps.index",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:Steps.artifact_path",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_native.py:Steps",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:Steps.artifact_path",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:Steps.load_bytes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_native.py:Steps",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:Steps.load_bytes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "class:src/pyrualean/hosts/robodojo_native.py:NativeToolkit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "class:src/pyrualean/hosts/robodojo_native.py:NativeToolkit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeToolkit.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_native.py:NativeToolkit",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeToolkit.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeToolkit._envelope",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_native.py:NativeToolkit",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeToolkit._envelope",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeToolkit.execute_tool",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_native.py:NativeToolkit",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeToolkit.execute_tool",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeToolkit.conclude",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_native.py:NativeToolkit",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeToolkit.conclude",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeToolkit.solved",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_native.py:NativeToolkit",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeToolkit.solved",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeToolkit.episode_over",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_native.py:NativeToolkit",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeToolkit.episode_over",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeToolkit.cancel_active_and_wait",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_native.py:NativeToolkit",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeToolkit.cancel_active_and_wait",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeToolkit.close",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_native.py:NativeToolkit",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeToolkit.close",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "class:src/pyrualean/hosts/robodojo_native.py:NativeBackend",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "class:src/pyrualean/hosts/robodojo_native.py:NativeBackend",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeBackend.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_native.py:NativeBackend",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeBackend.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeBackend.toolkit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_native.py:NativeBackend",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeBackend.toolkit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeBackend.colour_only",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_native.py:NativeBackend",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeBackend.colour_only",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeBackend.execute_tool",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_native.py:NativeBackend",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeBackend.execute_tool",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeBackend.conclude",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_native.py:NativeBackend",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeBackend.conclude",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeBackend.solved",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_native.py:NativeBackend",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeBackend.solved",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeBackend.episode_over",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_native.py:NativeBackend",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeBackend.episode_over",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeBackend.artifact",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_native.py:NativeBackend",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeBackend.artifact",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeBackend.env_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_native.py:NativeBackend",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeBackend.env_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeBackend.cancel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_native.py:NativeBackend",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeBackend.cancel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_native.py",
+      "target": "file:src/pyrualean/hosts/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_native.py:Steps.record",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:_png",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_native.py:Steps.record",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:_plain",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_native.py:Steps.artifact_path",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:Steps.index",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_native.py:Steps.load_bytes",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:Steps.artifact_path",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_native.py:NativeToolkit.__init__",
+      "target": "class:src/pyrualean/hosts/robodojo_native.py:_Primitives",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_native.py:NativeToolkit.__init__",
+      "target": "class:src/pyrualean/hosts/robodojo_native.py:Steps",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_native.py:NativeToolkit.execute_tool",
+      "target": "function:src/pyrualean/hosts/robodojo_native.py:NativeToolkit._envelope",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:head_view",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:head_view",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_quat_matrix",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_quat_matrix",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:wrist_view",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:wrist_view",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_fill_convex",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_fill_convex",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:robot_pixels",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:robot_pixels",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_march",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_march",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_match",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_match",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_rc",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_rc",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_head_cover",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_head_cover",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:largest_part",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:largest_part",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_smear_height",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_smear_height",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_seen",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_seen",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_taller",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_taller",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:seeds",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:seeds",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:measure",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:measure",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "class:src/pyrualean/hosts/robodojo_sight.py:View",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "class:src/pyrualean/hosts/robodojo_sight.py:View",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:View.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_sight.py:View",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:View.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:View.project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_sight.py:View",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:View.project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:View.rays",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_sight.py:View",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:View.rays",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:View.on_plane",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_sight.py:View",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:View.on_plane",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "class:src/pyrualean/hosts/robodojo_sight.py:Sight",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "class:src/pyrualean/hosts/robodojo_sight.py:Sight",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:Sight._sample",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_sight.py:Sight",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:Sight._sample",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:Sight.shows",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_sight.py:Sight",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:Sight.shows",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:Sight.allows",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_sight.py:Sight",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:Sight.allows",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:Sight.in_image",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_sight.py:Sight",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:Sight.in_image",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "class:src/pyrualean/hosts/robodojo_sight.py:_Grid",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "class:src/pyrualean/hosts/robodojo_sight.py:_Grid",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_Grid.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_sight.py:_Grid",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_Grid.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_Grid.at",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_sight.py:_Grid",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_Grid.at",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_Grid.index",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_sight.py:_Grid",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_Grid.index",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_Grid.holds",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_sight.py:_Grid",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_Grid.holds",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "class:src/pyrualean/hosts/robodojo_sight.py:_Solid",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "class:src/pyrualean/hosts/robodojo_sight.py:_Solid",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_Solid.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_sight.py:_Solid",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_Solid.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_Solid.spans",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_sight.py:_Solid",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_Solid.spans",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "class:src/pyrualean/hosts/robodojo_sight.py:_Levels",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "class:src/pyrualean/hosts/robodojo_sight.py:_Levels",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_Levels.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_sight.py:_Levels",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_Levels.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_Levels.cone",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_sight.py:_Levels",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_Levels.cone",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_Levels.prism",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_sight.py:_Levels",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_Levels.prism",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_Levels.block",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_sight.py:_Levels",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_Levels.block",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_Levels.rise_in",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_sight.py:_Levels",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_Levels.rise_in",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_Levels.hang",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_sight.py:_Levels",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_Levels.hang",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_Levels.solid",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:src/pyrualean/hosts/robodojo_sight.py:_Levels",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_Levels.solid",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/pyrualean/hosts/robodojo_sight.py",
+      "target": "file:src/pyrualean/hosts/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_sight.py:View.on_plane",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:View.rays",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_sight.py:head_view",
+      "target": "class:src/pyrualean/hosts/robodojo_sight.py:View",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_sight.py:wrist_view",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_quat_matrix",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_sight.py:wrist_view",
+      "target": "class:src/pyrualean/hosts/robodojo_sight.py:View",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_sight.py:robot_pixels",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_quat_matrix",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_sight.py:robot_pixels",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_fill_convex",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_sight.py:Sight.shows",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:Sight._sample",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_sight.py:Sight.allows",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:Sight._sample",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_sight.py:_match",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_rc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_sight.py:_match",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_march",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_sight.py:_Levels.cone",
+      "target": "class:src/pyrualean/hosts/robodojo_sight.py:_Solid",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_sight.py:_Levels.prism",
+      "target": "class:src/pyrualean/hosts/robodojo_sight.py:_Solid",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_sight.py:_Levels.block",
+      "target": "class:src/pyrualean/hosts/robodojo_sight.py:_Solid",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_sight.py:_Levels.hang",
+      "target": "class:src/pyrualean/hosts/robodojo_sight.py:_Solid",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_sight.py:_Levels.solid",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_Levels.block",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_sight.py:_Levels.solid",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_Levels.hang",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_sight.py:_seen",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_march",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_sight.py:_taller",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_seen",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_sight.py:seeds",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:largest_part",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_sight.py:measure",
+      "target": "class:src/pyrualean/hosts/robodojo_sight.py:Sight",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_sight.py:measure",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:largest_part",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_sight.py:measure",
+      "target": "class:src/pyrualean/hosts/robodojo_sight.py:_Grid",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_sight.py:measure",
+      "target": "class:src/pyrualean/hosts/robodojo_sight.py:_Levels",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_sight.py:measure",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_march",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_sight.py:measure",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_match",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_sight.py:measure",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_head_cover",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_sight.py:measure",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_smear_height",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_sight.py:measure",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_seen",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/pyrualean/hosts/robodojo_sight.py:measure",
+      "target": "function:src/pyrualean/hosts/robodojo_sight.py:_taller",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

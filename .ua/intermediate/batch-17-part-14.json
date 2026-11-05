@@ -1,0 +1,1921 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "type": "file",
+      "name": "hang_mugs_random.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "拟合杯架姿态并识别杯子与把手几何，按杯型选择杯身、杯沿或把手抓取；通过侧视观测校正挂入位置并复查挂钩占用。同一实现用于随机场景任务。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "视觉定位",
+        "运动控制"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:say",
+      "type": "function",
+      "name": "say",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "输出离线程序的执行诊断信息。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        37,
+        38
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:f3",
+      "type": "function",
+      "name": "f3",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "把坐标向量格式化为三位小数的诊断文本。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        41,
+        42
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:cam_mats",
+      "type": "function",
+      "name": "cam_mats",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "读取相机标定矩阵以支持杯架和杯子几何投影。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        45,
+        47
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:project",
+      "type": "function",
+      "name": "project",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "使用相机内外参把三维世界坐标投影为图像坐标。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        50,
+        54
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:on_plane",
+      "type": "function",
+      "name": "on_plane",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "将像素中心射线与已知几何平面求交。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        57,
+        62
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:peg_segments",
+      "type": "function",
+      "name": "peg_segments",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "按杯架层高和朝向生成各挂杆的三维线段。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        66,
+        76
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:render_parts",
+      "type": "function",
+      "name": "render_parts",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "将候选杯架位姿中的几何部件渲染成局部图像轮廓。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        79,
+        105
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:edge_score",
+      "type": "function",
+      "name": "edge_score",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "比较渲染轮廓边缘与图像边缘的一致程度。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        108,
+        112
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:contrast_score",
+      "type": "function",
+      "name": "contrast_score",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "比较渲染部件内部与背景的对比度来评价杯架姿态。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        115,
+        124
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:gauss_fit",
+      "type": "function",
+      "name": "gauss_fit",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "估计 Lab 颜色样本的高斯均值、逆协方差与行列式项。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        127,
+        130
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:loglik",
+      "type": "function",
+      "name": "loglik",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "计算图像像素相对颜色高斯模型的对数似然。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        133,
+        136
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:fit_holder",
+      "type": "function",
+      "name": "fit_holder",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "结合渲染轮廓、边缘和颜色模型搜索杯架平面位置及旋转角。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        139,
+        192
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:find_holder",
+      "type": "function",
+      "name": "find_holder",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "通过多个语义提示取得杯架初始位置，再拟合其几何姿态。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        195,
+        228
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:identify",
+      "type": "function",
+      "name": "identify",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "依据杯沿半径、把手伸出和颜色证据软判别杯子资产类型。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        276,
+        354
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:find_mugs",
+      "type": "function",
+      "name": "find_mugs",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "从头部及可选腕相机收集杯子检测，并合并多个提示形成候选。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        364,
+        403
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:top_view",
+      "type": "function",
+      "name": "top_view",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "从垂直腕部视图估计杯口圆、把手方向和伸出长度，并检查倒伏或杂物误检。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        409,
+        528
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:rot",
+      "type": "function",
+      "name": "rot",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "按机器人姿态约定构造夹爪前指、闭合及法向三轴矩阵。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        532,
+        540
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:peg_point",
+      "type": "function",
+      "name": "peg_point",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "将杯架局部坐标中的侧挂杆位置转换为世界坐标。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        543,
+        548
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:wrap",
+      "type": "function",
+      "name": "wrap",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "将角度归一到正负 180 度范围。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        551,
+        552
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:mv",
+      "type": "function",
+      "name": "mv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "执行指定机械臂的笛卡尔运动并返回控制反馈。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        555,
+        564
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:grip",
+      "type": "function",
+      "name": "grip",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "执行指定机械臂的夹爪指令并返回夹持反馈。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        567,
+        570
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:grasp_body",
+      "type": "function",
+      "name": "grasp_body",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "沿把手方向以低俯仰侧夹杯身，并按杯型设置相对杯沿抓取深度。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        573,
+        605
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:grasp_rim",
+      "type": "function",
+      "name": "grasp_rim",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "以倾斜滚转姿态夹住把手对侧的杯沿薄壁。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        608,
+        642
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:handle_hang",
+      "type": "function",
+      "name": "handle_hang",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "从上方夹住把手横杆，利用重力摆动后的几何关系规划挂杯。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        660,
+        753
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:sag_rot",
+      "type": "function",
+      "name": "sag_rot",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "围绕夹爪第三轴旋转杯体模型，表示杯沿夹持后的下垂。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        756,
+        764
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:est_sag",
+      "type": "function",
+      "name": "est_sag",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "比较腕图中的杯子框与不同下垂角投影，估计夹持姿态变化。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        767,
+        816
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_one",
+      "type": "function",
+      "name": "hang_one",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "重新观察指定杯子并选择抓法，搬运后把杯柄穿入指定挂钩。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "complex",
+      "lineRange": [
+        819,
+        1054
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:body_putdown",
+      "type": "function",
+      "name": "body_putdown",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "挂杯流程无法继续时，将侧夹的杯子按原位置安全放回桌面。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1064,
+        1082
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:observe_at_station",
+      "type": "function",
+      "name": "observe_at_station",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "组织杯柄侧视观测，在首次开口识别失败时改变角度或站位重试。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1085,
+        1117
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:observe_once",
+      "type": "function",
+      "name": "observe_once",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "用另一臂对挂杯站位取前后差分图，读取杯柄开口的位置。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1120,
+        1233
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:blob_mugs",
+      "type": "function",
+      "name": "blob_mugs",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "从头部颜色前景生成分割遗漏的杯子候选并验证真实物体。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1238,
+        1286
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_rim45",
+      "type": "function",
+      "name": "hang_rim45",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "以杯沿夹持和 45 度挂放姿态处理特定杯型，必要时先中转到可达位置。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1300,
+        1421
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:quat_R",
+      "type": "function",
+      "name": "quat_R",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "把腕部四元数转换为旋转矩阵。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1438,
+        1442
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:ypeg_point",
+      "type": "function",
+      "name": "ypeg_point",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "计算杯架前侧纵向挂杆上指定半径的三维位置。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1445,
+        1448
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_y14",
+      "type": "function",
+      "name": "hang_y14",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "为特殊杯型规划前侧挂杆的杯沿夹持和转向挂入动作。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1451,
+        1589
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:episode_ended",
+      "type": "function",
+      "name": "episode_ended",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "归位双臂并根据原语反馈判断环境是否已经结束回合。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1606,
+        1619
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:peg_occupied",
+      "type": "function",
+      "name": "peg_occupied",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "比较挂杆下方区域与初始头部图像，判断是否已挂有杯子。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1622,
+        1645
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:ypeg_occupied",
+      "type": "function",
+      "name": "ypeg_occupied",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "比较前侧挂杆下方区域与初始图像，判断特殊杯型是否仍在架上。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1648,
+        1670
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:arms_aside",
+      "type": "function",
+      "name": "arms_aside",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "把双臂移动到不遮挡杯架观测的侧后方高位。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1673,
+        1675
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:pair_cost",
+      "type": "function",
+      "name": "pair_cost",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "根据杯子位置、负责机械臂和目标挂钩估计分配代价。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1678,
+        1688
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:plan_next",
+      "type": "function",
+      "name": "plan_next",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "summary": "在低挂钩先于同侧高挂钩的约束下，为剩余杯子选择代价较低的下一次挂放。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1691,
+        1712
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:say",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:say",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:f3",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:f3",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:cam_mats",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:cam_mats",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:project",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:on_plane",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:on_plane",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:peg_segments",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:peg_segments",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:render_parts",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:render_parts",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:edge_score",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:edge_score",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:contrast_score",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:contrast_score",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:gauss_fit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:gauss_fit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:loglik",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:loglik",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:fit_holder",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:fit_holder",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:find_holder",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:find_holder",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:identify",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:identify",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:find_mugs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:find_mugs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:top_view",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:top_view",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:rot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:rot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:peg_point",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:peg_point",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:wrap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:wrap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:mv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:mv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:grip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:grip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:grasp_body",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:grasp_body",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:grasp_rim",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:grasp_rim",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:handle_hang",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:handle_hang",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:sag_rot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:sag_rot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:est_sag",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:est_sag",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_one",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_one",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:body_putdown",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:body_putdown",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:observe_at_station",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:observe_at_station",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:observe_once",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:observe_once",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:blob_mugs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:blob_mugs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_rim45",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_rim45",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:quat_R",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:quat_R",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:ypeg_point",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:ypeg_point",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_y14",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_y14",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:episode_ended",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:episode_ended",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:peg_occupied",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:peg_occupied",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:ypeg_occupied",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:ypeg_occupied",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:arms_aside",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:arms_aside",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:pair_cost",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:pair_cost",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:plan_next",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:plan_next",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:render_parts",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:peg_segments",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:fit_holder",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:fit_holder",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:render_parts",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:fit_holder",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:edge_score",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:fit_holder",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:contrast_score",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:fit_holder",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:gauss_fit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:fit_holder",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:loglik",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:find_holder",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:fit_holder",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:identify",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:top_view",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:top_view",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:cam_mats",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:top_view",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:top_view",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:grasp_body",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:grasp_body",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:grasp_body",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:grasp_body",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:grasp_rim",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:grasp_rim",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:grasp_rim",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:grasp_rim",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:handle_hang",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:handle_hang",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:handle_hang",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:handle_hang",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:handle_hang",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:peg_point",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:handle_hang",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:handle_hang",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:rot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:est_sag",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:est_sag",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:cam_mats",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:est_sag",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:sag_rot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:est_sag",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_one",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:top_view",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_one",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_one",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:identify",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_one",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_rim45",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_one",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_y14",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_one",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:grasp_body",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_one",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:grasp_rim",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_one",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:rot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_one",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_one",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_one",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:est_sag",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_one",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:sag_rot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_one",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_one",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:peg_point",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_one",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:observe_at_station",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_one",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:body_putdown",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_one",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:body_putdown",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:body_putdown",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:body_putdown",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:observe_at_station",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:observe_once",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:observe_at_station",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:observe_once",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:observe_once",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:rot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:observe_once",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:observe_once",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:observe_once",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:cam_mats",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:observe_once",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:observe_once",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:blob_mugs",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:cam_mats",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:blob_mugs",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_rim45",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_rim45",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_rim45",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_rim45",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_rim45",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_rim45",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:rot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_rim45",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:peg_point",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_y14",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_y14",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_y14",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_y14",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_y14",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_y14",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:quat_R",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_y14",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:rot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:hang_y14",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:ypeg_point",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:episode_ended",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:peg_occupied",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:cam_mats",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:peg_occupied",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:peg_point",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:peg_occupied",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:peg_occupied",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:ypeg_occupied",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:cam_mats",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:ypeg_occupied",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:ypeg_point",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:ypeg_occupied",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:ypeg_occupied",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:arms_aside",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:plan_next",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/hang_mugs_random.py:pair_cost",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

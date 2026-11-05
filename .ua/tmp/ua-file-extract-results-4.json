@@ -1,0 +1,6814 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 8,
+  "filesSkipped": [],
+  "filesUnreadable": [],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 8,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 8,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "results": [
+    {
+      "path": "src/pyrualean/hosts/common.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 121,
+      "nonEmptyLines": 95,
+      "functions": [
+        {
+          "name": "resolve_rpent_root",
+          "startLine": 33,
+          "endLine": 55,
+          "params": [
+            "explicit"
+          ]
+        },
+        {
+          "name": "stop_all",
+          "startLine": 108,
+          "endLine": 118,
+          "params": [
+            "toolkit",
+            "daemons"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "RpentBackend",
+          "startLine": 58,
+          "endLine": 105,
+          "methods": [
+            "__init__",
+            "toolkit",
+            "execute_tool",
+            "solved",
+            "artifact",
+            "env_steps",
+            "cancel"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "resolve_rpent_root",
+          "line": 33,
+          "isDefault": false
+        },
+        {
+          "name": "RpentBackend",
+          "line": 58,
+          "isDefault": false
+        },
+        {
+          "name": "stop_all",
+          "line": 108,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "resolve_rpent_root",
+          "callee": "os.environ.get",
+          "lineNumber": 36
+        },
+        {
+          "caller": "resolve_rpent_root",
+          "callee": "os.environ.get",
+          "lineNumber": 36
+        },
+        {
+          "caller": "resolve_rpent_root",
+          "callee": "Path(value).expanduser().resolve",
+          "lineNumber": 39
+        },
+        {
+          "caller": "resolve_rpent_root",
+          "callee": "Path(value).expanduser",
+          "lineNumber": 39
+        },
+        {
+          "caller": "resolve_rpent_root",
+          "callee": "Path",
+          "lineNumber": 39
+        },
+        {
+          "caller": "resolve_rpent_root",
+          "callee": "(root / \"rpent\").is_dir",
+          "lineNumber": 40
+        },
+        {
+          "caller": "resolve_rpent_root",
+          "callee": "(root / \"robots\").is_dir",
+          "lineNumber": 40
+        },
+        {
+          "caller": "resolve_rpent_root",
+          "callee": "str",
+          "lineNumber": 41
+        },
+        {
+          "caller": "resolve_rpent_root",
+          "callee": "sys.path.insert",
+          "lineNumber": 42
+        },
+        {
+          "caller": "resolve_rpent_root",
+          "callee": "str",
+          "lineNumber": 42
+        },
+        {
+          "caller": "resolve_rpent_root",
+          "callee": "FileNotFoundError",
+          "lineNumber": 44
+        },
+        {
+          "caller": "resolve_rpent_root",
+          "callee": "Path(rpent.__file__).resolve",
+          "lineNumber": 48
+        },
+        {
+          "caller": "resolve_rpent_root",
+          "callee": "Path",
+          "lineNumber": 48
+        },
+        {
+          "caller": "resolve_rpent_root",
+          "callee": "str",
+          "lineNumber": 49
+        },
+        {
+          "caller": "resolve_rpent_root",
+          "callee": "sys.path.insert",
+          "lineNumber": 50
+        },
+        {
+          "caller": "resolve_rpent_root",
+          "callee": "str",
+          "lineNumber": 50
+        },
+        {
+          "caller": "resolve_rpent_root",
+          "callee": "FileNotFoundError",
+          "lineNumber": 53
+        },
+        {
+          "caller": "execute_tool",
+          "callee": "self._toolkit.execute_tool",
+          "lineNumber": 69
+        },
+        {
+          "caller": "solved",
+          "callee": "bool",
+          "lineNumber": 80
+        },
+        {
+          "caller": "solved",
+          "callee": "self._toolkit.solved",
+          "lineNumber": 80
+        },
+        {
+          "caller": "solved",
+          "callee": "getattr",
+          "lineNumber": 82
+        },
+        {
+          "caller": "solved",
+          "callee": "bool",
+          "lineNumber": 83
+        },
+        {
+          "caller": "solved",
+          "callee": "status.get",
+          "lineNumber": 83
+        },
+        {
+          "caller": "artifact",
+          "callee": "self._toolkit.state.load_bytes",
+          "lineNumber": 86
+        },
+        {
+          "caller": "env_steps",
+          "callee": "getattr",
+          "lineNumber": 96
+        },
+        {
+          "caller": "env_steps",
+          "callee": "getattr",
+          "lineNumber": 98
+        },
+        {
+          "caller": "env_steps",
+          "callee": "int",
+          "lineNumber": 100
+        },
+        {
+          "caller": "env_steps",
+          "callee": "primitives.recorded_frame_count",
+          "lineNumber": 100
+        },
+        {
+          "caller": "cancel",
+          "callee": "self._toolkit.cancel_active_and_wait",
+          "lineNumber": 105
+        },
+        {
+          "caller": "stop_all",
+          "callee": "contextlib.suppress",
+          "lineNumber": 114
+        },
+        {
+          "caller": "stop_all",
+          "callee": "toolkit.close",
+          "lineNumber": 115
+        },
+        {
+          "caller": "stop_all",
+          "callee": "reversed",
+          "lineNumber": 116
+        },
+        {
+          "caller": "stop_all",
+          "callee": "contextlib.suppress",
+          "lineNumber": 117
+        },
+        {
+          "caller": "stop_all",
+          "callee": "daemon.stop",
+          "lineNumber": 118
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 3,
+        "functionCount": 2,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/pyrualean/hosts/rpent_libero.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 418,
+      "nonEmptyLines": 368,
+      "functions": [
+        {
+          "name": "add_cell_args",
+          "startLine": 65,
+          "endLine": 71,
+          "params": [
+            "parser"
+          ]
+        },
+        {
+          "name": "add_boot_args",
+          "startLine": 74,
+          "endLine": 78,
+          "params": [
+            "parser"
+          ]
+        },
+        {
+          "name": "cell_from_args",
+          "startLine": 81,
+          "endLine": 89,
+          "params": [
+            "args"
+          ]
+        },
+        {
+          "name": "boot_options",
+          "startLine": 92,
+          "endLine": 96,
+          "params": [
+            "args"
+          ]
+        },
+        {
+          "name": "boot",
+          "startLine": 99,
+          "endLine": 176,
+          "params": [
+            "cell",
+            "out_dir",
+            "rpent_root",
+            "env_only",
+            "vla_endpoint",
+            "sam3_endpoint"
+          ]
+        },
+        {
+          "name": "dump_card",
+          "startLine": 179,
+          "endLine": 210,
+          "params": [
+            "toolkit",
+            "cell",
+            "out_dir"
+          ]
+        },
+        {
+          "name": "_sha256_text",
+          "startLine": 213,
+          "endLine": 214,
+          "params": [
+            "text"
+          ]
+        },
+        {
+          "name": "run_episode",
+          "startLine": 217,
+          "endLine": 338,
+          "params": [
+            "policy_path",
+            "cell",
+            "out_dir",
+            "timeout_s",
+            "rpent_root"
+          ]
+        },
+        {
+          "name": "_install_sigterm",
+          "startLine": 341,
+          "endLine": 346,
+          "params": []
+        },
+        {
+          "name": "card_only",
+          "startLine": 349,
+          "endLine": 360,
+          "params": [
+            "cell",
+            "out_dir",
+            "rpent_root"
+          ]
+        },
+        {
+          "name": "_add_cell_args",
+          "startLine": 363,
+          "endLine": 368,
+          "params": [
+            "parser"
+          ]
+        },
+        {
+          "name": "_cell",
+          "startLine": 371,
+          "endLine": 372,
+          "params": [
+            "args"
+          ]
+        },
+        {
+          "name": "main",
+          "startLine": 375,
+          "endLine": 414,
+          "params": [
+            "argv"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "Cell",
+          "startLine": 50,
+          "endLine": 62,
+          "methods": [
+            "tag"
+          ],
+          "properties": [
+            "suite",
+            "task",
+            "seed",
+            "max_episode_steps",
+            "libero_type",
+            "cuda_device"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "Cell",
+          "line": 49,
+          "isDefault": false
+        },
+        {
+          "name": "add_cell_args",
+          "line": 65,
+          "isDefault": false
+        },
+        {
+          "name": "add_boot_args",
+          "line": 74,
+          "isDefault": false
+        },
+        {
+          "name": "cell_from_args",
+          "line": 81,
+          "isDefault": false
+        },
+        {
+          "name": "boot_options",
+          "line": 92,
+          "isDefault": false
+        },
+        {
+          "name": "boot",
+          "line": 99,
+          "isDefault": false
+        },
+        {
+          "name": "dump_card",
+          "line": 179,
+          "isDefault": false
+        },
+        {
+          "name": "_sha256_text",
+          "line": 213,
+          "isDefault": false
+        },
+        {
+          "name": "run_episode",
+          "line": 217,
+          "isDefault": false
+        },
+        {
+          "name": "_install_sigterm",
+          "line": 341,
+          "isDefault": false
+        },
+        {
+          "name": "card_only",
+          "line": 349,
+          "isDefault": false
+        },
+        {
+          "name": "_add_cell_args",
+          "line": 363,
+          "isDefault": false
+        },
+        {
+          "name": "_cell",
+          "line": 371,
+          "isDefault": false
+        },
+        {
+          "name": "main",
+          "line": 375,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "tag",
+          "callee": "self.suite.replace",
+          "lineNumber": 62
+        },
+        {
+          "caller": "add_cell_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 68
+        },
+        {
+          "caller": "add_cell_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 69
+        },
+        {
+          "caller": "add_cell_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 70
+        },
+        {
+          "caller": "add_cell_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 71
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 77
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 78
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "Cell",
+          "lineNumber": 82
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "str",
+          "lineNumber": 83
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "int",
+          "lineNumber": 84
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "int",
+          "lineNumber": 85
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "int",
+          "lineNumber": 86
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "getattr",
+          "lineNumber": 86
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "str",
+          "lineNumber": 87
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "getattr",
+          "lineNumber": 87
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "getattr",
+          "lineNumber": 88
+        },
+        {
+          "caller": "boot_options",
+          "callee": "getattr",
+          "lineNumber": 94
+        },
+        {
+          "caller": "boot_options",
+          "callee": "getattr",
+          "lineNumber": 95
+        },
+        {
+          "caller": "boot",
+          "callee": "resolve_rpent_root",
+          "lineNumber": 118
+        },
+        {
+          "caller": "boot",
+          "callee": "out_dir.mkdir",
+          "lineNumber": 124
+        },
+        {
+          "caller": "boot",
+          "callee": "init_output_dir",
+          "lineNumber": 125
+        },
+        {
+          "caller": "boot",
+          "callee": "NullDashboardEventSink",
+          "lineNumber": 126
+        },
+        {
+          "caller": "boot",
+          "callee": "Namespace",
+          "lineNumber": 127
+        },
+        {
+          "caller": "boot",
+          "callee": "get_robot_spec",
+          "lineNumber": 142
+        },
+        {
+          "caller": "boot",
+          "callee": "spec.init_runtime",
+          "lineNumber": 144
+        },
+        {
+          "caller": "boot",
+          "callee": "runtime_kwargs.setdefault",
+          "lineNumber": 146
+        },
+        {
+          "caller": "boot",
+          "callee": "runtime_kwargs.setdefault",
+          "lineNumber": 147
+        },
+        {
+          "caller": "boot",
+          "callee": "memory_dir.mkdir",
+          "lineNumber": 149
+        },
+        {
+          "caller": "boot",
+          "callee": "RunConfig",
+          "lineNumber": 150
+        },
+        {
+          "caller": "boot",
+          "callee": "str",
+          "lineNumber": 158
+        },
+        {
+          "caller": "boot",
+          "callee": "get_toolkit",
+          "lineNumber": 163
+        },
+        {
+          "caller": "boot",
+          "callee": "reversed",
+          "lineNumber": 172
+        },
+        {
+          "caller": "boot",
+          "callee": "contextlib.suppress",
+          "lineNumber": 173
+        },
+        {
+          "caller": "boot",
+          "callee": "daemon.stop",
+          "lineNumber": 174
+        },
+        {
+          "caller": "dump_card",
+          "callee": "toolkit.execute_tool",
+          "lineNumber": 182
+        },
+        {
+          "caller": "dump_card",
+          "callee": "view.get",
+          "lineNumber": 183
+        },
+        {
+          "caller": "dump_card",
+          "callee": "float",
+          "lineNumber": 184
+        },
+        {
+          "caller": "dump_card",
+          "callee": "raw.get",
+          "lineNumber": 184
+        },
+        {
+          "caller": "dump_card",
+          "callee": "card_dir.mkdir",
+          "lineNumber": 186
+        },
+        {
+          "caller": "dump_card",
+          "callee": "toolkit.state.artifact_path",
+          "lineNumber": 190
+        },
+        {
+          "caller": "dump_card",
+          "callee": "source.is_file",
+          "lineNumber": 193
+        },
+        {
+          "caller": "dump_card",
+          "callee": "shutil.copyfile",
+          "lineNumber": 195
+        },
+        {
+          "caller": "dump_card",
+          "callee": "name.split",
+          "lineNumber": 196
+        },
+        {
+          "caller": "dump_card",
+          "callee": "str",
+          "lineNumber": 196
+        },
+        {
+          "caller": "dump_card",
+          "callee": "TaskCard",
+          "lineNumber": 197
+        },
+        {
+          "caller": "dump_card",
+          "callee": "str",
+          "lineNumber": 201
+        },
+        {
+          "caller": "dump_card",
+          "callee": "view.get",
+          "lineNumber": 201
+        },
+        {
+          "caller": "dump_card",
+          "callee": "str",
+          "lineNumber": 202
+        },
+        {
+          "caller": "dump_card",
+          "callee": "raw.get",
+          "lineNumber": 202
+        },
+        {
+          "caller": "dump_card",
+          "callee": "float",
+          "lineNumber": 203
+        },
+        {
+          "caller": "dump_card",
+          "callee": "raw.get",
+          "lineNumber": 203
+        },
+        {
+          "caller": "dump_card",
+          "callee": "float",
+          "lineNumber": 204
+        },
+        {
+          "caller": "dump_card",
+          "callee": "raw.get",
+          "lineNumber": 204
+        },
+        {
+          "caller": "dump_card",
+          "callee": "abs",
+          "lineNumber": 205
+        },
+        {
+          "caller": "dump_card",
+          "callee": "abs",
+          "lineNumber": 205
+        },
+        {
+          "caller": "dump_card",
+          "callee": "len",
+          "lineNumber": 205
+        },
+        {
+          "caller": "dump_card",
+          "callee": "(out_dir / \"card.json\").write_text",
+          "lineNumber": 209
+        },
+        {
+          "caller": "dump_card",
+          "callee": "card.to_json",
+          "lineNumber": 209
+        },
+        {
+          "caller": "_sha256_text",
+          "callee": "hashlib.sha256(text.encode(\"utf-8\")).hexdigest",
+          "lineNumber": 214
+        },
+        {
+          "caller": "_sha256_text",
+          "callee": "hashlib.sha256",
+          "lineNumber": 214
+        },
+        {
+          "caller": "_sha256_text",
+          "callee": "text.encode",
+          "lineNumber": 214
+        },
+        {
+          "caller": "run_episode",
+          "callee": "out_dir.mkdir",
+          "lineNumber": 227
+        },
+        {
+          "caller": "run_episode",
+          "callee": "time.perf_counter",
+          "lineNumber": 228
+        },
+        {
+          "caller": "run_episode",
+          "callee": "time.strftime",
+          "lineNumber": 229
+        },
+        {
+          "caller": "run_episode",
+          "callee": "str",
+          "lineNumber": 239
+        },
+        {
+          "caller": "run_episode",
+          "callee": "policy_sha256",
+          "lineNumber": 240
+        },
+        {
+          "caller": "run_episode",
+          "callee": "policy_path.stat",
+          "lineNumber": 241
+        },
+        {
+          "caller": "run_episode",
+          "callee": "shutil.copyfile",
+          "lineNumber": 265
+        },
+        {
+          "caller": "run_episode",
+          "callee": "Ledger",
+          "lineNumber": 269
+        },
+        {
+          "caller": "run_episode",
+          "callee": "boot",
+          "lineNumber": 271
+        },
+        {
+          "caller": "run_episode",
+          "callee": "str",
+          "lineNumber": 272
+        },
+        {
+          "caller": "run_episode",
+          "callee": "resolve_rpent_root",
+          "lineNumber": 272
+        },
+        {
+          "caller": "run_episode",
+          "callee": "time.perf_counter",
+          "lineNumber": 273
+        },
+        {
+          "caller": "run_episode",
+          "callee": "RpentBackend",
+          "lineNumber": 274
+        },
+        {
+          "caller": "run_episode",
+          "callee": "dump_card",
+          "lineNumber": 275
+        },
+        {
+          "caller": "run_episode",
+          "callee": "render_prompt",
+          "lineNumber": 277
+        },
+        {
+          "caller": "run_episode",
+          "callee": "int",
+          "lineNumber": 277
+        },
+        {
+          "caller": "run_episode",
+          "callee": "bundle.text",
+          "lineNumber": 278
+        },
+        {
+          "caller": "run_episode",
+          "callee": "(out_dir / \"prompt.txt\").write_text",
+          "lineNumber": 279
+        },
+        {
+          "caller": "run_episode",
+          "callee": "len",
+          "lineNumber": 281
+        },
+        {
+          "caller": "run_episode",
+          "callee": "_sha256_text",
+          "lineNumber": 282
+        },
+        {
+          "caller": "run_episode",
+          "callee": "list",
+          "lineNumber": 283
+        },
+        {
+          "caller": "run_episode",
+          "callee": "LiberoRobot",
+          "lineNumber": 286
+        },
+        {
+          "caller": "run_episode",
+          "callee": "_install_sigterm",
+          "lineNumber": 287
+        },
+        {
+          "caller": "run_episode",
+          "callee": "scratch.mkdir",
+          "lineNumber": 289
+        },
+        {
+          "caller": "run_episode",
+          "callee": "audit_source",
+          "lineNumber": 291
+        },
+        {
+          "caller": "run_episode",
+          "callee": "policy_path.read_text",
+          "lineNumber": 292
+        },
+        {
+          "caller": "run_episode",
+          "callee": "load_policy",
+          "lineNumber": 295
+        },
+        {
+          "caller": "run_episode",
+          "callee": "make_builtins",
+          "lineNumber": 295
+        },
+        {
+          "caller": "run_episode",
+          "callee": "str",
+          "lineNumber": 299
+        },
+        {
+          "caller": "run_episode",
+          "callee": "open",
+          "lineNumber": 301
+        },
+        {
+          "caller": "run_episode",
+          "callee": "contextlib.redirect_stdout",
+          "lineNumber": 302
+        },
+        {
+          "caller": "run_episode",
+          "callee": "contextlib.redirect_stderr",
+          "lineNumber": 302
+        },
+        {
+          "caller": "run_episode",
+          "callee": "run_policy",
+          "lineNumber": 303
+        },
+        {
+          "caller": "run_episode",
+          "callee": "bool",
+          "lineNumber": 313
+        },
+        {
+          "caller": "run_episode",
+          "callee": "toolkit.solved",
+          "lineNumber": 313
+        },
+        {
+          "caller": "run_episode",
+          "callee": "backend.env_steps",
+          "lineNumber": 314
+        },
+        {
+          "caller": "run_episode",
+          "callee": "type",
+          "lineNumber": 316
+        },
+        {
+          "caller": "run_episode",
+          "callee": "str",
+          "lineNumber": 316
+        },
+        {
+          "caller": "run_episode",
+          "callee": "result[\"notes\"].append",
+          "lineNumber": 318
+        },
+        {
+          "caller": "run_episode",
+          "callee": "isinstance",
+          "lineNumber": 321
+        },
+        {
+          "caller": "run_episode",
+          "callee": "len",
+          "lineNumber": 324
+        },
+        {
+          "caller": "run_episode",
+          "callee": "ledger.stateful_calls",
+          "lineNumber": 325
+        },
+        {
+          "caller": "run_episode",
+          "callee": "ledger.env_steps",
+          "lineNumber": 326
+        },
+        {
+          "caller": "run_episode",
+          "callee": "ledger.write_jsonl",
+          "lineNumber": 327
+        },
+        {
+          "caller": "run_episode",
+          "callee": "contextlib.suppress",
+          "lineNumber": 329
+        },
+        {
+          "caller": "run_episode",
+          "callee": "toolkit.close",
+          "lineNumber": 330
+        },
+        {
+          "caller": "run_episode",
+          "callee": "reversed",
+          "lineNumber": 331
+        },
+        {
+          "caller": "run_episode",
+          "callee": "contextlib.suppress",
+          "lineNumber": 332
+        },
+        {
+          "caller": "run_episode",
+          "callee": "daemon.stop",
+          "lineNumber": 333
+        },
+        {
+          "caller": "run_episode",
+          "callee": "time.perf_counter",
+          "lineNumber": 334
+        },
+        {
+          "caller": "run_episode",
+          "callee": "(out_dir / \"result.json\").write_text",
+          "lineNumber": 335
+        },
+        {
+          "caller": "run_episode",
+          "callee": "json.dumps",
+          "lineNumber": 336
+        },
+        {
+          "caller": "handler",
+          "callee": "KeyboardInterrupt",
+          "lineNumber": 343
+        },
+        {
+          "caller": "_install_sigterm",
+          "callee": "contextlib.suppress",
+          "lineNumber": 345
+        },
+        {
+          "caller": "_install_sigterm",
+          "callee": "signal.signal",
+          "lineNumber": 346
+        },
+        {
+          "caller": "card_only",
+          "callee": "boot",
+          "lineNumber": 352
+        },
+        {
+          "caller": "card_only",
+          "callee": "dump_card",
+          "lineNumber": 354
+        },
+        {
+          "caller": "card_only",
+          "callee": "contextlib.suppress",
+          "lineNumber": 356
+        },
+        {
+          "caller": "card_only",
+          "callee": "toolkit.close",
+          "lineNumber": 357
+        },
+        {
+          "caller": "card_only",
+          "callee": "reversed",
+          "lineNumber": 358
+        },
+        {
+          "caller": "card_only",
+          "callee": "contextlib.suppress",
+          "lineNumber": 359
+        },
+        {
+          "caller": "card_only",
+          "callee": "daemon.stop",
+          "lineNumber": 360
+        },
+        {
+          "caller": "_add_cell_args",
+          "callee": "add_cell_args",
+          "lineNumber": 364
+        },
+        {
+          "caller": "_add_cell_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 365
+        },
+        {
+          "caller": "_add_cell_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 366
+        },
+        {
+          "caller": "_add_cell_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 367
+        },
+        {
+          "caller": "_add_cell_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 368
+        },
+        {
+          "caller": "_cell",
+          "callee": "cell_from_args",
+          "lineNumber": 372
+        },
+        {
+          "caller": "main",
+          "callee": "argparse.ArgumentParser",
+          "lineNumber": 376
+        },
+        {
+          "caller": "main",
+          "callee": "parser.add_subparsers",
+          "lineNumber": 379
+        },
+        {
+          "caller": "main",
+          "callee": "sub.add_parser",
+          "lineNumber": 380
+        },
+        {
+          "caller": "main",
+          "callee": "run.add_argument",
+          "lineNumber": 381
+        },
+        {
+          "caller": "main",
+          "callee": "run.add_argument",
+          "lineNumber": 382
+        },
+        {
+          "caller": "main",
+          "callee": "_add_cell_args",
+          "lineNumber": 383
+        },
+        {
+          "caller": "main",
+          "callee": "sub.add_parser",
+          "lineNumber": 384
+        },
+        {
+          "caller": "main",
+          "callee": "_add_cell_args",
+          "lineNumber": 385
+        },
+        {
+          "caller": "main",
+          "callee": "parser.parse_args",
+          "lineNumber": 386
+        },
+        {
+          "caller": "main",
+          "callee": "run_episode",
+          "lineNumber": 388
+        },
+        {
+          "caller": "main",
+          "callee": "args.policy.resolve",
+          "lineNumber": 389
+        },
+        {
+          "caller": "main",
+          "callee": "_cell",
+          "lineNumber": 390
+        },
+        {
+          "caller": "main",
+          "callee": "args.out.resolve",
+          "lineNumber": 391
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 395
+        },
+        {
+          "caller": "main",
+          "callee": "json.dumps",
+          "lineNumber": 396
+        },
+        {
+          "caller": "main",
+          "callee": "card_only",
+          "lineNumber": 412
+        },
+        {
+          "caller": "main",
+          "callee": "_cell",
+          "lineNumber": 412
+        },
+        {
+          "caller": "main",
+          "callee": "args.out.resolve",
+          "lineNumber": 412
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 413
+        },
+        {
+          "caller": "main",
+          "callee": "card_obj.to_json",
+          "lineNumber": 413
+        }
+      ],
+      "metrics": {
+        "importCount": 6,
+        "exportCount": 14,
+        "functionCount": 13,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/pyrualean/hosts/rpent_robocasa.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 557,
+      "nonEmptyLines": 495,
+      "functions": [
+        {
+          "name": "add_cell_args",
+          "startLine": 86,
+          "endLine": 101,
+          "params": [
+            "parser"
+          ]
+        },
+        {
+          "name": "add_boot_args",
+          "startLine": 104,
+          "endLine": 129,
+          "params": [
+            "parser"
+          ]
+        },
+        {
+          "name": "cell_from_args",
+          "startLine": 132,
+          "endLine": 139,
+          "params": [
+            "args"
+          ]
+        },
+        {
+          "name": "boot_options",
+          "startLine": 142,
+          "endLine": 149,
+          "params": [
+            "args"
+          ]
+        },
+        {
+          "name": "memory_root",
+          "startLine": 152,
+          "endLine": 171,
+          "params": [
+            "out_dir",
+            "memory_dir"
+          ]
+        },
+        {
+          "name": "boot",
+          "startLine": 174,
+          "endLine": 269,
+          "params": [
+            "cell",
+            "out_dir",
+            "rpent_root",
+            "env_only",
+            "vla_endpoint",
+            "env_endpoint",
+            "vla_model_path",
+            "robocasa_assets_path",
+            "memory_dir"
+          ]
+        },
+        {
+          "name": "_floats",
+          "startLine": 272,
+          "endLine": 277,
+          "params": [
+            "value",
+            "n"
+          ]
+        },
+        {
+          "name": "_fmt",
+          "startLine": 280,
+          "endLine": 281,
+          "params": [
+            "values"
+          ]
+        },
+        {
+          "name": "_yaw",
+          "startLine": 284,
+          "endLine": 286,
+          "params": [
+            "quat_xyzw"
+          ]
+        },
+        {
+          "name": "dump_card",
+          "startLine": 289,
+          "endLine": 344,
+          "params": [
+            "toolkit",
+            "cell",
+            "out_dir"
+          ]
+        },
+        {
+          "name": "_sha256_text",
+          "startLine": 347,
+          "endLine": 348,
+          "params": [
+            "text"
+          ]
+        },
+        {
+          "name": "run_episode",
+          "startLine": 351,
+          "endLine": 471,
+          "params": [
+            "policy_path",
+            "cell",
+            "out_dir",
+            "timeout_s",
+            "rpent_root",
+            "boot_options"
+          ]
+        },
+        {
+          "name": "_install_sigterm",
+          "startLine": 474,
+          "endLine": 479,
+          "params": []
+        },
+        {
+          "name": "card_only",
+          "startLine": 482,
+          "endLine": 496,
+          "params": [
+            "cell",
+            "out_dir",
+            "rpent_root",
+            "boot_options"
+          ]
+        },
+        {
+          "name": "_add_cell_args",
+          "startLine": 499,
+          "endLine": 505,
+          "params": [
+            "parser"
+          ]
+        },
+        {
+          "name": "main",
+          "startLine": 508,
+          "endLine": 553,
+          "params": [
+            "argv"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "Cell",
+          "startLine": 67,
+          "endLine": 83,
+          "methods": [
+            "tag"
+          ],
+          "properties": [
+            "suite",
+            "task",
+            "seed",
+            "max_episode_steps",
+            "cuda_device"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "Cell",
+          "line": 66,
+          "isDefault": false
+        },
+        {
+          "name": "add_cell_args",
+          "line": 86,
+          "isDefault": false
+        },
+        {
+          "name": "add_boot_args",
+          "line": 104,
+          "isDefault": false
+        },
+        {
+          "name": "cell_from_args",
+          "line": 132,
+          "isDefault": false
+        },
+        {
+          "name": "boot_options",
+          "line": 142,
+          "isDefault": false
+        },
+        {
+          "name": "memory_root",
+          "line": 152,
+          "isDefault": false
+        },
+        {
+          "name": "boot",
+          "line": 174,
+          "isDefault": false
+        },
+        {
+          "name": "_floats",
+          "line": 272,
+          "isDefault": false
+        },
+        {
+          "name": "_fmt",
+          "line": 280,
+          "isDefault": false
+        },
+        {
+          "name": "_yaw",
+          "line": 284,
+          "isDefault": false
+        },
+        {
+          "name": "dump_card",
+          "line": 289,
+          "isDefault": false
+        },
+        {
+          "name": "_sha256_text",
+          "line": 347,
+          "isDefault": false
+        },
+        {
+          "name": "run_episode",
+          "line": 351,
+          "isDefault": false
+        },
+        {
+          "name": "_install_sigterm",
+          "line": 474,
+          "isDefault": false
+        },
+        {
+          "name": "card_only",
+          "line": 482,
+          "isDefault": false
+        },
+        {
+          "name": "_add_cell_args",
+          "line": 499,
+          "isDefault": false
+        },
+        {
+          "name": "main",
+          "line": 508,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "add_cell_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 89
+        },
+        {
+          "caller": "add_cell_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 90
+        },
+        {
+          "caller": "add_cell_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 96
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 107
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 112
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 115
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "os.environ.get",
+          "lineNumber": 117
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 120
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "os.environ.get",
+          "lineNumber": 122
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 125
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "Cell",
+          "lineNumber": 133
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "str",
+          "lineNumber": 134
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "getattr",
+          "lineNumber": 134
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "str",
+          "lineNumber": 135
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "int",
+          "lineNumber": 136
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "int",
+          "lineNumber": 137
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "getattr",
+          "lineNumber": 137
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "getattr",
+          "lineNumber": 138
+        },
+        {
+          "caller": "boot_options",
+          "callee": "getattr",
+          "lineNumber": 144
+        },
+        {
+          "caller": "boot_options",
+          "callee": "getattr",
+          "lineNumber": 145
+        },
+        {
+          "caller": "boot_options",
+          "callee": "getattr",
+          "lineNumber": 146
+        },
+        {
+          "caller": "boot_options",
+          "callee": "getattr",
+          "lineNumber": 147
+        },
+        {
+          "caller": "boot_options",
+          "callee": "getattr",
+          "lineNumber": 148
+        },
+        {
+          "caller": "memory_root",
+          "callee": "Path(memory_dir).expanduser().resolve",
+          "lineNumber": 162
+        },
+        {
+          "caller": "memory_root",
+          "callee": "Path(memory_dir).expanduser",
+          "lineNumber": 162
+        },
+        {
+          "caller": "memory_root",
+          "callee": "Path",
+          "lineNumber": 162
+        },
+        {
+          "caller": "memory_root",
+          "callee": "(EMPTY_MEMORY / \"MEMORY.md\").is_file",
+          "lineNumber": 163
+        },
+        {
+          "caller": "memory_root",
+          "callee": "root.mkdir",
+          "lineNumber": 167
+        },
+        {
+          "caller": "memory_root",
+          "callee": "(root / \"MEMORY.md\").touch",
+          "lineNumber": 168
+        },
+        {
+          "caller": "memory_root",
+          "callee": "(root / \"MEMORY.md\").is_file",
+          "lineNumber": 169
+        },
+        {
+          "caller": "memory_root",
+          "callee": "FileNotFoundError",
+          "lineNumber": 170
+        },
+        {
+          "caller": "boot",
+          "callee": "resolve_rpent_root",
+          "lineNumber": 205
+        },
+        {
+          "caller": "boot",
+          "callee": "os.environ.get",
+          "lineNumber": 211
+        },
+        {
+          "caller": "boot",
+          "callee": "str",
+          "lineNumber": 213
+        },
+        {
+          "caller": "boot",
+          "callee": "Path(robocasa_assets_path).expanduser",
+          "lineNumber": 213
+        },
+        {
+          "caller": "boot",
+          "callee": "Path",
+          "lineNumber": 213
+        },
+        {
+          "caller": "boot",
+          "callee": "ValueError",
+          "lineNumber": 216
+        },
+        {
+          "caller": "boot",
+          "callee": "os.environ.setdefault",
+          "lineNumber": 220
+        },
+        {
+          "caller": "boot",
+          "callee": "os.environ.setdefault",
+          "lineNumber": 221
+        },
+        {
+          "caller": "boot",
+          "callee": "out_dir.mkdir",
+          "lineNumber": 226
+        },
+        {
+          "caller": "boot",
+          "callee": "init_output_dir",
+          "lineNumber": 229
+        },
+        {
+          "caller": "boot",
+          "callee": "memory_root",
+          "lineNumber": 230
+        },
+        {
+          "caller": "boot",
+          "callee": "NullDashboardEventSink",
+          "lineNumber": 231
+        },
+        {
+          "caller": "boot",
+          "callee": "Namespace",
+          "lineNumber": 232
+        },
+        {
+          "caller": "boot",
+          "callee": "str",
+          "lineNumber": 242
+        },
+        {
+          "caller": "boot",
+          "callee": "str",
+          "lineNumber": 243
+        },
+        {
+          "caller": "boot",
+          "callee": "get_robot_spec",
+          "lineNumber": 245
+        },
+        {
+          "caller": "boot",
+          "callee": "spec.init_runtime",
+          "lineNumber": 247
+        },
+        {
+          "caller": "boot",
+          "callee": "runtime_kwargs.setdefault",
+          "lineNumber": 249
+        },
+        {
+          "caller": "boot",
+          "callee": "RunConfig",
+          "lineNumber": 250
+        },
+        {
+          "caller": "boot",
+          "callee": "str",
+          "lineNumber": 258
+        },
+        {
+          "caller": "boot",
+          "callee": "get_toolkit",
+          "lineNumber": 263
+        },
+        {
+          "caller": "boot",
+          "callee": "reversed",
+          "lineNumber": 265
+        },
+        {
+          "caller": "boot",
+          "callee": "contextlib.suppress",
+          "lineNumber": 266
+        },
+        {
+          "caller": "boot",
+          "callee": "daemon.stop",
+          "lineNumber": 267
+        },
+        {
+          "caller": "_floats",
+          "callee": "float",
+          "lineNumber": 274
+        },
+        {
+          "caller": "_floats",
+          "callee": "len",
+          "lineNumber": 277
+        },
+        {
+          "caller": "_fmt",
+          "callee": "\", \".join",
+          "lineNumber": 281
+        },
+        {
+          "caller": "_yaw",
+          "callee": "math.atan2",
+          "lineNumber": 286
+        },
+        {
+          "caller": "dump_card",
+          "callee": "toolkit.execute_tool",
+          "lineNumber": 298
+        },
+        {
+          "caller": "dump_card",
+          "callee": "view.get",
+          "lineNumber": 299
+        },
+        {
+          "caller": "dump_card",
+          "callee": "card_dir.mkdir",
+          "lineNumber": 301
+        },
+        {
+          "caller": "dump_card",
+          "callee": "CARD_IMAGES.items",
+          "lineNumber": 303
+        },
+        {
+          "caller": "dump_card",
+          "callee": "toolkit.state.artifact_path",
+          "lineNumber": 305
+        },
+        {
+          "caller": "dump_card",
+          "callee": "source.is_file",
+          "lineNumber": 308
+        },
+        {
+          "caller": "dump_card",
+          "callee": "shutil.copyfile",
+          "lineNumber": 310
+        },
+        {
+          "caller": "dump_card",
+          "callee": "str",
+          "lineNumber": 311
+        },
+        {
+          "caller": "dump_card",
+          "callee": "_floats",
+          "lineNumber": 312
+        },
+        {
+          "caller": "dump_card",
+          "callee": "raw.get",
+          "lineNumber": 312
+        },
+        {
+          "caller": "dump_card",
+          "callee": "_floats",
+          "lineNumber": 313
+        },
+        {
+          "caller": "dump_card",
+          "callee": "raw.get",
+          "lineNumber": 313
+        },
+        {
+          "caller": "dump_card",
+          "callee": "_floats",
+          "lineNumber": 314
+        },
+        {
+          "caller": "dump_card",
+          "callee": "raw.get",
+          "lineNumber": 314
+        },
+        {
+          "caller": "dump_card",
+          "callee": "_floats",
+          "lineNumber": 315
+        },
+        {
+          "caller": "dump_card",
+          "callee": "raw.get",
+          "lineNumber": 315
+        },
+        {
+          "caller": "dump_card",
+          "callee": "_floats",
+          "lineNumber": 316
+        },
+        {
+          "caller": "dump_card",
+          "callee": "raw.get",
+          "lineNumber": 316
+        },
+        {
+          "caller": "dump_card",
+          "callee": "_yaw",
+          "lineNumber": 317
+        },
+        {
+          "caller": "dump_card",
+          "callee": "_fmt",
+          "lineNumber": 319
+        },
+        {
+          "caller": "dump_card",
+          "callee": "math.degrees",
+          "lineNumber": 320
+        },
+        {
+          "caller": "dump_card",
+          "callee": "_fmt",
+          "lineNumber": 321
+        },
+        {
+          "caller": "dump_card",
+          "callee": "_fmt",
+          "lineNumber": 322
+        },
+        {
+          "caller": "dump_card",
+          "callee": "abs",
+          "lineNumber": 324
+        },
+        {
+          "caller": "dump_card",
+          "callee": "abs",
+          "lineNumber": 324
+        },
+        {
+          "caller": "dump_card",
+          "callee": "view.get",
+          "lineNumber": 327
+        },
+        {
+          "caller": "dump_card",
+          "callee": "isinstance",
+          "lineNumber": 328
+        },
+        {
+          "caller": "dump_card",
+          "callee": "json.dumps",
+          "lineNumber": 329
+        },
+        {
+          "caller": "dump_card",
+          "callee": "TaskCard",
+          "lineNumber": 332
+        },
+        {
+          "caller": "dump_card",
+          "callee": "str",
+          "lineNumber": 336
+        },
+        {
+          "caller": "dump_card",
+          "callee": "view.get",
+          "lineNumber": 336
+        },
+        {
+          "caller": "dump_card",
+          "callee": "(out_dir / \"card.json\").write_text",
+          "lineNumber": 343
+        },
+        {
+          "caller": "dump_card",
+          "callee": "card.to_json",
+          "lineNumber": 343
+        },
+        {
+          "caller": "_sha256_text",
+          "callee": "hashlib.sha256(text.encode(\"utf-8\")).hexdigest",
+          "lineNumber": 348
+        },
+        {
+          "caller": "_sha256_text",
+          "callee": "hashlib.sha256",
+          "lineNumber": 348
+        },
+        {
+          "caller": "_sha256_text",
+          "callee": "text.encode",
+          "lineNumber": 348
+        },
+        {
+          "caller": "run_episode",
+          "callee": "out_dir.mkdir",
+          "lineNumber": 362
+        },
+        {
+          "caller": "run_episode",
+          "callee": "time.perf_counter",
+          "lineNumber": 363
+        },
+        {
+          "caller": "run_episode",
+          "callee": "time.strftime",
+          "lineNumber": 364
+        },
+        {
+          "caller": "run_episode",
+          "callee": "dict",
+          "lineNumber": 365
+        },
+        {
+          "caller": "run_episode",
+          "callee": "str",
+          "lineNumber": 376
+        },
+        {
+          "caller": "run_episode",
+          "callee": "policy_sha256",
+          "lineNumber": 377
+        },
+        {
+          "caller": "run_episode",
+          "callee": "policy_path.stat",
+          "lineNumber": 378
+        },
+        {
+          "caller": "run_episode",
+          "callee": "shutil.copyfile",
+          "lineNumber": 403
+        },
+        {
+          "caller": "run_episode",
+          "callee": "Ledger",
+          "lineNumber": 407
+        },
+        {
+          "caller": "run_episode",
+          "callee": "boot",
+          "lineNumber": 409
+        },
+        {
+          "caller": "run_episode",
+          "callee": "str",
+          "lineNumber": 410
+        },
+        {
+          "caller": "run_episode",
+          "callee": "resolve_rpent_root",
+          "lineNumber": 410
+        },
+        {
+          "caller": "run_episode",
+          "callee": "time.perf_counter",
+          "lineNumber": 411
+        },
+        {
+          "caller": "run_episode",
+          "callee": "RpentBackend",
+          "lineNumber": 412
+        },
+        {
+          "caller": "run_episode",
+          "callee": "dump_card",
+          "lineNumber": 413
+        },
+        {
+          "caller": "run_episode",
+          "callee": "render_prompt",
+          "lineNumber": 415
+        },
+        {
+          "caller": "run_episode",
+          "callee": "int",
+          "lineNumber": 415
+        },
+        {
+          "caller": "run_episode",
+          "callee": "bundle.text",
+          "lineNumber": 416
+        },
+        {
+          "caller": "run_episode",
+          "callee": "(out_dir / \"prompt.txt\").write_text",
+          "lineNumber": 417
+        },
+        {
+          "caller": "run_episode",
+          "callee": "len",
+          "lineNumber": 419
+        },
+        {
+          "caller": "run_episode",
+          "callee": "_sha256_text",
+          "lineNumber": 420
+        },
+        {
+          "caller": "run_episode",
+          "callee": "list",
+          "lineNumber": 421
+        },
+        {
+          "caller": "run_episode",
+          "callee": "RobocasaRobot",
+          "lineNumber": 424
+        },
+        {
+          "caller": "run_episode",
+          "callee": "_install_sigterm",
+          "lineNumber": 425
+        },
+        {
+          "caller": "run_episode",
+          "callee": "scratch.mkdir",
+          "lineNumber": 427
+        },
+        {
+          "caller": "run_episode",
+          "callee": "audit_source",
+          "lineNumber": 429
+        },
+        {
+          "caller": "run_episode",
+          "callee": "policy_path.read_text",
+          "lineNumber": 430
+        },
+        {
+          "caller": "run_episode",
+          "callee": "load_policy",
+          "lineNumber": 433
+        },
+        {
+          "caller": "run_episode",
+          "callee": "make_builtins",
+          "lineNumber": 433
+        },
+        {
+          "caller": "run_episode",
+          "callee": "str",
+          "lineNumber": 437
+        },
+        {
+          "caller": "run_episode",
+          "callee": "open",
+          "lineNumber": 439
+        },
+        {
+          "caller": "run_episode",
+          "callee": "contextlib.redirect_stdout",
+          "lineNumber": 440
+        },
+        {
+          "caller": "run_episode",
+          "callee": "contextlib.redirect_stderr",
+          "lineNumber": 440
+        },
+        {
+          "caller": "run_episode",
+          "callee": "run_policy",
+          "lineNumber": 441
+        },
+        {
+          "caller": "run_episode",
+          "callee": "bool",
+          "lineNumber": 451
+        },
+        {
+          "caller": "run_episode",
+          "callee": "backend.solved",
+          "lineNumber": 451
+        },
+        {
+          "caller": "run_episode",
+          "callee": "backend.env_steps",
+          "lineNumber": 452
+        },
+        {
+          "caller": "run_episode",
+          "callee": "type",
+          "lineNumber": 454
+        },
+        {
+          "caller": "run_episode",
+          "callee": "str",
+          "lineNumber": 454
+        },
+        {
+          "caller": "run_episode",
+          "callee": "result[\"notes\"].append",
+          "lineNumber": 456
+        },
+        {
+          "caller": "run_episode",
+          "callee": "isinstance",
+          "lineNumber": 459
+        },
+        {
+          "caller": "run_episode",
+          "callee": "len",
+          "lineNumber": 462
+        },
+        {
+          "caller": "run_episode",
+          "callee": "ledger.stateful_calls",
+          "lineNumber": 463
+        },
+        {
+          "caller": "run_episode",
+          "callee": "ledger.env_steps",
+          "lineNumber": 464
+        },
+        {
+          "caller": "run_episode",
+          "callee": "ledger.write_jsonl",
+          "lineNumber": 465
+        },
+        {
+          "caller": "run_episode",
+          "callee": "stop_all",
+          "lineNumber": 466
+        },
+        {
+          "caller": "run_episode",
+          "callee": "time.perf_counter",
+          "lineNumber": 467
+        },
+        {
+          "caller": "run_episode",
+          "callee": "(out_dir / \"result.json\").write_text",
+          "lineNumber": 468
+        },
+        {
+          "caller": "run_episode",
+          "callee": "json.dumps",
+          "lineNumber": 469
+        },
+        {
+          "caller": "handler",
+          "callee": "KeyboardInterrupt",
+          "lineNumber": 476
+        },
+        {
+          "caller": "_install_sigterm",
+          "callee": "contextlib.suppress",
+          "lineNumber": 478
+        },
+        {
+          "caller": "_install_sigterm",
+          "callee": "signal.signal",
+          "lineNumber": 479
+        },
+        {
+          "caller": "card_only",
+          "callee": "(boot_options or {}).items",
+          "lineNumber": 491
+        },
+        {
+          "caller": "card_only",
+          "callee": "boot",
+          "lineNumber": 492
+        },
+        {
+          "caller": "card_only",
+          "callee": "dump_card",
+          "lineNumber": 494
+        },
+        {
+          "caller": "card_only",
+          "callee": "stop_all",
+          "lineNumber": 496
+        },
+        {
+          "caller": "_add_cell_args",
+          "callee": "add_cell_args",
+          "lineNumber": 500
+        },
+        {
+          "caller": "_add_cell_args",
+          "callee": "add_boot_args",
+          "lineNumber": 501
+        },
+        {
+          "caller": "_add_cell_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 502
+        },
+        {
+          "caller": "_add_cell_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 503
+        },
+        {
+          "caller": "_add_cell_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 504
+        },
+        {
+          "caller": "_add_cell_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 505
+        },
+        {
+          "caller": "main",
+          "callee": "argparse.ArgumentParser",
+          "lineNumber": 509
+        },
+        {
+          "caller": "main",
+          "callee": "parser.add_subparsers",
+          "lineNumber": 512
+        },
+        {
+          "caller": "main",
+          "callee": "sub.add_parser",
+          "lineNumber": 513
+        },
+        {
+          "caller": "main",
+          "callee": "run.add_argument",
+          "lineNumber": 514
+        },
+        {
+          "caller": "main",
+          "callee": "run.add_argument",
+          "lineNumber": 515
+        },
+        {
+          "caller": "main",
+          "callee": "_add_cell_args",
+          "lineNumber": 516
+        },
+        {
+          "caller": "main",
+          "callee": "sub.add_parser",
+          "lineNumber": 517
+        },
+        {
+          "caller": "main",
+          "callee": "_add_cell_args",
+          "lineNumber": 518
+        },
+        {
+          "caller": "main",
+          "callee": "parser.parse_args",
+          "lineNumber": 519
+        },
+        {
+          "caller": "main",
+          "callee": "run_episode",
+          "lineNumber": 521
+        },
+        {
+          "caller": "main",
+          "callee": "args.policy.resolve",
+          "lineNumber": 522
+        },
+        {
+          "caller": "main",
+          "callee": "cell_from_args",
+          "lineNumber": 523
+        },
+        {
+          "caller": "main",
+          "callee": "args.out.resolve",
+          "lineNumber": 524
+        },
+        {
+          "caller": "main",
+          "callee": "boot_options",
+          "lineNumber": 527
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 529
+        },
+        {
+          "caller": "main",
+          "callee": "json.dumps",
+          "lineNumber": 530
+        },
+        {
+          "caller": "main",
+          "callee": "card_only",
+          "lineNumber": 546
+        },
+        {
+          "caller": "main",
+          "callee": "cell_from_args",
+          "lineNumber": 547
+        },
+        {
+          "caller": "main",
+          "callee": "args.out.resolve",
+          "lineNumber": 548
+        },
+        {
+          "caller": "main",
+          "callee": "boot_options",
+          "lineNumber": 550
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 552
+        },
+        {
+          "caller": "main",
+          "callee": "card_obj.to_json",
+          "lineNumber": 552
+        }
+      ],
+      "metrics": {
+        "importCount": 6,
+        "exportCount": 17,
+        "functionCount": 16,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/pyrualean/hosts/rpent_robodojo.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 707,
+      "nonEmptyLines": 618,
+      "functions": [
+        {
+          "name": "add_cell_args",
+          "startLine": 111,
+          "endLine": 120,
+          "params": [
+            "parser"
+          ]
+        },
+        {
+          "name": "add_boot_args",
+          "startLine": 123,
+          "endLine": 171,
+          "params": [
+            "parser"
+          ]
+        },
+        {
+          "name": "cell_from_args",
+          "startLine": 174,
+          "endLine": 181,
+          "params": [
+            "args"
+          ]
+        },
+        {
+          "name": "_connect_reset_default",
+          "startLine": 184,
+          "endLine": 185,
+          "params": []
+        },
+        {
+          "name": "_connect_without_reset",
+          "startLine": 189,
+          "endLine": 218,
+          "params": []
+        },
+        {
+          "name": "_support_arm_default",
+          "startLine": 221,
+          "endLine": 222,
+          "params": []
+        },
+        {
+          "name": "_env_server_through_pyrualean",
+          "startLine": 226,
+          "endLine": 260,
+          "params": []
+        },
+        {
+          "name": "boot_options",
+          "startLine": 263,
+          "endLine": 275,
+          "params": [
+            "args"
+          ]
+        },
+        {
+          "name": "_status",
+          "startLine": 278,
+          "endLine": 285,
+          "params": [
+            "toolkit"
+          ]
+        },
+        {
+          "name": "make_backend",
+          "startLine": 305,
+          "endLine": 308,
+          "params": [
+            "toolkit"
+          ]
+        },
+        {
+          "name": "boot",
+          "startLine": 316,
+          "endLine": 415,
+          "params": [
+            "cell",
+            "out_dir",
+            "rpent_root",
+            "env_only",
+            "vla_endpoint",
+            "sam3_endpoint",
+            "env_endpoint",
+            "source_root",
+            "xpolicylab_root",
+            "sim_python",
+            "pi05_python",
+            "policy_backend",
+            "action_type",
+            "connect_reset"
+          ]
+        },
+        {
+          "name": "_fmt",
+          "startLine": 418,
+          "endLine": 419,
+          "params": [
+            "values"
+          ]
+        },
+        {
+          "name": "_opening",
+          "startLine": 422,
+          "endLine": 434,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "dump_card",
+          "startLine": 437,
+          "endLine": 490,
+          "params": [
+            "toolkit",
+            "cell",
+            "out_dir"
+          ]
+        },
+        {
+          "name": "_sha256_text",
+          "startLine": 493,
+          "endLine": 494,
+          "params": [
+            "text"
+          ]
+        },
+        {
+          "name": "run_episode",
+          "startLine": 497,
+          "endLine": 620,
+          "params": [
+            "policy_path",
+            "cell",
+            "out_dir",
+            "timeout_s",
+            "rpent_root",
+            "boot_options"
+          ]
+        },
+        {
+          "name": "_install_sigterm",
+          "startLine": 623,
+          "endLine": 628,
+          "params": []
+        },
+        {
+          "name": "card_only",
+          "startLine": 631,
+          "endLine": 646,
+          "params": [
+            "cell",
+            "out_dir",
+            "rpent_root",
+            "boot_options"
+          ]
+        },
+        {
+          "name": "_add_cell_args",
+          "startLine": 649,
+          "endLine": 655,
+          "params": [
+            "parser"
+          ]
+        },
+        {
+          "name": "main",
+          "startLine": 658,
+          "endLine": 703,
+          "params": [
+            "argv"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "Cell",
+          "startLine": 91,
+          "endLine": 108,
+          "methods": [
+            "tag"
+          ],
+          "properties": [
+            "suite",
+            "task",
+            "seed",
+            "max_episode_steps",
+            "cuda_device"
+          ]
+        },
+        {
+          "name": "RobodojoBackend",
+          "startLine": 288,
+          "endLine": 302,
+          "methods": [
+            "env_steps"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "Cell",
+          "line": 90,
+          "isDefault": false
+        },
+        {
+          "name": "add_cell_args",
+          "line": 111,
+          "isDefault": false
+        },
+        {
+          "name": "add_boot_args",
+          "line": 123,
+          "isDefault": false
+        },
+        {
+          "name": "cell_from_args",
+          "line": 174,
+          "isDefault": false
+        },
+        {
+          "name": "_connect_reset_default",
+          "line": 184,
+          "isDefault": false
+        },
+        {
+          "name": "_connect_without_reset",
+          "line": 188,
+          "isDefault": false
+        },
+        {
+          "name": "_support_arm_default",
+          "line": 221,
+          "isDefault": false
+        },
+        {
+          "name": "_env_server_through_pyrualean",
+          "line": 225,
+          "isDefault": false
+        },
+        {
+          "name": "boot_options",
+          "line": 263,
+          "isDefault": false
+        },
+        {
+          "name": "_status",
+          "line": 278,
+          "isDefault": false
+        },
+        {
+          "name": "RobodojoBackend",
+          "line": 288,
+          "isDefault": false
+        },
+        {
+          "name": "make_backend",
+          "line": 305,
+          "isDefault": false
+        },
+        {
+          "name": "boot",
+          "line": 316,
+          "isDefault": false
+        },
+        {
+          "name": "_fmt",
+          "line": 418,
+          "isDefault": false
+        },
+        {
+          "name": "_opening",
+          "line": 422,
+          "isDefault": false
+        },
+        {
+          "name": "dump_card",
+          "line": 437,
+          "isDefault": false
+        },
+        {
+          "name": "_sha256_text",
+          "line": 493,
+          "isDefault": false
+        },
+        {
+          "name": "run_episode",
+          "line": 497,
+          "isDefault": false
+        },
+        {
+          "name": "_install_sigterm",
+          "line": 623,
+          "isDefault": false
+        },
+        {
+          "name": "card_only",
+          "line": 631,
+          "isDefault": false
+        },
+        {
+          "name": "_add_cell_args",
+          "line": 649,
+          "isDefault": false
+        },
+        {
+          "name": "main",
+          "line": 658,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "add_cell_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 114
+        },
+        {
+          "caller": "add_cell_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 117
+        },
+        {
+          "caller": "add_cell_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 120
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 126
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 129
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 132
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 135
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "os.environ.get",
+          "lineNumber": 137
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 140
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "os.environ.get",
+          "lineNumber": 142
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 145
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "os.environ.get",
+          "lineNumber": 147
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 150
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "os.environ.get",
+          "lineNumber": 152
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 155
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "os.environ.get",
+          "lineNumber": 157
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 161
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 164
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "_connect_reset_default",
+          "lineNumber": 167
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "Cell",
+          "lineNumber": 175
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "str",
+          "lineNumber": 176
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "getattr",
+          "lineNumber": 176
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "str",
+          "lineNumber": 177
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "int",
+          "lineNumber": 178
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "int",
+          "lineNumber": 179
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "getattr",
+          "lineNumber": 179
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "getattr",
+          "lineNumber": 180
+        },
+        {
+          "caller": "_connect_reset_default",
+          "callee": "os.environ.get(\"ROBODOJO_CONNECT_RESET\", \"0\").strip().lower",
+          "lineNumber": 185
+        },
+        {
+          "caller": "_connect_reset_default",
+          "callee": "os.environ.get(\"ROBODOJO_CONNECT_RESET\", \"0\").strip",
+          "lineNumber": 185
+        },
+        {
+          "caller": "_connect_reset_default",
+          "callee": "os.environ.get",
+          "lineNumber": 185
+        },
+        {
+          "caller": "connect",
+          "callee": "expected_meta.get",
+          "lineNumber": 209
+        },
+        {
+          "caller": "connect",
+          "callee": "BaseEnvClient.__init__",
+          "lineNumber": 210
+        },
+        {
+          "caller": "connect",
+          "callee": "self.get_obs",
+          "lineNumber": 212
+        },
+        {
+          "caller": "_support_arm_default",
+          "callee": "os.environ.get(\"ROBODOJO_SUPPORT_ARM\", \"\").strip().lower",
+          "lineNumber": 222
+        },
+        {
+          "caller": "_support_arm_default",
+          "callee": "os.environ.get(\"ROBODOJO_SUPPORT_ARM\", \"\").strip",
+          "lineNumber": 222
+        },
+        {
+          "caller": "_support_arm_default",
+          "callee": "os.environ.get",
+          "lineNumber": 222
+        },
+        {
+          "caller": "_env_server_through_pyrualean",
+          "callee": "os.path.join",
+          "lineNumber": 240
+        },
+        {
+          "caller": "_env_server_through_pyrualean",
+          "callee": "str",
+          "lineNumber": 241
+        },
+        {
+          "caller": "_env_server_through_pyrualean",
+          "callee": "Path(__file__).resolve",
+          "lineNumber": 241
+        },
+        {
+          "caller": "_env_server_through_pyrualean",
+          "callee": "Path",
+          "lineNumber": 241
+        },
+        {
+          "caller": "daemon",
+          "callee": "list",
+          "lineNumber": 244
+        },
+        {
+          "caller": "daemon",
+          "callee": "kwargs.get",
+          "lineNumber": 244
+        },
+        {
+          "caller": "daemon",
+          "callee": "enumerate",
+          "lineNumber": 245
+        },
+        {
+          "caller": "daemon",
+          "callee": "str(part).endswith",
+          "lineNumber": 245
+        },
+        {
+          "caller": "daemon",
+          "callee": "str",
+          "lineNumber": 245
+        },
+        {
+          "caller": "daemon",
+          "callee": "kwargs.get",
+          "lineNumber": 246
+        },
+        {
+          "caller": "daemon",
+          "callee": "dict",
+          "lineNumber": 250
+        },
+        {
+          "caller": "daemon",
+          "callee": "kwargs.get",
+          "lineNumber": 250
+        },
+        {
+          "caller": "daemon",
+          "callee": "env.get",
+          "lineNumber": 251
+        },
+        {
+          "caller": "daemon",
+          "callee": "os.environ.get",
+          "lineNumber": 251
+        },
+        {
+          "caller": "daemon",
+          "callee": "os.pathsep.join",
+          "lineNumber": 252
+        },
+        {
+          "caller": "daemon",
+          "callee": "original",
+          "lineNumber": 254
+        },
+        {
+          "caller": "boot_options",
+          "callee": "getattr",
+          "lineNumber": 265
+        },
+        {
+          "caller": "boot_options",
+          "callee": "getattr",
+          "lineNumber": 266
+        },
+        {
+          "caller": "boot_options",
+          "callee": "getattr",
+          "lineNumber": 267
+        },
+        {
+          "caller": "boot_options",
+          "callee": "getattr",
+          "lineNumber": 268
+        },
+        {
+          "caller": "boot_options",
+          "callee": "getattr",
+          "lineNumber": 269
+        },
+        {
+          "caller": "boot_options",
+          "callee": "getattr",
+          "lineNumber": 270
+        },
+        {
+          "caller": "boot_options",
+          "callee": "getattr",
+          "lineNumber": 271
+        },
+        {
+          "caller": "boot_options",
+          "callee": "getattr",
+          "lineNumber": 272
+        },
+        {
+          "caller": "boot_options",
+          "callee": "getattr",
+          "lineNumber": 273
+        },
+        {
+          "caller": "boot_options",
+          "callee": "getattr",
+          "lineNumber": 274
+        },
+        {
+          "caller": "_status",
+          "callee": "toolkit._primitives.env.get_status",
+          "lineNumber": 282
+        },
+        {
+          "caller": "_status",
+          "callee": "isinstance",
+          "lineNumber": 285
+        },
+        {
+          "caller": "env_steps",
+          "callee": "_status(self._toolkit).get",
+          "lineNumber": 298
+        },
+        {
+          "caller": "env_steps",
+          "callee": "_status",
+          "lineNumber": 298
+        },
+        {
+          "caller": "env_steps",
+          "callee": "int",
+          "lineNumber": 300
+        },
+        {
+          "caller": "make_backend",
+          "callee": "RobodojoBackend",
+          "lineNumber": 308
+        },
+        {
+          "caller": "boot",
+          "callee": "ValueError",
+          "lineNumber": 351
+        },
+        {
+          "caller": "boot",
+          "callee": "ValueError",
+          "lineNumber": 353
+        },
+        {
+          "caller": "boot",
+          "callee": "resolve_rpent_root",
+          "lineNumber": 354
+        },
+        {
+          "caller": "boot",
+          "callee": "out_dir.mkdir",
+          "lineNumber": 360
+        },
+        {
+          "caller": "boot",
+          "callee": "init_output_dir",
+          "lineNumber": 361
+        },
+        {
+          "caller": "boot",
+          "callee": "memory_dir.mkdir",
+          "lineNumber": 364
+        },
+        {
+          "caller": "boot",
+          "callee": "(memory_dir / \"MEMORY.md\").touch",
+          "lineNumber": 365
+        },
+        {
+          "caller": "boot",
+          "callee": "NullDashboardEventSink",
+          "lineNumber": 366
+        },
+        {
+          "caller": "boot",
+          "callee": "Namespace",
+          "lineNumber": 367
+        },
+        {
+          "caller": "boot",
+          "callee": "str",
+          "lineNumber": 386
+        },
+        {
+          "caller": "boot",
+          "callee": "str",
+          "lineNumber": 387
+        },
+        {
+          "caller": "boot",
+          "callee": "get_robot_spec",
+          "lineNumber": 389
+        },
+        {
+          "caller": "boot",
+          "callee": "_connect_reset_default",
+          "lineNumber": 392
+        },
+        {
+          "caller": "boot",
+          "callee": "contextlib.nullcontext",
+          "lineNumber": 394
+        },
+        {
+          "caller": "boot",
+          "callee": "_connect_without_reset",
+          "lineNumber": 394
+        },
+        {
+          "caller": "boot",
+          "callee": "_env_server_through_pyrualean",
+          "lineNumber": 395
+        },
+        {
+          "caller": "boot",
+          "callee": "_support_arm_default",
+          "lineNumber": 395
+        },
+        {
+          "caller": "boot",
+          "callee": "contextlib.nullcontext",
+          "lineNumber": 395
+        },
+        {
+          "caller": "boot",
+          "callee": "spec.init_runtime",
+          "lineNumber": 397
+        },
+        {
+          "caller": "boot",
+          "callee": "RoboDojoToolkit",
+          "lineNumber": 403
+        },
+        {
+          "caller": "boot",
+          "callee": "MemoryManager",
+          "lineNumber": 406
+        },
+        {
+          "caller": "boot",
+          "callee": "register_home",
+          "lineNumber": 409
+        },
+        {
+          "caller": "boot",
+          "callee": "reversed",
+          "lineNumber": 411
+        },
+        {
+          "caller": "boot",
+          "callee": "contextlib.suppress",
+          "lineNumber": 412
+        },
+        {
+          "caller": "boot",
+          "callee": "daemon.stop",
+          "lineNumber": 413
+        },
+        {
+          "caller": "_fmt",
+          "callee": "\", \".join",
+          "lineNumber": 419
+        },
+        {
+          "caller": "_opening",
+          "callee": "range",
+          "lineNumber": 424
+        },
+        {
+          "caller": "_opening",
+          "callee": "isinstance",
+          "lineNumber": 425
+        },
+        {
+          "caller": "_opening",
+          "callee": "next",
+          "lineNumber": 428
+        },
+        {
+          "caller": "_opening",
+          "callee": "iter",
+          "lineNumber": 428
+        },
+        {
+          "caller": "_opening",
+          "callee": "float",
+          "lineNumber": 432
+        },
+        {
+          "caller": "dump_card",
+          "callee": "toolkit.execute_tool",
+          "lineNumber": 448
+        },
+        {
+          "caller": "dump_card",
+          "callee": "view.get",
+          "lineNumber": 449
+        },
+        {
+          "caller": "dump_card",
+          "callee": "summary.get",
+          "lineNumber": 450
+        },
+        {
+          "caller": "dump_card",
+          "callee": "card_dir.mkdir",
+          "lineNumber": 452
+        },
+        {
+          "caller": "dump_card",
+          "callee": "CARD_IMAGES.items",
+          "lineNumber": 454
+        },
+        {
+          "caller": "dump_card",
+          "callee": "toolkit.state.artifact_path",
+          "lineNumber": 456
+        },
+        {
+          "caller": "dump_card",
+          "callee": "source.is_file",
+          "lineNumber": 459
+        },
+        {
+          "caller": "dump_card",
+          "callee": "shutil.copyfile",
+          "lineNumber": 461
+        },
+        {
+          "caller": "dump_card",
+          "callee": "str",
+          "lineNumber": 462
+        },
+        {
+          "caller": "dump_card",
+          "callee": "_arm_state",
+          "lineNumber": 465
+        },
+        {
+          "caller": "dump_card",
+          "callee": "_fmt",
+          "lineNumber": 466
+        },
+        {
+          "caller": "dump_card",
+          "callee": "round",
+          "lineNumber": 468
+        },
+        {
+          "caller": "dump_card",
+          "callee": "round",
+          "lineNumber": 468
+        },
+        {
+          "caller": "dump_card",
+          "callee": "round",
+          "lineNumber": 468
+        },
+        {
+          "caller": "dump_card",
+          "callee": "_opening",
+          "lineNumber": 470
+        },
+        {
+          "caller": "dump_card",
+          "callee": "raw.get",
+          "lineNumber": 470
+        },
+        {
+          "caller": "dump_card",
+          "callee": "_status(toolkit).get",
+          "lineNumber": 472
+        },
+        {
+          "caller": "dump_card",
+          "callee": "_status",
+          "lineNumber": 472
+        },
+        {
+          "caller": "dump_card",
+          "callee": "int",
+          "lineNumber": 474
+        },
+        {
+          "caller": "dump_card",
+          "callee": "TaskCard",
+          "lineNumber": 478
+        },
+        {
+          "caller": "dump_card",
+          "callee": "str",
+          "lineNumber": 482
+        },
+        {
+          "caller": "dump_card",
+          "callee": "view.get",
+          "lineNumber": 482
+        },
+        {
+          "caller": "dump_card",
+          "callee": "summary.get",
+          "lineNumber": 482
+        },
+        {
+          "caller": "dump_card",
+          "callee": "(out_dir / \"card.json\").write_text",
+          "lineNumber": 489
+        },
+        {
+          "caller": "dump_card",
+          "callee": "card.to_json",
+          "lineNumber": 489
+        },
+        {
+          "caller": "_sha256_text",
+          "callee": "hashlib.sha256(text.encode(\"utf-8\")).hexdigest",
+          "lineNumber": 494
+        },
+        {
+          "caller": "_sha256_text",
+          "callee": "hashlib.sha256",
+          "lineNumber": 494
+        },
+        {
+          "caller": "_sha256_text",
+          "callee": "text.encode",
+          "lineNumber": 494
+        },
+        {
+          "caller": "run_episode",
+          "callee": "out_dir.mkdir",
+          "lineNumber": 508
+        },
+        {
+          "caller": "run_episode",
+          "callee": "time.perf_counter",
+          "lineNumber": 509
+        },
+        {
+          "caller": "run_episode",
+          "callee": "time.strftime",
+          "lineNumber": 510
+        },
+        {
+          "caller": "run_episode",
+          "callee": "dict",
+          "lineNumber": 511
+        },
+        {
+          "caller": "run_episode",
+          "callee": "str",
+          "lineNumber": 522
+        },
+        {
+          "caller": "run_episode",
+          "callee": "policy_sha256",
+          "lineNumber": 523
+        },
+        {
+          "caller": "run_episode",
+          "callee": "policy_path.stat",
+          "lineNumber": 524
+        },
+        {
+          "caller": "run_episode",
+          "callee": "shutil.copyfile",
+          "lineNumber": 550
+        },
+        {
+          "caller": "run_episode",
+          "callee": "Ledger",
+          "lineNumber": 554
+        },
+        {
+          "caller": "run_episode",
+          "callee": "boot",
+          "lineNumber": 556
+        },
+        {
+          "caller": "run_episode",
+          "callee": "str",
+          "lineNumber": 557
+        },
+        {
+          "caller": "run_episode",
+          "callee": "resolve_rpent_root",
+          "lineNumber": 557
+        },
+        {
+          "caller": "run_episode",
+          "callee": "time.perf_counter",
+          "lineNumber": 558
+        },
+        {
+          "caller": "run_episode",
+          "callee": "make_backend",
+          "lineNumber": 559
+        },
+        {
+          "caller": "run_episode",
+          "callee": "dump_card",
+          "lineNumber": 560
+        },
+        {
+          "caller": "run_episode",
+          "callee": "render_prompt",
+          "lineNumber": 563
+        },
+        {
+          "caller": "run_episode",
+          "callee": "int",
+          "lineNumber": 563
+        },
+        {
+          "caller": "run_episode",
+          "callee": "bundle.text",
+          "lineNumber": 564
+        },
+        {
+          "caller": "run_episode",
+          "callee": "(out_dir / \"prompt.txt\").write_text",
+          "lineNumber": 565
+        },
+        {
+          "caller": "run_episode",
+          "callee": "len",
+          "lineNumber": 567
+        },
+        {
+          "caller": "run_episode",
+          "callee": "_sha256_text",
+          "lineNumber": 568
+        },
+        {
+          "caller": "run_episode",
+          "callee": "list",
+          "lineNumber": 569
+        },
+        {
+          "caller": "run_episode",
+          "callee": "RobodojoRobot",
+          "lineNumber": 572
+        },
+        {
+          "caller": "run_episode",
+          "callee": "_install_sigterm",
+          "lineNumber": 573
+        },
+        {
+          "caller": "run_episode",
+          "callee": "scratch.mkdir",
+          "lineNumber": 575
+        },
+        {
+          "caller": "run_episode",
+          "callee": "audit_source",
+          "lineNumber": 577
+        },
+        {
+          "caller": "run_episode",
+          "callee": "policy_path.read_text",
+          "lineNumber": 578
+        },
+        {
+          "caller": "run_episode",
+          "callee": "load_policy",
+          "lineNumber": 581
+        },
+        {
+          "caller": "run_episode",
+          "callee": "make_builtins",
+          "lineNumber": 581
+        },
+        {
+          "caller": "run_episode",
+          "callee": "str",
+          "lineNumber": 585
+        },
+        {
+          "caller": "run_episode",
+          "callee": "open",
+          "lineNumber": 587
+        },
+        {
+          "caller": "run_episode",
+          "callee": "contextlib.redirect_stdout",
+          "lineNumber": 588
+        },
+        {
+          "caller": "run_episode",
+          "callee": "contextlib.redirect_stderr",
+          "lineNumber": 588
+        },
+        {
+          "caller": "run_episode",
+          "callee": "run_policy",
+          "lineNumber": 589
+        },
+        {
+          "caller": "run_episode",
+          "callee": "backend.solved",
+          "lineNumber": 600
+        },
+        {
+          "caller": "run_episode",
+          "callee": "backend.env_steps",
+          "lineNumber": 601
+        },
+        {
+          "caller": "run_episode",
+          "callee": "type",
+          "lineNumber": 603
+        },
+        {
+          "caller": "run_episode",
+          "callee": "str",
+          "lineNumber": 603
+        },
+        {
+          "caller": "run_episode",
+          "callee": "result[\"notes\"].append",
+          "lineNumber": 605
+        },
+        {
+          "caller": "run_episode",
+          "callee": "isinstance",
+          "lineNumber": 608
+        },
+        {
+          "caller": "run_episode",
+          "callee": "len",
+          "lineNumber": 611
+        },
+        {
+          "caller": "run_episode",
+          "callee": "ledger.stateful_calls",
+          "lineNumber": 612
+        },
+        {
+          "caller": "run_episode",
+          "callee": "ledger.env_steps",
+          "lineNumber": 613
+        },
+        {
+          "caller": "run_episode",
+          "callee": "ledger.write_jsonl",
+          "lineNumber": 614
+        },
+        {
+          "caller": "run_episode",
+          "callee": "stop_all",
+          "lineNumber": 615
+        },
+        {
+          "caller": "run_episode",
+          "callee": "time.perf_counter",
+          "lineNumber": 616
+        },
+        {
+          "caller": "run_episode",
+          "callee": "(out_dir / \"result.json\").write_text",
+          "lineNumber": 617
+        },
+        {
+          "caller": "run_episode",
+          "callee": "json.dumps",
+          "lineNumber": 618
+        },
+        {
+          "caller": "handler",
+          "callee": "KeyboardInterrupt",
+          "lineNumber": 625
+        },
+        {
+          "caller": "_install_sigterm",
+          "callee": "contextlib.suppress",
+          "lineNumber": 627
+        },
+        {
+          "caller": "_install_sigterm",
+          "callee": "signal.signal",
+          "lineNumber": 628
+        },
+        {
+          "caller": "card_only",
+          "callee": "(boot_options or {}).items",
+          "lineNumber": 641
+        },
+        {
+          "caller": "card_only",
+          "callee": "boot",
+          "lineNumber": 642
+        },
+        {
+          "caller": "card_only",
+          "callee": "dump_card",
+          "lineNumber": 644
+        },
+        {
+          "caller": "card_only",
+          "callee": "stop_all",
+          "lineNumber": 646
+        },
+        {
+          "caller": "_add_cell_args",
+          "callee": "add_cell_args",
+          "lineNumber": 650
+        },
+        {
+          "caller": "_add_cell_args",
+          "callee": "add_boot_args",
+          "lineNumber": 651
+        },
+        {
+          "caller": "_add_cell_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 652
+        },
+        {
+          "caller": "_add_cell_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 653
+        },
+        {
+          "caller": "_add_cell_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 654
+        },
+        {
+          "caller": "_add_cell_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 655
+        },
+        {
+          "caller": "main",
+          "callee": "argparse.ArgumentParser",
+          "lineNumber": 659
+        },
+        {
+          "caller": "main",
+          "callee": "parser.add_subparsers",
+          "lineNumber": 662
+        },
+        {
+          "caller": "main",
+          "callee": "sub.add_parser",
+          "lineNumber": 663
+        },
+        {
+          "caller": "main",
+          "callee": "run.add_argument",
+          "lineNumber": 664
+        },
+        {
+          "caller": "main",
+          "callee": "run.add_argument",
+          "lineNumber": 665
+        },
+        {
+          "caller": "main",
+          "callee": "_add_cell_args",
+          "lineNumber": 666
+        },
+        {
+          "caller": "main",
+          "callee": "sub.add_parser",
+          "lineNumber": 667
+        },
+        {
+          "caller": "main",
+          "callee": "_add_cell_args",
+          "lineNumber": 668
+        },
+        {
+          "caller": "main",
+          "callee": "parser.parse_args",
+          "lineNumber": 669
+        },
+        {
+          "caller": "main",
+          "callee": "run_episode",
+          "lineNumber": 671
+        },
+        {
+          "caller": "main",
+          "callee": "args.policy.resolve",
+          "lineNumber": 672
+        },
+        {
+          "caller": "main",
+          "callee": "cell_from_args",
+          "lineNumber": 673
+        },
+        {
+          "caller": "main",
+          "callee": "args.out.resolve",
+          "lineNumber": 674
+        },
+        {
+          "caller": "main",
+          "callee": "boot_options",
+          "lineNumber": 677
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 679
+        },
+        {
+          "caller": "main",
+          "callee": "json.dumps",
+          "lineNumber": 680
+        },
+        {
+          "caller": "main",
+          "callee": "card_only",
+          "lineNumber": 696
+        },
+        {
+          "caller": "main",
+          "callee": "cell_from_args",
+          "lineNumber": 697
+        },
+        {
+          "caller": "main",
+          "callee": "args.out.resolve",
+          "lineNumber": 698
+        },
+        {
+          "caller": "main",
+          "callee": "boot_options",
+          "lineNumber": 700
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 702
+        },
+        {
+          "caller": "main",
+          "callee": "card_obj.to_json",
+          "lineNumber": 702
+        }
+      ],
+      "metrics": {
+        "importCount": 7,
+        "exportCount": 22,
+        "functionCount": 20,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "src/pyrualean/hosts/rpent_robotwin.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 536,
+      "nonEmptyLines": 466,
+      "functions": [
+        {
+          "name": "add_cell_args",
+          "startLine": 75,
+          "endLine": 90,
+          "params": [
+            "parser"
+          ]
+        },
+        {
+          "name": "add_boot_args",
+          "startLine": 93,
+          "endLine": 116,
+          "params": [
+            "parser"
+          ]
+        },
+        {
+          "name": "cell_from_args",
+          "startLine": 119,
+          "endLine": 126,
+          "params": [
+            "args"
+          ]
+        },
+        {
+          "name": "boot_options",
+          "startLine": 129,
+          "endLine": 136,
+          "params": [
+            "args"
+          ]
+        },
+        {
+          "name": "_eval_success",
+          "startLine": 139,
+          "endLine": 145,
+          "params": [
+            "toolkit"
+          ]
+        },
+        {
+          "name": "make_backend",
+          "startLine": 165,
+          "endLine": 168,
+          "params": [
+            "toolkit"
+          ]
+        },
+        {
+          "name": "boot",
+          "startLine": 171,
+          "endLine": 244,
+          "params": [
+            "cell",
+            "out_dir",
+            "rpent_root",
+            "env_only",
+            "vla_endpoint",
+            "env_endpoint",
+            "vla_model_path",
+            "robotwin_assets_path",
+            "lingbot_robot_config"
+          ]
+        },
+        {
+          "name": "_floats",
+          "startLine": 247,
+          "endLine": 252,
+          "params": [
+            "value",
+            "n"
+          ]
+        },
+        {
+          "name": "_fmt",
+          "startLine": 255,
+          "endLine": 256,
+          "params": [
+            "values"
+          ]
+        },
+        {
+          "name": "_table_height",
+          "startLine": 259,
+          "endLine": 269,
+          "params": [
+            "toolkit"
+          ]
+        },
+        {
+          "name": "dump_card",
+          "startLine": 272,
+          "endLine": 323,
+          "params": [
+            "toolkit",
+            "cell",
+            "out_dir"
+          ]
+        },
+        {
+          "name": "_sha256_text",
+          "startLine": 326,
+          "endLine": 327,
+          "params": [
+            "text"
+          ]
+        },
+        {
+          "name": "run_episode",
+          "startLine": 330,
+          "endLine": 450,
+          "params": [
+            "policy_path",
+            "cell",
+            "out_dir",
+            "timeout_s",
+            "rpent_root",
+            "boot_options"
+          ]
+        },
+        {
+          "name": "_install_sigterm",
+          "startLine": 453,
+          "endLine": 458,
+          "params": []
+        },
+        {
+          "name": "card_only",
+          "startLine": 461,
+          "endLine": 475,
+          "params": [
+            "cell",
+            "out_dir",
+            "rpent_root",
+            "boot_options"
+          ]
+        },
+        {
+          "name": "_add_cell_args",
+          "startLine": 478,
+          "endLine": 484,
+          "params": [
+            "parser"
+          ]
+        },
+        {
+          "name": "main",
+          "startLine": 487,
+          "endLine": 532,
+          "params": [
+            "argv"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "Cell",
+          "startLine": 61,
+          "endLine": 72,
+          "methods": [
+            "tag"
+          ],
+          "properties": [
+            "suite",
+            "task",
+            "seed",
+            "max_episode_steps",
+            "cuda_device"
+          ]
+        },
+        {
+          "name": "RobotwinBackend",
+          "startLine": 148,
+          "endLine": 162,
+          "methods": [
+            "solved",
+            "env_steps"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "Cell",
+          "line": 60,
+          "isDefault": false
+        },
+        {
+          "name": "add_cell_args",
+          "line": 75,
+          "isDefault": false
+        },
+        {
+          "name": "add_boot_args",
+          "line": 93,
+          "isDefault": false
+        },
+        {
+          "name": "cell_from_args",
+          "line": 119,
+          "isDefault": false
+        },
+        {
+          "name": "boot_options",
+          "line": 129,
+          "isDefault": false
+        },
+        {
+          "name": "_eval_success",
+          "line": 139,
+          "isDefault": false
+        },
+        {
+          "name": "RobotwinBackend",
+          "line": 148,
+          "isDefault": false
+        },
+        {
+          "name": "make_backend",
+          "line": 165,
+          "isDefault": false
+        },
+        {
+          "name": "boot",
+          "line": 171,
+          "isDefault": false
+        },
+        {
+          "name": "_floats",
+          "line": 247,
+          "isDefault": false
+        },
+        {
+          "name": "_fmt",
+          "line": 255,
+          "isDefault": false
+        },
+        {
+          "name": "_table_height",
+          "line": 259,
+          "isDefault": false
+        },
+        {
+          "name": "dump_card",
+          "line": 272,
+          "isDefault": false
+        },
+        {
+          "name": "_sha256_text",
+          "line": 326,
+          "isDefault": false
+        },
+        {
+          "name": "run_episode",
+          "line": 330,
+          "isDefault": false
+        },
+        {
+          "name": "_install_sigterm",
+          "line": 453,
+          "isDefault": false
+        },
+        {
+          "name": "card_only",
+          "line": 461,
+          "isDefault": false
+        },
+        {
+          "name": "_add_cell_args",
+          "line": 478,
+          "isDefault": false
+        },
+        {
+          "name": "main",
+          "line": 487,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "tag",
+          "callee": "self.suite.replace",
+          "lineNumber": 72
+        },
+        {
+          "caller": "add_cell_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 78
+        },
+        {
+          "caller": "add_cell_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 79
+        },
+        {
+          "caller": "add_cell_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 85
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 96
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 99
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 102
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "os.environ.get",
+          "lineNumber": 104
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 107
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "os.environ.get",
+          "lineNumber": 109
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 112
+        },
+        {
+          "caller": "add_boot_args",
+          "callee": "os.environ.get",
+          "lineNumber": 114
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "Cell",
+          "lineNumber": 120
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "str",
+          "lineNumber": 121
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "getattr",
+          "lineNumber": 121
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "str",
+          "lineNumber": 122
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "int",
+          "lineNumber": 123
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "int",
+          "lineNumber": 124
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "getattr",
+          "lineNumber": 124
+        },
+        {
+          "caller": "cell_from_args",
+          "callee": "getattr",
+          "lineNumber": 125
+        },
+        {
+          "caller": "boot_options",
+          "callee": "getattr",
+          "lineNumber": 131
+        },
+        {
+          "caller": "boot_options",
+          "callee": "getattr",
+          "lineNumber": 132
+        },
+        {
+          "caller": "boot_options",
+          "callee": "getattr",
+          "lineNumber": 133
+        },
+        {
+          "caller": "boot_options",
+          "callee": "getattr",
+          "lineNumber": 134
+        },
+        {
+          "caller": "boot_options",
+          "callee": "getattr",
+          "lineNumber": 135
+        },
+        {
+          "caller": "_eval_success",
+          "callee": "bool",
+          "lineNumber": 143
+        },
+        {
+          "caller": "_eval_success",
+          "callee": "toolkit._primitives.status().get",
+          "lineNumber": 143
+        },
+        {
+          "caller": "_eval_success",
+          "callee": "toolkit._primitives.status",
+          "lineNumber": 143
+        },
+        {
+          "caller": "_eval_success",
+          "callee": "bool",
+          "lineNumber": 145
+        },
+        {
+          "caller": "_eval_success",
+          "callee": "(getattr(toolkit, \"_latest_status\", None) or {}).get",
+          "lineNumber": 145
+        },
+        {
+          "caller": "_eval_success",
+          "callee": "getattr",
+          "lineNumber": 145
+        },
+        {
+          "caller": "solved",
+          "callee": "_eval_success",
+          "lineNumber": 156
+        },
+        {
+          "caller": "env_steps",
+          "callee": "int",
+          "lineNumber": 160
+        },
+        {
+          "caller": "env_steps",
+          "callee": "super().env_steps",
+          "lineNumber": 162
+        },
+        {
+          "caller": "env_steps",
+          "callee": "super",
+          "lineNumber": 162
+        },
+        {
+          "caller": "make_backend",
+          "callee": "RobotwinBackend",
+          "lineNumber": 168
+        },
+        {
+          "caller": "boot",
+          "callee": "resolve_rpent_root",
+          "lineNumber": 195
+        },
+        {
+          "caller": "boot",
+          "callee": "out_dir.mkdir",
+          "lineNumber": 201
+        },
+        {
+          "caller": "boot",
+          "callee": "init_output_dir",
+          "lineNumber": 202
+        },
+        {
+          "caller": "boot",
+          "callee": "memory_dir.mkdir",
+          "lineNumber": 205
+        },
+        {
+          "caller": "boot",
+          "callee": "(memory_dir / \"MEMORY.md\").touch",
+          "lineNumber": 206
+        },
+        {
+          "caller": "boot",
+          "callee": "NullDashboardEventSink",
+          "lineNumber": 207
+        },
+        {
+          "caller": "boot",
+          "callee": "Namespace",
+          "lineNumber": 208
+        },
+        {
+          "caller": "boot",
+          "callee": "os.environ.get",
+          "lineNumber": 213
+        },
+        {
+          "caller": "boot",
+          "callee": "os.environ.get",
+          "lineNumber": 214
+        },
+        {
+          "caller": "boot",
+          "callee": "os.environ.get",
+          "lineNumber": 215
+        },
+        {
+          "caller": "boot",
+          "callee": "str",
+          "lineNumber": 221
+        },
+        {
+          "caller": "boot",
+          "callee": "str",
+          "lineNumber": 222
+        },
+        {
+          "caller": "boot",
+          "callee": "get_robot_spec",
+          "lineNumber": 224
+        },
+        {
+          "caller": "boot",
+          "callee": "spec.init_runtime",
+          "lineNumber": 226
+        },
+        {
+          "caller": "boot",
+          "callee": "runtime_kwargs.setdefault",
+          "lineNumber": 228
+        },
+        {
+          "caller": "boot",
+          "callee": "RoboTwinToolkit",
+          "lineNumber": 234
+        },
+        {
+          "caller": "boot",
+          "callee": "MemoryManager",
+          "lineNumber": 237
+        },
+        {
+          "caller": "boot",
+          "callee": "reversed",
+          "lineNumber": 240
+        },
+        {
+          "caller": "boot",
+          "callee": "contextlib.suppress",
+          "lineNumber": 241
+        },
+        {
+          "caller": "boot",
+          "callee": "daemon.stop",
+          "lineNumber": 242
+        },
+        {
+          "caller": "_floats",
+          "callee": "float",
+          "lineNumber": 249
+        },
+        {
+          "caller": "_floats",
+          "callee": "len",
+          "lineNumber": 252
+        },
+        {
+          "caller": "_fmt",
+          "callee": "\", \".join",
+          "lineNumber": 256
+        },
+        {
+          "caller": "_table_height",
+          "callee": "np.asarray",
+          "lineNumber": 265
+        },
+        {
+          "caller": "_table_height",
+          "callee": "toolkit.state.load",
+          "lineNumber": 265
+        },
+        {
+          "caller": "_table_height",
+          "callee": "float",
+          "lineNumber": 266
+        },
+        {
+          "caller": "_table_height",
+          "callee": "np.nanmedian",
+          "lineNumber": 266
+        },
+        {
+          "caller": "dump_card",
+          "callee": "toolkit.execute_tool",
+          "lineNumber": 281
+        },
+        {
+          "caller": "dump_card",
+          "callee": "view.get",
+          "lineNumber": 282
+        },
+        {
+          "caller": "dump_card",
+          "callee": "raw.get",
+          "lineNumber": 283
+        },
+        {
+          "caller": "dump_card",
+          "callee": "raw.get",
+          "lineNumber": 284
+        },
+        {
+          "caller": "dump_card",
+          "callee": "card_dir.mkdir",
+          "lineNumber": 286
+        },
+        {
+          "caller": "dump_card",
+          "callee": "CARD_IMAGES.items",
+          "lineNumber": 288
+        },
+        {
+          "caller": "dump_card",
+          "callee": "toolkit.state.artifact_path",
+          "lineNumber": 290
+        },
+        {
+          "caller": "dump_card",
+          "callee": "source.is_file",
+          "lineNumber": 293
+        },
+        {
+          "caller": "dump_card",
+          "callee": "shutil.copyfile",
+          "lineNumber": 295
+        },
+        {
+          "caller": "dump_card",
+          "callee": "str",
+          "lineNumber": 296
+        },
+        {
+          "caller": "dump_card",
+          "callee": "_floats",
+          "lineNumber": 299
+        },
+        {
+          "caller": "dump_card",
+          "callee": "robot.get",
+          "lineNumber": 299
+        },
+        {
+          "caller": "dump_card",
+          "callee": "_floats",
+          "lineNumber": 300
+        },
+        {
+          "caller": "dump_card",
+          "callee": "robot.get",
+          "lineNumber": 300
+        },
+        {
+          "caller": "dump_card",
+          "callee": "_fmt",
+          "lineNumber": 301
+        },
+        {
+          "caller": "dump_card",
+          "callee": "_fmt",
+          "lineNumber": 302
+        },
+        {
+          "caller": "dump_card",
+          "callee": "_fmt",
+          "lineNumber": 303
+        },
+        {
+          "caller": "dump_card",
+          "callee": "float",
+          "lineNumber": 304
+        },
+        {
+          "caller": "dump_card",
+          "callee": "robot.get",
+          "lineNumber": 304
+        },
+        {
+          "caller": "dump_card",
+          "callee": "_table_height",
+          "lineNumber": 306
+        },
+        {
+          "caller": "dump_card",
+          "callee": "status.get",
+          "lineNumber": 309
+        },
+        {
+          "caller": "dump_card",
+          "callee": "int",
+          "lineNumber": 310
+        },
+        {
+          "caller": "dump_card",
+          "callee": "TaskCard",
+          "lineNumber": 311
+        },
+        {
+          "caller": "dump_card",
+          "callee": "str",
+          "lineNumber": 315
+        },
+        {
+          "caller": "dump_card",
+          "callee": "view.get",
+          "lineNumber": 315
+        },
+        {
+          "caller": "dump_card",
+          "callee": "raw.get",
+          "lineNumber": 315
+        },
+        {
+          "caller": "dump_card",
+          "callee": "(out_dir / \"card.json\").write_text",
+          "lineNumber": 322
+        },
+        {
+          "caller": "dump_card",
+          "callee": "card.to_json",
+          "lineNumber": 322
+        },
+        {
+          "caller": "_sha256_text",
+          "callee": "hashlib.sha256(text.encode(\"utf-8\")).hexdigest",
+          "lineNumber": 327
+        },
+        {
+          "caller": "_sha256_text",
+          "callee": "hashlib.sha256",
+          "lineNumber": 327
+        },
+        {
+          "caller": "_sha256_text",
+          "callee": "text.encode",
+          "lineNumber": 327
+        },
+        {
+          "caller": "run_episode",
+          "callee": "out_dir.mkdir",
+          "lineNumber": 341
+        },
+        {
+          "caller": "run_episode",
+          "callee": "time.perf_counter",
+          "lineNumber": 342
+        },
+        {
+          "caller": "run_episode",
+          "callee": "time.strftime",
+          "lineNumber": 343
+        },
+        {
+          "caller": "run_episode",
+          "callee": "dict",
+          "lineNumber": 344
+        },
+        {
+          "caller": "run_episode",
+          "callee": "str",
+          "lineNumber": 355
+        },
+        {
+          "caller": "run_episode",
+          "callee": "policy_sha256",
+          "lineNumber": 356
+        },
+        {
+          "caller": "run_episode",
+          "callee": "policy_path.stat",
+          "lineNumber": 357
+        },
+        {
+          "caller": "run_episode",
+          "callee": "shutil.copyfile",
+          "lineNumber": 382
+        },
+        {
+          "caller": "run_episode",
+          "callee": "Ledger",
+          "lineNumber": 386
+        },
+        {
+          "caller": "run_episode",
+          "callee": "boot",
+          "lineNumber": 388
+        },
+        {
+          "caller": "run_episode",
+          "callee": "str",
+          "lineNumber": 389
+        },
+        {
+          "caller": "run_episode",
+          "callee": "resolve_rpent_root",
+          "lineNumber": 389
+        },
+        {
+          "caller": "run_episode",
+          "callee": "time.perf_counter",
+          "lineNumber": 390
+        },
+        {
+          "caller": "run_episode",
+          "callee": "make_backend",
+          "lineNumber": 391
+        },
+        {
+          "caller": "run_episode",
+          "callee": "dump_card",
+          "lineNumber": 392
+        },
+        {
+          "caller": "run_episode",
+          "callee": "render_prompt",
+          "lineNumber": 394
+        },
+        {
+          "caller": "run_episode",
+          "callee": "int",
+          "lineNumber": 394
+        },
+        {
+          "caller": "run_episode",
+          "callee": "bundle.text",
+          "lineNumber": 395
+        },
+        {
+          "caller": "run_episode",
+          "callee": "(out_dir / \"prompt.txt\").write_text",
+          "lineNumber": 396
+        },
+        {
+          "caller": "run_episode",
+          "callee": "len",
+          "lineNumber": 398
+        },
+        {
+          "caller": "run_episode",
+          "callee": "_sha256_text",
+          "lineNumber": 399
+        },
+        {
+          "caller": "run_episode",
+          "callee": "list",
+          "lineNumber": 400
+        },
+        {
+          "caller": "run_episode",
+          "callee": "RobotwinRobot",
+          "lineNumber": 403
+        },
+        {
+          "caller": "run_episode",
+          "callee": "_install_sigterm",
+          "lineNumber": 404
+        },
+        {
+          "caller": "run_episode",
+          "callee": "scratch.mkdir",
+          "lineNumber": 406
+        },
+        {
+          "caller": "run_episode",
+          "callee": "audit_source",
+          "lineNumber": 408
+        },
+        {
+          "caller": "run_episode",
+          "callee": "policy_path.read_text",
+          "lineNumber": 409
+        },
+        {
+          "caller": "run_episode",
+          "callee": "load_policy",
+          "lineNumber": 412
+        },
+        {
+          "caller": "run_episode",
+          "callee": "make_builtins",
+          "lineNumber": 412
+        },
+        {
+          "caller": "run_episode",
+          "callee": "str",
+          "lineNumber": 416
+        },
+        {
+          "caller": "run_episode",
+          "callee": "open",
+          "lineNumber": 418
+        },
+        {
+          "caller": "run_episode",
+          "callee": "contextlib.redirect_stdout",
+          "lineNumber": 419
+        },
+        {
+          "caller": "run_episode",
+          "callee": "contextlib.redirect_stderr",
+          "lineNumber": 419
+        },
+        {
+          "caller": "run_episode",
+          "callee": "run_policy",
+          "lineNumber": 420
+        },
+        {
+          "caller": "run_episode",
+          "callee": "backend.solved",
+          "lineNumber": 430
+        },
+        {
+          "caller": "run_episode",
+          "callee": "backend.env_steps",
+          "lineNumber": 431
+        },
+        {
+          "caller": "run_episode",
+          "callee": "type",
+          "lineNumber": 433
+        },
+        {
+          "caller": "run_episode",
+          "callee": "str",
+          "lineNumber": 433
+        },
+        {
+          "caller": "run_episode",
+          "callee": "result[\"notes\"].append",
+          "lineNumber": 435
+        },
+        {
+          "caller": "run_episode",
+          "callee": "isinstance",
+          "lineNumber": 438
+        },
+        {
+          "caller": "run_episode",
+          "callee": "len",
+          "lineNumber": 441
+        },
+        {
+          "caller": "run_episode",
+          "callee": "ledger.stateful_calls",
+          "lineNumber": 442
+        },
+        {
+          "caller": "run_episode",
+          "callee": "ledger.env_steps",
+          "lineNumber": 443
+        },
+        {
+          "caller": "run_episode",
+          "callee": "ledger.write_jsonl",
+          "lineNumber": 444
+        },
+        {
+          "caller": "run_episode",
+          "callee": "stop_all",
+          "lineNumber": 445
+        },
+        {
+          "caller": "run_episode",
+          "callee": "time.perf_counter",
+          "lineNumber": 446
+        },
+        {
+          "caller": "run_episode",
+          "callee": "(out_dir / \"result.json\").write_text",
+          "lineNumber": 447
+        },
+        {
+          "caller": "run_episode",
+          "callee": "json.dumps",
+          "lineNumber": 448
+        },
+        {
+          "caller": "handler",
+          "callee": "KeyboardInterrupt",
+          "lineNumber": 455
+        },
+        {
+          "caller": "_install_sigterm",
+          "callee": "contextlib.suppress",
+          "lineNumber": 457
+        },
+        {
+          "caller": "_install_sigterm",
+          "callee": "signal.signal",
+          "lineNumber": 458
+        },
+        {
+          "caller": "card_only",
+          "callee": "(boot_options or {}).items",
+          "lineNumber": 470
+        },
+        {
+          "caller": "card_only",
+          "callee": "boot",
+          "lineNumber": 471
+        },
+        {
+          "caller": "card_only",
+          "callee": "dump_card",
+          "lineNumber": 473
+        },
+        {
+          "caller": "card_only",
+          "callee": "stop_all",
+          "lineNumber": 475
+        },
+        {
+          "caller": "_add_cell_args",
+          "callee": "add_cell_args",
+          "lineNumber": 479
+        },
+        {
+          "caller": "_add_cell_args",
+          "callee": "add_boot_args",
+          "lineNumber": 480
+        },
+        {
+          "caller": "_add_cell_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 481
+        },
+        {
+          "caller": "_add_cell_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 482
+        },
+        {
+          "caller": "_add_cell_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 483
+        },
+        {
+          "caller": "_add_cell_args",
+          "callee": "parser.add_argument",
+          "lineNumber": 484
+        },
+        {
+          "caller": "main",
+          "callee": "argparse.ArgumentParser",
+          "lineNumber": 488
+        },
+        {
+          "caller": "main",
+          "callee": "parser.add_subparsers",
+          "lineNumber": 491
+        },
+        {
+          "caller": "main",
+          "callee": "sub.add_parser",
+          "lineNumber": 492
+        },
+        {
+          "caller": "main",
+          "callee": "run.add_argument",
+          "lineNumber": 493
+        },
+        {
+          "caller": "main",
+          "callee": "run.add_argument",
+          "lineNumber": 494
+        },
+        {
+          "caller": "main",
+          "callee": "_add_cell_args",
+          "lineNumber": 495
+        },
+        {
+          "caller": "main",
+          "callee": "sub.add_parser",
+          "lineNumber": 496
+        },
+        {
+          "caller": "main",
+          "callee": "_add_cell_args",
+          "lineNumber": 497
+        },
+        {
+          "caller": "main",
+          "callee": "parser.parse_args",
+          "lineNumber": 498
+        },
+        {
+          "caller": "main",
+          "callee": "run_episode",
+          "lineNumber": 500
+        },
+        {
+          "caller": "main",
+          "callee": "args.policy.resolve",
+          "lineNumber": 501
+        },
+        {
+          "caller": "main",
+          "callee": "cell_from_args",
+          "lineNumber": 502
+        },
+        {
+          "caller": "main",
+          "callee": "args.out.resolve",
+          "lineNumber": 503
+        },
+        {
+          "caller": "main",
+          "callee": "boot_options",
+          "lineNumber": 506
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 508
+        },
+        {
+          "caller": "main",
+          "callee": "json.dumps",
+          "lineNumber": 509
+        },
+        {
+          "caller": "main",
+          "callee": "card_only",
+          "lineNumber": 525
+        },
+        {
+          "caller": "main",
+          "callee": "cell_from_args",
+          "lineNumber": 526
+        },
+        {
+          "caller": "main",
+          "callee": "args.out.resolve",
+          "lineNumber": 527
+        },
+        {
+          "caller": "main",
+          "callee": "boot_options",
+          "lineNumber": 529
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 531
+        },
+        {
+          "caller": "main",
+          "callee": "card_obj.to_json",
+          "lineNumber": 531
+        }
+      ],
+      "metrics": {
+        "importCount": 6,
+        "exportCount": 19,
+        "functionCount": 17,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "src/pyrualean/prompt.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 538,
+      "nonEmptyLines": 466,
+      "functions": [
+        {
+          "name": "_annotation",
+          "startLine": 36,
+          "endLine": 43,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "_format_parameters",
+          "startLine": 46,
+          "endLine": 62,
+          "params": [
+            "sig"
+          ]
+        },
+        {
+          "name": "_render_callable",
+          "startLine": 65,
+          "endLine": 75,
+          "params": [
+            "owner",
+            "name",
+            "fn"
+          ]
+        },
+        {
+          "name": "_render_property",
+          "startLine": 78,
+          "endLine": 85,
+          "params": [
+            "owner",
+            "name",
+            "prop"
+          ]
+        },
+        {
+          "name": "_render_result_type",
+          "startLine": 88,
+          "endLine": 103,
+          "params": []
+        },
+        {
+          "name": "_public_members",
+          "startLine": 106,
+          "endLine": 125,
+          "params": [
+            "robot_cls"
+          ]
+        },
+        {
+          "name": "_return_type_name",
+          "startLine": 128,
+          "endLine": 135,
+          "params": [
+            "member"
+          ]
+        },
+        {
+          "name": "vla_hidden",
+          "startLine": 138,
+          "endLine": 153,
+          "params": [
+            "robot_cls",
+            "primitives"
+          ]
+        },
+        {
+          "name": "_apply_edits",
+          "startLine": 156,
+          "endLine": 162,
+          "params": [
+            "text",
+            "edits",
+            "what"
+          ]
+        },
+        {
+          "name": "api_reference",
+          "startLine": 165,
+          "endLine": 257,
+          "params": [
+            "robot_cls",
+            "var",
+            "primitives"
+          ]
+        },
+        {
+          "name": "knowledge_stem",
+          "startLine": 260,
+          "endLine": 265,
+          "params": [
+            "name",
+            "primitives"
+          ]
+        },
+        {
+          "name": "knowledge_text",
+          "startLine": 268,
+          "endLine": 276,
+          "params": [
+            "name",
+            "primitives"
+          ]
+        },
+        {
+          "name": "render_prompt",
+          "startLine": 474,
+          "endLine": 526,
+          "params": [
+            "card",
+            "budget_s",
+            "knowledge",
+            "robot_cls",
+            "primitives"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "TaskCard",
+          "startLine": 280,
+          "endLine": 393,
+          "methods": [
+            "to_json",
+            "from_json",
+            "render",
+            "_render_generic"
+          ],
+          "properties": [
+            "suite",
+            "task",
+            "seed",
+            "task_language",
+            "object_names",
+            "eef_pos",
+            "eef_quat",
+            "gripper_opening",
+            "images",
+            "max_env_steps",
+            "transfer",
+            "robot",
+            "facts"
+          ]
+        },
+        {
+          "name": "PromptBundle",
+          "startLine": 397,
+          "endLine": 411,
+          "methods": [
+            "messages",
+            "text"
+          ],
+          "properties": [
+            "system",
+            "user",
+            "images"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "_annotation",
+          "line": 36,
+          "isDefault": false
+        },
+        {
+          "name": "_format_parameters",
+          "line": 46,
+          "isDefault": false
+        },
+        {
+          "name": "_render_callable",
+          "line": 65,
+          "isDefault": false
+        },
+        {
+          "name": "_render_property",
+          "line": 78,
+          "isDefault": false
+        },
+        {
+          "name": "_render_result_type",
+          "line": 88,
+          "isDefault": false
+        },
+        {
+          "name": "_public_members",
+          "line": 106,
+          "isDefault": false
+        },
+        {
+          "name": "_return_type_name",
+          "line": 128,
+          "isDefault": false
+        },
+        {
+          "name": "vla_hidden",
+          "line": 138,
+          "isDefault": false
+        },
+        {
+          "name": "_apply_edits",
+          "line": 156,
+          "isDefault": false
+        },
+        {
+          "name": "api_reference",
+          "line": 165,
+          "isDefault": false
+        },
+        {
+          "name": "knowledge_stem",
+          "line": 260,
+          "isDefault": false
+        },
+        {
+          "name": "knowledge_text",
+          "line": 268,
+          "isDefault": false
+        },
+        {
+          "name": "TaskCard",
+          "line": 279,
+          "isDefault": false
+        },
+        {
+          "name": "PromptBundle",
+          "line": 396,
+          "isDefault": false
+        },
+        {
+          "name": "render_prompt",
+          "line": 474,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_annotation",
+          "callee": "isinstance",
+          "lineNumber": 39
+        },
+        {
+          "caller": "_annotation",
+          "callee": "isinstance",
+          "lineNumber": 41
+        },
+        {
+          "caller": "_annotation",
+          "callee": "str(value).replace",
+          "lineNumber": 43
+        },
+        {
+          "caller": "_annotation",
+          "callee": "str",
+          "lineNumber": 43
+        },
+        {
+          "caller": "_format_parameters",
+          "callee": "sig.parameters.items",
+          "lineNumber": 49
+        },
+        {
+          "caller": "_format_parameters",
+          "callee": "parts.append",
+          "lineNumber": 53
+        },
+        {
+          "caller": "_format_parameters",
+          "callee": "_annotation",
+          "lineNumber": 56
+        },
+        {
+          "caller": "_format_parameters",
+          "callee": "parts.append",
+          "lineNumber": 61
+        },
+        {
+          "caller": "_render_callable",
+          "callee": "inspect.signature",
+          "lineNumber": 66
+        },
+        {
+          "caller": "_render_callable",
+          "callee": "_format_parameters",
+          "lineNumber": 67
+        },
+        {
+          "caller": "_render_callable",
+          "callee": "_annotation",
+          "lineNumber": 68
+        },
+        {
+          "caller": "_render_callable",
+          "callee": "', '.join",
+          "lineNumber": 70
+        },
+        {
+          "caller": "_render_callable",
+          "callee": "len",
+          "lineNumber": 71
+        },
+        {
+          "caller": "_render_callable",
+          "callee": "\",\\n    \".join",
+          "lineNumber": 72
+        },
+        {
+          "caller": "_render_callable",
+          "callee": "inspect.getdoc",
+          "lineNumber": 74
+        },
+        {
+          "caller": "_render_callable",
+          "callee": "textwrap.indent",
+          "lineNumber": 75
+        },
+        {
+          "caller": "_render_property",
+          "callee": "_annotation",
+          "lineNumber": 82
+        },
+        {
+          "caller": "_render_property",
+          "callee": "inspect.signature",
+          "lineNumber": 82
+        },
+        {
+          "caller": "_render_property",
+          "callee": "inspect.getdoc",
+          "lineNumber": 84
+        },
+        {
+          "caller": "_render_property",
+          "callee": "textwrap.indent",
+          "lineNumber": 85
+        },
+        {
+          "caller": "_render_result_type",
+          "callee": "fields",
+          "lineNumber": 90
+        },
+        {
+          "caller": "_render_result_type",
+          "callee": "parts.append",
+          "lineNumber": 91
+        },
+        {
+          "caller": "_render_result_type",
+          "callee": "_annotation",
+          "lineNumber": 91
+        },
+        {
+          "caller": "_render_result_type",
+          "callee": "', '.join",
+          "lineNumber": 92
+        },
+        {
+          "caller": "_render_result_type",
+          "callee": "len",
+          "lineNumber": 93
+        },
+        {
+          "caller": "_render_result_type",
+          "callee": "\",\\n    \".join",
+          "lineNumber": 94
+        },
+        {
+          "caller": "_render_result_type",
+          "callee": "vars(cls).items",
+          "lineNumber": 96
+        },
+        {
+          "caller": "_render_result_type",
+          "callee": "vars",
+          "lineNumber": 96
+        },
+        {
+          "caller": "_render_result_type",
+          "callee": "isinstance",
+          "lineNumber": 97
+        },
+        {
+          "caller": "_render_result_type",
+          "callee": "name.startswith",
+          "lineNumber": 97
+        },
+        {
+          "caller": "_render_result_type",
+          "callee": "_annotation",
+          "lineNumber": 98
+        },
+        {
+          "caller": "_render_result_type",
+          "callee": "inspect.signature",
+          "lineNumber": 98
+        },
+        {
+          "caller": "_render_result_type",
+          "callee": "inspect.getdoc",
+          "lineNumber": 99
+        },
+        {
+          "caller": "_render_result_type",
+          "callee": "extra.append",
+          "lineNumber": 100
+        },
+        {
+          "caller": "_render_result_type",
+          "callee": "inspect.getdoc",
+          "lineNumber": 101
+        },
+        {
+          "caller": "_render_result_type",
+          "callee": "textwrap.indent",
+          "lineNumber": 102
+        },
+        {
+          "caller": "_render_result_type",
+          "callee": "\"\\n\".join",
+          "lineNumber": 103
+        },
+        {
+          "caller": "_public_members",
+          "callee": "frozenset",
+          "lineNumber": 115
+        },
+        {
+          "caller": "_public_members",
+          "callee": "getattr",
+          "lineNumber": 115
+        },
+        {
+          "caller": "_public_members",
+          "callee": "reversed",
+          "lineNumber": 117
+        },
+        {
+          "caller": "_public_members",
+          "callee": "vars(klass).items",
+          "lineNumber": 120
+        },
+        {
+          "caller": "_public_members",
+          "callee": "vars",
+          "lineNumber": 120
+        },
+        {
+          "caller": "_public_members",
+          "callee": "name.startswith",
+          "lineNumber": 121
+        },
+        {
+          "caller": "_public_members",
+          "callee": "isinstance",
+          "lineNumber": 123
+        },
+        {
+          "caller": "_public_members",
+          "callee": "inspect.isfunction",
+          "lineNumber": 123
+        },
+        {
+          "caller": "_return_type_name",
+          "callee": "isinstance",
+          "lineNumber": 129
+        },
+        {
+          "caller": "_return_type_name",
+          "callee": "inspect.signature",
+          "lineNumber": 132
+        },
+        {
+          "caller": "_return_type_name",
+          "callee": "isinstance",
+          "lineNumber": 135
+        },
+        {
+          "caller": "_return_type_name",
+          "callee": "getattr",
+          "lineNumber": 135
+        },
+        {
+          "caller": "vla_hidden",
+          "callee": "effective_primitives",
+          "lineNumber": 146
+        },
+        {
+          "caller": "vla_hidden",
+          "callee": "frozenset",
+          "lineNumber": 148
+        },
+        {
+          "caller": "vla_hidden",
+          "callee": "frozenset",
+          "lineNumber": 148
+        },
+        {
+          "caller": "vla_hidden",
+          "callee": "frozenset",
+          "lineNumber": 149
+        },
+        {
+          "caller": "vla_hidden",
+          "callee": "getattr",
+          "lineNumber": 149
+        },
+        {
+          "caller": "vla_hidden",
+          "callee": "_public_members",
+          "lineNumber": 150
+        },
+        {
+          "caller": "vla_hidden",
+          "callee": "_return_type_name",
+          "lineNumber": 151
+        },
+        {
+          "caller": "vla_hidden",
+          "callee": "_return_type_name",
+          "lineNumber": 152
+        },
+        {
+          "caller": "vla_hidden",
+          "callee": "members.items",
+          "lineNumber": 152
+        },
+        {
+          "caller": "vla_hidden",
+          "callee": "frozenset",
+          "lineNumber": 153
+        },
+        {
+          "caller": "_apply_edits",
+          "callee": "text.count",
+          "lineNumber": 158
+        },
+        {
+          "caller": "_apply_edits",
+          "callee": "RuntimeError",
+          "lineNumber": 160
+        },
+        {
+          "caller": "_apply_edits",
+          "callee": "text.replace",
+          "lineNumber": 161
+        },
+        {
+          "caller": "api_reference",
+          "callee": "effective_primitives",
+          "lineNumber": 175
+        },
+        {
+          "caller": "api_reference",
+          "callee": "vla_hidden",
+          "lineNumber": 176
+        },
+        {
+          "caller": "api_reference",
+          "callee": "inspect.getdoc",
+          "lineNumber": 178
+        },
+        {
+          "caller": "api_reference",
+          "callee": "sections.append",
+          "lineNumber": 179
+        },
+        {
+          "caller": "api_reference",
+          "callee": "textwrap.indent",
+          "lineNumber": 179
+        },
+        {
+          "caller": "api_reference",
+          "callee": "set",
+          "lineNumber": 183
+        },
+        {
+          "caller": "api_reference",
+          "callee": "vars",
+          "lineNumber": 183
+        },
+        {
+          "caller": "api_reference",
+          "callee": "set",
+          "lineNumber": 183
+        },
+        {
+          "caller": "api_reference",
+          "callee": "reversed",
+          "lineNumber": 186
+        },
+        {
+          "caller": "api_reference",
+          "callee": "issubclass",
+          "lineNumber": 186
+        },
+        {
+          "caller": "api_reference",
+          "callee": "inspect.get_annotations(cls).items",
+          "lineNumber": 191
+        },
+        {
+          "caller": "api_reference",
+          "callee": "inspect.get_annotations",
+          "lineNumber": 191
+        },
+        {
+          "caller": "api_reference",
+          "callee": "str(annotation).replace(\"typing.\", \"\").startswith",
+          "lineNumber": 192
+        },
+        {
+          "caller": "api_reference",
+          "callee": "str(annotation).replace",
+          "lineNumber": 192
+        },
+        {
+          "caller": "api_reference",
+          "callee": "str",
+          "lineNumber": 192
+        },
+        {
+          "caller": "api_reference",
+          "callee": "defined.update",
+          "lineNumber": 194
+        },
+        {
+          "caller": "api_reference",
+          "callee": "vars",
+          "lineNumber": 194
+        },
+        {
+          "caller": "api_reference",
+          "callee": "defined.items",
+          "lineNumber": 197
+        },
+        {
+          "caller": "api_reference",
+          "callee": "name.isupper",
+          "lineNumber": 198
+        },
+        {
+          "caller": "api_reference",
+          "callee": "name.startswith",
+          "lineNumber": 198
+        },
+        {
+          "caller": "api_reference",
+          "callee": "sections.append",
+          "lineNumber": 201
+        },
+        {
+          "caller": "api_reference",
+          "callee": "\"\\n\".join",
+          "lineNumber": 201
+        },
+        {
+          "caller": "api_reference",
+          "callee": "_public_members(robot_cls).items",
+          "lineNumber": 203
+        },
+        {
+          "caller": "api_reference",
+          "callee": "_public_members",
+          "lineNumber": 203
+        },
+        {
+          "caller": "api_reference",
+          "callee": "isinstance",
+          "lineNumber": 206
+        },
+        {
+          "caller": "api_reference",
+          "callee": "members.append",
+          "lineNumber": 207
+        },
+        {
+          "caller": "api_reference",
+          "callee": "_render_property",
+          "lineNumber": 207
+        },
+        {
+          "caller": "api_reference",
+          "callee": "members.append",
+          "lineNumber": 209
+        },
+        {
+          "caller": "api_reference",
+          "callee": "_render_callable",
+          "lineNumber": 209
+        },
+        {
+          "caller": "api_reference",
+          "callee": "sections.append",
+          "lineNumber": 210
+        },
+        {
+          "caller": "api_reference",
+          "callee": "\"\\n\\n\".join",
+          "lineNumber": 210
+        },
+        {
+          "caller": "api_reference",
+          "callee": "tuple",
+          "lineNumber": 211
+        },
+        {
+          "caller": "api_reference",
+          "callee": "getattr",
+          "lineNumber": 211
+        },
+        {
+          "caller": "api_reference",
+          "callee": "_render_result_type",
+          "lineNumber": 213
+        },
+        {
+          "caller": "api_reference",
+          "callee": "is_dataclass",
+          "lineNumber": 215
+        },
+        {
+          "caller": "api_reference",
+          "callee": "sections.append",
+          "lineNumber": 217
+        },
+        {
+          "caller": "api_reference",
+          "callee": "\"\\n\\n\".join",
+          "lineNumber": 218
+        },
+        {
+          "caller": "api_reference",
+          "callee": "getattr",
+          "lineNumber": 220
+        },
+        {
+          "caller": "api_reference",
+          "callee": "sections.append",
+          "lineNumber": 224
+        },
+        {
+          "caller": "api_reference",
+          "callee": "\"\\n\\n\".join",
+          "lineNumber": 224
+        },
+        {
+          "caller": "api_reference",
+          "callee": "_render_result_type",
+          "lineNumber": 225
+        },
+        {
+          "caller": "api_reference",
+          "callee": "sections.append",
+          "lineNumber": 227
+        },
+        {
+          "caller": "api_reference",
+          "callee": "_render_callable",
+          "lineNumber": 227
+        },
+        {
+          "caller": "api_reference",
+          "callee": "sections.append",
+          "lineNumber": 228
+        },
+        {
+          "caller": "api_reference",
+          "callee": "frozenset",
+          "lineNumber": 240
+        },
+        {
+          "caller": "api_reference",
+          "callee": "getattr",
+          "lineNumber": 240
+        },
+        {
+          "caller": "api_reference",
+          "callee": "sections.append",
+          "lineNumber": 244
+        },
+        {
+          "caller": "api_reference",
+          "callee": "\"\\n\\n\".join",
+          "lineNumber": 253
+        },
+        {
+          "caller": "api_reference",
+          "callee": "tuple",
+          "lineNumber": 255
+        },
+        {
+          "caller": "api_reference",
+          "callee": "getattr",
+          "lineNumber": 255
+        },
+        {
+          "caller": "api_reference",
+          "callee": "_apply_edits",
+          "lineNumber": 256
+        },
+        {
+          "caller": "knowledge_stem",
+          "callee": "ValueError",
+          "lineNumber": 264
+        },
+        {
+          "caller": "knowledge_text",
+          "callee": "knowledge_stem",
+          "lineNumber": 275
+        },
+        {
+          "caller": "knowledge_text",
+          "callee": "resources.files(\"pyrualean\").joinpath(f\"knowledge/{stem}.md\").read_text",
+          "lineNumber": 276
+        },
+        {
+          "caller": "knowledge_text",
+          "callee": "resources.files(\"pyrualean\").joinpath",
+          "lineNumber": 276
+        },
+        {
+          "caller": "knowledge_text",
+          "callee": "resources.files",
+          "lineNumber": 276
+        },
+        {
+          "caller": "to_json",
+          "callee": "json.dumps",
+          "lineNumber": 311
+        },
+        {
+          "caller": "from_json",
+          "callee": "json.loads",
+          "lineNumber": 315
+        },
+        {
+          "caller": "from_json",
+          "callee": "Path(path).read_text",
+          "lineNumber": 315
+        },
+        {
+          "caller": "from_json",
+          "callee": "Path",
+          "lineNumber": 315
+        },
+        {
+          "caller": "from_json",
+          "callee": "fields",
+          "lineNumber": 316
+        },
+        {
+          "caller": "from_json",
+          "callee": "cls",
+          "lineNumber": 317
+        },
+        {
+          "caller": "from_json",
+          "callee": "data.items",
+          "lineNumber": 317
+        },
+        {
+          "caller": "render",
+          "callee": "self._render_generic",
+          "lineNumber": 321
+        },
+        {
+          "caller": "render",
+          "callee": "\", \".join",
+          "lineNumber": 322
+        },
+        {
+          "caller": "render",
+          "callee": "', '.join",
+          "lineNumber": 329
+        },
+        {
+          "caller": "render",
+          "callee": "\", \".join",
+          "lineNumber": 335
+        },
+        {
+          "caller": "render",
+          "callee": "Path",
+          "lineNumber": 335
+        },
+        {
+          "caller": "render",
+          "callee": "self.images.items",
+          "lineNumber": 335
+        },
+        {
+          "caller": "render",
+          "callee": "lines.append",
+          "lineNumber": 337
+        },
+        {
+          "caller": "render",
+          "callee": "lines.append",
+          "lineNumber": 349
+        },
+        {
+          "caller": "render",
+          "callee": "\"\\n\".join",
+          "lineNumber": 357
+        },
+        {
+          "caller": "_render_generic",
+          "callee": "lines.append",
+          "lineNumber": 368
+        },
+        {
+          "caller": "_render_generic",
+          "callee": "lines.append",
+          "lineNumber": 374
+        },
+        {
+          "caller": "_render_generic",
+          "callee": "', '.join",
+          "lineNumber": 374
+        },
+        {
+          "caller": "_render_generic",
+          "callee": "self.facts.items",
+          "lineNumber": 375
+        },
+        {
+          "caller": "_render_generic",
+          "callee": "lines.append",
+          "lineNumber": 376
+        },
+        {
+          "caller": "_render_generic",
+          "callee": "lines.append",
+          "lineNumber": 377
+        },
+        {
+          "caller": "_render_generic",
+          "callee": "\", \".join",
+          "lineNumber": 379
+        },
+        {
+          "caller": "_render_generic",
+          "callee": "Path",
+          "lineNumber": 379
+        },
+        {
+          "caller": "_render_generic",
+          "callee": "self.images.items",
+          "lineNumber": 379
+        },
+        {
+          "caller": "_render_generic",
+          "callee": "\", \".join",
+          "lineNumber": 380
+        },
+        {
+          "caller": "_render_generic",
+          "callee": "lines.append",
+          "lineNumber": 382
+        },
+        {
+          "caller": "_render_generic",
+          "callee": "lines.append",
+          "lineNumber": 389
+        },
+        {
+          "caller": "_render_generic",
+          "callee": "\"\\n\".join",
+          "lineNumber": 393
+        },
+        {
+          "caller": "render_prompt",
+          "callee": "get_adapter",
+          "lineNumber": 492
+        },
+        {
+          "caller": "render_prompt",
+          "callee": "effective_primitives",
+          "lineNumber": 493
+        },
+        {
+          "caller": "render_prompt",
+          "callee": "bool",
+          "lineNumber": 496
+        },
+        {
+          "caller": "render_prompt",
+          "callee": "CONTRACT.format",
+          "lineNumber": 497
+        },
+        {
+          "caller": "render_prompt",
+          "callee": "scoring_limits.format",
+          "lineNumber": 504
+        },
+        {
+          "caller": "render_prompt",
+          "callee": "api_reference",
+          "lineNumber": 507
+        },
+        {
+          "caller": "render_prompt",
+          "callee": "knowledge_text",
+          "lineNumber": 511
+        },
+        {
+          "caller": "render_prompt",
+          "callee": "\"\\n\\n\".join",
+          "lineNumber": 513
+        },
+        {
+          "caller": "render_prompt",
+          "callee": "contract.rstrip",
+          "lineNumber": 515
+        },
+        {
+          "caller": "render_prompt",
+          "callee": "know.strip",
+          "lineNumber": 517
+        },
+        {
+          "caller": "render_prompt",
+          "callee": "card.render",
+          "lineNumber": 524
+        },
+        {
+          "caller": "render_prompt",
+          "callee": "tuple",
+          "lineNumber": 525
+        },
+        {
+          "caller": "render_prompt",
+          "callee": "card.images.values",
+          "lineNumber": 525
+        },
+        {
+          "caller": "render_prompt",
+          "callee": "PromptBundle",
+          "lineNumber": 526
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 15,
+        "functionCount": 13,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "src/pyrualean/runner.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 242,
+      "nonEmptyLines": 207,
+      "functions": [
+        {
+          "name": "policy_sha256",
+          "startLine": 50,
+          "endLine": 51,
+          "params": [
+            "path"
+          ]
+        },
+        {
+          "name": "load_policy",
+          "startLine": 54,
+          "endLine": 95,
+          "params": [
+            "path",
+            "entrypoint",
+            "builtins",
+            "bindings"
+          ]
+        },
+        {
+          "name": "run_policy",
+          "startLine": 114,
+          "endLine": 171,
+          "params": [
+            "policy",
+            "robo",
+            "timeout_s"
+          ]
+        },
+        {
+          "name": "run_host",
+          "startLine": 174,
+          "endLine": 225,
+          "params": [
+            "argv",
+            "timeout_s",
+            "log_path",
+            "env",
+            "grace_s"
+          ]
+        },
+        {
+          "name": "_kill_group",
+          "startLine": 228,
+          "endLine": 232,
+          "params": [
+            "proc",
+            "sig"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "PolicyLoadError",
+          "startLine": 46,
+          "endLine": 47,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "PolicyOutcome",
+          "startLine": 99,
+          "endLine": 111,
+          "methods": [
+            "to_dict"
+          ],
+          "properties": [
+            "status",
+            "reason",
+            "error_type",
+            "error_message",
+            "traceback",
+            "elapsed_s",
+            "failure"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "PolicyLoadError",
+          "line": 46,
+          "isDefault": false
+        },
+        {
+          "name": "policy_sha256",
+          "line": 50,
+          "isDefault": false
+        },
+        {
+          "name": "load_policy",
+          "line": 54,
+          "isDefault": false
+        },
+        {
+          "name": "PolicyOutcome",
+          "line": 98,
+          "isDefault": false
+        },
+        {
+          "name": "run_policy",
+          "line": 114,
+          "isDefault": false
+        },
+        {
+          "name": "run_host",
+          "line": 174,
+          "isDefault": false
+        },
+        {
+          "name": "_kill_group",
+          "line": 228,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "policy_sha256",
+          "callee": "hashlib.sha256(Path(path).read_bytes()).hexdigest",
+          "lineNumber": 51
+        },
+        {
+          "caller": "policy_sha256",
+          "callee": "hashlib.sha256",
+          "lineNumber": 51
+        },
+        {
+          "caller": "policy_sha256",
+          "callee": "Path(path).read_bytes",
+          "lineNumber": 51
+        },
+        {
+          "caller": "policy_sha256",
+          "callee": "Path",
+          "lineNumber": 51
+        },
+        {
+          "caller": "load_policy",
+          "callee": "Path(path).expanduser().resolve",
+          "lineNumber": 68
+        },
+        {
+          "caller": "load_policy",
+          "callee": "Path(path).expanduser",
+          "lineNumber": 68
+        },
+        {
+          "caller": "load_policy",
+          "callee": "Path",
+          "lineNumber": 68
+        },
+        {
+          "caller": "load_policy",
+          "callee": "location.is_file",
+          "lineNumber": 69
+        },
+        {
+          "caller": "load_policy",
+          "callee": "PolicyLoadError",
+          "lineNumber": 70
+        },
+        {
+          "caller": "load_policy",
+          "callee": "uuid.uuid4",
+          "lineNumber": 71
+        },
+        {
+          "caller": "load_policy",
+          "callee": "importlib.util.spec_from_file_location",
+          "lineNumber": 72
+        },
+        {
+          "caller": "load_policy",
+          "callee": "PolicyLoadError",
+          "lineNumber": 74
+        },
+        {
+          "caller": "load_policy",
+          "callee": "importlib.util.module_from_spec",
+          "lineNumber": 75
+        },
+        {
+          "caller": "load_policy",
+          "callee": "module.__dict__.update",
+          "lineNumber": 79
+        },
+        {
+          "caller": "load_policy",
+          "callee": "str",
+          "lineNumber": 81
+        },
+        {
+          "caller": "load_policy",
+          "callee": "sys.path.insert",
+          "lineNumber": 83
+        },
+        {
+          "caller": "load_policy",
+          "callee": "spec.loader.exec_module",
+          "lineNumber": 85
+        },
+        {
+          "caller": "load_policy",
+          "callee": "sys.modules.pop",
+          "lineNumber": 87
+        },
+        {
+          "caller": "load_policy",
+          "callee": "sys.modules.pop",
+          "lineNumber": 90
+        },
+        {
+          "caller": "load_policy",
+          "callee": "PolicyLoadError",
+          "lineNumber": 91
+        },
+        {
+          "caller": "load_policy",
+          "callee": "getattr",
+          "lineNumber": 92
+        },
+        {
+          "caller": "load_policy",
+          "callee": "callable",
+          "lineNumber": 93
+        },
+        {
+          "caller": "load_policy",
+          "callee": "PolicyLoadError",
+          "lineNumber": 94
+        },
+        {
+          "caller": "to_dict",
+          "callee": "asdict",
+          "lineNumber": 111
+        },
+        {
+          "caller": "run_policy",
+          "callee": "threading.Event",
+          "lineNumber": 129
+        },
+        {
+          "caller": "on_timeout",
+          "callee": "timed_out.set",
+          "lineNumber": 132
+        },
+        {
+          "caller": "on_timeout",
+          "callee": "robo._stop_episode",
+          "lineNumber": 133
+        },
+        {
+          "caller": "run_policy",
+          "callee": "threading.Timer",
+          "lineNumber": 136
+        },
+        {
+          "caller": "run_policy",
+          "callee": "timer.start",
+          "lineNumber": 138
+        },
+        {
+          "caller": "run_policy",
+          "callee": "time.perf_counter",
+          "lineNumber": 140
+        },
+        {
+          "caller": "run_policy",
+          "callee": "policy",
+          "lineNumber": 142
+        },
+        {
+          "caller": "run_policy",
+          "callee": "inspect.isawaitable",
+          "lineNumber": 143
+        },
+        {
+          "caller": "run_policy",
+          "callee": "asyncio.run",
+          "lineNumber": 146
+        },
+        {
+          "caller": "run_policy",
+          "callee": "PolicyOutcome",
+          "lineNumber": 147
+        },
+        {
+          "caller": "run_policy",
+          "callee": "PolicyOutcome",
+          "lineNumber": 149
+        },
+        {
+          "caller": "run_policy",
+          "callee": "PolicyOutcome",
+          "lineNumber": 151
+        },
+        {
+          "caller": "run_policy",
+          "callee": "str",
+          "lineNumber": 151
+        },
+        {
+          "caller": "run_policy",
+          "callee": "PolicyOutcome",
+          "lineNumber": 153
+        },
+        {
+          "caller": "run_policy",
+          "callee": "isinstance",
+          "lineNumber": 155
+        },
+        {
+          "caller": "run_policy",
+          "callee": "type",
+          "lineNumber": 156
+        },
+        {
+          "caller": "run_policy",
+          "callee": "str",
+          "lineNumber": 157
+        },
+        {
+          "caller": "run_policy",
+          "callee": "traceback.format_exc",
+          "lineNumber": 158
+        },
+        {
+          "caller": "run_policy",
+          "callee": "failure_details",
+          "lineNumber": 159
+        },
+        {
+          "caller": "run_policy",
+          "callee": "getattr",
+          "lineNumber": 161
+        },
+        {
+          "caller": "run_policy",
+          "callee": "getattr",
+          "lineNumber": 161
+        },
+        {
+          "caller": "run_policy",
+          "callee": "timer.cancel",
+          "lineNumber": 166
+        },
+        {
+          "caller": "run_policy",
+          "callee": "time.perf_counter",
+          "lineNumber": 167
+        },
+        {
+          "caller": "run_policy",
+          "callee": "timed_out.is_set",
+          "lineNumber": 168
+        },
+        {
+          "caller": "run_host",
+          "callee": "Path(log_path).parent.mkdir",
+          "lineNumber": 192
+        },
+        {
+          "caller": "run_host",
+          "callee": "Path",
+          "lineNumber": 192
+        },
+        {
+          "caller": "run_host",
+          "callee": "open",
+          "lineNumber": 193
+        },
+        {
+          "caller": "run_host",
+          "callee": "subprocess.Popen",
+          "lineNumber": 196
+        },
+        {
+          "caller": "run_host",
+          "callee": "list",
+          "lineNumber": 197
+        },
+        {
+          "caller": "forward",
+          "callee": "_kill_group",
+          "lineNumber": 205
+        },
+        {
+          "caller": "run_host",
+          "callee": "signal.signal",
+          "lineNumber": 209
+        },
+        {
+          "caller": "run_host",
+          "callee": "proc.wait",
+          "lineNumber": 213
+        },
+        {
+          "caller": "run_host",
+          "callee": "_kill_group",
+          "lineNumber": 215
+        },
+        {
+          "caller": "run_host",
+          "callee": "proc.wait",
+          "lineNumber": 217
+        },
+        {
+          "caller": "run_host",
+          "callee": "_kill_group",
+          "lineNumber": 219
+        },
+        {
+          "caller": "run_host",
+          "callee": "proc.wait",
+          "lineNumber": 220
+        },
+        {
+          "caller": "run_host",
+          "callee": "previous.items",
+          "lineNumber": 222
+        },
+        {
+          "caller": "run_host",
+          "callee": "signal.signal",
+          "lineNumber": 223
+        },
+        {
+          "caller": "run_host",
+          "callee": "log_handle.close",
+          "lineNumber": 225
+        },
+        {
+          "caller": "_kill_group",
+          "callee": "os.killpg",
+          "lineNumber": 230
+        }
+      ],
+      "metrics": {
+        "importCount": 5,
+        "exportCount": 7,
+        "functionCount": 5,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "src/pyrualean/sandbox.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 272,
+      "nonEmptyLines": 241,
+      "functions": [
+        {
+          "name": "_workspace_module",
+          "startLine": 108,
+          "endLine": 109,
+          "params": [
+            "root",
+            "top"
+          ]
+        },
+        {
+          "name": "make_builtins",
+          "startLine": 112,
+          "endLine": 148,
+          "params": [
+            "workspace"
+          ]
+        },
+        {
+          "name": "audit_source",
+          "startLine": 179,
+          "endLine": 234,
+          "params": [
+            "code",
+            "workspace"
+          ]
+        },
+        {
+          "name": "blocked_names",
+          "startLine": 237,
+          "endLine": 261,
+          "params": [
+            "code"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "_workspace_module",
+          "line": 108,
+          "isDefault": false
+        },
+        {
+          "name": "make_builtins",
+          "line": 112,
+          "isDefault": false
+        },
+        {
+          "name": "audit_source",
+          "line": 179,
+          "isDefault": false
+        },
+        {
+          "name": "blocked_names",
+          "line": 237,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_workspace_module",
+          "callee": "bool",
+          "lineNumber": 109
+        },
+        {
+          "caller": "_workspace_module",
+          "callee": "(root / f\"{top}.py\").is_file",
+          "lineNumber": 109
+        },
+        {
+          "caller": "_workspace_module",
+          "callee": "(root / top / \"__init__.py\").is_file",
+          "lineNumber": 109
+        },
+        {
+          "caller": "make_builtins",
+          "callee": "Path(workspace).resolve",
+          "lineNumber": 115
+        },
+        {
+          "caller": "make_builtins",
+          "callee": "Path",
+          "lineNumber": 115
+        },
+        {
+          "caller": "guarded_import",
+          "callee": "name.split",
+          "lineNumber": 126
+        },
+        {
+          "caller": "guarded_import",
+          "callee": "_workspace_module",
+          "lineNumber": 127
+        },
+        {
+          "caller": "guarded_import",
+          "callee": "ImportError",
+          "lineNumber": 128
+        },
+        {
+          "caller": "guarded_import",
+          "callee": "', '.join",
+          "lineNumber": 130
+        },
+        {
+          "caller": "guarded_import",
+          "callee": "sorted",
+          "lineNumber": 130
+        },
+        {
+          "caller": "guarded_import",
+          "callee": "real_import",
+          "lineNumber": 132
+        },
+        {
+          "caller": "guarded_open",
+          "callee": "isinstance",
+          "lineNumber": 135
+        },
+        {
+          "caller": "guarded_open",
+          "callee": "PermissionError",
+          "lineNumber": 136
+        },
+        {
+          "caller": "guarded_open",
+          "callee": "Path",
+          "lineNumber": 137
+        },
+        {
+          "caller": "guarded_open",
+          "callee": "os.fspath",
+          "lineNumber": 137
+        },
+        {
+          "caller": "guarded_open",
+          "callee": "target.resolve",
+          "lineNumber": 138
+        },
+        {
+          "caller": "guarded_open",
+          "callee": "target.is_absolute",
+          "lineNumber": 138
+        },
+        {
+          "caller": "guarded_open",
+          "callee": "(root / target).resolve",
+          "lineNumber": 138
+        },
+        {
+          "caller": "guarded_open",
+          "callee": "PermissionError",
+          "lineNumber": 140
+        },
+        {
+          "caller": "guarded_open",
+          "callee": "real_open",
+          "lineNumber": 143
+        },
+        {
+          "caller": "make_builtins",
+          "callee": "vars(_builtins).items",
+          "lineNumber": 145
+        },
+        {
+          "caller": "make_builtins",
+          "callee": "vars",
+          "lineNumber": 145
+        },
+        {
+          "caller": "audit_source",
+          "callee": "ast.parse",
+          "lineNumber": 190
+        },
+        {
+          "caller": "audit_source",
+          "callee": "Path(workspace).resolve",
+          "lineNumber": 193
+        },
+        {
+          "caller": "audit_source",
+          "callee": "Path",
+          "lineNumber": 193
+        },
+        {
+          "caller": "add",
+          "callee": "len",
+          "lineNumber": 197
+        },
+        {
+          "caller": "add",
+          "callee": "flags.append",
+          "lineNumber": 198
+        },
+        {
+          "caller": "check_import",
+          "callee": "(name or \"\").split",
+          "lineNumber": 201
+        },
+        {
+          "caller": "check_import",
+          "callee": "_workspace_module",
+          "lineNumber": 204
+        },
+        {
+          "caller": "check_import",
+          "callee": "add",
+          "lineNumber": 206
+        },
+        {
+          "caller": "audit_source",
+          "callee": "ast.walk",
+          "lineNumber": 208
+        },
+        {
+          "caller": "audit_source",
+          "callee": "isinstance",
+          "lineNumber": 209
+        },
+        {
+          "caller": "audit_source",
+          "callee": "check_import",
+          "lineNumber": 211
+        },
+        {
+          "caller": "audit_source",
+          "callee": "isinstance",
+          "lineNumber": 212
+        },
+        {
+          "caller": "audit_source",
+          "callee": "check_import",
+          "lineNumber": 214
+        },
+        {
+          "caller": "audit_source",
+          "callee": "isinstance",
+          "lineNumber": 215
+        },
+        {
+          "caller": "audit_source",
+          "callee": "add",
+          "lineNumber": 217
+        },
+        {
+          "caller": "audit_source",
+          "callee": "add",
+          "lineNumber": 219
+        },
+        {
+          "caller": "audit_source",
+          "callee": "node.attr.startswith",
+          "lineNumber": 220
+        },
+        {
+          "caller": "audit_source",
+          "callee": "add",
+          "lineNumber": 221
+        },
+        {
+          "caller": "audit_source",
+          "callee": "isinstance",
+          "lineNumber": 222
+        },
+        {
+          "caller": "audit_source",
+          "callee": "isinstance",
+          "lineNumber": 222
+        },
+        {
+          "caller": "audit_source",
+          "callee": "add",
+          "lineNumber": 224
+        },
+        {
+          "caller": "audit_source",
+          "callee": "add",
+          "lineNumber": 226
+        },
+        {
+          "caller": "audit_source",
+          "callee": "isinstance",
+          "lineNumber": 227
+        },
+        {
+          "caller": "audit_source",
+          "callee": "isinstance",
+          "lineNumber": 227
+        },
+        {
+          "caller": "audit_source",
+          "callee": "add",
+          "lineNumber": 230
+        },
+        {
+          "caller": "audit_source",
+          "callee": "text.replace(\"\\\\\", \"/\").split",
+          "lineNumber": 231
+        },
+        {
+          "caller": "audit_source",
+          "callee": "text.replace",
+          "lineNumber": 231
+        },
+        {
+          "caller": "audit_source",
+          "callee": "text.startswith",
+          "lineNumber": 232
+        },
+        {
+          "caller": "audit_source",
+          "callee": "add",
+          "lineNumber": 233
+        },
+        {
+          "caller": "blocked_names",
+          "callee": "ast.parse",
+          "lineNumber": 246
+        },
+        {
+          "caller": "blocked_names",
+          "callee": "ast.walk",
+          "lineNumber": 250
+        },
+        {
+          "caller": "blocked_names",
+          "callee": "isinstance",
+          "lineNumber": 251
+        },
+        {
+          "caller": "blocked_names",
+          "callee": "isinstance",
+          "lineNumber": 253
+        },
+        {
+          "caller": "blocked_names",
+          "callee": "isinstance",
+          "lineNumber": 255
+        },
+        {
+          "caller": "blocked_names",
+          "callee": "isinstance",
+          "lineNumber": 259
+        },
+        {
+          "caller": "blocked_names",
+          "callee": "found.append",
+          "lineNumber": 260
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 4,
+        "functionCount": 4,
+        "classCount": 0
+      }
+    }
+  ]
+}

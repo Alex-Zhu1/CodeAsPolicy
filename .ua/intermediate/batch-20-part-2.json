@@ -1,0 +1,1818 @@
+{
+  "nodes": [
+    {
+      "id": "file:tests/test_openai_runtime.py",
+      "type": "file",
+      "name": "test_openai_runtime.py",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "验证OpenAI 兼容规划循环、消息顺序、重试与预算。通过固定输入、模拟后端或临时资源检查正常行为及失败边界。",
+      "tags": [
+        "测试",
+        "回归验证",
+        "行为契约"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:tests/test_openai_runtime.py:_reply",
+      "type": "function",
+      "name": "_reply",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "构造带工具调用或文本内容的模型回复数据。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        21,
+        51
+      ]
+    },
+    {
+      "id": "function:tests/test_openai_runtime.py:card_images",
+      "type": "function",
+      "name": "card_images",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "创建测试任务卡所需的临时图像文件。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        73,
+        82
+      ]
+    },
+    {
+      "id": "function:tests/test_openai_runtime.py:_toolkit",
+      "type": "function",
+      "name": "_toolkit",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "创建使用临时代码工作区的 ArmToolkit。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        85,
+        86
+      ]
+    },
+    {
+      "id": "function:tests/test_openai_runtime.py:_run",
+      "type": "function",
+      "name": "_run",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "以脚本化传输执行 OpenAI 运行器并返回审计结果。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        89,
+        105
+      ]
+    },
+    {
+      "id": "function:tests/test_openai_runtime.py:test_tools_spec_converts_to_openai_functions",
+      "type": "function",
+      "name": "test_tools_spec_converts_to_openai_functions",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "验证将工具定义转换为 OpenAI 函数调用格式。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        108,
+        112
+      ]
+    },
+    {
+      "id": "function:tests/test_openai_runtime.py:test_full_episode_with_images_and_finish",
+      "type": "function",
+      "name": "test_full_episode_with_images_and_finish",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "验证完整执行含图像观察和结束报告的回合。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        115,
+        192
+      ]
+    },
+    {
+      "id": "function:tests/test_openai_runtime.py:test_no_tool_call_is_nudged_then_ends",
+      "type": "function",
+      "name": "test_no_tool_call_is_nudged_then_ends",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "验证无工具调用时追加提示并允许随后结束。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        195,
+        202
+      ]
+    },
+    {
+      "id": "function:tests/test_openai_runtime.py:test_decision_budget_ends_episode_and_allows_final_finish",
+      "type": "function",
+      "name": "test_decision_budget_ends_episode_and_allows_final_finish",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "验证决策预算耗尽后仍允许最后一次结束报告。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        205,
+        224
+      ]
+    },
+    {
+      "id": "function:tests/test_openai_runtime.py:test_budget_exhausted_without_finish_stops_after_one_more_reply",
+      "type": "function",
+      "name": "test_budget_exhausted_without_finish_stops_after_one_more_reply",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "验证预算耗尽且未结束时只接受一次额外回复。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        227,
+        239
+      ]
+    },
+    {
+      "id": "function:tests/test_openai_runtime.py:test_bad_arguments_are_reported_not_fatal",
+      "type": "function",
+      "name": "test_bad_arguments_are_reported_not_fatal",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "验证无效工具参数返回反馈而非中止运行器。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        242,
+        253
+      ]
+    },
+    {
+      "id": "function:tests/test_openai_runtime.py:test_provider_errors_retry_then_fail",
+      "type": "function",
+      "name": "test_provider_errors_retry_then_fail",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "验证提供商错误在重试耗尽后返回失败状态。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        256,
+        262
+      ]
+    },
+    {
+      "id": "function:tests/test_openai_runtime.py:test_recovered_provider_error_is_a_warning_not_an_error",
+      "type": "function",
+      "name": "test_recovered_provider_error_is_a_warning_not_an_error",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "验证重试恢复的提供商错误归入警告。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        265,
+        275
+      ]
+    },
+    {
+      "id": "function:tests/test_openai_runtime.py:test_rate_limits_are_waited_out_beyond_the_retries",
+      "type": "function",
+      "name": "test_rate_limits_are_waited_out_beyond_the_retries",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "验证速率限制等待可超过普通重试次数。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        278,
+        301
+      ]
+    },
+    {
+      "id": "function:tests/test_openai_runtime.py:test_an_episode_ended_from_outside_gets_no_further_request",
+      "type": "function",
+      "name": "test_an_episode_ended_from_outside_gets_no_further_request",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "验证外部结束回合后不再请求模型。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        304,
+        315
+      ]
+    },
+    {
+      "id": "function:tests/test_openai_runtime.py:test_a_rate_limit_wait_ends_when_the_episode_is_ended",
+      "type": "function",
+      "name": "test_a_rate_limit_wait_ends_when_the_episode_is_ended",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "验证回合结束会中断速率限制等待。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        318,
+        338
+      ]
+    },
+    {
+      "id": "function:tests/test_openai_runtime.py:test_client_error_is_not_retried",
+      "type": "function",
+      "name": "test_client_error_is_not_retried",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "验证客户端参数错误不触发重试。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        341,
+        346
+      ]
+    },
+    {
+      "id": "function:tests/test_openai_runtime.py:test_wall_clock_timeout_stops_episode",
+      "type": "function",
+      "name": "test_wall_clock_timeout_stops_episode",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "验证墙钟超时终止回合并调用停止钩子。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        349,
+        367
+      ]
+    },
+    {
+      "id": "function:tests/test_openai_runtime.py:test_images_can_be_downscaled_with_a_note",
+      "type": "function",
+      "name": "test_images_can_be_downscaled_with_a_note",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "验证可缩小输入图像并附带尺寸变化说明。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        370,
+        385
+      ]
+    },
+    {
+      "id": "function:tests/test_openai_runtime.py:test_extra_body_and_sampling_options_are_sent",
+      "type": "function",
+      "name": "test_extra_body_and_sampling_options_are_sent",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "验证额外请求字段和采样选项被完整发送。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        388,
+        404
+      ]
+    },
+    {
+      "id": "function:tests/test_openai_runtime.py:test_tool_choice_required_is_sent",
+      "type": "function",
+      "name": "test_tool_choice_required_is_sent",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "验证强制工具调用选项被写入请求。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        407,
+        414
+      ]
+    },
+    {
+      "id": "function:tests/test_openai_runtime.py:test_two_tool_calls_in_one_reply_keep_the_message_order_legal",
+      "type": "function",
+      "name": "test_two_tool_calls_in_one_reply_keep_the_message_order_legal",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "验证单次回复的多个工具调用保持合法消息顺序。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        417,
+        433
+      ]
+    },
+    {
+      "id": "function:tests/test_openai_runtime.py:test_failure_skips_queued_actions_then_model_repairs",
+      "type": "function",
+      "name": "test_failure_skips_queued_actions_then_model_repairs",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "验证执行失败跳过排队动作并允许模型重新修复。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        437,
+        466
+      ]
+    },
+    {
+      "id": "function:tests/test_openai_runtime.py:test_supervisor_pause_also_skips_queued_calls",
+      "type": "function",
+      "name": "test_supervisor_pause_also_skips_queued_calls",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "验证监督暂停同样跳过剩余排队调用。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        469,
+        491
+      ]
+    },
+    {
+      "id": "function:tests/test_openai_runtime.py:test_provider_without_tool_call_ids_still_answers_the_right_call",
+      "type": "function",
+      "name": "test_provider_without_tool_call_ids_still_answers_the_right_call",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "验证提供商缺少调用编号时仍正确配对工具响应。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        494,
+        504
+      ]
+    },
+    {
+      "id": "function:tests/test_openai_runtime.py:test_finish_with_unparsable_arguments_does_not_end_the_episode",
+      "type": "function",
+      "name": "test_finish_with_unparsable_arguments_does_not_end_the_episode",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "验证无法解析的结束参数不会提前终止回合。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        507,
+        518
+      ]
+    },
+    {
+      "id": "function:tests/test_openai_runtime.py:test_text_only_reply_replays_with_a_string_content",
+      "type": "function",
+      "name": "test_text_only_reply_replays_with_a_string_content",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "验证纯文本回复以字符串内容重放。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        521,
+        529
+      ]
+    },
+    {
+      "id": "function:tests/test_openai_runtime.py:test_repeated_unparsable_replies_stop_the_episode",
+      "type": "function",
+      "name": "test_repeated_unparsable_replies_stop_the_episode",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "验证连续不可解析回复达到上限后停止回合。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        532,
+        537
+      ]
+    },
+    {
+      "id": "function:tests/test_openai_runtime.py:test_max_tokens_zero_is_not_sent",
+      "type": "function",
+      "name": "test_max_tokens_zero_is_not_sent",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "验证零值令牌上限不发送到提供商。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        540,
+        546
+      ]
+    },
+    {
+      "id": "function:tests/test_openai_runtime.py:test_a_long_tool_call_is_cut_off_at_the_wall_clock",
+      "type": "function",
+      "name": "test_a_long_tool_call_is_cut_off_at_the_wall_clock",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "验证长时间工具调用也受墙钟计时器中断。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        549,
+        585
+      ]
+    },
+    {
+      "id": "function:tests/test_openai_runtime.py:test_confirmed_stuck_dispatch_waits_for_new_decision",
+      "type": "function",
+      "name": "test_confirmed_stuck_dispatch_waits_for_new_decision",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "验证明确卡住后派发恢复需要等待下一次模型决策。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        588,
+        606
+      ]
+    },
+    {
+      "id": "class:tests/test_openai_runtime.py:ScriptedTransport",
+      "type": "class",
+      "name": "ScriptedTransport",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "按预设序列返回 HTTP 状态或回复，并保留每次请求快照供消息协议断言。",
+      "tags": [
+        "测试",
+        "测试替身",
+        "状态模拟"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        54,
+        69
+      ]
+    },
+    {
+      "id": "function:tests/test_openai_runtime.py:ScriptedTransport.__init__",
+      "type": "function",
+      "name": "ScriptedTransport.__init__",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "初始化该测试替身的输入、状态与调用记录，服务于OpenAI 兼容规划循环、消息顺序、重试与预算的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        55,
+        57
+      ]
+    },
+    {
+      "id": "function:tests/test_openai_runtime.py:ScriptedTransport.__call__",
+      "type": "function",
+      "name": "ScriptedTransport.__call__",
+      "filePath": "tests/test_openai_runtime.py",
+      "summary": "保存请求快照并返回下一条脚本化传输结果，服务于OpenAI 兼容规划循环、消息顺序、重试与预算的回归验证。",
+      "tags": [
+        "测试",
+        "模拟接口",
+        "状态处理"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        59,
+        69
+      ]
+    },
+    {
+      "id": "file:tests/test_play.py",
+      "type": "file",
+      "name": "test_play.py",
+      "filePath": "tests/test_play.py",
+      "summary": "验证交互运行器环境、模型目录回退及使用量审计。通过固定输入、模拟后端或临时资源检查正常行为及失败边界。",
+      "tags": [
+        "测试",
+        "回归验证",
+        "行为契约"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_play.py:test_codex_catalog_only_for_ids_codex_looks_up_as_gpt_6_astra",
+      "type": "function",
+      "name": "test_codex_catalog_only_for_ids_codex_looks_up_as_gpt_6_astra",
+      "filePath": "tests/test_play.py",
+      "summary": "验证只为需要目录回退的 GPT-6 Astra 模型标识使用补充目录。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        21,
+        45
+      ]
+    },
+    {
+      "id": "function:tests/test_play.py:test_agent_environment_per_runtime",
+      "type": "function",
+      "name": "test_agent_environment_per_runtime",
+      "filePath": "tests/test_play.py",
+      "summary": "验证按模型运行器构建所需环境变量。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        48,
+        70
+      ]
+    },
+    {
+      "id": "function:tests/test_play.py:_events",
+      "type": "function",
+      "name": "_events",
+      "filePath": "tests/test_play.py",
+      "summary": "构造包含会话与完成项目的运行事件记录。",
+      "tags": [
+        "测试",
+        "测试夹具",
+        "模拟数据"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        73,
+        77
+      ]
+    },
+    {
+      "id": "function:tests/test_play.py:test_fallback_metadata_notice_is_a_warning_not_an_error",
+      "type": "function",
+      "name": "test_fallback_metadata_notice_is_a_warning_not_an_error",
+      "filePath": "tests/test_play.py",
+      "summary": "验证模型目录元数据回退提示归入警告而非错误。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        80,
+        98
+      ]
+    },
+    {
+      "id": "function:tests/test_play.py:test_codex_context_config_reads_home_and_env",
+      "type": "function",
+      "name": "test_codex_context_config_reads_home_and_env",
+      "filePath": "tests/test_play.py",
+      "summary": "验证从指定配置目录和环境读取上下文压缩参数。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        101,
+        116
+      ]
+    },
+    {
+      "id": "function:tests/test_play.py:test_usage_from_rollouts_counts_compactions",
+      "type": "function",
+      "name": "test_usage_from_rollouts_counts_compactions",
+      "filePath": "tests/test_play.py",
+      "summary": "验证运行记录统计正确计入上下文压缩次数。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        119,
+        148
+      ]
+    },
+    {
+      "id": "function:tests/test_play.py:test_make_backend_prefers_the_hosts_factory",
+      "type": "function",
+      "name": "test_make_backend_prefers_the_hosts_factory",
+      "filePath": "tests/test_play.py",
+      "summary": "验证优先使用宿主提供的后端工厂。",
+      "tags": [
+        "测试",
+        "断言验证",
+        "边界检查"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        151,
+        157
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:_reply",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:_reply",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:card_images",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:card_images",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:_toolkit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:_toolkit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:_run",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:_run",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_tools_spec_converts_to_openai_functions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_tools_spec_converts_to_openai_functions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_full_episode_with_images_and_finish",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_full_episode_with_images_and_finish",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_no_tool_call_is_nudged_then_ends",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_no_tool_call_is_nudged_then_ends",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_decision_budget_ends_episode_and_allows_final_finish",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_decision_budget_ends_episode_and_allows_final_finish",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_budget_exhausted_without_finish_stops_after_one_more_reply",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_budget_exhausted_without_finish_stops_after_one_more_reply",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_bad_arguments_are_reported_not_fatal",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_bad_arguments_are_reported_not_fatal",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_provider_errors_retry_then_fail",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_provider_errors_retry_then_fail",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_recovered_provider_error_is_a_warning_not_an_error",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_recovered_provider_error_is_a_warning_not_an_error",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_rate_limits_are_waited_out_beyond_the_retries",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_rate_limits_are_waited_out_beyond_the_retries",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_an_episode_ended_from_outside_gets_no_further_request",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_an_episode_ended_from_outside_gets_no_further_request",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_a_rate_limit_wait_ends_when_the_episode_is_ended",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_a_rate_limit_wait_ends_when_the_episode_is_ended",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_client_error_is_not_retried",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_client_error_is_not_retried",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_wall_clock_timeout_stops_episode",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_wall_clock_timeout_stops_episode",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_images_can_be_downscaled_with_a_note",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_images_can_be_downscaled_with_a_note",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_extra_body_and_sampling_options_are_sent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_extra_body_and_sampling_options_are_sent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_tool_choice_required_is_sent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_tool_choice_required_is_sent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_two_tool_calls_in_one_reply_keep_the_message_order_legal",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_two_tool_calls_in_one_reply_keep_the_message_order_legal",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_failure_skips_queued_actions_then_model_repairs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_failure_skips_queued_actions_then_model_repairs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_supervisor_pause_also_skips_queued_calls",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_supervisor_pause_also_skips_queued_calls",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_provider_without_tool_call_ids_still_answers_the_right_call",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_provider_without_tool_call_ids_still_answers_the_right_call",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_finish_with_unparsable_arguments_does_not_end_the_episode",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_finish_with_unparsable_arguments_does_not_end_the_episode",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_text_only_reply_replays_with_a_string_content",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_text_only_reply_replays_with_a_string_content",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_repeated_unparsable_replies_stop_the_episode",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_repeated_unparsable_replies_stop_the_episode",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_max_tokens_zero_is_not_sent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_max_tokens_zero_is_not_sent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_a_long_tool_call_is_cut_off_at_the_wall_clock",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_a_long_tool_call_is_cut_off_at_the_wall_clock",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_confirmed_stuck_dispatch_waits_for_new_decision",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:test_confirmed_stuck_dispatch_waits_for_new_decision",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "class:tests/test_openai_runtime.py:ScriptedTransport",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "class:tests/test_openai_runtime.py:ScriptedTransport",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:ScriptedTransport.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_openai_runtime.py:ScriptedTransport",
+      "target": "function:tests/test_openai_runtime.py:ScriptedTransport.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_openai_runtime.py",
+      "target": "function:tests/test_openai_runtime.py:ScriptedTransport.__call__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/test_openai_runtime.py:ScriptedTransport",
+      "target": "function:tests/test_openai_runtime.py:ScriptedTransport.__call__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_tools_spec_converts_to_openai_functions",
+      "target": "function:tests/test_openai_runtime.py:_toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_full_episode_with_images_and_finish",
+      "target": "function:tests/test_openai_runtime.py:_toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_full_episode_with_images_and_finish",
+      "target": "function:tests/test_openai_runtime.py:_reply",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_full_episode_with_images_and_finish",
+      "target": "function:tests/test_openai_runtime.py:_run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_no_tool_call_is_nudged_then_ends",
+      "target": "function:tests/test_openai_runtime.py:_toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_no_tool_call_is_nudged_then_ends",
+      "target": "function:tests/test_openai_runtime.py:_reply",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_no_tool_call_is_nudged_then_ends",
+      "target": "function:tests/test_openai_runtime.py:_run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_decision_budget_ends_episode_and_allows_final_finish",
+      "target": "function:tests/test_openai_runtime.py:_toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_decision_budget_ends_episode_and_allows_final_finish",
+      "target": "function:tests/test_openai_runtime.py:_reply",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_decision_budget_ends_episode_and_allows_final_finish",
+      "target": "function:tests/test_openai_runtime.py:_run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_budget_exhausted_without_finish_stops_after_one_more_reply",
+      "target": "function:tests/test_openai_runtime.py:_toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_budget_exhausted_without_finish_stops_after_one_more_reply",
+      "target": "function:tests/test_openai_runtime.py:_reply",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_budget_exhausted_without_finish_stops_after_one_more_reply",
+      "target": "function:tests/test_openai_runtime.py:_run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_bad_arguments_are_reported_not_fatal",
+      "target": "function:tests/test_openai_runtime.py:_toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_bad_arguments_are_reported_not_fatal",
+      "target": "function:tests/test_openai_runtime.py:_reply",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_bad_arguments_are_reported_not_fatal",
+      "target": "function:tests/test_openai_runtime.py:_run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_provider_errors_retry_then_fail",
+      "target": "function:tests/test_openai_runtime.py:_toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_provider_errors_retry_then_fail",
+      "target": "function:tests/test_openai_runtime.py:_run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_recovered_provider_error_is_a_warning_not_an_error",
+      "target": "function:tests/test_openai_runtime.py:_toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_recovered_provider_error_is_a_warning_not_an_error",
+      "target": "function:tests/test_openai_runtime.py:_reply",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_recovered_provider_error_is_a_warning_not_an_error",
+      "target": "function:tests/test_openai_runtime.py:_run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_rate_limits_are_waited_out_beyond_the_retries",
+      "target": "function:tests/test_openai_runtime.py:_toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_rate_limits_are_waited_out_beyond_the_retries",
+      "target": "function:tests/test_openai_runtime.py:_reply",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_an_episode_ended_from_outside_gets_no_further_request",
+      "target": "function:tests/test_openai_runtime.py:_toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_an_episode_ended_from_outside_gets_no_further_request",
+      "target": "function:tests/test_openai_runtime.py:_reply",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_an_episode_ended_from_outside_gets_no_further_request",
+      "target": "function:tests/test_openai_runtime.py:_run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_a_rate_limit_wait_ends_when_the_episode_is_ended",
+      "target": "function:tests/test_openai_runtime.py:_toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_client_error_is_not_retried",
+      "target": "function:tests/test_openai_runtime.py:_toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_client_error_is_not_retried",
+      "target": "function:tests/test_openai_runtime.py:_run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_wall_clock_timeout_stops_episode",
+      "target": "function:tests/test_openai_runtime.py:_toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_wall_clock_timeout_stops_episode",
+      "target": "function:tests/test_openai_runtime.py:_reply",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_images_can_be_downscaled_with_a_note",
+      "target": "function:tests/test_openai_runtime.py:_toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_images_can_be_downscaled_with_a_note",
+      "target": "function:tests/test_openai_runtime.py:_reply",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_images_can_be_downscaled_with_a_note",
+      "target": "function:tests/test_openai_runtime.py:_run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_extra_body_and_sampling_options_are_sent",
+      "target": "function:tests/test_openai_runtime.py:_toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_extra_body_and_sampling_options_are_sent",
+      "target": "function:tests/test_openai_runtime.py:_reply",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_extra_body_and_sampling_options_are_sent",
+      "target": "function:tests/test_openai_runtime.py:_run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_tool_choice_required_is_sent",
+      "target": "function:tests/test_openai_runtime.py:_toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_tool_choice_required_is_sent",
+      "target": "function:tests/test_openai_runtime.py:_reply",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_tool_choice_required_is_sent",
+      "target": "function:tests/test_openai_runtime.py:_run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_two_tool_calls_in_one_reply_keep_the_message_order_legal",
+      "target": "function:tests/test_openai_runtime.py:_toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_two_tool_calls_in_one_reply_keep_the_message_order_legal",
+      "target": "function:tests/test_openai_runtime.py:_reply",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_two_tool_calls_in_one_reply_keep_the_message_order_legal",
+      "target": "function:tests/test_openai_runtime.py:_run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_failure_skips_queued_actions_then_model_repairs",
+      "target": "function:tests/test_openai_runtime.py:_toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_failure_skips_queued_actions_then_model_repairs",
+      "target": "function:tests/test_openai_runtime.py:_reply",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_failure_skips_queued_actions_then_model_repairs",
+      "target": "function:tests/test_openai_runtime.py:_run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_supervisor_pause_also_skips_queued_calls",
+      "target": "function:tests/test_openai_runtime.py:_toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_supervisor_pause_also_skips_queued_calls",
+      "target": "function:tests/test_openai_runtime.py:_reply",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_supervisor_pause_also_skips_queued_calls",
+      "target": "function:tests/test_openai_runtime.py:_run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_provider_without_tool_call_ids_still_answers_the_right_call",
+      "target": "function:tests/test_openai_runtime.py:_toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_provider_without_tool_call_ids_still_answers_the_right_call",
+      "target": "function:tests/test_openai_runtime.py:_reply",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_provider_without_tool_call_ids_still_answers_the_right_call",
+      "target": "function:tests/test_openai_runtime.py:_run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_finish_with_unparsable_arguments_does_not_end_the_episode",
+      "target": "function:tests/test_openai_runtime.py:_toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_finish_with_unparsable_arguments_does_not_end_the_episode",
+      "target": "function:tests/test_openai_runtime.py:_reply",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_finish_with_unparsable_arguments_does_not_end_the_episode",
+      "target": "function:tests/test_openai_runtime.py:_run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_text_only_reply_replays_with_a_string_content",
+      "target": "function:tests/test_openai_runtime.py:_toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_text_only_reply_replays_with_a_string_content",
+      "target": "function:tests/test_openai_runtime.py:_reply",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_text_only_reply_replays_with_a_string_content",
+      "target": "function:tests/test_openai_runtime.py:_run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_repeated_unparsable_replies_stop_the_episode",
+      "target": "function:tests/test_openai_runtime.py:_toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_repeated_unparsable_replies_stop_the_episode",
+      "target": "function:tests/test_openai_runtime.py:_reply",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_repeated_unparsable_replies_stop_the_episode",
+      "target": "function:tests/test_openai_runtime.py:_run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_max_tokens_zero_is_not_sent",
+      "target": "function:tests/test_openai_runtime.py:_toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_max_tokens_zero_is_not_sent",
+      "target": "function:tests/test_openai_runtime.py:_reply",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_max_tokens_zero_is_not_sent",
+      "target": "function:tests/test_openai_runtime.py:_run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_a_long_tool_call_is_cut_off_at_the_wall_clock",
+      "target": "function:tests/test_openai_runtime.py:_toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_a_long_tool_call_is_cut_off_at_the_wall_clock",
+      "target": "function:tests/test_openai_runtime.py:_reply",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_confirmed_stuck_dispatch_waits_for_new_decision",
+      "target": "function:tests/test_openai_runtime.py:_toolkit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_confirmed_stuck_dispatch_waits_for_new_decision",
+      "target": "function:tests/test_openai_runtime.py:_reply",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_openai_runtime.py:test_confirmed_stuck_dispatch_waits_for_new_decision",
+      "target": "function:tests/test_openai_runtime.py:_run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/arms.py",
+      "target": "file:tests/test_openai_runtime.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/supervision.py",
+      "target": "file:tests/test_openai_runtime.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/stuck_recovery.py",
+      "target": "file:tests/test_openai_runtime.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/openai_runtime.py",
+      "target": "file:tests/test_openai_runtime.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/execution.py",
+      "target": "file:tests/test_openai_runtime.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:tests/test_play.py",
+      "target": "function:tests/test_play.py:test_codex_catalog_only_for_ids_codex_looks_up_as_gpt_6_astra",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_play.py",
+      "target": "function:tests/test_play.py:test_codex_catalog_only_for_ids_codex_looks_up_as_gpt_6_astra",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_play.py",
+      "target": "function:tests/test_play.py:test_agent_environment_per_runtime",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_play.py",
+      "target": "function:tests/test_play.py:test_agent_environment_per_runtime",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_play.py",
+      "target": "function:tests/test_play.py:_events",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_play.py",
+      "target": "function:tests/test_play.py:_events",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_play.py",
+      "target": "function:tests/test_play.py:test_fallback_metadata_notice_is_a_warning_not_an_error",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_play.py",
+      "target": "function:tests/test_play.py:test_fallback_metadata_notice_is_a_warning_not_an_error",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_play.py",
+      "target": "function:tests/test_play.py:test_codex_context_config_reads_home_and_env",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_play.py",
+      "target": "function:tests/test_play.py:test_codex_context_config_reads_home_and_env",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_play.py",
+      "target": "function:tests/test_play.py:test_usage_from_rollouts_counts_compactions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_play.py",
+      "target": "function:tests/test_play.py:test_usage_from_rollouts_counts_compactions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_play.py",
+      "target": "function:tests/test_play.py:test_make_backend_prefers_the_hosts_factory",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_play.py",
+      "target": "function:tests/test_play.py:test_make_backend_prefers_the_hosts_factory",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_play.py:test_fallback_metadata_notice_is_a_warning_not_an_error",
+      "target": "function:tests/test_play.py:_events",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/pyrualean/generate.py",
+      "target": "file:tests/test_play.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/hosts/common.py",
+      "target": "file:tests/test_play.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/pyrualean/play.py",
+      "target": "file:tests/test_play.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

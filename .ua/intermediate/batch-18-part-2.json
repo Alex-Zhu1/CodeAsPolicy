@@ -1,0 +1,2945 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "type": "file",
+      "name": "play_stacking_toy.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "实现离线 RoboDojo 任务程序：识别套柱玩具底座和不同形状零件，按数量分配立柱并执行避碰抓取、套柱及掉落修复。通过执行环境注入的 robo 接口完成任务，不在评测时调用规划模型。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:carry_z",
+      "type": "function",
+      "name": "carry_z",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "根据搬运目标和可达上限计算安全搬运高度。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        89,
+        90
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:say",
+      "type": "function",
+      "name": "say",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "打印任务执行进度和诊断信息。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        98,
+        99
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:f3",
+      "type": "function",
+      "name": "f3",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "格式化向量或测量数据以便打印诊断信息。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        102,
+        103
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:wrap180",
+      "type": "function",
+      "name": "wrap180",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "把角度规范到一个完整周期的对称区间。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        106,
+        107
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:angd",
+      "type": "function",
+      "name": "angd",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "按给定角度周期计算两个朝向的最小差值。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        110,
+        112
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:circle_poly",
+      "type": "function",
+      "name": "circle_poly",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "离散生成圆形轮廓。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        116,
+        118
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:star_poly",
+      "type": "function",
+      "name": "star_poly",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "交替内外半径生成星形轮廓。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        121,
+        127
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:colour_mask",
+      "type": "function",
+      "name": "colour_mask",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "根据图像颜色阈值筛选目标或背景像素区域。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        141,
+        155
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:white_mask",
+      "type": "function",
+      "name": "white_mask",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "根据图像颜色阈值筛选目标或背景像素区域。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        158,
+        160
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:cam_of",
+      "type": "function",
+      "name": "cam_of",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "读取相机标定并转为数值矩阵供投影计算。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        164,
+        166
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:project",
+      "type": "function",
+      "name": "project",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "把世界坐标点投影到标定相机图像平面。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        169,
+        172
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:on_plane",
+      "type": "function",
+      "name": "on_plane",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "将像素视线与给定高度平面相交以恢复世界坐标。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        175,
+        180
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:place_poly",
+      "type": "function",
+      "name": "place_poly",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "对二维轮廓施加平移和旋转。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        183,
+        185
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:render",
+      "type": "function",
+      "name": "render",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "将已知几何轮廓投影渲染为图像覆盖掩码。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        188,
+        204
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:search",
+      "type": "function",
+      "name": "search",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "多阶段搜索几何模型位姿并以掩码重叠程度选择最佳拟合。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        207,
+        225
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:fill_holes",
+      "type": "function",
+      "name": "fill_holes",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "填充目标掩码的内部空洞。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        228,
+        233
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:components",
+      "type": "function",
+      "name": "components",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "提取满足面积阈值的连通区域。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        236,
+        238
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:fit_piece",
+      "type": "function",
+      "name": "fit_piece",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "将指定形状零件模型拟合到单个图像连通区域。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        241,
+        283
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:base_parts",
+      "type": "function",
+      "name": "base_parts",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "构建套柱底板和各立柱的几何模型。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        287,
+        292
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:fit_base",
+      "type": "function",
+      "name": "fit_base",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "根据白色区域和已有估计拟合套柱玩具底座位姿。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        295,
+        326
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:refit_base",
+      "type": "function",
+      "name": "refit_base",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "根据白色区域和已有估计拟合套柱玩具底座位姿。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        329,
+        354
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:poles_from",
+      "type": "function",
+      "name": "poles_from",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "由底座位姿计算各立柱世界位置。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        357,
+        359
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:survey",
+      "type": "function",
+      "name": "survey",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "从头部图像扫描并拟合桌面零件。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        363,
+        387
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:merge_counts",
+      "type": "function",
+      "name": "merge_counts",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "累计各类零件的数量。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        390,
+        394
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:assign_poles",
+      "type": "function",
+      "name": "assign_poles",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "按零件数量和排列匹配结果分配立柱。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        397,
+        405
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:zmax",
+      "type": "function",
+      "name": "zmax",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "插值机械臂可达性表估计当前位置最高可达高度。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        424,
+        437
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:arm_state",
+      "type": "function",
+      "name": "arm_state",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "读取所选机械臂的当前状态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        440,
+        442
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:near_yaw",
+      "type": "function",
+      "name": "near_yaw",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "在等价方向中选择靠近当前值且满足腕部角度范围的偏航角。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        445,
+        451
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:mv",
+      "type": "function",
+      "name": "mv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "调用机器人位姿运动接口并处理本任务的运动结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        454,
+        460
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:mv_down",
+      "type": "function",
+      "name": "mv_down",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "尝试向下接近目标，并按可达高度降低运动目标。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        463,
+        472
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:grip",
+      "type": "function",
+      "name": "grip",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "发送夹爪开合命令并记录执行步数或状态。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        475,
+        480
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:home_arm",
+      "type": "function",
+      "name": "home_arm",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "将指定机械臂返回起始姿态并处理返回结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        483,
+        490
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:raise_arm",
+      "type": "function",
+      "name": "raise_arm",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "抬高机械臂以清空头部相机视野。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        493,
+        506
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:rot",
+      "type": "function",
+      "name": "rot",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "在平面内旋转二维向量。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        509,
+        511
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:wrist_fit",
+      "type": "function",
+      "name": "wrist_fit",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "从腕部相机图像细化待抓物体的位置和朝向。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        515,
+        567
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:grasp_plan",
+      "type": "function",
+      "name": "grasp_plan",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "根据零件形状和目标朝向生成夹持方向与抓点偏移候选。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        574,
+        593
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:place_yaw",
+      "type": "function",
+      "name": "place_yaw",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "选择避开邻近立柱或零件的放置偏航角。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        596,
+        602
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:finger_clear",
+      "type": "function",
+      "name": "finger_clear",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "计算张开夹指与附近物体或底座之间的间隙。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        618,
+        638
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:finger_margin",
+      "type": "function",
+      "name": "finger_margin",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "计算张开夹指与附近物体或底座之间的间隙。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        641,
+        659
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:grasp_options",
+      "type": "function",
+      "name": "grasp_options",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "根据零件形状和目标朝向生成夹持方向与抓点偏移候选。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        662,
+        677
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:pick",
+      "type": "function",
+      "name": "pick",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "执行接近、闭合和抬升步骤，并依据本任务的视觉或夹爪反馈处理抓取结果。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        680,
+        810
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:held_offset",
+      "type": "function",
+      "name": "held_offset",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "从腕部图像估计抓持零件孔心相对夹爪的偏移。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        820,
+        855
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:place_yaws",
+      "type": "function",
+      "name": "place_yaws",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "选择避开邻近立柱或零件的放置偏航角。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        863,
+        878
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:put_on_peg",
+      "type": "function",
+      "name": "put_on_peg",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "按层高和孔心偏移将抓持零件套入指定立柱。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        881,
+        950
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:put_down",
+      "type": "function",
+      "name": "put_down",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "将抓持物体降到目标位置并释放。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        953,
+        988
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:can_pick",
+      "type": "function",
+      "name": "can_pick",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "检查机械臂能否到达所需抓取或放置位置。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        996,
+        997
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:can_place",
+      "type": "function",
+      "name": "can_place",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "检查机械臂能否到达所需抓取或放置位置。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1000,
+        1002
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:handover_spot",
+      "type": "function",
+      "name": "handover_spot",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "搜索留有足够障碍间隙的临时放置位置。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1005,
+        1030
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:dedupe",
+      "type": "function",
+      "name": "dedupe",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "合并空间邻近的重复目标检测。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1033,
+        1041
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:candidates",
+      "type": "function",
+      "name": "candidates",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "生成符合当前数量约束的零件分配候选。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1045,
+        1053
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:on_base",
+      "type": "function",
+      "name": "on_base",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "判断目标点是否位于底座覆盖区域。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1056,
+        1060
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:clear_other",
+      "type": "function",
+      "name": "clear_other",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "移开闲置机械臂以减少遮挡和运动干涉。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1066,
+        1079
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:squeeze",
+      "type": "function",
+      "name": "squeeze",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "夹压已套入立柱的零件使堆叠稳定就位。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1082,
+        1131
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:stack_region",
+      "type": "function",
+      "name": "stack_region",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "生成立柱堆叠区域的图像投影范围。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1138,
+        1145
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:find_strays",
+      "type": "function",
+      "name": "find_strays",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "在图像中检测偏离目标堆叠的散落零件。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1148,
+        1171
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:home_check",
+      "type": "function",
+      "name": "home_check",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "双臂归位后读取任务状态并检查是否完成。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1173,
+        1196
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:run",
+      "type": "function",
+      "name": "run",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "识别套柱玩具底座和不同形状零件，按数量分配立柱并执行避碰抓取、套柱及掉落修复。统筹观察、运动和任务检查。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "complex",
+      "lineRange": [
+        1199,
+        1420
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:squeeze_pass",
+      "type": "function",
+      "name": "squeeze_pass",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "夹压已套入立柱的零件使堆叠稳定就位。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1423,
+        1441
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:strays_rounds",
+      "type": "function",
+      "name": "strays_rounds",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "重复寻找和回收散落零件并记录失败次数。",
+      "tags": [
+        "离线策略",
+        "机器人控制",
+        "任务程序"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1444,
+        1519
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:run.decide",
+      "type": "function",
+      "name": "run.decide",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "根据当前计数和候选分配固定各零件类型的立柱，必要时选缺件最少的方案。",
+      "tags": [
+        "离线策略",
+        "局部规划",
+        "机器人控制"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1231,
+        1249
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:run.resurvey",
+      "type": "function",
+      "name": "run.resurvey",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "重新扫描零件并匹配已有目标，更新被推移的位置、清除对应失败计数并加入新目标。",
+      "tags": [
+        "离线策略",
+        "局部规划",
+        "机器人控制"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1251,
+        1302
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:run.arm_for",
+      "type": "function",
+      "name": "run.arm_for",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "选择同时能抓取和套柱的机械臂，无法直接完成时安排双臂中转。",
+      "tags": [
+        "离线策略",
+        "局部规划",
+        "机器人控制"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1307,
+        1317
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:run.do_piece",
+      "type": "function",
+      "name": "run.do_piece",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "summary": "抓取单个零件并放到指定立柱层，必要时交给另一机械臂，同时更新完成与失败状态。",
+      "tags": [
+        "离线策略",
+        "局部规划",
+        "机器人控制"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1330,
+        1368
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:carry_z",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:carry_z",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:say",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:say",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:f3",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:f3",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:wrap180",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:wrap180",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:angd",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:angd",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:circle_poly",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:circle_poly",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:star_poly",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:star_poly",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:colour_mask",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:colour_mask",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:white_mask",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:white_mask",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:cam_of",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:cam_of",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:project",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:on_plane",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:on_plane",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:place_poly",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:place_poly",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:render",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:render",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:search",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:search",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:fill_holes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:fill_holes",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:components",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:components",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:fit_piece",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:fit_piece",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:base_parts",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:base_parts",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:fit_base",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:fit_base",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:refit_base",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:refit_base",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:poles_from",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:poles_from",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:survey",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:survey",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:merge_counts",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:merge_counts",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:assign_poles",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:assign_poles",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:zmax",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:zmax",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:arm_state",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:arm_state",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:near_yaw",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:near_yaw",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:mv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:mv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:mv_down",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:mv_down",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:grip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:grip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:home_arm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:home_arm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:raise_arm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:raise_arm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:rot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:rot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:wrist_fit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:wrist_fit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:grasp_plan",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:grasp_plan",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:place_yaw",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:place_yaw",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:finger_clear",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:finger_clear",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:finger_margin",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:finger_margin",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:grasp_options",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:grasp_options",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:pick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:pick",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:held_offset",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:held_offset",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:place_yaws",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:place_yaws",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:put_on_peg",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:put_on_peg",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:put_down",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:put_down",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:can_pick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:can_pick",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:can_place",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:can_place",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:handover_spot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:handover_spot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:dedupe",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:dedupe",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:candidates",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:candidates",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:on_base",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:on_base",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:clear_other",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:clear_other",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:squeeze",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:squeeze",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:stack_region",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:stack_region",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:find_strays",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:find_strays",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:home_check",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:home_check",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:run",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:run",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:squeeze_pass",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:squeeze_pass",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:strays_rounds",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:strays_rounds",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:render",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:place_poly",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:render",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:fit_piece",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:fit_piece",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:search",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:fit_piece",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:render",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:fit_piece",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:base_parts",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:circle_poly",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:fit_base",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:white_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:fit_base",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:components",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:fit_base",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:fit_base",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:base_parts",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:fit_base",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:search",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:fit_base",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:refit_base",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:white_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:refit_base",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:colour_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:refit_base",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:components",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:refit_base",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:refit_base",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:refit_base",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:place_poly",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:refit_base",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:search",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:refit_base",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:base_parts",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:refit_base",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:survey",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:colour_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:survey",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:components",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:survey",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:fill_holes",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:survey",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:survey",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:fit_piece",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:near_yaw",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:mv_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:zmax",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:mv_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:raise_arm",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:arm_state",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:raise_arm",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:raise_arm",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:raise_arm",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:zmax",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:raise_arm",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:home_arm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:wrist_fit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:cam_of",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:wrist_fit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:colour_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:wrist_fit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:wrist_fit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:stack_region",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:wrist_fit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:components",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:wrist_fit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:fill_holes",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:wrist_fit",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:fit_piece",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:grasp_plan",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:angd",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:place_yaw",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:angd",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:finger_clear",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:place_poly",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:finger_margin",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:place_poly",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:grasp_options",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:grasp_plan",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:grasp_options",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:angd",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:arm_state",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:grasp_plan",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:near_yaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:mv_down",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:wrist_fit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:grasp_options",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:finger_clear",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:finger_margin",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:angd",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:carry_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:zmax",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:held_offset",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:rot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:held_offset",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:cam_of",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:held_offset",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:arm_state",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:held_offset",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:colour_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:held_offset",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:components",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:held_offset",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:fill_holes",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:held_offset",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:held_offset",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:put_on_peg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:place_yaws",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:put_on_peg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:rot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:put_on_peg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:carry_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:put_on_peg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:zmax",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:put_on_peg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:put_on_peg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:arm_state",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:put_on_peg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:put_on_peg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:put_on_peg",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:put_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:rot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:put_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:put_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:put_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:put_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:put_down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:arm_state",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:can_pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:zmax",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:can_place",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:zmax",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:handover_spot",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:zmax",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:handover_spot",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:handover_spot",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:clear_other",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:arm_state",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:clear_other",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:clear_other",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:clear_other",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:zmax",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:clear_other",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:home_arm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:squeeze",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:zmax",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:squeeze",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:carry_z",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:squeeze",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:clear_other",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:squeeze",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:near_yaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:squeeze",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:arm_state",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:squeeze",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:squeeze",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:squeeze",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:stack_region",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:find_strays",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:stack_region",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:find_strays",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:colour_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:find_strays",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:components",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:find_strays",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:on_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:home_check",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:home_check",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:arm_state",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:home_check",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:home_check",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:zmax",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:home_check",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:cam_of",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:survey",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:arm_state",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:fit_base",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:poles_from",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:on_base",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:dedupe",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:home_check",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:strays_rounds",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:squeeze_pass",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:squeeze_pass",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:squeeze_pass",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:squeeze",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:squeeze_pass",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:home_check",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:strays_rounds",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:find_strays",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:strays_rounds",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:raise_arm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:strays_rounds",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:strays_rounds",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:f3",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:strays_rounds",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:survey",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:strays_rounds",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:home_check",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:run.decide",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:run.decide",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:run.resurvey",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:run.resurvey",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:run.arm_for",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:run.arm_for",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:run.do_piece",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/play_stacking_toy.py:run.do_piece",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    }
+  ]
+}

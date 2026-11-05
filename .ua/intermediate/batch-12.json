@@ -1,0 +1,223 @@
+{
+  "nodes": [
+    {
+      "id": "document:integrations/xpolicylab/PyRUA_Lean/README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "integrations/xpolicylab/PyRUA_Lean/README.md",
+      "summary": "说明 XPolicyLab 在线机器人代码生成策略的安装、模型配置和评估入口，连接策略服务、环境客户端与本地 PyRUA 执行栈。",
+      "tags": [
+        "文档",
+        "使用指南",
+        "机器人"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:integrations/xpolicylab/PyRUA_Lean/deploy.yml",
+      "type": "config",
+      "name": "deploy.yml",
+      "filePath": "integrations/xpolicylab/PyRUA_Lean/deploy.yml",
+      "summary": "配置 RoboDojo RGB 在线 OpenAI 策略、无 VLA 原语、按需图像、执行预算和结果目录。",
+      "tags": [
+        "配置",
+        "部署",
+        "构建"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_Lean/download_assets.sh",
+      "type": "file",
+      "name": "download_assets.sh",
+      "filePath": "integrations/xpolicylab/PyRUA_Lean/download_assets.sh",
+      "summary": "从 Hugging Face 或 ModelScope 下载 SAM3 检查点，并验证目标文件非空，供策略服务加载感知模型。",
+      "tags": [
+        "部署脚本",
+        "环境配置",
+        "评估"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_Lean/eval.sh",
+      "type": "file",
+      "name": "eval.sh",
+      "filePath": "integrations/xpolicylab/PyRUA_Lean/eval.sh",
+      "summary": "选择空闲端口启动策略服务，等待服务就绪后运行环境客户端，并通过退出清理停止后台服务。",
+      "tags": [
+        "部署脚本",
+        "环境配置",
+        "评估"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_Lean/install.sh",
+      "type": "file",
+      "name": "install.sh",
+      "filePath": "integrations/xpolicylab/PyRUA_Lean/install.sh",
+      "summary": "在已有 CUDA PyTorch 环境中安装 PyRUA、XPolicyLab 和感知依赖，用约束保留现有 torch 与 torchvision 版本，并执行导入检查。",
+      "tags": [
+        "部署脚本",
+        "环境配置",
+        "评估"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_Lean/setup_eval_env_client.sh",
+      "type": "file",
+      "name": "setup_eval_env_client.sh",
+      "filePath": "integrations/xpolicylab/PyRUA_Lean/setup_eval_env_client.sh",
+      "summary": "整理任务、种子、GPU、Conda 环境和策略配置参数，调用 XPolicyLab 公共环境客户端启动流程。",
+      "tags": [
+        "部署脚本",
+        "环境配置",
+        "评估"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_Lean/setup_eval_policy_server.sh",
+      "type": "file",
+      "name": "setup_eval_policy_server.sh",
+      "filePath": "integrations/xpolicylab/PyRUA_Lean/setup_eval_policy_server.sh",
+      "summary": "激活策略环境，配置 GPU、Python 路径和 SAM3 检查点，将部署配置及覆盖参数传给 XPolicyLab 策略服务器。",
+      "tags": [
+        "部署脚本",
+        "环境配置",
+        "评估"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "document:integrations/xpolicylab/PyRUA_Lean/README.md",
+      "target": "document:README.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:integrations/xpolicylab/PyRUA_Lean/README.md",
+      "target": "document:docs/visual-supervision.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:integrations/xpolicylab/PyRUA_Lean/README.md",
+      "target": "file:integrations/xpolicylab/PyRUA_Lean/__init__.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:integrations/xpolicylab/PyRUA_Lean/README.md",
+      "target": "file:integrations/xpolicylab/PyRUA_Lean/deploy.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:integrations/xpolicylab/PyRUA_Lean/README.md",
+      "target": "config:integrations/xpolicylab/PyRUA_Lean/deploy.yml",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:integrations/xpolicylab/PyRUA_Lean/README.md",
+      "target": "file:integrations/xpolicylab/PyRUA_Lean/download_assets.sh",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:integrations/xpolicylab/PyRUA_Lean/README.md",
+      "target": "file:integrations/xpolicylab/PyRUA_Lean/eval.sh",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:integrations/xpolicylab/PyRUA_Lean/README.md",
+      "target": "file:integrations/xpolicylab/PyRUA_Lean/install.sh",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:integrations/xpolicylab/PyRUA_Lean/README.md",
+      "target": "file:integrations/xpolicylab/PyRUA_Lean/model.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:integrations/xpolicylab/PyRUA_Lean/README.md",
+      "target": "file:integrations/xpolicylab/PyRUA_Lean/setup_eval_env_client.sh",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:integrations/xpolicylab/PyRUA_Lean/README.md",
+      "target": "file:integrations/xpolicylab/PyRUA_Lean/setup_eval_policy_server.sh",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:integrations/xpolicylab/PyRUA_Lean/deploy.yml",
+      "target": "file:integrations/xpolicylab/PyRUA_Lean/model.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:integrations/xpolicylab/PyRUA_Lean/deploy.yml",
+      "target": "file:integrations/xpolicylab/PyRUA_Lean/deploy.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_Lean/eval.sh",
+      "target": "file:integrations/xpolicylab/PyRUA_Lean/setup_eval_policy_server.sh",
+      "type": "triggers",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_Lean/eval.sh",
+      "target": "file:integrations/xpolicylab/PyRUA_Lean/setup_eval_env_client.sh",
+      "type": "triggers",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_Lean/install.sh",
+      "target": "config:pyproject.toml",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_Lean/setup_eval_env_client.sh",
+      "target": "config:integrations/xpolicylab/PyRUA_Lean/deploy.yml",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_Lean/setup_eval_policy_server.sh",
+      "target": "config:integrations/xpolicylab/PyRUA_Lean/deploy.yml",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

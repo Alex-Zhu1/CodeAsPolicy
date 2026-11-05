@@ -1,0 +1,4593 @@
+{
+  "nodes": [
+    {
+      "id": "document:integrations/xpolicylab/PyRUA_RSI/eval/robodojo_summary.md",
+      "type": "document",
+      "name": "robodojo_summary.md",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/eval/robodojo_summary.md",
+      "summary": "记录 RSI 固定程序在 RoboDojo seed 0 的能力维度和逐任务评测，并区分开发种子与另一个未用于开发的评测种子。",
+      "tags": [
+        "文档",
+        "离线策略",
+        "评测结果"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/model.py",
+      "type": "file",
+      "name": "model.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/model.py",
+      "summary": "将 XPolicyLab 观测与关节动作通过 Bridge 接入离线任务程序，启动本地代码响应服务并为整回合单元保留执行预算。",
+      "tags": [
+        "策略适配",
+        "线程管理",
+        "xpolicylab"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/model.py:_hold",
+      "type": "function",
+      "name": "_hold",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/model.py",
+      "summary": "把观测中的机械臂和夹爪关节状态转换为保持当前姿态的动作。",
+      "tags": [
+        "策略适配",
+        "线程管理",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        35,
+        43
+      ]
+    },
+    {
+      "id": "class:integrations/xpolicylab/PyRUA_RSI/model.py:Model",
+      "type": "class",
+      "name": "Model",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/model.py",
+      "summary": "实现 XPolicyLab 策略接口，通过线程和 Bridge 将回合执行与客户端观测动作交换连接起来。",
+      "tags": [
+        "策略适配",
+        "线程管理",
+        "数据结构"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        46,
+        205
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/model.py:Model.__init__",
+      "type": "function",
+      "name": "Model.__init__",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/model.py",
+      "summary": "保存策略配置、轮询与收尾时限，建立 Bridge 和结果目录并检查机器人形态。",
+      "tags": [
+        "策略适配",
+        "线程管理",
+        "方法"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        47,
+        70
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/model.py:Model._check_embodiment",
+      "type": "function",
+      "name": "Model._check_embodiment",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/model.py",
+      "summary": "验证动作类型为关节目标，且环境配置为两条六关节机械臂和各一个夹爪关节。",
+      "tags": [
+        "策略适配",
+        "线程管理",
+        "方法"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        72,
+        90
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/model.py:Model.update_obs",
+      "type": "function",
+      "name": "Model.update_obs",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/model.py",
+      "summary": "把新观测交给 Bridge，并在首次观测时启动执行该任务的守护线程。",
+      "tags": [
+        "策略适配",
+        "线程管理",
+        "方法"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        104,
+        119
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/model.py:Model.on_trial_end",
+      "type": "function",
+      "name": "Model.on_trial_end",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/model.py",
+      "summary": "接收客户端最终判定并等待回合结果落盘，等待时间受 wrap_up_s 限制。",
+      "tags": [
+        "策略适配",
+        "线程管理",
+        "方法"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        126,
+        141
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/model.py:Model._play",
+      "type": "function",
+      "name": "Model._play",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/model.py",
+      "summary": "选择任务离线代码并调用 play_episode，将单元时限扩展到整回合预算；记录结果后始终结束 Bridge。",
+      "tags": [
+        "策略适配",
+        "线程管理",
+        "方法"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        156,
+        205
+      ]
+    },
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/offline_programs.py",
+      "type": "file",
+      "name": "offline_programs.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/offline_programs.py",
+      "summary": "以本地 Chat Completions 兼容服务替代模型：每回合首次请求返回任务完整 Python 程序，之后返回 finish。",
+      "tags": [
+        "离线策略",
+        "http",
+        "代码分发"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/offline_programs.py:program_for",
+      "type": "function",
+      "name": "program_for",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/offline_programs.py",
+      "summary": "按任务名读取 programs 目录下的 Python 程序，缺失时报告明确路径错误。",
+      "tags": [
+        "离线策略",
+        "http",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        24,
+        28
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/offline_programs.py:select",
+      "type": "function",
+      "name": "select",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/offline_programs.py",
+      "summary": "验证任务程序存在后，在锁保护下切换即将执行的任务。",
+      "tags": [
+        "离线策略",
+        "http",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        31,
+        36
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/offline_programs.py:start",
+      "type": "function",
+      "name": "start",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/offline_programs.py",
+      "summary": "在进程中只启动一次本地多线程 HTTP 服务并返回其兼容 API 基址。",
+      "tags": [
+        "离线策略",
+        "http",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        70,
+        78
+      ]
+    },
+    {
+      "id": "class:integrations/xpolicylab/PyRUA_RSI/offline_programs.py:_Handler",
+      "type": "class",
+      "name": "_Handler",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/offline_programs.py",
+      "summary": "处理兼容 Chat Completions 的请求，以整段离线代码和结束工具调用模拟模型响应。",
+      "tags": [
+        "离线策略",
+        "http",
+        "数据结构"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        39,
+        67
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/offline_programs.py:_Handler.do_POST",
+      "type": "function",
+      "name": "_Handler.do_POST",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/offline_programs.py",
+      "summary": "识别新会话并更新响应计数，首轮返回 python 工具调用，后续返回 finish 并写入 JSON HTTP 响应。",
+      "tags": [
+        "离线策略",
+        "http",
+        "方法"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        43,
+        67
+      ]
+    },
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/align_blocks.py",
+      "type": "file",
+      "name": "align_blocks.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/align_blocks.py",
+      "summary": "通过视觉定位直角尺与方块，先侧推分离可能碰撞的方块，再用双臂交替前推直尺将方块对齐。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "视觉定位",
+        "运动控制"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/align_blocks.py:find",
+      "type": "function",
+      "name": "find",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/align_blocks.py",
+      "summary": "依次尝试视觉提示词，返回首个具有有效三维中心的定位结果。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        15,
+        20
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/align_blocks.py:ray_plane",
+      "type": "function",
+      "name": "ray_plane",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/align_blocks.py",
+      "summary": "用相机内外参把像素射线与指定高度平面求交。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        23,
+        29
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/align_blocks.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/align_blocks.py",
+      "summary": "识别直尺与方块、规划避碰侧推和双臂握持点，分步推动直尺并收回机械臂。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "complex",
+      "lineRange": [
+        32,
+        237
+      ]
+    },
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "type": "file",
+      "name": "arrange_largest_number.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "使用双腕俯视图的颜色与轮廓模板识别数字，拟合目标垫排列并按降序抓放；支持跨臂中转和终局补救。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "视觉定位",
+        "运动控制"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:say",
+      "type": "function",
+      "name": "say",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "输出离线程序的执行诊断信息。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        75,
+        76
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:spent",
+      "type": "function",
+      "name": "spent",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "累加原语实际使用的控制步数。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        79,
+        80
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:left_budget",
+      "type": "function",
+      "name": "left_budget",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "返回动作预算扣除已用步数后的剩余额度。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        83,
+        84
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:wrap180",
+      "type": "function",
+      "name": "wrap180",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "将角度规范化到以零为中心的 360 度区间。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        87,
+        88
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:other",
+      "type": "function",
+      "name": "other",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "返回给定机械臂的另一侧名称。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        91,
+        92
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:mv",
+      "type": "function",
+      "name": "mv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "调用机器人笛卡尔移动，累计步数并记录阻塞、IK 错误和提前终止。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        95,
+        104
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:grip",
+      "type": "function",
+      "name": "grip",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "执行夹爪指令并同步控制步数、预算上限和回合终止状态。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        107,
+        120
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:home",
+      "type": "function",
+      "name": "home",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "有限次尝试归位，累计步数并在成功或回合终止时退出。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        123,
+        133
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:finger_yaw",
+      "type": "function",
+      "name": "finger_yaw",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "从腕部四元数计算夹爪闭合轴在平面内的方向角。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        136,
+        141
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:down",
+      "type": "function",
+      "name": "down",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "封装固定滚转角与指定俯仰偏航的笛卡尔移动。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        144,
+        145
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:xmin_right",
+      "type": "function",
+      "name": "xmin_right",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "按采样边界分段插值估算右臂可达区域的横向下界。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        148,
+        155
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:reaches",
+      "type": "function",
+      "name": "reaches",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "结合机械臂侧别、目标高度与裕量判断平面位置是否可达。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        158,
+        160
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:camera",
+      "type": "function",
+      "name": "camera",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "读取相机内参和外参并转换为数值数组。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        165,
+        167
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:finger_mask",
+      "type": "function",
+      "name": "finger_mask",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "生成并缓存腕相机中夹爪遮挡区域的膨胀掩码。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        173,
+        181
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:project",
+      "type": "function",
+      "name": "project",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "把世界三维点变换到相机坐标并投影为像素及深度。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        184,
+        192
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:rectify",
+      "type": "function",
+      "name": "rectify",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "把相机图像重采样到指定高度的世界平面网格，并标记无效或遮挡像素。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        210,
+        226
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:difference",
+      "type": "function",
+      "name": "difference",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "计算 Lab 颜色与局部中值背景的距离，以分离前景物体。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        229,
+        241
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:template",
+      "type": "function",
+      "name": "template",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "生成给定数字、旋转角和分辨率的轮廓模板，并保留质心到原点偏移。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        251,
+        269
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:crop",
+      "type": "function",
+      "name": "crop",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "围绕图像位置裁出固定大小窗口，对越界部分补零。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        272,
+        280
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:match_blob",
+      "type": "function",
+      "name": "match_blob",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "遍历数字模板、角度和小幅平移，以 IoU 寻找最佳形状匹配。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        283,
+        301
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:find_digits",
+      "type": "function",
+      "name": "find_digits",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "从前景颜色连通域检测数字形状，并用十种数字模板评估候选。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        307,
+        337
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:refine",
+      "type": "function",
+      "name": "refine",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "在已有数字候选附近细化角度与位置，兼容轮廓和颜色匹配分数。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        340,
+        356
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:_disc",
+      "type": "function",
+      "name": "_disc",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "按物理半径与图像分辨率生成圆形形态学核。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        367,
+        369
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_t",
+      "type": "function",
+      "name": "edge_t",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "缓存数字轮廓带及内外抑制模板，用于梯度相关评分。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        372,
+        384
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:gradmap",
+      "type": "function",
+      "name": "gradmap",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "从平滑的 Lab 图像计算颜色通道梯度并屏蔽无效区域。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        387,
+        401
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:_escore",
+      "type": "function",
+      "name": "_escore",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "用轮廓带相关分数减去内外区域响应，评估数字边缘匹配。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        404,
+        407
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_read",
+      "type": "function",
+      "name": "edge_read",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "在指定世界坐标邻域搜索数字轮廓，返回各数字最佳方向、位置与得分。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        410,
+        442
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:e2s",
+      "type": "function",
+      "name": "e2s",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "把轮廓得分映射为与颜色 IoU 可比较的连续置信分数。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        445,
+        450
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_det",
+      "type": "function",
+      "name": "edge_det",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "将各数字的轮廓评分整理为统一检测记录，保留第二名差值和来源。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        453,
+        459
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_dense",
+      "type": "function",
+      "name": "edge_dense",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "在全图遍历数字与角度模板，生成局部归一化的最佳轮廓得分图。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        462,
+        481
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_peaks",
+      "type": "function",
+      "name": "edge_peaks",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "迭代选取高分位置并抑制邻域，获得相互分离的候选峰值。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        484,
+        495
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_at",
+      "type": "function",
+      "name": "edge_at",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "优先使用离目标最近的腕相机俯视图读取数字轮廓。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        501,
+        516
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:face_lab",
+      "type": "function",
+      "name": "face_lab",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "在数字模板覆盖区域估计正面的 Lab 中值颜色。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        519,
+        531
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:col_dist",
+      "type": "function",
+      "name": "col_dist",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "计算降低亮度权重后的 Lab 颜色距离。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        534,
+        535
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:rep_face",
+      "type": "function",
+      "name": "rep_face",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "从靠近目标的俯视图取得代表性数字正面颜色。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        538,
+        544
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_candidates",
+      "type": "function",
+      "name": "edge_candidates",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "在已知数字和目标垫之外检索轮廓候选，并用共同正面颜色剔除杂物。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        547,
+        586
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:gradient_map",
+      "type": "function",
+      "name": "gradient_map",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "计算平滑颜色梯度并把无效边缘标为缺失值，供目标垫几何拟合。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        591,
+        598
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:fit_pads",
+      "type": "function",
+      "name": "fit_pads",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "搜索四或五个等间距圆形目标垫的纵坐标、半径和横向偏移。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        601,
+        640
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:overview",
+      "type": "function",
+      "name": "overview",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "把两腕相机移动到各自半区上方，采集并合成桌面正射图和检测信息。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        645,
+        664
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:look_grasp_point",
+      "type": "function",
+      "name": "look_grasp_point",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "根据相机相对夹爪偏移计算垂直观察目标所需的腕部位置。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        671,
+        674
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:set_open",
+      "type": "function",
+      "name": "set_open",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "检查当前夹爪开度，仅在偏差超限时调整到指定开度。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        677,
+        680
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:wrist_dets",
+      "type": "function",
+      "name": "wrist_dets",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "验证腕相机朝向后，在目标邻域生成平面图并检测数字。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        683,
+        693
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:search_look",
+      "type": "function",
+      "name": "search_look",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "扩大腕相机观察范围，补查总览遗漏的数字。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        700,
+        716
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:close_look",
+      "type": "function",
+      "name": "close_look",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "尝试多个可达观察高度，在目标附近融合颜色、轮廓及分割读取数字。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        719,
+        766
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:tilt_ok",
+      "type": "function",
+      "name": "tilt_ok",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "检查倾斜抓取姿态在相邻位置和偏航采样下的可达性。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        791,
+        816
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:place_ok",
+      "type": "function",
+      "name": "place_ok",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "根据预先测得的运动学边界判断倾斜夹持能否把数字放到目标垫。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        819,
+        829
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:tilted_yaws",
+      "type": "function",
+      "name": "tilted_yaws",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "把数字方向与抓取轴转换为倾斜抓取和放置所需的偏航角。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        832,
+        839
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:plan_job",
+      "type": "function",
+      "name": "plan_job",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "枚举能把数字搬到目标垫的机械臂与俯仰姿态，无法直达时交给中转流程。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        842,
+        863
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:cut_and_read",
+      "type": "function",
+      "name": "cut_and_read",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "对 SAM3 框做 GrabCut，投影到桌面后与数字轮廓模板比对。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        871,
+        916
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:sam_read",
+      "type": "function",
+      "name": "sam_read",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "按预期数字提示词查询腕相机分割，并返回目标附近最可信的形状读取。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        919,
+        942
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:sam_dets",
+      "type": "function",
+      "name": "sam_dets",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "通过 SAM3 框与 GrabCut 补充颜色差异检测遗漏的数字。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        945,
+        975
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:merge",
+      "type": "function",
+      "name": "merge",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "按检测完整性和得分排序，将空间接近的重复检测聚类。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        980,
+        991
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:certain",
+      "type": "function",
+      "name": "certain",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "依据检测完整性、绝对得分和第一二名差值判断数字读取是否可靠。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        994,
+        995
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:assign",
+      "type": "function",
+      "name": "assign",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "在互异数字约束及固定分配下寻找总匹配得分最高的检测赋值。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        998,
+        1022
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:in_range",
+      "type": "function",
+      "name": "in_range",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "检查候选数字是否处于任务允许的桌面范围及测量裕量内。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1025,
+        1027
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:face_filter",
+      "type": "function",
+      "name": "face_filter",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "比较数字正面颜色，候选过多时优先剔除颜色偏离共同纹理的杂物。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1030,
+        1047
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:dedupe",
+      "type": "function",
+      "name": "dedupe",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "合并距离过近的数字读取，优先保留位置一致且置信度高的记录。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1050,
+        1060
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:read_scene",
+      "type": "function",
+      "name": "read_scene",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "融合双腕总览、圆垫拟合和数字候选，确定放置目标及后续动作的场景模型。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1063,
+        1091
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:occupancy",
+      "type": "function",
+      "name": "occupancy",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "融合可见区域与前景掩码，计算桌面到障碍物的距离以寻找中转空位。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1094,
+        1105
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:spot",
+      "type": "function",
+      "name": "spot",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "在指定范围和机械臂共同可达约束下搜索净空最大的临时放置位置。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1108,
+        1121
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:opening_for",
+      "type": "function",
+      "name": "opening_for",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "依据数字抓取宽度估计夹爪所需开度，并限制到允许范围。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1126,
+        1127
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:grasp_point",
+      "type": "function",
+      "name": "grasp_point",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "根据数字朝向和选定抓取轴修正夹持中心偏移。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1130,
+        1133
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:grasp_yaw",
+      "type": "function",
+      "name": "grasp_yaw",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "把数字旋转角和抓取轴转换为当前机械臂的抓取偏航角。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1136,
+        1139
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pick",
+      "type": "function",
+      "name": "pick",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "近距离确认数字后按选择的轴抓取抬升，返回持有、误识别或失败结果。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1145,
+        1207
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:put",
+      "type": "function",
+      "name": "put",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "将持有数字旋转为正向并搬至目标位置，下降释放后抬离。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1210,
+        1231
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pad_difference",
+      "type": "function",
+      "name": "pad_difference",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "分别估计目标垫内外背景颜色，分离垫面上的数字形状。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1237,
+        1272
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:check_pad",
+      "type": "function",
+      "name": "check_pad",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "靠近观察目标垫上的数字，计算相对垫中心的位置偏差、方向和匹配分数。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1275,
+        1337
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:angle_ok",
+      "type": "function",
+      "name": "angle_ok",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "按数字的对称性和允许偏差判断摆放朝向是否合格。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1340,
+        1345
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:place_and_check",
+      "type": "function",
+      "name": "place_and_check",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "放置后重新检查数字位置与朝向，必要时有限次重新抓取纠正。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1348,
+        1375
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pick_at",
+      "type": "function",
+      "name": "pick_at",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "在已知数字姿态上直接抓取并抬升，省去再次近距离观察。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1378,
+        1399
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:use",
+      "type": "function",
+      "name": "use",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "切换活动机械臂前收回另一臂，避免两臂同时占用操作空间。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1409,
+        1416
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:handover",
+      "type": "function",
+      "name": "handover",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "当目标垫无法直接到达时，通过双方可达的空闲桌面位置中转数字。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1419,
+        1447
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:run",
+      "type": "function",
+      "name": "run",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "读取场景并补查不确定数字，分配互异数值后按降序安排直达抓放或跨臂中转。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1450,
+        1566
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:finish",
+      "type": "function",
+      "name": "finish",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "打开夹爪、抬离桌面并收回双臂，输出剩余预算和耗时。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1569,
+        1581
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:episode_over",
+      "type": "function",
+      "name": "episode_over",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "通过廉价夹爪动作探测归位后回合是否已被环境终止。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1584,
+        1593
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pad_arm",
+      "type": "function",
+      "name": "pad_arm",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "依据目标垫左右位置选择负责放置的机械臂。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1596,
+        1597
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:look_any",
+      "type": "function",
+      "name": "look_any",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "允许任意朝向地近距离读取目标数字，兼用颜色与轮廓证据。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1600,
+        1636
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:fetch_any",
+      "type": "function",
+      "name": "fetch_any",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "重新抓取任意方向的数字并送至目标垫，必要时安排跨臂中转。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        1639,
+        1671
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:recover",
+      "type": "function",
+      "name": "recover",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "归位后若回合仍未结束，复查每个目标垫、重定位缺失数字并有限次修正。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        1674,
+        1764
+      ]
+    },
+    {
+      "id": "class:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:Grid",
+      "type": "class",
+      "name": "Grid",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "summary": "保存桌面正射图的范围和分辨率，并转换世界坐标与栅格索引。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "数据结构"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        195,
+        207
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/model.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/model.py:_hold",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/model.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/model.py:_hold",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/model.py",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/model.py:Model",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/model.py",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/model.py:Model",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/model.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/model.py:Model.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:integrations/xpolicylab/PyRUA_RSI/model.py:Model",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/model.py:Model.__init__",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/model.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/model.py:Model._check_embodiment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:integrations/xpolicylab/PyRUA_RSI/model.py:Model",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/model.py:Model._check_embodiment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/model.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/model.py:Model.update_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:integrations/xpolicylab/PyRUA_RSI/model.py:Model",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/model.py:Model.update_obs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/model.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/model.py:Model.on_trial_end",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:integrations/xpolicylab/PyRUA_RSI/model.py:Model",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/model.py:Model.on_trial_end",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/model.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/model.py:Model._play",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:integrations/xpolicylab/PyRUA_RSI/model.py:Model",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/model.py:Model._play",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/model.py",
+      "target": "file:integrations/xpolicylab/PyRUA_RSI/offline_programs.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/offline_programs.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/offline_programs.py:program_for",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/offline_programs.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/offline_programs.py:program_for",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/offline_programs.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/offline_programs.py:select",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/offline_programs.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/offline_programs.py:select",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/offline_programs.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/offline_programs.py:start",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/offline_programs.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/offline_programs.py:start",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/offline_programs.py",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/offline_programs.py:_Handler",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/offline_programs.py",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/offline_programs.py:_Handler",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/offline_programs.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/offline_programs.py:_Handler.do_POST",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:integrations/xpolicylab/PyRUA_RSI/offline_programs.py:_Handler",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/offline_programs.py:_Handler.do_POST",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/align_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/align_blocks.py:find",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/align_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/align_blocks.py:find",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/align_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/align_blocks.py:ray_plane",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/align_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/align_blocks.py:ray_plane",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/align_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/align_blocks.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/align_blocks.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/align_blocks.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:say",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:say",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:spent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:spent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:left_budget",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:left_budget",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:wrap180",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:wrap180",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:other",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:other",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:mv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:mv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:grip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:grip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:home",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:finger_yaw",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:finger_yaw",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:down",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:down",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:xmin_right",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:xmin_right",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:reaches",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:reaches",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:camera",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:camera",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:finger_mask",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:finger_mask",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:project",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:rectify",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:rectify",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:difference",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:difference",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:template",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:template",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:crop",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:crop",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:match_blob",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:match_blob",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:find_digits",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:find_digits",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:refine",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:refine",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:_disc",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:_disc",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_t",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_t",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:gradmap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:gradmap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:_escore",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:_escore",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_read",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_read",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:e2s",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:e2s",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_det",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_det",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_dense",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_dense",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_peaks",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_peaks",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_at",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_at",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:face_lab",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:face_lab",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:col_dist",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:col_dist",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:rep_face",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:rep_face",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_candidates",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_candidates",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:gradient_map",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:gradient_map",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:fit_pads",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:fit_pads",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:overview",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:overview",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:look_grasp_point",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:look_grasp_point",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:set_open",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:set_open",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:wrist_dets",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:wrist_dets",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:search_look",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:search_look",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:close_look",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:close_look",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:tilt_ok",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:tilt_ok",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:place_ok",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:place_ok",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:tilted_yaws",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:tilted_yaws",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:plan_job",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:plan_job",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:cut_and_read",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:cut_and_read",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:sam_read",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:sam_read",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:sam_dets",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:sam_dets",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:merge",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:merge",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:certain",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:certain",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:assign",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:assign",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:in_range",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:in_range",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:face_filter",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:face_filter",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:dedupe",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:dedupe",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:read_scene",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:read_scene",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:occupancy",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:occupancy",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:spot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:spot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:opening_for",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:opening_for",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:grasp_point",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:grasp_point",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:grasp_yaw",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:grasp_yaw",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pick",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:put",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:put",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pad_difference",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pad_difference",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:check_pad",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:check_pad",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:angle_ok",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:angle_ok",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:place_and_check",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:place_and_check",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pick_at",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pick_at",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:use",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:use",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:handover",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:handover",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:run",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:run",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:finish",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:finish",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:episode_over",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:episode_over",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pad_arm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pad_arm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:look_any",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:look_any",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:fetch_any",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:fetch_any",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:recover",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:recover",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:Grid",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:Grid",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/model.py:Model.__init__",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/model.py:Model._check_embodiment",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/model.py:Model.__init__",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/offline_programs.py:start",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/model.py:Model._play",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/offline_programs.py:select",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/offline_programs.py:select",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/offline_programs.py:program_for",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/offline_programs.py:_Handler.do_POST",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/offline_programs.py:program_for",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/align_blocks.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/align_blocks.py:find",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/align_blocks.py:main",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/align_blocks.py:ray_plane",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:spent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:mv",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:grip",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:spent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:grip",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:home",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:spent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:down",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:reaches",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:xmin_right",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:rectify",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:rectify",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:finger_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:match_blob",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:template",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:match_blob",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:crop",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:find_digits",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:match_blob",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_read",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:e2s",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:refine",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:match_blob",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_t",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:template",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_t",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:_disc",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:_escore",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_t",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_read",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:_escore",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_det",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:e2s",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_dense",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:_escore",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_at",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_read",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_at",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_det",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:face_lab",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:template",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:rep_face",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:face_lab",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_candidates",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_dense",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_candidates",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_peaks",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_candidates",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:in_range",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_candidates",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_read",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_candidates",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_det",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_candidates",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:face_lab",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_candidates",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:col_dist",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_candidates",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:overview",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:down",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:overview",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:Grid",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:overview",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:camera",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:overview",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:rectify",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:overview",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:difference",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:overview",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:find_digits",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:overview",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:gradmap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:overview",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:gradient_map",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:set_open",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:wrist_dets",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:camera",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:wrist_dets",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:Grid",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:wrist_dets",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:rectify",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:wrist_dets",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:difference",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:wrist_dets",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:find_digits",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:search_look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:set_open",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:search_look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:down",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:search_look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:look_grasp_point",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:search_look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:camera",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:search_look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:search_look",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:Grid",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:search_look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:rectify",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:search_look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:difference",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:search_look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:find_digits",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:close_look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:set_open",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:close_look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:look_grasp_point",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:close_look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:down",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:close_look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:close_look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:wrist_dets",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:close_look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:certain",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:close_look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:gradmap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:close_look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_read",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:close_look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_det",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:close_look",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:sam_read",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:tilt_ok",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:tilted_yaws",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:plan_job",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:other",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:plan_job",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:reaches",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:plan_job",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:tilted_yaws",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:plan_job",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:tilt_ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:plan_job",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:place_ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:cut_and_read",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:Grid",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:cut_and_read",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:project",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:cut_and_read",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:find_digits",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:sam_read",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:camera",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:sam_read",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:sam_read",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:cut_and_read",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:sam_dets",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:camera",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:sam_dets",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:sam_dets",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:cut_and_read",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:face_filter",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:rep_face",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:face_filter",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:col_dist",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:face_filter",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:dedupe",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:certain",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:dedupe",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:read_scene",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:overview",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:read_scene",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:fit_pads",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:read_scene",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:read_scene",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:in_range",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:read_scene",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:merge",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:read_scene",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:certain",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:read_scene",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_at",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:spot",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:reaches",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:grasp_yaw",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:grasp_yaw",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:tilted_yaws",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:left_budget",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:close_look",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:refine",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:grasp_point",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:grasp_yaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:opening_for",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pick",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:down",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:put",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:put",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:grasp_point",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:put",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:down",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:put",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:put",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:put",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:opening_for",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:check_pad",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:set_open",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:check_pad",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:look_grasp_point",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:check_pad",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:down",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:check_pad",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:check_pad",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:camera",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:check_pad",
+      "target": "class:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:Grid",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:check_pad",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:rectify",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:check_pad",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pad_difference",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:check_pad",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:find_digits",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:check_pad",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:match_blob",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:check_pad",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:gradmap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:check_pad",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_read",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:check_pad",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:check_pad",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:e2s",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:check_pad",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:refine",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:place_and_check",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:put",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:place_and_check",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:left_budget",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:place_and_check",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:check_pad",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:place_and_check",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:place_and_check",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:angle_ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:place_and_check",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pick_at",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pick_at",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:grasp_point",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pick_at",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:grasp_yaw",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pick_at",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pick_at",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:opening_for",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pick_at",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:down",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pick_at",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:use",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:use",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:reaches",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:other",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:use",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:spot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:put",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:plan_job",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:handover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:place_and_check",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:read_scene",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:search_look",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:rep_face",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:certain",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_candidates",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:sam_dets",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:left_budget",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:close_look",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:in_range",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:dedupe",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:face_filter",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:occupancy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:assign",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:plan_job",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:handover",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:use",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:run",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:place_and_check",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:finish",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:finish",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:finish",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:finish",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:episode_over",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:look_any",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:set_open",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:look_any",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:look_grasp_point",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:look_any",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:down",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:look_any",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:wrist_dets",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:look_any",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:match_blob",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:look_any",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:refine",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:look_any",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:wrap180",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:look_any",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:gradmap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:look_any",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_read",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:look_any",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:e2s",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:fetch_any",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:reaches",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:fetch_any",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:other",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:fetch_any",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:use",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:fetch_any",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:look_any",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:fetch_any",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:fetch_any",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pick_at",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:fetch_any",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pad_arm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:fetch_any",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:put",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:fetch_any",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:spot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:fetch_any",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pick",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:fetch_any",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:place_and_check",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:recover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:left_budget",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:recover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:episode_over",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:recover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:say",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:recover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pad_arm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:recover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:use",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:recover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:check_pad",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:recover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:angle_ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:recover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:pick_at",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:recover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:put",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:recover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:finish",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:recover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:overview",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:recover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:face_lab",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:recover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_candidates",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:recover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:occupancy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:recover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:home",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:recover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:edge_read",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:recover",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py:fetch_any",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "document:integrations/xpolicylab/PyRUA_RSI/eval/robodojo_summary.md",
+      "target": "file:integrations/xpolicylab/PyRUA_RSI/programs/align_blocks.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/offline_programs.py:program_for",
+      "target": "file:integrations/xpolicylab/PyRUA_RSI/programs/align_blocks.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:integrations/xpolicylab/PyRUA_RSI/eval/robodojo_summary.md",
+      "target": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/offline_programs.py:program_for",
+      "target": "file:integrations/xpolicylab/PyRUA_RSI/programs/arrange_largest_number.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

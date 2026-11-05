@@ -1,0 +1,3257 @@
+[
+  {
+    "path": "src/pyrualean/coordination.py",
+    "category": "code",
+    "moduleDoc": "Small code-policy API for synchronized motion; task strategy stays in Python.",
+    "symbols": [
+      {
+        "name": "_observation",
+        "kind": "function",
+        "range": [
+          100,
+          111
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return Observation(\n        raw.get(\"id\") or raw[\"observation_id\"],\n        robo._action_revision,"
+      },
+      {
+        "name": "_result",
+        "kind": "function",
+        "range": [
+          114,
+          130
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "obs = _observation(raw[\"observation\"], robo, raw[\"observation\"][\"step\"])\narms = {\n        a: ArmMotion(**{**raw[\"arms\"][a], \"pose\": Pose(**raw[\"arms\"][a][\"pose\"])})\n        for a in (\"left\", \"right\")\nreturn DualMove(\n        raw[\"status\"],\n        arms[\"left\"],"
+      },
+      {
+        "name": "CoordinationPause",
+        "kind": "class",
+        "range": [
+          10,
+          11
+        ],
+        "owner": null,
+        "doc": "Execution cannot continue locally; return the actual scene to the model.",
+        "body": ""
+      },
+      {
+        "name": "Pose",
+        "kind": "class",
+        "range": [
+          15,
+          37
+        ],
+        "owner": null,
+        "doc": "World TCP pose: metres, unit quaternion [w,x,y,z], no implicit EEF offset.",
+        "body": "xyz: tuple[float, float, float]\nquat: tuple[float, float, float, float]\nframe: str = \"world\"\npoint: str = \"tcp\""
+      },
+      {
+        "name": "Pose.__post_init__",
+        "kind": "function",
+        "range": [
+          23,
+          33
+        ],
+        "owner": "Pose",
+        "doc": "",
+        "body": "xyz, quat = tuple(float(v) for v in self.xyz), tuple(float(v) for v in self.quat)\nif len(xyz) != 3 or len(quat) != 4 or not all(map(math.isfinite, (*xyz, *quat))):\n            raise ValueError(\"Pose needs three finite metres and four finite quaternion values\")\nif self.frame != \"world\" or self.point != \"tcp\":\n            raise ValueError(\"Only explicit world-frame TCP poses are supported\")\nnorm = math.sqrt(sum(v * v for v in quat))\nif abs(norm - 1) > 0.001:\n            raise ValueError(\"quat must be a unit quaternion in [w,x,y,z] order\")\nobject.__setattr__(self, \"xyz\", xyz)\nobject.__setattr__(self, \"quat\", tuple(v / norm for v in quat))"
+      },
+      {
+        "name": "Pose.shifted",
+        "kind": "function",
+        "range": [
+          35,
+          37
+        ],
+        "owner": "Pose",
+        "doc": "Translate in world axes, preserving orientation; fixed to this snapshot.",
+        "body": "return replace(self, xyz=tuple(a + b for a, b in zip(self.xyz, (dx, dy, dz), strict=True)))"
+      },
+      {
+        "name": "Observation",
+        "kind": "class",
+        "range": [
+          41,
+          57
+        ],
+        "owner": null,
+        "doc": "Both TCP poses at one endpoint; images use image(camera, step=step).\n\nstate_version matches the runtime/Valen action revision; native_revision is\nthe host's native action revision. native_steps is the simulator counter,\nstep the recorded-image index. Openings do not establish object support.",
+        "body": "id: str\nstate_version: int\nnative_revision: int\nstep: int\nnative_steps: int | None\nleft: Pose\nright: Pose\nleft_opening: float\nright_opening: float"
+      },
+      {
+        "name": "ArmMotion",
+        "kind": "class",
+        "range": [
+          61,
+          68
+        ],
+        "owner": null,
+        "doc": "Measured endpoint and error against this arm's final target, not task success.",
+        "body": "reached: bool\npose: Pose\nopening: float\nposition_error_m: float\norientation_error_deg: float"
+      },
+      {
+        "name": "DualMove",
+        "kind": "class",
+        "range": [
+          72,
+          97
+        ],
+        "owner": null,
+        "doc": "Result of move_both. status is completed, rejected (zero steps), or partial.\n\nInspect reached, left/right errors and stop_reason before dependent actions.\nrecoverable permits a bounded, explicitly programmed correction; it does not\ncertify support or prescribe a retry. Observe the actual state before repair.\nsteps_used counts native actions for this call; remaining_steps is its local\nallowance, not the episode budget. checked names actual geometric coverage.\nCritical faults and visual reviews instead unwind the current code block;\ntheir physical endpoint remains in the tool's coordination feedback.",
+        "body": "status: str\nleft: ArmMotion\nright: ArmMotion\nsteps_used: int\nstop_reason: str | None\nrecoverable: bool\nobservation: Observation\nremaining_steps: int\nchecked: tuple[str, ...]"
+      },
+      {
+        "name": "DualMove.reached",
+        "kind": "function",
+        "range": [
+          95,
+          97
+        ],
+        "owner": "DualMove",
+        "doc": "Both final motion targets reached; no claim about objects or task completion.",
+        "body": "return self.status == \"completed\" and self.left.reached and self.right.reached"
+      },
+      {
+        "name": "CoordinationMixin",
+        "kind": "class",
+        "range": [
+          133,
+          255
+        ],
+        "owner": null,
+        "doc": "Adapter-neutral Python surface over the host's synchronized executor.",
+        "body": "COORDINATION_API: ClassVar[bool] = True"
+      },
+      {
+        "name": "CoordinationMixin.motion_capabilities",
+        "kind": "function",
+        "range": [
+          138,
+          140
+        ],
+        "owner": "CoordinationMixin",
+        "doc": "Return actual frame, synchronization, feedback and collision-check coverage.",
+        "body": "return self._readonly(\"motion_capabilities\", {})"
+      },
+      {
+        "name": "CoordinationMixin.pose",
+        "kind": "function",
+        "range": [
+          142,
+          144
+        ],
+        "owner": "CoordinationMixin",
+        "doc": "Construct a world TCP Pose: metres, unit quaternion [w,x,y,z].",
+        "body": "return Pose(xyz, quat, frame, point)"
+      },
+      {
+        "name": "CoordinationMixin.observe",
+        "kind": "function",
+        "range": [
+          146,
+          149
+        ],
+        "owner": "CoordinationMixin",
+        "doc": "Read both arms together; use the returned step for matching camera images.",
+        "body": "state = self.state()\nreturn _observation(self._readonly(\"motion_observe\", {}), self, state.step)"
+      },
+      {
+        "name": "CoordinationMixin.move_both",
+        "kind": "function",
+        "range": [
+          151,
+          255
+        ],
+        "owner": "CoordinationMixin",
+        "doc": "Move both arms on one native action clock, returning their actual outcomes.\n\nleft/right: world TCP xyz (metres, retain current orientation), a Pose,\nor None (hold that arm). grippers maps left/right to 'keep'/'open'/'close';\nomitted means keep the last COMMAND, not the measured gap. Commands take\neffect from the start of this motion, including open/close during travel.\nChoose release timing and support checks in your Python/watch contract.\n\nBoth paths are checked before either moves. No implicit sequential or\nnear-pose fallback. keep_relative additionally checks the initial relative\nTCP transform using the supplied position/orientation tolerances, along\nsampled paths and after each native action; this is not force control.\nmax_step_m/max_step_deg bound nominal Cartesian spacing (IK allowance:\n1 mm / 0.5 deg). Unsupported requested collision checks reject the move.\n\nmax_steps/timeout_s bound this call, including planning/checkpoint waits.\nEpisode and code budgets still apply across calls. checkpoint_steps (1..8)\nbounds segments before Valen checks when enabled. Test result.reached;\na recoverable rejection/partial result may be handled by a bounded Python\nloop. Critical faults, expired budgets or visual reviews stop this code\nblock with current-state feedback. Already executed actions remain done.\n\nCompose freely with move_to/set_gripper/home. For sequential cooperation,\nwrite the sequence and branches in Python; no operation object is needed.",
+        "body": "self._guard()\nobs = self.observe()\ntargets = {}\nfor arm, value in ((\"left\", left), (\"right\", right)):\n            if value is not None:\n                target = value if isinstance(value, Pose) else Pose(value, getattr(obs, arm).quat)\ngrips = {\"left\": \"keep\", \"right\": \"keep\", **(grippers or {})}\nif set(grips) != {\"left\", \"right\"} or any(\n            v not in (\"keep\", \"open\", \"close\") for v in grips.values()\n        ):\nraw = self._readonly(\n            \"motion_plan\",\n            dict(\nif not raw[\"accepted\"]:\n            record(raw)\n            if not raw[\"recoverable\"]:\nplan_id = raw[\"id\"]\ntry:\n            while True:\n                raw = self._stateful(\"motion_execute\", {\"plan_id\": plan_id}, record)"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import math",
+      "from dataclasses import dataclass, replace",
+      "from typing import ClassVar"
+    ]
+  },
+  {
+    "path": "src/pyrualean/hosts/__init__.py",
+    "category": "code",
+    "moduleDoc": "Backend hosts: boot a real simulator stack and expose it as a ``Backend``.",
+    "symbols": [],
+    "imports": []
+  },
+  {
+    "path": "src/pyrualean/hosts/robodojo_coordination.py",
+    "category": "code",
+    "moduleDoc": "Bounded dual-arm trajectories over RoboDojo's single native action clock.\n\nNo threads, no hidden object state, no silent sequential fallback. Geometry\nchecks cover sampled arm/table clearance only; inter-arm collision and force\ncontrol are deliberately not advertised.",
+    "symbols": [
+      {
+        "name": "_positive",
+        "kind": "function",
+        "range": [
+          22,
+          27
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "if isinstance(value, bool) or (integer and type(value) is not int):\n        raise ValueError(f\"{name} must be {'an integer' if integer else 'a number'}\")\nif not math.isfinite(value) or not 0 < value <= upper:\n        raise ValueError(f\"{name} must be positive and <= {upper}\")\nreturn value"
+      },
+      {
+        "name": "_matrix",
+        "kind": "function",
+        "range": [
+          30,
+          35
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "p = Pose(**pose)\nout = np.eye(4)\nout[:3, :3] = kin.rot_from_quat(p.quat)\nout[:3, 3] = p.xyz\nreturn out"
+      },
+      {
+        "name": "_errors",
+        "kind": "function",
+        "range": [
+          38,
+          42
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return (\n        float(np.linalg.norm(now[:3, 3] - target[:3, 3])),\n        kin.rotation_error(now[:3, :3], target[:3, :3]),"
+      },
+      {
+        "name": "_dispatch",
+        "kind": "function",
+        "range": [
+          426,
+          430
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "try:\n        return getattr(controller, method)(**kwargs)\n    except (ValueError, TypeError, KeyError) as exc:"
+      },
+      {
+        "name": "_read",
+        "kind": "function",
+        "range": [
+          433,
+          434
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return _dispatch(controller, method, **kwargs)"
+      },
+      {
+        "name": "handlers",
+        "kind": "function",
+        "range": [
+          440,
+          446
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "controller = Controller(primitives)\nnames = (\"capabilities\", \"observe\", \"plan\", \"execute\", \"stop\", \"discard\")\nreturn {\n        f\"motion_{name}\": partial(_dispatch if name == \"execute\" else _read, controller, name)\n        for name in names"
+      },
+      {
+        "name": "register",
+        "kind": "function",
+        "range": [
+          449,
+          459
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "for name, handler in handlers(toolkit._primitives).items():\n        toolkit.add_tool(\n            name,"
+      },
+      {
+        "name": "Controller",
+        "kind": "class",
+        "range": [
+          45,
+          423
+        ],
+        "owner": null,
+        "doc": "",
+        "body": ""
+      },
+      {
+        "name": "Controller.__init__",
+        "kind": "function",
+        "range": [
+          46,
+          49
+        ],
+        "owner": "Controller",
+        "doc": "",
+        "body": "self.primitives = primitives\nself.observations: dict[str, dict] = {}\nself.plans: dict[str, dict] = {}"
+      },
+      {
+        "name": "Controller.capabilities",
+        "kind": "function",
+        "range": [
+          51,
+          67
+        ],
+        "owner": "Controller",
+        "doc": "",
+        "body": "return dict(\n            modes=[\"synchronized\"],\n            frames=[\"world\"],"
+      },
+      {
+        "name": "Controller._snapshot",
+        "kind": "function",
+        "range": [
+          74,
+          89
+        ],
+        "owner": "Controller",
+        "doc": "",
+        "body": "state = tools._obs(self.primitives)[\"state\"]\nq = {a: tools._joints(state, a) for a in kin.ARMS}\nreturn dict(\n            revision=getattr(self.primitives, \"_motion_revision\", 0),\n            native_steps=self._native_steps(),"
+      },
+      {
+        "name": "Controller.observe",
+        "kind": "function",
+        "range": [
+          111,
+          117
+        ],
+        "owner": "Controller",
+        "doc": "",
+        "body": "snap = self._snapshot()\ntoken = uuid.uuid4().hex\nif len(self.observations) >= 16:\n            self.observations.pop(next(iter(self.observations)))\nself.observations[token] = snap\nreturn dict(id=token, **self._view(snap))"
+      },
+      {
+        "name": "Controller.plan",
+        "kind": "function",
+        "range": [
+          126,
+          267
+        ],
+        "owner": "Controller",
+        "doc": "",
+        "body": "started = time.monotonic()\n_positive(max_steps, \"max_steps\", 10000, integer=True)\n_positive(timeout_s, \"timeout_s\", 3600)\n_positive(checkpoint_steps, \"checkpoint_steps\", 8, integer=True)\nif type(keep_relative) is not bool or type(require_inter_arm_clearance) is not bool:\n            raise ValueError(\"constraint switches must be bool\")\nif set(targets) - set(kin.ARMS) or set(grippers) != set(kin.ARMS):\n            raise ValueError(\"targets/grippers must name left/right\")\nif any(v not in (\"keep\", \"open\", \"close\") for v in grippers.values()):\n            raise ValueError(\"invalid gripper command\")\nfor key, value, upper in (\n            (\"position_tolerance_m\", position_tolerance_m, 0.05),\n            (\"orientation_tolerance_deg\", orientation_tolerance_deg, 20),\nsnap = self.observations.get(observation_id)\ncurrent = self._snapshot()\ngoals = {a: _matrix(targets[a]) if a in targets else current[\"poses\"][a] for a in kin.ARMS}\nlimits = dict(\n            position=position_tolerance_m,\n            orientation=orientation_tolerance_deg,\nplan = dict(\n            id=uuid.uuid4().hex,\n            expected=snap,\nif require_inter_arm_clearance:\n            return reject(\"unsupported: inter-arm collision geometry\")\nif snap is None or not self._same(snap):\n            return reject(\"stale_observation\")\ngoals = {a: _matrix(targets[a]) if a in targets else snap[\"poses\"][a] for a in kin.ARMS}\nrel = "
+      },
+      {
+        "name": "Controller._report",
+        "kind": "function",
+        "range": [
+          275,
+          302
+        ],
+        "owner": "Controller",
+        "doc": "",
+        "body": "snap = self._snapshot()\narms = {}\nfor a in kin.ARMS:\n            dist, angle = _errors(snap[\"poses\"][a], plan[\"goals\"][a])\n            arms[a] = dict(\nplan[\"last_status\"], plan[\"last_reason\"] = status, reason\nreturn dict(\n            plan_id=plan[\"id\"],\n            status=status,"
+      },
+      {
+        "name": "Controller.execute",
+        "kind": "function",
+        "range": [
+          304,
+          392
+        ],
+        "owner": "Controller",
+        "doc": "",
+        "body": "plan = self.plans.get(plan_id)\nif plan is None:\n            return dict(\n                status=\"rejected\",\nif plan[\"stopped\"] or not self._same(plan[\"expected\"]):\n            plan[\"stopped\"] = True\n            return self._report(\nreason = self._reason(plan)\nif reason:\n            plan[\"stopped\"] = True\n            return self._report(plan, \"partial\" if plan[\"steps\"] else \"rejected\", reason)\ntry:\n            for _ in range(plan[\"checkpoint_steps\"]):\n                reason = self._reason(plan)"
+      },
+      {
+        "name": "Controller._recoverable",
+        "kind": "function",
+        "range": [
+          395,
+          406
+        ],
+        "owner": "Controller",
+        "doc": "",
+        "body": "if reason is None:\n            return True\nreturn reason in (\"stale_observation\", \"consumed_or_stale_plan\") or any(\n            reason.endswith(\": \" + name)\n            for name in ("
+      },
+      {
+        "name": "Controller.discard",
+        "kind": "function",
+        "range": [
+          408,
+          410
+        ],
+        "owner": "Controller",
+        "doc": "",
+        "body": "self.plans.pop(plan_id, None)\nreturn {}"
+      },
+      {
+        "name": "Controller.stop",
+        "kind": "function",
+        "range": [
+          412,
+          423
+        ],
+        "owner": "Controller",
+        "doc": "",
+        "body": "plan = self.plans.get(plan_id)\nif plan is None:\n            return dict(\n                status=\"rejected\", stop_reason=\"unknown_or_superseded_plan\", executed_steps=0\nplan[\"stopped\"] = True\nreturn self._report(\n            plan,\n            plan.get(\"last_status\", \"partial\" if plan[\"steps\"] else \"rejected\"),"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import math",
+      "import time",
+      "import uuid",
+      "from functools import partial",
+      "import numpy as np",
+      "from ..coordination import Pose",
+      "from . import robodojo_kinematics as kin",
+      "from . import robodojo_tools as tools"
+    ]
+  },
+  {
+    "path": "src/pyrualean/hosts/robodojo_kinematics.py",
+    "category": "code",
+    "moduleDoc": "Kinematics of RoboDojo's two ARX-X5 arms, computed in the host: full pose, no RPC.\n\nRPent's RoboDojo environment exposes one IK call, ``solve_ik_position``: a target position, a\nfew candidate orientations (the current one, the starting one, 25 degree tilts of the current\none about world x and y), the one needing the least joint motion.  Nothing can ask for an\norientation, and the tilts accumulate: an arm sent away and back to its starting position by\n``move_to`` came back rotated by 47 to 52 degrees.  The simulator's own full-pose action path\n(``<arm>_ee_pose``) swings the arm when its IK diverges.\n\nSo the host solves IK itself.  The chain is the benchmark's URDF (``Assets/Robots/x5/X5A.urdf``,\njoints ``joint1`` .. ``joint6``, ending at ``link6``), and each arm's base pose was fitted to\n113 (joint angles, reported end-effector pose) pairs recorded in four episodes: the\nreported ``<arm>_ee_pose`` is exactly the pose of ``link6`` in the world (0.00 mm and 0.000\ndegrees of residual), with the bases on the table edge at x = -0.30 / +0.30, y = -0.45,\nz = 0.765, turned 90 degrees about z.  The solution is commanded as joint angles, the action\npath RPent's ``move_to`` uses for its own IK solutions.\n\nFrames.  ``link6``'s x axis is the gripper's pointing direction (wrist to fingertips) and the\ntwo fingers close along its y axis.  At the start both grippers point away from the robot\n(+y in the world) with the fingers side by side (closing along world x).  :data:`TCP_OFFSET`\nplaces the grasp point, between the fingertips, on the pointing axis.\n\nOrientation for people: ``pitch`` is how far the pointing direction is below the horizontal\n(0 level, 90 straight down), ``yaw`` its heading on the table (0 away from the robot, +90 to\nthe robot's left, i.e. world -x), ``roll`` the turn of the fingers about the pointing direction\n(0 as at the start).  The rotation is ``Rz(90 + yaw) @ Ry(pitch) @ Rx(roll)``; pointing straight\ndown, ``yaw`` and ``roll`` both turn about the vertical, and :func:`angles` reports roll 0.",
+    "symbols": [
+      {
+        "name": "_rot_x",
+        "kind": "function",
+        "range": [
+          93,
+          95
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "c, s = math.cos(a), math.sin(a)\nreturn np.array([[1.0, 0.0, 0.0], [0.0, c, -s], [0.0, s, c]])"
+      },
+      {
+        "name": "_rot_y",
+        "kind": "function",
+        "range": [
+          98,
+          100
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "c, s = math.cos(a), math.sin(a)\nreturn np.array([[c, 0.0, s], [0.0, 1.0, 0.0], [-s, 0.0, c]])"
+      },
+      {
+        "name": "_rot_z",
+        "kind": "function",
+        "range": [
+          103,
+          105
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "c, s = math.cos(a), math.sin(a)\nreturn np.array([[c, -s, 0.0], [s, c, 0.0], [0.0, 0.0, 1.0]])"
+      },
+      {
+        "name": "_axis_angle",
+        "kind": "function",
+        "range": [
+          108,
+          117
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "x, y, z = axis\nc, s, t = math.cos(angle), math.sin(angle), 1.0 - math.cos(angle)\nreturn np.array(\n        [\n            [t * x * x + c, t * x * y - s * z, t * x * z + s * y],"
+      },
+      {
+        "name": "_homogeneous",
+        "kind": "function",
+        "range": [
+          120,
+          124
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "out = np.eye(4)\nout[:3, :3] = rot\nout[:3, 3] = pos\nreturn out"
+      },
+      {
+        "name": "_check_arm",
+        "kind": "function",
+        "range": [
+          134,
+          136
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "if arm not in ARMS:\n        raise ValueError(f\"arm must be 'left' or 'right', got {arm!r}\")"
+      },
+      {
+        "name": "frames",
+        "kind": "function",
+        "range": [
+          139,
+          150
+        ],
+        "owner": null,
+        "doc": "World poses of each joint frame (after its rotation) and of link6, in chain order.",
+        "body": "_check_arm(arm)\nif len(q) != 6:\n        raise ValueError(\"an X5 arm has 6 joints\")\nt = _BASE_T[arm]\nout = []\nfor origin, axis, angle in zip(_ORIGINS, _AXES, q, strict=True):\n        t = t @ origin @ _homogeneous(_axis_angle(axis, float(angle)), (0.0, 0.0, 0.0))\n        out.append(t)\nreturn out"
+      },
+      {
+        "name": "fk",
+        "kind": "function",
+        "range": [
+          153,
+          156
+        ],
+        "owner": null,
+        "doc": "World pose (4x4) of link6, the frame RoboDojo reports as ``<arm>_ee_pose``.",
+        "body": "return frames(arm, q)[-1]"
+      },
+      {
+        "name": "tcp",
+        "kind": "function",
+        "range": [
+          159,
+          162
+        ],
+        "owner": null,
+        "doc": "The grasp point of a link6 pose.",
+        "body": "return pose[:3, 3] + pose[:3, 0] * offset"
+      },
+      {
+        "name": "quat_wxyz",
+        "kind": "function",
+        "range": [
+          165,
+          184
+        ],
+        "owner": null,
+        "doc": "A rotation matrix as a unit quaternion [w, x, y, z] (w >= 0).",
+        "body": "m = rot\ntr = m[0, 0] + m[1, 1] + m[2, 2]\nif tr > 0:\n        s = math.sqrt(tr + 1.0) * 2\n        q = (0.25 * s, (m[2, 1] - m[1, 2]) / s, (m[0, 2] - m[2, 0]) / s, (m[1, 0] - m[0, 1]) / s)\nn = math.sqrt(sum(v * v for v in q))\nq = tuple(v / n for v in q)\nreturn q if q[0] >= 0 else tuple(-v for v in q)  # type: ignore[return-value]"
+      },
+      {
+        "name": "rot_from_quat",
+        "kind": "function",
+        "range": [
+          187,
+          199
+        ],
+        "owner": null,
+        "doc": "[w, x, y, z] to a rotation matrix.",
+        "body": "w, x, y, z = (float(v) for v in q)\nn = math.sqrt(w * w + x * x + y * y + z * z)\nw, x, y, z = w / n, x / n, y / n, z / n\nreturn np.array(\n        [\n            [1 - 2 * (y * y + z * z), 2 * (x * y - z * w), 2 * (x * z + y * w)],"
+      },
+      {
+        "name": "orientation",
+        "kind": "function",
+        "range": [
+          202,
+          207
+        ],
+        "owner": null,
+        "doc": "The gripper rotation for (pitch, yaw, roll) in degrees (module docstring).",
+        "body": "return (\n        _rot_z(math.radians(90.0 + yaw)) @ _rot_y(math.radians(pitch)) @ _rot_x(math.radians(roll))\n    )"
+      },
+      {
+        "name": "angles",
+        "kind": "function",
+        "range": [
+          213,
+          230
+        ],
+        "owner": null,
+        "doc": "(pitch, yaw, roll) in degrees of a gripper rotation; roll 0 when pointing straight down.",
+        "body": "point = rot[:, 0]\npitch = math.degrees(math.asin(max(-1.0, min(1.0, -point[2]))))\nhorizontal = math.hypot(point[0], point[1])\nif horizontal < _VERTICAL:\n        jaw = rot[:, 1]\n        # with roll 0 the jaw axis is Rz(90 + yaw) applied to +y, i.e. (-cos yaw, -sin yaw, 0)\nyaw = math.degrees(math.atan2(point[1], point[0])) - 90.0\nbase = orientation(pitch, yaw, 0.0)\nrest = base.T @ rot  # a rotation about x by roll\nroll = math.degrees(math.atan2(rest[2, 1], rest[1, 1]))\nreturn pitch, _wrap(yaw), _wrap(roll)"
+      },
+      {
+        "name": "_wrap",
+        "kind": "function",
+        "range": [
+          233,
+          234
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return (deg + 180.0) % 360.0 - 180.0"
+      },
+      {
+        "name": "rotation_error",
+        "kind": "function",
+        "range": [
+          237,
+          241
+        ],
+        "owner": null,
+        "doc": "Angle in degrees between two rotations.",
+        "body": "c = (np.trace(a.T @ b) - 1.0) / 2.0\nreturn math.degrees(math.acos(max(-1.0, min(1.0, c))))"
+      },
+      {
+        "name": "_rotvec",
+        "kind": "function",
+        "range": [
+          244,
+          255
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "c = (np.trace(rot) - 1.0) / 2.0\nangle = math.acos(max(-1.0, min(1.0, c)))\nif angle < 1e-9:\n        return np.zeros(3)\nw = np.array([rot[2, 1] - rot[1, 2], rot[0, 2] - rot[2, 0], rot[1, 0] - rot[0, 1]])\ns = math.sin(angle)\nif s < 1e-6:  # angle near pi: take the axis from the symmetric part\n        axis = np.sqrt(np.maximum(np.diag(rot) + 1.0, 0.0) / 2.0)\n        axis = axis * np.sign(w + (w == 0))\nreturn w / (2 * s) * angle"
+      },
+      {
+        "name": "jacobian",
+        "kind": "function",
+        "range": [
+          258,
+          269
+        ],
+        "owner": null,
+        "doc": "(6x6 world-frame geometric Jacobian of the point ``offset`` along link6's x, its pose).",
+        "body": "fr = frames(arm, q)\nend = fr[-1]\npoint = end[:3, 3] + end[:3, 0] * offset\njac = np.zeros((6, 6))\nfor i, (t, axis) in enumerate(zip(fr, _AXES, strict=True)):\n        a = t[:3, :3] @ axis\n        jac[:3, i] = np.cross(a, point - t[:3, 3])\nreturn jac, end"
+      },
+      {
+        "name": "clearance_violations",
+        "kind": "function",
+        "range": [
+          281,
+          298
+        ],
+        "owner": null,
+        "doc": "Parts of the arm in the table: below its top, over its extent.",
+        "body": "fr = frames(arm, q)\nbad = []\nfor i, t in enumerate(fr[1:], start=2):  # joint1's frame is at the base\n        if t[2, 3] < TABLE_Z + 0.015 and over(t[:3, 3]):\n            bad.append(f\"joint{i}\")\ntip = fr[-1][:3, 3] + fr[-1][:3, 0] * max(offset, TIP_OFFSET)\nif tip[2] < TABLE_Z + 0.002 and over(tip):\n        bad.append(\"fingertips\")\nreturn bad"
+      },
+      {
+        "name": "solve",
+        "kind": "function",
+        "range": [
+          301,
+          346
+        ],
+        "owner": null,
+        "doc": "Damped least squares from ``seed`` for a 4x4 target of the point ``offset`` along link6's x.\n\n``rot_weight`` is metres per radian in the error: it only sets how the solver trades the two\nwhile it converges, and what it settles on when the pose is out of reach.",
+        "body": "q = np.array(seed, dtype=float)\nlo = np.array([lim[0] for lim in JOINT_LIMITS])\nhi = np.array([lim[1] for lim in JOINT_LIMITS])\ndamping = 0.02\npos_err = rot_err = math.inf\nfor _ in range(iterations):\n        jac, end = jacobian(arm, q, offset)\n        point = end[:3, 3] + end[:3, 0] * offset\nend = fk(arm, q)\npoint = end[:3, 3] + end[:3, 0] * offset\npos_err = float(np.linalg.norm(target[:3, 3] - point))\nrot_err = rotation_error(target[:3, :3], end[:3, :3])\nok = pos_err <= pos_tol and rot_err <= rot_tol_deg\nreturn IKResult(\n        tuple(float(v) for v in q), pos_err, rot_err, ok, bool(clearance_violations(arm, q, offset))\n    )"
+      },
+      {
+        "name": "best_solution",
+        "kind": "function",
+        "range": [
+          349,
+          382
+        ],
+        "owner": null,
+        "doc": "The solution nearest ``current`` that reaches the target and clears the table.\n\nSeeds: the current joints, the same with the wrist turned half a turn either way, the extra\nseeds given (the starting joints), and a few fixed perturbations of the current joints.  When\nno seed reaches the target, the closest miss is returned (``ok`` False).",
+        "body": "cur = np.array(current, dtype=float)\nseeds = [cur]\nfor d in (math.pi, -math.pi):\n        s = cur.copy()\n        s[5] = s[5] + d\nseeds.extend(np.array(s, dtype=float) for s in extra_seeds)\nrng = np.random.default_rng(0)\nseeds.extend(cur + rng.normal(0.0, 0.6, size=6) for _ in range(6))\ngood, misses = [], []\nfor s in seeds:\n        res = solve(arm, target, s, offset=offset, **kwargs)\n        (good if res.ok and not res.collides else misses).append(res)\nif good:\n        weights = np.array([2.0, 2.0, 1.5, 1.0, 1.0, 0.5])\n        return min(good, key=lambda r: float(np.sum(weights * np.abs(np.array(r.q) - cur))))\nreturn min(misses, key=lambda r: (r.collides, r.pos_err_m + 0.1 * math.radians(r.rot_err_deg)))"
+      },
+      {
+        "name": "slerp",
+        "kind": "function",
+        "range": [
+          385,
+          392
+        ],
+        "owner": null,
+        "doc": "Rotation a fraction ``t`` of the way from ``a`` to ``b``.",
+        "body": "rv = _rotvec(a.T @ b)\nangle = float(np.linalg.norm(rv))\nif angle < 1e-9:\n        return a.copy()\nreturn a @ _axis_angle(rv / angle, angle * t)"
+      },
+      {
+        "name": "line_path",
+        "kind": "function",
+        "range": [
+          395,
+          431
+        ],
+        "owner": null,
+        "doc": "Joint waypoints that move the grasp point along a straight line to ``target``.\n\nEvery waypoint is solved from the previous one, so the arm cannot jump between IK branches\non the way; returns the waypoints and, when the line cannot be followed, why not.",
+        "body": "start = fk(arm, start_q)\np0 = start[:3, 3] + start[:3, 0] * offset\ndist = float(np.linalg.norm(target[:3, 3] - p0))\nturn = rotation_error(start[:3, :3], target[:3, :3])\nn = max(1, math.ceil(dist / step_m), math.ceil(turn / step_deg))\nq = tuple(float(v) for v in start_q)\nout = []\nfor k in range(1, n + 1):\n        t = k / n\n        way = np.eye(4)\nreturn out, None"
+      },
+      {
+        "name": "IKResult",
+        "kind": "class",
+        "range": [
+          273,
+          278
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "q: tuple[float, ...]\npos_err_m: float\nrot_err_deg: float\nok: bool\ncollides: bool"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import math",
+      "from collections.abc import Sequence",
+      "from dataclasses import dataclass",
+      "import numpy as np",
+      "from ..robodojo import TCP_OFFSET as _TCP_OFFSET"
+    ]
+  },
+  {
+    "path": "src/pyrualean/hosts/robodojo_native.py",
+    "category": "code",
+    "moduleDoc": "A RoboDojo toolkit that needs nothing but an environment.\n\nRPent's ``RoboDojoToolkit`` wraps RPent's simulator bridge and records RPent's artifacts.  Under\nRoboDojo's own evaluation client there is no RPent: there is an observation (three colour\nimages and the robot's state, with a depth image and the cameras' matrices when the client's\nconfiguration switches them on) and an action that takes joint targets.\n:class:`NativeToolkit` is what the robot class needs on top of that and no more: the tools of\n:mod:`.robodojo_tools` (through the depth image where the observation has one, from colour\nalone where it has not), ``segment``, the recorded steps (``view_env_state``, the images and\nthe cameras' calibration of each step) and the envelope RPent's toolkit wraps a\nstate-changing tool's result in, which :func:`pyrualean._backend.unwrap` reads.\n\n``env`` is anything with ``get_obs() -> dict`` (``vision`` / ``state`` / ``instruction``),\n``step(action) -> (obs, reward, done, info)`` with ``info[\"status\"]`` holding ``step`` and\n``step_limit``, and ``get_status()``.  ``sam3_client`` segments an image by words or by a pixel\n(RPent's ``Sam3Client`` interface).",
+    "symbols": [
+      {
+        "name": "_png",
+        "kind": "function",
+        "range": [
+          64,
+          69
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "from PIL import Image\nbuffer = io.BytesIO()\nImage.fromarray(np.asarray(image)[..., :3].astype(np.uint8)).save(buffer, format=\"PNG\")\nreturn buffer.getvalue()"
+      },
+      {
+        "name": "_plain",
+        "kind": "function",
+        "range": [
+          72,
+          83
+        ],
+        "owner": null,
+        "doc": "A state entry as plain lists and numbers (it is written to JSON and read back).",
+        "body": "if isinstance(value, dict):\n        return {str(k): _plain(v) for k, v in value.items()}\nif isinstance(value, np.ndarray):\n        return value.tolist()\nif isinstance(value, (list, tuple)):\n        return [_plain(v) for v in value]\nif isinstance(value, np.generic):\n        return value.item()\nreturn value"
+      },
+      {
+        "name": "segment",
+        "kind": "function",
+        "range": [
+          143,
+          172
+        ],
+        "owner": null,
+        "doc": "Segment an object by words in the current image of one camera (RPent's tool, as is).",
+        "body": "obs = tools._obs(primitives)\ncam = (obs.get(\"vision\") or {}).get(camera)\nif cam is None:\n        return {\"error\": f\"camera {camera!r} not in observation\"}\ncolor = cam.get(\"color\")\nif color is None:\n        return {\"error\": \"camera color image missing\"}\nsam3 = getattr(primitives, \"sam3_client\", None)\nif sam3 is None:\n        return {\"error\": \"sam3_client not configured\"}\nres = sam3.segment(color, text_prompt=text_prompt, min_score=float(min_score))\nif not res.found:\n        return {\"camera\": camera, \"found\": False, \"text_prompt\": text_prompt}\nmask = np.asarray(res.mask, dtype=bool)\nrows, cols = np.nonzero(mask)\ncount = int(rows.size)\nreturn {\n        \"camera\": camera,\n        \"found\": True,"
+      },
+      {
+        "name": "Cancelled",
+        "kind": "class",
+        "range": [
+          44,
+          45
+        ],
+        "owner": null,
+        "doc": "The episode was stopped while a tool was running.",
+        "body": ""
+      },
+      {
+        "name": "_Primitives",
+        "kind": "class",
+        "range": [
+          48,
+          61
+        ],
+        "owner": null,
+        "doc": "What the tools of :mod:`.robodojo_tools` are bound to.",
+        "body": ""
+      },
+      {
+        "name": "_Primitives.__init__",
+        "kind": "function",
+        "range": [
+          51,
+          57
+        ],
+        "owner": "_Primitives",
+        "doc": "",
+        "body": "self.env = env\nself.sam3_client = sam3_client\nself.colour_only = colour_only\nself._last_obs: dict[str, Any] | None = None\nself.cancelled = threading.Event()"
+      },
+      {
+        "name": "Steps",
+        "kind": "class",
+        "range": [
+          86,
+          140
+        ],
+        "owner": null,
+        "doc": "The recorded steps of an episode: the state in memory, the images on disk.",
+        "body": ""
+      },
+      {
+        "name": "Steps.__init__",
+        "kind": "function",
+        "range": [
+          89,
+          92
+        ],
+        "owner": "Steps",
+        "doc": "",
+        "body": "self.root = Path(out_dir) / \"steps\"\nself.root.mkdir(parents=True, exist_ok=True)\nself.records: list[dict[str, Any]] = []"
+      },
+      {
+        "name": "Steps.record",
+        "kind": "function",
+        "range": [
+          94,
+          126
+        ],
+        "owner": "Steps",
+        "doc": "",
+        "body": "step = len(self.records)\nfolder = self.root / f\"{step:04d}\"\nfolder.mkdir(exist_ok=True)\nfor name, cam in (obs.get(\"vision\") or {}).items():\n            color = (cam or {}).get(\"color\")\n            if color is not None:\ntry:\n            spent = int(status.get(\"step\", 0)) >= int(status.get(\"step_limit\", 1 << 30))\n        except (TypeError, ValueError):\ncameras = {}\nfor name, cam in (obs.get(\"vision\") or {}).items():\n            cam = cam or {}\n            pose = tools.extrinsic_of(cam)\nself.records.append(\n            {\n                \"state\": _plain(obs.get(\"state\") or {}),\nreturn step"
+      },
+      {
+        "name": "Steps.index",
+        "kind": "function",
+        "range": [
+          128,
+          134
+        ],
+        "owner": "Steps",
+        "doc": "",
+        "body": "if not self.records:\n            raise IndexError(\"no step recorded\")\nindex = len(self.records) + step if step < 0 else step\nif not 0 <= index < len(self.records):\n            raise IndexError(f\"step {step} is not recorded (0 .. {len(self.records) - 1})\")\nreturn index"
+      },
+      {
+        "name": "Steps.artifact_path",
+        "kind": "function",
+        "range": [
+          136,
+          137
+        ],
+        "owner": "Steps",
+        "doc": "",
+        "body": "return self.root / f\"{self.index(step):04d}\" / name"
+      },
+      {
+        "name": "Steps.load_bytes",
+        "kind": "function",
+        "range": [
+          139,
+          140
+        ],
+        "owner": "Steps",
+        "doc": "",
+        "body": "return self.artifact_path(name, step).read_bytes()"
+      },
+      {
+        "name": "NativeToolkit",
+        "kind": "class",
+        "range": [
+          175,
+          278
+        ],
+        "owner": null,
+        "doc": "The robot's tools over a bare environment, with the steps they record.",
+        "body": ""
+      },
+      {
+        "name": "NativeToolkit.__init__",
+        "kind": "function",
+        "range": [
+          178,
+          208
+        ],
+        "owner": "NativeToolkit",
+        "doc": "",
+        "body": "obs = env.get_obs()\nif colour_only is None:\n            # what the observation offers decides: depth where the client sends it\n            head = (obs.get(\"vision\") or {}).get(\"cam_head\") or {}\nself._primitives = _Primitives(env, sam3_client, colour_only)\nself.state = Steps(out_dir)\nself._verdict = verdict\nself._lock = threading.Lock()\nself._primitives._last_obs = obs\nstart = {arm: tools._joints(obs.get(\"state\") or {}, arm) for arm in tools.ARMS}\nself._tools: dict[str, Callable[..., dict[str, Any]]] = {\n            \"move_pose\": partial(tools.move_pose, self._primitives, start),\n            \"grip\": partial(tools.grip, self._primitives),\nfrom .robodojo_coordination import handlers\nself._tools.update(handlers(self._primitives))\nself.state.record(obs, self._status())"
+      },
+      {
+        "name": "NativeToolkit._envelope",
+        "kind": "function",
+        "range": [
+          217,
+          231
+        ],
+        "owner": "NativeToolkit",
+        "doc": "",
+        "body": "index = self.state.index(step)\nrecord = self.state.records[index]\nreturn {\n            \"step\": index,\n            \"task_language\": record[\"instruction\"],"
+      },
+      {
+        "name": "NativeToolkit.execute_tool",
+        "kind": "function",
+        "range": [
+          233,
+          256
+        ],
+        "owner": "NativeToolkit",
+        "doc": "Run one tool; a state-changing one answers with the step it recorded.",
+        "body": "kwargs = dict(input_dict or {})\nif name == \"view_env_state\":\n            try:\n                return self._envelope(int(kwargs.get(\"step\", -1)), name, {})\nhandler = self._tools.get(name)\nif handler is None:\n            return {\"error\": f\"this RoboDojo host has no tool {name!r}\"}\nwith self._lock:\n            try:\n                payload = handler(**kwargs)"
+      },
+      {
+        "name": "NativeToolkit.conclude",
+        "kind": "function",
+        "range": [
+          258,
+          263
+        ],
+        "owner": "NativeToolkit",
+        "doc": "The policy has finished: let the environment judge the scene as it stands.",
+        "body": "conclude = getattr(self._primitives.env, \"conclude\", None)\nif callable(conclude):\n            conclude()"
+      },
+      {
+        "name": "NativeToolkit.solved",
+        "kind": "function",
+        "range": [
+          265,
+          266
+        ],
+        "owner": "NativeToolkit",
+        "doc": "",
+        "body": "return bool(self._verdict()) if self._verdict is not None else False"
+      },
+      {
+        "name": "NativeToolkit.episode_over",
+        "kind": "function",
+        "range": [
+          268,
+          272
+        ],
+        "owner": "NativeToolkit",
+        "doc": "Whether the environment's owner has ended the episode (a client that judges it).",
+        "body": "over = getattr(self._primitives.env, \"episode_over\", None)\nreturn bool(over()) if callable(over) else False"
+      },
+      {
+        "name": "NativeToolkit.cancel_active_and_wait",
+        "kind": "function",
+        "range": [
+          274,
+          275
+        ],
+        "owner": "NativeToolkit",
+        "doc": "",
+        "body": "self._primitives.cancelled.set()"
+      },
+      {
+        "name": "NativeToolkit.close",
+        "kind": "function",
+        "range": [
+          277,
+          278
+        ],
+        "owner": "NativeToolkit",
+        "doc": "",
+        "body": "self._primitives.cancelled.set()"
+      },
+      {
+        "name": "NativeBackend",
+        "kind": "class",
+        "range": [
+          281,
+          318
+        ],
+        "owner": null,
+        "doc": "A :class:`NativeToolkit` as a :class:`pyrualean.Backend`.",
+        "body": ""
+      },
+      {
+        "name": "NativeBackend.__init__",
+        "kind": "function",
+        "range": [
+          284,
+          285
+        ],
+        "owner": "NativeBackend",
+        "doc": "",
+        "body": "self._toolkit = toolkit"
+      },
+      {
+        "name": "NativeBackend.toolkit",
+        "kind": "function",
+        "range": [
+          288,
+          289
+        ],
+        "owner": "NativeBackend",
+        "doc": "",
+        "body": "return self._toolkit"
+      },
+      {
+        "name": "NativeBackend.colour_only",
+        "kind": "function",
+        "range": [
+          292,
+          293
+        ],
+        "owner": "NativeBackend",
+        "doc": "",
+        "body": "return bool(self._toolkit._primitives.colour_only)"
+      },
+      {
+        "name": "NativeBackend.execute_tool",
+        "kind": "function",
+        "range": [
+          295,
+          296
+        ],
+        "owner": "NativeBackend",
+        "doc": "",
+        "body": "return self._toolkit.execute_tool(name, input_dict)"
+      },
+      {
+        "name": "NativeBackend.conclude",
+        "kind": "function",
+        "range": [
+          298,
+          299
+        ],
+        "owner": "NativeBackend",
+        "doc": "",
+        "body": "self._toolkit.conclude()"
+      },
+      {
+        "name": "NativeBackend.solved",
+        "kind": "function",
+        "range": [
+          301,
+          302
+        ],
+        "owner": "NativeBackend",
+        "doc": "",
+        "body": "return self._toolkit.solved()"
+      },
+      {
+        "name": "NativeBackend.episode_over",
+        "kind": "function",
+        "range": [
+          304,
+          305
+        ],
+        "owner": "NativeBackend",
+        "doc": "",
+        "body": "return self._toolkit.episode_over()"
+      },
+      {
+        "name": "NativeBackend.artifact",
+        "kind": "function",
+        "range": [
+          307,
+          308
+        ],
+        "owner": "NativeBackend",
+        "doc": "",
+        "body": "return self._toolkit.state.load_bytes(name, step=step)"
+      },
+      {
+        "name": "NativeBackend.env_steps",
+        "kind": "function",
+        "range": [
+          310,
+          315
+        ],
+        "owner": "NativeBackend",
+        "doc": "",
+        "body": "step = self._toolkit._status().get(\"step\")\ntry:\n            return int(step)\n        except (TypeError, ValueError):"
+      },
+      {
+        "name": "NativeBackend.cancel",
+        "kind": "function",
+        "range": [
+          317,
+          318
+        ],
+        "owner": "NativeBackend",
+        "doc": "",
+        "body": "self._toolkit.cancel_active_and_wait()"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import io",
+      "import threading",
+      "from collections.abc import Callable",
+      "from functools import partial",
+      "from pathlib import Path",
+      "from typing import Any",
+      "import numpy as np",
+      "from . import robodojo_tools as tools",
+      "from PIL import Image",
+      "from .robodojo_coordination import handlers"
+    ]
+  },
+  {
+    "path": "src/pyrualean/hosts/robodojo_sight.py",
+    "category": "code",
+    "moduleDoc": "An object's 3D extent from its masks in colour cameras alone: no depth image.\n\nRoboDojo's evaluation client, as configured, hands a policy three colour images and the\nrobot's state: depth and camera matrices are switched off in its config.  The cameras' poses\nare nevertheless known.  The head\ncamera never moves, and each wrist camera is bolted to its arm's end-effector link, whose pose\nis part of the state (:func:`head_view`, :func:`wrist_view`; the numbers were read off the\nsimulator once).  So every pixel is a known ray, and an object that stands on a known plane\n(the table) can be measured from where the rays of its mask go:\n\n*   A mask in ONE camera says where the object's shadow falls on the table as seen from that\n    camera: the object fills some of the space between the camera and that shadow.  How tall it\n    is cannot be read from it: a low deep thing and a tall shallow one cast the same shadow.\n*   For a height ``h`` there are two readings of one mask.  An upright ``prism``: the table cells\n    that are in the shadow and whose column up to ``h`` stays in the mask; for a box or a can\n    of that height these cells are its footprint, exactly.  Something that ``hangs`` from that\n    height: every cell whose point at ``h`` is in the mask, with as much below it as the mask\n    allows, standing on the table or not; that is a bowl from its rim down, or anything wider\n    above than below.\n*   A SECOND camera that sees the object from elsewhere settles the height: the solid a reading\n    describes is projected into it and compared with the object's mask there.  The reading and\n    height that match best are taken (:func:`measure`); the hanging one only where it matches\n    clearly better, since whatever stands on its own footprint is a prism.  With only one mask\n    the height is the tallest prism that still accounts for the whole mask, which is right for\n    boxes and cans and a guess for a bowl.\n\n:func:`measure` answers with the world point each pixel of the mask shows on that solid: what a\ndepth image would have given for an object of that shape.\n\nA wrist camera always sees its own two fingers, and sometimes the other arm.  Those pixels\n(:func:`robot_pixels`) are ``unknown`` in that view: what a reading puts behind them counts\nneither for nor against it, and a mask that lies on them is the robot's, not the object's.",
+    "symbols": [
+      {
+        "name": "head_view",
+        "kind": "function",
+        "range": [
+          202,
+          212
+        ],
+        "owner": null,
+        "doc": "RoboDojo's fixed head camera.",
+        "body": "a = math.radians(HEAD_PITCH_DOWN_DEG)\npose = np.eye(4)\npose[:3, 1] = [0.0, math.sin(a), math.cos(a)]\npose[:3, 2] = [0.0, -math.cos(a), math.sin(a)]\npose[:3, 3] = HEAD_POSITION\nk = [[HEAD_FOCAL_PX, 0, IMAGE_SHAPE[1] / 2], [0, HEAD_FOCAL_PX, IMAGE_SHAPE[0] / 2], [0, 0, 1]]\nreturn View(k, pose)"
+      },
+      {
+        "name": "_quat_matrix",
+        "kind": "function",
+        "range": [
+          215,
+          225
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "w, x, y, z = (float(v) for v in quat)\nn = math.sqrt(w * w + x * x + y * y + z * z) or 1.0\nw, x, y, z = w / n, x / n, y / n, z / n\nreturn np.array(\n        [\n            [1 - 2 * (y * y + z * z), 2 * (x * y - w * z), 2 * (x * z + w * y)],"
+      },
+      {
+        "name": "wrist_view",
+        "kind": "function",
+        "range": [
+          228,
+          239
+        ],
+        "owner": null,
+        "doc": "An arm's wrist camera, from that arm's end-effector pose [x, y, z, qw, qx, qy, qz].",
+        "body": "pose = np.eye(4)\npose[:3, :3] = _quat_matrix(ee_pose[3:7])\npose[:3, 3] = [float(v) for v in ee_pose[:3]]\nk = [\n        [WRIST_FOCAL_PX, 0, IMAGE_SHAPE[1] / 2],\n        [0, WRIST_FOCAL_PX, IMAGE_SHAPE[0] / 2],\nreturn View(k, pose @ np.asarray(WRIST_MOUNT))"
+      },
+      {
+        "name": "_fill_convex",
+        "kind": "function",
+        "range": [
+          242,
+          276
+        ],
+        "owner": null,
+        "doc": "Mark the pixels inside the convex hull of image points (N x 2: row, col).",
+        "body": "pts = np.unique(np.round(rc, 3), axis=0)\nif len(pts) < 3:\n        return\npts = pts[np.lexsort((pts[:, 0], pts[:, 1]))]  # by col, then row\nlower: list[np.ndarray] = []\nfor q in pts:\n        while len(lower) >= 2 and cross(lower[-2], lower[-1], q) <= 0:\n            lower.pop()\nupper: list[np.ndarray] = []\nfor q in pts[::-1]:\n        while len(upper) >= 2 and cross(upper[-2], upper[-1], q) <= 0:\n            upper.pop()\nhull = np.array(lower[:-1] + upper[:-1])\nif len(hull) < 3:\n        return\nh, w = hit.shape\nr0, r1 = max(0, int(hull[:, 0].min())), min(h, int(hull[:, 0].max()) + 2)\nc0, c1 = max(0, int(hull[:, 1].min())), min(w, int(hull[:, 1].max()) + 2)\nif r0 >= r1 or c0 >= c1:\n        return\nrows, cols = np.mgrid[r0:r1, c0:c1]\ninside = np.ones(rows.shape, dtype=bool)\nfor i in range(len(hull)):\n        o, a_ = hull[i], hull[(i + 1) % len(hull)]\n        inside &= (a_[1] - o[1]) * (rows - o[0]) - (a_[0] - o[0]) * (cols - o[1]) >= -1e-9\nhit[r0:r1, c0:c1] |= inside"
+      },
+      {
+        "name": "robot_pixels",
+        "kind": "function",
+        "range": [
+          279,
+          371
+        ],
+        "owner": null,
+        "doc": "The pixels of a view that may show the robot itself, from the state alone.\n\nEach link, gripper rail and finger is a capsule (the ones ``locate`` drops depth points by),\ndrawn as discs along its axis.  Generous on purpose: these pixels are *unknown*, not empty.\n``own`` names the arm whose wrist camera this view is: that arm is behind the camera except\nfor its two fingers, which the camera sees from between them, as two boxes.  Without\n``between`` the space between a gripper's fingers is left out: what shows there is what the\ngripper is over, not the gripper.",
+        "body": "from . import robodojo_tools as tools  # the gripper's measured outline lives there\nrows, cols = np.mgrid[0 : view.shape[0], 0 : view.shape[1]]\nhit = np.zeros(view.shape, dtype=bool)\nfor arm in kin.ARMS:\n        try:\n            q = [float(v) for v in state[f\"{arm}_arm_joint_state\"]]\nreturn hit"
+      },
+      {
+        "name": "_march",
+        "kind": "function",
+        "range": [
+          487,
+          527
+        ],
+        "owner": null,
+        "doc": "The depth along each pixel's ray at which it first meets the solid (NaN: never).",
+        "body": "grid = solid.grid\nd = view.rays(rows, cols)\npos = view.pos\nlo_t = np.zeros(len(rows))\nhi_t = np.full(len(rows), 50.0)\ninside = solid.cells\nfloor = float(np.nanmin(solid.low[inside])) if inside.any() else 0.0\nroof = float(np.nanmax(solid.high[inside])) if inside.any() else 0.0\nbox_lo = np.array([grid.lo[0], grid.lo[1], grid.base_z + floor - 1e-4])\nbox_hi = np.array(\n        [\n            grid.lo[0] + grid.nx * grid.cell,\nwith np.errstate(divide=\"ignore\", invalid=\"ignore\"):\n        for axis in range(3):\n            t1 = (box_lo[axis] - pos[axis]) / d[:, axis]\nalive = hi_t >= lo_t\nfirst = np.full(len(rows), np.nan)\nif not alive.any() or not inside.any():\n        return first\nrun = np.linalg.norm(d, axis=1) * np.where(alive, hi_t - lo_t, 0.0)\nsteps = int(min(400, max(2, math.ceil(float(run.max()) / (grid.cell * 0.8)) + 1)))\nslack = grid.cell * 0.5\nfor f in np.linspace(0.0, 1.0, steps):\n        t = np.where(alive, lo_t + (hi_t - lo_t) * f, 0.0)\n        at = pos + d * t[:, None]\nreturn first"
+      },
+      {
+        "name": "_match",
+        "kind": "function",
+        "range": [
+          530,
+          556
+        ],
+        "owner": null,
+        "doc": "How well a solid agrees with the object's mask in another view (F1).\n\n``None``: this view cannot say (the solid lies outside its image, or on unknown pixels).",
+        "body": "cells = solid.cells\nif cells.sum() < MIN_CELLS:\n        return 0.0\ngrid = solid.grid\nlow, high = solid.low[cells], solid.high[cells]\ninside = total = 0\nfor f in (0.0, 0.5, 1.0):\n        pts = np.c_[grid.xy[cells], grid.base_z + low + (high - low) * f]\n        seen = sight.in_image(pts)\nif total < MIN_CELLS:\n        return None\nprecision = inside / total\nif len(pixels[0]) == 0:\n        return 0.0\nrecall = float(np.isfinite(_march(sight.view, pixels[0], pixels[1], solid)).mean())\nif precision + recall <= 0:\n        return 0.0\nreturn 2 * precision * recall / (precision + recall)"
+      },
+      {
+        "name": "_rc",
+        "kind": "function",
+        "range": [
+          559,
+          564
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "r, c, _ = sight.view.project(pts)\nh, w = sight.mask.shape\nri = np.clip(np.rint(np.where(seen, r, 0.0)).astype(np.int64), 0, h - 1)\nci = np.clip(np.rint(np.where(seen, c, 0.0)).astype(np.int64), 0, w - 1)\nreturn ri, ci"
+      },
+      {
+        "name": "_head_cover",
+        "kind": "function",
+        "range": [
+          655,
+          670
+        ],
+        "owner": null,
+        "doc": "The share of the head mask's shadow that a prism casts.",
+        "body": "cells = solid.cells\nif cells.sum() < MIN_CELLS:\n        return 0.0\ngrid = solid.grid\nheight = float(np.nanmax(solid.high[cells]))\nfoot = head.view.pos[:2]\nabove = head.view.pos[2] - grid.base_z\nscale = above / max(above - height, 1e-6)  # a point at `height` shadows this much further out\nhit = np.zeros(len(shadow), dtype=bool)\nreach = float(np.linalg.norm(shadow - foot, axis=1).max()) * (1.0 - 1.0 / scale)\nfor s in np.linspace(1.0 / scale, 1.0, max(2, int(reach / grid.cell) + 2)):\n        hit |= grid.holds(cells, foot + (shadow - foot) * s)\nreturn float(hit.mean())"
+      },
+      {
+        "name": "largest_part",
+        "kind": "function",
+        "range": [
+          673,
+          726
+        ],
+        "owner": null,
+        "doc": "A mask's largest connected part, with the parts that lie within ``gap_px`` of it.\n\nA text prompt that fits two objects comes back as one mask over both; a finger across an\nobject cuts its mask in two.  The first is two objects, the second one.",
+        "body": "mask = np.asarray(mask, dtype=bool)\nrows = np.nonzero(mask.any(axis=1))[0]\nruns: list[tuple[int, int, int]] = []  # row, first col, last col\nfor r in rows:\n        line = np.flatnonzero(np.diff(np.r_[0, mask[r].astype(np.int8), 0]))\n        runs.extend(\nif len(runs) <= 1:\n        return mask\nparent = list(range(len(runs)))\nby_row: dict[int, list[int]] = {}\nfor i, (r, _, _) in enumerate(runs):\n        by_row.setdefault(r, []).append(i)\nfor i, (r, a, b) in enumerate(runs):\n        for j in by_row.get(r - 1, ()):\n            if runs[j][1] <= b + 1 and runs[j][2] >= a - 1:\nroots = [find(i) for i in range(len(runs))]\nsize: dict[int, int] = {}\nbox: dict[int, list[int]] = {}\nfor root, (r, a, b) in zip(roots, runs, strict=True):\n        size[root] = size.get(root, 0) + b - a + 1\n        bb = box.setdefault(root, [r, r, a, b])\nif len(size) == 1:\n        return mask\nmain = max(size, key=size.get)  # type: ignore[arg-type]\nm = box[main]\nkeep = {\n        root\n        for root, bb in box.items()\nout = np.zeros_like(mask)\nfor root, (r, a, b) in zip(roots, runs, strict=True):\n        if root in keep:\n            out[r, a : b + 1] = True\nreturn out"
+      },
+      {
+        "name": "_smear_height",
+        "kind": "function",
+        "range": [
+          729,
+          751
+        ],
+        "owner": null,
+        "doc": "An upright object's height from one mask alone.\n\nSeen from the point under the camera, the mask's shadow on the plane ends to either side in a\nstretch that runs straight away from that point: the shadow of an upright edge (or of the\nside of a can), whose near end is on the plane and whose far end is that edge's top.",
+        "body": "rel = shadow - head.view.pos[:2]\nrho = np.hypot(rel[:, 0], rel[:, 1])\ntheta = np.arctan2(rel[:, 0], rel[:, 1])\nif len(rho) < 30 or rho.min() <= 1e-6:\n        return None\nwidth = 1.5 / head.view.fx  # what a pixel and a half spans, seen from the camera\nscales = []\nfor side in (np.percentile(theta, 1.5), np.percentile(theta, 98.5)):\n        near = np.abs(theta - side) <= width\n        if near.sum() >= 4:\nif not scales:\n        return None\nabove = float(head.view.pos[2] - base_z)\nreturn above * (1.0 - 1.0 / float(np.median(scales)))"
+      },
+      {
+        "name": "_seen",
+        "kind": "function",
+        "range": [
+          754,
+          758
+        ],
+        "owner": null,
+        "doc": "The share of the other views' mask pixels whose ray meets the solid.",
+        "body": "marks = [float(np.isfinite(_march(s.view, px[0], px[1], solid)).mean()) for s, px in sights]\nreturn float(np.mean(marks)) if marks else 0.0"
+      },
+      {
+        "name": "_taller",
+        "kind": "function",
+        "range": [
+          761,
+          786
+        ],
+        "owner": null,
+        "doc": "The level an object's top is at, given the level of its body.\n\nA prism is judged at one height, and for a bottle the best one is its shoulder: the neck\nabove it is thin.  The columns every view allows go higher there.  They also go higher\nalong the edge of a box that faces the cameras, where nothing shows whether the box ends:\nso the top is raised only as far as it lets the solid account for more of the other views'\nmasks (a neck does, that edge does not).",
+        "body": "last = int(rise.max()) - 1\nif last <= level:\n        return level\nmost = _seen(trusted, levels.prism(last, rise))\nif most - _seen(trusted, levels.prism(level, rise)) < TALLER_GAIN:\n        return level\nlow, high = level, last  # the lowest top that accounts for nearly all the tallest does\nwhile high - low > 1:\n        mid = (low + high) // 2\n        if most - _seen(trusted, levels.prism(mid, rise)) < TALLER_GAIN / 2:\nreturn high"
+      },
+      {
+        "name": "seeds",
+        "kind": "function",
+        "range": [
+          789,
+          815
+        ],
+        "owner": null,
+        "doc": "World points (N x 3) at which another camera may see the object of a head mask.\n\nThe ray through the middle of the mask, taken at a few heights above the plane: one of them\nlies on or in the object, whatever its height.  Projected into another view they are where\nto point a segmenter that takes a pixel (:func:`measure` then tells which mask it gave is\nthe object's).",
+        "body": "mask = largest_part(head.mask)\nrows, cols = np.nonzero(mask)\nif len(rows) < MIN_PIXELS:\n        return np.zeros((0, 3))\nmid_r, mid_c = (rows.min() + rows.max()) / 2, (cols.min() + cols.max()) / 2\ni = int(np.argmin((rows - mid_r) ** 2 + (cols - mid_c) ** 2))\nd = head.view.rays(rows[i : i + 1], cols[i : i + 1])[0]\nif d[2] >= -1e-6:\n        return np.zeros((0, 3))\nout = []\nfor h in heights:\n        t = (base_z + h - head.view.pos[2]) / d[2]\n        if t > 0:\nreturn np.array(out)"
+      },
+      {
+        "name": "measure",
+        "kind": "function",
+        "range": [
+          818,
+          1034
+        ],
+        "owner": null,
+        "doc": "Where an object's surface is, from its mask in one view and, if any, in others.\n\n``head`` is the view the object is read from (a camera that looks down on it).  ``others``\nsee the same object from elsewhere and settle its height; an entry may be a list of masks\nfrom one camera, of which the one that fits is taken.  ``known`` is the object's height,\nreading and match from an earlier measurement that two views agreed on (``(height_m, kind)``\nor ``(height_m, kind, match)``): it is used when no other view sees the object now, and\nwhen the views that do agree on it less well than those did; never when a prism that tall\nno longer fits the mask (the object has fallen over).  Returns ``points`` (N x 3), the world\npoint each pixel of the head mask shows on the solid the reading describes (what a depth\nimage would have given, for an object of that shape) with those pixels (``rows``,\n``cols``), its ``height_m`` above ``base_z``, the reading taken (``kind``: ``\"prism\"`` or\n``\"hang\"``), the number of ``views`` that agreed and their ``match``, whether the height is\nthe ``remembered`` one, and whether a known height was ``outgrown`` (it no longer fits the\nmask); or ``None`` when the mask gives no footprint.",
+        "body": "head = Sight(head.view, largest_part(head.mask))\nrows, cols = np.nonzero(head.mask)\nif len(rows) < MIN_PIXELS:\n        return None\nshadow, ok = head.view.on_plane(rows, cols, base_z)\nshadow = shadow[ok]\nabove = float(head.view.pos[2] - base_z)\nif len(shadow) < MIN_PIXELS or above <= 0.05:\n        return None\nfoot = head.view.pos[:2]\ntop_height = min(SWEEP_MAX_M, above - 0.05)\nshrunk = foot + (shadow - foot) * (1.0 - top_height / above)\nlo = np.minimum(shadow.min(axis=0), shrunk.min(axis=0)) - 0.006\nhi = np.maximum(shadow.max(axis=0), shrunk.max(axis=0)) + 0.006\nif np.any(hi - lo > 1.6):\n        return None\ngrid = _Grid(lo, hi, base_z)\nlevels = _Levels(head, grid, top_height)\nif levels.inside[0].sum() < MIN_CELLS:\n        return None\nfull_shadow = shadow\nif len(shadow) > 2500:\n        shadow = shadow[:: len(shadow) // 2500 + 1]\ncone = levels.cone()\nseconds: list[list[tuple[Sight, tuple[np.ndarray, np.ndarray]]]] = []\nfor entry in others:\n        candidates = []\n        for sight in entry if isinstance(entry, (list, tuple)) else [entry]:\nkinds = (\"prism\", \"hang\")\ntried = list(range(0, levels.count, SWEEP_EVERY))\nsolids: dict[tuple[str, int], _Solid] = {}\ntrusted = []\ncoarse = tried[::2] if len(tried) > 12 else tried\nfor candidates in seconds:\n        ranked = []\n        for sight, px in candidates:\nbest: dict[str, tuple[float, int]] = {}\nif trusted:\n        for kind in kinds:\n   "
+      },
+      {
+        "name": "View",
+        "kind": "class",
+        "range": [
+          148,
+          199
+        ],
+        "owner": null,
+        "doc": "A pinhole camera at a known pose (Isaac's convention: it looks down its -z, +y is up).",
+        "body": ""
+      },
+      {
+        "name": "View.__init__",
+        "kind": "function",
+        "range": [
+          151,
+          162
+        ],
+        "owner": "View",
+        "doc": "",
+        "body": "k = np.asarray(intrinsic, dtype=np.float64)\nself.pose = np.asarray(extrinsic, dtype=np.float64)\nself.fx, self.fy, self.cx, self.cy = k[0, 0], k[1, 1], k[0, 2], k[1, 2]\nself.shape = (int(shape[0]), int(shape[1]))\nself.pos = self.pose[:3, 3]\nself.rot = self.pose[:3, :3]"
+      },
+      {
+        "name": "View.project",
+        "kind": "function",
+        "range": [
+          164,
+          174
+        ],
+        "owner": "View",
+        "doc": "(row, col, depth along the optical axis) of world points; depth <= 0 is behind.",
+        "body": "local = (np.asarray(xyz, dtype=np.float64) - self.pos) @ self.rot\ndepth = -local[..., 2]\nsafe = np.where(np.abs(depth) > 1e-9, depth, 1e-9)\nreturn (\n            -self.fy * local[..., 1] / safe + self.cy,\n            self.fx * local[..., 0] / safe + self.cx,"
+      },
+      {
+        "name": "View.rays",
+        "kind": "function",
+        "range": [
+          176,
+          187
+        ],
+        "owner": "View",
+        "doc": "World direction of each pixel's ray, per unit of depth along the optical axis.",
+        "body": "local = np.stack(\n            [\n                (np.asarray(cols, dtype=np.float64) - self.cx) / self.fx,\nreturn local @ self.rot.T"
+      },
+      {
+        "name": "View.on_plane",
+        "kind": "function",
+        "range": [
+          189,
+          199
+        ],
+        "owner": "View",
+        "doc": "Where each pixel's ray meets the horizontal plane ``z`` (N x 2), and which rays do.",
+        "body": "d = self.rays(rows, cols)\ndown = d[..., 2]\nok = down < -1e-6\nt = np.where(ok, (z - self.pos[2]) / np.where(ok, down, -1.0), 0.0)\nok &= t > 0\nreturn self.pos[:2] + d[..., :2] * t[..., None], ok"
+      },
+      {
+        "name": "Sight",
+        "kind": "class",
+        "range": [
+          375,
+          429
+        ],
+        "owner": null,
+        "doc": "What one camera shows of the object: its mask, and the pixels that cannot tell.",
+        "body": "view: View\nmask: np.ndarray\nunknown: Any = None\nrobot: Any = None"
+      },
+      {
+        "name": "Sight._sample",
+        "kind": "function",
+        "range": [
+          394,
+          407
+        ],
+        "owner": "Sight",
+        "doc": "",
+        "body": "r, c, depth = self.view.project(xyz)\nh, w = field.shape\nok = (depth > 1e-6) & (r >= 0) & (r <= h - 1) & (c >= 0) & (c <= w - 1)\nr0 = np.clip(np.floor(np.where(ok, r, 0.0)).astype(np.int64), 0, h - 2)\nc0 = np.clip(np.floor(np.where(ok, c, 0.0)).astype(np.int64), 0, w - 2)\nfr, fc = np.clip(r - r0, 0.0, 1.0), np.clip(c - c0, 0.0, 1.0)\nval = (\n            field[r0, c0] * (1 - fr) * (1 - fc)\n            + field[r0 + 1, c0] * fr * (1 - fc)\nreturn np.where(ok, val, outside)"
+      },
+      {
+        "name": "Sight.shows",
+        "kind": "function",
+        "range": [
+          409,
+          416
+        ],
+        "owner": "Sight",
+        "doc": "Points that project onto the object's own pixels.\n\n``level`` is where the mask's edge is drawn between the last pixel inside and the first\none outside: 0.5 half way, lower further out.",
+        "body": "return self._sample(self._object, xyz, 0.0) >= level"
+      },
+      {
+        "name": "Sight.allows",
+        "kind": "function",
+        "range": [
+          418,
+          424
+        ],
+        "owner": "Sight",
+        "doc": "Points that may belong to the object: on its mask, on pixels that cannot tell, or\noff the image.",
+        "body": "if self._maybe is None:\n            self._maybe = (self.mask | self.unknown).astype(np.float32)\nreturn self._sample(self._maybe, xyz, 1.0) >= level"
+      },
+      {
+        "name": "Sight.in_image",
+        "kind": "function",
+        "range": [
+          426,
+          429
+        ],
+        "owner": "Sight",
+        "doc": "",
+        "body": "r, c, depth = self.view.project(xyz)\nh, w = self.mask.shape\nreturn (depth > 1e-6) & (r >= 0) & (r <= h - 1) & (c >= 0) & (c <= w - 1)"
+      },
+      {
+        "name": "_Grid",
+        "kind": "class",
+        "range": [
+          432,
+          465
+        ],
+        "owner": null,
+        "doc": "Cells of the supporting plane around an object's shadow.",
+        "body": ""
+      },
+      {
+        "name": "_Grid.__init__",
+        "kind": "function",
+        "range": [
+          435,
+          443
+        ],
+        "owner": "_Grid",
+        "doc": "",
+        "body": "area = float(np.prod(np.maximum(hi - lo, 1e-6)))\nself.cell = max(CELL_MIN_M, math.sqrt(area / GRID_CELLS))\nself.lo = lo\nself.nx = max(2, int(math.ceil((hi[0] - lo[0]) / self.cell)) + 1)\nself.ny = max(2, int(math.ceil((hi[1] - lo[1]) / self.cell)) + 1)\ngx, gy = np.meshgrid(np.arange(self.nx), np.arange(self.ny))\nself.xy = lo + np.stack([gx.ravel(), gy.ravel()], axis=1) * self.cell\nself.base_z = base_z"
+      },
+      {
+        "name": "_Grid.at",
+        "kind": "function",
+        "range": [
+          445,
+          447
+        ],
+        "owner": "_Grid",
+        "doc": "",
+        "body": "xy = self.xy if cells is None else self.xy[cells]\nreturn np.c_[xy, np.full(len(xy), self.base_z + height)]"
+      },
+      {
+        "name": "_Grid.index",
+        "kind": "function",
+        "range": [
+          449,
+          455
+        ],
+        "owner": "_Grid",
+        "doc": "The cell each plane point falls into (-1: off the grid).",
+        "body": "ix = np.rint((xy[..., 0] - self.lo[0]) / self.cell).astype(np.int64)\niy = np.rint((xy[..., 1] - self.lo[1]) / self.cell).astype(np.int64)\nok = (ix >= 0) & (ix < self.nx) & (iy >= 0) & (iy < self.ny)\nreturn np.where(ok, iy * self.nx + ix, -1)"
+      },
+      {
+        "name": "_Grid.holds",
+        "kind": "function",
+        "range": [
+          457,
+          465
+        ],
+        "owner": "_Grid",
+        "doc": "Which plane points fall into one of the given cells (a flat boolean per cell).",
+        "body": "ix = np.rint((xy[..., 0] - self.lo[0]) / self.cell).astype(np.int64)\niy = np.rint((xy[..., 1] - self.lo[1]) / self.cell).astype(np.int64)\nok = (ix >= 0) & (ix < self.nx) & (iy >= 0) & (iy < self.ny)\nout = np.zeros(np.shape(ix), dtype=bool)\nout[ok] = cells[iy[ok] * self.nx + ix[ok]]\nreturn out"
+      },
+      {
+        "name": "_Solid",
+        "kind": "class",
+        "range": [
+          468,
+          484
+        ],
+        "owner": null,
+        "doc": "What a reading says the object is: over each cell, a column from ``low`` to ``high``\n(metres above the plane; NaN where there is none).",
+        "body": ""
+      },
+      {
+        "name": "_Solid.__init__",
+        "kind": "function",
+        "range": [
+          472,
+          474
+        ],
+        "owner": "_Solid",
+        "doc": "",
+        "body": "self.grid, self.low, self.high = grid, low, high\nself.cells = np.isfinite(high)"
+      },
+      {
+        "name": "_Solid.spans",
+        "kind": "function",
+        "range": [
+          476,
+          484
+        ],
+        "owner": "_Solid",
+        "doc": "Which points (plane position and height above the plane) lie in the solid.",
+        "body": "index = self.grid.index(xy)\non = index >= 0\nlow = np.where(on, self.low[np.where(on, index, 0)], np.nan)\nhigh = np.where(on, self.high[np.where(on, index, 0)], np.nan)\nwith np.errstate(invalid=\"ignore\"):\n            return on & (z >= low - slack) & (z <= high + slack)"
+      },
+      {
+        "name": "_Levels",
+        "kind": "class",
+        "range": [
+          567,
+          652
+        ],
+        "owner": null,
+        "doc": "Which points over the grid the head mask allows, level by level.",
+        "body": ""
+      },
+      {
+        "name": "_Levels.__init__",
+        "kind": "function",
+        "range": [
+          570,
+          588
+        ],
+        "owner": "_Levels",
+        "doc": "",
+        "body": "self.grid = grid\ncount = int(top_height / LEVEL_M) + 1\nrows = [head.shows(grid.at(0.0), EDGE_LEVEL)]\nfor j in range(1, count):\n            row = head.allows(grid.at(j * LEVEL_M), EDGE_LEVEL)\n            if not row.any() and not rows[-1].any():\nself.inside = np.array(rows)  # [level, cell]\nself.count = len(rows)\nself.rise = np.logical_and.accumulate(self.inside, axis=0).sum(axis=0)\nself.drop = np.zeros(self.inside.shape, dtype=np.int32)\nrun = np.zeros(self.inside.shape[1], dtype=np.int32)\nfor j in range(self.count):\n            run = np.where(self.inside[j], run + 1, 0)\n            self.drop[j] = run"
+      },
+      {
+        "name": "_Levels.cone",
+        "kind": "function",
+        "range": [
+          590,
+          601
+        ],
+        "owner": "_Levels",
+        "doc": "Everything the head mask allows over the grid: per cell, from the lowest level that\nis inside to the highest.",
+        "body": "any_in = self.inside.any(axis=0)\nfirst = self.inside.argmax(axis=0)\nlast = self.count - 1 - self.inside[::-1].argmax(axis=0)\nreturn _Solid(\n            self.grid,\n            np.where(any_in, first * LEVEL_M, np.nan),"
+      },
+      {
+        "name": "_Levels.prism",
+        "kind": "function",
+        "range": [
+          603,
+          613
+        ],
+        "owner": "_Levels",
+        "doc": "What stands on the plane, no taller than ``level``: over each cell of the shadow a\ncolumn as high as the mask allows it there.  For a box or a can that is the box or the\ncan; a bottle keeps its shoulders and a mug its handle, each at its own height.\n``rise`` replaces the head mask's word on how high each column may go (the least that\nevery view allows).",
+        "body": "rise = self.rise if rise is None else rise\non = rise > 0\ntop = np.minimum(rise - 1, level) * LEVEL_M\nreturn _Solid(self.grid, np.where(on, 0.0, np.nan), np.where(on, top, np.nan))"
+      },
+      {
+        "name": "_Levels.block",
+        "kind": "function",
+        "range": [
+          615,
+          623
+        ],
+        "owner": "_Levels",
+        "doc": "The cells whose column reaches ``level``, all cut there: the upright prism proper.",
+        "body": "on = self.rise > level\nreturn _Solid(\n            self.grid,\n            np.where(on, 0.0, np.nan),"
+      },
+      {
+        "name": "_Levels.rise_in",
+        "kind": "function",
+        "range": [
+          625,
+          638
+        ],
+        "owner": "_Levels",
+        "doc": "How many levels from the plane up another view allows over each cell, counted up to\n``level`` and only where the head mask has a column at all.",
+        "body": "out = np.zeros(len(self.grid.xy), dtype=np.int64)\nalive = self.rise > 0\nfor j in range(min(level, self.count - 1) + 1):\n            if not alive.any():\n                break\nreturn out"
+      },
+      {
+        "name": "_Levels.hang",
+        "kind": "function",
+        "range": [
+          640,
+          647
+        ],
+        "owner": "_Levels",
+        "doc": "",
+        "body": "on = self.inside[level]\nlow = (level - self.drop[level] + 1) * LEVEL_M\nreturn _Solid(\n            self.grid,\n            np.where(on, low, np.nan),"
+      },
+      {
+        "name": "_Levels.solid",
+        "kind": "function",
+        "range": [
+          649,
+          652
+        ],
+        "owner": "_Levels",
+        "doc": "The solid a reading is judged by in another view.",
+        "body": "return self.block(level) if kind == \"prism\" else self.hang(level)"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import math",
+      "from collections.abc import Sequence",
+      "from dataclasses import dataclass",
+      "from typing import Any",
+      "import numpy as np",
+      "from . import robodojo_kinematics as kin",
+      "from . import robodojo_tools as tools"
+    ]
+  },
+  {
+    "path": "src/pyrualean/hosts/robodojo_tools.py",
+    "category": "code",
+    "moduleDoc": "RoboDojo tools of this library's own, registered on RPent's toolkit at boot.\n\nRPent's RoboDojo toolset moves an arm only by position (``move_to``) and grips one native\naction at a time (``set_gripper``); its perception returns one mask centroid and one surface\npoint.  The tools here are what a program needs on top of that, computed in the host from the\nsame observations and commanded through the same action path:\n\n``move_pose``    the grasp point to a position AND an orientation, along a straight line,\n                 with the host's own IK (:mod:`.robodojo_kinematics`);\n``grip``         a full gripper stroke, repeated until the fingers stop, with what they hold;\n``locate``       an object's 3D extent, heading and top from its mask and the depth image;\n``home``         the joints the episode started with (:func:`home`, kept from before).\n\nEvery tool is registered as a stateful (not read-only) tool, so RPent's toolkit records a step\nafter it like after its own motions.  Each native action is one ``env.step`` and counts against\nthe episode's budget; a tool stops at the step limit.",
+    "symbols": [
+      {
+        "name": "_obs",
+        "kind": "function",
+        "range": [
+          143,
+          146
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "obs = primitives.env.get_obs()\nprimitives._last_obs = obs\nreturn obs"
+      },
+      {
+        "name": "_joints",
+        "kind": "function",
+        "range": [
+          149,
+          150
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return [float(v) for v in state[f\"{arm}_arm_joint_state\"]]"
+      },
+      {
+        "name": "_opening",
+        "kind": "function",
+        "range": [
+          153,
+          165
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "value = state.get(f\"{arm}_ee_joint_state\")\nfor _ in range(4):\n        if value is None or isinstance(value, (int, float)):\n            break\ntry:\n        return float(value)\n    except (TypeError, ValueError):"
+      },
+      {
+        "name": "_command",
+        "kind": "function",
+        "range": [
+          168,
+          178
+        ],
+        "owner": null,
+        "doc": "1 (close) -> 0.0, -1 (open) -> 1.0, 0 / None (keep) -> None.",
+        "body": "if gripper is None:\n        return None\ng = float(gripper)\nif g > 0:\n        return 0.0\nif g < 0:\n        return 1.0\nreturn None"
+      },
+      {
+        "name": "_act",
+        "kind": "function",
+        "range": [
+          181,
+          203
+        ],
+        "owner": null,
+        "doc": "One native action: the arms named in ``joints`` to those angles, the others held.",
+        "body": "action: dict[str, list[float]] = {}\nfor arm in ARMS:\n        q = joints.get(arm)\n        action[f\"{arm}_arm_joint_state\"] = [\nprimitives._motion_revision = getattr(primitives, \"_motion_revision\", 0) + 1\n_obs_step, _reward, _done, info = primitives.env.step(action)\nobs = _obs(primitives)\nreturn obs[\"state\"], (info.get(\"status\") or {}) if isinstance(info, dict) else {}"
+      },
+      {
+        "name": "_remember",
+        "kind": "function",
+        "range": [
+          206,
+          214
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "commands = getattr(primitives, \"_grip_commands\", None)\nif commands is None:\n        commands = {}\n        try:\ncommands[arm] = float(command)"
+      },
+      {
+        "name": "_keep",
+        "kind": "function",
+        "range": [
+          217,
+          235
+        ],
+        "owner": null,
+        "doc": "The opening to command for a gripper that keeps what it has.\n\nThe last command again, not the measured opening: commanding the opening a held object\nleaves takes the squeeze off (a held object was lost after the OTHER arm's motions 9.6 % of\nthe time, after its own 6.1 %).  Unless the gripper is no longer where that command put it\n(the VLA moved it in between): closed further than commanded -> keep it closed; opened\nfurther -> follow it.",
+        "body": "measured = _opening(state, arm)\nlast = (getattr(primitives, \"_grip_commands\", None) or {}).get(arm)\nif last is None:\n        return measured\nif last <= 0.05:  # last told to close\n        return 0.0 if measured < 0.95 else measured\nif abs(measured - last) <= 0.08:\n        return last\nreturn 0.0 if measured < last else measured"
+      },
+      {
+        "name": "_spent",
+        "kind": "function",
+        "range": [
+          238,
+          242
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "try:\n        return int(status.get(\"step\", 0)) >= int(status.get(\"step_limit\", 1 << 30))\n    except (TypeError, ValueError):"
+      },
+      {
+        "name": "_tcp",
+        "kind": "function",
+        "range": [
+          245,
+          246
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return [round(float(v), 4) for v in kin.tcp(kin.fk(arm, q))]"
+      },
+      {
+        "name": "_pose_summary",
+        "kind": "function",
+        "range": [
+          249,
+          257
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "pose = kin.fk(arm, q)\npitch, yaw, roll = kin.angles(pose[:3, :3])\nreturn {\n        \"xyz\": [round(float(v), 4) for v in kin.tcp(pose)],\n        \"pitch\": round(pitch, 1),"
+      },
+      {
+        "name": "_target",
+        "kind": "function",
+        "range": [
+          265,
+          273
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "cur = kin.angles(kin.fk(arm, q)[:3, :3])\nwant = tuple(\n        float(v) if v is not None else c for v, c in zip((pitch, yaw, roll), cur, strict=True)\n    )\nt = np.eye(4)\nt[:3, :3] = kin.orientation(*want)\nt[:3, 3] = [float(v) for v in xyz]\nreturn t, want"
+      },
+      {
+        "name": "_joint_path_clear",
+        "kind": "function",
+        "range": [
+          276,
+          280
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "a, b = np.asarray(q0, float), np.asarray(q1, float)\nreturn all(\n        not kin.clearance_violations(arm, a + (b - a) * t) for t in np.linspace(0, 1, 11)[1:]\n    )"
+      },
+      {
+        "name": "_pose_of",
+        "kind": "function",
+        "range": [
+          283,
+          290
+        ],
+        "owner": null,
+        "doc": "The grasp-point pose (rotation of link6, position of the grasp point) of joints ``q``.",
+        "body": "t = kin.fk(arm, q)\nout = np.eye(4)\nout[:3, :3] = t[:3, :3]\nout[:3, 3] = kin.tcp(t)\nreturn out"
+      },
+      {
+        "name": "_plan",
+        "kind": "function",
+        "range": [
+          293,
+          325
+        ],
+        "owner": null,
+        "doc": "(joint waypoints, the path taken, why nothing can be done, a note) for one target pose.\n\nThe pose itself is solved first, so a refusal says whether the TARGET is out of reach or\nonly the straight line to it.  A target missed by at most NEAR_M / NEAR_DEG is replaced by\nthe closest reachable pose, and the note says so.",
+        "body": "res = kin.best_solution(arm, target, q, extra_seeds=[start_joints[arm]])\nnear = res.pos_err_m <= NEAR_M and res.rot_err_deg <= NEAR_DEG\nif not res.ok and not near:\n        return [], None, _unreachable(res), None\nif res.collides:\n        return [], None, \"every solution puts part of the arm into the table\", None\nnote = None\ngoal = target\nif not res.ok:\n        goal = _pose_of(arm, res.q)\n        note = (\nif path in (\"line\", \"auto\"):\n        ways, why = kin.line_path(arm, q, goal)\n        if why is None:\nif not _joint_path_clear(arm, q, res.q):\n        return [], \"joint\", \"the joint-space swing to this pose passes through the table\", None\nreturn _followable(q, [res.q]), \"joint\", None, note"
+      },
+      {
+        "name": "_unreachable",
+        "kind": "function",
+        "range": [
+          328,
+          332
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return (\n        f\"out of reach: the closest pose the arm can take is {res.pos_err_m:.3f} m and \"\n        f\"{res.rot_err_deg:.0f} deg away\""
+      },
+      {
+        "name": "_alternatives",
+        "kind": "function",
+        "range": [
+          335,
+          358
+        ],
+        "owner": null,
+        "doc": "Nearby poses that ARE reachable: a less steep pitch here, or this pose higher / lower.",
+        "body": "out = []\npitch, yaw, roll = want\nfor p in (60.0, 45.0, 30.0, 0.0):\n        if p < pitch - 5.0 and ok(tuple(xyz), (p, yaw, roll)):\n            out.append(f\"pitch={p:.0f} at this position\")\nfor dz in (-0.03, -0.06, -0.10, 0.03, 0.06):\n        z = xyz[2] + dz\n        if z > kin.TABLE_Z + 0.015 and ok((xyz[0], xyz[1], z), want):\nreturn out"
+      },
+      {
+        "name": "_followable",
+        "kind": "function",
+        "range": [
+          361,
+          375
+        ],
+        "owner": null,
+        "doc": "Waypoints split into steps the simulator can follow in one action each.\n\nIt turns a joint about 0.2 rad per action; an arm that then falls behind its waypoints is\none that something stopped.",
+        "body": "out: list[list[float]] = []\na = np.asarray(q, float)\nfor way in ways:\n        b = np.asarray(way, float)\n        n = max(1, math.ceil(float(np.max(np.abs(b - a))) / JOINT_STEP_RAD))\nreturn out"
+      },
+      {
+        "name": "move_pose",
+        "kind": "function",
+        "range": [
+          378,
+          510
+        ],
+        "owner": null,
+        "doc": "Move one arm's grasp point to ``xyz`` and an orientation: the tool behind ``move_to``.\n\n``pitch`` / ``yaw`` / ``roll`` in degrees (:mod:`.robodojo_kinematics`); an angle left None\nkeeps its current value, so a plain position move no longer turns the wrist.  The two\nfingers are interchangeable, so the target turned half a turn about the pointing axis is\ntried too and the one needing less joint travel is taken.  ``path``: ``\"line\"`` moves the\ngrasp point along a straight line (waypoints every 2.5 cm or 8 degrees, each solved from the\nlast), ``\"joint\"`` swings the joints straight to the solution, ``\"auto\"`` takes the line and\nfalls back to the swing when the line cannot be followed.  Nothing moves when the target is\nout of reach or the motion would take the arm into the table: the result says why.",
+        "body": "if arm not in ARMS:\n        return {\"error\": \"arm must be 'left' or 'right'\"}\nif path not in (\"auto\", \"line\", \"joint\"):\n        return {\"error\": \"path must be 'auto', 'line' or 'joint'\"}\ntry:\n        xyz = [float(v) for v in xyz]\n    except (TypeError, ValueError):\nif len(xyz) != 3 or not all(math.isfinite(v) for v in xyz):\n        return {\"error\": \"xyz must be three finite numbers\"}\ngrip = _command(gripper)\nstate = _obs(primitives)[\"state\"]\nq = _joints(state, arm)\nstart = _tcp(arm, q)\ntarget, want = _target(arm, q, xyz, pitch, yaw, roll)\nflipped, _ = _target(arm, q, xyz, want[0], want[1], want[2] + 180.0)\nempty = _opening(state, arm) >= OPEN_FOR_HALF_TURN and grip != 0.0\noptions = []\nfirst_why: str | None = None\nfor t in (target, flipped) if empty else (target,):\n        ways, taken, why, note = _plan(arm, q, t, path, start_joints)\n        if why is None:\nresult: dict[str, Any] = {\n        \"arm\": arm,\n        \"target_xyz\": [round(v, 4) for v in xyz],\nif not options:\n        if first_why and first_why.startswith(\"out of reach\"):\n            alts = _alternatives(arm, q, xyz, want, start_joints)\n_near, _travel, ways, taken, goal, note = min(options, key=lambda o: (o[0], o[1]))\nresult[\"path\"] = taken\nif goal is flipped:\n        half = (\n            \"took the pose turned half a turn about the pointing direction (the empty \"\nif note:\n        result[\"note\"] = note\nsteps = 0\nstatus: d"
+      },
+      {
+        "name": "grip",
+        "kind": "function",
+        "range": [
+          513,
+          564
+        ],
+        "owner": null,
+        "doc": "Close (1) or open (-1) one gripper: repeat the command until the fingers stop.\n\n``opening`` (0..1, with an open command only) opens to that reading instead of all the\nway, e.g. to reach between close neighbours.",
+        "body": "if arm not in ARMS:\n        return {\"error\": \"arm must be 'left' or 'right'\"}\ncommand = _command(gripper)\nif command is None:\n        return {\"error\": \"gripper must be 1 (close) or -1 (open)\"}\nif opening is not None:\n        try:\n            opening = float(opening)\nstate = _obs(primitives)[\"state\"]\nhold = {a: _joints(state, a) for a in ARMS}  # both arms keep the joints they had\nbefore = _opening(state, arm)\nsteps = 0\nstatus: dict[str, Any] = {}\nlast = before\nfor _ in range(GRIP_MAX_ACTIONS):\n        primitives._check_cancelled()\n        state, status = _act(primitives, state, hold, {arm: command})\nmeasured = _opening(state, arm)\nclosing = command == 0.0\nholding = bool(closing and measured > HOLD_MIN_OPENING)\nwidth = GRIP_ZERO_M + GRIP_SPAN_M * measured if holding else 0.0\nreturn {\n        \"arm\": arm,\n        \"gripper\": \"closed\" if closing else \"open\","
+      },
+      {
+        "name": "home",
+        "kind": "function",
+        "range": [
+          567,
+          641
+        ],
+        "owner": null,
+        "doc": "Drive one arm or both back to ``start_joints``: the tool behind ``robo.home``.\n\nWith ``lift``, an arm away from its start whose grasp point is below HOME_LIFT_BELOW first\ngoes straight up by HOME_LIFT_M (or less, where the line ends sooner), orientation kept.\n\nThe same joint action as ``move_pose``, the other arm held where it is and each gripper\ncommanded its measured opening, with the joint target given instead of solved for.  The\nsimulator moves a joint about 0.2 rad in one action: a return from a short reach took 5,\nand of 135 returns in one sweep half were still under way after 10 (the limit then).",
+        "body": "if arm not in (*ARMS, \"both\"):\n        return {\"error\": \"arm must be 'left', 'right' or 'both'\"}\narms = ARMS if arm == \"both\" else (arm,)\nstate = _obs(primitives)[\"state\"]\nerror = error_of(state)\nsteps_used = 0\nstatus: dict[str, Any] = {}\nlifted: dict[str, float] = {}\nfor name in arms if lift and error > tol else ():\n        q = _joints(state, name)\n        if max(abs(a - b) for a, b in zip(q, start_joints[name], strict=True)) <= tol:\nerror = error_of(state)\nswing = 0\nwhile error > tol and swing < max_steps and not _spent(status):\n        primitives._check_cancelled()\n        state, status = _act(primitives, state, {name: start_joints[name] for name in arms}, {})\nout = {\n        \"arm\": arm,\n        \"reached\": error <= tol,\nif lifted:\n        out[\"lifted_m\"] = lifted\nreturn out"
+      },
+      {
+        "name": "_on_robot",
+        "kind": "function",
+        "range": [
+          649,
+          684
+        ],
+        "owner": null,
+        "doc": "Which world points lie on either arm: within ``radius`` of its links (base to the tips),\non the rail of its gripper or on one of its fingers, wherever those stand open.",
+        "body": "hit = np.zeros(len(points), dtype=bool)\nfor arm in ARMS:\n        try:\n            q = _joints(state, arm)\nreturn hit"
+      },
+      {
+        "name": "_camera",
+        "kind": "function",
+        "range": [
+          687,
+          688
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return (obs.get(\"vision\") or {}).get(camera)"
+      },
+      {
+        "name": "depth_image",
+        "kind": "function",
+        "range": [
+          691,
+          711
+        ],
+        "owner": null,
+        "doc": "A camera's depth along its optical axis, metres (H x W), or None when it has none.\n\nRoboDojo's simulator gives it as ``depth`` (float metres; RPent's bridge calls the same\narray ``distance_to_image_plane``) or as ``approximate_depth`` (whole millimetres, the\nform its released data has), whichever its configuration switches on.",
+        "body": "for key, scale in (\n        (\"distance_to_image_plane\", 1.0),\n        (\"depth\", 1.0),\nreturn None"
+      },
+      {
+        "name": "extrinsic_of",
+        "kind": "function",
+        "range": [
+          714,
+          719
+        ],
+        "owner": null,
+        "doc": "A camera's pose in the world (4 x 4): RoboDojo names it ``extrinsic_matrix``,\nXPolicyLab's observation format ``extrinsics_matrix``.",
+        "body": "pose = cam.get(\"extrinsic_matrix\")\nreturn cam.get(\"extrinsics_matrix\") if pose is None else pose"
+      },
+      {
+        "name": "world_points",
+        "kind": "function",
+        "range": [
+          722,
+          741
+        ],
+        "owner": null,
+        "doc": "World points of pixels through the depth image, and which pixels had a valid depth.\n\nThe same projection as RPent's ``back_project``: Isaac cameras look along -Z and the\ndepth (``distance_to_image_plane``) is along the optical axis.",
+        "body": "depth = depth_image(cam)\nif depth is None:\n        raise KeyError(\"no depth image in the observation\")\nk = np.asarray(cam[\"intrinsic_matrix\"], dtype=np.float64)\nt = np.asarray(extrinsic_of(cam), dtype=np.float64)\nd = depth[rows, cols]\nvalid = np.isfinite(d) & (d > 0)\nr, c, d = rows[valid], cols[valid], d[valid]\nfx, fy, cx, cy = k[0, 0], k[1, 1], k[0, 2], k[1, 2]\np = np.stack([(c - cx) / fx * d, -(r - cy) / fy * d, -d, np.ones_like(d)])\nreturn (t @ p)[:3].T, valid"
+      },
+      {
+        "name": "_cells",
+        "kind": "function",
+        "range": [
+          744,
+          753
+        ],
+        "owner": null,
+        "doc": "One point per occupied grid cell (the mean of the points in it): the footprint with\nthe same weight everywhere.",
+        "body": "_, cell_of, count = np.unique(\n        np.floor(xy / cell).astype(np.int64), axis=0, return_inverse=True, return_counts=True\n    )\ncell_of = cell_of.reshape(-1)\nsums = np.stack([np.bincount(cell_of, weights=xy[:, i]) for i in (0, 1)], axis=1)\nreturn sums / count[:, None]"
+      },
+      {
+        "name": "_footprint",
+        "kind": "function",
+        "range": [
+          756,
+          788
+        ],
+        "owner": null,
+        "doc": "A footprint's rectangle: the heading of its long side (degrees from +x, -90 .. 90), its\nlength and width, and its centre.\n\nEvery occupied cell counts once, so the answer does not depend on how densely each part\nof the object was seen.  A footprint clearly longer one way lies along its principal\naxes (a T, a hammer, a shoe: their smallest rectangle can sit askew).  A square or a\ncircle has no principal axis: there the rectangle of least area over all headings is\ntaken, which finds the sides of a square.",
+        "body": "cells = _cells(xy)\ntrim = [FOOTPRINT_TRIM, 100.0 - FOOTPRINT_TRIM]\nspread, axes = np.linalg.eigh(np.cov((cells - cells.mean(axis=0)).T))\nif spread[1] >= LONG_FOOTPRINT * max(float(spread[0]), 1e-12):\n        heading = math.degrees(math.atan2(axes[1, 1], axes[0, 1]))\n    else:\n_, ul, uh, vl, vh, u, v = extents(heading)\ncentre = u * (ul + uh) / 2 + v * (vl + vh) / 2\nlength, width = uh - ul, vh - vl\nif width > length:\n        length, width, heading = width, length, heading + 90.0\nreturn (heading + 90.0) % 180.0 - 90.0, float(length), float(width), centre"
+      },
+      {
+        "name": "_far_side",
+        "kind": "function",
+        "range": [
+          791,
+          830
+        ],
+        "owner": null,
+        "doc": "Footprint points (N x 2) of what the camera cannot see of a round object.\n\nA camera sees the near half of an upright bottle, cup or doll, so its visible points end\nat the middle and their footprint sits towards the camera: against the scenes' true poses\nthe centre of an upright bottle was 6 to 14 mm off and its far edge up to 2 cm short.\nEach horizontal slice whose visible points lie on a circular arc is completed to the full\ncircle, provided the circles of the object share one upright axis.  Flat-sided objects are\nleft alone: their slices are not arcs, and their tops, which the camera does see, cover\nthem.  So is a rounded body that is not round about an upright axis.",
+        "body": "circles = []\nfor low in np.arange(kin.TABLE_Z + 0.004, float(pts[:, 2].max()), SLICE_M):\n        xy = pts[(pts[:, 2] >= low) & (pts[:, 2] < low + SLICE_M), :2]\n        if len(xy) < 15:\nif len(circles) >= 3:\n        # The slices of a round object share an axis: a circle off it is a misfit.  And when no\n        # more than half of them share one, the object is not round about an upright axis: the\nturn = np.linspace(0.0, 2 * math.pi, 90, endpoint=False)\nring = np.c_[np.cos(turn), np.sin(turn)]\nreturn np.vstack([c + r * ring for c, r in circles]) if circles else np.zeros((0, 2))"
+      },
+      {
+        "name": "object_geometry",
+        "kind": "function",
+        "range": [
+          833,
+          862
+        ],
+        "owner": null,
+        "doc": "Extent, heading and heights of an object from its visible surface points (N x 3).",
+        "body": "pts = points[points[:, 2] > kin.TABLE_Z + 0.004]  # the table seen through gaps in the mask\nif len(pts) < 12:\n        return None\nmed = np.median(pts[:, :2], axis=0)\nspread = np.median(np.linalg.norm(pts[:, :2] - med, axis=1))\nkeep = np.linalg.norm(pts[:, :2] - med, axis=1) <= max(4.0 * spread, 0.03)\npts = pts[keep]  # pixels of other things at the mask's edge\ntop = float(np.percentile(pts[:, 2], 97))\nlow = float(pts[:, 2].min())\nstanding = pts[pts[:, 2] > low + FOOT_M] if top - low > FOOT_MIN_HEIGHT_M else pts\nheading, length, width, mid = _footprint(np.vstack([standing[:, :2], _far_side(pts)]))\nacross_heading = (heading + 180.0) % 180.0 - 90.0\nreturn {\n        \"center_xyz\": [\n            round(float(mid[0]), 4),"
+      },
+      {
+        "name": "colour_only",
+        "kind": "function",
+        "range": [
+          872,
+          883
+        ],
+        "owner": null,
+        "doc": "Whether perception works from colour images alone.\n\nAlways when the host says so (``primitives.colour_only``, which the host for RoboDojo's\nown evaluation client sets), and whenever the observation simply carries no depth image.",
+        "body": "if getattr(primitives, \"colour_only\", False):\n        return True\nif cam is None:\n        return False\nreturn depth_image(cam) is None"
+      },
+      {
+        "name": "_shown",
+        "kind": "function",
+        "range": [
+          886,
+          898
+        ],
+        "owner": null,
+        "doc": "The robot state an observation's pictures show.\n\nRoboDojo's evaluation client before its commit 6e3190f hands out each picture one\nobservation late: the state is the robot's now, the pictures are of the state before the\nlast action (measured in that client: a wrist camera's picture fits the previous\nend-effector pose to a millimetre and the current one not at all while the arm moves).  A\nhost that knows this puts the state the pictures belong to under ``image_state``; without\nit they are taken to be current.",
+        "body": "shown = obs.get(\"image_state\")\nreturn shown if isinstance(shown, dict) and shown else (obs.get(\"state\") or {})"
+      },
+      {
+        "name": "_view",
+        "kind": "function",
+        "range": [
+          901,
+          911
+        ],
+        "owner": null,
+        "doc": "A camera's pose from the state alone: the head camera is fixed, a wrist camera rides on\nits arm's end-effector link.",
+        "body": "if camera == \"cam_head\":\n        return sight.head_view()\narm = _WRISTS.get(camera)\npose = state.get(f\"{arm}_ee_pose\") if arm else None\nif pose is None:\n        return None\nreturn sight.wrist_view([float(v) for v in np.ravel(pose)[:7]])"
+      },
+      {
+        "name": "_scene",
+        "kind": "function",
+        "range": [
+          914,
+          930
+        ],
+        "owner": null,
+        "doc": "What has been measured in the images of this observation (kept until they change).",
+        "body": "marks = []\nfor name in sorted(obs.get(\"vision\") or {}):\n        color = (obs[\"vision\"][name] or {}).get(\"color\")\n        if color is not None:\nkey = tuple(marks)\nscene = getattr(primitives, \"_scene\", None)\nif not isinstance(scene, dict) or scene.get(\"key\") != key:\n        scene = {\"key\": key, \"regions\": []}\n        try:\nreturn scene"
+      },
+      {
+        "name": "_heights",
+        "kind": "function",
+        "range": [
+          933,
+          941
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "known = getattr(primitives, \"_measured_heights\", None)\nif known is None:\n        known = {}\n        try:\nreturn known"
+      },
+      {
+        "name": "_behind_robot",
+        "kind": "function",
+        "range": [
+          944,
+          956
+        ],
+        "owner": null,
+        "doc": "Whether the robot's outline runs along the mask's edge: it then hides part of the object.",
+        "body": "grown = mask.copy()\nfor _ in range(RIM_PX):\n        wider = grown.copy()\n        wider[1:] |= grown[:-1]\nrim = grown & ~mask\nreturn bool(rim.any()) and float(outline[rim].mean()) >= HIDDEN_RIM_SHARE"
+      },
+      {
+        "name": "_measure_in_colour",
+        "kind": "function",
+        "range": [
+          959,
+          1059
+        ],
+        "owner": null,
+        "doc": "An object's geometry from its mask in ``camera`` and whatever the other cameras show of it.\n\nThe other cameras are asked for the object twice: by the same words, and by the pixels\nwhere points of the first mask's rays fall in their image (:func:`.robodojo_sight.seeds`);\n:func:`.robodojo_sight.measure` takes of those masks the one that is the same object.\nReturns the geometry (``object_geometry`` of the surface points) and what was seen.",
+        "body": "state = _shown(obs)\nvision = obs.get(\"vision\") or {}\nseen: dict[str, Any] = {\"views\": 1}\nview = _view(camera, state)\nif view is None:\n        return None, seen\nfirst = sight.Sight(view, mask)\nsam3 = getattr(primitives, \"sam3_client\", None)\nothers = []\nspots = sight.seeds(first)\nfor name in vision:\n        if name == camera or sam3 is None:\n            continue\nkey = \" \".join(str(text_prompt or \"\").lower().split())\nknown = _heights(primitives).get(key) if key else None\nres = sight.measure(first, others, known=known)\nif res is None:\n        return None, seen\nseen[\"views\"] = int(res[\"views\"])\nif res[\"views\"] == 1 and not res.get(\"remembered\"):\n        # one camera, nothing to check it against: has the robot got in front of the object?\n        outline = sight.robot_pixels(view, state, own=_WRISTS.get(camera), scale=1.0, between=False)\nif res[\"views\"] >= 2:\n        rough = res[\"match\"] is not None and res[\"match\"] < ROUGH_MATCH\n        if key and not rough:\npoints = np.asarray(res[\"points\"], dtype=np.float64)\n_scene(primitives, obs)[\"regions\"].append(\n        {\"camera\": camera, \"rows\": res[\"rows\"], \"cols\": res[\"cols\"], \"points\": points}\n    )\nreturn object_geometry(points), seen"
+      },
+      {
+        "name": "probe",
+        "kind": "function",
+        "range": [
+          1062,
+          1143
+        ],
+        "owner": null,
+        "doc": "The world point a pixel shows, without a depth image.\n\nThe object under the pixel is segmented from that pixel and measured as ``locate`` measures\none; the answer is where the pixel's ray meets it.  A pixel on nothing that stands out\n(the table, or something too flat to measure) is where its ray meets the table.",
+        "body": "obs = _obs(primitives)\ncam = _camera(obs, camera)\nif cam is None:\n        return {\"error\": f\"camera {camera!r} not in observation\"}\ncolor = cam.get(\"color\")\nif color is None:\n        return {\"error\": \"camera color image missing\"}\nstate = _shown(obs)\nview = _view(camera, state)\nif view is None:\n        return {\"error\": f\"no pose for camera {camera!r} in the state\"}\nrow, col = int(row), int(col)\nif not (0 <= row < view.shape[0] and 0 <= col < view.shape[1]):\n        return {\n            \"error\": f\"pixel [{row}, {col}] is outside the {view.shape[0]} x {view.shape[1]} image\"\nscene = _scene(primitives, obs)\nfor region in scene[\"regions\"]:\n        hit = in_region(region)\n        if hit is not None:\nfor flat in scene.get(\"flat\", ()):\n        if flat[\"camera\"] == camera and flat[\"mask\"][row, col]:\n            return on_table()\nsam3 = getattr(primitives, \"sam3_client\", None)\nif sam3 is None:\n        return on_table()\nres = sam3.segment(color, point=[row, col], min_score=0.0)\nmask = np.asarray(res.mask, dtype=bool) if res.found else None\nif mask is None or not mask[row, col] or mask.sum() > PROBE_TABLE_SHARE * mask.size:\n        if mask is not None and mask[row, col]:\n            scene.setdefault(\"flat\", []).append({\"camera\": camera, \"mask\": mask})\ngeo, _seen = _measure_in_colour(primitives, obs, camera, mask, None, 0.0)\nif geo is not None:\n        hit = in_region(scene[\"regions\"][-1])\n "
+      },
+      {
+        "name": "back_project",
+        "kind": "function",
+        "range": [
+          1149,
+          1180
+        ],
+        "owner": null,
+        "doc": "The world point a pixel shows: through the depth image where there is one.\n\nWith depth it is RPent's ``back_project`` (the same projection, the same answer and the\nsame errors), for a host that runs without RPent; without depth it is :func:`probe`.",
+        "body": "obs = _obs(primitives)\ncam = _camera(obs, camera)\nif cam is None:\n        return {\"error\": f\"camera {camera!r} not in observation\"}\nif colour_only(primitives, cam):\n        return probe(primitives, row, col, camera)\ndepth = depth_image(cam)\nk = np.asarray(cam.get(\"intrinsic_matrix\"), dtype=np.float64)\nt = np.asarray(extrinsic_of(cam), dtype=np.float64)\nif k.shape != (3, 3) or t.shape != (4, 4):\n        return {\"error\": f\"calibration missing/invalid: K={k.shape} T={t.shape}\"}\nh, w = int(depth.shape[0]), int(depth.shape[1])\nrow, col = int(row), int(col)\nif not (0 <= row < h and 0 <= col < w):\n        return {\"error\": f\"pixel out of range: row 0..{h - 1}, col 0..{w - 1}\"}\nd = float(depth[row, col])\nif not math.isfinite(d) or d <= 0:\n        return {\"error\": f\"invalid depth at pixel: {d}\"}\npoints, _valid = world_points(cam, np.array([row]), np.array([col]))\nreturn {\n        \"camera\": camera,\n        \"pixel\": [row, col],"
+      },
+      {
+        "name": "locate",
+        "kind": "function",
+        "range": [
+          1186,
+          1268
+        ],
+        "owner": null,
+        "doc": "Segment an object by text and measure it in 3D from the depth image.",
+        "body": "if not isinstance(text_prompt, str) or not text_prompt.strip():\n        return {\"error\": \"text_prompt must be a non-empty string\"}\nobs = _obs(primitives)\ncam = _camera(obs, camera)\nif cam is None:\n        return {\"error\": f\"camera {camera!r} not in observation\"}\ncolor = cam.get(\"color\")\nif color is None:\n        return {\"error\": \"camera color image missing\"}\nsam3 = getattr(primitives, \"sam3_client\", None)\nif sam3 is None:\n        return {\"error\": \"sam3_client not configured\"}\nres = sam3.segment(color, text_prompt=text_prompt, min_score=float(min_score))\nif not res.found:\n        return {\"camera\": camera, \"found\": False, \"text_prompt\": text_prompt}\nmask = np.asarray(res.mask, dtype=bool)\nrows, cols = np.nonzero(mask)\nout: dict[str, Any] = {\n        \"camera\": camera,\n        \"found\": True,\nif colour_only(primitives, cam):\n        view = _view(camera, _shown(obs))\n        if view is not None:\ntry:\n        points, _valid = world_points(cam, rows, cols)\n    except Exception as exc:  # noqa: BLE001 - a missing depth image is a result, not a crash\non_robot = _on_robot(_shown(obs), points)\nif on_robot.any():\n        out[\"robot_px_fraction\"] = round(float(on_robot.mean()), 3)\n        points = points[~on_robot]\ngeo = object_geometry(points)\nif geo is None:\n        out[\"geometry_error\"] = (\n            \"the mask lies on the robot's own arm or gripper\"\nout.update(geo)\nreturn out"
+      },
+      {
+        "name": "register",
+        "kind": "function",
+        "range": [
+          1351,
+          1372
+        ],
+        "owner": null,
+        "doc": "Add this module's tools to a freshly booted RoboDojo toolkit.\n\nThe joint angles of ``home`` are read here: boot leaves both arms at their origin.  RPent's\ntoolkit records a step after every handler except ``locate`` (marked read-only; RPent\nlooks through the ``partial``).",
+        "body": "primitives = toolkit._primitives\nstate = primitives.env.get_obs().get(\"state\", {})\nstart = {arm: _joints(state, arm) for arm in ARMS}\nhandlers = {\n        \"move_pose\": partial(move_pose, primitives, start),\n        \"grip\": partial(grip, primitives),\nfor name, handler in handlers.items():\n        toolkit.add_tool(name, SPECS[name], handler)\nfrom .robodojo_coordination import register as register_coordination\nregister_coordination(toolkit)"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import math",
+      "import zlib",
+      "from collections.abc import Sequence",
+      "from functools import partial",
+      "from typing import Any",
+      "import numpy as np",
+      "from ..robodojo import HOME_MAX_ACTIONS, HOME_TOL_RAD",
+      "from . import robodojo_kinematics as kin",
+      "from . import robodojo_sight as sight",
+      "from .robodojo_coordination import register as register_coordination"
+    ]
+  },
+  {
+    "path": "src/pyrualean/hosts/xpolicylab_bridge.py",
+    "category": "code",
+    "moduleDoc": "Between XPolicyLab's two calls and an environment a program steps.\n\nXPolicyLab's evaluation client owns the simulator and asks a policy for actions: it sends an\nobservation (``update_obs``) and asks what to do (``get_action``).  A PyRUA-Lean episode is the\nother way round: a program calls a tool, the tool steps the environment and reads what came\nof it.  :class:`Bridge` turns one into the other.  The policy server answers ``get_action``\nwith the next native action a tool has asked for; the tool's ``step`` returns when the client\nhas taken it and sent the observation that followed.\n\nA model thinks for minutes between two actions, far longer than the client waits for one\nanswer, so ``get_action`` never holds the client longer than ``poll_s``: when no tool has\nstepped by then it answers :data:`WAIT`, and the adapter's ``deploy.py`` asks again.  An empty\nanswer means the program has finished.  ``deploy.py`` adds the episode's step count and limit\nto each observation (``additional_info[\"pyrualean\"]``) and reports the benchmark's verdict\nwhen the episode is over (the protocol's ``trial_end``, which the server hands to\n``on_trial_end``).\n\nAn older RoboDojo client's pictures run one observation behind its state (fixed upstream\nin 6e3190f).  ``deploy.py`` says which client it is, and the bridge adds to each observation\nthe state its pictures show (``image_state``: the previous observation's for such a client),\nwhich is what the tools take a wrist camera's pose from; where the client sends the cameras'\nmatrices, a late picture gets the matrix of the observation before as well.\n\n:class:`PolicyModel` is the object XPolicyLab's policy server serves (its ``Model``);\n:func:`serve` runs that server in this process.",
+    "symbols": [
+      {
+        "name": "serve",
+        "kind": "function",
+        "range": [
+          313,
+          316
+        ],
+        "owner": null,
+        "doc": "Serve ``bridge`` to an XPolicyLab evaluation client on ``host:port``.",
+        "body": "return Server(PolicyModel(bridge), host, port)"
+      },
+      {
+        "name": "EpisodeOver",
+        "kind": "class",
+        "range": [
+          49,
+          50
+        ],
+        "owner": null,
+        "doc": "The evaluation client has ended the episode: no observation will follow.",
+        "body": ""
+      },
+      {
+        "name": "Bridge",
+        "kind": "class",
+        "range": [
+          53,
+          220
+        ],
+        "owner": null,
+        "doc": "One episode's meeting point of the evaluation client and the tools.",
+        "body": ""
+      },
+      {
+        "name": "Bridge.__init__",
+        "kind": "function",
+        "range": [
+          56,
+          66
+        ],
+        "owner": "Bridge",
+        "doc": "",
+        "body": "self._cv = threading.Condition()\nself.poll_s = poll_s\nself._obs: dict[str, Any] | None = None\nself._serial = 0\nself._action: dict[str, Any] | None = None\nself._finished = False\nself._over: dict[str, Any] | None = None\nself._status: dict[str, Any] = {}\nself._pictured: Any = None\nself.resets = 0"
+      },
+      {
+        "name": "Bridge.reset",
+        "kind": "function",
+        "range": [
+          70,
+          73
+        ],
+        "owner": "Bridge",
+        "doc": "",
+        "body": "with self._cv:\n            self.resets += 1\n            self._cv.notify_all()"
+      },
+      {
+        "name": "Bridge.update_obs",
+        "kind": "function",
+        "range": [
+          75,
+          107
+        ],
+        "owner": "Bridge",
+        "doc": "",
+        "body": "with self._cv:\n            info = (obs.get(\"additional_info\") or {}).get(STATUS_KEY)\n            if isinstance(info, dict):"
+      },
+      {
+        "name": "Bridge.get_action",
+        "kind": "function",
+        "range": [
+          109,
+          116
+        ],
+        "owner": "Bridge",
+        "doc": "",
+        "body": "with self._cv:\n            self._cv.wait_for(lambda: self._action is not None or self._finished, self.poll_s)\n            if self._action is not None:"
+      },
+      {
+        "name": "Bridge.episode_end",
+        "kind": "function",
+        "range": [
+          118,
+          121
+        ],
+        "owner": "Bridge",
+        "doc": "",
+        "body": "with self._cv:\n            self._over = dict(info or {})\n            self._cv.notify_all()"
+      },
+      {
+        "name": "Bridge.first_obs",
+        "kind": "function",
+        "range": [
+          125,
+          141
+        ],
+        "owner": "Bridge",
+        "doc": "The first observation of the episode; ``alive()`` false means the client died.",
+        "body": "deadline = time.monotonic() + timeout_s\nwith self._cv:\n            while self._obs is None:\n                if self._over is not None:"
+      },
+      {
+        "name": "Bridge.get_obs",
+        "kind": "function",
+        "range": [
+          143,
+          147
+        ],
+        "owner": "Bridge",
+        "doc": "",
+        "body": "with self._cv:\n            if self._obs is None:\n                raise RuntimeError(\"no observation yet\")"
+      },
+      {
+        "name": "Bridge.status",
+        "kind": "function",
+        "range": [
+          149,
+          156
+        ],
+        "owner": "Bridge",
+        "doc": "",
+        "body": "with self._cv:\n            status = dict(self._status)\n            if self._over is not None:"
+      },
+      {
+        "name": "Bridge.over",
+        "kind": "function",
+        "range": [
+          159,
+          161
+        ],
+        "owner": "Bridge",
+        "doc": "",
+        "body": "with self._cv:\n            return None if self._over is None else dict(self._over)"
+      },
+      {
+        "name": "Bridge.step",
+        "kind": "function",
+        "range": [
+          163,
+          186
+        ],
+        "owner": "Bridge",
+        "doc": "Have the client take one native action; returns the observation that follows.\n\nRaises :class:`EpisodeOver` when the client ended the episode on that action (the task\nis solved, or the budget is spent) or had ended it before.",
+        "body": "deadline = time.monotonic() + timeout_s\nwith self._cv:\n            if self._over is not None or self._finished:\n                raise EpisodeOver(\"the episode is over\")"
+      },
+      {
+        "name": "Bridge.finish",
+        "kind": "function",
+        "range": [
+          188,
+          193
+        ],
+        "owner": "Bridge",
+        "doc": "The program has no more actions: the client judges the scene and ends the episode.",
+        "body": "with self._cv:\n            self._finished = True\n            self._cv.notify_all()"
+      },
+      {
+        "name": "Bridge.abandon",
+        "kind": "function",
+        "range": [
+          195,
+          205
+        ],
+        "owner": "Bridge",
+        "doc": "The client has left this episode (it reset): nothing more will come of it.\n\nA verdict the client has already reported stands.",
+        "body": "with self._cv:\n            self._finished = True\n            if self._over is None:"
+      },
+      {
+        "name": "Bridge.verdict",
+        "kind": "function",
+        "range": [
+          207,
+          220
+        ],
+        "owner": "Bridge",
+        "doc": "What the client reported at the end of the episode.\n\n``None`` when nothing came in time or ``alive()`` turned false (the client died).",
+        "body": "deadline = time.monotonic() + timeout_s\nwith self._cv:\n            while self._over is None:\n                left = deadline - time.monotonic()"
+      },
+      {
+        "name": "BridgeEnv",
+        "kind": "class",
+        "range": [
+          223,
+          251
+        ],
+        "owner": null,
+        "doc": "The environment :mod:`.robodojo_tools` steps, over a :class:`Bridge`.",
+        "body": ""
+      },
+      {
+        "name": "BridgeEnv.__init__",
+        "kind": "function",
+        "range": [
+          226,
+          228
+        ],
+        "owner": "BridgeEnv",
+        "doc": "",
+        "body": "self.bridge = bridge\nself.alive = alive  # false once the evaluation client's process has gone"
+      },
+      {
+        "name": "BridgeEnv.get_obs",
+        "kind": "function",
+        "range": [
+          230,
+          231
+        ],
+        "owner": "BridgeEnv",
+        "doc": "",
+        "body": "return self.bridge.get_obs()"
+      },
+      {
+        "name": "BridgeEnv.get_status",
+        "kind": "function",
+        "range": [
+          233,
+          234
+        ],
+        "owner": "BridgeEnv",
+        "doc": "",
+        "body": "return self.bridge.status()"
+      },
+      {
+        "name": "BridgeEnv.step",
+        "kind": "function",
+        "range": [
+          236,
+          242
+        ],
+        "owner": "BridgeEnv",
+        "doc": "",
+        "body": "try:\n            obs = self.bridge.step(action)\n            done = False\nreturn obs, 0.0, done, {\"status\": self.bridge.status()}"
+      },
+      {
+        "name": "BridgeEnv.episode_over",
+        "kind": "function",
+        "range": [
+          244,
+          247
+        ],
+        "owner": "BridgeEnv",
+        "doc": "The client has ended the episode and reported its verdict.",
+        "body": "return self.bridge.over is not None"
+      },
+      {
+        "name": "BridgeEnv.conclude",
+        "kind": "function",
+        "range": [
+          249,
+          251
+        ],
+        "owner": "BridgeEnv",
+        "doc": "",
+        "body": "self.bridge.finish()\nself.bridge.verdict(alive=self.alive)"
+      },
+      {
+        "name": "PolicyModel",
+        "kind": "class",
+        "range": [
+          254,
+          277
+        ],
+        "owner": null,
+        "doc": "XPolicyLab's ``Model`` for a PyRUA-Lean episode: every call goes to a :class:`Bridge`.",
+        "body": ""
+      },
+      {
+        "name": "PolicyModel.__init__",
+        "kind": "function",
+        "range": [
+          257,
+          258
+        ],
+        "owner": "PolicyModel",
+        "doc": "",
+        "body": "self.bridge = bridge"
+      },
+      {
+        "name": "PolicyModel.reset",
+        "kind": "function",
+        "range": [
+          260,
+          261
+        ],
+        "owner": "PolicyModel",
+        "doc": "",
+        "body": "self.bridge.reset()"
+      },
+      {
+        "name": "PolicyModel.update_obs",
+        "kind": "function",
+        "range": [
+          263,
+          264
+        ],
+        "owner": "PolicyModel",
+        "doc": "",
+        "body": "self.bridge.update_obs(obs)"
+      },
+      {
+        "name": "PolicyModel.get_action",
+        "kind": "function",
+        "range": [
+          266,
+          267
+        ],
+        "owner": "PolicyModel",
+        "doc": "",
+        "body": "return self.bridge.get_action()"
+      },
+      {
+        "name": "PolicyModel.on_trial_end",
+        "kind": "function",
+        "range": [
+          269,
+          271
+        ],
+        "owner": "PolicyModel",
+        "doc": "",
+        "body": "self.bridge.episode_end(result)\nreturn True"
+      },
+      {
+        "name": "PolicyModel.update_obs_batch",
+        "kind": "function",
+        "range": [
+          273,
+          274
+        ],
+        "owner": "PolicyModel",
+        "doc": "",
+        "body": "raise NotImplementedError(\"one conversation drives one environment: eval_batch is false\")"
+      },
+      {
+        "name": "PolicyModel.get_action_batch",
+        "kind": "function",
+        "range": [
+          276,
+          277
+        ],
+        "owner": "PolicyModel",
+        "doc": "",
+        "body": "raise NotImplementedError(\"one conversation drives one environment: eval_batch is false\")"
+      },
+      {
+        "name": "Server",
+        "kind": "class",
+        "range": [
+          280,
+          310
+        ],
+        "owner": null,
+        "doc": "XPolicyLab's websocket policy server, run in a thread of this process.",
+        "body": ""
+      },
+      {
+        "name": "Server.__init__",
+        "kind": "function",
+        "range": [
+          283,
+          293
+        ],
+        "owner": "Server",
+        "doc": "",
+        "body": "from client_server.ws.model_server import PolicyServer, PolicyServerConfig\nself._loop = asyncio.new_event_loop()\nself._server = PolicyServer(model, PolicyServerConfig(host=host, port=int(port)))\nself._thread = threading.Thread(\n            target=self._run, name=\"xpolicylab-policy-server\", daemon=True\n        )\nself.error: BaseException | None = None\nself._thread.start()"
+      },
+      {
+        "name": "Server.stop",
+        "kind": "function",
+        "range": [
+          302,
+          310
+        ],
+        "owner": "Server",
+        "doc": "",
+        "body": "if not self._thread.is_alive():\n            return\ntry:\n            asyncio.run_coroutine_threadsafe(self._server.stop(), self._loop).result(timeout=10)\n        except Exception:  # noqa: BLE001 - best effort during shutdown\nself._loop.call_soon_threadsafe(self._loop.stop)\nself._thread.join(timeout=10)"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import asyncio",
+      "import threading",
+      "import time",
+      "from typing import Any",
+      "from client_server.ws.model_server import PolicyServer, PolicyServerConfig"
+    ]
+  },
+  {
+    "path": "src/pyrualean/hosts/xpolicylab_robodojo.py",
+    "category": "code",
+    "moduleDoc": "RoboDojo through its own evaluation client and XPolicyLab.\n\nThe host of ``--robot robodojo_xpl``.  RoboDojo's evaluation runs a policy as two processes\nthat talk XPolicyLab's websocket protocol: the evaluation client owns the simulator\n(``src/eval_client/main.py``), builds the observation (three colour images and the robot's\nstate; a depth image and the camera matrices where its config switches them on, which this\nhost does for the client it starts) and counts the task's own action budget; a policy server\nanswers ``update_obs`` / ``get_action``.  This host is the policy server.  :func:`boot`\n\n*   builds the directory the client runs from (:mod:`.robodojo_client_root`): RoboDojo's\n    code and configuration copied, XPolicyLab's code and the adapter\n    (``integrations/xpolicylab/PyRUA_Lean``) beside them, ``Assets`` linked;\n*   serves a :class:`.xpolicylab_bridge.Bridge` with XPolicyLab's policy server, in a thread;\n*   starts the evaluation client on one task and one layout (``scripts/eval_policy.sh``, the\n    script RoboDojo's own CLI ends in), which connects to that server;\n*   and returns a :class:`.robodojo_native.NativeToolkit` over the bridge once the first\n    observation has arrived.\n\nWhat the client decides stays the client's: when the task is solved it ends the episode at\nonce, and when the program has finished it judges the scene as it stands\n(``backend.conclude()``).  ``Cell.seed`` is the layout; ``eval_seed`` (0, 1 or 2) picks which\nof RoboDojo's three layout sets it is taken from.  The one layout is picked the way\nXPolicyLab's ``scripts/run_robodojo_layout_range.sh`` picks layouts: a resume manifest that\nleaves every other one out.\n\nNeeds: a RoboDojo checkout with its XPolicyLab submodule (``--source-root`` /\n``ROBODOJO_SOURCE_ROOT``; ``Assets`` in it, or ``ROBODOJO_ASSETS_ROOT``), ``msgpack-numpy``\nfor both sides and ``websockets >= 13`` for the server.  ``ROBODOJO_XPL_SITE`` may name a\ndirectory with ``common/`` (what both sides lack) and ``server/`` (what only the server may\nsee): the simulator's environment keeps the websockets it was built with.  Without a\ncheckout the tree ``rlinf-robodojo-runtime`` ships is used (an older client), with the\nXPolicyLab checkout ``--xpolicylab-root`` / ``ROBODOJO_XPOLICYLAB_ROOT`` names.",
+    "symbols": [
+      {
+        "name": "add_boot_args",
+        "kind": "function",
+        "range": [
+          75,
+          92
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "parser.add_argument(\n        \"--source-root\",\n        default=os.environ.get(\"ROBODOJO_SOURCE_ROOT\"),\nparser.add_argument(\n        \"--xpolicylab-root\",\n        default=os.environ.get(\"ROBODOJO_XPOLICYLAB_ROOT\"),\nparser.add_argument(\n        \"--eval-seed\",\n        type=int,"
+      },
+      {
+        "name": "boot_options",
+        "kind": "function",
+        "range": [
+          95,
+          100
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return {\n        \"source_root\": getattr(args, \"source_root\", None),\n        \"xpolicylab_root\": getattr(args, \"xpolicylab_root\", None),"
+      },
+      {
+        "name": "_source_root",
+        "kind": "function",
+        "range": [
+          103,
+          118
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "explicit = explicit or os.environ.get(\"ROBODOJO_SOURCE_ROOT\")\nif explicit:\n        root = Path(explicit).expanduser().resolve()\n    else:\nmissing = [part for part in client_root().SOURCE_PARTS if not (root / part).exists()]\nif missing or not (root / \"src\" / \"eval_client\" / \"main.py\").is_file():\n        raise FileNotFoundError(f\"not a RoboDojo source tree with its evaluation client: {root}\")\nreturn root"
+      },
+      {
+        "name": "_xpolicylab_root",
+        "kind": "function",
+        "range": [
+          121,
+          133
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "value = explicit or os.environ.get(\"ROBODOJO_XPOLICYLAB_ROOT\")\nif not value and source is not None and (source / \"XPolicyLab\" / \"client_server\").is_dir():\n        value = str(source / \"XPolicyLab\")  # the submodule of a RoboDojo checkout\nif not value:\n        raise FileNotFoundError(\n            \"an XPolicyLab checkout: the XPolicyLab directory of the RoboDojo checkout, \"\nroot = Path(value).expanduser().resolve()\nif not (root / \"client_server\" / \"ws\" / \"model_server.py\").is_file():\n        raise FileNotFoundError(f\"not an XPolicyLab checkout: {root}\")\nreturn root"
+      },
+      {
+        "name": "adapter_dir",
+        "kind": "function",
+        "range": [
+          136,
+          143
+        ],
+        "owner": null,
+        "doc": "This library's XPolicyLab adapter (``policy/PyRUA_Lean`` of a submission).",
+        "body": "here = Path(__file__).resolve()\nfor parent in here.parents:\n        if (parent / ADAPTER_DIR / \"deploy.py\").is_file():\n            return parent / ADAPTER_DIR\nraise FileNotFoundError(f\"{ADAPTER_DIR} not found above {here}\")"
+      },
+      {
+        "name": "client_root",
+        "kind": "function",
+        "range": [
+          146,
+          151
+        ],
+        "owner": null,
+        "doc": ":mod:`.robodojo_client_root`: the one place that builds the client's directory.",
+        "body": "from . import robodojo_client_root\nreturn robodojo_client_root"
+      },
+      {
+        "name": "with_depth",
+        "kind": "function",
+        "range": [
+          154,
+          157
+        ],
+        "owner": null,
+        "doc": "Switch the depth image and the camera matrices on in a copy of RoboDojo's ``env_cfg``.",
+        "body": "client_root().with_depth(env_cfg, suite)"
+      },
+      {
+        "name": "lay_out",
+        "kind": "function",
+        "range": [
+          160,
+          178
+        ],
+        "owner": null,
+        "doc": "The directory the evaluation client runs from: RoboDojo's code and configuration\ncopied from ``source``, XPolicyLab's code and the adapter in ``XPolicyLab/``, ``Assets``\nlinked.  The client writes ``eval_result/`` into it.\n\nWith ``depth`` the copy of ``env_cfg`` has the depth image and the camera matrices\nswitched on; RoboDojo's tree is not touched.",
+        "body": "return client_root().lay_out(\n        bench,\n        source,"
+      },
+      {
+        "name": "only_layout",
+        "kind": "function",
+        "range": [
+          181,
+          234
+        ],
+        "owner": null,
+        "doc": "Have the client evaluate ``cell.seed`` and no other layout of the task.\n\nRoboDojo takes layouts from the front; its resume manifest can leave layouts out, which\nis how XPolicyLab's ``scripts/run_robodojo_layout_range.sh`` selects them.  This writes\nthat manifest: nothing evaluated yet, every other layout abandoned.",
+        "body": "import yaml\ncfg = yaml.safe_load((bench / \"env_cfg\" / f\"{cell.suite}.yml\").read_text(encoding=\"utf-8\"))\nconfig_name = str(cfg.get(\"config_name\") or cell.suite)\nlayouts = bench / \"Assets\" / \"Eval_Layout\" / \"RoboDojo\" / config_name / str(eval_seed)\npattern = re.compile(rf\"{re.escape(cell.task)}_\\d+\\.json\")\ncount = (\n        sum(1 for p in layouts.iterdir() if pattern.fullmatch(p.name)) if layouts.is_dir() else 0\n    )\nif not 0 <= int(cell.seed) < count:\n        raise ValueError(\n            f\"layout {cell.seed} of {cell.task}: {layouts} holds {count} (eval seed {eval_seed})\"\nresult_dir = (\n        bench / \"eval_result\" / \"RoboDojo\" / cell.task / POLICY_NAME / config_name\n        / f\"{eval_seed}_{additional_info}\"\nresult_dir.mkdir(parents=True, exist_ok=True)\nmanifest = result_dir / f\"_resume_{run_id}.json\"\nmanifest.write_text(\n        json.dumps(\n            {\nreturn manifest"
+      },
+      {
+        "name": "_site",
+        "kind": "function",
+        "range": [
+          237,
+          242
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "root = os.environ.get(\"ROBODOJO_XPL_SITE\")\nif not root:\n        return None, None\ncommon, server = Path(root) / \"common\", Path(root) / \"server\"\nreturn (str(common) if common.is_dir() else None), (str(server) if server.is_dir() else None)"
+      },
+      {
+        "name": "_import_server",
+        "kind": "function",
+        "range": [
+          245,
+          256
+        ],
+        "owner": null,
+        "doc": "Make XPolicyLab's policy server importable here, with a websockets it can run on.",
+        "body": "common, server = _site()\nfor entry in (str(bench / \"XPolicyLab\"), str(bench), common, server):\n        if entry and entry not in sys.path:\n            sys.path.insert(0, entry)\nloaded = sys.modules.get(\"websockets\")\nif loaded is not None and int(str(getattr(loaded, \"__version__\", \"0\")).split(\".\")[0]) < 13:\n        # the simulator's environment keeps an old websockets; nothing here has used it yet\n        for name in [n for n in sys.modules if n == \"websockets\" or n.startswith(\"websockets.\")]:"
+      },
+      {
+        "name": "_free_port",
+        "kind": "function",
+        "range": [
+          259,
+          262
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "with socket.socket() as sock:\n        sock.bind((\"127.0.0.1\", 0))\n        return int(sock.getsockname()[1])"
+      },
+      {
+        "name": "lacking",
+        "kind": "function",
+        "range": [
+          291,
+          303
+        ],
+        "owner": null,
+        "doc": "What robot ``robodojo_xpl`` reads and this observation does not hold.",
+        "body": "head = (obs.get(\"vision\") or {}).get(\"cam_head\") or {}\nreturn [\n        name\n        for name, got in ("
+      },
+      {
+        "name": "_toolkit",
+        "kind": "function",
+        "range": [
+          306,
+          332
+        ],
+        "owner": null,
+        "doc": "The robot's tools over ``bridge``; the verdict is the one the client reports.",
+        "body": "if depth:\n        lacks = lacking(bridge.get_obs())\n        if lacks:\nsam3 = None\nif not env_only:\n        from . import sam3_local\nreturn NativeToolkit(\n        BridgeEnv(bridge, alive),\n        sam3,"
+      },
+      {
+        "name": "boot",
+        "kind": "function",
+        "range": [
+          335,
+          434
+        ],
+        "owner": null,
+        "doc": "Start the policy server and RoboDojo's evaluation client; return ``(toolkit, daemons)``.\n\n``env_only`` leaves SAM3 out (enough to dump a task card).  With ``bridge`` nothing is\nstarted: the evaluation client is already talking to a policy server that serves that\nbridge (XPolicyLab started both, and the adapter's ``model.py`` runs the episode).\n``depth`` is what the robot reads: with it the client this host starts is configured to\nsend the depth image and the camera matrices, and a client that does not send them is\nrefused; without it nothing but the client's default observation is read.",
+        "body": "if eval_seed not in EVAL_SEEDS:\n        raise ValueError(f\"eval_seed must be one of {EVAL_SEEDS}\")\nout_dir.mkdir(parents=True, exist_ok=True)\nif bridge is not None:\n        bridge.first_obs(boot_timeout_s)\n        return _toolkit(bridge, cell, out_dir, env_only, depth=depth), []\nsource = _source_root(source_root)\nxpolicylab = _xpolicylab_root(xpolicylab_root, source)\nbench = lay_out(out_dir / \"bench\", source, xpolicylab, depth=depth, suite=cell.suite)\n_import_server(bench)\nbridge = Bridge()\nport = _free_port()\nserver = serve(bridge, \"127.0.0.1\", port)\ndaemons: list[Any] = [server]\ntry:\n        common, site_server = _site()\n        env = dict(os.environ)\nreturn toolkit, daemons"
+      },
+      {
+        "name": "make_backend",
+        "kind": "function",
+        "range": [
+          437,
+          438
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return NativeBackend(toolkit)"
+      },
+      {
+        "name": "dump_card",
+        "kind": "function",
+        "range": [
+          441,
+          485
+        ],
+        "owner": null,
+        "doc": "Write ``card.json`` plus the step-0 images and return the card.\n\nThe same card as RPent's host writes: both arms' initial grasp points, gripper angles and\nopenings, and the task's own native-action budget.  Nothing privileged.",
+        "body": "record = toolkit.state.records[0]\nraw = record[\"state\"]\ncard_dir = out_dir / \"card\"\ncard_dir.mkdir(exist_ok=True)\nimages: dict[str, str] = {}\nfor camera in CAMERAS:\n        source = toolkit.state.artifact_path(f\"{camera}.png\", step=0)\n        if source.is_file():\nfacts: dict[str, Any] = {}\nfor arm in (\"left\", \"right\"):\n        start = _arm_state(raw, arm)\n        facts[f\"{arm} arm initial grasp point [x, y, z]\"] = f\"{_fmt(start.tcp_pos)} m\"\ntry:\n        budget = int(toolkit._status().get(\"step_limit\"))\n    except (TypeError, ValueError):\nfacts[\"native action budget\"] = f\"{budget} (a motion call spends one or more)\"\ncard = TaskCard(\n        suite=cell.suite,\n        task=cell.task,\n(out_dir / \"card.json\").write_text(card.to_json() + \"\\n\", encoding=\"utf-8\")\nreturn card"
+      },
+      {
+        "name": "_Client",
+        "kind": "class",
+        "range": [
+          265,
+          288
+        ],
+        "owner": null,
+        "doc": "The evaluation client's process.",
+        "body": ""
+      },
+      {
+        "name": "_Client.__init__",
+        "kind": "function",
+        "range": [
+          268,
+          269
+        ],
+        "owner": "_Client",
+        "doc": "",
+        "body": "self.proc, self.bridge, self.log = proc, bridge, log"
+      },
+      {
+        "name": "_Client.alive",
+        "kind": "function",
+        "range": [
+          271,
+          272
+        ],
+        "owner": "_Client",
+        "doc": "",
+        "body": "return self.proc.poll() is None"
+      },
+      {
+        "name": "_Client.stop",
+        "kind": "function",
+        "range": [
+          274,
+          288
+        ],
+        "owner": "_Client",
+        "doc": "",
+        "body": "self.bridge.finish()\ntry:\n            self.proc.wait(timeout=90)\n        except subprocess.TimeoutExpired:\nwith contextlib.suppress(Exception):\n            self.log.close()"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import argparse",
+      "import contextlib",
+      "import json",
+      "import os",
+      "import re",
+      "import shutil",
+      "import signal",
+      "import socket",
+      "import subprocess",
+      "import sys",
+      "import time",
+      "from pathlib import Path",
+      "from typing import Any",
+      "from ..prompt import TaskCard",
+      "from ..robodojo import _arm_state",
+      "from . import robodojo_tools as tools",
+      "from .robodojo_native import CAMERAS, NativeBackend, NativeToolkit",
+      "from .rpent_robodojo import Cell, _fmt, _opening, add_cell_args, cell_from_args",
+      "from .xpolicylab_bridge import Bridge, BridgeEnv, serve",
+      "from . import robodojo_client_root",
+      "import yaml",
+      "from . import sam3_local",
+      "import robodojo_runtime"
+    ]
+  },
+  {
+    "path": "src/pyrualean/hosts/xpolicylab_robodojo_rgb.py",
+    "category": "code",
+    "moduleDoc": "RoboDojo's evaluation client as it is configured: colour images and the robot's state.\n\nThe host of ``--robot robodojo_xpl_rgb``: everything :mod:`.xpolicylab_robodojo` does, with\nthe client's configuration left alone and nothing read that it does not send by default (no\ndepth image, no camera matrices).",
+    "symbols": [
+      {
+        "name": "boot",
+        "kind": "function",
+        "range": [
+          34,
+          38
+        ],
+        "owner": null,
+        "doc": ":func:`.xpolicylab_robodojo.boot` on the client's default observation.",
+        "body": "options[\"depth\"] = False\nreturn _base.boot(cell, out_dir, **options)"
+      },
+      {
+        "name": "dump_card",
+        "kind": "function",
+        "range": [
+          41,
+          42
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return _base.dump_card(toolkit, cell, out_dir, robot=ROBOT)"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "from pathlib import Path",
+      "from typing import Any",
+      "from . import xpolicylab_robodojo as _base",
+      "from .xpolicylab_robodojo import Cell, add_boot_args, add_cell_args, boot_options, cell_from_args, make_backend"
+    ]
+  },
+  {
+    "path": "src/pyrualean/robodojo.py",
+    "category": "code",
+    "moduleDoc": "RoboDojo robot API for code policies.\n\nPerception (``segment``, ``back_project``) and the frozen Pi0.5 policy\n(``pi0_pick``) are RPent's RoboDojo tools (``robots/robodojo/tools.py``) with\nRPent's argument names and defaults.  Motion and grasping are this library's\nown (``hosts/robodojo_tools.py``, registered on RPent's toolkit at boot, so they\nare executed and recorded like RPent's tools): RPent's toolset moves an arm by\nposition only and its IK lets the wrist drift, which leaves a program unable to\norient the fingers for a grasp or to bring an arm back to its starting pose,\nand RoboDojo counts 45 of its 54 tasks as solved only with both arms back.\n``move_to`` solves a full-pose IK in the host (``hosts/robodojo_kinematics.py``,\nthe benchmark's URDF fitted to the reported poses exactly) and moves the grasp\npoint along a straight line; ``set_gripper`` (a full stroke that reports what\nit holds), ``locate`` (an object's 3D extent from its mask and the depth image)\nand ``home`` complete the set.  Only what a program cannot compose from the\nothers is a primitive: a button press is a ``move_to`` past the surface, a\ntwist is a ``move_to`` with another ``roll``.  The calling convention is\nthe library's: a policy is an ordinary Python program that calls these methods\nand branches on their typed return values.\n\nRoboDojo is the one robot whose success flag RPent keeps from its planner:\nofficial success is read by the runner after the planner has finished, and no\ntool result carries it.  This class keeps that regime, so the code arm sees\nwhat the tool-calling arm sees: it has no ``done`` (``ABSENT_MEMBERS``; the\nattribute raises rather than answering a constant False that a\n``while not robo.done`` loop would spin on), its ``State`` has no\n``terminated`` and no result has a success-of-the-task field.  The host reads\nthe verdict from the backend when the episode is over.\n\nThe docstrings in this module are the model-facing documentation: the prompt\nis generated from them (see :mod:`pyrualean.prompt`), so keep them accurate.",
+    "symbols": [
+      {
+        "name": "_floats",
+        "kind": "function",
+        "range": [
+          345,
+          352
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "try:\n        vals = tuple(float(v) for v in value)\n    except (TypeError, ValueError) as exc:\nif len(vals) != n or not all(math.isfinite(v) for v in vals):\n        raise ValueError(f\"{name} must be {n} finite numbers, got {value!r}\")\nreturn vals"
+      },
+      {
+        "name": "_tuple3",
+        "kind": "function",
+        "range": [
+          355,
+          362
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "try:\n        vals = tuple(float(v) for v in value)\n    except (TypeError, ValueError):\nif len(vals) != 3:\n        return (math.nan, math.nan, math.nan)\nreturn vals  # type: ignore[return-value]"
+      },
+      {
+        "name": "_arm",
+        "kind": "function",
+        "range": [
+          365,
+          368
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "if name not in (\"left\", \"right\"):\n        raise ValueError(f\"arm must be 'left' or 'right', got {name!r}\")\nreturn str(name)"
+      },
+      {
+        "name": "_camera",
+        "kind": "function",
+        "range": [
+          371,
+          374
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "if name not in cameras:\n        raise ValueError(f\"camera must be one of {cameras}, got {name!r}\")\nreturn str(name)"
+      },
+      {
+        "name": "_command",
+        "kind": "function",
+        "range": [
+          377,
+          387
+        ],
+        "owner": null,
+        "doc": "A gripper command: 1 closes, -1 opens, 0 keeps (``move_to`` only).",
+        "body": "allowed = (-1, 0, 1) if allow_keep else (-1, 1)\ntry:\n        number = float(value)\n    except (TypeError, ValueError):\nif number not in allowed:\n        words = \"1 (close), -1 (open) or 0 (keep)\" if allow_keep else \"1 (close) or -1 (open)\"\n        raise ValueError(f\"gripper must be {words}, got {value!r}\")\nreturn int(number)"
+      },
+      {
+        "name": "_scalar",
+        "kind": "function",
+        "range": [
+          390,
+          402
+        ],
+        "owner": null,
+        "doc": "First element of a possibly nested one-value sequence (``[0.97]``, a numpy array).",
+        "body": "for _ in range(4):\n        if value is None or isinstance(value, (int, float)):\n            break\ntry:\n        return float(value)\n    except (TypeError, ValueError):"
+      },
+      {
+        "name": "_sequence",
+        "kind": "function",
+        "range": [
+          405,
+          412
+        ],
+        "owner": null,
+        "doc": "A list or numpy array as a tuple of floats; ``()`` when it is neither.",
+        "body": "if value is None:\n        return ()\ntry:\n        return tuple(float(v) for v in value)\n    except (TypeError, ValueError):"
+      },
+      {
+        "name": "_rotation",
+        "kind": "function",
+        "range": [
+          415,
+          424
+        ],
+        "owner": null,
+        "doc": "[w, x, y, z] to a 3x3 rotation (rows).",
+        "body": "w, x, y, z = (float(v) for v in quat)\nn = math.sqrt(w * w + x * x + y * y + z * z) or 1.0\nw, x, y, z = w / n, x / n, y / n, z / n\nreturn [\n        [1 - 2 * (y * y + z * z), 2 * (x * y - z * w), 2 * (x * z + y * w)],\n        [2 * (x * y + z * w), 1 - 2 * (x * x + z * z), 2 * (y * z - x * w)],"
+      },
+      {
+        "name": "_wrap",
+        "kind": "function",
+        "range": [
+          427,
+          428
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "return (deg + 180.0) % 360.0 - 180.0"
+      },
+      {
+        "name": "gripper_angles",
+        "kind": "function",
+        "range": [
+          431,
+          453
+        ],
+        "owner": null,
+        "doc": "(pitch, yaw, roll) in degrees of an end-effector quaternion [w, x, y, z].\n\nThe end-effector link's x axis is the pointing direction and its y axis the\nline the fingers close along; the orientation is ``Rz(90 + yaw) Ry(pitch)\nRx(roll)`` (the starting pose is 0, 0, 0: pointing away from the robot,\nlevel, fingers side by side).  Within a degree of straight down, yaw and\nroll turn about the same axis: yaw carries their difference, roll reads 0.",
+        "body": "r = _rotation(quat)\npoint = (r[0][0], r[1][0], r[2][0])\npitch = math.degrees(math.asin(max(-1.0, min(1.0, -point[2]))))\nif math.hypot(point[0], point[1]) < math.sin(math.radians(1.0)):  # within 1 degree\n        jaw = (r[0][1], r[1][1])\n        return pitch, _wrap(math.degrees(math.atan2(-jaw[1], -jaw[0]))), 0.0\nyaw = math.degrees(math.atan2(point[1], point[0])) - 90.0\na, p = math.radians(90.0 + yaw), math.radians(pitch)\nca, sa, cp, sp = math.cos(a), math.sin(a), math.cos(p), math.sin(p)\nbase = [[ca * cp, -sa, ca * sp], [sa * cp, ca, sa * sp], [-sp, 0.0, cp]]  # Rz(a) Ry(p)\nr21 = sum(base[k][2] * r[k][1] for k in range(3))\nr11 = sum(base[k][1] * r[k][1] for k in range(3))\nreturn pitch, _wrap(yaw), _wrap(math.degrees(math.atan2(r21, r11)))"
+      },
+      {
+        "name": "_arm_state",
+        "kind": "function",
+        "range": [
+          456,
+          472
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "pose = _sequence(raw.get(f\"{name}_ee_pose\"))\nif len(pose) != 7:\n        pose = (0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0)\nr = _rotation(pose[3:])\ntcp = tuple(pose[i] + r[i][0] * TCP_OFFSET for i in range(3))\npitch, yaw, roll = gripper_angles(pose[3:])\nreturn ArmState(\n        tcp_pos=tcp,  # type: ignore[arg-type]\n        pitch=round(pitch, 2),"
+      },
+      {
+        "name": "_angle",
+        "kind": "function",
+        "range": [
+          475,
+          484
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "if value is None:\n        return None\ntry:\n        out = float(value)\n    except (TypeError, ValueError) as exc:\nif not math.isfinite(out):\n        raise ValueError(f\"{name} must be finite, got {value!r}\")\nreturn out"
+      },
+      {
+        "name": "_pick_arm",
+        "kind": "function",
+        "range": [
+          497,
+          499
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "raw = raw if isinstance(raw, dict) else {}\nreturn {key: float(raw.get(key, math.nan)) for key in _PICK_ARM_KEYS}"
+      },
+      {
+        "name": "ArmState",
+        "kind": "class",
+        "range": [
+          74,
+          103
+        ],
+        "owner": null,
+        "doc": "One arm at a recorded step.\n\ntcp_pos: the grasp point [x, y, z] in the world frame, metres: the middle of\n    the finger pads, 0.145 m out along the pointing direction from the\n    end-effector link.  ``move_to`` drives this point.\npitch / yaw / roll: the gripper's orientation, degrees (see the class\n    docstring): ``pitch`` 0 points level and 90 straight down, ``yaw`` is\n    the heading of the pointing direction on the table (0 away from the\n    robot, +90 towards the robot's left), ``roll`` the turn of the fingers\n    about the pointing direction (0 as at the start).  Pointing straight\n    down, ``yaw`` alone says how the fingers lie and ``roll`` reads 0.\neef_pos: position of the end-effector link (the wrist flange), metres.\neef_quat: end-effector orientation as a unit quaternion [w, x, y, z].\ngripper: measured gripper opening, normalised: 1.0 = open, 0.0 = closed on\n    nothing; closed on an object 0.002 + 0.109 x this reading is the\n    object's width in metres.\n    (Gripper COMMANDS use the opposite sign convention: see ``set_gripper``.)\njoints: the six arm joint angles, radians (the last turns the fingers about\n    the pointing direction).",
+        "body": "tcp_pos: tuple[float, float, float]\npitch: float\nyaw: float\nroll: float\neef_pos: tuple[float, float, float]\neef_quat: tuple[float, float, float, float]\ngripper: float\njoints: tuple[float, ...]"
+      },
+      {
+        "name": "State",
+        "kind": "class",
+        "range": [
+          107,
+          129
+        ],
+        "owner": null,
+        "doc": "Snapshot of both arms at one recorded step.\n\nstep: index of the recorded step (0 = initial scene).  A new step is\n    recorded after every motion call.\ntask: the task instruction given by the benchmark (authoritative).\nleft / right: the two arms (``state.arm(\"left\")`` picks one by name).\ntruncated: the native-action budget of the episode is exhausted; no\n    further motion is possible.",
+        "body": "step: int\ntask: str\nleft: ArmState\nright: ArmState\ntruncated: bool"
+      },
+      {
+        "name": "State.arm",
+        "kind": "function",
+        "range": [
+          124,
+          129
+        ],
+        "owner": "State",
+        "doc": "",
+        "body": "if name == \"left\":\n            return self.left\nif name == \"right\":\n            return self.right\nraise ValueError(\"arm must be 'left' or 'right'\")"
+      },
+      {
+        "name": "Move",
+        "kind": "class",
+        "range": [
+          133,
+          174
+        ],
+        "owner": null,
+        "doc": "Outcome of ``move_to``.\n\ntarget_xyz: the requested grasp-point position.\nstart_xyz / final_xyz: where the grasp point was before and after.\ndist_to_target_m: distance from ``final_xyz`` to ``target_xyz``.\norientation_error_deg: how far the final orientation is from the one asked\n    (the angles passed, the others as they were).\npitch / yaw / roll: the orientation the gripper ended with, degrees.\nreached: within 0.01 m and 5 degrees of the target.\npath: ``\"line\"`` (the grasp point moved along a straight line),\n    ``\"joint\"`` (the joints swung straight to the solution) or None\n    (nothing moved).\nik_error: why nothing moved (the pose is out of reach, or every way there\n    goes through the table), or None.  An out-of-reach target names the\n    nearby poses that ARE reachable (a less steep pitch here, or this\n    orientation higher or lower).\nnote: set when the exact pose was out of reach but one within 2 cm and\n    8 degrees was not: the arm went there instead (``dist_to_target_m``\n    and ``orientation_error_deg`` say how far off it is).\nblocked: the arm stopped short of a planned pose it could reach: something\n    is in the way, or a held object is pushing against something.\nsteps_used: native actions consumed.\ntruncated: the native-action budget ran out.",
+        "body": "arm: str\ntarget_xyz: tuple[float, float, float]\nstart_xyz: tuple[float, float, float]\nfinal_xyz: tuple[float, float, float]\ndist_to_target_m: float\norientation_error_deg: float\npitch: float\nyaw: float\nroll: float\nreached: bool\npath: str | None\nik_error: str | None\nnote: str | None\nblocked: bool\nsteps_used: int\ntruncated: bool"
+      },
+      {
+        "name": "Home",
+        "kind": "class",
+        "range": [
+          178,
+          193
+        ],
+        "owner": null,
+        "doc": "Outcome of ``home``.\n\narm: ``\"left\"``, ``\"right\"`` or ``\"both\"``, as requested.\nreached: every joint of the returned arm(s) ended within 0.01 rad of the\n    angle it had when the episode started.\nmax_joint_error_rad: the largest difference that remains.\nsteps_used: native actions consumed.\ntruncated: the native-action budget ran out.",
+        "body": "arm: str\nreached: bool\nmax_joint_error_rad: float\nsteps_used: int\ntruncated: bool"
+      },
+      {
+        "name": "Gripper",
+        "kind": "class",
+        "range": [
+          197,
+          222
+        ],
+        "owner": null,
+        "doc": "Outcome of ``set_gripper``.\n\ncommanded: ``\"closed\"`` or ``\"open\"``.\nopening: the opening once the fingers stopped (1.0 = open, 0.0 = closed on\n    nothing).\nholding: after a close, the fingers stopped apart (an opening above 0.01,\n    about 3 mm): something is between them.  It does not say what: check\n    that the intended object moves with the arm.\nwidth_m: after a close, the width of what is held, across the fingers\n    (0.0 when nothing is), else None.\nsteps_used: native actions consumed.\nstep / step_limit: native actions executed so far and the episode budget\n    (None if the runtime did not report them).\ntruncated: the native-action budget ran out.",
+        "body": "arm: str\ncommanded: str\nopening: float\nholding: bool\nwidth_m: float | None\nsteps_used: int\nstep: int | None\nstep_limit: int | None\ntruncated: bool"
+      },
+      {
+        "name": "Pick",
+        "kind": "class",
+        "range": [
+          226,
+          255
+        ],
+        "owner": null,
+        "doc": "Outcome of ``pi0_pick``.\n\nsuccess: the grasp HEURISTIC fired for some arm: it descended at least\n    0.06 m, then rose at least 0.04 m with its gripper below 0.55.  It is\n    provisional and errs both ways: it says nothing about which object is\n    held, and it stays False for an arm that grasped without first going\n    down 0.06 m.  Read ``left`` / ``right`` and confirm from the wrist camera.\ninstruction: the text the policy received.\nchunks_used: policy chunks executed (each up to 50 native actions; a chunk\n    is cut short the moment the heuristic fires).\nleft / right: what each arm did, as a dict of end-effector heights (metres)\n    and measured gripper openings (1.0 = open, 0.0 = closed):\n    ``start_eef_z``, ``min_eef_z`` (the lowest point reached),\n    ``peak_eef_z`` (the highest point after that), ``peak_lift_m`` (peak -\n    min), ``start_gripper``, ``final_gripper``.  The policy drives BOTH\n    arms and picks the arm itself; inspect both.\nmonitored_arm: the ``arm`` argument, echoed.\nbudget_exhausted: the native-action budget ran out during the pick.\ntruncated: same condition, as recorded in the state after the call.",
+        "body": "success: bool\ninstruction: str\nchunks_used: int\nleft: dict[str, float]\nright: dict[str, float]\nmonitored_arm: str\nbudget_exhausted: bool\ntruncated: bool"
+      },
+      {
+        "name": "Segment",
+        "kind": "class",
+        "range": [
+          259,
+          276
+        ],
+        "owner": null,
+        "doc": "Outcome of ``segment``.\n\nfound: SAM3 produced a mask scoring at least ``min_score``.\ncentroid: (row, col) of the mask centroid (mean of the mask pixels, floored),\n    or None.  Pass exactly this pixel, with the same camera, to\n    ``back_project``.\narea_px: number of mask pixels (0 when not found).\nscore: SAM3 confidence in [0, 1], None when not found.\nbox: mask bounding box as reported by SAM3, or None.",
+        "body": "found: bool\ncentroid: tuple[int, int] | None\narea_px: int\nscore: float | None\nbox: Any\ncamera: str"
+      },
+      {
+        "name": "WorldPoint",
+        "kind": "class",
+        "range": [
+          280,
+          291
+        ],
+        "owner": null,
+        "doc": "Outcome of ``back_project``: the surface point seen at one pixel.\n\nxyz: world [x, y, z], metres.  It is a visible SURFACE point (the top of\n    an object as the camera sees it), not the object's centre.\ndepth_m: distance of that point along the camera's optical axis.",
+        "body": "pixel: tuple[int, int]\nxyz: tuple[float, float, float]\ndepth_m: float\ncamera: str"
+      },
+      {
+        "name": "ObjectPose",
+        "kind": "class",
+        "range": [
+          295,
+          339
+        ],
+        "owner": null,
+        "doc": "Outcome of ``locate``: an object measured from its mask and the depth image.\n\nfound: SAM3 produced a mask scoring at least ``min_score``.\ncenter_xyz: [x, y, z] of the middle of the smallest rectangle around the\n    object's footprint, at half its height above the table, metres.  A\n    handle, a spout or a tail is part of the footprint and moves the\n    middle away from the body's.  None when no 3D measurement was\n    possible (see ``note``).\ntop_z: height of the object's top surface (the highest points seen).\nheight_m: ``top_z`` above the table surface (0.765 m).\nlength_m / width_m: the long and the short side of the smallest rectangle\n    around the footprint.\nlong_axis_deg: direction of the long side on the table, degrees from +x\n    (-90 .. 90); of a square, one of its sides.\ngrasp_yaw: the ``yaw`` for ``move_to(..., pitch=90, yaw=grasp_yaw)``:\n    pointing straight down, the fingers then close across the short side\n    (a cube's: across two faces).\nscore: SAM3 confidence.\ncentroid: (row, col) of the mask in the image, as ``Segment.centroid``.\narea_px: mask pixels.\ncamera: the camera measured from.\nnote: why there is no 3D measurement (a flat object, no depth), else None.\n\nThe camera sees the top and the near side.  The far side of an object that\nis round about an upright axis (a bottle, a cup) is filled in from the arc\nthat is seen; the far side of anything else, and what other things or the\nrobot's own gripper hide, is not measured, so such a footprint can be\nshorter than the object.  A held object is usually not found from the head\ncamera.",
+        "body": "found: bool\ncenter_xyz: tuple[float, float, float] | None\ntop_z: float | None\nheight_m: float | None\nlength_m: float | None\nwidth_m: float | None\nlong_axis_deg: float | None\ngrasp_yaw: float | None\nscore: float | None\ncentroid: tuple[int, int] | None\narea_px: int\ncamera: str\nnote: str | None"
+      },
+      {
+        "name": "RobodojoRobot",
+        "kind": "class",
+        "range": [
+          507,
+          1126
+        ],
+        "owner": null,
+        "doc": "The RoboDojo dual-arm station: two 6-DoF ARX-X5 arms with parallel grippers at a table.\n\nWorld frame: x runs across the table (the LEFT arm is at negative x and\nappears on the LEFT of the head image), y points away from the robot\ntowards the far edge of the table, z is up; metres.  Orientations are unit\nquaternions ordered [w, x, y, z].  The arms are ``\"left\"`` and ``\"right\"``\n(``robo.LEFT`` / ``robo.RIGHT``). ``move_to`` names one arm and\nholds the other; ``move_both`` moves both on one native action clock.\nChoose roles, ordering and recovery in your Python program.\n\n``move_to`` drives an arm's GRASP POINT, the middle of the finger pads\n(``state().left.tcp_pos``), to a world position, with an orientation given\nin degrees: ``pitch`` is how far the gripper points below the horizontal\n(0 level, 90 straight down), ``yaw`` the heading of the pointing direction\non the table (0 away from the robot, +90 towards the robot's left, -90\ntowards its right) and ``roll`` the turn of the fingers about the pointing\ndirection (0: side by side, as at the start).  Pointing straight down, the\nfingers close along the line at ``yaw`` degrees from +x (counter-clockwise\nseen from above): ``locate``'s ``grasp_yaw`` is that line across an\nobject's narrow side.  The table\nsurface is at z = 0.765; the arms stand on it at x = -0.30 and +0.30,\ny = -0.45.\n\nTwo gripper conventions, do not mix them up.  COMMANDS are signed:\n``robo.CLOSE`` (1) closes, ``robo.OPEN`` (-1) opens, ``robo.KEEP`` (0)\nleaves the gripper as it is.  MEASUREMENTS (``state().left.gripper``,\n``Gripper.opening``) are openings: 1.0 = open, 0.0 = closed on nothing.\n\nEvery native action (one step of ``move_to``, ``set_gripper`` or\n``home``, one VLA action) counts against the episode's\nnative-action budget; when it is spent the state reports ``truncated``\nand motion calls raise ``EpisodeFinished``.  Motion calls block until the\nprimitive finishes and return a typed result; nothing is queued.\n\nPerception is camera based: a fixed head camera (``cam_head``, the whole\ntable) and one wrist camera per arm (``cam_left_wrist``,\n``cam_right_wrist``), 640x480 each.  ``locate`` finds an object by a text\nprompt and measures it in 3D (centre, top, footprint, heading);\n``segment`` / ``back_project`` give a mask centroid and the world point at\none pixel.  Object poses are never given.\n\nThe frozen Pi0.5 VLA (``pi0_pick``) is a learned dual-arm policy trained on\ndemonstrations of this benchmark's tasks.",
+        "body": "ARMS: tuple[str, str] = (\"left\", \"right\")\nLEFT: str = \"left\"\nRIGHT: str = \"right\"\nCLOSE: int = 1\nOPEN: int = -1\nKEEP: int = 0\nRESULT_TYPES: ClassVar[tuple[type, ...]] = (\n        State,\n        ArmState,\nNAME: ClassVar[str] = \"robodojo\"\nABSENT_MEMBERS: ClassVar[frozenset[str]] = frozenset({\"done\", \"world_map\"})\nCAMERAS: ClassVar[tuple[str, ...]] = (\"cam_head\", \"cam_left_wrist\", \"cam_right_wrist\")\nIMAGE_ARTIFACTS: ClassVar[dict[tuple[str, str], str]] = {\n        (\"cam_head\", \"high\"): \"cam_head.png\",\n        (\"cam_left_wrist\", \"high\"): \"cam_left_wrist.png\",\nWORLD_MAP_ARTIFACTS: ClassVar[dict[tuple[str, str], str]] = {}\nON_MOTION_IMAGES: ClassVar[tuple[str, ...]] = (\n        \"cam_head.png\",\n        \"cam_left_wrist.png\",\nSTATEFUL_TOOLS: ClassVar[frozenset[str]] = STATEFUL_TOOLS\nVLA_PRIMITIVES: ClassVar[tuple[str, ...]] = (\"pi0_pick\",)\nVLA_REFERENCE_EDITS: ClassVar[tuple[tuple[str, str], ...]] = (\n        (\n            \"    ``home``, one VLA action) counts against the episode's\\n\",\nSUMMARY_KEYS: ClassVar[tuple[str, ...]] = (\n        \"success\",\n        \"reached\","
+      },
+      {
+        "name": "RobodojoRobot.task",
+        "kind": "function",
+        "range": [
+          635,
+          640
+        ],
+        "owner": "RobodojoRobot",
+        "doc": "The task instruction the benchmark generated for this layout (authoritative).\n\nRead it before planning.",
+        "body": "return super().task"
+      },
+      {
+        "name": "RobodojoRobot.done",
+        "kind": "function",
+        "range": [
+          643,
+          653
+        ],
+        "owner": "RobodojoRobot",
+        "doc": "Absent (not in the API reference): there is no success flag to read.\n\nIt raises instead of returning False, which a ``while not robo.done``\nloop carried over from another robot would spin on until the budget\nis gone.  ``AttributeError`` also makes ``hasattr(robo, \"done\")`` false.",
+        "body": "raise AttributeError(\n            \"RoboDojo reports no task success while the episode runs: there is no robo.done; \"\n            \"judge progress from the images and the robot state\""
+      },
+      {
+        "name": "RobodojoRobot.state",
+        "kind": "function",
+        "range": [
+          658,
+          668
+        ],
+        "owner": "RobodojoRobot",
+        "doc": "Read the recorded state of both arms.\n\nArgs:\n    step: recorded step to read; ``-1`` is the latest, ``0`` the\n        initial scene.  A new step is recorded after every motion call.\nReturns:\n    State with ``left`` / ``right`` end-effector poses, measured\n    gripper openings and joint angles, and the ``truncated`` flag.",
+        "body": "return super().state(step)"
+      },
+      {
+        "name": "RobodojoRobot.image",
+        "kind": "function",
+        "range": [
+          670,
+          685
+        ],
+        "owner": "RobodojoRobot",
+        "doc": "Load a recorded camera image as a ``numpy`` uint8 array (480, 640, 3), RGB.\n\nArgs:\n    camera: ``\"cam_head\"`` (fixed view of the whole table: identify\n        objects, destinations and the global layout),\n        ``\"cam_left_wrist\"`` or ``\"cam_right_wrist\"`` (on the gripper:\n        what that arm is about to grasp or is holding).\n    resolution: there is one resolution per camera, ``\"high\"``.  Pixel\n        coordinates are (row, col) with row 0 at the top and col 0 at\n        the left.\n    step: recorded step, ``-1`` = latest.  ``segment`` and\n        ``back_project`` always read the CURRENT observation, which is\n        the latest recorded step.",
+        "body": "return super().image(camera, resolution=resolution, step=step)"
+      },
+      {
+        "name": "RobodojoRobot.world_map",
+        "kind": "function",
+        "range": [
+          687,
+          693
+        ],
+        "owner": "RobodojoRobot",
+        "doc": "Absent (not in the API reference): no per-pixel world maps are recorded.",
+        "body": "raise ValueError(\n            \"RoboDojo records no world maps; use back_project(row, col, camera) per pixel\"\n        )"
+      },
+      {
+        "name": "RobodojoRobot.camera_meta",
+        "kind": "function",
+        "range": [
+          695,
+          706
+        ],
+        "owner": "RobodojoRobot",
+        "doc": "Return the calibration of one camera at a recorded step as a dict.\n\nKeys: ``shape`` (image shape), ``intrinsic_matrix`` (3x3),\n``extrinsic_matrix`` (4x4 camera-to-world; the camera looks down its\nown -z axis with +y up) and ``has_depth``.  The wrist cameras move\nwith their arm.",
+        "body": "camera = _camera(camera, self.CAMERAS)\npayload = self._readonly(self.STATE_TOOL, {\"step\": int(step)})\ncameras = (payload.get(\"state\") or {}).get(\"cameras\") or {}\nreturn dict(cameras.get(camera) or {})"
+      },
+      {
+        "name": "RobodojoRobot.show",
+        "kind": "function",
+        "range": [
+          708,
+          716
+        ],
+        "owner": "RobodojoRobot",
+        "doc": "Attach the current image of ``camera`` to the feedback of this turn.\n\nImages are not returned automatically; call ``show(\"cam_head\")``,\n``show(\"cam_left_wrist\")`` or ``show(\"cam_right_wrist\")`` when *you*\n(the author) need to look at the scene before writing the next turn.\nCosts tokens: look only when a decision depends on it.",
+        "body": "super().show(camera)"
+      },
+      {
+        "name": "RobodojoRobot.artifact",
+        "kind": "function",
+        "range": [
+          718,
+          724
+        ],
+        "owner": "RobodojoRobot",
+        "doc": "Return the raw bytes of a recorded artifact (advanced).\n\nNames are ``cam_head.png``, ``cam_left_wrist.png`` and\n``cam_right_wrist.png``.",
+        "body": "return super().artifact(name, step=step)"
+      },
+      {
+        "name": "RobodojoRobot.segment",
+        "kind": "function",
+        "range": [
+          728,
+          768
+        ],
+        "owner": "RobodojoRobot",
+        "doc": "Segment an object in the current image of ``camera`` by a text prompt (SAM3).\n\nArgs:\n    text_prompt: what to find, e.g. ``\"the green bottle\"``.  Name one\n        object by its visible properties.\n    camera: ``\"cam_head\"`` (default), ``\"cam_left_wrist\"`` or\n        ``\"cam_right_wrist\"``.\n    min_score: masks scoring below this are reported as not found.\nReturns:\n    Segment; when ``found``, pass ``centroid`` (row, col) to\n    ``back_project`` with the same camera to get a world point.  The\n    mask is the best match for the text, not a guarantee of identity:\n    check where it is against the image.\nRaises:\n    ToolError: the camera image or the SAM3 service is unavailable.",
+        "body": "camera = _camera(camera, self.CAMERAS)\nprompt = str(text_prompt)\nif not prompt.strip():\n            raise ValueError(\"text_prompt must not be empty\")\nkwargs: dict[str, Any] = {\n            \"text_prompt\": prompt,\n            \"camera\": camera,\np = self._readonly(\"segment\", kwargs)\nif not p.get(\"found\"):\n            return Segment(False, None, 0, None, None, str(p.get(\"camera\", camera)))\ncentroid = p.get(\"centroid_rc\") or ()\nmoments = p.get(\"mask_moments\") or ()\nreturn Segment(\n            found=True,\n            centroid=(int(centroid[0]), int(centroid[1])) if len(centroid) == 2 else None,"
+      },
+      {
+        "name": "RobodojoRobot.back_project",
+        "kind": "function",
+        "range": [
+          770,
+          794
+        ],
+        "owner": "RobodojoRobot",
+        "doc": "Return the world point seen at one pixel of the current image of ``camera``.\n\nArgs:\n    row / col: pixel, row 0 at the top, col 0 at the left (images are\n        480 rows x 640 cols).\n    camera: the camera the pixel was read from (default ``\"cam_head\"``).\nReturns:\n    WorldPoint; ``xyz`` is where the camera ray meets the first\n    surface.  A pixel on an object's edge or a thin part can land on\n    the table or the background behind it: prefer ``Segment.centroid``.\nRaises:\n    ToolError: pixel out of range, no valid depth there, or the\n    camera calibration is missing.",
+        "body": "camera = _camera(camera, self.CAMERAS)\nkwargs: dict[str, Any] = {\"row\": int(row), \"col\": int(col), \"camera\": camera}\np = self._readonly(\"back_project\", kwargs)\npixel = p.get(\"pixel\") or (int(row), int(col))\nreturn WorldPoint(\n            pixel=(int(pixel[0]), int(pixel[1])),\n            xyz=_tuple3(p.get(\"world_xyz\")),"
+      },
+      {
+        "name": "RobodojoRobot.locate",
+        "kind": "function",
+        "range": [
+          796,
+          851
+        ],
+        "owner": "RobodojoRobot",
+        "doc": "Find an object by a text prompt and measure it in 3D.\n\nSAM3 segments the current image of ``camera`` (as ``segment``); every\npixel of the mask is then projected into the world through the depth\nimage, and the points above the table give the object's centre, top,\nfootprint and heading.  Nothing moves.\n\nArgs:\n    text_prompt: one object by its visible properties, e.g. ``\"the\n        small red cube on the left\"``.\n    camera: ``\"cam_head\"`` (default; the whole table),\n        ``\"cam_left_wrist\"`` or ``\"cam_right_wrist\"`` (close up, from\n        the gripper: re-measure before a precise grasp).\n    min_score: masks scoring below this are reported as not found.\nReturns:\n    ObjectPose.  For a top grasp: ``move_to([x, y, top_z + 0.08],\n    pitch=90, yaw=grasp_yaw)`` above it, then down to the height to\n    hold it at.  The mask is the best match for the text, not proof of\n    identity: check it against the image.\nRaises:\n    ToolError: the camera image or the SAM3 service is unavailable.",
+        "body": "camera = _camera(camera, self.CAMERAS)\nprompt = str(text_prompt)\nif not prompt.strip():\n            raise ValueError(\"text_prompt must not be empty\")\nkwargs: dict[str, Any] = {\n            \"text_prompt\": prompt,\n            \"camera\": camera,\np = self._readonly(\"locate\", kwargs)\ncentroid = p.get(\"centroid_rc\") or ()\ncenter = p.get(\"center_xyz\")\nreturn ObjectPose(\n            found=bool(p.get(\"found\")),\n            center_xyz=_tuple3(center) if center is not None else None,"
+      },
+      {
+        "name": "RobodojoRobot.pi0_pick",
+        "kind": "function",
+        "range": [
+          855,
+          913
+        ],
+        "owner": "RobodojoRobot",
+        "doc": "Run the frozen Pi0.5 policy closed loop until an arm has lifted something.\n\nThe policy was trained on complete demonstrations of this benchmark's\ntasks, each under its task instruction: it is a whole-task policy, not\na grasp skill (the name is RPent's).  It receives the three current\ncamera images, both arms' joint state and an instruction, and drives\nBOTH arms for up to ``max_chunks`` chunks of up to 50 native actions\neach.  The call returns as soon as its grasp heuristic fires (an arm\nwent down, came back up at least 0.04 m and has its gripper closed) or\nthe budget runs out; called again, the policy carries on from the\nscene as it then is.\n\nArgs:\n    prompt: the instruction for the policy.  None (default) uses the\n        benchmark's own task instruction (``robo.task``).  An override\n        must name the intended object by what distinguishes it (not\n        just \"pick the bottle\") and must not contain template markers\n        such as ``<target>``.\n    arm: recorded as ``monitored_arm`` only; the policy chooses the arm\n        itself and the heuristic watches both.\n    max_chunks: upper bound on policy chunks (>= 1).  Each chunk can\n        spend 50 native actions of the episode's budget, so the\n        default can spend 400.\nReturns:\n    Pick; ``success`` is a provisional heuristic.  Look at the wrist\n    camera of the arm that lifted (``Pick.left`` / ``Pick.right``) to\n    confirm that the intended object is held.  A broad task\n    instruction may fit several objects and promises no grasp order.\nRaises:\n    ToolError: the policy service is unavailable or the prompt was\n    rejected.",
+        "body": "arm = _arm(arm)\nif int(max_chunks) < 1:\n            raise ValueError(\"max_chunks must be at least 1\")\nkwargs: dict[str, Any] = {\"arm\": arm, \"max_chunks\": int(max_chunks)}\nif prompt is not None:\n            text = str(prompt)\n            if not text.strip():\nreturn self._stateful(\"pi0_pick\", kwargs, build)"
+      },
+      {
+        "name": "RobodojoRobot.move_to",
+        "kind": "function",
+        "range": [
+          917,
+          972
+        ],
+        "owner": "RobodojoRobot",
+        "doc": "Move one arm's grasp point to a world position, with an orientation.\n\nThe grasp point is the middle of the finger pads (``tcp_pos``).  The\nlibrary solves the arm's inverse kinematics for the full pose and,\nwith ``path=\"auto\"``, moves the grasp point along a straight line to\nit, about 2.5 cm or 8 degrees per native action; when the line leaves\nthe arm's reach it swings the joints straight to the solution instead.\nNothing moves when the pose is out of reach or every way there takes\nthe arm into the table: ``ik_error`` says why.\n\nArgs:\n    xyz: target grasp-point position [x, y, z], metres.\n    arm: ``\"left\"`` or ``\"right\"``.  The other arm holds its joints.\n    gripper: ``robo.CLOSE`` (1) or ``robo.OPEN`` (-1) to command the\n        moving arm's gripper on every action of the motion,\n        ``robo.KEEP`` (0) to keep commanding what it was last told (a\n        held object stays squeezed).  Keep it closed (1) while\n        carrying an object.\n    pitch / yaw / roll: the orientation to arrive with, degrees (the\n        class docstring defines them).  An angle left None keeps its\n        current value, so a plain position move does not turn the\n        gripper.  With an EMPTY open gripper the fingers are\n        interchangeable, so the pose turned half a turn about the\n        pointing direction may be taken when it needs less joint\n        travel (``note`` says so; yaw / roll then read 180 off);\n        holding something, the pose is taken exactly as asked.\n    path: ``\"auto\"`` (default), ``\"line\"`` (straight line or nothing)\n        or ``\"joint\"`` (swing the joints: fewer actions, but the grasp\n        point does not follow a line: not near objects).\nReturns:\n    Move; test ``reached`` (within 0.01 m and 5 degrees).  ``blocked``\n    means the arm was stopped by something on the way.\nRaises:\n    ValueError: a malformed argument (nothing is sent).",
+        "body": "arm = _arm(arm)\ntarget = _floats(xyz, 3, \"xyz\")\ncommand = _command(gripper, allow_keep=True)\nif path not in (\"auto\", \"line\", \"joint\"):\n            raise ValueError(f\"path must be 'auto', 'line' or 'joint', got {path!r}\")\nkwargs: dict[str, Any] = {\"xyz\": list(target), \"arm\": arm, \"gripper\": command, \"path\": path}\nfor name, value in ((\"pitch\", pitch), (\"yaw\", yaw), (\"roll\", roll)):\n            angle = _angle(value, name)\n            if angle is not None:\nreturn self._stateful(\"move_pose\", kwargs, lambda p: self._move(arm, target, p))"
+      },
+      {
+        "name": "RobodojoRobot.set_gripper",
+        "kind": "function",
+        "range": [
+          974,
+          1025
+        ],
+        "owner": "RobodojoRobot",
+        "doc": "Close or open one gripper, without moving the arms.\n\nThe command is repeated until the fingers stop (2 to 10 native\nactions).  After a close, ``holding`` tells whether something stopped\nthe fingers apart and ``width_m`` how wide it is.  Later motions with\n``robo.KEEP`` keep commanding what was commanded last, so a held\nobject stays squeezed and a partial opening stays as it is.\n\nArgs:\n    arm: ``\"left\"`` or ``\"right\"``.\n    gripper: ``robo.CLOSE`` (1) or ``robo.OPEN`` (-1).\n    opening: with ``robo.OPEN`` only: open to this reading\n        (0 < opening <= 1) instead of all the way, e.g. to reach\n        between close neighbours.  Something 0.002 + 0.109 x opening\n        metres wide then just fits between the fingers.\nReturns:\n    Gripper.  ``holding`` is not proof that the INTENDED object is\n    held: confirm it moves with the arm (wrist camera, or ``locate``\n    it again after a lift).",
+        "body": "arm = _arm(arm)\ncommand = _command(gripper, allow_keep=False)\nkwargs: dict[str, Any] = {\"arm\": arm, \"gripper\": command}\nif opening is not None:\n            try:\n                fraction = float(opening)\nreturn self._stateful(\"grip\", kwargs, build)"
+      },
+      {
+        "name": "RobodojoRobot.home",
+        "kind": "function",
+        "range": [
+          1027,
+          1056
+        ],
+        "owner": "RobodojoRobot",
+        "doc": "Return an arm to the joint angles it had when the episode started.\n\nA grasp point lower than 1.0 m first goes straight up by up to 6 cm;\nthen each native action commands the starting angles directly, so the\narm swings straight back: no IK and no path planning beyond that lift\n(clear tall things yourself).  The call returns when every joint is\nwithin 0.01 rad or after 25 actions of the swing.  The gripper keeps\nthe opening it has; an arm that is not named holds its joints.  Most\ntasks count as done only with both arms back where they started.\n\nArgs:\n    arm: ``\"left\"``, ``\"right\"`` or ``\"both\"`` (default).\nReturns:\n    Home; test ``reached`` and call again when it is False.",
+        "body": "if arm not in (*self.ARMS, \"both\"):\n            raise ValueError(f\"arm must be 'left', 'right' or 'both', got {arm!r}\")\nwhich = str(arm)\nreturn self._stateful(\"home\", {\"arm\": which}, build)"
+      },
+      {
+        "name": "RobodojoRobot._move",
+        "kind": "function",
+        "range": [
+          1065,
+          1085
+        ],
+        "owner": "RobodojoRobot",
+        "doc": "",
+        "body": "commanded = p.get(\"target_xyz\")\nangles = p.get(\"final_angles\") or {}\nreturn Move(\n            arm=str(p.get(\"arm\", arm)),\n            target_xyz=_tuple3(commanded if commanded is not None else target),"
+      },
+      {
+        "name": "RobodojoRobot._state_from_envelope",
+        "kind": "function",
+        "range": [
+          1087,
+          1096
+        ],
+        "owner": "RobodojoRobot",
+        "doc": "",
+        "body": "summary = envelope.get(\"state\") or {}\nraw = summary.get(\"state\") or {}\nreturn State(\n            step=int(envelope.get(\"step\", -1)),\n            task=str(envelope.get(\"task_language\") or summary.get(\"instruction\") or \"\"),"
+      },
+      {
+        "name": "RobodojoRobot._absorb",
+        "kind": "function",
+        "range": [
+          1098,
+          1110
+        ],
+        "owner": "RobodojoRobot",
+        "doc": "Latch ``truncated`` only.\n\nRPent records ``terminated=False`` on purpose (official success is read\nby its runner after the planner); nothing an envelope says may end\nthis episode as a success either.",
+        "body": "if envelope is None:\n            return\nstate = self._state_from_envelope(envelope)\nself._last_state = state\nif state.truncated:\n            self._truncated = True"
+      },
+      {
+        "name": "RobodojoRobot._summary_dict",
+        "kind": "function",
+        "range": [
+          1112,
+          1126
+        ],
+        "owner": "RobodojoRobot",
+        "doc": "Compact state for the per-turn tool feedback (host-facing).",
+        "body": "state = self.state()\nout: dict[str, Any] = {\"step\": state.step}\nfor name in self.ARMS:\n            arm = state.arm(name)\n            out[f\"{name}_tcp\"] = [round(v, 4) for v in arm.tcp_pos]\nout[\"truncated\"] = state.truncated\nreturn out"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import math",
+      "from collections.abc import Sequence",
+      "from dataclasses import dataclass",
+      "from typing import Any, ClassVar",
+      "from ._robot import RobotBase",
+      "from .coordination import CoordinationMixin",
+      "from .robots import RobotAdapter"
+    ]
+  },
+  {
+    "path": "src/pyrualean/robodojo_xpl.py",
+    "category": "code",
+    "moduleDoc": "The RoboDojo robot under RoboDojo's own evaluation client, through XPolicyLab.\n\nThe same robot as ``pyrualean.robodojo`` (the same API, the same tools, the same knowledge\nfile), served to RoboDojo's evaluation client as an XPolicyLab policy instead of being run on\nRPent's simulator bridge: the client owns the simulator and gives the verdict\n(:mod:`pyrualean.hosts.xpolicylab_robodojo`).\n\nIts perception reads what ``pyrualean.robodojo`` reads: a depth image and the camera matrices.\nRoboDojo's simulator emits both, its released data is RGB-D, and the client's configuration\nshipped with them on; they have been off by default since RoboDojo PR 2.  The host switches\nthem on in the configuration of the client it starts.  Under a client somebody else starts\nthey have to be on there (``observation.vision.depth`` or ``approximate_depth``,\n``intrinsic_matrix``, ``extrinsic_matrix`` in ``env_cfg/<config>.yml`` and the\n``distance_to_image_plane`` capture in its camera file); where they are not,\n``pyrualean.robodojo_xpl_rgb`` is the robot that needs none of it.\n\nThere is no VLA in this host; capability filtering selects ``no-vla`` automatically.",
+    "symbols": [
+      {
+        "name": "RobodojoOfficialRobot",
+        "kind": "class",
+        "range": [
+          37,
+          46
+        ],
+        "owner": null,
+        "doc": "",
+        "body": "__doc__ = RobodojoRobot.__doc__\nNAME: ClassVar[str] = \"robodojo_xpl\"\nSUPPORTS_VLA: ClassVar[bool] = False"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "from dataclasses import replace",
+      "from typing import ClassVar",
+      "from . import robodojo as _base",
+      "from .robodojo import RobodojoRobot"
+    ]
+  },
+  {
+    "path": "src/pyrualean/robodojo_xpl_rgb.py",
+    "category": "code",
+    "moduleDoc": "RoboDojo under its own evaluation client as that client is configured: no depth image.\n\n``pyrualean.robodojo_xpl`` is the RoboDojo robot under RoboDojo's own evaluation client with\nthe depth image and the camera matrices its simulator can give.  Those are switched off in\nthe client's configuration (``env_cfg/arx_x5.yml``: ``approximate_depth``, ``depth``,\n``intrinsic_matrix``, ``extrinsic_matrix``; RoboDojo PR 2), a policy cannot switch them on\nfrom its side, and no adapter on the leaderboard reads them.  The robot here is the same\nrobot with perception that needs no more than that default: ``locate`` measures an object\nfrom its masks in the cameras that see it (:mod:`pyrualean.hosts.robodojo_sight`),\n``back_project`` answers for the object under a pixel, ``camera_meta`` is worked out from the\nrobot's state.  Motion and the gripper are unchanged.\n\nThe host is :mod:`pyrualean.hosts.xpolicylab_robodojo_rgb`.  There is no VLA in that host:\ncapability filtering selects ``no-vla`` automatically.",
+    "symbols": [
+      {
+        "name": "ObjectSight",
+        "kind": "class",
+        "range": [
+          49,
+          84
+        ],
+        "owner": null,
+        "doc": "Outcome of ``locate``: an object measured from its masks in the colour cameras.\n\nfound: SAM3 produced a mask scoring at least ``min_score``.\ncenter_xyz: [x, y, z] of the middle of the smallest rectangle around the\n    object's footprint, at half its height above the table, metres.  A\n    handle, a spout or a tail is part of the footprint and moves the\n    middle away from the body's.  None when no 3D measurement was\n    possible (see ``note``).\ntop_z: height of the object's top surface.\nheight_m: ``top_z`` above the table surface (0.765 m).\nlength_m / width_m: the long and the short side of the smallest rectangle\n    around the footprint.\nlong_axis_deg: direction of the long side on the table, degrees from +x\n    (-90 .. 90); of a square, one of its sides.\ngrasp_yaw: the ``yaw`` for ``move_to(..., pitch=90, yaw=grasp_yaw)``:\n    pointing straight down, the fingers then close across the short side\n    (a cube's: across two faces).\nviews: how many cameras agreed on the measurement.  1: nothing but the\n    camera asked saw the object, and its height is a guess (see\n    ``locate``); ``note`` says which guess.\nscore: SAM3 confidence.\ncentroid: (row, col) of the mask in the image, as ``Segment.centroid``.\narea_px: mask pixels.\ncamera: the camera measured from.\nnote: what limits the measurement (one camera only; two that agree only\n    roughly; the mask is the robot's own arm, or not on the table; too\n    flat or too far to measure), else None.\n\nThe object is taken to stand on the table.  What other things or the\nrobot's own arm hide of it is not measured, so a partly hidden object\ncomes out smaller and off-centre.  A held object is usually not found from\nthe head camera.",
+        "body": "views: int = 1"
+      },
+      {
+        "name": "SeenPoint",
+        "kind": "class",
+        "range": [
+          88,
+          99
+        ],
+        "owner": null,
+        "doc": "Outcome of ``back_project``: the point seen at one pixel.\n\nxyz: world [x, y, z], metres: where the pixel's ray meets the object under\n    the pixel, or the table.\ndepth_m: distance of that point along the camera's optical axis.\nsurface: ``\"object\"`` when the pixel lies on something that could be\n    measured, ``\"table\"`` when the point is on the table top (z = 0.765):\n    the pixel shows the table, or something too flat or too far to measure.",
+        "body": "surface: str = \"table\""
+      },
+      {
+        "name": "RobodojoOfficialColourRobot",
+        "kind": "class",
+        "range": [
+          102,
+          303
+        ],
+        "owner": null,
+        "doc": "The RoboDojo dual-arm station: two 6-DoF ARX-X5 arms with parallel grippers at a table.\n\nWorld frame: x runs across the table (the LEFT arm is at negative x and\nappears on the LEFT of the head image), y points away from the robot\ntowards the far edge of the table, z is up; metres.  Orientations are unit\nquaternions ordered [w, x, y, z].  The arms are ``\"left\"`` and ``\"right\"``\n(``robo.LEFT`` / ``robo.RIGHT``). ``move_to`` names one arm and\nholds the other; ``move_both`` moves both on one native action clock.\nChoose roles, ordering and recovery in your Python program.\n\n``move_to`` drives an arm's GRASP POINT, the middle of the finger pads\n(``state().left.tcp_pos``), to a world position, with an orientation given\nin degrees: ``pitch`` is how far the gripper points below the horizontal\n(0 level, 90 straight down), ``yaw`` the heading of the pointing direction\non the table (0 away from the robot, +90 towards the robot's left, -90\ntowards its right) and ``roll`` the turn of the fingers about the pointing\ndirection (0: side by side, as at the start).  Pointing straight down, the\nfingers close along the line at ``yaw`` degrees from +x (counter-clockwise\nseen from above): ``locate``'s ``grasp_yaw`` is that line across an\nobject's narrow side.  The table\nsurface is at z = 0.765; the arms stand on it at x = -0.30 and +0.30,\ny = -0.45.\n\nTwo gripper conventions, do not mix them up.  COMMANDS are signed:\n``robo.CLOSE`` (1) closes, ``robo.OPEN`` (-1) opens, ``robo.KEEP`` (0)\nleaves the gripper as it is.  MEASUREMENTS (``state().left.gripper``,\n``Gripper.opening``) are openings: 1.0 = open, 0.0 = closed on nothing.\n\nEvery native action (one step of ``move_to``, ``set_gripper`` or\n``home``, one VLA action) counts against the episode's\nnative-action budget; when it is spent the state reports ``truncated``\nand motion calls raise ``EpisodeFinished``.  Motion calls block until the\nprimitive finishes and return a typed result; nothing is queued.\n\nPerception is from colour images alone; there is no depth image.  A fixed\nhead camera (``cam_head``, the whole table) and one wrist camera per arm\n(``cam_left_wrist``, ``cam_right_wrist``), 640x480 each, and where each\none is, is known from the robot's state.  ``locate`` finds an object by a\ntext prompt and measures it in 3D (centre, top, footprint, heading) from\nthe cameras that see it: it takes two of them to measure a height.\n``segment`` / ``back_project`` give a mask centroid and the world point at\none pixel.  Object poses are never given.\n\nThe frozen Pi0.5 VLA (``pi0_pick``) is a learned dual-arm policy trained on\ndemonstrations of this benchmark's tasks.",
+        "body": "NAME: ClassVar[str] = \"robodojo_xpl_rgb\"\nSUPPORTS_VLA: ClassVar[bool] = False\nRESULT_TYPES: ClassVar[tuple[type, ...]] = (\n        State,\n        ArmState,\nSUMMARY_KEYS: ClassVar[tuple[str, ...]] = (*RobodojoRobot.SUMMARY_KEYS, \"views\", \"surface\")"
+      },
+      {
+        "name": "RobodojoOfficialColourRobot.camera_meta",
+        "kind": "function",
+        "range": [
+          170,
+          191
+        ],
+        "owner": "RobodojoOfficialColourRobot",
+        "doc": "Return the calibration of one camera at a recorded step as a dict.\n\nKeys: ``shape`` (image shape), ``intrinsic_matrix`` (3x3) and\n``extrinsic_matrix`` (4x4 camera-to-world; the camera looks down its\nown -z axis with +y up).  The head camera is fixed; a wrist camera\nmoves with its arm, and its pose is worked out from that arm's state.",
+        "body": "from .hosts import robodojo_sight as sight\ncamera = _camera(camera, self.CAMERAS)\nif camera == \"cam_head\":\n            view = sight.head_view()\n        else:\nk = [[view.fx, 0.0, view.cx], [0.0, view.fy, view.cy], [0.0, 0.0, 1.0]]\nreturn {\n            \"shape\": [view.shape[0], view.shape[1], 3],\n            \"intrinsic_matrix\": k,"
+      },
+      {
+        "name": "RobodojoOfficialColourRobot.back_project",
+        "kind": "function",
+        "range": [
+          193,
+          228
+        ],
+        "owner": "RobodojoOfficialColourRobot",
+        "doc": "Return the world point seen at one pixel of the current image of ``camera``.\n\nThere is no depth image, so a pixel alone is only a ray.  The object\nunder the pixel is segmented from that pixel (SAM3) and measured as\n``locate`` measures one, and the answer is where the pixel's ray\nmeets it.  A pixel on the table top itself gives the point of the\ntable it shows, exactly.\n\nArgs:\n    row / col: pixel, row 0 at the top, col 0 at the left (images are\n        480 rows x 640 cols).\n    camera: the camera the pixel was read from (default ``\"cam_head\"``).\nReturns:\n    SeenPoint; check ``surface``.  ``\"object\"``: ``xyz`` is on the\n    object under the pixel, as well as ``locate`` would measure that\n    object from this camera and the others that see it.\n    ``\"table\"``: ``xyz`` is on the table top; a pixel that shows\n    something too flat or too far to measure also answers so.  A thin\n    part in mid-air (a peg, a handle, a cable) is not measured\n    reliably: reason from the image and from ``locate`` of the whole\n    object instead.\nRaises:\n    ToolError: pixel out of range, or it looks past the table.",
+        "body": "camera = _camera(camera, self.CAMERAS)\nkwargs: dict[str, Any] = {\"row\": int(row), \"col\": int(col), \"camera\": camera}\np = self._readonly(\"back_project\", kwargs)\npixel = p.get(\"pixel\") or (int(row), int(col))\nreturn SeenPoint(\n            pixel=(int(pixel[0]), int(pixel[1])),\n            xyz=_tuple3(p.get(\"world_xyz\")),"
+      },
+      {
+        "name": "RobodojoOfficialColourRobot.locate",
+        "kind": "function",
+        "range": [
+          230,
+          303
+        ],
+        "owner": "RobodojoOfficialColourRobot",
+        "doc": "Find an object by a text prompt and measure it in 3D from the colour cameras.\n\nSAM3 segments the current image of ``camera`` (as ``segment``); the\nsame object is then looked for in the other two cameras, and its\nheight and footprint are those that fit every camera that shows it.\nOne camera cannot measure a height: a low deep thing and a tall\nshallow one look alike from it.  ``views`` says how many cameras\nagreed.  Nothing moves.\n\nArgs:\n    text_prompt: one object by its visible properties, e.g. ``\"the\n        small red cube on the left\"``.\n    camera: ``\"cam_head\"`` (default; the whole table),\n        ``\"cam_left_wrist\"`` or ``\"cam_right_wrist\"`` (close up, from\n        the gripper).\n    min_score: masks scoring below this are reported as not found.\nReturns:\n    ObjectSight.  For a top grasp: ``move_to([x, y, top_z + 0.09],\n    pitch=90)`` above it, ``locate`` it again from there (the wrist\n    camera then looks down on it and the reading is good to 1-2 mm),\n    turn to ``yaw=grasp_yaw`` and go down to the height to hold it\n    at.  With ``views >= 2`` and no ``note`` a block, a can, a bowl\n    or the body of a bottle is measured to 1-3 mm; a ``note`` that\n    the cameras agree only roughly leaves the height uncertain.  With\n    ``views == 1`` the height is a guess, the tallest upright shape\n    that fits the one image: close for a box or a can, wrong for a\n    bowl, a cup or anything wider above than below, and for a tall\n    thing that tapers; ``center_xyz`` is then off, along the line\n    away from the robot, by about half of what the height is wrong\n    by.  An object once measured with ``views >= 2`` keeps that height\n    in later calls with the same prompt.  No position comes back\n    (``center_xyz`` None, ``note`` says why) for a mask on the robot's\n    own arm or on something that is not on the table.  The mask is\n    the best match for the text, not proof of identity: check it\n    against the image.\nRaises:\n    ToolError: the camera image or the SAM3 service is unavailable.",
+        "body": "camera = _camera(camera, self.CAMERAS)\nprompt = str(text_prompt)\nif not prompt.strip():\n            raise ValueError(\"text_prompt must not be empty\")\nkwargs: dict[str, Any] = {\n            \"text_prompt\": prompt,\n            \"camera\": camera,\np = self._readonly(\"locate\", kwargs)\ncentroid = p.get(\"centroid_rc\") or ()\ncenter = p.get(\"center_xyz\")\nnote = p.get(\"geometry_error\") or p.get(\"height_guess\")\nreturn ObjectSight(\n            found=bool(p.get(\"found\")),\n            center_xyz=_tuple3(center) if center is not None else None,"
+      }
+    ],
+    "imports": [
+      "from __future__ import annotations",
+      "import math",
+      "from dataclasses import dataclass",
+      "from typing import Any, ClassVar",
+      "from .robodojo import ArmState, Gripper, Home, Move, ObjectPose, Pick, RobodojoRobot, Segment, State, WorldPoint, _camera, _tuple3",
+      "from .robots import RobotAdapter",
+      "from .hosts import robodojo_sight as sight"
+    ]
+  }
+]

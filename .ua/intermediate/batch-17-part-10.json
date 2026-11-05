@@ -1,0 +1,943 @@
+{
+  "nodes": [
+    {
+      "id": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "type": "file",
+      "name": "fold_clothes.py",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "summary": "依据衣物掩码建立衣身坐标，先折袖再由双臂交替小步翻折下摆，观察折线高度并对未折到位的侧边重折。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "视觉定位",
+        "运动控制"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:pix_to_table",
+      "type": "function",
+      "name": "pix_to_table",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "summary": "把衣物像素射线批量投影到桌面平面。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        37,
+        42
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:wrap",
+      "type": "function",
+      "name": "wrap",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "summary": "将角度归一到正负 180 度范围。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        45,
+        46
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:left_steps",
+      "type": "function",
+      "name": "left_steps",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "summary": "返回动作预算减去已消耗控制步数后的余额。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        49,
+        50
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:box_ok",
+      "type": "function",
+      "name": "box_ok",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "summary": "要求后续衣物掩码仍位于初始衣物范围内，以排除随机场景杂物。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        53,
+        60
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:garment_mask",
+      "type": "function",
+      "name": "garment_mask",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "summary": "尝试多种衣物提示并选择符合初始范围的有效分割掩码。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "moderate",
+      "lineRange": [
+        63,
+        118
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:measure",
+      "type": "function",
+      "name": "measure",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "summary": "从衣物掩码估计中心、主方向及衣身坐标中的边界。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        121,
+        151
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:world",
+      "type": "function",
+      "name": "world",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "summary": "把衣物自身二维坐标转换为桌面世界位置。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        154,
+        156
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:mv",
+      "type": "function",
+      "name": "mv",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "summary": "执行指定机械臂的笛卡尔运动并返回控制反馈。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        159,
+        192
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:grip",
+      "type": "function",
+      "name": "grip",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "summary": "执行指定机械臂的夹爪指令并返回夹持反馈。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        195,
+        199
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:home",
+      "type": "function",
+      "name": "home",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "summary": "调用机械臂归位并检查返回的完成状态。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        202,
+        211
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:park",
+      "type": "function",
+      "name": "park",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "summary": "把手臂移到接近初始但向外转动的位置，清空视野且延后环境归位判定。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        217,
+        226
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:over",
+      "type": "function",
+      "name": "over",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "summary": "读取截断状态，判断当前回合是否已经结束。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        229,
+        233
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:corner",
+      "type": "function",
+      "name": "corner",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "summary": "在排除袖子的衣身区域寻找当前侧下摆对角极点。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        237,
+        246
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:side_bottom",
+      "type": "function",
+      "name": "side_bottom",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "summary": "测量衣身指定侧的最低边界位置。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        249,
+        252
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:carry",
+      "type": "function",
+      "name": "carry",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "summary": "保持腕部方向，沿翻折轨迹搬运下摆抓点，并交替两臂的小步先后顺序。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        255,
+        297
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:release",
+      "type": "function",
+      "name": "release",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "summary": "把抓住的衣物降至桌面附近，双臂依次松开并撤离。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        300,
+        308
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:hem_grasp",
+      "type": "function",
+      "name": "hem_grasp",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "summary": "计算指定侧下摆角和夹持朝向，下降夹住衣身底角。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        311,
+        321
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:fold_body",
+      "type": "function",
+      "name": "fold_body",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "summary": "抓住需要折叠的衣身侧边，将下摆搬向肩线附近并释放。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        324,
+        340
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:pull_up",
+      "type": "function",
+      "name": "pull_up",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "summary": "对部分折好的侧边低位夹住折角继续向上推送。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        343,
+        363
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:refold_v4",
+      "type": "function",
+      "name": "refold_v4",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "summary": "重新夹住当前底角，以六段低位搬运完成单侧下摆重折。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        366,
+        393
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:fold_sleeve",
+      "type": "function",
+      "name": "fold_sleeve",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "summary": "定位外伸袖部并向衣身内侧折叠，随后收回该侧手臂。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        396,
+        429
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:need_rise",
+      "type": "function",
+      "name": "need_rise",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "summary": "依据衣物自身领口与下摆长度计算合格折线所需上升距离。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        432,
+        435
+      ]
+    },
+    {
+      "id": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:extents",
+      "type": "function",
+      "name": "extents",
+      "filePath": "integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "summary": "测量衣物两侧外伸范围，并排除领口上方翻折布片对袖长判断的干扰。",
+      "tags": [
+        "离线策略",
+        "robodojo",
+        "函数"
+      ],
+      "complexity": "simple",
+      "lineRange": [
+        438,
+        446
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:pix_to_table",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:pix_to_table",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:wrap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:wrap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:left_steps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:left_steps",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:box_ok",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:box_ok",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:garment_mask",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:garment_mask",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:measure",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:measure",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:world",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:world",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:mv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:mv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:grip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:grip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:home",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:park",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:park",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:over",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:over",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:corner",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:corner",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:side_bottom",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:side_bottom",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:carry",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:carry",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:release",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:release",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:hem_grasp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:hem_grasp",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:fold_body",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:fold_body",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:pull_up",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:pull_up",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:refold_v4",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:refold_v4",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:fold_sleeve",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:fold_sleeve",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:need_rise",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:need_rise",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:extents",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:extents",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:garment_mask",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:box_ok",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:garment_mask",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:measure",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:pix_to_table",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:park",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:carry",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:release",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:release",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:hem_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:corner",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:hem_grasp",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:fold_body",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:hem_grasp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:fold_body",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:world",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:fold_body",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:fold_body",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:fold_body",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:carry",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:fold_body",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:release",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:pull_up",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:hem_grasp",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:pull_up",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:world",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:pull_up",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:pull_up",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:pull_up",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:carry",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:pull_up",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:release",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:refold_v4",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:corner",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:refold_v4",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:refold_v4",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:world",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:refold_v4",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:refold_v4",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:fold_sleeve",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:world",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:fold_sleeve",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:wrap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:fold_sleeve",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:grip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:fold_sleeve",
+      "target": "function:integrations/xpolicylab/PyRUA_RSI/programs/fold_clothes.py:mv",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

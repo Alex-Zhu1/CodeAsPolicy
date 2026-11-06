@@ -21,14 +21,19 @@ from __future__ import annotations
 import inspect
 import json
 import textwrap
-from dataclasses import dataclass, field, fields, is_dataclass
+from dataclasses import dataclass, field, fields, is_dataclass, replace
 from importlib import resources
 from pathlib import Path
 from typing import Any
 
 from ._robot import PRIMITIVE_SETS, RobotBase, effective_primitives
 from .libero import RESULT_TYPES, LiberoRobot
-from .task_acceptance import normalize_acceptance, render_acceptance
+from .task_acceptance import (
+    acceptance_sha256,
+    load_acceptance,
+    normalize_acceptance,
+    render_acceptance,
+)
 
 _HOST_ONLY = frozenset({"ledger", "backend"})
 _LINE = 88
@@ -264,12 +269,21 @@ def api_reference(
             "actions. Semantic completion is never inferred from pose or obstructed closure. "
             "Choose grasps backwards from the object's remaining use: its working region "
             "must be free when used and the receiver grasp region accessible during transfer. "
+            "Distinguish in-place state/orientation changes (tipping, flipping, sliding, "
+            "pressing) from objects that must be relocated; do not pick up and move group "
+            "members whose required state change can be performed in place, or vacate row "
+            "members to create an interior gap for a replacement item. "
             "A donor may temporarily hold a future working region if transfer frees it. "
             "For a handoff, choose both "
-            "grasp regions and a mutually reachable exchange pose before pickup. A changed "
+            "grasp regions and a mutually reachable exchange pose before pickup, and preview "
+            "the receiver's final placement/reorientation pose before committing to transfer. "
+            "After receiver close and donor release/withdrawal, call grasp_step(id, 'handoff') "
+            "to reacquire stationary receiver state and hold evidence before probe. A changed "
             "grasp or slip requires rechecking transfer and subsequent use, even if the "
             "new hold is stable. Account for finger clearance, not just TCP separation; "
-            "verify support before release. "
+            "verify support before release. After a low contact stroke, retreat straight up "
+            "or reverse along the contact axis before any lateral free/approach sweep, and "
+            "verify neighboring objects remain undisturbed. "
             "On snapshot backends, object_ref(name, description) preserves a logical object "
             "identity across grasps. Pass object_ref=ref to begin_grasp while the target is "
             "visible: preparation/open/approach/align return object_tracking. The executor "
@@ -347,7 +361,7 @@ def knowledge_text(name: str = "libero", primitives: str = "full", *,
     """
 
     stem = knowledge_stem(name, primitives)
-    package = resources.files("pyrualean")
+    package = resources.files(__package__ or "robouse")
     text = package.joinpath(f"knowledge/{stem}.md").read_text(encoding="utf-8")
     if intent_only is not False and name in {"robodojo", "robodojo_xpl_rgb"}:
         # Share sensing/acceptance facts with the adapter-specific knowledge;
@@ -404,6 +418,27 @@ class TaskCard:
 
     def __post_init__(self):
         self.acceptance = normalize_acceptance(self.acceptance)
+
+    def with_acceptance(
+        self, source: str | Path | dict[str, Any] | None
+    ) -> TaskCard:
+        """Return a copy with validated public acceptance requirements and provenance."""
+        contract, artifact = load_acceptance(source, suite=self.suite, task=self.task)
+        sources = dict(self.sources)
+        if contract["requirements"] or contract["coverage_source"]:
+            label = contract["coverage_source"] or "supplied"
+            sources["task acceptance"] = (
+                f"public acceptance specification ({label}); coverage={contract['coverage']}"
+            )
+        elif "task acceptance" in sources:
+            sources["task acceptance"] = (
+                "none supplied; only recorded step-0 instruction is available (coverage=unknown)"
+            )
+        provenance = dict(self.provenance)
+        if provenance or artifact is not None:
+            provenance["acceptance_sha256"] = acceptance_sha256(contract)
+            provenance["acceptance_artifact"] = artifact
+        return replace(self, acceptance=contract, sources=sources, provenance=provenance)
 
     def to_json(self) -> str:
         return json.dumps(self.__dict__, indent=2, ensure_ascii=False)
@@ -472,6 +507,11 @@ class TaskCard:
         ]
         if self.object_names:
             lines.append(f"- objects named by the benchmark: {', '.join(self.object_names)}")
+        else:
+            lines.append(
+                "- scene objects: not pre-listed by the benchmark; inspect step-0 images "
+                "to account for all task-relevant object groups, supply stacks and target areas"
+            )
         if not compact:
             for key, value in self.sources.items():
                 lines.append(f"- source of {key}: {value}")

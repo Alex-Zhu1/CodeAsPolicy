@@ -91,4 +91,84 @@ def test_ungrounded_coverage_and_verdicts_are_not_accepted_as_public_requirement
 def test_supplied_requirements_alone_do_not_certify_coverage():
     example = card(acceptance={"requirements": requirements()[:1]})
     assert example.acceptance["coverage"] == "unknown"
-    assert "Unknown coverage alone is no reason to stop useful work" in example.render()
+    rendered = example.render()
+    assert "Unknown coverage alone is no reason to stop useful work" in rendered
+    assert "do not invent hidden checks" not in rendered
+    assert "never waives an unperformed task phase" in rendered
+    assert "supply stacks" in rendered
+
+
+def test_complete_coverage_forbids_assumption_waivers_without_unknown_coverage_warning():
+    supplied = dict(requirements=requirements(), coverage="complete",
+                    coverage_source="public task sheet revision 2")
+    rendered = card(acceptance=supplied).render()
+    assert "never waives a supplied requirement" in rendered
+    assert "Unknown coverage alone is no reason to stop useful work" not in rendered
+    assert "do not invent hidden checks" not in rendered
+
+
+def test_load_acceptance_supports_single_file_and_task_catalog_with_provenance(tmp_path):
+    from pyrualean.task_acceptance import CATALOG_SCHEMA, acceptance_sha256, load_acceptance
+
+    single_payload = dict(
+        schema="pyrualean.task_acceptance.v1",
+        requirements=requirements(),
+        coverage="complete",
+        coverage_source="public benchmark manual",
+    )
+    single_file = tmp_path / "single.json"
+    single_file.write_text(json.dumps(single_payload), encoding="utf-8")
+    updated = card(robot="robodojo_xpl_rgb").with_acceptance(single_file)
+    assert updated.acceptance["coverage"] == "complete"
+    assert updated.provenance["acceptance_sha256"] == acceptance_sha256(updated.acceptance)
+    assert updated.provenance["acceptance_artifact"]["path"] == str(single_file.resolve())
+    assert updated.provenance["acceptance_artifact"]["matched_key"] is None
+    assert "public benchmark manual" in updated.sources["task acceptance"]
+
+    catalog_payload = {
+        "schema": CATALOG_SCHEMA,
+        "tasks": {
+            "arx_x5/make_kong": {
+                "requirements": [
+                    dict(
+                        id="wait_discard",
+                        kind="order",
+                        condition="Wait until the opponent discards a tile before acting.",
+                        source="mahjong rules §1",
+                    ),
+                    dict(
+                        id="expose_triplet",
+                        kind="outcome",
+                        condition="Expose the three matching hand tiles face up.",
+                        source="mahjong rules §2",
+                    ),
+                    dict(
+                        id="supplemental_tile",
+                        kind="outcome",
+                        condition=(
+                            "Draw the supplemental tile from the supply stack and stand it "
+                            "upright at the end of the hand row."
+                        ),
+                        source="mahjong rules §3",
+                    ),
+                ],
+                "coverage": "complete",
+                "coverage_source": "public mahjong task sheet",
+            }
+        },
+    }
+    catalog_file = tmp_path / "catalog.json"
+    catalog_file.write_text(json.dumps(catalog_payload), encoding="utf-8")
+    matched = TaskCard(
+        suite="arx_x5", task="make_kong", seed=0,
+        task_language="Wait for the opponent to discard a tile, then declare a kong.",
+        object_names=[], robot="robodojo_xpl_rgb",
+    ).with_acceptance(catalog_file)
+    assert matched.acceptance["coverage"] == "complete"
+    assert len(matched.acceptance["requirements"]) == 3
+    assert matched.provenance["acceptance_artifact"]["matched_key"] == "arx_x5/make_kong"
+    assert "supplemental tile from the supply stack" in matched.render(compact=True)
+
+    unmatched, meta = load_acceptance(catalog_file, suite="arx_x5", task="other_task")
+    assert unmatched["requirements"] == [] and unmatched["coverage"] == "unknown"
+    assert meta["matched_key"] is None

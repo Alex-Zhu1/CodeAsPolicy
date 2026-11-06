@@ -178,6 +178,9 @@ def observe(primitives, *, description, landmarks=None, previous=None, previous_
     reseeded, continuity = False, {}
     if landmarks is None and tracked is not None:
         landmarks, reasons, details = tracked['points'], tracked['failures'], tracked['methods']
+        shapes = tracked.get('shapes') or {
+            n: f.get('appearance', {}) for n, f in (origin or {}).get('landmarks', {}).items()
+        }
         continuity = tracked['continuity']
         association = 'continuous_visual_tracking'
     elif landmarks is None and origin and packet is not None:
@@ -187,9 +190,11 @@ def observe(primitives, *, description, landmarks=None, previous=None, previous_
             association = origin["association"]
         elif anchor is not None:
             landmarks, reasons, details = feature_tools.reassociate(anchor, packet, obs)
+            shapes = {n: f.get("appearance", {}) for n, f in anchor["landmarks"].items()}
             association = "fixed_keyframe_reassociation"
         else:
             landmarks, reasons = _track(origin, packet, obs)
+            shapes = {n: f.get("appearance", {}) for n, f in origin["landmarks"].items()}
             association = "optical_flow_estimate"
     elif landmarks is None:
         masks, views = _masks(primitives, obs, description)
@@ -215,7 +220,10 @@ def observe(primitives, *, description, landmarks=None, previous=None, previous_
     for name, pixels in points.items():
         appearance = feature_tools.appearance(obs, pixels)
         for camera, values in shapes.get(name, {}).items():
-            appearance.setdefault(camera, {}).update(values)
+            if camera in pixels:
+                appearance.setdefault(camera, {}).update(
+                    {k: v for k, v in values.items() if k != "trackable"}
+                )
         features[name] = dict(pixels=pixels, appearance=appearance, **_triangulate(
             primitives, obs, pixels, 3. if association == "optical_flow_estimate" else 2.))
     if not points and not views and tracked is None:

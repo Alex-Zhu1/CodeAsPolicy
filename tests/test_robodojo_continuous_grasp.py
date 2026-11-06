@@ -184,3 +184,26 @@ def test_current_declared_material_points_can_seed_preclosure_identity(tmp_path)
     assert closed['object_evidence']['baseline_ready']
     base = robot._hold_baselines[(ref['object_id'], 'right')]
     assert set(base['landmarks']) == set(named)
+
+
+def test_tracked_close_preserves_sift_scale_and_angle_across_handoff(tmp_path):
+    env, robot, host, ref, _, _ = visual_station(tmp_path)
+    closed = robot.grasp_step('tracked', 'close')
+    assert closed['object_evidence']['baseline_ready']
+    base = robot._hold_baselines[(ref['object_id'], 'right')]
+    assert any(
+        'size' in f['appearance'].get('cam_right_wrist', {})
+        and 'angle' in f['appearance'].get('cam_right_wrist', {})
+        for f in base['landmarks'].values()
+    )
+    robot.set_gripper('left', robot.OPEN)
+    assert robot.execute_motion(
+        'donor_withdraw', left=robot.observe().left.shifted(dz=.02),
+        holding={'left': 'empty', 'right': 'retain'},
+    )['reached']
+    handoff = robot.grasp_step('tracked', 'handoff')
+    assert handoff['reached'] and handoff['object_evidence']['baseline_ready']
+    assert handoff['object_evidence']['handoff_reacquired']
+    probed = robot.grasp_step('tracked', 'probe')
+    assert probed['reached']
+    assert probed['object_evidence']['state'] == 'image_consistent'

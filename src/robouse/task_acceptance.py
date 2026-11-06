@@ -3,9 +3,21 @@
 from __future__ import annotations
 
 import copy
+import hashlib
+import json
+from importlib import resources
+from pathlib import Path
+from typing import Any
 
 SCHEMA = "pyrualean.task_acceptance.v1"
+CATALOG_SCHEMA = "pyrualean.task_acceptance_catalog.v1"
 KINDS = frozenset({"outcome", "order", "invariant", "final_state"})
+
+
+def default_robodojo_acceptance_path() -> Path | None:
+    """Return the packaged RoboDojo public acceptance catalog path when present."""
+    candidate = Path(str(resources.files(__package__ or "robouse").joinpath("knowledge/robodojo_acceptance.json")))
+    return candidate if candidate.is_file() else None
 
 
 def normalize_acceptance(value: dict) -> dict:
@@ -50,6 +62,75 @@ def normalize_acceptance(value: dict) -> dict:
     return result
 
 
+def _resolve_catalog_entry(
+    payload: dict[str, Any], *, suite: str | None = None, task: int | str | None = None,
+) -> tuple[dict[str, Any], str | None]:
+    """Select one task's acceptance entry from a public catalog without guessing rules."""
+    if payload.get("schema") != CATALOG_SCHEMA:
+        return payload, None
+    allowed = {"schema", "tasks", "source"}
+    if set(payload) - allowed or not isinstance(payload.get("tasks"), dict):
+        raise ValueError("acceptance catalog requires schema and a tasks mapping")
+    tasks = payload["tasks"]
+    candidates = []
+    if suite is not None and task is not None:
+        candidates.append(f"{suite}/{task}")
+    if task is not None:
+        candidates.append(str(task))
+    for key in candidates:
+        if key in tasks:
+            entry = tasks[key]
+            if not isinstance(entry, dict):
+                raise ValueError(f"acceptance catalog entry {key!r} must be a dict")
+            return entry, key
+    return {}, None
+
+
+def load_acceptance(
+    source: str | Path | dict[str, Any] | None,
+    *,
+    suite: str | None = None,
+    task: int | str | None = None,
+) -> tuple[dict[str, Any], dict[str, Any] | None]:
+    """Load and validate a public acceptance contract or task catalog entry with provenance."""
+    if source is None:
+        return normalize_acceptance({}), None
+    artifact: dict[str, Any] | None = None
+    if isinstance(source, (str, Path)):
+        path = Path(source).expanduser().resolve()
+        data = path.read_bytes()
+        try:
+            payload = json.loads(data.decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+            raise ValueError(f"invalid task-acceptance JSON in {path}") from exc
+        if not isinstance(payload, dict):
+            raise ValueError("task-acceptance file must contain a JSON object")
+        entry, matched_key = _resolve_catalog_entry(payload, suite=suite, task=task)
+        contract = normalize_acceptance(entry)
+        artifact = {
+            "path": str(path),
+            "sha256": hashlib.sha256(data).hexdigest(),
+            "size_bytes": len(data),
+            "schema": payload.get("schema", SCHEMA),
+            "matched_key": matched_key,
+        }
+        return contract, artifact
+    if isinstance(source, dict):
+        entry, matched_key = _resolve_catalog_entry(source, suite=suite, task=task)
+        contract = normalize_acceptance(entry)
+        if source.get("schema") == CATALOG_SCHEMA:
+            artifact = {"schema": CATALOG_SCHEMA, "matched_key": matched_key}
+        return contract, artifact
+    raise ValueError("task acceptance source must be a path, dict or None")
+
+
+def acceptance_sha256(value: dict[str, Any]) -> str:
+    """Deterministic digest of a normalized task-acceptance contract."""
+    contract = normalize_acceptance(value)
+    canonical = json.dumps(contract, sort_keys=True, ensure_ascii=False, allow_nan=False)
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
 def render_acceptance(value: dict) -> list[str]:
     """Keep requirements and their source visible even in compact policy prompts."""
     contract = normalize_acceptance(value)
@@ -66,12 +147,27 @@ def render_acceptance(value: dict) -> list[str]:
     if not contract["requirements"]:
         lines.append("- no supplemental public acceptance requirements supplied; "
                      "this does not mean there are no ordering, preservation or final-state rules")
+    if contract["coverage"] != "complete":
+        lines.extend([
+            "- short task instructions often compress a multi-phase domain procedure "
+            "(waiting/preconditions, primary action, supplemental/replacement item handling "
+            "and placement, preserving untouched items, and arm/gripper reset); inspect step-0 "
+            "images to account for all task-relevant object groups, supply stacks and target "
+            "areas before fixing done_when",
+            "- distinguish inferred steps and assumptions from supplied requirements; "
+            "recording an assumption or narrower done_when never waives an unperformed task "
+            "phase or justifies leaving task-relevant scene objects unused while budget "
+            "remains. Unknown coverage alone is no reason to stop useful work",
+        ])
+    else:
+        lines.append(
+            "- distinguish inferred steps and assumptions from supplied requirements; "
+            "recording an assumption or narrower done_when never waives a supplied requirement"
+        )
     lines.extend([
         "- before finishing, review the whole original instruction and each public requirement: "
         "outcome, order, invariants and final state; cite current observation/action evidence "
         "and identify unmet or unknown items",
-        "- distinguish inferred steps and assumptions from supplied requirements; "
-        "do not invent hidden checks. Unknown coverage alone is no reason to stop useful work",
         "- a completed operation or planner goal is not task acceptance; "
         "your completion declaration remains a claim until the authority confirms it",
     ])

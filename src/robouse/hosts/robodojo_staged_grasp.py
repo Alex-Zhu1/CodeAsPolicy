@@ -23,6 +23,7 @@ class GraspController:
         self.intents = intents
         self.motion = intents.motion
         self.records = {}
+        self.rejected = {}
 
     def _remaining(self):
         status = self.motion.primitives.env.get_status()
@@ -33,25 +34,61 @@ class GraspController:
         return dict(status="rejected", reached=False, steps_used=0, needs_model=True,
                     stop_reason=reason, grasp_complete=False, retained=False)
 
+    def _handoff_state(self, record, now=None):
+        now = self.motion._snapshot() if now is None else now
+        if record.get("uncertain") or any(
+                p.get("dispatch_pending") for p in self.motion.plans.values()):
+            return dict(ok=False, reason="grasp_execution_uncertain_or_external_motion",
+                        snapshot=now)
+        if "close" not in record["completed"] or "probe" in record["completed"]:
+            return dict(ok=False, reason="grasp_stage_order", snapshot=now)
+        expected = record["expected"]
+        arm = record["contract"]["arm"]
+        other = "left" if arm == "right" else "right"
+        pos_err, rot_err = _errors(now["poses"][arm], expected["poses"][arm])
+        joint_err = float(np.max(np.abs(
+            np.asarray(now["joints"][arm]) - np.asarray(expected["joints"][arm]))))
+        if (pos_err > max(record["completion"]["position_m"], .002)
+                or rot_err > max(record["completion"]["orientation_deg"], 1.)
+                or joint_err > .02):
+            return dict(ok=False, reason="handoff_receiver_pose_changed", snapshot=now)
+        if (expected["commands"][arm] > .05 or now["commands"][arm] > .05
+                or not (tools.HOLD_MIN_OPENING < now["opening"][arm] < .95)
+                or abs(now["opening"][arm] - expected["opening"][arm]) > .02):
+            return dict(ok=False, reason="handoff_receiver_not_holding", snapshot=now)
+        if (now["commands"][other] <= .05
+                and tools.HOLD_MIN_OPENING < now["opening"][other] < .95):
+            return dict(ok=False, reason="handoff_donor_not_released", snapshot=now)
+        return dict(ok=True, reason=None, snapshot=now)
+
     def _view(self, record, stage=None, *, steps=0, reason=None, status=None):
         arm = record["contract"]["arm"]
         complete = "probe" in record["completed"]
         snap = record["expected"]
+        same = not record.get("uncertain") and self.motion._same(snap)
+        handoff_ready = (
+            not same and "close" in record["completed"]
+            and "probe" not in record["completed"] and self._handoff_state(record)["ok"]
+        )
+        ordered_stages = ("open", "approach", "align", "close", "handoff", "probe")
         return copy.deepcopy(dict(
             grasp_id=record["id"], stage=stage, status=status or record["status"],
             reached=stage in record["completed"] if stage else complete,
             grasp_complete=complete, retained=complete, grasp_verified=False,
+            handoff_reacquired=bool(record.get("handoff_reacquired")),
+            handoff_reacquisition_required=bool(handoff_ready),
             needs_visual_confirmation="close" in record["completed"],
             needs_model=(status or record["status"]) in ("needs_model", "rejected"),
             stop_reason=reason or record.get("reason"), steps_used=steps,
             grasp_steps_used=record["spent"], step_limit=record["limit"],
             remaining_steps=max(0, record["limit"] - record["spent"]),
-            completed_stages=[s for s in STAGES if s in record["completed"]],
-            next_stage=next((s for s in STAGES if s not in record["completed"]), None),
+            completed_stages=[s for s in ordered_stages if s in record["completed"]],
+            next_stage=("handoff" if handoff_ready else
+                        next((s for s in STAGES if s not in record["completed"]), None)),
             actual_pose=self.intents._pose(snap["poses"][arm]), opening=snap["opening"][arm],
             stage_result={k: v for k, v in (record.get("result") or {}).items() if k in (
                 "status", "reached", "stop_reason", "tracking", "arms", "holding", "opening",
-                "steps_used", "intent_steps_used", "partial_plan")},
+                "steps_used", "intent_steps_used", "partial_plan", "handoff_reacquired")},
             target=self.intents._pose(record["target"]),
             alignment_target=self.intents._pose(record["aligned"]),
             contract=record["contract"], process_restart_resume=False,
@@ -101,11 +138,18 @@ class GraspController:
                       status="ready", spent=0, limit=(contract["max_steps"]
                           if contract["max_steps"] is not None else self._remaining()))
         self.records[grasp_id] = record
+        self.rejected.pop(grasp_id, None)
         return self._view(record)
+
+    def _unknown(self, grasp_id):
+        out = self._error("unknown_grasp_in_this_session")
+        if grasp_id in self.rejected:
+            out["prepare_error"] = self.rejected[grasp_id]
+        return out
 
     def status(self, grasp_id):
         record = self.records.get(grasp_id)
-        return self._view(record) if record else self._error("unknown_grasp_in_this_session")
+        return self._view(record) if record else self._unknown(grasp_id)
 
     def _stroke(self, record, op, stage):
         p = self.motion.primitives
@@ -198,9 +242,9 @@ class GraspController:
              rotation_deg=(0., 0., 0.), max_steps=None):
         record = self.records.get(grasp_id)
         if record is None:
-            return self._error("unknown_grasp_in_this_session")
-        if stage not in STAGES:
-            raise ValueError("stage must be open, approach, align, close or probe")
+            return self._unknown(grasp_id)
+        if stage not in STAGES and stage != "handoff":
+            raise ValueError("stage must be open, approach, align, close, handoff or probe")
         offset, turn = vector(offset, "offset"), vector(rotation_deg, "rotation_deg")
         refine = adjustment_id is not None
         if refine and (stage != "align" or not isinstance(adjustment_id, str)
@@ -213,10 +257,51 @@ class GraspController:
         op = record["operations"].get(key)
         if op is not None and op["signature"] != signature:
             return self._error("grasp_stage_identity_conflict")
+        if stage == "handoff":
+            if max_steps is not None:
+                _positive(max_steps, "max_steps", 10000, integer=True)
+                record["limit"] = max(record["limit"], max_steps)
+            if (op is not None and op.get("saved")
+                    and not record.get("uncertain")
+                    and self.motion._same(record["expected"])):
+                return dict(copy.deepcopy(op["saved"]), steps_used=0)
+            if "close" not in record["completed"] or "probe" in record["completed"]:
+                return self._error("grasp_stage_order")
+            handoff = self._handoff_state(record)
+            if not handoff["ok"]:
+                return self._error(handoff["reason"])
+            if op is None:
+                op = dict(signature=signature, motion_id="grasp:" + uuid.uuid4().hex)
+                record["operations"][key] = op
+            now = handoff["snapshot"]
+            arm = record["contract"]["arm"]
+            record["active_phase"] = key
+            record["expected"] = now
+            record["handoff_reacquired"] = True
+            record["completed"].add("handoff")
+            record["result"] = dict(
+                status="completed", reached=True, stop_reason=None,
+                opening=now["opening"][arm], holding=True, grasp_verified=False,
+                handoff_reacquired=True,
+            )
+            record["status"] = "ready"
+            record["reason"] = None
+            out = self._view(record, "handoff", steps=0)
+            op["saved"] = copy.deepcopy(out)
+            return out
         if op is not None and op.get("saved"):
             return dict(copy.deepcopy(op["saved"]), steps_used=0)
         if record.get("uncertain") or not self.motion._same(record["expected"]):
-            return self._error("grasp_execution_uncertain_or_external_motion")
+            if (stage == "probe" and "close" in record["completed"]
+                    and "probe" not in record["completed"]):
+                handoff = self._handoff_state(record)
+                if not handoff["ok"]:
+                    return self._error("grasp_execution_uncertain_or_external_motion")
+                record["expected"] = handoff["snapshot"]
+                record["handoff_reacquired"] = True
+                record["completed"].add("handoff")
+            else:
+                return self._error("grasp_execution_uncertain_or_external_motion")
         if max_steps is not None:
             _positive(max_steps, "max_steps", 10000, integer=True)
             record["limit"] = max(record["limit"], max_steps)
@@ -272,10 +357,15 @@ def handlers(intents, controller=None):
         try:
             return getattr(controller, method)(**kwargs)
         except (ValueError, TypeError, KeyError) as exc:
-            record = controller.records.get(kwargs.get("grasp_id"))
+            grasp_id = kwargs.get("grasp_id")
+            record = controller.records.get(grasp_id)
             if record is not None and record.get("uncertain"):
                 raise  # Never turn a possibly executed dispatch into a known rejection.
-            return controller._error(f"invalid_grasp: {exc}")
+            reason = f"invalid_grasp: {exc}"
+            if (method == "prepare" and isinstance(grasp_id, str)
+                    and grasp_id.strip() and grasp_id not in controller.records):
+                controller.rejected[grasp_id] = reason
+            return controller._error(reason)
 
     def readonly(method, **kwargs):
         return dispatch(method, **kwargs)

@@ -213,3 +213,65 @@ def test_offline_prompt_is_compact_without_advertising_unavailable_plan_helper(t
     prompt = render_prompt(card, primitives="no-vla").text()
     assert card.render(compact=True) in prompt and card.render() not in prompt
     assert "# Execution plan" not in prompt
+
+
+def test_dump_card_records_supplied_public_acceptance_and_artifact_provenance(tmp_path):
+    from pyrualean.hosts.xpolicylab_robodojo_rgb import dump_card
+    from pyrualean.task_acceptance import CATALOG_SCHEMA, acceptance_sha256
+
+    _, _, host = station(tmp_path)
+    spec_path = tmp_path / "public_acceptance.json"
+    spec_path.write_text(json.dumps({
+        "schema": CATALOG_SCHEMA,
+        "tasks": {
+            "make_kong": {
+                "requirements": [
+                    dict(id="expose", kind="outcome",
+                         condition="Expose the three matching hand tiles face up.",
+                         source="public game rules §1"),
+                    dict(id="draw_place", kind="outcome",
+                         condition="Draw the replacement tile from the left supply stack and "
+                                   "stand it upright at the end of the hand row.",
+                         source="public game rules §2"),
+                ],
+                "coverage": "complete",
+                "coverage_source": "public game rules v1",
+            }
+        },
+    }), encoding="utf-8")
+    card = dump_card(
+        host,
+        Cell("arx_x5", "make_kong", 0, acceptance=spec_path),
+        tmp_path,
+    )
+    assert card.acceptance["coverage"] == "complete"
+    assert [r["id"] for r in card.acceptance["requirements"]] == ["expose", "draw_place"]
+    assert "public game rules v1" in card.sources["task acceptance"]
+    assert card.provenance["acceptance_sha256"] == acceptance_sha256(card.acceptance)
+    assert card.provenance["acceptance_artifact"]["path"] == str(spec_path.resolve())
+    assert card.provenance["acceptance_artifact"]["matched_key"] == "make_kong"
+    compact = card.render(compact=True)
+    assert "Draw the replacement tile from the left supply stack" in compact
+    assert "scene objects: not pre-listed by the benchmark" in compact
+
+
+def test_dump_card_loads_packaged_robodojo_acceptance_catalog_by_default(tmp_path):
+    from pyrualean.hosts.xpolicylab_robodojo_rgb import dump_card
+    from pyrualean.task_acceptance import acceptance_sha256, default_robodojo_acceptance_path
+
+    _, _, host = station(tmp_path)
+    card = dump_card(host, Cell("arx_x5", "make_kong", 0), tmp_path)
+    assert card.acceptance["coverage"] == "complete"
+    ids = [r["id"] for r in card.acceptance["requirements"]]
+    assert "expose_matching_triplet_in_place" in ids
+    assert "draw_and_orient_supplemental_tile" in ids
+    assert "stand_supplemental_tile_upright_at_right_end" in ids
+    assert card.provenance["acceptance_sha256"] == acceptance_sha256(card.acceptance)
+    catalog_path = default_robodojo_acceptance_path()
+    assert catalog_path is not None
+    assert card.provenance["acceptance_artifact"]["path"] == str(catalog_path.resolve())
+    assert card.provenance["acceptance_artifact"]["matched_key"] == "arx_x5/make_kong"
+    compact = card.render(compact=True)
+    assert "do not pick up and relocate the matching hand tiles" in compact
+    assert "standing upright at the right end of the front hand row" in compact
+    assert "mahjong9" not in compact and "0.319" not in compact

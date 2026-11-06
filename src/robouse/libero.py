@@ -941,7 +941,7 @@ class LiberoRobot(RobotBase):
 ADAPTER = RobotAdapter(
     name="libero",
     robot_cls=LiberoRobot,
-    host="pyrualean.hosts.rpent_libero",
+    host=f"{__package__ or 'robouse'}.hosts.rpent_libero",
     knowledge="libero",
     blurb="a simulated Franka arm in the LIBERO benchmark",
     guides_subdir="robots/libero/guides",

@@ -438,7 +438,9 @@ def make_backend(toolkit: NativeToolkit) -> NativeBackend:
     return NativeBackend(toolkit)
 
 
-def dump_card(toolkit: NativeToolkit, cell: Cell, out_dir: Path, robot: str = ROBOT) -> TaskCard:
+def dump_card(
+    toolkit: NativeToolkit, cell: Cell, out_dir: Path, robot: str = ROBOT, *, acceptance: Any = None
+) -> TaskCard:
     """Write ``card.json`` plus the step-0 images and return the card.
 
     The same card as RPent's host writes: both arms' initial grasp points, gripper angles and
@@ -463,6 +465,7 @@ def dump_card(toolkit: NativeToolkit, cell: Cell, out_dir: Path, robot: str = RO
         status=toolkit._status(), primitives=toolkit._primitives, robot=robot,
         observation=record.get("observation"), image_sources=image_sources,
         observation_artifact=str((toolkit.state.root / "0000" / "observation.json").resolve()),
+        acceptance=acceptance,
     )
     (out_dir / "card.json").write_text(card.to_json() + "\n", encoding="utf-8")
     return card

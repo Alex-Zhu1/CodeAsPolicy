@@ -78,6 +78,6 @@ def stuck_recovery_config(args):
 
 def recovery_instructions() -> str:
     """Packaged core of astra-stuck-recovery, available without a repository checkout."""
-    return files("pyrualean").joinpath("knowledge/astra_stuck_recovery.md").read_text(
+    return files(__package__ or "robouse").joinpath("knowledge/astra_stuck_recovery.md").read_text(
         encoding="utf-8"
     )

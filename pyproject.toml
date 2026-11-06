@@ -3,15 +3,15 @@ requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "pyrualean"
+name = "robouse"
 version = "0.2.0"
-description = "A pyautogui-style robot library for code policies over RPent primitives"
+description = "RoboUse: A computer-use-style robot library for code policies over physical and simulated robots"
 readme = {file = "README.md", content-type = "text/markdown"}
 requires-python = ">=3.10"
 license = "Apache-2.0"
 license-files = ["LICENSE", "NOTICE"]
-authors = [{name = "PyRUA-Lean Contributors"}]
-keywords = ["robotics", "code-as-policy", "libero", "agents"]
+authors = [{name = "RoboUse Contributors"}]
+keywords = ["robotics", "code-as-policy", "computer-use", "robot-use", "libero", "agents"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -44,13 +44,15 @@ Repository = "https://github.com/DAGroup-PKU/PyRUA-Lean"
 Issues = "https://github.com/DAGroup-PKU/PyRUA-Lean/issues"
 
 [project.scripts]
-pyrualean = "pyrualean.cli:main"
+robouse = "robouse.cli:main"
+pyrualean = "robouse.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
-pyrualean = ["knowledge/*.md", "codex-catalog-gpt-6-astra-fallback.json"]
+robouse = ["knowledge/*.md", "knowledge/*.json", "codex-catalog-gpt-6-astra-fallback.json"]
+pyrualean = ["knowledge/*.md", "knowledge/*.json", "codex-catalog-gpt-6-astra-fallback.json"]
 
 [tool.pytest.ini_options]
 addopts = ["--import-mode=importlib"]

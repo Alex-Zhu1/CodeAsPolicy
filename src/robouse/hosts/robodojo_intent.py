@@ -49,6 +49,7 @@ class IntentController:
     def __init__(self, primitives):
         self.motion = Controller(primitives)
         self.records = {}
+        self.last_contact = {}
 
     def _goal(self, value, initial):
         if isinstance(value, (list, tuple)):
@@ -132,7 +133,35 @@ class IntentController:
                     tracking_position_tolerance_m=tracking_m,
                     tracking_orientation_tolerance_deg=tracking_deg)
 
+    def _retreat_clearance(self, record):
+        if record["contract"]["interaction"] not in ("free", "approach"):
+            return None
+        for arm in record["contract"]["targets"]:
+            contact = self.last_contact.get(arm)
+            if contact is None:
+                continue
+            start = np.asarray(record["initial"]["poses"][arm][:3, 3], float)
+            if np.linalg.norm(start - contact["end"]) > .015 or start[2] >= .85:
+                continue
+            delta = np.asarray(record["goals"][arm][:3, 3], float) - start
+            horiz = float(np.hypot(delta[0], delta[1]))
+            dz = float(delta[2])
+            if horiz <= .025 and dz >= -.005:
+                continue
+            axis = contact.get("axis")
+            if axis is not None:
+                along = float(delta[0] * axis[0] + delta[1] * axis[1])
+                cross = float(np.hypot(delta[0] - along * axis[0],
+                                       delta[1] - along * axis[1]))
+                if along <= .01 and cross <= .025 and dz >= -.005:
+                    continue
+            return f"{arm}: post_contact_retreat_clearance"
+        return None
+
     def _geometry(self, record, poses):
+        reason = self._retreat_clearance(record)
+        if reason:
+            return reason
         local = record["contract"].get("local")
         if local:
             from .robodojo_local import violation
@@ -421,6 +450,21 @@ class IntentController:
             self._account(record)
         record["result"] = result
         record["expected"] = self.motion._snapshot()
+        if record["spent"] > before:
+            for arm in record["contract"]["targets"]:
+                if record["contract"]["interaction"] == "contact":
+                    start = np.asarray(record["initial"]["poses"][arm][:3, 3], float)
+                    end = np.asarray(record["expected"]["poses"][arm][:3, 3], float)
+                    stroke = end - start
+                    horiz = float(np.hypot(stroke[0], stroke[1]))
+                    axis = (np.array([stroke[0], stroke[1], 0.], float) / horiz
+                            if horiz > 1e-4 else None)
+                    self.last_contact[arm] = dict(
+                        start=start, end=end, axis=axis,
+                        revision=record["expected"]["revision"],
+                    )
+                else:
+                    self.last_contact.pop(arm, None)
         if result["stop_reason"] == "code_interrupted":
             record["status"] = "paused"
             self.motion.discard(plan["id"])

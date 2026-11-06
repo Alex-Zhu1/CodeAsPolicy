@@ -81,8 +81,16 @@ def flow(previous, old, obs):
                 continue
             similarity = float(cv2.matchTemplate(pb, pa, cv2.TM_CCOEFF_NORMED)[0, 0])
             if not math.isfinite(similarity) or similarity < .85:
-                failures[label] = 'flow_appearance_changed'
-                continue
+                inner_a, inner_b = _patch(a, pixel, radius=5), _patch(b, candidate, radius=5)
+                inner_sim = (
+                    float(cv2.matchTemplate(inner_b, inner_a, cv2.TM_CCOEFF_NORMED)[0, 0])
+                    if inner_a is not None and inner_b is not None
+                    else float('nan')
+                )
+                if (not math.isfinite(inner_sim) or inner_sim < .88
+                        or np.linalg.norm(back[i] - start[i]) > 1.0):
+                    failures[label] = 'flow_appearance_changed'
+                    continue
             points.setdefault(name, {})[camera] = candidate
     return points, failures
 
@@ -109,7 +117,17 @@ def capture(obs, masks, *, arm=None, identity='capture'):
         return {}, {'capture': 'opencv_unavailable'}
     sift = cv2.SIFT_create(nfeatures=256)
     detected, reasons = {}, {}
-    for camera, mask in masks.items():
+    other_wrist = (
+        f"cam_{'right' if arm == 'left' else 'left'}_wrist"
+        if arm in ('left', 'right')
+        else None
+    )
+    active_masks = (
+        {c: m for c, m in masks.items() if c != other_wrist}
+        if other_wrist and any(c != other_wrist for c in masks)
+        else masks
+    )
+    for camera, mask in active_masks.items():
         gray = _gray(obs['vision'][camera]['color'])
         if mask.shape != gray.shape or not 9 <= int(mask.sum()) < .75 * mask.size:
             reasons[camera] = 'mask_empty_or_not_object_specific'
@@ -183,7 +201,7 @@ def reassociate(anchor, old, obs):
     except ImportError:
         return {}, {'reassociation': 'opencv_unavailable'}, {}
     points, failures, details = {}, {}, {}
-    sift = cv2.SIFT_create(nfeatures=512)
+    sift = cv2.SIFT_create(nfeatures=2048)
     for camera in old.get('vision', {}):
         before = old['vision'][camera].get('color')
         after = (obs.get('vision', {}).get(camera) or {}).get('color')

@@ -50,7 +50,7 @@ ADAPTER = replace(
     _base.ADAPTER,
     name="robodojo_xpl",
     robot_cls=RobodojoOfficialRobot,
-    host="pyrualean.hosts.xpolicylab_robodojo",
+    host=f"{__package__ or 'robouse'}.hosts.xpolicylab_robodojo",
     services=_base.ADAPTER.services_novla,
 )
 

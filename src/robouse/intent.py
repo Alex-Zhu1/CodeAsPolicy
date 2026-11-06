@@ -303,7 +303,7 @@ class IntentMixin:
 
     def grasp_step(self, grasp_id: str, stage: str, *, adjustment_id=None,
                    offset=(0., 0., 0.), rotation_deg=(0., 0., 0.), max_steps=None) -> dict:
-        """Execute/continue one grasp phase: open, approach, align, close, probe.
+        """Execute/continue one grasp phase: open, approach, align, close, handoff, probe.
 
         A completed phase never dispatches again. Paused phases continue from
         the measured endpoint. max_steps can raise the total grasp allowance
@@ -320,6 +320,9 @@ class IntentMixin:
         bounds. No automatic regrasp/opening, no blind retries.
 
         close requires measured alignment and reports obstructed closure only.
+        For a dual-arm handoff, after the receiving arm completes close and the
+        donor arm opens and withdraws, call stage='handoff' to verify stationary
+        receiver hold and reacquire state/evidence before stage='probe'.
         probe requires retained closure, keeps squeezing, and stops on loss.
         retained/grasp_complete do NOT verify object identity or stability:
         inspect fresh images and object_evidence (when bound via object_ref)
@@ -331,6 +334,14 @@ class IntentMixin:
             # Observe before dispatch; never close first and then rediscover a
             # partly hidden target from its text description.
             self._grasp_tracking_feedback(grasp_id, {}, seed=False)
+        elif (stage == 'probe' and grasp_id in getattr(self, '_grasp_objects', {})
+              and (grasp_id, 'probe') not in getattr(self, '_grasp_evidence', {})):
+            status = self.grasp_status(grasp_id)
+            if status.get('handoff_reacquisition_required'):
+                try:
+                    self._reacquire_handoff_evidence(grasp_id)
+                except Exception:
+                    pass
         result = self._stateful("grasp_step", dict(
             grasp_id=grasp_id, stage=stage, adjustment_id=adjustment_id,
             offset=_argument(offset), rotation_deg=_argument(rotation_deg), max_steps=max_steps,

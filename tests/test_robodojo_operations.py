@@ -202,3 +202,25 @@ def test_empty_close_requires_replanning_instead_of_resuming_or_advancing(tmp_pa
     count = len(env.actions)
     robo.resume_operation(ref(result))
     assert len(env.actions) == count
+
+
+def test_handoff_operation_status_reports_ready_advance_instead_of_needs_replan(tmp_path):
+    env, robo, host, _ = setup(tmp_path)
+    closed = through(robo, ("open", "approach", "align", "close"))
+    operation = ref(closed)
+    robo.set_gripper("left", robo.OPEN)
+    assert robo.execute_motion(
+        "donor_clear", left=robo.observe().left.shifted(dz=.03),
+        holding={"left": "empty", "right": "retain"},
+    )["reached"]
+    after_donor = robo.operation_status(operation)["operation"]
+    assert after_donor["state"] == "ready"
+    assert after_donor["reason"] == "handoff_reacquisition_required"
+    assert after_donor["progress"]["next_phase"] == "handoff"
+    assert after_donor["continuation"]["action"] == "advance"
+    handoff = robo.grasp_step("pick", "handoff")
+    assert handoff["operation"]["state"] == "ready"
+    assert handoff["operation"]["progress"]["next_phase"] == "probe"
+    probed = robo.grasp_step("pick", "probe")
+    assert probed["operation"]["state"] == "completed"
+    assert probed["operation"]["execution_complete"]

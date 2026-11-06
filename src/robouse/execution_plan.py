@@ -72,10 +72,15 @@ These are your planning claims, not benchmark facts, verified evidence or motion
 permission. They never replace the task instruction, watch prerequisites or finish.
 Before declaring the whole task complete, review the task card's acceptance
 requirements and original instruction, including ordering, preservation and final
-state. Record unmet/unknown items and assumptions in your note; a narrower
-done_when does not remove them. Cite observation/action evidence, and distinguish
-your completion claim from the environment's verdict. Missing public criteria
-alone do not require stopping useful work or an extra planning-only turn.
+state. When acceptance coverage is unknown or partial, account for all task-relevant
+object groups visible in step 0 (such as primary targets, actor/opponent items,
+separate supply/replacement stacks and destination slots) and every physical phase
+implied by the domain action. Record unmet/unknown items and assumptions in your
+note; a narrower done_when or recorded assumption never discharges an unperformed
+phase or justifies finishing while task-relevant scene objects remain unused and
+budget remains. Cite observation/action evidence, and distinguish your completion
+claim from the environment's verdict. Missing public criteria alone do not require
+stopping useful work or an extra planning-only turn.
 Keep text brief (at most 1000 characters per field). The host saves the latest
 note and revision history with observation/action context; earlier notes survive
 code failures. An unchanged note is not refreshed by later motion.
@@ -85,10 +90,24 @@ code failures. An unchanged note is not refreshed by later motion.
 When nearby objects or controls share a useful setup, consider a local work
 group. Choose its members, required effect per member, dependencies, surroundings
 to preserve, and an exit condition from current observations. Compare the cost
-of a shared approach and local transitions with repeatedly leaving and returning.
-Prefer one approach, a compact sequence of local actions with feedback, and one
-departure when geometry and task ordering permit. Keep useful positioning between
-members; reposition only as far as the next action and clearance require.
+of candidate manipulation schemes by the required final object state: distinguish
+objects that only need an in-place state or orientation change (such as tipping
+face up, flipping, sliding or pressing) from objects that must be relocated to a
+different zone. When an object or group can achieve its required final state in
+place, act on it in place with local contact strokes rather than picking up,
+carrying, placing and then tipping/acting on each member. Do not vacate or
+relocate existing group members merely to open an interior gap for a later
+supply/replacement item; place an incoming or replacement item at the designated
+open end or target slot in its required standing/resting orientation. Compare the
+cost of a shared approach and local transitions with repeatedly leaving and
+returning. Prefer one approach, a compact sequence of local actions with feedback,
+and one departure when geometry and task ordering permit. Keep useful positioning
+between members; reposition only as far as the next action and clearance require,
+and keep default free/approach arrival tolerances on intermediate shifts/retreats
+so local repositioning is not slowed by unnecessary precision windows. After a
+low contact stroke, always lift clear vertically or reverse back along the
+contact axis before sweeping laterally across neighboring objects, and check/repair
+any disturbed neighbors before leaving the group.
 
 A group may use several strokes, grasps or directions. Simultaneous contact and
 a single straight trajectory are optional, not the definition of grouping.

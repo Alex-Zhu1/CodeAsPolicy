@@ -55,7 +55,17 @@ class VisualTrack:
             self.invalidate('nonmonotonic_intermediate_frame')
             return
         points, failures = features.flow(self.previous, self.packet, packet)
-        self.previous = dict(landmarks={n: dict(pixels=p) for n, p in points.items()})
+        shapes = {
+            n: copy.deepcopy(
+                self.previous.get('landmarks', {}).get(n, {}).get('appearance')
+                or self.anchor.get('landmarks', {}).get(n, {}).get('appearance')
+                or {}
+            )
+            for n in points
+        }
+        self.previous = dict(landmarks={
+            n: dict(pixels=p, appearance=shapes.get(n, {})) for n, p in points.items()
+        })
         self.methods = {f'{n}/{c}': 'checked_frame_flow' for n, p in points.items() for c in p}
         self.failures = failures
         self.packet, self.source = self._images(packet), copy.deepcopy(source)
@@ -72,7 +82,16 @@ class VisualTrack:
                 self.anchor, self.anchor_packet, packet)
             for name, cameras in found.items():
                 for camera, pixel in cameras.items():
-                    pixels = self.previous['landmarks'].setdefault(name, {'pixels': {}})['pixels']
+                    entry = self.previous['landmarks'].setdefault(
+                        name,
+                        dict(
+                            pixels={},
+                            appearance=copy.deepcopy(
+                                self.anchor.get('landmarks', {}).get(name, {}).get('appearance', {})
+                            ),
+                        ),
+                    )
+                    pixels = entry['pixels']
                     if camera in pixels and np.linalg.norm(np.asarray(pixels[camera])-pixel) > 3.:
                         pixels.pop(camera)
                         self.failures[f'{name}/{camera}'] = 'flow_anchor_disagree'
@@ -88,6 +107,13 @@ class VisualTrack:
                     self.failures.pop(f'{name}/{camera}', None)
         return dict(
             points={n: f['pixels'] for n, f in self.previous['landmarks'].items()},
+            shapes={
+                n: copy.deepcopy(
+                    f.get('appearance')
+                    or self.anchor.get('landmarks', {}).get(n, {}).get('appearance', {})
+                )
+                for n, f in self.previous['landmarks'].items()
+            },
             failures=copy.deepcopy(self.failures), methods=copy.deepcopy(self.methods),
             continuity=dict(anchor_source_id=self.anchor.get('provenance', {}).get('source_id'),
                 source_id=self.source.get('source_id'), frames=self.frames,

@@ -179,6 +179,10 @@ class Model(ModelTemplate):
                 openai_options=dict(self.cfg.get("openai_options") or {}),
                 monitor=MonitorConfig(**dict(self.cfg.get("monitor") or {})),
                 code_limits=ExecutionLimits(**dict(self.cfg.get("code_limits") or {})),
+                task_acceptance=(
+                    self.cfg.get("task_acceptance")
+                    or os.environ.get("PYRUALEAN_TASK_ACCEPTANCE")
+                ),
             )
             self.results.append(
                 {k: result.get(k) for k in ("status", "environment_success", "task", "robot")}

@@ -279,3 +279,61 @@ def test_local_envelope_is_checked_on_actual_feedback(tmp_path):
     result = robo.align_local("local", [0, 0, .004])
     assert result["stop_reason"] == "right: local_translation_constraint"
     assert len(env.actions) == 1 and not result["reached"]
+
+
+def test_handoff_stage_reacquires_state_after_donor_release_and_withdraw(tmp_path):
+    env, robo, host, _ = setup(tmp_path)
+    tools._remember(host._primitives, "left", 0.0)
+    env.grips["left"] = .25
+    host._primitives._operations.grasps.records["pick"]["expected"] = (
+        host._primitives._operations.intents.motion._snapshot()
+    )
+    through(robo, ("open", "approach", "align", "close"))
+    # Donor has not released yet: handoff reacquisition must refuse.
+    clamped = robo.grasp_step("pick", "handoff")
+    assert clamped["stop_reason"] == "handoff_donor_not_released"
+    # Donor opens and retreats while receiver holds stationary.
+    robo.set_gripper("left", robo.OPEN)
+    retreat = robo.execute_motion(
+        "donor_retreat", left=robo.observe().left.shifted(dz=.03),
+        holding={"left": "empty", "right": "retain"},
+    )
+    assert retreat["reached"], retreat
+    status = robo.grasp_status("pick")
+    assert status["handoff_reacquisition_required"] and status["next_stage"] == "handoff"
+    before = len(env.actions)
+    handoff = robo.grasp_step("pick", "handoff")
+    assert handoff["reached"] and handoff["steps_used"] == 0
+    assert handoff["handoff_reacquired"] and handoff["next_stage"] == "probe"
+    assert "handoff" in handoff["completed_stages"]
+    assert len(env.actions) == before
+    probed = robo.grasp_step("pick", "probe")
+    assert probed["reached"] and probed["grasp_complete"] and probed["retained"]
+
+
+def test_handoff_rejects_when_receiver_moved_after_close(tmp_path):
+    env, robo, _, _ = setup(tmp_path)
+    through(robo, ("open", "approach", "align", "close"))
+    moved = robo.execute_motion(
+        "receiver_shift", right=robo.observe().right.shifted(dz=.02),
+        holding={"right": "retain"},
+    )
+    assert moved["reached"]
+    count = len(env.actions)
+    assert robo.grasp_step("pick", "handoff")["stop_reason"] == "handoff_receiver_pose_changed"
+    assert (
+        robo.grasp_step("pick", "probe")["stop_reason"]
+        == "grasp_execution_uncertain_or_external_motion"
+    )
+    assert len(env.actions) == count
+
+
+def test_rejected_begin_grasp_surfaces_prepare_error_on_follow_up_step(tmp_path):
+    env, robo, _, goal = setup(tmp_path)
+    rejected = robo.begin_grasp("zero_probe", goal, probe=[0., 0., 0.])
+    assert rejected["status"] == "rejected"
+    assert "probe must be 0.5..6 cm" in rejected["stop_reason"]
+    step = robo.grasp_step("zero_probe", "open")
+    assert step["stop_reason"] == "unknown_grasp_in_this_session"
+    assert "probe must be 0.5..6 cm" in step["prepare_error"]
+    assert not env.actions

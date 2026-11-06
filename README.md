@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/assets/logo-dark.svg">
-    <img src="docs/assets/logo.svg" width="70%" alt="PyRUA-Lean: Python for Lean Robot-Use Agents"/>
+    <img src="docs/assets/logo.svg" width="70%" alt="RoboUse: Robot-Use for AI Agents"/>
   </picture>
 </p>
 
@@ -20,9 +20,9 @@
   <a href="pyproject.toml"><img src="https://img.shields.io/badge/Python-3.10%2B-3776ab?logo=python&logoColor=white"></a>
 </p>
 
-**PyRUA-Lean** (*Py*thon for lean *R*obot-*U*se *A*gents, the robot counterpart of computer-use agents)
+**RoboUse** (*Robot-Use for AI Agents*, the robotics counterpart of computer-use agents)
 turns a robot into a Python object. A tool-calling agent spends a full LLM call on every small step of a task
-and re-sends everything before it each time. A PyRUA-Lean agent writes code against `robo` instead, so one call
+and re-sends everything before it each time. A RoboUse agent writes code against `robo` instead, so one call
 can find an object, move above it, grasp, check the gripper and try again.
 
 <p align="center">

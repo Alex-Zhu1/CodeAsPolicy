@@ -83,10 +83,11 @@ def get_adapter(name: str) -> RobotAdapter:
 
     if name not in ROBOTS:
         raise ValueError(f"unknown robot {name!r}; known: {ROBOTS}")
-    module = importlib.import_module(f"pyrualean.{name}")
+    pkg = __package__ or "robouse"
+    module = importlib.import_module(f"{pkg}.{name}")
     adapter = getattr(module, "ADAPTER", None)
     if not isinstance(adapter, RobotAdapter):
-        raise ImportError(f"pyrualean.{name} defines no ADAPTER")
+        raise ImportError(f"{pkg}.{name} defines no ADAPTER")
     return adapter
 
 

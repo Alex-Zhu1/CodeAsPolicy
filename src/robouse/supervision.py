@@ -770,7 +770,7 @@ This checks primitive endpoints, not the intermediate trajectory inside move_to.
 
 def planning_instructions() -> str:
     """Canonical, packaged runtime core of the Astra–Valen planning skill."""
-    return files("pyrualean").joinpath("knowledge/astra_valen_supervision.md").read_text(
+    return files(__package__ or "robouse").joinpath("knowledge/astra_valen_supervision.md").read_text(
         encoding="utf-8"
     )
 

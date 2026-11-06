@@ -430,23 +430,64 @@ class ObjectEvidenceMixin:
         record.summary = copy.deepcopy(dict(result))
         return EvidenceResult(result)
 
+    def _reacquire_handoff_evidence(self, grasp_id):
+        """Verify or re-anchor stationary receiver hold evidence after donor release."""
+        self._object_store()
+        binding = self._grasp_objects.get(grasp_id)
+        if not binding:
+            return None
+        ref, arm = binding["reference"], binding["arm"]
+        evidence = dict(self.observe_hold(ref, arm=arm))
+        # When donor fingers occluded closure or withdrawal exposed the held part
+        # while the receiver remained stationary at the closure pose, establish a
+        # stationary post-handoff baseline on the same grip command epoch before probe.
+        if (not evidence.get("baseline_ready") or evidence.get("reason") in (
+                "baseline_not_ready", "no_comparable_3d_landmarks",
+                "insufficient_comparable_wrist_features")):
+            source = self._perception_snapshot(None)
+            epoch = source.get("gripper_command_epochs", {}).get(arm)
+            grip_cmd = source.get("gripper_commands", {}).get(arm)
+            if grip_cmd is not None and grip_cmd <= .05 and epoch is not None:
+                current = self._observe_object(
+                    ref, observation_id=source["observation_id"], capture=True, arm=arm,
+                    tracking_id=f"hold:{ref['object_id']}:{arm}:{epoch}",
+                    tracking_epoch=epoch,
+                )
+                quality = baseline_quality(current, arm)
+                grip = current["robot"][arm]
+                if (self.perception_is_current(current) and quality["ready"]
+                        and .01 < grip["opening"] < .95):
+                    hold_key = (ref["object_id"], arm)
+                    self._hold_captures[hold_key] = copy.deepcopy(current)
+                    self._hold_baselines[hold_key] = copy.deepcopy(current)
+                    evidence = dict(self.observe_hold(ref, arm=arm, observation=current))
+                    evidence["handoff_baseline_reacquired"] = True
+        evidence["handoff_reacquired"] = True
+        self._grasp_evidence[(grasp_id, "handoff")] = copy.deepcopy(evidence)
+        return EvidenceResult(evidence)
+
     def _grasp_object_feedback(self, grasp_id, stage, result):
-        """Attach read-only evidence after a known completed closure/probe."""
+        """Attach read-only evidence after a known completed closure/handoff/probe."""
         self._object_store()
         binding = self._grasp_objects.get(grasp_id)
         if not binding:
             return result
         if stage in ('open', 'approach', 'align') and result.get('steps_used', 0) > 0:
             return self._grasp_tracking_feedback(grasp_id, result, seed=True)
-        if stage not in ("close", "probe") or not result.get("reached"):
+        if stage not in ("close", "handoff", "probe") or not result.get("reached"):
             return result
         key = (grasp_id, stage)
-        replayed = key in self._grasp_evidence
+        replayed = key in self._grasp_evidence and (
+            stage != "handoff" or self.perception_is_current(self._grasp_evidence[key])
+        )
         if not replayed:
             try:
-                closed = self._grasp_track(grasp_id) if stage == 'close' else None
-                evidence = self.observe_hold(binding["reference"], arm=binding["arm"],
-                                             observation=closed, reset=stage == "close")
+                if stage == "handoff":
+                    evidence = self._reacquire_handoff_evidence(grasp_id)
+                else:
+                    closed = self._grasp_track(grasp_id) if stage == 'close' else None
+                    evidence = self.observe_hold(binding["reference"], arm=binding["arm"],
+                                                 observation=closed, reset=stage == "close")
             except Exception as exc:
                 # A perception error must not erase/replay an already completed stroke.
                 evidence = dict(state="unknown", reason="evidence_acquisition_failed",

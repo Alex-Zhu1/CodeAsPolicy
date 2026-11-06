@@ -516,3 +516,35 @@ def test_invalid_or_unsupported_intent_cannot_dispatch(tmp_path, argument):
     env, robo, _ = station(tmp_path)
     result = robo.execute_motion("invalid", right=robo.observe().right.shifted(dz=.06), **argument)
     assert result["status"] == "rejected" and not env.actions
+
+
+def test_post_contact_retreat_clearance_blocks_low_lateral_sweep(tmp_path):
+    env = TimedEnvironment()
+    pose = np.eye(4)
+    pose[:3, :3] = kin.orientation(35., 0., 0.)
+    pose[:3, 3] = [.20, -.18, .815]
+    solved = kin.solve("right", pose, env.joints["right"], pos_tol=1e-4, rot_tol_deg=.1)
+    assert solved.ok
+    env.joints["right"] = list(solved.q)
+    env, robo, _ = station(tmp_path, env)
+    start = robo.observe().right
+    stroke = empty_move(robo, "contact_push", right=start.shifted(dy=.03), interaction="contact")
+    assert stroke["reached"], stroke
+    before = len(env.actions)
+    after_contact = robo.observe().right
+    # A diagonal lateral free sweep from the low contact endpoint is rejected before moving.
+    sweep = empty_move(
+        robo, "diagonal_sweep",
+        right=after_contact.shifted(dx=-.06, dy=-.03, dz=.04),
+        interaction="free",
+    )
+    assert sweep["status"] == "rejected"
+    assert sweep["stop_reason"] == "right: post_contact_retreat_clearance"
+    assert len(env.actions) == before
+    # Lifting vertically clears the post-contact guard, allowing subsequent lateral travel.
+    lift = empty_move(robo, "vertical_clear", right=after_contact.shifted(dz=.05),
+                      interaction="free")
+    assert lift["reached"], lift
+    sideways = empty_move(robo, "lateral_after_lift",
+                          right=robo.observe().right.shifted(dx=-.04), interaction="free")
+    assert sideways["reached"], sideways

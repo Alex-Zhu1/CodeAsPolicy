@@ -65,6 +65,7 @@ from .supervision import (
     monitor_prompt,
     planning_instructions,
 )
+from .task_acceptance import acceptance_sha256, load_acceptance
 
 #: RPent's LIBERO guides (the default set for ``--guides`` on that robot).
 GUIDE_NAMES = ("strict_hybrid_guide.md", "pro_hybrid_guide.md", "env_calibration.md")
@@ -543,6 +544,7 @@ def play_episode(
     monitor: MonitorConfig | None = None,
     stuck_recovery: StuckRecoveryConfig | None = None,
     code_limits: ExecutionLimits | None = None,
+    task_acceptance: dict[str, Any] | str | Path | None = None,
 ) -> dict[str, Any]:
     """Run one episode of ``arm`` on ``cell`` and write ``result.json``.
 
@@ -589,6 +591,15 @@ def play_episode(
         raise ValueError(f"runtime must be one of {RUNTIMES}")
     if primitives not in PRIMITIVE_SETS:
         raise ValueError(f"primitives must be one of {PRIMITIVE_SETS}")
+    acceptance_source = (
+        task_acceptance if task_acceptance is not None else getattr(cell, "acceptance", None)
+    )
+    if acceptance_source is not None:
+        load_acceptance(
+            acceptance_source,
+            suite=getattr(cell, "suite", None),
+            task=getattr(cell, "task", None),
+        )
     adapter = get_adapter(robot)
     primitives = effective_primitives(adapter.robot_cls, primitives)
     host = adapter.host_module()
@@ -688,7 +699,22 @@ def play_episode(
         result["startup_s"] = time.perf_counter() - started
         backend = _make_backend(host, toolkit)
         card = host.dump_card(toolkit, cell, out_dir)
+        if acceptance_source is not None:
+            card = card.with_acceptance(acceptance_source)
+            (out_dir / "card.json").write_text(card.to_json() + "\n", encoding="utf-8")
         result["task_language"] = card.task_language
+        result["task_acceptance"] = {
+            "schema": card.acceptance["schema"],
+            "coverage": card.acceptance["coverage"],
+            "coverage_source": card.acceptance["coverage_source"],
+            "verdict_authority": card.acceptance["verdict_authority"],
+            "requirement_ids": [r["id"] for r in card.acceptance["requirements"]],
+            "sha256": (
+                card.provenance.get("acceptance_sha256")
+                or acceptance_sha256(card.acceptance)
+            ),
+            "artifact": card.provenance.get("acceptance_artifact"),
+        }
         robo = adapter.robot_cls(backend, ledger=ledger, primitives=primitives)
         # Generated policies declare intent; directly instantiated robots retain
         # the low-level API for existing scripts and controller development.
@@ -1034,7 +1060,7 @@ def main(argv: list[str] | None = None) -> int:
     known, _ = pre.parse_known_args(argv)
     adapter = get_adapter(known.robot)
     host = adapter.host_module()
-    parser = argparse.ArgumentParser(prog="python -m pyrualean.play", description=__doc__)
+    parser = argparse.ArgumentParser(prog=f"python -m {__package__ or 'robouse'}.play", description=__doc__)
     add_monitor_arguments(parser)
     add_stuck_recovery_arguments(parser)
     add_execution_arguments(parser)
@@ -1150,6 +1176,11 @@ def main(argv: list[str] | None = None) -> int:
         default=setting("PRIMITIVES", "full"),
         help="primitive set: full, or no-vla (the VLA primitives hidden and refused)",
     )
+    parser.add_argument(
+        "--task-acceptance",
+        default=setting("TASK_ACCEPTANCE", None),
+        help="JSON file with public task-acceptance requirements or a task catalog",
+    )
     args = parser.parse_args(argv)
     cell = host.cell_from_args(args)
     result = play_episode(
@@ -1179,6 +1210,7 @@ def main(argv: list[str] | None = None) -> int:
         monitor=monitor_config(args),
         stuck_recovery=stuck_recovery_config(args),
         code_limits=execution_limits(args),
+        task_acceptance=args.task_acceptance,
     )
     print(
         json.dumps(

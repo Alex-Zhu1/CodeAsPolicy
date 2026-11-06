@@ -72,17 +72,28 @@ class RobotOperations(OperationRegistry):
         if raw.get("status") == "rejected":
             state, reason = "rejected", raw.get("stop_reason")
         expected = record["expected"]
+        handoff_ready = False
         if (state in ("running", "paused", "ready")
                 and not self.grasps.motion._same(expected)):
-            state, reason = "needs_replan", "state_changed_outside_grasp"
-            raw = dict(raw, status="needs_model", needs_model=True, reached=False,
-                       stop_reason=reason)
+            if ("close" in record["completed"] and "probe" not in record["completed"]
+                    and self.grasps._handoff_state(record)["ok"]):
+                handoff_ready = True
+                state, reason = "ready", "handoff_reacquisition_required"
+                raw = dict(raw, status="ready", needs_model=False,
+                           stop_reason=reason, next_stage="handoff",
+                           handoff_reacquisition_required=True)
+            else:
+                state, reason = "needs_replan", "state_changed_outside_grasp"
+                raw = dict(raw, status="needs_model", needs_model=True, reached=False,
+                           stop_reason=reason)
         op = record["operations"].get(active, {})
         complete = bool(op.get("saved", {}).get("reached"))
+        ordered_stages = ("open", "approach", "align", "close", "handoff", "probe")
         return raw, feedback(
             state=state, phase=phase, phase_complete=complete,
-            completed=[s for s in STAGES if s in record["completed"]],
-            next_phase=next((s for s in STAGES if s not in record["completed"]), None),
+            completed=[s for s in ordered_stages if s in record["completed"]],
+            next_phase=("handoff" if handoff_ready else
+                        next((s for s in STAGES if s not in record["completed"]), None)),
             used=record["spent"], limit=record["limit"], unit="native_action", reason=reason,
             effect="unknown" if record.get("uncertain") else "known",
             verification="intended object remains supported" if "close" in record["completed"]

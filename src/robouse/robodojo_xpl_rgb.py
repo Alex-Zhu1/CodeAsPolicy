@@ -408,7 +408,7 @@ class RobodojoOfficialColourRobot(RobodojoRobot):
 ADAPTER = RobotAdapter(
     name="robodojo_xpl_rgb",
     robot_cls=RobodojoOfficialColourRobot,
-    host="pyrualean.hosts.xpolicylab_robodojo_rgb",
+    host=f"{__package__ or 'robouse'}.hosts.xpolicylab_robodojo_rgb",
     knowledge="robodojo_xpl_rgb",
     blurb="a dual-arm ARX-X5 robot in the RoboDojo benchmark",
     guides_subdir="",

@@ -1,0 +1,51 @@
+{
+  "schema": "pyrualean.task_acceptance_catalog.v1",
+  "source": "PyRUA packaged RoboDojo public task-acceptance specifications",
+  "tasks": {
+    "arx_x5/make_kong": {
+      "schema": "pyrualean.task_acceptance.v1",
+      "verdict_authority": "environment",
+      "coverage": "complete",
+      "coverage_source": "RoboDojo make_kong public task specification",
+      "requirements": [
+        {
+          "id": "wait_opponent_discard",
+          "kind": "order",
+          "condition": "Keep both robot arms near their starting poses and wait until the opponent arm finishes discarding a tile onto the table before manipulating any tiles.",
+          "source": "task_language and RoboDojo turn-taking rules"
+        },
+        {
+          "id": "expose_matching_triplet_in_place",
+          "kind": "outcome",
+          "condition": "Identify the three tiles in the front hand row that match the opponent's discarded tile and tip all three matching hand tiles face up (front face pointing straight up, flat on the table) in place at their hand-row positions; do not pick up and relocate the matching hand tiles to another area before tipping them.",
+          "source": "RoboDojo make_kong public task specification"
+        },
+        {
+          "id": "preserve_other_hand_tiles_upright",
+          "kind": "invariant",
+          "condition": "Keep all other nine non-matching tiles in the front hand row standing upright in their original row positions throughout the episode.",
+          "source": "RoboDojo make_kong public task specification"
+        },
+        {
+          "id": "draw_and_orient_supplemental_tile",
+          "kind": "order",
+          "condition": "After the three matching hand tiles are face up and while the nine non-matching hand tiles remain upright, draw one supplemental replacement tile from the top of the left-side supply stack and bring it through an upright, front-facing standing orientation (matching the standing hand tiles' orientation, with its face toward the robot/front and its standing axis vertical) before final placement.",
+          "source": "RoboDojo make_kong public task specification"
+        },
+        {
+          "id": "stand_supplemental_tile_upright_at_right_end",
+          "kind": "final_state",
+          "condition": "Place and release the supplemental replacement tile standing upright at the right end of the front hand row, aligned with the row and immediately adjacent to the rightmost standing hand tile (one tile width to the right of the rightmost hand tile, not lying flat and not placed into an interior gap in the row). Because the supply stack is on the far left and the right end of the hand row is on the far right, transfer/reorient the tile between arms as needed so the right arm stands it upright at the right end of the row.",
+          "source": "RoboDojo make_kong public task specification"
+        },
+        {
+          "id": "open_grippers_and_return_arms_home",
+          "kind": "final_state",
+          "condition": "After all tile manipulation and placement are complete, leave both grippers open and return both robot arms to their starting home poses.",
+          "source": "RoboDojo evaluation completion rules"
+        }
+      ]
+    }
+  }
+}
+

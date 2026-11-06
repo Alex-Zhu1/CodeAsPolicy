@@ -1409,7 +1409,7 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
 ADAPTER = RobotAdapter(
     name="robodojo",
     robot_cls=RobodojoRobot,
-    host="pyrualean.hosts.rpent_robodojo",
+    host=f"{__package__ or 'robouse'}.hosts.rpent_robodojo",
     knowledge="robodojo",
     blurb="a dual-arm ARX-X5 robot in the RoboDojo benchmark",
     guides_subdir="",

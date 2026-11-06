@@ -1381,7 +1381,7 @@ class RobocasaRobot(RobotBase):
 ADAPTER = RobotAdapter(
     name="robocasa",
     robot_cls=RobocasaRobot,
-    host="pyrualean.hosts.rpent_robocasa",
+    host=f"{__package__ or 'robouse'}.hosts.rpent_robocasa",
     knowledge="robocasa",
     blurb="a mobile-base PandaOmron robot in the RoboCasa365 kitchen benchmark",
     guides_subdir="",  # RPent ships no guides for this robot

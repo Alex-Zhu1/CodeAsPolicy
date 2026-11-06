@@ -38,8 +38,8 @@ def boot(cell: Cell, out_dir: Path, **options: Any) -> tuple[Any, list[Any]]:
     return _base.boot(cell, out_dir, **options)
 
 
-def dump_card(toolkit: Any, cell: Cell, out_dir: Path) -> Any:
-    return _base.dump_card(toolkit, cell, out_dir, robot=ROBOT)
+def dump_card(toolkit: Any, cell: Cell, out_dir: Path, *, acceptance: Any = None) -> Any:
+    return _base.dump_card(toolkit, cell, out_dir, robot=ROBOT, acceptance=acceptance)
 
 
 __all__ = [

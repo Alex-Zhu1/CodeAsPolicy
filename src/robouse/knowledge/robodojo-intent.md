@@ -114,15 +114,28 @@
   opening and contact height for the affected objects and surrounding clearance.
   The gap between fingers can miss a group member; inspect each intended effect.
   Several short contacts and local shifts can share one approach and departure.
+- Choose the lowest-order physical action that achieves each member's required
+  final state. When a member or group only needs an in-place state or orientation
+  change (such as tipping face up, flipping, pushing or pressing) and no
+  requirement demands moving it to another zone, perform the contact action in
+  place instead of staging a costly pick-carry-place-tip sequence per member.
+  Do not pick up and relocate existing row/group members merely to create an
+  interior gap for a replacement item; keep existing members at their positions
+  and place any replacement/supply item at the designated end or slot of the row.
 - Express each changed route as a new `execute_motion` intent and inspect its
   result before dependent motion. Resume an interrupted route under its original
   ID. Group progress is a planner decision over existing operations; the executor
   does not automatically choose contacts, skip members or certify their effects.
 - Between contacts, clear fingers or held objects along an observed free route
-  only as far as needed for the next local transition. Preserve orientation until
-  clear before turning; a group does not remove departure or collision checks.
-  Use combined left/right intents only when their routes and object interactions
-  are compatible. Sampled arm/table checks do not establish inter-arm clearance.
+  only as far as needed for the next local transition. Omit tight `completion`
+  tolerances (keep `position_m >= 0.004` and `orientation_deg >= 2.0`) on
+  `interaction="free"` retreats and local shifts between members so empty-hand
+  transitions stay fast instead of triggering a slow `precision` window; reserve
+  sub-4 mm / sub-2 degree tolerances for final contact or alignment endpoints.
+  Preserve orientation until clear before turning; a group does not remove
+  departure or collision checks. Use combined left/right intents only when their
+  routes and object interactions are compatible. Sampled arm/table checks do not
+  establish inter-arm clearance.
 
 ## Choose grasps for the remaining task
 - Before choosing a grasp, work backwards from the next required use: which
@@ -150,7 +163,15 @@
 - If the intended grasp is inaccessible, consider repositioning the object or
   setting it down for a different grasp at a suitable support location. Consider
   the extra manipulation and verification cost without requiring an up-front reserve.
-  Do not add repositioning when the existing pose already permits the task.
+  Do not add repositioning when the existing pose already permits the task, and
+  reserve staged grasps/transport for objects whose location must actually change.
+  When drawing a supply or replacement item from one side of the table (e.g. a
+  left-side stack) to stand upright at the opposite end of an arrangement (e.g.
+  the far-right end of a row), plan a two-arm handoff/reorientation so the
+  receiving arm can present and stand the item upright at that destination rather
+  than laying it flat in an interior gap, and use `preview=True` before handoff
+  to confirm the receiving grasp orientation can reach the final upright placement
+  pose without multiple post-handoff reorientation retries.
 - A changed grasp region, object slip or changed arm role invalidates the
   assumptions used for transfer and later use. Recheck the receiver access,
   resulting working-region clearance and route before proceeding;
@@ -200,8 +221,12 @@
   weaken motion guards or consume speculative future-task reserves.
 - Use `begin_grasp(id, target, arm=..., approach=..., pregrasp=..., probe=...,
   completion=..., translation_limits=..., rotation_limit_deg=...)` to record a
-  grasp without moving. Then `grasp_step(id, stage)` for `open`, `approach`,
-  `align`, `close`, `probe` in order. Each stage returns before the next; inspect
+  grasp without moving (`probe` must be 0.5..6 cm; inspect `status` before
+  calling `grasp_step`). Then `grasp_step(id, stage)` for `open`, `approach`,
+  `align`, `close`, `probe` in order. In a dual-arm handoff, after the receiving
+  arm completes `close` and the donor arm opens and withdraws, call
+  `grasp_step(id, 'handoff')` to verify stationary receiver hold and reacquire
+  state/evidence before `grasp_step(id, 'probe')`. Each stage returns before the next; inspect
   reached, next_stage, actual_pose and stage_result. grasp_complete follows the
   probe only and still requires images to verify the intended object followed.
   The executor plans only the current stage, not an all-or-nothing macro.
@@ -239,7 +264,10 @@
 - For contact, preserve orientation unless the intended interaction requires
   rotation. Observe the resulting object translation/rotation before deciding
   another stroke. A changed contact point or route is an Astra decision.
-  Depart from contact along a clear direction before turning or travelling.
+  Depart from a low contact endpoint (`z < 0.85`) by lifting straight up (`+z`)
+  or reversing back along the contact stroke axis before any lateral `free` or
+  `approach` move (`post_contact_retreat_clearance`), and verify adjacent
+  standing objects remain undisturbed.
 - Grasp at a solid accessible region and account for finger dimensions and
   both arms. Previews start from current state and do not simulate a whole
   future sequence. A reachable grasp alone does not prove placement reach.

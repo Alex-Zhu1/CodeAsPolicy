@@ -916,7 +916,7 @@ class RobotwinRobot(RobotBase):
 ADAPTER = RobotAdapter(
     name="robotwin",
     robot_cls=RobotwinRobot,
-    host="pyrualean.hosts.rpent_robotwin",
+    host=f"{__package__ or 'robouse'}.hosts.rpent_robotwin",
     knowledge="robotwin",
     blurb="a dual-arm robot in the RoboTwin benchmark",
     guides_subdir="robots/robotwin/guides",

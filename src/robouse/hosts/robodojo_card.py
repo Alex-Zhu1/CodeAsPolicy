@@ -5,11 +5,17 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import os
 import time
 from pathlib import Path
 
 from ..prompt import TaskCard
 from ..robodojo import _arm_state, _sequence
+from ..task_acceptance import (
+    acceptance_sha256,
+    default_robodojo_acceptance_path,
+    load_acceptance,
+)
 from .robodojo_coordination import capabilities
 
 
@@ -36,8 +42,28 @@ def _reference(metadata):
 
 
 def build_card(*, cell, raw, instruction, images, status, primitives, robot,
-               observation=None, image_sources=None, observation_artifact=None):
+               observation=None, image_sources=None, observation_artifact=None,
+               acceptance=None):
     """Keep benchmark instructions verbatim; never infer a task or missing state."""
+    explicit_acceptance = (
+        acceptance
+        if acceptance is not None
+        else getattr(cell, "acceptance", None) or os.environ.get("PYRUALEAN_TASK_ACCEPTANCE")
+    )
+    acceptance_source = (
+        explicit_acceptance
+        if explicit_acceptance is not None
+        else default_robodojo_acceptance_path()
+    )
+    acceptance_contract, acceptance_artifact = load_acceptance(
+        acceptance_source, suite=cell.suite, task=cell.task,
+    )
+    if (
+        explicit_acceptance is None
+        and not acceptance_contract["requirements"]
+        and not acceptance_contract["coverage_source"]
+    ):
+        acceptance_artifact = None
     facts = {}
     for arm in ("left", "right"):
         pose = _sequence(raw.get(f"{arm}_ee_pose"))
@@ -113,11 +139,23 @@ def build_card(*, cell, raw, instruction, images, status, primitives, robot,
         data = path.read_bytes()
         artifact = dict(path=str(path.resolve()), sha256=hashlib.sha256(data).hexdigest(),
                         size_bytes=len(data))
+    if acceptance_contract["requirements"] or acceptance_contract["coverage_source"]:
+        label = acceptance_contract["coverage_source"] or "supplied"
+        acceptance_label = (
+            f"public acceptance specification ({label}); "
+            f"coverage={acceptance_contract['coverage']}"
+        )
+    else:
+        acceptance_label = (
+            "none supplied; only recorded step-0 instruction is available (coverage=unknown)"
+        )
     provenance = dict(
         schema="pyrualean.task_card.v1", assembled_at=time.time(), time_domain="unix_seconds",
         initial_observation=initial, observation_artifact=artifact,
         instruction_sha256=hashlib.sha256(instruction.encode("utf-8")).hexdigest(),
         initial_state_sha256=hashlib.sha256(state_bytes).hexdigest(),
+        acceptance_sha256=acceptance_sha256(acceptance_contract),
+        acceptance_artifact=acceptance_artifact,
         images=image_records,
         budget_at_card_creation=dict(
             limit=budget, native_steps=native_step,
@@ -131,6 +169,7 @@ def build_card(*, cell, raw, instruction, images, status, primitives, robot,
         task_language=instruction, object_names=[], images=images,
         max_env_steps=budget, robot=robot, facts=facts,
         initial_state=initial_state, provenance=provenance,
+        acceptance=acceptance_contract,
         sources={
             "assembly": "PyRUA deterministic formatting; no Astra-generated task or plan",
             "task identifiers": "evaluation cell configuration (suite/task/seed)",
@@ -138,6 +177,7 @@ def build_card(*, cell, raw, instruction, images, status, primitives, robot,
                 "RoboDojo recorded step-0 instruction, copied verbatim" if instruction else
                 "missing from recorded step 0; no task inferred from the identifier"
             ),
+            "task acceptance": acceptance_label,
             "initial state and images": "RoboDojo recorded step 0; PyRUA derives TCP and angles",
             "native action budget": budget_source,
             "motion capabilities": (

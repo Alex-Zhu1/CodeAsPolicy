@@ -103,6 +103,7 @@ class Cell:
     seed: int
     max_episode_steps: int = DEFAULT_MAX_EPISODE_STEPS
     cuda_device: int | None = None
+    acceptance: Any = None
 
     @property
     def tag(self) -> str:
@@ -179,6 +180,7 @@ def cell_from_args(args: argparse.Namespace) -> Cell:
         seed=int(args.seed),
         max_episode_steps=int(getattr(args, "max_episode_steps", DEFAULT_MAX_EPISODE_STEPS)),
         cuda_device=getattr(args, "cuda_device", None),
+        acceptance=getattr(args, "task_acceptance", None),
     )
 
 
@@ -416,7 +418,9 @@ def boot(
     return toolkit, daemons
 
 
-def dump_card(toolkit: Any, cell: Cell, out_dir: Path) -> TaskCard:
+def dump_card(
+    toolkit: Any, cell: Cell, out_dir: Path, *, acceptance: Any = None
+) -> TaskCard:
     """Write ``card.json`` plus the step-0 images and return the card.
 
     The facts are what RPent's agent also sees in its first
@@ -449,6 +453,7 @@ def dump_card(toolkit: Any, cell: Cell, out_dir: Path) -> TaskCard:
         instruction=str(view.get("task_language") or summary.get("instruction") or ""),
         images=images, status=_status(toolkit), primitives=toolkit._primitives, robot="robodojo",
         observation=view.get("observation"), image_sources=image_sources,
+        acceptance=acceptance,
     )
     (out_dir / "card.json").write_text(card.to_json() + "\n", encoding="utf-8")
     return card

@@ -156,8 +156,11 @@
   budget briefly in plan()'s goal, next_action, done_when and evidence fields.
   Compare a small set of geometrically distinct candidates with read-only
   previews before committing to a costly grasp. Batch independent previews.
+  Multi-leg previews use `following=[...]` to evaluate chained waypoints under
+  active `constraints={"max_tilt_deg": ..., "z_bounds": ..., "keep_out": ..., "corridor_m": ..., "geometry": ...}`
+  (including TCP sphere envelopes and `ObjectPose`/`WorldPoint` auto-envelopes).
   Previews start at the current robot state: they do not simulate a future
-  grasp, validate object/inter-arm collisions, or certify a whole sequence.
+  grasp or validate unmodeled inter-arm dynamics without explicit constraints.
   Reobserve the actual object-in-hand pose after lifting, then check the next
   route and finger clearance before approaching or releasing.
 - If the intended grasp is inaccessible, consider repositioning the object or

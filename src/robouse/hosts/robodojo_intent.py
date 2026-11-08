@@ -26,6 +26,10 @@ def capabilities():
         interactions=["free", "approach", "contact"],
         holding=["keep", "empty", "retain"],
         completion=["tcp_pose", "obstructed_closure", "external_verification_required"],
+        constraints=["max_tilt_deg", "z_bounds", "keep_out", "corridor_m", "geometry"],
+        geometry_scope="explicit_tcp_local_spheres; unrepresented_robot_and_objects_not_checked",
+        preview_scope="current_measured_state_to_target; not_future_grasp_or_task_completion",
+        following_preview="same_contract_pose_sequence; hypothetical_after_first_stage",
         staged_grasp=["open", "approach", "align", "close", "probe"],
         local_alignment="frozen_observed_frame_bounded_translation_and_rotation",
         budget_policy="remaining_native_actions_by_default; resumable_resting_segments",
@@ -103,6 +107,58 @@ class IntentController:
             raise ValueError("reserve_steps must be an integer between 0 and 10000")
         if type(contract["keep_relative"]) is not bool:
             raise ValueError("keep_relative must be bool")
+        constraints = contract.setdefault("constraints", {})
+        if constraints:
+            if not isinstance(constraints, dict):
+                raise ValueError("constraints must be a dict")
+            allowed_constraints = {"max_tilt_deg", "z_bounds", "keep_out", "corridor_m", "reference_axis", "geometry"}
+            if set(constraints) - allowed_constraints:
+                raise ValueError(f"constraints supported: {allowed_constraints}")
+            if "geometry" in constraints:
+                from .robodojo_geometry import validate_geometry
+
+                constraints["geometry"] = validate_geometry(constraints)
+            if "max_tilt_deg" in constraints:
+                v = constraints["max_tilt_deg"]
+                if isinstance(v, (int, float)):
+                    if not (0 < float(v) <= 180):
+                        raise ValueError("max_tilt_deg must be in (0, 180]")
+                elif isinstance(v, dict):
+                    if set(v) - set(kin.ARMS) or any(not (0 < float(val) <= 180) for val in v.values()):
+                        raise ValueError("max_tilt_deg dict must map left/right to (0, 180]")
+                else:
+                    raise ValueError("max_tilt_deg must be number or dict")
+            if "z_bounds" in constraints:
+                v = constraints["z_bounds"]
+                if isinstance(v, (list, tuple)):
+                    if len(v) != 2 or v[0] > v[1]:
+                        raise ValueError("z_bounds must be [min_z, max_z] with min_z <= max_z")
+                elif isinstance(v, dict):
+                    if set(v) - set(kin.ARMS) or any(len(val) != 2 or val[0] > val[1] for val in v.values()):
+                        raise ValueError("z_bounds dict must map left/right to [min_z, max_z]")
+                else:
+                    raise ValueError("z_bounds must be list/tuple or dict")
+            if "keep_out" in constraints:
+                ko = constraints["keep_out"]
+                if not isinstance(ko, (list, tuple)) or len(ko) > 16:
+                    raise ValueError("keep_out must be a list of at most 16 items")
+                for item in ko:
+                    if not isinstance(item, dict) or "xyz" not in item or "radius_m" not in item:
+                        raise ValueError("keep_out items must contain xyz and radius_m")
+                    _vector(item["xyz"], "keep_out xyz")
+                    r = item["radius_m"]
+                    if not (isinstance(r, (int, float)) and r > 0 and math.isfinite(r)):
+                        raise ValueError("keep_out radius_m must be positive")
+            if "corridor_m" in constraints:
+                c = constraints["corridor_m"]
+                if isinstance(c, (int, float)):
+                    if not (0 < float(c) <= 0.2):
+                        raise ValueError("corridor_m must be in (0, 0.2]")
+                elif isinstance(c, dict):
+                    if set(c) - set(kin.ARMS) or any(not (0 < float(val) <= 0.2) for val in c.values()):
+                        raise ValueError("corridor_m dict must map left/right to (0, 0.2]")
+                else:
+                    raise ValueError("corridor_m must be number or dict")
 
     def _policy(self, record):
         contract = record["contract"]
@@ -158,7 +214,7 @@ class IntentController:
             return f"{arm}: post_contact_retreat_clearance"
         return None
 
-    def _geometry(self, record, poses):
+    def _geometry(self, record, poses, *, previous_poses=None):
         reason = self._retreat_clearance(record)
         if reason:
             return reason
@@ -180,6 +236,139 @@ class IntentController:
             if (np.linalg.norm(offset - along * axis) > tolerance
                     or along < -tolerance or along > length + tolerance):
                 return f"{arm}: direction_constraint"
+
+        # Proactive kinematic / geometric constraints
+        constraints = record["contract"].get("constraints") or {}
+        if constraints.get("geometry"):
+            from .robodojo_geometry import geometry_violation
+
+            violation = geometry_violation(poses, constraints, previous_poses=previous_poses)
+            if violation is not None:
+                record.setdefault("result", {})["constraint_violation"] = violation
+                return "geometry_constraint"
+        if constraints:
+            target_arms = tuple(record["contract"]["targets"].keys())
+            # 1. max_tilt_deg
+            if "max_tilt_deg" in constraints:
+                tilt_spec = constraints["max_tilt_deg"]
+                ref_axis = constraints.get("reference_axis")
+                for arm in target_arms:
+                    max_deg = tilt_spec.get(arm) if isinstance(tilt_spec, dict) else tilt_spec
+                    if max_deg is None:
+                        continue
+                    current_axis = poses[arm][:3, 0]
+                    norm_c = float(np.linalg.norm(current_axis))
+                    if norm_c < 1e-9:
+                        continue
+                    u_c = current_axis / norm_c
+                    if ref_axis is not None:
+                        u_ref = np.asarray(ref_axis, float)
+                        u_ref /= np.linalg.norm(u_ref)
+                    else:
+                        init_axis = record["initial"]["poses"][arm][:3, 0]
+                        u_ref = init_axis / np.linalg.norm(init_axis)
+                    dot = float(np.clip(np.dot(u_c, u_ref), -1.0, 1.0))
+                    deg = float(np.degrees(np.arccos(dot)))
+                    if deg > float(max_deg) + 1e-5:
+                        record.setdefault("result", {})["constraint_violation"] = {
+                            "name": f"{arm}_tilt",
+                            "metric": "tilt_deg",
+                            "value": round(deg, 2),
+                            "bound": float(max_deg),
+                            "delta": round(deg - float(max_deg), 2),
+                            "remedy": f"Align {arm} pointing axis with reference direction within {max_deg} deg.",
+                        }
+                        return f"{arm}: tilt_constraint"
+
+            # 2. z_bounds
+            if "z_bounds" in constraints:
+                z_spec = constraints["z_bounds"]
+                for arm in target_arms:
+                    bounds = z_spec.get(arm) if isinstance(z_spec, dict) else z_spec
+                    if bounds is None:
+                        continue
+                    min_z, max_z = bounds[0], bounds[1]
+                    tcp_z = float(poses[arm][2, 3])
+                    if tcp_z < float(min_z) - 1e-5 or tcp_z > float(max_z) + 1e-5:
+                        delta = round(float(min_z) - tcp_z if tcp_z < min_z else tcp_z - float(max_z), 4)
+                        record.setdefault("result", {})["constraint_violation"] = {
+                            "name": f"{arm}_z_bounds",
+                            "metric": "tcp_z_m",
+                            "value": round(tcp_z, 4),
+                            "bound": [float(min_z), float(max_z)],
+                            "delta": delta,
+                            "remedy": f"Adjust {arm} TCP height within [{min_z}, {max_z}] m.",
+                        }
+                        return f"{arm}: z_bounds_constraint"
+
+            # 3. keep_out
+            if "keep_out" in constraints:
+                for obstacle in constraints["keep_out"]:
+                    obs_xyz = np.asarray(obstacle["xyz"], float)
+                    r = float(obstacle["radius_m"])
+                    xy_only = bool(obstacle.get("xy_only", False))
+                    for arm in target_arms:
+                        if arm in (constraints.get("geometry") or {}).get("arms", {}):
+                            # Represented volume (with pair-specific contacts) replaces
+                            # the point-only approximation for this arm.
+                            continue
+                        dimensions = 2 if xy_only else 3
+                        tcp = poses[arm][:dimensions, 3]
+                        center = obs_xyz[:dimensions]
+                        closest = tcp
+                        if previous_poses is not None:
+                            start = previous_poses[arm][:dimensions, 3]
+                            segment = tcp - start
+                            length_squared = float(np.dot(segment, segment))
+                            if length_squared > 0.:
+                                fraction = float(np.clip(
+                                    np.dot(center - start, segment) / length_squared, 0., 1.,
+                                ))
+                                closest = start + fraction * segment
+                        dist = float(np.linalg.norm(closest - center))
+                        if dist < r - 1e-5:
+                            record.setdefault("result", {})["constraint_violation"] = {
+                                "name": f"{arm}_keep_out",
+                                "metric": "obstacle_distance_m",
+                                "value": round(dist, 4),
+                                "bound": round(r, 4),
+                                "delta": round(dist - r, 4),
+                                "remedy": f"Route {arm} around obstacle keeping at least {r}m clearance.",
+                            }
+                            return f"{arm}: keep_out_constraint"
+
+            # 4. corridor_m
+            if "corridor_m" in constraints:
+                corr_spec = constraints["corridor_m"]
+                for arm in target_arms:
+                    corridor_radius = corr_spec.get(arm) if isinstance(corr_spec, dict) else corr_spec
+                    if corridor_radius is None:
+                        continue
+                    A = record["initial"]["poses"][arm][:3, 3]
+                    B = record["goals"][arm][:3, 3]
+                    P = poses[arm][:3, 3]
+                    AB = B - A
+                    L = float(np.linalg.norm(AB))
+                    if L < 1e-6:
+                        dist = float(np.linalg.norm(P - A))
+                    else:
+                        u = AB / L
+                        AP = P - A
+                        t = float(np.dot(AP, u))
+                        t_clamped = max(0.0, min(L, t))
+                        closest = A + t_clamped * u
+                        dist = float(np.linalg.norm(P - closest))
+                    if dist > float(corridor_radius) + 1e-5:
+                        record.setdefault("result", {})["constraint_violation"] = {
+                            "name": f"{arm}_corridor",
+                            "metric": "corridor_deviation_m",
+                            "value": round(dist, 4),
+                            "bound": float(corridor_radius),
+                            "delta": round(dist - float(corridor_radius), 4),
+                            "remedy": f"Keep {arm} trajectory within {corridor_radius}m of the linear path.",
+                        }
+                        return f"{arm}: corridor_constraint"
+
         return None
 
     def _guard(self, record, snapshot):
@@ -192,9 +381,14 @@ class IntentController:
                 return f"{arm}: holding_requirement"
             if requirement == "empty" and closed_on_something:
                 return f"{arm}: empty_hand_requirement"
-        return self._geometry(record, snapshot["poses"])
+        reason = self._geometry(record, snapshot["poses"],
+                                previous_poses=record.get("guard_previous_poses"))
+        record["guard_previous_poses"] = snapshot["poses"]
+        return reason
 
     def _result(self, record, *, dispatch_steps=0):
+        from .robodojo_geometry import geometry_coverage
+
         raw = copy.deepcopy(record.get("result") or {})
         status = record["status"]
         raw.update(
@@ -209,7 +403,19 @@ class IntentController:
             verification=record["contract"]["completion"].get("verify"),
             policy=record["policy"], tracking=record["tracker"].summary(),
             holding_check="obstructed_closure_only", process_restart_resume=False,
+            geometry_coverage=geometry_coverage(record["contract"].get("constraints") or {}),
         )
+        if record.get("preview_sequence") is not None:
+            raw.update(
+                preview=True, sequence=record["preview_sequence"],
+                preview_scope="measured_start_then_hypothetical_pose_sequence",
+                sequence_semantics="continuous_via_route_same_contract", intermediate_stops=False,
+                sequence_joint_planning="rolling_ik_state_across_legs",
+                boundary_poses="requested_nominal_targets; not_observed_arrivals",
+                simulated_effects=[],
+                unverified=["contact", "grasp_changes", "object_motion", "task_success"],
+                replan_before_dispatch=True,
+            )
         # Read-only host calls also serve in-process clients. A returned policy
         # dictionary must never become a writable alias to a paused contract.
         return copy.deepcopy(raw)
@@ -226,7 +432,8 @@ class IntentController:
         if reason:
             return self._stop(record, reason)
         errors = {a: _errors(snap["poses"][a], record["goals"][a]) for a in kin.ARMS}
-        if all(d <= record["position_m"] and angle <= record["orientation_deg"]
+        if not record.get("preview_route") and all(
+               d <= record["position_m"] and angle <= record["orientation_deg"]
                for d, angle in errors.values()):
             record["status"] = "completed"
             record["result"] = dict(stop_reason=None, observation=self.motion._view(snap),
@@ -261,6 +468,8 @@ class IntentController:
             orientation_tolerance_deg=record["orientation_deg"], checkpoint_steps=4,
             require_inter_arm_clearance=False, **record["policy"],
         )
+        if record.get("preview_route"):
+            arguments["via"] = record["preview_route"][:-1]
         result = planner.plan(**arguments)
         estimate = (result.get("trajectory") or {}).get("planned_steps")
         fraction = 1.
@@ -268,6 +477,7 @@ class IntentController:
         # of the same Cartesian route, with a newly timed RESTING endpoint.
         # Do not truncate a moving spline or loosen any physical constraint.
         while (not result["accepted"] and "budget" in (result.get("stop_reason") or "")
+               and not record.get("preview_route")
                and fraction > 1 / 128):
             fraction /= 2
             goals = {}
@@ -284,6 +494,10 @@ class IntentController:
             result = planner.plan(**arguments)
         if not result["accepted"]:
             record["result"] = result
+            if record.get("preview_route"):
+                # A sequence estimate is all-or-nothing. It has no saved
+                # intent to extend/resume and never substitutes a direct leg.
+                return self._stop(record, result["stop_reason"])
             if "budget" in (result.get("stop_reason") or "") and not tools._spent(status):
                 # The model may have chosen a cap too small for even one useful
                 # resting segment. Keep the identity extendable, not terminal.
@@ -303,22 +517,29 @@ class IntentController:
         plan["guard"] = partial(self._guard, record)
         plan["resume_on_cancel"] = True
         plan["episode_reserve"] = record["contract"]["reserve_steps"]
+        # Reject crossings on the planned TCP polyline, including the segment
+        # from the measured start. This checks straight chords between FK
+        # samples, not the continuous FK curve of joint interpolation or an
+        # arbitrary native servo path; live guards still check measured poses.
+        previous_poses = snap["poses"]
         for way in plan["ways"]:
-            points = [way["joints"]]
+            points = []
             block = way.get("trajectory")
             if block:
                 # Timed substeps concatenate left and right joint targets.
                 points.extend({a: row[i * 6:(i + 1) * 6] for i, a in enumerate(kin.ARMS)}
                               for row in block["positions"])
+            points.append(way["joints"])
             for joints in points:
                 poses = {a: tools._pose_of(a, joints[a]) for a in kin.ARMS}
-                reason = self._geometry(record, poses)
+                reason = self._geometry(record, poses, previous_poses=previous_poses)
                 if (not reason and record["contract"]["keep_relative"]
                         and self.motion._relative_error(poses, record["relative"], plan["limits"])):
                     reason = "relative_pose_constraint"
                 if reason:
                     planner.discard(plan["id"])
                     return self._stop(record, reason)
+                previous_poses = poses
         record.update(plan_id=plan["id"], accounted=0, expected=snap, status="checkpoint")
         if preview:
             planner.discard(plan["id"])
@@ -329,10 +550,20 @@ class IntentController:
                         replan_before_dispatch=True)
         return self._result(record)
 
-    def prepare(self, intent_id, *, preview=False, **contract):
+    def prepare(self, intent_id, *, preview=False, following=None, **contract):
         self._validate(intent_id, contract)
         if type(preview) is not bool:
             raise ValueError("preview must be bool")
+        if following is not None:
+            if not preview:
+                raise ValueError("following is available only with preview=True")
+            if (not isinstance(following, list) or len(following) > 32
+                    or any(not isinstance(leg, dict) or not leg or set(leg) - set(kin.ARMS)
+                           for leg in following)):
+                raise ValueError("following must contain at most 32 nonempty left/right target mappings")
+            if (contract["directions"] or "corridor_m" in contract.get("constraints", {})
+                    or contract.get("local")):
+                raise ValueError("following does not support directions, corridor_m or local alignment")
         contract = json.loads(json.dumps(contract, allow_nan=False))
         previous = self.records.get(intent_id)
         if previous is not None and not preview:
@@ -345,6 +576,27 @@ class IntentController:
         snap = self.motion._snapshot()
         goals = dict(snap["poses"])
         goals.update({a: self._goal(v, snap["poses"][a]) for a, v in contract["targets"].items()})
+        route, sequence = [], []
+        if following:
+            start = snap["poses"]
+            active_arms = set(contract["targets"])
+            for index, leg in enumerate([None, *following]):
+                if leg is not None:
+                    active_arms.update(leg)
+                    goals = dict(goals)
+                    goals.update({a: self._goal(v, goals[a]) for a, v in leg.items()})
+                encoded = {a: self._pose(value) for a, value in goals.items()}
+                route.append(encoded)
+                sequence.append(dict(
+                    index=index,
+                    start={a: self._pose(value) for a, value in start.items()},
+                    targets=encoded, hypothetical_start=index > 0,
+                    start_basis="measured" if index == 0 else "previous_requested_target",
+                ))
+                start = goals
+            # This contract is ephemeral: no intent is saved by a preview.
+            # Include every arm that moves later in policy/constraint checks.
+            contract["targets"] = {a: self._pose(goals[a]) for a in kin.ARMS if a in active_arms}
         mode = contract["interaction"]
         done = contract["completion"]
         record = dict(
@@ -357,6 +609,8 @@ class IntentController:
                         max(0, self.motion.primitives.env.get_status().get("step_limit", 10000)
                             - (snap["native_steps"] or 0))),
         )
+        if route:
+            record.update(preview_route=route, preview_sequence=sequence)
         record["policy"] = self._policy(record)
         # Check the requested goal before permitting any part of its path.
         reason = self._geometry(record, goals)
@@ -448,7 +702,12 @@ class IntentController:
             raise
         finally:
             self._account(record)
+        # The live guard writes its metric report into the intent record;
+        # Controller's motion report contains only the resulting stop reason.
+        violation = record.get("result", {}).get("constraint_violation")
         record["result"] = result
+        if violation is not None:
+            record["result"]["constraint_violation"] = violation
         record["expected"] = self.motion._snapshot()
         if record["spent"] > before:
             for arm in record["contract"]["targets"]:

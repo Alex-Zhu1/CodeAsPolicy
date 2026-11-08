@@ -20,6 +20,7 @@ kills the whole process group when the child ignores the watchdog.
 
 from __future__ import annotations
 
+import copy
 import hashlib
 import importlib.util
 import inspect
@@ -37,11 +38,13 @@ from pathlib import Path
 from typing import Any
 
 from ._backend import EpisodeFinished
+from .action_contract import ActionContractPause
 from .coordination import CoordinationPause
 from .interaction import InteractionPause
 from .execution import ExecutionLimit
 from .libero import LiberoRobot
 from .recovery import failure_details
+from .supervision import SupervisionPause
 
 
 class PolicyLoadError(ValueError):
@@ -84,12 +87,12 @@ def load_policy(
         sys.path.insert(0, parent)
     try:
         spec.loader.exec_module(module)
-    except (ExecutionLimit, EpisodeFinished):
-        sys.modules.pop(module_name, None)
-        raise
     except (Exception, SystemExit) as exc:
         sys.modules.pop(module_name, None)
         raise PolicyLoadError(f"importing {location} failed: {exc}") from exc
+    except BaseException:
+        sys.modules.pop(module_name, None)
+        raise
     policy = getattr(module, entrypoint, None)
     if not callable(policy):
         raise PolicyLoadError(f"{location} does not define a callable {entrypoint!r}")
@@ -107,9 +110,28 @@ class PolicyOutcome:
     traceback: str | None = None
     elapsed_s: float = 0.0
     failure: dict[str, Any] | None = None
+    pause: BaseException | None = None
+
+    @property
+    def error(self) -> str | None:
+        if self.error_message is not None:
+            return f"{self.error_type}: {self.error_message}" if self.error_type else self.error_message
+        if self.status == "paused" and self.pause is not None:
+            return f"{type(self.pause).__name__}: {self.pause}"
+        if self.status == "paused" and self.reason is not None:
+            return f"Pause: {self.reason}"
+        return None
 
     def to_dict(self) -> dict[str, Any]:
-        return asdict(self)
+        return {
+            "status": self.status,
+            "reason": self.reason,
+            "error_type": self.error_type,
+            "error_message": self.error_message,
+            "traceback": self.traceback,
+            "elapsed_s": self.elapsed_s,
+            "failure": copy.deepcopy(self.failure) if self.failure is not None else None,
+        }
 
 
 def run_policy(
@@ -148,8 +170,8 @@ def run_policy(
         outcome = PolicyOutcome(status="completed")
     except EpisodeFinished as exc:
         outcome = PolicyOutcome(status="finished", reason=exc.reason)
-    except (CoordinationPause, InteractionPause) as exc:
-        outcome = PolicyOutcome(status="paused", reason=str(exc))
+    except (CoordinationPause, InteractionPause, SupervisionPause, ActionContractPause) as exc:
+        outcome = PolicyOutcome(status="paused", reason=str(exc), pause=exc)
     except (Exception, SystemExit, KeyboardInterrupt) as exc:
         outcome = PolicyOutcome(
             status="error",

@@ -86,6 +86,84 @@ def test_direction_is_checked_on_measured_motion_not_only_requested_goal(tmp_pat
     assert result["needs_model"] and len(env.actions) == 1
 
 
+def test_live_constraint_stop_preserves_metric_diagnostics(tmp_path):
+    env, robo, _ = station(tmp_path)
+    step = env.step
+
+    def drift(action):
+        value = step(action)
+        env.joints["right"][0] += .1
+        return value
+
+    env.step = drift
+    result = empty_move(robo, right=robo.observe().right.shifted(dz=.06),
+                        constraints={"corridor_m": .005})
+    assert result["stop_reason"] == "right: corridor_constraint"
+    assert result["needs_model"] and len(env.actions) == result["steps_used"] == 1
+    diagnostic = result["constraint_violation"]
+    assert diagnostic["metric"] == "corridor_deviation_m"
+    assert diagnostic["value"] > diagnostic["bound"] == .005
+    assert diagnostic["delta"] > 0 and diagnostic["remedy"]
+    assert robo.motion_status("travel")["constraint_violation"] == diagnostic
+
+
+@pytest.mark.parametrize("offset, radius, xy_only, shift", [
+    ([0., 0., .01], .004, False, {"dz": .06}),
+    ([.0698, 0., .01], .07, False, {"dz": .06}),
+    ([-.01, 0., 1.], .002, True, {"dx": -.04, "dz": .04}),
+])
+def test_keep_out_crossing_between_native_waypoints_rejects_without_moving(
+    tmp_path, offset, radius, xy_only, shift,
+):
+    env, robo, _ = station(tmp_path)
+    start = robo.observe().right
+    obstacle = np.asarray(start.xyz) + offset
+    goal = start.shifted(**shift)
+    dimensions = 2 if xy_only else 3
+    # Both the initial state and final target are clear; the route intersects.
+    assert np.linalg.norm(np.asarray(start.xyz)[:dimensions] - obstacle[:dimensions]) > radius
+    assert np.linalg.norm(np.asarray(goal.xyz)[:dimensions] - obstacle[:dimensions]) > radius
+    result = empty_move(robo, right=goal, constraints={"keep_out": [{
+        "xyz": obstacle.tolist(), "radius_m": radius, "xy_only": xy_only,
+    }]})
+    assert result["status"] == "rejected" and result["steps_used"] == 0
+    assert result["stop_reason"] == "right: keep_out_constraint"
+    diagnostic = result["constraint_violation"]
+    assert diagnostic["metric"] == "obstacle_distance_m"
+    assert diagnostic["value"] < diagnostic["bound"] == radius
+    assert diagnostic["delta"] < 0 and diagnostic["remedy"]
+    assert not env.actions
+
+
+@pytest.mark.parametrize("xy_only", [False, True])
+@pytest.mark.parametrize("interaction", ["free", "approach"])
+def test_keep_out_clear_route_remains_executable(tmp_path, xy_only, interaction):
+    env, robo, _ = station(tmp_path)
+    start = robo.observe().right
+    obstacle = np.asarray(start.xyz) + [.03, 0., .01]
+    result = empty_move(robo, right=start.shifted(dz=.06), interaction=interaction,
+                        constraints={"keep_out": [{
+                            "xyz": obstacle.tolist(), "radius_m": .004, "xy_only": xy_only,
+                        }]})
+    assert result["reached"] and env.actions, result
+    assert "constraint_violation" not in result
+
+
+@pytest.mark.parametrize("constraints", [
+    {"max_tilt_deg": {"right": 5.}},
+    {"z_bounds": {"right": [0., 2.]}},
+    {"corridor_m": {"right": .01}},
+])
+def test_arm_specific_constraints_allow_bilateral_motion(tmp_path, constraints):
+    env, robo, _ = station(tmp_path)
+    initial = robo.observe()
+    result = robo.execute_motion(
+        "lift_both", left=initial.left.shifted(dz=.04), right=initial.right.shifted(dz=.04),
+        holding={"left": "empty", "right": "empty"}, constraints=constraints,
+    )
+    assert result["reached"] and env.actions, result
+
+
 def test_contact_budget_estimate_executes_a_resting_prefix_without_speeding_up(tmp_path):
     env, robo, _ = station(tmp_path)
     target = robo.observe().right.shifted(dz=.06)

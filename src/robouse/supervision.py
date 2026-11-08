@@ -202,6 +202,7 @@ class VisualSupervisor:
         self.unknowns = {}
         self._rule_sources = {}
         self._rule_scope = None
+        self.last_violation = None
         # Review notifications survive cells without turning their observations
         # into hard prerequisites. New known evidence can rearm a notification.
         self._reviewed_unknowns = {}
@@ -212,6 +213,7 @@ class VisualSupervisor:
         self.cell = cell
         self.contract = None
         self.paused = None
+        self.last_violation = None
         self.reports = []
         self.evidence = []
         self.evidence_cameras = []
@@ -219,26 +221,38 @@ class VisualSupervisor:
         self.actions = 0
         self.verifications = 0
 
-    def watch(self, phase, facts, *, alerts=(), critical=None, completion=None,
-              requires=None, invalidates=None):
+    def watch(self, phase, facts=None, *, alerts=(), critical=None, completion=None,
+              requires=None, invalidates=None, invariants=None):
         """Declare checks for the following primitives; changing phase clears evidence windows."""
         if self.paused:
             raise SupervisionPause(self.paused)
         self.contract = None  # malformed replacements cannot leave old rules active
         if not isinstance(phase, str) or not 1 <= len(phase) <= 200:
             raise ValueError("phase must contain 1..200 characters")
-        if not isinstance(facts, dict) or not 1 <= len(facts) <= 12:
-            raise ValueError("facts must map 1..12 IDs to atomic visual questions")
-        if any(
-            not isinstance(k, str)
-            or not 1 <= len(k) <= 64
-            or not isinstance(v, str)
-            or not 1 <= len(v) <= 500
-            for k, v in facts.items()
-        ):
-            raise ValueError("Fact IDs/questions must be bounded nonempty strings")
-        if len({q.strip().casefold() for q in facts.values()}) != len(facts):
-            raise ValueError("Visual questions must be distinct")
+        if facts is None:
+            if not invariants:
+                raise ValueError("watch requires facts or invariants (or both)")
+            facts = {}
+        else:
+            if not isinstance(facts, dict) or not 1 <= len(facts) <= 12:
+                raise ValueError("facts must map 1..12 IDs to atomic visual questions")
+            if any(
+                not isinstance(k, str)
+                or not 1 <= len(k) <= 64
+                or not isinstance(v, str)
+                or not 1 <= len(v) <= 500
+                for k, v in facts.items()
+            ):
+                raise ValueError("Fact IDs/questions must be bounded nonempty strings")
+            if len({q.strip().casefold() for q in facts.values()}) != len(facts):
+                raise ValueError("Visual questions must be distinct")
+        if invariants is not None and (not isinstance(invariants, (list, tuple)) or not invariants):
+            raise ValueError("invariants must be a non-empty sequence of callables or ConstraintChecks")
+        if invariants is not None:
+            from .monitor import ConstraintCheck
+
+            if any(not callable(inv) and not isinstance(inv, ConstraintCheck) for inv in invariants):
+                raise ValueError("Each invariant must be a callable or ConstraintCheck")
         if not isinstance(alerts, (list, tuple)) or len(alerts) > 8:
             raise ValueError("alerts must contain at most eight rules")
         rules = [_rule(rule, facts) for rule in alerts]
@@ -253,6 +267,7 @@ class VisualSupervisor:
             raise ValueError("critical fact IDs must be distinct")
         complete = _rule(completion, facts) if completion is not None else None
         self.ledger.configure(phase, facts, requires, invalidates)
+        invs = list(invariants) if invariants is not None else []
         self.contract = copy.deepcopy(
             dict(
                 phase=phase, facts=facts, alerts=rules, critical=list(critical),
@@ -262,13 +277,24 @@ class VisualSupervisor:
                 invalidates=invalidates,
             )
         )
-        scope = json.dumps(self.contract, sort_keys=True)
+        self.contract["invariants"] = invs
+        scope = json.dumps(self._contract_record(), sort_keys=True)
         if scope != self._rule_scope:
             self.counts, self._rule_sources = {}, {}
             self._rule_scope = scope
         self.unknowns = {key: fact["unknown_streak"] for key, fact in self.ledger.facts.items()}
         self.previous = None
         self._save_evidence("watch")
+
+    def _contract_record(self):
+        """Detach the contract for feedback/audit without exposing live callables."""
+        if self.contract is None:
+            return None
+        record = copy.deepcopy({k: v for k, v in self.contract.items() if k != "invariants"})
+        record["invariants"] = [
+            str(getattr(inv, "name", str(inv))) for inv in self.contract.get("invariants", [])
+        ]
+        return record
 
     def read_evidence(self):
         """Return a detached snapshot; editing it cannot establish a visual fact."""
@@ -295,7 +321,7 @@ class VisualSupervisor:
     def _record(self, report: dict) -> None:
         self.reports.append(report)
         with (self.directory / "events.jsonl").open("a", encoding="utf-8") as stream:
-            stream.write(json.dumps(report, allow_nan=False) + "\n")
+            stream.write(json.dumps(report, allow_nan=False, default=str) + "\n")
 
     def _interrupt(self, reason: str) -> None:
         if self.config.mode == "pause":
@@ -309,6 +335,68 @@ class VisualSupervisor:
         # Ordinary visual uncertainty asks the planner to review, not to obtain
         # Valen's permission before every motion in every later cell.
         return self.ledger.blockers(self.contract["phase"])
+
+    def _evaluate_invariants(self, robo, stage: str, tool: str) -> dict | None:
+        if not self.contract or not self.contract.get("invariants"):
+            return None
+        from .monitor import ConstraintCheck, evaluate_constraints
+
+        checks = []
+        for inv in self.contract["invariants"]:
+            if callable(inv):
+                try:
+                    import inspect
+
+                    sig = inspect.signature(inv)
+                    res = inv(robo) if len(sig.parameters) > 0 else inv()
+                    if not isinstance(res, ConstraintCheck):
+                        raise TypeError(f"Expected ConstraintCheck, got {type(res).__name__}")
+                except Exception as exc:
+                    res = ConstraintCheck(
+                        name="invariant_eval_error",
+                        kind="proactive" if stage == "before_action" else "reactive",
+                        passed=False,
+                        metric="evaluation_error",
+                        value=None,
+                        bound=None,
+                        delta=None,
+                        elements=(),
+                        reason=f"Invariant callable raised {type(exc).__name__}: {exc}",
+                        remedy="Fix invariant predicate definition.",
+                    )
+            else:
+                res = inv
+            checks.append(res)
+
+        if not checks:
+            return None
+
+        report = evaluate_constraints(checks)
+        if not report["passed"]:
+            for v in report["violated"]:
+                record_data = dict(
+                    cell=self.cell,
+                    tool=tool,
+                    stage=stage,
+                    event="constraint_violation",
+                    name=v["name"],
+                    kind=v["kind"],
+                    metric=v["metric"],
+                    value=v["value"],
+                    bound=v["bound"],
+                    delta=v["delta"],
+                    elements=v["elements"],
+                    reason=v["reason"],
+                    remedy=v["remedy"],
+                )
+                self._record(record_data)
+            first_fail = report["violated"][0]
+            summary = f"constraint_violation:{first_fail['name']}: {first_fail['reason'] or first_fail['remedy']}"
+            if self.config.mode == "pause":
+                self.paused = summary
+                self.last_violation = first_fail
+                raise SupervisionPause(summary)
+        return report
 
     @staticmethod
     def _source_protocol(robo):
@@ -326,6 +414,8 @@ class VisualSupervisor:
             self._record(dict(cell=self.cell, tool=tool, event="missing_contract"))
             self._interrupt("missing_contract: call watch before motion")
             return
+        if robo is not None:
+            self._evaluate_invariants(robo, stage="before_action", tool=tool)
         if robo is not None and self.last_endpoint is not None:
             current = (robo._backend.env_steps(), robo._action_revision)
             if current != self.last_endpoint:
@@ -425,7 +515,7 @@ class VisualSupervisor:
             cell=self.cell,
             sequence=self.sequence,
             tool=tool,
-            contract=copy.deepcopy(self.contract),
+            contract=self._contract_record(),
             step=robo._backend.env_steps(),
             start_step=steps_before,
             mode=self.config.mode,
@@ -473,6 +563,20 @@ class VisualSupervisor:
                 return
             self._interrupt(f"{event}: {reason}; inspect current state and revise the motion")
             return
+        # Evaluate invariants after action completes
+        invariant_report = self._evaluate_invariants(robo, stage="after_action", tool=tool)
+        if self.contract and not self.contract.get("facts"):
+            # Pure invariant supervision: no Valen VQA questions to evaluate
+            self.paused = None
+            triggers = ["action_budget_review"] if self.actions >= self.config.max_actions else []
+            passed = invariant_report is not None and invariant_report["passed"]
+            event = "invariant_supervision_passed" if passed else "invariant_supervision_failed"
+            report.update(event="review" if triggers else event,
+                          actions=self.actions, triggers=triggers)
+            self._record(report)
+            if triggers:
+                self._interrupt("review: " + ", ".join(triggers))
+            return
         self._evaluate(robo, report, prefix, steps_before=steps_before)
 
     def verify(self, robo, observation_id=None) -> dict:
@@ -497,9 +601,47 @@ class VisualSupervisor:
         self.sequence += 1
         prefix = self.directory / f"{self.run_id}-{self.sequence:05d}"
         report = dict(cell=self.cell, sequence=self.sequence, tool="verify",
-                      contract=copy.deepcopy(self.contract), mode=self.config.mode,
+                      contract=self._contract_record(), mode=self.config.mode,
                       verification_calls=self.verifications, read_only=True)
         self._evaluate(robo, report, prefix, observation_id=observation_id, strict=True)
+        return copy.deepcopy(report)
+
+    def check_constraints(self, *checks, pause_on_violation: bool = True) -> dict:
+        """Evaluate programmatic geometric/evidence constraints at primitive boundaries."""
+        if self.paused:
+            raise SupervisionPause(self.paused)
+
+        from .monitor import evaluate_constraints
+
+        flat_checks = []
+        for c in checks:
+            if isinstance(c, (list, tuple)):
+                flat_checks.extend(c)
+            else:
+                flat_checks.append(c)
+
+        report = evaluate_constraints(flat_checks)
+        if not report["passed"]:
+            for v in report["violated"]:
+                self._record(
+                    dict(
+                        cell=self.cell,
+                        event="constraint_violation",
+                        name=v["name"],
+                        kind=v["kind"],
+                        metric=v["metric"],
+                        value=v["value"],
+                        bound=v["bound"],
+                        delta=v["delta"],
+                        elements=v["elements"],
+                        reason=v["reason"],
+                        remedy=v["remedy"],
+                    )
+                )
+            if self.config.mode == "pause" and pause_on_violation:
+                self.paused = report["summary"]
+                self.last_violation = report["violated"][0]
+                raise SupervisionPause(report["summary"])
         return copy.deepcopy(report)
 
     def _capture(self, robo, prefix, observation_id, *, strict):
@@ -684,7 +826,7 @@ class VisualSupervisor:
             {k: v for k, v in report.items() if k not in ("contract", "observation")}
             for report in self.reports[-8:]
         ]
-        return dict(
+        res = dict(
             mode=self.config.mode,
             paused=self.paused is not None,
             reason=self.paused,
@@ -694,22 +836,33 @@ class VisualSupervisor:
             unknown_streaks=dict(self.unknowns),
             reports=recent,
             report_count=len(self.reports),
-            contract=self.contract,
+            contract=self._contract_record(),
             evidence_cameras=self.evidence_cameras,
             observation=self.reports[-1].get("observation") if self.reports else None,
             evidence=self.ledger.summary(),
             blocked=self.reports[-1].get("blocked", {}) if self.reports else {},
             audit_dir=str(self.directory),
         )
+        if self.last_violation is not None:
+            res["constraint_violation"] = copy.deepcopy(self.last_violation)
+        return res
 
 
 def monitor_prompt(config: MonitorConfig, *, instructions: str | None = None) -> str:
     return f"""# Optional visual review
 
-Supervision mode: {config.mode}. Valen checks images after EACH successful motion
-primitive, independently of robo.show(). Its answers are fallible visual evidence.
+Supervision mode: {config.mode}. When facts are declared, Valen checks images after
+EACH successful motion primitive, independently of robo.show(). Its answers are
+fallible visual evidence.
 Before motion in EVERY python cell, declare phase-specific checks using:
-watch(phase, facts, alerts=[], critical=None, completion=None, requires=None, invalidates=None)
+watch(phase, facts=None, alerts=[], critical=None, completion=None, requires=None, invalidates=None,
+      invariants=None)
+Optional invariants is a nonempty list of monitor.ConstraintCheck results or callables
+returning one. Callables receive robo (or take no arguments) and run before and after
+each motion; re-read public state inside them for live checks. Supply facts, invariants,
+or both. Code-only watches need no Valen request; both modes retain the action budget.
+In plan callbacks, monitor.check_fact(robo, "fact_id") reuses a verified answer with
+host source/action freshness checks and no extra VQA; unknown/stale answers fail.
 facts maps 1..12 IDs to distinct, concrete yes/no visual questions. Name objects
 and arms in the questions. critical defaults to []; opt in only when sustained
 uncertainty warrants returning to you for judgment. An alert or completion rule has
@@ -751,7 +904,7 @@ in the named phase. Do not add requires={{"held": "yes"}} to routine transport.
 New cells and ordinary review do not erase these gates. Device constraints and
 unresolved execution receipts remain enforced independently of Valen.
 
-In pause mode, an alert, completion candidate, {config.unknown_limit} consecutive
+In pause mode, an invariant violation, alert, completion candidate, {config.unknown_limit} consecutive
 critical unknowns (once per episode of uncertainty), a monitor error, or
 {config.max_actions} actions in one cell
 unwinds the current cell and prevents its remaining motions. Missing watch also

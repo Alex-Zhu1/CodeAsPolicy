@@ -33,15 +33,17 @@ skill folders are not discovered. Verify `prompt.txt` when comparing runs. The
 skill gives planning guidance; host checks enforce only the dependencies actually
 registered through the API, without changing monitor thresholds.
 
-The `play` CLIs configure the bundled
-[recovery core](../src/pyrualean/knowledge/astra_stuck_recovery.md) by default for
-`cells`. It is independent of the monitor switch. Override its text or round limit:
+The `play` CLIs leave recovery off by default. For `cells`, enable the bundled
+[recovery core](../src/pyrualean/knowledge/astra_stuck_recovery.md) with
+`--stuck-recovery`, independently of the monitor switch. A custom skill file also
+enables recovery:
 
 ```bash
 --stuck-recovery-skill skills/astra-stuck-recovery/SKILL.md --stuck-recovery-rounds 2
 ```
 
-The initial prompt describes the trigger protocol. The skill body is delivered
+`--stuck-recovery-rounds` alone only configures a limit; it does not enable recovery.
+When recovery is enabled, the initial prompt describes the trigger protocol. The skill body is delivered
 only after `finish(status="stuck", summary="...")`, along with current state and
 available camera images. `episode_finished=false` means the confirmed blockage
 was recorded and Astra should apply recovery in the same episode. No motion is
@@ -52,7 +54,7 @@ calls in the same batch until the planner has read this response.
 Recovery dispatches are bounded (two by default). Terminal environments,
 exhausted episode budgets, or exhausted recovery rounds finalize the stuck
 request with `episode_finished=true`. Success/failure requests remain terminal.
-With `--no-stuck-recovery`, stuck is terminal. The audit is stored in
+With recovery off (the default, or `--no-stuck-recovery`), stuck is terminal. The audit is stored in
 `stuck_recovery.jsonl` and `result.json`; the frozen skill is saved alongside it.
 An ended episode cannot be reopened by loading a skill. Archived run prompts
 remain unchanged.
@@ -68,9 +70,14 @@ CUDA_VISIBLE_DEVICES=0 /path/to/valen-env/bin/python \
     --model /path/to/Valen-2B --port 18001
 ```
 
-`pyrualean play` and `python -m pyrualean.play` default to `cells`, monitoring
-`off`, and bundled stuck recovery. Normal execution does not require a Valen service
-or `watch` declarations. Opt in with `--monitor-mode pause` to request cell
+`pyrualean play` and `python -m pyrualean.play` default to `cells`, with monitoring
+and confirmed-stuck recovery both `off`. Normal execution does not require a Valen service
+or `watch` declarations. Executable [action contracts](guide/action-contracts.md)
+remain active independently: public task invariants require check bindings before
+motion, and declared stage prerequisites gate their dependent actions even with
+monitoring off. The planner must declare prerequisite/completion checks, geometric
+constraints and multi-stage previews; their availability does not ensure adoption.
+Opt in with `--monitor-mode pause` to request cell
 interruptions, or `--monitor-mode shadow` to collect reports. The service address is
 `http://127.0.0.1:18001/predict`; set `PYRUALEAN_VALEN_URL` or `--valen-url` to
 override it (the flag wins). The CLI connects to an existing service rather than
@@ -81,14 +88,16 @@ starting model weights. To collect observations without pausing, use:
 ```
 
 When explicitly enabled, `pause` stops the remaining cell actions when review is due.
-Use `--monitor-mode off --no-stuck-recovery` to disable both features. Turning off
-the monitor alone still leaves the bundled recovery skill configured. Both the
-outer `pyrualean play` CLI and `python -m pyrualean.play` forward explicit opt-outs.
+Use `--monitor-mode off --no-stuck-recovery` to explicitly disable both features.
+The switches are independent: enabling the monitor does not enable recovery, and
+turning it off does not disable explicitly enabled recovery. Both the outer
+`pyrualean play` CLI and `python -m pyrualean.play` preserve explicit selections.
 Codex, Claude, and OpenAI runtimes share the same supervised tools. The `program`
 arm defaults to both features off and rejects explicitly enabling either.
 
 When migrating an existing supervised run, pass `--monitor-mode pause` explicitly
-to retain monitoring. Questions no longer become critical implicitly. Use
+to retain monitoring, and `--stuck-recovery` to retain bundled recovery.
+Questions no longer become critical implicitly. Use
 `critical=[...]` for a one-time uncertainty review, and `requires` / `defer_fact`
 only when a fresh matching visual answer must remain a hard precondition across
 cells. An existing explicit gate is still enforced; ordinary review does not remove it.
@@ -113,7 +122,7 @@ monitor:
   max_actions: 8
 ```
 
-The defaults above are CLI defaults. Python callers still explicitly pass
+Python callers also leave monitoring and recovery off unless they explicitly pass
 `monitor=MonitorConfig(...)` and/or `stuck_recovery=StuckRecoveryConfig(...)` to
 `play_episode`; the XPolicyLab adapter's deployment configuration is unchanged.
 

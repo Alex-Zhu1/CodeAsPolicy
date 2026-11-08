@@ -29,6 +29,8 @@ def failure_details(
         kind = "verification"
     elif isinstance(cause, ImportError):
         kind = "import"
+    elif "constraint_violation" in str(cause) or getattr(cause, "kind", None) == "constraint":
+        kind = "constraint"
     else:
         kind = "runtime"
     location = None

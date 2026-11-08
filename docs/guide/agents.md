@@ -17,8 +17,11 @@ Codex keeps its own shell, sandboxed to the workspace; Claude Code its read-only
 | `claude` | Claude Code, through the Claude Agent SDK. | Claude models. |
 | `openai` | A plain loop in PyRUA-Lean against any OpenAI-compatible chat-completions endpoint: a gateway, or a local SGLang or vLLM server. | Open models such as [PyRUA-Lean Coder](../models/coder.md); RoboDojo. |
 
-`--model` names the model as the endpoint knows it. `--reasoning` sets the reasoning effort of Codex and Claude Code
-(default `xhigh`); with `openai`, put it in `--openai-extra-body`.
+`--model` names the model as the endpoint knows it (`gpt-6-astra` by default for `play`).
+`--reasoning` sets the reasoning effort of Codex and Claude Code (`high` by default for
+`play`); with `openai`, put it in `--openai-extra-body`. Environment settings supply CLI
+defaults, and explicit runtime options take precedence. The single-shot `generate`
+command retains its own defaults.
 
 ## Codex
 

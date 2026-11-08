@@ -108,6 +108,16 @@ def test_render_prompt_contains_contract_reference_knowledge_and_card(tmp_path):
     assert len(bundle.system) < 40_000
 
 
+def test_default_libero_cells_prompt_keeps_contract_within_budget():
+    from pyrualean.play import build_prompt
+
+    card = TaskCard(suite="libero_object_swap", task=2, seed=0,
+                    task_language="Move the object", object_names=[])
+    text = build_prompt("cells", card, budget_s=900, max_programs=None)
+    assert "contract={...}" in text and "public invariant IDs" in text
+    assert len(text) < 40_000
+
+
 def test_task_card_round_trips_through_json(tmp_path):
     card = TaskCard(
         suite="s",

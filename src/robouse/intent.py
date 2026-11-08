@@ -21,6 +21,17 @@ def _argument(value):
     return value
 
 
+def _constraints(value):
+    """Normalize the shared public motion, local-alignment and grasp constraints."""
+    if value is None:
+        return {}
+    if not isinstance(value, dict):
+        raise TypeError("constraints must be a dict")
+    from .monitor import proactive_constraints
+
+    return proactive_constraints(**value)
+
+
 class IntentMixin:
     INTENT_API: ClassVar[bool] = True
     LEGACY_MOTION_METHODS: ClassVar[frozenset[str]] = frozenset({
@@ -31,6 +42,7 @@ class IntentMixin:
         self, intent_id: str, *, left=None, right=None, interaction="free",
         directions=None, holding=None, completion=None, max_steps=None,
         reserve_steps=0, keep_relative=False, preview=False,
+        constraints=None, following=None,
     ) -> dict:
         """Execute an immutable, bounded motion intent for one or both arms.
 
@@ -48,12 +60,25 @@ class IntentMixin:
         directions optionally maps arms to allowed positive world translation
         axes, e.g. {'right': [0, 0, -1]}. Goals and measured motion must remain
         on that axis within the completion tolerance. No sideways search.
+        constraints optionally bounds max_tilt_deg, z_bounds, keep_out, corridor_m
+        and explicit geometry (TCP-local gripper/held-object sphere envelopes).
+        geometry={"arms": {"left": [{"name": "pad", "xyz": [...], "radius_m": r}],
+        "right": [...]}, "clearance_m": gap} checks represented volumes and their
+        translation/rotation sweep, including an uncommanded arm. uncertainty_m
+        inflates a sphere; enclose the whole gripper opening range and held object.
+        Optional allowed_contacts=[{"pair": ["left:pad", "right:pad"],
+        "max_penetration_m": p}] permits only that pair/bound; keep_out:index names
+        an obstacle. Missing links, same-arm collisions and unsampled servo motion
+        are not certified. Inspect geometry_coverage; unknown geometry is not clear.
 
         holding maps arms to 'keep', 'empty', or 'retain'. All retain the current
         gripper command: this method never opens, closes or regrips. 'empty' is
         your observed empty-hand assertion; 'retain' additionally requires a
         recorded close command and obstructed closure before/after each action.
         This check cannot prove object identity, stability or detect all slips.
+        In plan contract callbacks, monitor.check_hold(robo, ref, arm="right",
+        space="image") checks current object image consistency; space="spatial"
+        requires 3D following evidence. Unknown/stale evidence cannot pass.
 
         completion optionally supplies position_m, orientation_deg and verify
         (a short visual/semantic condition). Pose tolerance applies at arrival;
@@ -81,6 +106,13 @@ class IntentMixin:
         Unknown execution, external movement or a lost host session cannot
         automatically resume. Process-restart recovery is not advertised.
         preview=True estimates this intent without reserving its ID or moving.
+        With preview only, following=[{"left": target, "right": target}, ...]
+        adds up to 32 hypothetical subsequent poses, rolling joint state through
+        all legs. The same holding/interaction/constraints apply throughout; no
+        intermediate stops, contact, object motion or grasp changes are simulated.
+        It is one continuous via route under that contract. Directions and
+        corridor_m cannot be used with following. A preview is conditional on
+        its measured start and supplied envelopes, not proof of task feasibility.
         """
         from .coordination import Pose
 
@@ -97,7 +129,7 @@ class IntentMixin:
                 return [target(v) for v in value]
             return value
 
-        raw = self._readonly("intent_prepare", dict(
+        request = dict(
             intent_id=intent_id,
             targets={a: target(v) for a, v in (("left", left), ("right", right)) if v is not None},
             interaction=interaction, directions={} if directions is None else target(directions),
@@ -105,12 +137,19 @@ class IntentMixin:
             completion={} if completion is None else completion,
             max_steps=max_steps, reserve_steps=reserve_steps,
             keep_relative=keep_relative, preview=preview,
-        ))
+            constraints=_constraints(constraints),
+        )
+        if following is not None:
+            request["following"] = target(following)
+        raw = self._readonly("intent_prepare", request)
         if raw.get("interrupted"):
             from .coordination import CoordinationPause
 
             self._coordination_feedback = raw if preview else self.motion_status(intent_id)
             raise CoordinationPause("intent preparation interrupted; resume the saved intent")
+        if not preview:
+            # Keep preflight refusals available after subsequent read-only observations.
+            self._coordination_feedback = raw
         if preview or raw["status"] not in ("checkpoint", "paused"):
             return raw
         return self.resume_motion(intent_id)
@@ -206,6 +245,7 @@ class IntentMixin:
         self, intent_id: str, offset, *, arm="right", reference=None, frame="world",
         translation_limits=(.01, .01, .01), rotation_deg=(0., 0., 0.),
         rotation_limit_deg=5., holding="keep", completion=None, max_steps=None, preview=False,
+        constraints=None,
     ) -> dict:
         """Align to an explicit offset inside a frozen observed-pose envelope.
 
@@ -225,6 +265,8 @@ class IntentMixin:
         alignment. holding is keep/empty/retain. Default arrival is 1.5 mm/1 deg.
         Returns the same motion feedback and partial-progress semantics as
         execute_motion; reached is TCP arrival, not grasp or contact proof.
+        constraints uses execute_motion's geometry bounds, frozen with this ID
+        and enforced in addition to the local alignment envelope.
         """
         self._interaction_guard()
         raw = self._readonly("local_prepare", dict(
@@ -233,7 +275,10 @@ class IntentMixin:
             frame=frame, translation_limits=_argument(translation_limits),
             rotation_deg=_argument(rotation_deg), rotation_limit_deg=rotation_limit_deg,
             holding=holding, completion=completion, max_steps=max_steps, preview=preview,
+            constraints=_constraints(constraints),
         ))
+        if not preview:
+            self._coordination_feedback = raw
         if preview or raw["status"] not in ("checkpoint", "paused"):
             return raw
         return self.resume_motion(intent_id)
@@ -243,6 +288,7 @@ class IntentMixin:
         pregrasp=None, probe=(0., 0., .025), opening=1.,
         completion=None, translation_limits=(.01, .01, .01), rotation_limit_deg=5.,
         max_steps=None, object_ref=None,
+        constraints=None,
     ) -> dict:
         """Register a staged grasp without moving, opening or preflighting later phases.
 
@@ -260,6 +306,8 @@ class IntentMixin:
         Default budget is remaining native actions, with no return reserve.
         Explicit max_steps covers all stages and refinements cumulatively.
         The ID freezes the plan. Use it to continue, never wrap in once().
+        constraints uses execute_motion's geometry bounds and is frozen for
+        every movement, refinement, and native opening/closing action.
 
         On snapshot backends, pass object_ref=robo.object_ref(name, description)
         to bind the intended object while it is visible. Preparation and open/
@@ -292,6 +340,7 @@ class IntentMixin:
             completion=completion, translation_limits=_argument(translation_limits),
             rotation_limit_deg=rotation_limit_deg,
             max_steps=max_steps,
+            constraints=_constraints(constraints),
         ))
         if result.get("status") != "rejected":
             from copy import deepcopy

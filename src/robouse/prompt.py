@@ -304,12 +304,13 @@ def api_reference(
             "fresh observation and strategy review. Do not infer a held object's pose from "
             "table-height geometry. "
             "Read motion_capabilities: object/inter-arm collision checking and force control "
-            "are not provided by current adapters. Split at "
+            "are not provided by current adapters, unless declared constraints (corridor_m, "
+            "keep_out, z_bounds, geometry envelopes) are checked by proactive monitors. Split at "
             "required observation, contact or release decisions. Timed trajectories are "
             "continuous within uninterrupted execution, not across interruptions or model waits. "
-            "CoordinationPause(BaseException) and SupervisionPause stop code for review; do not "
+            "CoordinationPause(BaseException), SupervisionPause and ActionContractPause stop code for review; do not "
             "catch these interruptions. Already executed actions remain done. Use watch when "
-            "monitoring is enabled; only declared prerequisites are enforced. Skills provide "
+            "monitoring is enabled; only declared prerequisites and constraints are enforced. Skills provide "
             "guidance, not a prescribed task sequence or object-support verdict."
         )
     # A robot without ``done`` never ends an episode as "terminated".
@@ -562,13 +563,14 @@ class TaskCard:
         if caps.get("motion_intents"):
             lines.extend([
                 "- execute_motion(id, ...): supply goals, interaction, allowed directions, "
-                "holding requirements, completion conditions and step allocation",
+                "holding requirements, completion conditions, constraints= and step allocation",
+                "- following=[...] chains multi-leg waypoint segments; preview=True estimates "
+                "or validates envelopes without moving",
                 "- executor chooses spacing/speed in simulation time and bounded arrival "
                 "corrections; resume_motion(id) continues known remaining work",
                 "- a completed intent never dispatches again; direction/grasp/path changes "
                 "require a new intent; semantic completion still needs observation",
-                "- preview=True estimates without moving; low-level motion profiles remain "
-                "available for explicit control requirements",
+                "- low-level motion profiles remain available for explicit control requirements",
             ])
         elif caps.get("speed_control") is True:
             defaults = caps.get("trajectory_defaults") or {}
@@ -667,9 +669,12 @@ documented below.
 
 Reply with the complete source of `policy.py` in a single ```python fenced
 block and nothing else.  The program may import `math`, `time` and `numpy`
-(as `np`); do not import anything else, read files or start threads.  Keep it
-self-contained: helper functions live in the same file.  Print short progress
-lines with `print(...)`; stdout is saved with the episode.
+(as `np`); `monitor` (`check_distance`, `check_tilt`, `check_in_bounds`,
+`check_above`, `check_hold`, `check_fact`, `proactive_constraints`,
+`paint_elements`) and `plan(..., contract=...)` are available.  Do not import
+anything else, read files or start threads.  Keep it self-contained: helper
+functions live in the same file.  Print short progress lines with `print(...)`;
+stdout is saved with the episode.
 """
 
 

@@ -990,7 +990,8 @@ def test_adapter_and_prompt_say_that_nothing_reports_success():
     assert "of 600 s or by the simulator step budget (700 steps)" in bundle.system
     assert "reason: truncated | timeout | cancelled" in bundle.system
     cells = build_prompt(
-        "cells", card, budget_s=600, max_programs=None, images="on-demand", feedback="pure"
+        "cells", card, budget_s=600, max_programs=None, images="on-demand", feedback="pure",
+        primitives="full",
     )
     assert "`RobodojoRobot` bound to the live simulator, a\nfrozen Pi0.5 VLA and a SAM3" in cells
     assert "`robo.show('cam_head')`, `robo.show('cam_left_wrist')`" in cells

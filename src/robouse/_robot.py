@@ -117,6 +117,8 @@ class RobotBase(InteractionMixin, PerceptionMixin):
             frozenset(self.VLA_PRIMITIVES) if primitives == "no-vla" else frozenset()
         )
         self._supervisor: Any = None
+        self._action_contract: Any = None
+        self._contract_operations: dict = {}
         self._execution_budget: Any = None
         self._episode_deadline: float | None = None
         # Increases on every attempted motion, even when a controller fails.
@@ -318,6 +320,9 @@ class RobotBase(InteractionMixin, PerceptionMixin):
     def _readonly(
         self, tool: str, kwargs: dict[str, Any], *, allow_error_key: str | None = None
     ) -> dict[str, Any]:
+        from .contract_dispatch import prepare, remember
+
+        kwargs = prepare(self, tool, kwargs)
         record = self._ledger.open(tool, kwargs, stateful=False)
         record.session_id = kwargs.get("session_id")
         record.observation_id = kwargs.get("observation_id")
@@ -336,6 +341,7 @@ class RobotBase(InteractionMixin, PerceptionMixin):
                 raise_for_error(tool, payload)
             record.ok = True
             record.summary = self._summary(tool, payload)
+            remember(self, tool, kwargs, payload)
             return payload
         except BaseException as exc:
             record.error = f"{type(exc).__name__}: {exc}"
@@ -351,6 +357,9 @@ class RobotBase(InteractionMixin, PerceptionMixin):
     ) -> Any:
         self._interaction_guard()
         self._guard()
+        from .contract_dispatch import before_dispatch
+
+        before_dispatch(self, tool, kwargs)
         if self._supervisor is not None:
             self._supervisor.before_action(tool, self)
         if self._execution_budget is not None:
@@ -413,15 +422,19 @@ class RobotBase(InteractionMixin, PerceptionMixin):
                 record.env_steps = max(0, steps_after - steps_before)
         # The action has completed and its ledger entry is committed. A visual
         # interruption must not relabel an executed motion as a failed call.
-        if self._supervisor is not None:
-            outcome = dict(record.summary, action_id=context["action_id"],
-                           observation_id=self._latest_observation_id)
-            # Some adapters derive arrival from distance/tolerance instead of
-            # receiving a raw ``reached`` field from their controller.
-            for name in ("reached", "ik_error", "note", "blocked"):
-                if hasattr(result, name):
-                    outcome[name] = getattr(result, name)
-            self._supervisor.after_action(self, tool, steps_before, outcome=outcome)
+        try:
+            if self._supervisor is not None:
+                outcome = dict(record.summary, action_id=context["action_id"],
+                               observation_id=self._latest_observation_id)
+                # Some adapters derive arrival from distance/tolerance instead of
+                # receiving a raw reached field from their controller.
+                for name in ("reached", "ik_error", "note", "blocked"):
+                    if hasattr(result, name):
+                        outcome[name] = getattr(result, name)
+                self._supervisor.after_action(self, tool, steps_before, outcome=outcome)
+        finally:
+            if self._action_contract is not None:
+                self._action_contract.after_action(tool, kwargs)
         return result
 
 

@@ -214,9 +214,9 @@ def test_prompts_without_the_vla():
         guides=True,
         budget_mode="calls",
     )
-    full = build_prompt("cells", card, **kwargs)
-    assert build_prompt("cells", card, primitives="full", **kwargs) == full
+    full = build_prompt("cells", card, primitives="full", **kwargs)
     novla = build_prompt("cells", card, primitives="no-vla", **kwargs)
+    assert build_prompt("cells", card, **kwargs) == novla
     assert "frozen Pi0.5 VLA" in full and "robo.pi0_pick(" in full
     assert not VLA_TOKENS.search(novla), sorted(set(VLA_TOKENS.findall(novla)))
     assert "`LiberoRobot` bound to the live simulator, a\nSAM3 segmentation service" in novla
@@ -253,7 +253,11 @@ def test_play_episode_records_the_primitive_set_even_when_boot_fails(tmp_path, m
     assert result["host"]["primitive_set"] == "no-vla"
     written = json.loads((tmp_path / "run" / "result.json").read_text())
     assert written["host"]["primitive_set"] == "no-vla"
-    default = play_episode(cell, tmp_path / "run2", arm="cells", model="m")
-    assert default["host"]["primitive_set"] == "full"
+    default = play_episode(cell, tmp_path / "run2")
+    assert default["host"]["primitive_set"] == "no-vla"
+    assert default["arm"] == "cells" and default["model"] == "gpt-6-astra"
+    assert default["reasoning_effort"] == "high" and default["max_turns"] == 100
+    assert default["images"] == "on-demand" and default["feedback"] == "pure"
+    assert default["timeout_s"] == 5400 and default["stuck_recovery"] is None
     with pytest.raises(ValueError, match="primitives"):
         play_episode(cell, tmp_path / "run3", arm="cells", model="m", primitives="none")

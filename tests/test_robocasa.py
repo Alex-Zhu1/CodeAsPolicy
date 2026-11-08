@@ -1174,7 +1174,8 @@ def test_adapter_and_prompt_wording():
     assert "loop inside one cell" in know and "vla_desync" in know
     assert "- robot: robocasa" in bundle.user and "initial base position" in bundle.user
     cells = build_prompt(
-        "cells", card, budget_s=600, max_programs=None, images="on-demand", feedback="pure"
+        "cells", card, budget_s=600, max_programs=None, images="on-demand", feedback="pure",
+        primitives="full",
     )
     assert "`RobocasaRobot` bound to the live simulator, a\nfrozen RLDX-1 VLA" in cells
     assert "`robo.show('agentview')`, `robo.show('navview')` or `robo.show('wrist')`" in cells

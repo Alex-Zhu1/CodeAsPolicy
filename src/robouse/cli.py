@@ -24,6 +24,7 @@ from pathlib import Path
 from typing import Any
 
 from . import __version__
+from . import _play_defaults as play_defaults
 from ._env import setting
 from ._robot import PRIMITIVE_SETS
 from .evaluation.compare import main as compare_main
@@ -234,12 +235,14 @@ def cmd_play(args: argparse.Namespace) -> int:
             raise ValueError("Stuck recovery currently supports only --arm cells")
         argv += ["--stuck-recovery-skill", str(args.stuck_recovery_skill.resolve()),
                  "--stuck-recovery-rounds", str(args.stuck_recovery_rounds)]
-    elif args.no_stuck_recovery:
+    elif args.stuck_recovery:
+        if args.arm != "cells":
+            raise ValueError("Stuck recovery currently supports only --arm cells")
+        argv += ["--stuck-recovery", "--stuck-recovery-rounds", str(args.stuck_recovery_rounds)]
+    else:
         argv += ["--no-stuck-recovery"]
-    elif args.arm == "cells":
-        argv += ["--stuck-recovery-rounds", str(args.stuck_recovery_rounds)]
     config = monitor_config(args)
-    # Forward even off: omitting it would re-enable the host CLI's cells default.
+    # Forward resolved choices so the host cannot select different defaults.
     argv += ["--monitor-mode", config.mode]
     if config.mode != "off":
         if args.arm != "cells":
@@ -257,16 +260,16 @@ def cmd_play(args: argparse.Namespace) -> int:
         argv += ["--guides"]
     if args.guides_dir:
         argv += ["--guides-dir", args.guides_dir]
-    if args.max_turns is not None:
-        argv += ["--max-turns", str(args.max_turns)]
+    argv += ["--max-turns", str(args.max_turns or 0)]
     if args.vla_endpoint:
         argv += ["--vla-endpoint", args.vla_endpoint]
     if args.sam3_endpoint:
         argv += ["--sam3-endpoint", args.sam3_endpoint]
+    argv += ["--runtime", args.runtime, "--primitives", args.primitives]
     if args.runtime == "claude":
-        argv += ["--runtime", "claude", "--claude-cli", args.claude_cli]
+        argv += ["--claude-cli", args.claude_cli]
     elif args.runtime == "openai":
-        argv += ["--runtime", "openai", "--openai-max-tokens", str(args.openai_max_tokens)]
+        argv += ["--openai-max-tokens", str(args.openai_max_tokens)]
         argv += ["--image-max-side", str(args.image_max_side)]
         argv += ["--openai-nudges", str(args.openai_nudges)]
         argv += ["--openai-tool-choice", args.openai_tool_choice]
@@ -276,8 +279,6 @@ def cmd_play(args: argparse.Namespace) -> int:
             argv += ["--openai-extra-body", args.openai_extra_body]
         if args.openai_timeout_s is not None:
             argv += ["--openai-timeout-s", str(args.openai_timeout_s)]
-    if args.primitives != "full":
-        argv += ["--primitives", args.primitives]
     code = run_host(
         argv, timeout_s=args.budget_s + STARTUP_ALLOWANCE_S, log_path=args.out / "host.log"
     )
@@ -399,17 +400,18 @@ def main(argv: list[str] | None = None) -> int:
     add_monitor_arguments(play)
     add_stuck_recovery_arguments(play)
     add_execution_arguments(play)
-    play.add_argument("--arm", choices=("cells", "program"), default="cells",
+    play.add_argument("--arm", choices=("cells", "program"), default=play_defaults.ARM,
                       help="code execution mode (default: cells)")
-    play.add_argument("--model", default="gpt-6-astra")
-    play.add_argument("--reasoning", default="xhigh")
-    play.add_argument("--budget-s", type=float, default=1200.0)
+    play.add_argument("--model", default=play_defaults.MODEL)
+    play.add_argument("--reasoning", default=play_defaults.REASONING)
+    play.add_argument("--budget-s", type=float, default=play_defaults.BUDGET_S)
     play.add_argument("--max-programs", type=int, default=None)
     play.add_argument("--codex-bin", default=setting("CODEX_BIN", "codex"))
     play.add_argument("--base-url", default=None)
     play.add_argument("--api-key-env", default=None)
-    play.add_argument("--images", choices=("on-motion", "on-demand", "none"), default="on-motion")
-    play.add_argument("--feedback", choices=("pure", "rich"), default="rich")
+    play.add_argument("--images", choices=("on-motion", "on-demand", "none"),
+                      default=play_defaults.IMAGES)
+    play.add_argument("--feedback", choices=("pure", "rich"), default=play_defaults.FEEDBACK)
     play.add_argument("--codex-home", default=setting("CODEX_HOME"))
     play.add_argument(
         "--guides",
@@ -417,13 +419,15 @@ def main(argv: list[str] | None = None) -> int:
         help="give the agent RPent's LIBERO operating guides in its workspace",
     )
     play.add_argument("--guides-dir", default=None, help="directory holding the three guides")
-    play.add_argument("--max-turns", type=int, default=None, help="decision budget (tool calls)")
+    play.add_argument("--max-turns", type=play_defaults.turn_budget,
+                      default=play_defaults.MAX_TURNS,
+                      help="decision budget (default 100 tool calls; 0 = wall-clock only)")
     play.add_argument("--vla-endpoint", default=None, help="host:port of a shared Pi0.5 server")
     play.add_argument("--sam3-endpoint", default=None, help="host:port of a shared SAM3 server")
     play.add_argument(
         "--runtime",
         choices=("codex", "claude", "openai"),
-        default=setting("RUNTIME", "codex"),
+        default=setting("RUNTIME", play_defaults.RUNTIME),
         help=(
             "agent runtime: codex (Codex CLI), claude (Claude Code via the Claude Agent SDK) "
             "or openai (in-process loop against any OpenAI-compatible --base-url)"
@@ -448,7 +452,7 @@ def main(argv: list[str] | None = None) -> int:
     play.add_argument(
         "--primitives",
         choices=PRIMITIVE_SETS,
-        default=setting("PRIMITIVES", "full"),
+        default=setting("PRIMITIVES", play_defaults.PRIMITIVES),
         help="primitive set: full, or no-vla (the VLA primitives hidden and refused)",
     )
     _cell_args(play)

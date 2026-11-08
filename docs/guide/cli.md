@@ -39,40 +39,48 @@ cannot enable missing capabilities; `result.json` records the effective set.
 |---|---|
 | `--arm` | `cells` (default) or `program` |
 | `--runtime` | `codex`, `claude` or `openai` (`codex`; [Agent Configuration](agents.md)) |
-| `--model`, `--reasoning` | the model (`gpt-6-astra`) and its reasoning effort (`xhigh`) |
+| `--model`, `--reasoning` | the model (`gpt-6-astra`) and its reasoning effort (`high`) |
 | `--base-url`, `--api-key-env` | an OpenAI-compatible endpoint, and the variable holding its key |
-| `--max-turns` | the decision budget, in code cells |
-| `--budget-s` | the wall-clock budget, in seconds (`1200`) |
+| `--max-turns` | the decision budget (`100` code calls); `0` removes the call-count limit |
+| `--budget-s` | the wall-clock budget, in seconds (`5400`) |
 | `--code-timeout-s` | execution deadline per cell/program, including loading (`120` seconds) |
 | `--code-max-actions` | optional maximum motion attempts per code call |
 | `--code-output-chars` | maximum retained characters per stdout/stderr stream (`8000`) |
-| `--monitor-mode` | `pause` (cells default), `shadow` or `off` (program default) |
+| `--monitor-mode` | `pause`, `shadow` or `off` (default) |
 | `--valen-url` | existing Valen service (`$PYRUALEAN_VALEN_URL` or `http://127.0.0.1:18001/predict`) |
 | `--monitor-timeout-s`, `--monitor-threshold` | visual request budget (`30` seconds) and choice threshold (`0.8`) |
 | `--monitor-unknown-limit`, `--monitor-max-actions` | consecutive critical unknowns (`2`) and per-cell successful actions before review (`8`) |
-| `--stuck-recovery-skill` | optional file overriding the bundled recovery core; configured by default for cells, delivered only after confirmed stuck |
-| `--stuck-recovery-rounds` | maximum recovery dispatches within the episode (`2`) |
-| `--no-stuck-recovery` | explicitly disable stuck recovery; cannot be combined with a custom skill file |
-| `--images` | `on-motion`, `on-demand` or `none` (`on-motion`) |
-| `--feedback` | `rich` or `pure` (`rich`) |
-| `--primitives` | `full` or `no-vla` (`full`) |
+| `--stuck-recovery` | enable the bundled recovery core for cells; recovery is off by default |
+| `--stuck-recovery-skill` | enable recovery with a custom skill file; delivered only after confirmed stuck |
+| `--stuck-recovery-rounds` | maximum recovery dispatches within the episode (`2`); setting this alone does not enable recovery |
+| `--no-stuck-recovery` | explicitly disable stuck recovery; cannot be combined with either enabling flag |
+| `--images` | `on-motion`, `on-demand` or `none` (`on-demand`) |
+| `--feedback` | `rich` or `pure` (`pure`) |
+| `--primitives` | `full` or `no-vla` (`no-vla`) |
 | `--max-programs` | the most programs on the `program` arm |
 | `--guides`, `--guides-dir` | operating guides in the agent's workspace |
 | `--vla-endpoint`, `--sam3-endpoint` | running model servers to attach to |
 | `--codex-home`, `--codex-bin`, `--claude-cli` | the runtimes' homes and executables |
 
-Both `pyrualean play` and `python -m pyrualean.play` default to the supervised cells
-loop. The supervision core is in the initial prompt; the recovery body is delivered
-only after `finish(status="stuck")` when the host permits continuation. Both skill
-cores ship in the package. A running Valen service sharing the image filesystem is
-required; the CLI does not start a model server or fall back to unsupervised actions
-on a monitor error. See [visual supervision](../visual-supervision.md).
+Both `pyrualean play` and `python -m pyrualean.play` use the defaults above;
+`play_episode` uses the same launch settings when its optional arguments are omitted.
+Executable [action contracts](action-contracts.md) are active in the execution loop:
+public task invariants require check bindings before motion. Stage prerequisites,
+completion checks, geometric constraints and multi-stage previews depend on the
+planner's declarations.
 
-Use `--monitor-mode off --no-stuck-recovery` to disable both features. These are
-independent switches: turning off Valen alone leaves confirmed-stuck recovery
-configured. `program` supports neither feature and defaults both off; explicitly
-enabling either for that arm is rejected. Direct Python calls to `play_episode`
-and XPolicyLab's deployment configuration keep their explicit opt-in semantics.
+Valen monitoring and confirmed-stuck recovery are independently off by default.
+Enable monitoring with `--monitor-mode pause` or `shadow`, and recovery with
+`--stuck-recovery` or a custom `--stuck-recovery-skill`. Only enabled monitoring
+requires a running Valen service sharing the image filesystem. Its skill core is
+included in the initial prompt; the recovery body is delivered only after
+`finish(status="stuck")` when the host permits continuation. `program` rejects
+enabling either feature. Python callers opt in with `MonitorConfig` and
+`StuckRecoveryConfig`; see [visual supervision](../visual-supervision.md).
+
+These defaults apply to `play`. `generate`, `prompt`, `run` and XPolicyLab's
+deployment configuration retain their own settings. Robot, task, seed, GPU and
+native benchmark action budgets are selected separately.
 
 ## Environment variables
 
@@ -90,9 +98,9 @@ and XPolicyLab's deployment configuration keep their explicit opt-in semantics.
 | `PYRUALEAN_OPENAI_RETRIES`, `PYRUALEAN_OPENAI_TIMEOUT_S` | retries (`10`) and request timeout in seconds (`900`) of `--runtime openai` |
 | `CODEX_AUTO_COMPACT_TOKEN_LIMIT` | Codex's compaction threshold for the episode ([Agent Configuration](agents.md#codex)) |
 
-`pyrualean play` passes `--runtime` and `--primitives` on only when they differ from `codex` and `full`, so a
-`PYRUALEAN_RUNTIME` or `PYRUALEAN_PRIMITIVES` in the environment also wins over an explicit `--runtime codex` or
-`--primitives full`: unset it to get those.
+Environment variables supply CLI defaults. Explicit `--runtime` and `--primitives`
+take precedence, including `--runtime codex` and `--primitives full`; the outer
+CLI forwards the selected values to the host process.
 
 Each robot page lists the variables of its stack: checkpoints, assets and rendering.
 

@@ -43,9 +43,11 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+from . import monitor as monitor_module
 from . import strategies
 from ._backend import EpisodeFinished
 from ._robot import RobotBase, effective_primitives
+from .action_contract import ActionContract, ActionContractPause
 from .coordination import CoordinationPause
 from .execution import BoundedOutput, ExecutionBudget, ExecutionLimit, ExecutionLimits
 from .execution_journal import ExecutionJournal, fingerprint, plain
@@ -203,7 +205,7 @@ _CONTROL_FIELDS = (
     "execution_complete", "stop_confirmed", "new_motion_allowed", "allowed_next",
     "automatic_replay", "scene_rolled_back", "paused", "reason", "type", "kind",
     "next_action", "retry_allowed", "unresolved_action_count", "action_receipt_counts",
-    "handoff", "supervision", "failure", "recovery", "action_receipts", "observation",
+    "handoff", "supervision", "constraint_violation", "failure", "recovery", "action_receipts", "observation",
     "blocked", "last_action", "last_motion", "unresolved_actions", "summary",
     "primitive_outcome", "receipt",
     "reached", "dist_to_target_m", "orientation_error_deg", "final_xyz", "message", "error",
@@ -442,6 +444,10 @@ class ArmToolkit:
         self.workspace = Path(workspace)
         self.workspace.mkdir(parents=True, exist_ok=True)
         self._plan_store = ExecutionPlan(self.workspace.parent, self._session_id, task_card_path)
+        acceptance = (json.loads(Path(task_card_path).read_text()).get("acceptance", {})
+                      if task_card_path is not None else {})
+        self.action_contract = ActionContract(robo, acceptance)
+        robo._action_contract = self.action_contract
         self.max_programs = max_programs
         self.program_timeout_s = program_timeout_s
         #: Decision budget: at most this many `python` / `run_program` calls.
@@ -465,6 +471,7 @@ class ArmToolkit:
             "display": self._display,
             "log": print,
             "strategy": strategies,
+            "monitor": monitor_module,
             "plan": self._plan,
             "once": self._once,
             "resume_state": self.resume_state,
@@ -472,6 +479,7 @@ class ArmToolkit:
         if supervisor is not None:
             self._globals["watch"] = supervisor.watch
             self._globals["verify"] = functools.partial(supervisor.verify, robo)
+            self._globals["check_constraints"] = supervisor.check_constraints
             self._globals["evidence"] = supervisor.read_evidence
             self._globals["defer_fact"] = supervisor.defer_fact
         try:
@@ -560,6 +568,9 @@ class ArmToolkit:
             if plan is not None:
                 self._plan_store.latest = plan
                 self._plan_store.revision = plan["revision"]
+            saved_contract = self._journal.get("meta", "action_contract")
+            if saved_contract is not None:
+                self.action_contract.restore(saved_contract)
             for identity, operation in self._journal.all("operation").items():
                 operation["action_ids"] = [key for key, receipt in robo._receipts.items()
                                            if receipt.get("operation_id") == identity]
@@ -656,12 +667,21 @@ class ArmToolkit:
             self._operation_feedback = saved
         return dict(saved, replayed=False)
 
-    def _plan(self, goal=None, *, next_action="", done_when="", evidence="", status="in_progress"):
+    def _plan(self, goal=None, *, next_action="", done_when="", evidence="", status="in_progress",
+              contract=None):
         """Read/update Astra's current-goal note; no observation refresh or robot action."""
         if goal is None:
-            if next_action or done_when or evidence or status != "in_progress":
+            if next_action or done_when or evidence or status != "in_progress" or contract is not None:
                 raise ValueError("plan() reads the note; supply goal to update it")
             return self._plan_store.read()
+        self._plan_store.validate(goal=goal, next_action=next_action, done_when=done_when,
+                                  evidence=evidence, status=status)
+        if self.action_contract.evaluating:
+            self.action_contract.reject("plan", "plan_change_during_check", "Checks must be read-only.")
+        if contract is not None:
+            self.action_contract.configure(contract)
+        if status == "done":
+            self.action_contract.verify_completion()
         observation = self.robo._observations.get(self.robo._latest_observation_id, {})
         context = dict(
             robot_session_id=self.robo._interaction_session_id,
@@ -672,10 +692,13 @@ class ArmToolkit:
             last_action_id=self.robo._last_action_id,
             turn=len(self.turns) + 1,
         )
+        summary = self.action_contract.summary()
         result = self._plan_store.update(
             goal=goal, next_action=next_action, done_when=done_when,
             evidence=evidence, status=status, context=context,
+            contract=summary if summary["configured"] else None,
         )
+        self._journal.put("meta", "action_contract", summary)
         self._journal.put("meta", "plan", result)
         self._trace_event("execution_plan_updated", plan_revision=result["revision"],
                           observation_id=context["observation_id"])
@@ -962,6 +985,14 @@ class ArmToolkit:
         if self.finish is not None:
             return ArmResult({"ok": True, **self.finish,
                               **({"episode_finished": True} if self.stuck_recovery else {})})
+        if args.get("status") == "success":
+            try:
+                self.action_contract.verify_completion(tool="finish")
+            except ActionContractPause:
+                return self._feedback(self._snapshot(), {
+                    "ok": False, "execution_paused": True, "episode_finished": False,
+                    "status": "completion_not_verified",
+                })
         if self.stuck_recovery is not None and args.get("status") == "stuck":
             if not str(args.get("summary", "")).strip():
                 return ArmResult({"error": "Describe the confirmed blockage in summary."})
@@ -1186,6 +1217,19 @@ class ArmToolkit:
         moved = any(r.stateful for r in records)
         steps_after = self.robo._backend.env_steps()
         result: dict[str, Any] = dict(extra)
+        contract = self.action_contract.summary()
+        contract_pause = getattr(self.robo, "_last_action_contract_pause", None)
+        if contract["configured"] or contract["required_invariants"] or contract_pause is not None or "action_contract" in extra:
+            result["action_contract"] = extra.get("action_contract", contract)
+            self._journal.put("meta", "action_contract", result["action_contract"])
+            report = result["action_contract"].get("last_report") or (getattr(contract_pause, "report", None) if contract_pause is not None else {}) or {}
+            if report.get("passed") is False:
+                result.setdefault("recovery", {}).update(
+                    kind="contract", failed_assumption=report.get("failed_assumption"),
+                    evidence_state=report.get("evidence_state"),
+                    next_action="reobserve_or_replan", automatic_replay=False,
+                    failures=report.get("failures", []), instruction=report.get("remedy"),
+                )
         if self.robo._coordination_feedback is not None:
             result["coordination"] = self.robo._coordination_feedback
         if self.supervisor is not None:
@@ -1196,6 +1240,22 @@ class ArmToolkit:
                     executed[-1].to_dict() if executed else None
                 )
                 result["supervision"]["state"] = _state_dict(self.robo)
+        elif getattr(self.robo, "_supervision_pause", None) is not None:
+            sp = self.robo._supervision_pause
+            result["supervision"] = {"paused": True, "reason": str(sp)}
+        elif "supervision" in extra:
+            result["supervision"] = extra["supervision"]
+        last_summary = records[-1].summary if records and isinstance(records[-1].summary, dict) else {}
+        violation = (result.get("supervision", {}).get("constraint_violation")
+                     or last_summary.get("constraint_violation")
+                     or (result.get("coordination") or {}).get("constraint_violation"))
+        if violation:
+            recovery = result.setdefault("recovery", {})
+            recovery["constraint_violation"] = plain(violation)
+            # A retained geometry result is useful context, but must not replace
+            # the live prerequisite that actually blocked this dispatch.
+            if recovery.get("kind") != "contract":
+                recovery["kind"] = "constraint"
         if self.feedback == "pure":
             return self._attach_images(result, moved, {})
         result["primitive_calls"] = [
@@ -1305,6 +1365,8 @@ class ArmToolkit:
         self._globals["plan"] = self._plan
         self._globals.update(once=self._once, resume_state=self.resume_state)
         self.robo._coordination_feedback = None
+        self.robo._last_action_contract_pause = None
+        self.robo._supervision_pause = None
         index = self._cell_index
         if self.supervisor is not None:
             self.supervisor.begin_cell(index)
@@ -1365,8 +1427,12 @@ class ArmToolkit:
                     if value is not None:
                         extra["value"] = _trim(repr(value), 4000)
                 budget.check()
-        except (SupervisionPause, CoordinationPause, InteractionPause):
+        except (SupervisionPause, CoordinationPause, InteractionPause, ActionContractPause) as exc:
             extra["execution_paused"] = True
+            if isinstance(exc, ActionContractPause):
+                self.robo._last_action_contract_pause = exc
+            elif isinstance(exc, SupervisionPause):
+                self.robo._supervision_pause = exc
         except EpisodeFinished as exc:
             extra["episode_finished"] = exc.reason
         except (ExecutionLimit, Exception, SystemExit) as exc:
@@ -1390,6 +1456,8 @@ class ArmToolkit:
 
     def _run_program(self, args: dict[str, Any]) -> ArmResult:
         self.robo._coordination_feedback = None
+        self.robo._last_action_contract_pause = None
+        self.robo._supervision_pause = None
         if not self._budget_left(self._program_index):
             return ArmResult({"error": "call budget exhausted: the episode is over, call finish"})
         if self.max_programs is not None and self._program_index >= self.max_programs:
@@ -1447,7 +1515,8 @@ class ArmToolkit:
             with (ExecutionBudget(self.execution_limits, self.workspace, self.robo) as budget,
                   contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr)):
                 policy = load_policy(target, builtins=self._builtins,
-                                     bindings={"strategy": strategies, "plan": self._plan,
+                                     bindings={"strategy": strategies, "monitor": monitor_module,
+                                               "plan": self._plan,
                                                "once": self._once, "resume_state": self.resume_state})
                 stage = "execution"
                 timeout = (max(0.001, self.robo._episode_deadline - time.time())
@@ -1476,13 +1545,22 @@ class ArmToolkit:
             extra.update(self._output_fields(stdout, stderr))
             extra.update(status="finished", episode_finished=exc.reason)
             return self._feedback(before, extra)
-        except (SupervisionPause, CoordinationPause, InteractionPause):
+        except (SupervisionPause, CoordinationPause, InteractionPause, ActionContractPause) as exc:
             extra.update(self._output_fields(stdout, stderr))
             extra.update(status="paused", execution_paused=True)
+            if isinstance(exc, ActionContractPause):
+                self.robo._last_action_contract_pause = exc
+            elif isinstance(exc, SupervisionPause):
+                self.robo._supervision_pause = exc
             return self._feedback(before, extra)
         extra["status"] = outcome.status
         if outcome.status == "paused":
             extra["execution_paused"] = True
+            if outcome.pause is not None:
+                if isinstance(outcome.pause, ActionContractPause):
+                    self.robo._last_action_contract_pause = outcome.pause
+                elif isinstance(outcome.pause, SupervisionPause):
+                    self.robo._supervision_pause = outcome.pause
         if outcome.reason:
             extra["reason"] = outcome.reason
         if outcome.error_type:

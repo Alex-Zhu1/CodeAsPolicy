@@ -37,6 +37,7 @@ import time
 from pathlib import Path
 from typing import Any
 
+from . import _play_defaults as play_defaults
 from ._backend import Ledger
 from ._env import setting
 from ._robot import PRIMITIVE_SETS, effective_primitives
@@ -181,12 +182,12 @@ def build_prompt(
     *,
     budget_s: int,
     max_programs: int | None,
-    images: str = "on-motion",
-    feedback: str = "rich",
+    images: str = play_defaults.IMAGES,
+    feedback: str = play_defaults.FEEDBACK,
     guides: bool = False,
     budget_mode: str = "wall",
     adapter: RobotAdapter | None = None,
-    primitives: str = "full",
+    primitives: str = play_defaults.PRIMITIVES,
     monitor: MonitorConfig | None = None,
     stuck_recovery: StuckRecoveryConfig | None = None,
     code_limits: ExecutionLimits | None = None,
@@ -519,27 +520,27 @@ def play_episode(
     cell: Any,
     out_dir: Path,
     *,
-    arm: str,
-    model: str,
-    reasoning_effort: str = "xhigh",
-    budget_s: float = 1200.0,
+    arm: str = play_defaults.ARM,
+    model: str = play_defaults.MODEL,
+    reasoning_effort: str = play_defaults.REASONING,
+    budget_s: float = play_defaults.BUDGET_S,
     max_programs: int | None = None,
     codex_bin: str = "codex",
     base_url: str | None = None,
     api_key_env: str | None = None,
     rpent_root: str | None = None,
-    images: str = "on-motion",
-    feedback: str = "rich",
+    images: str = play_defaults.IMAGES,
+    feedback: str = play_defaults.FEEDBACK,
     codex_home: str | None = None,
     max_attempts: int = 3,
     guides: bool = False,
     guides_dir: str | None = None,
-    max_turns: int | None = None,
+    max_turns: int | None = play_defaults.MAX_TURNS,
     robot: str = "libero",
     boot_options: dict[str, Any] | None = None,
-    runtime: str = "codex",
+    runtime: str = play_defaults.RUNTIME,
     claude_cli: str | None = None,
-    primitives: str = "full",
+    primitives: str = play_defaults.PRIMITIVES,
     openai_options: dict[str, Any] | None = None,
     monitor: MonitorConfig | None = None,
     stuck_recovery: StuckRecoveryConfig | None = None,
@@ -1065,7 +1066,7 @@ def main(argv: list[str] | None = None) -> int:
     add_stuck_recovery_arguments(parser)
     add_execution_arguments(parser)
     parser.add_argument("--robot", default="libero", help="libero | robocasa | robotwin | robodojo")
-    parser.add_argument("--arm", choices=ARMS, default="cells",
+    parser.add_argument("--arm", choices=ARMS, default=play_defaults.ARM,
                         help="code execution mode (default: cells)")
     host.add_cell_args(parser)
     host.add_boot_args(parser)
@@ -1073,9 +1074,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--cuda-device", type=int, default=None)
     parser.add_argument("--max-episode-steps", type=int, default=10000)
     parser.add_argument("--rpent-root", default=None)
-    parser.add_argument("--model", default="gpt-6-astra")
-    parser.add_argument("--reasoning", default="xhigh")
-    parser.add_argument("--budget-s", type=float, default=1200.0)
+    parser.add_argument("--model", default=play_defaults.MODEL)
+    parser.add_argument("--reasoning", default=play_defaults.REASONING)
+    parser.add_argument("--budget-s", type=float, default=play_defaults.BUDGET_S)
     parser.add_argument("--max-programs", type=int, default=None)
     parser.add_argument(
         "--codex-bin",
@@ -1087,13 +1088,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--images",
         choices=("on-motion", "on-demand", "none"),
-        default="on-motion",
+        default=play_defaults.IMAGES,
         help="when camera images are attached to tool results",
     )
     parser.add_argument(
         "--feedback",
         choices=("pure", "rich"),
-        default="rich",
+        default=play_defaults.FEEDBACK,
         help="pure: only what the code output (python-tool semantics); rich: plus state and ledger",
     )
     parser.add_argument(
@@ -1113,14 +1114,14 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument(
         "--max-turns",
-        type=int,
-        default=None,
-        help="decision budget: at most this many tool calls (budget-s becomes a safety ceiling)",
+        type=play_defaults.turn_budget,
+        default=play_defaults.MAX_TURNS,
+        help="decision budget (default 100 tool calls; 0 = wall-clock only)",
     )
     parser.add_argument(
         "--runtime",
         choices=RUNTIMES,
-        default=setting("RUNTIME", "codex"),
+        default=setting("RUNTIME", play_defaults.RUNTIME),
         help=(
             "agent runtime: codex (Codex CLI), claude (Claude Code via the Claude Agent SDK) "
             "or openai (in-process loop against any OpenAI-compatible endpoint)"
@@ -1173,7 +1174,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--primitives",
         choices=PRIMITIVE_SETS,
-        default=setting("PRIMITIVES", "full"),
+        default=setting("PRIMITIVES", play_defaults.PRIMITIVES),
         help="primitive set: full, or no-vla (the VLA primitives hidden and refused)",
     )
     parser.add_argument(

@@ -753,7 +753,8 @@ def test_adapter_and_prompt_wording():
         assert banned not in know, banned
     assert "- robot: robotwin" in bundle.user and "left gripper: 1.00" in bundle.user
     cells = build_prompt(
-        "cells", card, budget_s=600, max_programs=None, images="on-demand", feedback="pure"
+        "cells", card, budget_s=600, max_programs=None, images="on-demand", feedback="pure",
+        primitives="full",
     )
     assert "`RobotwinRobot` bound to the live simulator, a\nfrozen LingBot-VLA" in cells
     assert "`robo.show('head')`, `robo.show('left_wrist')` or `robo.show('right_wrist')`" in cells

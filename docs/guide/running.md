@@ -3,13 +3,24 @@
 `pyrualean play` runs one episode: it boots the robot, gives the agent the task and serves its code until the
 episode is over.
 
-The default arm is `cells`, with Valen monitoring `off` and bundled stuck recovery.
-A normal run does not require a Valen service. To opt in, start the
+The default launch uses `cells`, Codex with `gpt-6-astra` at `high` reasoning,
+100 code calls and a 5400-second wall-clock ceiling. Images are requested on demand,
+feedback is `pure`, and the primitive set is `no-vla`. Both CLI entry points and
+Python's `play_episode` share these launch settings.
+
+Valen monitoring and confirmed-stuck recovery are off by default. A normal run
+does not require a Valen service. To opt in, start the
 [Valen service](../visual-supervision.md#run) and pass `--monitor-mode pause` for
 review interruptions or `--monitor-mode shadow` for reports only. The service
 address is `http://127.0.0.1:18001/predict` (`--valen-url` overrides it). Supervision
-instructions load only when monitoring is enabled; recovery instructions are
-supplied only after confirmed stuck. Use `--no-stuck-recovery` to disable recovery.
+instructions load only when monitoring is enabled. Enable bundled recovery with
+`--stuck-recovery`, or supply `--stuck-recovery-skill <file>` for a custom procedure;
+its body is supplied only after confirmed stuck. `--stuck-recovery-rounds` sets
+the limit without enabling recovery. The `program` arm rejects either feature.
+
+Executable [action contracts](action-contracts.md) remain active independently
+of Valen: public task invariants require check bindings before motion. The planner
+declares stage prerequisites, completion checks, geometry and multi-stage previews.
 
 ```bash
 pyrualean play --arm cells --suite libero_spatial_swap --task 7 --seed 2 \
@@ -35,20 +46,20 @@ still sees.
 
 | Option | Values |
 |---|---|
-| `--images` | `on-motion` (default): the current camera images after every call that moved the robot. `on-demand`: an image only when the code asked for one with `robo.show(camera)`. `none`. |
-| `--feedback` | `rich` (default): what the code printed, plus the robot's state and the primitives it called. `pure`: only what the code printed. |
+| `--images` | `on-demand` (default): images requested by the code with `robo.show(camera)` or `display()`. `on-motion`: current camera images after every call that moved the robot. `none`. Failure/pause reports can include recorded evidence; see [recovery](recovery.md). |
+| `--feedback` | `pure` (default): code output and execution diagnostics. `rich`: adds the robot's state and the primitives it called. |
 
 ## Budgets
 
 | Option | Meaning |
 |---|---|
-| `--max-turns N` | A decision budget: at most N code cells (`python` or `run_program` calls; `finish` is not counted). The agent knows the cells are limited, not how many. |
-| `--budget-s S` | A wall-clock budget in seconds, thinking included (default `1200`). With `--max-turns` it is a safety ceiling: set it well above what the cells take, so that outcomes do not depend on how fast the provider is (the paper's runs used `7200`). |
+| `--max-turns N` | A decision budget: at most N code calls (default `100`; `finish` is not counted). The agent knows calls are limited, not how many. `0` removes the call-count limit; the wall-clock and native action budgets still apply. |
+| `--budget-s S` | A wall-clock budget in seconds, thinking included (default `5400`). With a call-count limit it is a safety ceiling: set it well above what the calls take, so that outcomes do not depend on how fast the provider is (the paper's runs used `7200`). |
 
 ## VLA policies, guides and shared servers
 
-- `--primitives no-vla` removes the robot's VLA primitives: they disappear from the API reference and the
-  knowledge text, and calling one is refused.
+- `--primitives no-vla` is the default: VLA primitives disappear from the API reference and the
+  knowledge text, and calling one is refused. Use `--primitives full` when the adapter supports a VLA.
 - `--guides` gives the agent RPent's three LIBERO operating guides in its workspace (optional reading);
   `--guides-dir <dir>` gives it the `*.md` files of another directory.
 - `--vla-endpoint host:port` (and `--sam3-endpoint` on LIBERO-PRO) attach the episode to running model servers

@@ -11,6 +11,70 @@ from pyrualean.arms import MAX_TEXT_CHARS, ArmToolkit
 MOVE = "robo.move_to([0.05, -0.10, 0.6])"
 
 
+def test_constraint_preflight_recovery_survives_observation_and_clears_after_repair(tmp_path):
+    from tests.test_robodojo_trajectory import station
+
+    env, robo, _ = station(tmp_path)
+    kit = ArmToolkit(robo, arm="cells", workspace=tmp_path / "ws",
+                     feedback="pure", images="none")
+    result = kit.execute_tool("python", {"code": (
+        "obs = robo.observe()\n"
+        "res = robo.execute_motion('blocked', right=obs.right.shifted(dz=.03), "
+        "holding={'right': 'empty'}, constraints={'keep_out': "
+        "[{'xyz': list(obs.right.xyz), 'radius_m': .1}]})\n"
+        "state = robo.state()\n"
+    )})
+    assert not env.actions
+    assert result.result["recovery"]["kind"] == "constraint"
+    violation = result.result["recovery"]["constraint_violation"]
+    assert violation["metric"] == "obstacle_distance_m"
+    assert violation["delta"] < 0
+    assert violation["remedy"]
+    json.dumps(result.result, allow_nan=False)
+
+    # A revised intent must not inherit a previous refusal's recovery payload.
+    repaired = kit.execute_tool("python", {"code": (
+        "obs = robo.observe()\n"
+        "res = robo.execute_motion('revised', right=obs.right.shifted(dz=.03), "
+        "holding={'right': 'empty'})\n"
+    )})
+    assert env.actions
+    assert not repaired.is_error
+    assert repaired.result["coordination"]["reached"]
+    assert "recovery" not in repaired.result
+
+
+def test_live_constraint_diagnostic_reaches_cell_recovery(tmp_path, monkeypatch):
+    from tests.test_robodojo_trajectory import station
+
+    env, robo, _ = station(tmp_path)
+    original_step = env.step
+
+    def drift(action):
+        result = original_step(action)
+        env.joints["right"][0] += .1
+        return result
+
+    monkeypatch.setattr(env, "step", drift)
+    kit = ArmToolkit(robo, arm="cells", workspace=tmp_path / "ws",
+                     feedback="pure", images="none")
+    result = kit.execute_tool("python", {"code": (
+        "obs = robo.observe()\n"
+        "res = robo.execute_motion('drift', right=obs.right.shifted(dz=.06), "
+        "holding={'right': 'empty'}, constraints={'corridor_m': .005})\n"
+        "state = robo.state()\n"
+    )})
+    assert len(env.actions) == 1
+    assert result.result["coordination"]["stop_reason"] == "right: corridor_constraint"
+    assert result.result["recovery"]["kind"] == "constraint"
+    violation = result.result["recovery"]["constraint_violation"]
+    assert violation["metric"] == "corridor_deviation_m"
+    assert violation["value"] > violation["bound"]
+    assert violation["delta"] > 0
+    assert violation["remedy"]
+    json.dumps(result.result, allow_nan=False)
+
+
 @pytest.mark.parametrize("bad_tail", ["yield 1", "return 1", "def broken(:"])
 def test_validation_rejects_entire_cell_before_motion(robo, backend, tmp_path, bad_tail):
     kit = ArmToolkit(robo, arm="cells", workspace=tmp_path, feedback="pure")

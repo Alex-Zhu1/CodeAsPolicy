@@ -1150,3 +1150,112 @@ def test_same_source_cannot_rearm_or_repeat_unknown_review(snapshot_robo, tmp_pa
     assert monitor.reports[0]["values"]["held"] == "unknown"
     assert monitor.unknowns["held"] == 3
     assert snapshot_robo._ledger.stateful_calls() == 0
+
+
+@pytest.mark.parametrize("visual", [False, True])
+def test_callable_invariants_cells_return_serializable_feedback(robo, tmp_path, visual):
+    tk, supervisor, client = setup(robo, tmp_path, [answer()] if visual else [])
+    facts = ", {'held': 'Is the bowl held?'}" if visual else ""
+    code = (
+        "checked_heights = []\n"
+        "def within_workspace(r):\n"
+        "    xyz = r.state().eef_pos\n"
+        "    checked_heights.append(xyz[2])\n"
+        "    return monitor.check_distance((0, 0, 0), xyz, max_m=2)\n"
+        f"watch('move'{facts}, invariants=[within_workspace])\n" + MOVE
+    )
+    result = tk.execute_tool("python", {"code": code})
+    assert not result.is_error and not result.result.get("execution_paused")
+    assert tk._globals["checked_heights"] == [0.68, 0.6]
+    assert robo._ledger.stateful_calls() == supervisor.actions == 1
+    assert len(client.packets) == int(visual)
+    assert all(isinstance(inv, str)
+               for inv in result.result["supervision"]["contract"]["invariants"])
+    json.dumps(result.result, allow_nan=False)
+    json.dumps(tk.turns, allow_nan=False)
+    detached = supervisor.feedback()
+    detached["contract"]["invariants"].clear()
+    assert len(supervisor.contract["invariants"]) == 1
+
+
+@pytest.mark.parametrize("visual", [False, True])
+@pytest.mark.parametrize("stage", ["before_action", "after_action"])
+def test_callable_invariant_failure_pauses_cells_with_serializable_diagnostics(
+    robo, tmp_path, visual, stage
+):
+    tk, supervisor, client = setup(robo, tmp_path, [])
+    facts = ", {'held': 'Is the bowl held?'}" if visual else ""
+    bound = "max_xyz=(None, None, 0.65)" if stage == "before_action" else (
+        "min_xyz=(None, None, 0.65)"
+    )
+    code = (
+        f"watch('move'{facts}, invariants=[lambda r: monitor.check_in_bounds("
+        f"monitor.from_pose('tcp', r.state().eef_pos), {bound})])\n"
+        + MOVE + "\n" + MOVE
+    )
+    result = tk.execute_tool("python", {"code": code})
+    assert result.result["execution_paused"]
+    expected_actions = int(stage == "after_action")
+    assert robo._ledger.stateful_calls() == supervisor.actions == expected_actions
+    assert not client.packets
+    assert supervisor.reports[-1]["stage"] == stage
+    violation = result.result["supervision"]["constraint_violation"]
+    assert violation["metric"] == "bounds_violation_m"
+    assert violation["delta"] > 0
+    json.dumps(result.result, allow_nan=False)
+    json.dumps(tk.turns, allow_nan=False)
+
+
+@pytest.mark.parametrize("mode", ["pause", "shadow"])
+def test_code_only_invariants_respect_action_budget(robo, tmp_path, mode):
+    tk, supervisor, client = setup(robo, tmp_path, [], mode=mode, max_actions=1)
+    code = (
+        "watch('move', invariants=[monitor.check_distance((0,0,0), (0,0,1), max_m=2)])\n"
+        + MOVE + "\n" + MOVE
+    )
+    result = tk.execute_tool("python", {"code": code})
+    expected_actions = 1 if mode == "pause" else 2
+    assert robo._ledger.stateful_calls() == supervisor.actions == expected_actions
+    assert bool(result.result.get("execution_paused")) is (mode == "pause")
+    assert supervisor.reports[-1]["triggers"] == ["action_budget_review"]
+    assert not client.packets
+
+
+@pytest.mark.parametrize("invalid", ["False", "{}", "'not a check'"])
+def test_invalid_invariant_entries_clear_contract_and_prevent_motion(robo, tmp_path, invalid):
+    tk, supervisor, client = setup(robo, tmp_path, [])
+    code = (
+        WATCH + "try:\n"
+        f"    watch('bad', invariants=[{invalid}])\n"
+        "except ValueError:\n"
+        "    pass\n" + MOVE
+    )
+    result = tk.execute_tool("python", {"code": code})
+    assert result.result["execution_paused"]
+    assert supervisor.contract is None
+    assert supervisor.reports[-1]["event"] == "missing_contract"
+    assert robo._ledger.stateful_calls() == 0 and not client.packets
+
+
+@pytest.mark.parametrize("predicate", ["False", "1 / 0"])
+def test_invalid_invariant_result_is_a_latched_constraint_failure(robo, tmp_path, predicate):
+    tk, supervisor, client = setup(robo, tmp_path, [])
+    result = tk.execute_tool("python", {"code":
+        f"watch('move', invariants=[lambda r: {predicate}])\n" + MOVE})
+    assert result.result["execution_paused"]
+    assert result.result["supervision"]["constraint_violation"]["metric"] == "evaluation_error"
+    assert supervisor.paused and robo._ledger.stateful_calls() == 0
+    assert not client.packets
+    json.dumps(result.result, allow_nan=False)
+
+
+def test_mixed_invariant_contract_verify_result_is_serializable(snapshot_robo, tmp_path):
+    tk, supervisor, client = setup(snapshot_robo, tmp_path, [answer()])
+    result = tk.execute_tool("python", {"code":
+        "watch('inspect', {'held': 'Is the bowl held?'}, invariants=[lambda r: "
+        "monitor.check_distance((0,0,0), r.state().eef_pos, max_m=2)])\n"
+        "verified = verify()"})
+    assert not result.is_error and not result.result.get("execution_paused")
+    assert supervisor.actions == 0 and len(client.packets) == 1
+    json.dumps(tk._globals["verified"], allow_nan=False)
+    json.dumps(result.result, allow_nan=False)

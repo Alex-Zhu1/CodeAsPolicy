@@ -71,7 +71,7 @@ class GraspController:
             and "probe" not in record["completed"] and self._handoff_state(record)["ok"]
         )
         ordered_stages = ("open", "approach", "align", "close", "handoff", "probe")
-        return copy.deepcopy(dict(
+        out = dict(
             grasp_id=record["id"], stage=stage, status=status or record["status"],
             reached=stage in record["completed"] if stage else complete,
             grasp_complete=complete, retained=complete, grasp_verified=False,
@@ -88,16 +88,22 @@ class GraspController:
             actual_pose=self.intents._pose(snap["poses"][arm]), opening=snap["opening"][arm],
             stage_result={k: v for k, v in (record.get("result") or {}).items() if k in (
                 "status", "reached", "stop_reason", "tracking", "arms", "holding", "opening",
-                "steps_used", "intent_steps_used", "partial_plan", "handoff_reacquired")},
+                "steps_used", "intent_steps_used", "partial_plan", "handoff_reacquired",
+                "constraint_violation", "constraint_scope")},
             target=self.intents._pose(record["target"]),
             alignment_target=self.intents._pose(record["aligned"]),
             contract=record["contract"], process_restart_resume=False,
-        ))
+        )
+        for key in ("constraint_violation", "constraint_scope"):
+            if key in (record.get("result") or {}):
+                out[key] = record["result"][key]
+        return copy.deepcopy(out)
 
     def prepare(self, grasp_id, **contract):
         if not isinstance(grasp_id, str) or not grasp_id.strip() or len(grasp_id) > 160:
             raise ValueError("grasp_id must be nonempty text of at most 160 characters")
         contract = json.loads(json.dumps(contract, allow_nan=False))
+        contract.setdefault("constraints", {})
         old = self.records.get(grasp_id)
         if old is not None:
             return (self._view(old) if old["contract"] == contract else
@@ -137,6 +143,9 @@ class GraspController:
                       completed=set(), operations={}, tracker=ProgressTracker(),
                       status="ready", spent=0, limit=(contract["max_steps"]
                           if contract["max_steps"] is not None else self._remaining()))
+        # Validate the same contract vocabulary as motion intents, without
+        # planning any future grasp phase or dispatching a native action.
+        self.intents._validate(grasp_id, self._constraint_record(record, snap)["contract"])
         self.records[grasp_id] = record
         self.rejected.pop(grasp_id, None)
         return self._view(record)
@@ -151,11 +160,46 @@ class GraspController:
         record = self.records.get(grasp_id)
         return self._view(record) if record else self._unknown(grasp_id)
 
+    def _constraint_record(self, record, snapshot):
+        """Use the intent geometry guard for a stationary native gripper stroke."""
+        arm = record["contract"]["arm"]
+        initial = copy.deepcopy(snapshot)
+        return dict(
+            contract=dict(
+                targets={arm: self.intents._pose(initial["poses"][arm])},
+                interaction="free", directions={}, holding={},
+                completion=copy.deepcopy(record["completion"]), max_steps=None,
+                reserve_steps=0, keep_relative=False,
+                constraints=copy.deepcopy(record["contract"]["constraints"]),
+            ),
+            initial=initial, goals=copy.deepcopy(initial["poses"]),
+            position_m=record["completion"]["position_m"],
+            orientation_deg=record["completion"]["orientation_deg"], result={},
+        )
+
     def _stroke(self, record, op, stage):
         p = self.motion.primitives
         arm = record["contract"]["arm"]
         command = record["contract"]["opening"] if stage == "open" else 0.
         snap = self.motion._snapshot()
+        if "constraint_guard" not in op:
+            op["constraint_guard"] = self._constraint_record(record, snap)
+        guard = op["constraint_guard"]
+
+        def check(snapshot):
+            reason = self.intents._geometry(
+                guard, snapshot["poses"], previous_poses=op.get("guard_previous_poses"),
+            )
+            if reason:
+                return dict(copy.deepcopy(guard["result"]),
+                            status="needs_model" if op.get("ticks", 0) else "rejected",
+                            stop_reason=reason)
+            op["guard_previous_poses"] = copy.deepcopy(snapshot["poses"])
+            return None
+
+        stopped = check(snap)
+        if stopped:
+            return stopped
         if stage == "open":
             if snap["commands"][arm] <= .05 and snap["opening"][arm] > tools.HOLD_MIN_OPENING:
                 return dict(status="needs_model", stop_reason="gripper_may_hold_object")
@@ -170,6 +214,9 @@ class GraspController:
             if record["spent"] >= record["limit"] or self._remaining() <= 0:
                 return dict(status="paused", stop_reason="grasp_action_limit")
             p._check_cancelled()
+            stopped = check(self.motion._snapshot())
+            if stopped:
+                return stopped
             state = tools._obs(p)["state"]
             before = tools._opening(state, arm)
             op["pending"] = True
@@ -178,6 +225,9 @@ class GraspController:
             op["pending"] = False
             op["ticks"] = op.get("ticks", 0) + 1
             record["expected"] = self.motion._snapshot()
+            stopped = check(record["expected"])
+            if stopped:
+                return stopped
             now = tools._opening(state, arm)
             if op["ticks"] >= 2 and abs(now - before) < tools.GRIP_STILL:
                 if stage == "close" and now <= tools.HOLD_MIN_OPENING:
@@ -202,7 +252,8 @@ class GraspController:
                     offset=offset, frame="world", rotation_deg=turn,
                     translation_limits=record["contract"]["translation_limits"],
                     rotation_limit_deg=record["contract"]["rotation_limit_deg"],
-                    holding="empty", completion=record["completion"], max_steps=available)
+                    holding="empty", completion=record["completion"], max_steps=available,
+                    constraints=copy.deepcopy(record["contract"]["constraints"]))
             else:
                 goal = record["pregrasp"] if stage == "approach" else record["aligned"].copy()
                 if stage == "probe":
@@ -216,7 +267,8 @@ class GraspController:
                     completion=(record["completion"] if stage == "align" else
                                 {"position_m": .005 if stage == "approach" else .003,
                                  "orientation_deg": 3.}),
-                    max_steps=available, reserve_steps=0, keep_relative=False)
+                    max_steps=available, reserve_steps=0, keep_relative=False,
+                    constraints=copy.deepcopy(record["contract"]["constraints"]))
             inner = self.intents.records.get(mid)
             if inner is None:
                 return result

@@ -25,7 +25,8 @@ class ExecutionPlan:
     def read(self):
         return copy.deepcopy(self.latest)
 
-    def update(self, *, goal, next_action, done_when, evidence, status, context):
+    @staticmethod
+    def validate(*, goal, next_action, done_when, evidence, status):
         values = dict(goal=goal, next_action=next_action, done_when=done_when, evidence=evidence)
         for name, value in values.items():
             if not isinstance(value, str) or len(value) > 1000:
@@ -34,12 +35,19 @@ class ExecutionPlan:
             raise ValueError("plan needs a goal and done_when completion criterion")
         if status not in ("pending", "in_progress", "done", "blocked"):
             raise ValueError("plan status must be pending/in_progress/done/blocked")
+
+    def update(self, *, goal, next_action, done_when, evidence, status, context, contract=None):
+        self.validate(goal=goal, next_action=next_action, done_when=done_when,
+                      evidence=evidence, status=status)
+        values = dict(goal=goal, next_action=next_action, done_when=done_when, evidence=evidence)
         record = dict(
             schema="pyrualean.execution_plan.v1", author="astra", kind="planner_note",
             session_id=self.session_id, revision=self.revision + 1,
             updated_at=time.time(), time_domain="unix_seconds",
             task_card=self.card_reference, context=context, status=status, **values,
         )
+        if contract is not None:
+            record["contract"] = copy.deepcopy(contract)
         data = json.dumps(record, ensure_ascii=False, allow_nan=False) + "\n"
         # Keep revisions outside the policy workspace, just like the execution audit.
         latest = self.directory / "execution_plan.json"
@@ -54,9 +62,12 @@ class ExecutionPlan:
     def summary(self):
         if self.latest is None:
             return None
-        return {key: copy.deepcopy(self.latest[key]) for key in (
+        result = {key: copy.deepcopy(self.latest[key]) for key in (
             "kind", "revision", "goal", "next_action", "done_when", "evidence", "status", "context",
         )}
+        if "contract" in self.latest:
+            result["contract"] = copy.deepcopy(self.latest["contract"])
+        return result
 
 
 PLAN_PROMPT = """\
@@ -68,8 +79,8 @@ Use it in the same code call as useful work, and update when the goal, evidence
 or approach changes; no separate planning-only turn is required. Each update
 replaces the current note. `plan()` reads it across cells/programs. Status is
 pending/in_progress/done/blocked; done refers only to your stated goal.
-These are your planning claims, not benchmark facts, verified evidence or motion
-permission. They never replace the task instruction, watch prerequisites or finish.
+The text fields are planning claims, not benchmark facts or motion permission.
+They never replace the task instruction, watch prerequisites or finish.
 Before declaring the whole task complete, review the task card's acceptance
 requirements and original instruction, including ordering, preservation and final
 state. When acceptance coverage is unknown or partial, account for all task-relevant
@@ -84,6 +95,20 @@ stopping useful work or an extra planning-only turn.
 Keep text brief (at most 1000 characters per field). The host saves the latest
 note and revision history with observation/action context; earlier notes survive
 code failures. An unchanged note is not refreshed by later motion.
+
+## Executable action contracts
+
+plan(..., contract={...}) works without Valen. requires maps names to checks before
+actions; preserves checks before/after; ensures checks at status="done"/success finish.
+Bind all public invariant IDs in preserves. Checks: zero-argument read-only callbacks
+returning bool or monitor.ConstraintCheck from current evidence; unknown/errors block.
+Static checks expire on attempted motion; rebind after restart.
+New contracts replace requires/ensures/constraints, merge preserves; omission retains.
+constraints inherits execute_motion bounds into motion/local/grasp; conflicts or old IDs
+missing bounds reject. Observations/failure/stuck remain available; repair assumptions
+or choose independent work. Preserve protections. Compare approach/contact/exit for
+preservation, evidence, both arms' clearance, held extent, future reachability and cost.
+Preview coupled poses; re-observe after interaction. Arrival does not prove task completion.
 
 ## Plan local work groups
 

@@ -45,34 +45,36 @@ class StuckRecoveryConfig:
 def add_stuck_recovery_arguments(parser):
     selection = parser.add_mutually_exclusive_group()
     selection.add_argument(
+        "--stuck-recovery", action="store_true",
+        help="enable the bundled confirmed-stuck recovery skill (cells; default off)",
+    )
+    selection.add_argument(
         "--stuck-recovery-skill",
         type=Path,
         default=None,
-        help="override the bundled recovery skill delivered after confirmed stuck (cells)",
+        help="enable a custom recovery skill delivered after confirmed stuck (cells)",
     )
     selection.add_argument(
         "--no-stuck-recovery", action="store_true",
-        help="disable confirmed-stuck recovery (enabled by default for cells)",
+        help="explicitly disable confirmed-stuck recovery (the default)",
     )
     parser.add_argument(
         "--stuck-recovery-rounds",
         type=int,
         default=2,
-        help="maximum recovery dispatches per episode (default 2)",
+        help="maximum recovery dispatches when enabled (default 2; does not enable recovery)",
     )
 
 
 def stuck_recovery_config(args):
-    if args.no_stuck_recovery:
+    if args.no_stuck_recovery or not (args.stuck_recovery or args.stuck_recovery_skill):
         return None
+    if args.arm != "cells":
+        raise ValueError("Stuck recovery currently supports only --arm cells")
     if args.stuck_recovery_skill is not None:
-        if args.arm != "cells":
-            raise ValueError("Stuck recovery currently supports only --arm cells")
         instructions = args.stuck_recovery_skill.read_text(encoding="utf-8")
-    elif args.arm == "cells":
-        instructions = recovery_instructions()
     else:
-        return None
+        instructions = recovery_instructions()
     return StuckRecoveryConfig(instructions, args.stuck_recovery_rounds)
 
 

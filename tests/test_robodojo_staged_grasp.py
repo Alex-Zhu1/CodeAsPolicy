@@ -337,3 +337,109 @@ def test_rejected_begin_grasp_surfaces_prepare_error_on_follow_up_step(tmp_path)
     assert step["stop_reason"] == "unknown_grasp_in_this_session"
     assert "probe must be 0.5..6 cm" in step["prepare_error"]
     assert not env.actions
+
+
+def test_local_constraints_reject_before_dispatch_and_are_part_of_identity(tmp_path):
+    env, robo, _ = _precision_station(tmp_path)
+    initial = robo.observe().right
+    constraints = {"z_bounds": [0., initial.xyz[2] + .002]}
+    failed = robo.align_local("bounded", [0, 0, .004], constraints=constraints)
+    assert failed["stop_reason"] == "right: z_bounds_constraint"
+    assert failed["constraint_violation"]["metric"] == "tcp_z_m"
+    assert not env.actions
+    changed = robo.align_local("bounded", [0, 0, .004], constraints={"z_bounds": [0., 2.]})
+    assert changed["stop_reason"] == "intent_identity_conflict"
+    assert not env.actions
+
+
+def test_grasp_open_checks_constraints_before_any_native_action(tmp_path):
+    env, robo, _, _ = setup(tmp_path, constraints={"z_bounds": [0., .5]})
+    failed = robo.grasp_step("pick", "open")
+    assert failed["status"] == "rejected"
+    assert failed["steps_used"] == 0
+    assert failed["constraint_violation"]["metric"] == "tcp_z_m"
+    assert failed["stage_result"]["constraint_violation"] == failed["constraint_violation"]
+    assert robo.grasp_status("pick")["constraint_violation"] == failed["constraint_violation"]
+    assert not env.actions
+
+
+@pytest.mark.parametrize("phase", ["approach", "align", "refine", "probe"])
+def test_every_grasp_motion_phase_preserves_keep_out_constraints(tmp_path, phase):
+    env, robo, _ = _precision_station(tmp_path)
+    goal = robo.observe().right.shifted(dx=.02, dz=.015)
+    center = {
+        "approach": goal.shifted(dz=.025).xyz,
+        "align": goal.xyz,
+        "refine": goal.shifted(dx=.004).xyz,
+        "probe": goal.shifted(dx=.015).xyz,
+    }[phase]
+    constraints = {"keep_out": [{"xyz": list(center), "radius_m": .001}]}
+    assert robo.begin_grasp(
+        "pick", goal, opening=.7, approach=[0, 0, .025], probe=[.015, 0, 0],
+        constraints=constraints,
+    )["status"] == "ready"
+    before = {"approach": ("open",), "align": ("open", "approach"),
+              "refine": ("open", "approach", "align"),
+              "probe": ("open", "approach", "align", "close")}[phase]
+    through(robo, before)
+    count = len(env.actions)
+    failed = (robo.grasp_step("pick", "align", adjustment_id="observed", offset=[.004, 0, 0])
+              if phase == "refine" else robo.grasp_step("pick", phase))
+    assert not failed["reached"], failed
+    assert failed["stop_reason"] == "right: keep_out_constraint"
+    assert failed["constraint_violation"]["metric"] == "obstacle_distance_m"
+    assert failed["stage_result"]["constraint_violation"] == failed["constraint_violation"]
+    assert len(env.actions) == count
+
+
+@pytest.mark.parametrize("stage", ["open", "close"])
+def test_gripper_native_stroke_stops_after_live_constraint_violation(tmp_path, stage):
+    env, robo, _, _ = setup(tmp_path, constraints={"max_tilt_deg": 5.})
+    if stage == "close":
+        through(robo, ("open", "approach", "align"))
+    step, count = env.step, len(env.actions)
+
+    def displaced(action):
+        result = step(action)
+        _offset_measured_pose(env, angle=8.)
+        return result
+
+    env.step = displaced
+    failed = robo.grasp_step("pick", stage)
+    assert failed["stop_reason"] == "right: tilt_constraint"
+    assert failed["constraint_violation"]["metric"] == "tilt_deg"
+    assert failed["steps_used"] == 1 and len(env.actions) == count + 1
+    assert not failed["reached"]
+    # A failed stroke is a saved failure, never an implicit retry.
+    assert robo.grasp_step("pick", stage)["steps_used"] == 0
+    assert len(env.actions) == count + 1
+
+
+def test_grasp_constraints_stay_frozen_across_operation_resume_and_id_conflicts(tmp_path):
+    constraints = {"max_tilt_deg": 5.}
+    env, robo, host, goal = setup(tmp_path, constraints=constraints, max_steps=1)
+    constraints["max_tilt_deg"] = 180.
+    status = robo.grasp_status("pick")
+    assert status["contract"]["constraints"] == {"max_tilt_deg": 5.}
+    status["contract"]["constraints"]["max_tilt_deg"] = 170.
+    first = robo.grasp_step("pick", "open")
+    assert first["status"] == "paused" and len(env.actions) == 1
+    assert robo.grasp_status("pick")["contract"]["constraints"] == {"max_tilt_deg": 5.}
+    step = env.step
+
+    def displaced(action):
+        result = step(action)
+        _offset_measured_pose(env, angle=8.)
+        return result
+
+    env.step = displaced
+    stopped = robo.resume_operation(first["operation"]["ref"], max_steps=10)
+    assert stopped["stop_reason"] == "right: tilt_constraint"
+    assert stopped["constraint_violation"]["bound"] == 5.
+    assert len(env.actions) == 2
+    conflict = robo.begin_grasp(
+        "pick", goal, opening=.7, approach=[0, 0, .025], probe=[0, 0, .015],
+        constraints={"max_tilt_deg": 180.}, max_steps=1,
+    )
+    assert conflict["stop_reason"] == "grasp_identity_conflict"
+    assert len(env.actions) == 2

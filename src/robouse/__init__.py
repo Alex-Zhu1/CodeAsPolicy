@@ -31,6 +31,8 @@ from .libero import (
     Segment,
     State,
 )
+from . import monitor
+from .monitor import paint_elements
 from .prompt import PromptBundle, TaskCard, api_reference, knowledge_text, render_prompt
 from .robots import ROBOTS, RobotAdapter, get_adapter
 from .runner import PolicyLoadError, PolicyOutcome, load_policy, run_policy
@@ -66,6 +68,8 @@ __all__ = [
     "get_adapter",
     "knowledge_text",
     "load_policy",
+    "monitor",
+    "paint_elements",
     "render_prompt",
     "run_policy",
     "__version__",

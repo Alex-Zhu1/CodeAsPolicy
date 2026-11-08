@@ -42,7 +42,7 @@ def violation(local, pose):
 def prepare_local(controller, intent_id, *, arm, offset, reference=None, frame="world",
                   translation_limits=(.01, .01, .01), rotation_deg=(0., 0., 0.),
                   rotation_limit_deg=5., holding="keep", completion=None,
-                  max_steps=None, preview=False):
+                  max_steps=None, preview=False, constraints=None):
     if arm not in kin.ARMS or frame not in ("world", "tcp"):
         raise ValueError("alignment needs left/right arm and world/tcp frame")
     offset = vector(offset, "offset")
@@ -56,7 +56,8 @@ def prepare_local(controller, intent_id, *, arm, offset, reference=None, frame="
     request = dict(arm=arm, offset=offset.tolist(), reference=reference, frame=frame,
                    translation_limits=bounds.tolist(), rotation_deg=turn.tolist(),
                    rotation_limit_deg=rotation_limit_deg, holding=holding,
-                   completion=completion, max_steps=max_steps)
+                   completion=completion, max_steps=max_steps,
+                   constraints=constraints if constraints is not None else {})
     request = json.loads(json.dumps(request, allow_nan=False))
     previous = controller.records.get(intent_id)
     if previous is not None and not preview:
@@ -79,4 +80,5 @@ def prepare_local(controller, intent_id, *, arm, offset, reference=None, frame="
         directions={}, holding={arm: holding}, completion=copy.deepcopy(completion or
             {"position_m": .0015, "orientation_deg": 1.}), max_steps=max_steps,
         reserve_steps=0, keep_relative=False, local=local, preview=preview,
+        constraints=copy.deepcopy(request["constraints"]),
     )

@@ -332,6 +332,8 @@ def boot(
     policy_backend: str = "rlinf",
     action_type: str = "joint",
     connect_reset: bool | None = None,
+    primitives: str = "full",
+    no_sam: bool = False,
 ) -> tuple[Any, list[Any]]:
     """Start RPent's servers and return ``(toolkit, daemons)``.
 
@@ -390,7 +392,7 @@ def boot(
         output_dir=str(out_dir),
     )
     spec = get_robot_spec()
-    components = {"env"} if env_only else None
+    components = {"env"} if (env_only or no_sam or primitives == "no-sam") else None
     if connect_reset is None:
         connect_reset = _connect_reset_default()
     with (

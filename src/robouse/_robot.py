@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import functools
 import io
+import math
 import time
 from collections.abc import Callable
 from typing import Any, ClassVar
@@ -37,19 +38,24 @@ from .interaction import InteractionMixin, InteractionPause
 from .perception import PerceptionMixin
 
 #: Primitive sets a run can expose to the policy: ``full`` (every public
-#: method) or ``no-vla`` (the learned VLA primitives named by
+#: method), ``no-vla`` (the learned VLA primitives named by
 #: ``VLA_PRIMITIVES`` are hidden from the API reference and refused at call
-#: time, so the planner solves the task with the analytic primitives only).
-PRIMITIVE_SETS = ("full", "no-vla")
+#: time, so the planner solves the task with the analytic primitives only), or
+#: ``no-sam`` (both ``VLA_PRIMITIVES`` and ``SAM_PRIMITIVES`` are hidden and
+#: refused, leaving calibrated camera geometry and local image processing).
+PRIMITIVE_SETS = ("full", "no-vla", "no-sam")
 #: What a hidden primitive raises (and what the cell output shows).
 NO_VLA_MESSAGE = "{name} is not available in this run (no-VLA primitive set)"
+NO_SAM_MESSAGE = "{name} is not available in this run (no-SAM primitive set)"
 
 
 def effective_primitives(robot_cls: type, requested: str) -> str:
     """Intersect the requested primitive set with this adapter's capabilities."""
     if requested not in PRIMITIVE_SETS:
         raise ValueError(f"primitives must be one of {PRIMITIVE_SETS}, got {requested!r}")
-    return requested if getattr(robot_cls, "SUPPORTS_VLA", True) else "no-vla"
+    if requested == "full" and not getattr(robot_cls, "SUPPORTS_VLA", True):
+        return "no-vla"
+    return requested
 
 
 class RobotBase(InteractionMixin, PerceptionMixin):
@@ -68,6 +74,11 @@ class RobotBase(InteractionMixin, PerceptionMixin):
     #: the VLA.  Each ``old`` must occur exactly once, so a docstring change
     #: fails loudly instead of leaking a VLA mention.
     VLA_REFERENCE_EDITS: ClassVar[tuple[tuple[str, str], ...]] = ()
+    #: Public methods backed by SAM3 segmentation / depth-or-mask back-projection,
+    #: hidden and refused under ``no-sam``.
+    SAM_PRIMITIVES: ClassVar[tuple[str, ...]] = ()
+    #: ``(old, new)`` edits applied after ``VLA_REFERENCE_EDITS`` under ``no-sam``.
+    SAM_REFERENCE_EDITS: ClassVar[tuple[tuple[str, str], ...]] = ()
     #: Camera names accepted by :meth:`image`, :meth:`world_map` and :meth:`show`.
     CAMERAS: ClassVar[tuple[str, ...]] = ()
     #: ``(camera, resolution) -> recorded image artifact name``.
@@ -113,9 +124,14 @@ class RobotBase(InteractionMixin, PerceptionMixin):
         self._stop_reason: str | None = None
         self._show_requests: list[str] = []
         self._primitives = primitives
-        self._hidden: frozenset[str] = (
-            frozenset(self.VLA_PRIMITIVES) if primitives == "no-vla" else frozenset()
-        )
+        if primitives == "no-sam":
+            self._hidden: frozenset[str] = frozenset(self.VLA_PRIMITIVES) | frozenset(
+                self.SAM_PRIMITIVES
+            )
+        elif primitives == "no-vla":
+            self._hidden = frozenset(self.VLA_PRIMITIVES)
+        else:
+            self._hidden = frozenset()
         self._supervisor: Any = None
         self._action_contract: Any = None
         self._contract_operations: dict = {}
@@ -136,7 +152,12 @@ class RobotBase(InteractionMixin, PerceptionMixin):
 
     def _refuse_hidden(self, name: str, *args: Any, **kwargs: Any) -> Any:
         """Record and refuse a call to a primitive outside the run's primitive set."""
-        message = NO_VLA_MESSAGE.format(name=name)
+        template = (
+            NO_SAM_MESSAGE
+            if name in self.SAM_PRIMITIVES and self._primitives == "no-sam"
+            else NO_VLA_MESSAGE
+        )
+        message = template.format(name=name)
         record = self._ledger.open(
             name, {"args": list(args), **kwargs} if args else kwargs, stateful=False
         )
@@ -400,6 +421,21 @@ class RobotBase(InteractionMixin, PerceptionMixin):
                 )
             record.ok = True
             record.summary = self._summary(tool, payload)
+            # Keep decision-relevant fields computed by typed motion results
+            # alongside the backend payload so action history remains useful
+            # across cells and after journal resume.
+            for name in ("reached", "final_xyz", "dist_to_target_m",
+                         "orientation_error_deg", "blocked", "ik_error",
+                         "steps_used", "chunks_used", "note"):
+                value = getattr(result, name, None)
+                if isinstance(value, float) and not math.isfinite(value):
+                    continue
+                if isinstance(value, (tuple, list)) and any(
+                    isinstance(v, float) and not math.isfinite(v) for v in value
+                ):
+                    continue
+                if value is not None:
+                    record.summary[name] = value
         except BaseException as exc:
             record.error = f"{type(exc).__name__}: {exc}"
             action = self._receipts[context["action_id"]]
@@ -420,6 +456,13 @@ class RobotBase(InteractionMixin, PerceptionMixin):
             steps_after = self._backend.env_steps()
             if steps_before is not None and steps_after is not None:
                 record.env_steps = max(0, steps_after - steps_before)
+            receipt = self._receipts.get(context["action_id"])
+            if receipt is not None:
+                receipt.update(completed_at=time.time(), env_steps_after=steps_after,
+                               elapsed_s=record.elapsed_s, env_steps=record.env_steps,
+                               summary=dict(record.summary) if record.summary else {})
+                record.receipt = dict(receipt)
+                self._persist_action(context["action_id"])
         # The action has completed and its ledger entry is committed. A visual
         # interruption must not relabel an executed motion as a failed call.
         try:
@@ -438,4 +481,4 @@ class RobotBase(InteractionMixin, PerceptionMixin):
         return result
 
 
-__all__ = ["NO_VLA_MESSAGE", "PRIMITIVE_SETS", "RobotBase", "ToolError"]
+__all__ = ["NO_SAM_MESSAGE", "NO_VLA_MESSAGE", "PRIMITIVE_SETS", "RobotBase", "ToolError"]

@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import ast
 import base64
+import copy
 import contextlib
 import functools
 import hashlib
@@ -146,6 +147,14 @@ def _decision_envelope(result: dict) -> dict:
     receipts = result.get("action_receipts")
     if isinstance(receipts, list):
         compact["action_receipts"] = [_decision_receipt(r) for r in receipts]
+    memory = result.get("action_memory")
+    if isinstance(memory, list):
+        compact["action_memory"] = [_decision_record(r) for r in memory]
+    if isinstance(result.get("execution_plan"), dict):
+        plan = dict(result["execution_plan"])
+        if isinstance(plan.get("recent_actions"), list):
+            plan["recent_actions"] = [_decision_record(r) for r in plan["recent_actions"]]
+        compact["execution_plan"] = plan
     observation = result.get("observation")
     if isinstance(observation, dict):
         # Receipt identities are already above. Currency is represented by the
@@ -205,7 +214,8 @@ _CONTROL_FIELDS = (
     "execution_complete", "stop_confirmed", "new_motion_allowed", "allowed_next",
     "automatic_replay", "scene_rolled_back", "paused", "reason", "type", "kind",
     "next_action", "retry_allowed", "unresolved_action_count", "action_receipt_counts",
-    "handoff", "supervision", "constraint_violation", "failure", "recovery", "action_receipts", "observation",
+    "handoff", "supervision", "constraint_violation", "failure", "recovery", "action_memory",
+    "execution_plan", "action_receipts", "observation",
     "blocked", "last_action", "last_motion", "unresolved_actions", "summary",
     "primitive_outcome", "receipt",
     "reached", "dist_to_target_m", "orientation_error_deg", "final_xyz", "message", "error",
@@ -473,6 +483,7 @@ class ArmToolkit:
             "strategy": strategies,
             "monitor": monitor_module,
             "plan": self._plan,
+            "action_history": self._action_history,
             "once": self._once,
             "resume_state": self.resume_state,
         }
@@ -673,7 +684,11 @@ class ArmToolkit:
         if goal is None:
             if next_action or done_when or evidence or status != "in_progress" or contract is not None:
                 raise ValueError("plan() reads the note; supply goal to update it")
-            return self._plan_store.read()
+            plan = self._plan_store.read()
+            # Host integrations that inspect the note outside a policy call
+            # continue to receive the persisted planner record. During a cell
+            # or program, Astra gets the live action attachment as well.
+            return self._plan_with_history(plan) if self.robo._code_context else plan
         self._plan_store.validate(goal=goal, next_action=next_action, done_when=done_when,
                                   evidence=evidence, status=status)
         if self.action_contract.evaluating:
@@ -688,6 +703,7 @@ class ArmToolkit:
             observation_id=self.robo._latest_observation_id,
             source_id=observation.get("source_id"),
             observation_native_steps=observation.get("native_steps"),
+            env_steps=self.robo._backend.env_steps(),
             action_revision=self.robo._action_revision,
             last_action_id=self.robo._last_action_id,
             turn=len(self.turns) + 1,
@@ -702,7 +718,7 @@ class ArmToolkit:
         self._journal.put("meta", "plan", result)
         self._trace_event("execution_plan_updated", plan_revision=result["revision"],
                           observation_id=context["observation_id"])
-        return result
+        return self._plan_with_history(result) if self.robo._code_context else result
 
     def _display(self, image: Any) -> None:
         """Attach an image (numpy array, PIL image or PNG bytes) to this turn's result."""
@@ -743,6 +759,8 @@ class ArmToolkit:
                     "Execute Python code in a persistent session where `robo` "
                     "(the robot), `np`, `math` and `time` are defined. "
                     "Variables, functions and imports persist between calls. "
+                    "The read-only `action_history(...)` helper exposes prior motion "
+                    "and outcomes across calls. "
                     "Returns stdout, stderr, the exception if any, the value of a "
                     "trailing expression, the robot state, and the current camera "
                     "images whenever the robot moved."
@@ -765,7 +783,9 @@ class ArmToolkit:
                     "Run a complete Python program that defines `run(robo)`: pass "
                     "the full source as `code`, or `path` of a .py file you wrote "
                     "in the workspace. Each program starts from a fresh namespace "
-                    "(workspace files persist and can be imported). Returns "
+                    "(workspace files persist and can be imported). The "
+                    "The read-only `action_history(...)` helper is available inside "
+                    "the program for prior motion history. Returns "
                     "stdout, stderr, the exception if any, the ledger of primitive "
                     "calls, the robot state and the current camera images." + budget
                 ),
@@ -831,6 +851,12 @@ class ArmToolkit:
                                                    for data in saved.get("images", [])])
                 # The result/images are historical. Never replay an old motion permission.
                 result.result["handoff"] = self.robo._interaction_handoff()
+                if "action_memory" in result.result:
+                    result.result["action_memory"] = self._action_history(limit=8)
+                if self._plan_store.latest is not None and "execution_plan" in result.result:
+                    result.result["execution_plan"] = self._plan_with_history(
+                        self._plan_store.latest
+                    )
                 if isinstance(result.result.get("recovery"), dict):
                     result.result["recovery"].update(historical=True, new_motion_allowed=False)
                 result.result["execution"] = self._execution_feedback(key, replayed=True)
@@ -935,7 +961,9 @@ class ArmToolkit:
                     result = ArmResult({"error": f"{type(exc).__name__}: {exc}"})
                 self._observe_result(result, calls_before, steps_before)
                 if self._plan_store.revision != plan_before:
-                    result.result["execution_plan"] = self._plan_store.summary()
+                    result.result["execution_plan"] = self._plan_with_history(
+                        self._plan_store.latest
+                    )
                 moved_flag = any(r.stateful for r in self.robo._ledger.records[calls_before:])
                 steps_after = self.robo._backend.env_steps()
                 steps_delta = (
@@ -956,7 +984,7 @@ class ArmToolkit:
                         "sandbox_flags": flags,
                         **{k: result.result[k] for k in (
                             "failure", "recovery", "observation", "handoff", "action_receipts",
-                            "execution_plan")
+                            "action_memory", "execution_plan")
                            if k in result.result},
                     }
                 )
@@ -1074,6 +1102,163 @@ class ArmToolkit:
     def _snapshot(self) -> tuple[int, int | None]:
         return len(self.robo._ledger), self.robo._backend.env_steps()
 
+    def _action_history(
+        self,
+        limit: int | None = 10,
+        *,
+        stateful_only: bool = True,
+        since_plan: bool = False,
+    ) -> list[dict[str, Any]]:
+        """Return a bounded, detached action timeline for policy code and feedback.
+
+        The policy never receives the private ledger or receipt objects themselves.
+        This projection deliberately keeps the execution identity, arguments,
+        outcome and relative currency that are useful when deciding what to do
+        after a new image arrives.
+        """
+        if (limit is not None and (
+                isinstance(limit, bool) or not isinstance(limit, int) or not 0 <= limit <= 100
+        )):
+            raise ValueError("action_history limit must be an integer from 0 to 100, or None")
+        if limit == 0:
+            return []
+
+        now = time.time()
+        current_revision = getattr(self.robo, "_action_revision", 0)
+        try:
+            current_steps = self.robo._backend.env_steps()
+        except Exception:  # noqa: BLE001 - an unavailable counter is reported as unknown
+            current_steps = None
+
+        # A resumed toolkit has receipts but no reconstructed in-memory ledger.
+        # Prefer ledger records when present (they retain summaries and elapsed
+        # time), then fill any older identities from the durable receipts.
+        records = self.robo._ledger.records
+        entries: list[tuple[int, float, dict[str, Any], Any | None]] = []
+        seen: set[str] = set()
+        for record in records:
+            if stateful_only and not record.stateful:
+                continue
+            receipt = record.receipt or {}
+            action_id = record.action_id or receipt.get("action_id")
+            if action_id:
+                seen.add(action_id)
+            # Ledger index is the event order for both motion and read-only
+            # calls; action_revision is retained separately for currency.
+            entries.append((record.index, record.started_at, receipt, record))
+        if stateful_only:
+            for action_id, receipt in self.robo._receipts.items():
+                if action_id in seen:
+                    continue
+                revision = receipt.get("action_revision")
+                entries.append((revision if isinstance(revision, int) else -1,
+                                receipt.get("started_at", 0.0), receipt, None))
+        entries.sort(key=lambda item: (item[0], item[1]))
+
+        plan_start = None
+        if since_plan and self._plan_store.latest is not None:
+            context = self._plan_store.latest.get("context", {})
+            plan_start = context.get("action_revision")
+        if since_plan and plan_start is None:
+            return []
+
+        # The ledger stores per-call step deltas. Accumulating them gives an
+        # action-relative step distance without pretending read-only calls moved.
+        cumulative_steps = 0
+        projected: list[dict[str, Any]] = []
+        for _sort_revision, started_at, receipt, record in entries:
+            revision = receipt.get("action_revision")
+            if since_plan and (not isinstance(revision, int) or revision <= plan_start):
+                if record is not None and record.stateful:
+                    cumulative_steps += record.env_steps or 0
+                continue
+            if record is not None and record.stateful:
+                cumulative_steps += record.env_steps or 0
+            if not isinstance(revision, int) and stateful_only:
+                continue
+            if record is not None:
+                detached = record.to_dict()
+                kwargs = copy.deepcopy(detached.get("kwargs", {}))
+                summary = copy.deepcopy(detached.get("summary", {}))
+                completed_at = record.started_at + max(0.0, record.elapsed_s)
+                index = record.index
+                env_delta = record.env_steps
+                observation_id = record.observation_id or receipt.get("observation_id")
+                endpoint_steps = (receipt.get("env_steps_after")
+                                  if record.stateful else None)
+                if endpoint_steps is None and record.stateful:
+                    endpoint_steps = cumulative_steps
+            else:
+                kwargs = copy.deepcopy(receipt.get("arguments", {}))
+                summary = copy.deepcopy(receipt.get("summary", {}))
+                completed_at = receipt.get("completed_at", receipt.get("started_at"))
+                index = None
+                env_delta = receipt.get("env_steps")
+                observation_id = receipt.get("observation_id")
+                endpoint_steps = receipt.get("env_steps_after")
+            status = receipt.get("status") or (
+                "completed" if record is not None and record.ok else "failed"
+            )
+            targets = {
+                key: copy.deepcopy(value)
+                for key, value in kwargs.items()
+                if any(token in str(key).lower()
+                       for token in ("target", "pose", "position", "xyz", "left", "right"))
+            }
+            reached = summary.get("reached") if isinstance(summary, dict) else None
+            if reached is None and isinstance(summary, dict):
+                distance, tolerance = summary.get("final_dist_m"), kwargs.get("tol")
+                if isinstance(distance, (int, float)) and isinstance(tolerance, (int, float)):
+                    reached = bool(distance <= tolerance)
+            kwargs = _bounded_detail(kwargs, 1800)
+            summary = _bounded_detail(summary, 1600)
+            targets = _bounded_detail(targets, 1200)
+            action = {
+                "index": index,
+                "turn": receipt.get("turn"),
+                "tool": receipt.get("tool") or (record.tool if record is not None else None),
+                "stateful": bool(record.stateful) if record is not None else True,
+                "action_id": receipt.get("action_id") or (record.action_id if record else None),
+                "intent_id": (kwargs.get("intent_id") or kwargs.get("grasp_id")
+                              or receipt.get("operation_id")),
+                "observation_id": observation_id,
+                "source_id": receipt.get("source_id"),
+                "kwargs": kwargs,
+                "targets": targets,
+                "status": status,
+                "ok": bool(record.ok) if record is not None else status in (
+                    "completed", "partial", "acknowledged"
+                ),
+                "reached": reached,
+                "action_revision": revision,
+                "actions_ago": (current_revision - revision
+                                 if isinstance(revision, int) else None),
+                "env_steps": env_delta,
+                "env_steps_ago": (current_steps - endpoint_steps
+                                   if current_steps is not None and endpoint_steps is not None
+                                   else None),
+                "seconds_ago": round(max(0.0, now - completed_at), 3)
+                if isinstance(completed_at, (int, float)) else None,
+                "summary": summary,
+            }
+            if receipt.get("error") or (record is not None and record.error):
+                action["error"] = receipt.get("error") or record.error
+            projected.append(action)
+
+        # Most recent actions are the useful default, while preserving temporal
+        # order so the first item is the oldest item in the returned window.
+        return projected if limit is None else projected[-limit:]
+
+    def _plan_with_history(self, plan: dict[str, Any] | None) -> dict[str, Any] | None:
+        if plan is None:
+            return None
+        result = copy.deepcopy(plan)
+        all_since = self._action_history(limit=None, since_plan=True)
+        recent = all_since[-8:]
+        result["actions_since_plan"] = len(all_since)
+        result["recent_actions"] = recent
+        return result
+
     def _observe_result(self, output: ArmResult, calls_before: int, steps_before: int | None):
         """A common evidence envelope for cells, programs, errors and finish."""
         records = self.robo._ledger.records[calls_before:]
@@ -1087,6 +1272,15 @@ class ArmToolkit:
         output.result["handoff"] = self.robo._interaction_handoff()
         output.result["action_receipts"] = [self.robo._receipt_summary(r.action_id)
                                             for r in motions if r.action_id]
+        code_turn = "cell" in output.result or "program" in output.result
+        action_memory = self._action_history(limit=8)
+        # ``pure`` keeps its historical minimal response for the very first
+        # code turn; subsequent turns expose the timeline automatically. The
+        # explicit action_history() helper is available even in that first turn.
+        if code_turn and (self.feedback != "pure" or self.turns):
+            output.result["action_memory"] = action_memory
+        if code_turn and self._plan_store.latest is not None:
+            output.result["execution_plan"] = self._plan_with_history(self._plan_store.latest)
         output.result["observation"] = {
             "observation_id": f"{self._session_id}-{len(self.turns) + 1}",
             "observed_at": time.time(),
@@ -1363,7 +1557,8 @@ class ArmToolkit:
         self._cell_index += 1
         self._save_execution_state()  # reserve budget before generated Python can execute
         self._globals["plan"] = self._plan
-        self._globals.update(once=self._once, resume_state=self.resume_state)
+        self._globals.update(action_history=self._action_history, once=self._once,
+                             resume_state=self.resume_state)
         self.robo._coordination_feedback = None
         self.robo._last_action_contract_pause = None
         self.robo._supervision_pause = None
@@ -1517,6 +1712,7 @@ class ArmToolkit:
                 policy = load_policy(target, builtins=self._builtins,
                                      bindings={"strategy": strategies, "monitor": monitor_module,
                                                "plan": self._plan,
+                                               "action_history": self._action_history,
                                                "once": self._once, "resume_state": self.resume_state})
                 stage = "execution"
                 timeout = (max(0.001, self.robo._episode_deadline - time.time())
@@ -1590,7 +1786,9 @@ You control {robot_blurb} through ONE tool,
 `log(value)` and `display(image)` are predefined, and every variable,
 function or import you create stays
 available in later calls: helpers you define once can be called directly in
-any later call, without re-defining or re-importing them.  {feedback_note}
+any later call, without re-defining or re-importing them. The read-only
+`action_history(limit=10, stateful_only=True, since_plan=False)` helper is
+also available for inspecting prior motion and its outcome. {feedback_note}
 {image_note}
 The session is sandboxed: you may import `numpy`, `math`, `time`, `json`,
 `re`, `PIL` and other pure-computation modules, but not `os`, `sys`,
@@ -1620,7 +1818,9 @@ live simulator{svc}.  Every
 program starts from a fresh namespace (files in the workspace persist and can
 be imported); no language model runs while a program executes, so every
 decision inside it must be made in code from the return values documented
-below.  The tool returns the program's stdout, stderr, the exception if any,
+below. The read-only `action_history(...)` helper is available inside the
+program for inspecting earlier motion without replaying it. The tool returns
+the program's stdout, stderr, the exception if any,
 {feedback_note}  {image_note}
 {program_budget}
 
@@ -1654,7 +1854,7 @@ IMAGE_NOTES = {
         "`display(image)` to show any image array you built (a crop, an "
         "overlay, a picture you kept in memory), when you need to look before "
         "writing the next turn.  Prefer cells that carry out several steps with "
-        "in-code checks (segment, back_project, gripper opening, Move.reached) "
+        "in-code checks ({in_code_checks}) "
         "and look only when a decision depends on the picture."
     ),
     "none": ("Camera images are never attached; rely on the returned state and results."),
@@ -1670,11 +1870,14 @@ FEEDBACK_NOTES = {
             "`print(robo.state())` or the result of a motion call). Execution "
             "failures also include the host's failure and recovery report."
             " Every reply adds observation IDs, action revisions and image provenance."
+            " After prior motion, `action_memory` carries a bounded recent action timeline;"
+            " `action_history(...)` is available in code for a larger read-only query."
         ),
         "rich": (
             "The tool returns stdout, stderr, the exception if any, the value of "
             "a trailing expression, the ledger of primitive calls made during "
-            "the call and the robot state."
+            "the call and the robot state. Prior turns are available through the "
+            "bounded `action_memory` field and `action_history(...)` helper."
         ),
     },
     "program": {
@@ -1684,10 +1887,14 @@ FEEDBACK_NOTES = {
             "want to know. Execution failures also include the host's failure "
             "and recovery report."
             " Every reply adds observation IDs, action revisions and image provenance."
+            " After prior motion, `action_memory` carries a bounded recent action timeline;"
+            " `action_history(...)` is available in code for a larger read-only query."
         ),
         "rich": (
             "The tool returns the program's stdout, stderr, the exception if any, "
             "the ledger of primitive calls it made and the robot state."
+            " Prior turns are available through `action_memory` and the read-only "
+            "`action_history(...)` helper."
         ),
     },
 }
@@ -1836,6 +2043,7 @@ LIBERO_ROBOT = {
     "svc": ", a frozen Pi0.5 VLA and a SAM3 segmentation service",
     "svc_nl": ", a\nfrozen Pi0.5 VLA and a SAM3 segmentation service",
     "show_examples": "`robo.show('agentview')` or `robo.show('wrist')`",
+    "in_code_checks": "segment, back_project, gripper opening, Move.reached",
     "scoring": "live",
 }
 
@@ -1890,13 +2098,23 @@ def robot_words(adapter: Any, primitives: str = "full") -> dict[str, str]:
     """Contract wording for a :class:`pyrualean.robots.RobotAdapter`.
 
     ``primitives="no-vla"`` names the adapter's ``services_novla`` (the
-    services left once the VLA is removed) instead of ``services``.
+    services left once the VLA is removed) instead of ``services``;
+    ``primitives="no-sam"`` omits SAM3 as well when ``SAM_PRIMITIVES`` are hidden.
     """
 
     primitives = effective_primitives(adapter.robot_cls, primitives)
-    key = "services" if primitives == "full" else "services_novla"
-    phrase = getattr(adapter, key, "") or ""
+    if hasattr(adapter, "services_for"):
+        phrase = adapter.services_for(primitives) or ""
+    else:
+        key = "services" if primitives == "full" else "services_novla"
+        phrase = getattr(adapter, key, "") or ""
     head, _, tail = phrase.partition(" ")
+    sam_hidden = primitives == "no-sam" and bool(getattr(adapter.robot_cls, "SAM_PRIMITIVES", ()))
+    checks = (
+        "ray_at_z, triangulate, gripper opening, reached"
+        if sam_hidden
+        else "segment, back_project, gripper opening, Move.reached"
+    )
     return {
         "robot_blurb": adapter.blurb,
         "cls": adapter.robot_cls.__name__,
@@ -1904,6 +2122,7 @@ def robot_words(adapter: Any, primitives: str = "full") -> dict[str, str]:
         # the cells contract breaks the line after the first word of the phrase
         "svc_nl": f", {head}\n{tail}" if tail else (f", {phrase}" if phrase else ""),
         "show_examples": adapter.show_examples,
+        "in_code_checks": checks,
         "scoring": "live" if getattr(adapter, "live_success", True) else "final",
     }
 
@@ -1920,7 +2139,10 @@ def _arm_contract(
     robot: dict[str, str] | None = None,
 ) -> str:
     words = dict(LIBERO_ROBOT, **(robot or {}))
-    image_note = IMAGE_NOTES[images].format(show_examples=words["show_examples"])
+    image_note = IMAGE_NOTES[images].format(
+        show_examples=words["show_examples"],
+        in_code_checks=words["in_code_checks"],
+    )
     feedback_note = FEEDBACK_NOTES[arm][feedback]
     ending_notes = ENDING_NOTES if words["scoring"] == "live" else ENDING_NOTES_FINAL
     ending_note = ending_notes[budget_mode].format(

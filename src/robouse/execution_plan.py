@@ -76,9 +76,17 @@ PLAN_PROMPT = """\
 Keep a short current-goal note with the predefined Python helper:
 `plan(goal="...", next_action="...", done_when="...", evidence="", status="in_progress")`.
 Use it in the same code call as useful work, and update when the goal, evidence
-or approach changes; no separate planning-only turn is required. Each update
+or approach changes; no separate planning-only turn is required. Record the
+remaining step reserve split (primary execution budget ~60%–70% vs contingency/cleanup
+reserve ~30%–40% for local alignment fixes, release verification and homing) so
+you track reserve health across phases and avoid multi-stage detours. Each update
 replaces the current note. `plan()` reads it across cells/programs. Status is
 pending/in_progress/done/blocked; done refers only to your stated goal.
+The read-only `action_history(limit=10, stateful_only=True, since_plan=False)`
+helper returns recent executed actions with their tool, arguments, outcome,
+action/step/time distance and observation identity. Use `since_plan=True` to
+inspect only actions taken since the current plan note. Feedback also carries a
+bounded `action_memory` timeline when there is prior motion.
 The text fields are planning claims, not benchmark facts or motion permission.
 They never replace the task instruction, watch prerequisites or finish.
 Before declaring the whole task complete, review the task card's acceptance

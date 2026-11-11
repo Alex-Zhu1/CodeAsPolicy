@@ -142,10 +142,10 @@ def _return_type_name(member: Any) -> str | None:
 
 
 def vla_hidden(robot_cls: type, primitives: str = "full") -> tuple[frozenset[str], frozenset[str]]:
-    """What the ``no-vla`` primitive set hides: ``(member names, result type names)``.
+    """What the ``no-vla`` or ``no-sam`` primitive set hides: ``(member names, result type names)``.
 
-    The members are ``robot_cls.VLA_PRIMITIVES`` (methods, or constants of
-    that name); the result types are those returned by a hidden method and
+    The members are ``robot_cls.VLA_PRIMITIVES`` (plus ``SAM_PRIMITIVES`` under
+    ``no-sam``); the result types are those returned by a hidden method and
     by no remaining public member. ``full`` is intersected with host capabilities.
     """
 
@@ -153,6 +153,8 @@ def vla_hidden(robot_cls: type, primitives: str = "full") -> tuple[frozenset[str
     if primitives == "full":
         return frozenset(), frozenset()
     names = frozenset(getattr(robot_cls, "VLA_PRIMITIVES", ()))
+    if primitives == "no-sam":
+        names = names | frozenset(getattr(robot_cls, "SAM_PRIMITIVES", ()))
     members = _public_members(robot_cls)
     returned_by_vla = {_return_type_name(members[n]) for n in names if n in members}
     returned_by_rest = {_return_type_name(m) for n, m in members.items() if n not in names}
@@ -329,10 +331,15 @@ def api_reference(
     )
     text = "\n\n".join(sections)
     class_section = sections[0]
-    if primitives == "no-vla":
+    if primitives in ("no-vla", "no-sam"):
         edits = tuple(getattr(robot_cls, "VLA_REFERENCE_EDITS", ()))
         text = _apply_edits(text, edits, f"{robot_cls.__name__} docstrings")
         for old, new in edits:
+            class_section = class_section.replace(old, new)
+    if primitives == "no-sam":
+        sam_edits = tuple(getattr(robot_cls, "SAM_REFERENCE_EDITS", ()))
+        text = _apply_edits(text, sam_edits, f"{robot_cls.__name__} no-sam docstrings")
+        for old, new in sam_edits:
             class_section = class_section.replace(old, new)
     if intent_only:
         text = text.replace(class_section, f"class {robot_cls.__name__}\n"
@@ -344,11 +351,19 @@ def api_reference(
 
 
 def knowledge_stem(name: str, primitives: str = "full") -> str:
-    """Knowledge file stem: ``<name>`` for the full primitive set, ``<name>-novla`` otherwise."""
+    """Knowledge file stem: ``<name>`` for full, ``<name>-nosam`` when packaged, else ``<name>-novla``."""
 
     if primitives not in PRIMITIVE_SETS:
         raise ValueError(f"primitives must be one of {PRIMITIVE_SETS}, got {primitives!r}")
-    return name if primitives == "full" else f"{name}-novla"
+    if name == "robodojo_xpl":
+        name = "robodojo"
+    if primitives == "full":
+        return name
+    if primitives == "no-sam":
+        package = resources.files(__package__ or "robouse")
+        if package.joinpath(f"knowledge/{name}-nosam.md").is_file():
+            return f"{name}-nosam"
+    return f"{name}-novla"
 
 
 def knowledge_text(name: str = "libero", primitives: str = "full", *,
@@ -361,6 +376,8 @@ def knowledge_text(name: str = "libero", primitives: str = "full", *,
     explicitly includes legacy controller guidance.
     """
 
+    if name == "robodojo_xpl":
+        name = "robodojo"
     stem = knowledge_stem(name, primitives)
     package = resources.files(__package__ or "robouse")
     text = package.joinpath(f"knowledge/{stem}.md").read_text(encoding="utf-8")
@@ -727,7 +744,11 @@ def render_prompt(
     adapter = get_adapter(card.robot if card is not None else "libero")
     primitives = effective_primitives(robot_cls or adapter.robot_cls, primitives)
     max_env_steps = card.max_env_steps if card is not None else 10000
-    services = adapter.services if primitives == "full" else adapter.services_novla
+    services = (
+        adapter.services_for(primitives)
+        if hasattr(adapter, "services_for")
+        else (adapter.services if primitives == "full" else adapter.services_novla)
+    )
     scoring_head, scoring_limits, scoring_tail = SCORING_NOTES[bool(adapter.live_success)]
     contract = CONTRACT.format(
         budget_s=budget_s,

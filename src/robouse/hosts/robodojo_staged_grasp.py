@@ -52,12 +52,13 @@ class GraspController:
                 or rot_err > max(record["completion"]["orientation_deg"], 1.)
                 or joint_err > .02):
             return dict(ok=False, reason="handoff_receiver_pose_changed", snapshot=now)
-        if (expected["commands"][arm] > .05 or now["commands"][arm] > .05
-                or not (tools.HOLD_MIN_OPENING < now["opening"][arm] < .95)
+        if (not tools.retained_closure(expected["commands"][arm], expected["opening"][arm])
+                or not tools.retained_closure(
+                    now["commands"][arm], now["opening"][arm], expected["opening"][arm]
+                )
                 or abs(now["opening"][arm] - expected["opening"][arm]) > .02):
             return dict(ok=False, reason="handoff_receiver_not_holding", snapshot=now)
-        if (now["commands"][other] <= .05
-                and tools.HOLD_MIN_OPENING < now["opening"][other] < .95):
+        if now["commands"][other] <= .05 and 0. <= now["opening"][other] < .95:
             return dict(ok=False, reason="handoff_donor_not_released", snapshot=now)
         return dict(ok=True, reason=None, snapshot=now)
 
@@ -88,6 +89,7 @@ class GraspController:
             actual_pose=self.intents._pose(snap["poses"][arm]), opening=snap["opening"][arm],
             stage_result={k: v for k, v in (record.get("result") or {}).items() if k in (
                 "status", "reached", "stop_reason", "tracking", "arms", "holding", "opening",
+                "closure_obstructed", "thin_or_unobstructed_closure",
                 "steps_used", "intent_steps_used", "partial_plan", "handoff_reacquired",
                 "constraint_violation", "constraint_scope")},
             target=self.intents._pose(record["target"]),
@@ -230,12 +232,19 @@ class GraspController:
                 return stopped
             now = tools._opening(state, arm)
             if op["ticks"] >= 2 and abs(now - before) < tools.GRIP_STILL:
-                if stage == "close" and now <= tools.HOLD_MIN_OPENING:
-                    return dict(status="needs_model", stop_reason="empty_grasp", opening=now)
+                if stage == "close":
+                    if not (0. <= now < .95):
+                        return dict(status="needs_model",
+                                    stop_reason="gripper_opening_not_reached", opening=now)
+                    obstructed = bool(tools.HOLD_MIN_OPENING < now < .95)
+                    return dict(status="completed", stop_reason=None, opening=now,
+                                holding=True, closure_obstructed=obstructed,
+                                thin_or_unobstructed_closure=not obstructed,
+                                grasp_verified=False)
                 if stage == "open" and abs(now - command) > .01:
                     return dict(status="needs_model", stop_reason="gripper_opening_not_reached")
                 return dict(status="completed", stop_reason=None, opening=now,
-                            holding=stage == "close", grasp_verified=False)
+                            holding=False, grasp_verified=False)
         return dict(status="needs_model", stop_reason="gripper_not_settled")
 
     def _move(self, record, op, stage, offset, turn, refine):

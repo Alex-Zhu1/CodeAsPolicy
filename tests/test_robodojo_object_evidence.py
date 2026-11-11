@@ -152,6 +152,30 @@ def test_visual_following_without_obstruction_is_conflicting():
     assert out['state'] == 'conflicting_evidence'
 
 
+def test_thin_object_closure_supports_hold_baseline_and_distinguishes_lift_from_empty_close(scene):
+    env, toolkit, backend, robot = scene
+    prim = toolkit._primitives
+    tools._remember(prim, 'left', 0.)
+    env.packet['state']['left_ee_joint_state'] = [0.]
+    env.packet['image_state']['left_ee_joint_state'] = [0.]
+    advance(scene)
+    env.packet['state']['left_ee_joint_state'] = [0.]
+    env.packet['image_state']['left_ee_joint_state'] = [0.]
+    ref = robot.object_ref('key', 'thin white key')
+    obs = robot.observe_object(ref, landmarks=pixels(env.packet))
+    baseline = robot.observe_hold(ref, arm='left', observation=obs)
+    assert baseline['baseline_ready'] is True
+    assert baseline['reason'] == 'baseline_ready_not_hold_proof'
+    thin_a = sample('a', opening=0.0)
+    thin_lifted = sample('b', (.15, 0, 0), translate(.05), opening=0.0)
+    lifted = assess_hold(thin_a, thin_lifted, 'left')
+    assert lifted['state'] == 'following'
+    assert lifted['gripper']['thin_or_unobstructed_closure'] is True
+    thin_missed = sample('b', (.10, 0, 0), translate(.05), opening=0.0)
+    missed = assess_hold(thin_a, thin_missed, 'left')
+    assert missed['state'] == 'relative_motion'
+
+
 def test_triangulation_is_free_of_table_height_prior(scene):
     env, toolkit, backend, robot = scene
     ref = robot.object_ref('item', 'small red object')

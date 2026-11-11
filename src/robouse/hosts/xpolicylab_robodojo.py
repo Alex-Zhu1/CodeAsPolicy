@@ -304,7 +304,14 @@ def lacking(obs: dict[str, Any]) -> list[str]:
 
 
 def _toolkit(
-    bridge: Bridge, cell: Cell, out_dir: Path, env_only: bool, alive: Any = None, depth: bool = True
+    bridge: Bridge,
+    cell: Cell,
+    out_dir: Path,
+    env_only: bool,
+    alive: Any = None,
+    depth: bool = True,
+    *,
+    no_sam: bool = False,
 ) -> NativeToolkit:
     """The robot's tools over ``bridge``; the verdict is the one the client reports."""
 
@@ -319,7 +326,7 @@ def _toolkit(
                 "robodojo_xpl_rgb, which needs none of it."
             )
     sam3 = None
-    if not env_only:
+    if not env_only and not no_sam:
         from . import sam3_local
 
         sam3 = sam3_local.shared(cuda_device=cell.cuda_device)
@@ -344,11 +351,14 @@ def boot(
     boot_timeout_s: float = BOOT_TIMEOUT_S,
     bridge: Bridge | None = None,
     depth: bool = True,
+    primitives: str = "no-vla",
+    no_sam: bool = False,
     **_: Any,
 ) -> tuple[NativeToolkit, list[Any]]:
     """Start the policy server and RoboDojo's evaluation client; return ``(toolkit, daemons)``.
 
-    ``env_only`` leaves SAM3 out (enough to dump a task card).  With ``bridge`` nothing is
+    ``env_only`` (or ``primitives == "no-sam"`` / ``no_sam=True``) leaves SAM3 out:
+    no external VLA or SAM3 service is loaded.  With ``bridge`` nothing is
     started: the evaluation client is already talking to a policy server that serves that
     bridge (XPolicyLab started both, and the adapter's ``model.py`` runs the episode).
     ``depth`` is what the robot reads: with it the client this host starts is configured to
@@ -358,10 +368,11 @@ def boot(
 
     if eval_seed not in EVAL_SEEDS:
         raise ValueError(f"eval_seed must be one of {EVAL_SEEDS}")
+    skip_sam = bool(env_only or no_sam or primitives == "no-sam")
     out_dir.mkdir(parents=True, exist_ok=True)
     if bridge is not None:
         bridge.first_obs(boot_timeout_s)
-        return _toolkit(bridge, cell, out_dir, env_only, depth=depth), []
+        return _toolkit(bridge, cell, out_dir, env_only, depth=depth, no_sam=skip_sam), []
     source = _source_root(source_root)
     xpolicylab = _xpolicylab_root(xpolicylab_root, source)
     bench = lay_out(out_dir / "bench", source, xpolicylab, depth=depth, suite=cell.suite)
@@ -425,7 +436,9 @@ def boot(
             + "\n"
         )
         bridge.first_obs(boot_timeout_s, alive=lambda: client.alive() and server.error is None)
-        toolkit = _toolkit(bridge, cell, out_dir, env_only, alive=client.alive, depth=depth)
+        toolkit = _toolkit(
+            bridge, cell, out_dir, env_only, alive=client.alive, depth=depth, no_sam=skip_sam
+        )
     except BaseException:
         for daemon in reversed(daemons):
             with contextlib.suppress(Exception):

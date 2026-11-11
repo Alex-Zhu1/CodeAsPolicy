@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+import time
 import uuid
 from dataclasses import fields
 
@@ -112,6 +113,88 @@ class PerceptionMixin:
             record.observation_id = source["observation_id"]
         record.summary["provenance"] = copy.deepcopy(payload["provenance"])
         return payload
+
+    def _local_perception(self, tool, kwargs, compute, *, observation_id=None):
+        """Bind a pure client-side geometry computation to a snapshot and record its ledger entry."""
+        supported = getattr(self._backend, "supports_snapshot_perception", False) is True
+        if observation_id is not None and not supported:
+            raise NotImplementedError("This backend cannot bind perception to an observation_id")
+        source = self._perception_snapshot(observation_id) if supported else None
+        arguments = dict(kwargs)
+        if source is not None:
+            arguments.update(
+                session_id=source["session_id"],
+                observation_id=source["observation_id"],
+                observation_step=source["step"],
+            )
+        if self._execution_budget is not None:
+            self._execution_budget.check()
+        record = self._ledger.open(tool, arguments, stateful=False)
+        if source is not None:
+            record.session_id = source["session_id"]
+            record.observation_id = source["observation_id"]
+        started = time.perf_counter()
+        try:
+            with self._verification_scope():
+                payload, geometry = compute(source)
+            calibration = payload.get("calibration") if isinstance(payload, dict) else None
+            if source is None:
+                provenance = dict(
+                    schema="pyrualean.perception.v1",
+                    operation=tool,
+                    binding="unsupported",
+                    source_freshness="unverified",
+                    current_at_return=False,
+                )
+                if geometry is not None:
+                    provenance["geometry"] = copy.deepcopy(geometry)
+                if calibration:
+                    provenance["calibration"] = copy.deepcopy(calibration)
+            else:
+                provenance = {
+                    key: copy.deepcopy(source[key])
+                    for key in (
+                        "session_id",
+                        "observation_id",
+                        "source_id",
+                        "step",
+                        "native_steps",
+                        "source_freshness",
+                        "aligned",
+                        "images",
+                    )
+                    if key in source
+                }
+                identity = f"{self._interaction_session_id}:perception:{uuid.uuid4().hex}"
+                provenance.update(
+                    schema="pyrualean.perception.v1",
+                    operation=tool,
+                    binding="snapshot",
+                    frozen=True,
+                    perception_id=identity,
+                    action_revision=source["action_revision"],
+                    current_at_return=self._perception_source_is_current(source),
+                )
+                if geometry is not None:
+                    provenance["geometry"] = copy.deepcopy(geometry)
+                if calibration:
+                    provenance["calibration"] = copy.deepcopy(calibration)
+                self._perception_records[identity] = {
+                    "source": copy.deepcopy(source),
+                    "provenance": copy.deepcopy(provenance),
+                }
+                while len(self._perception_records) > 256:
+                    del self._perception_records[next(iter(self._perception_records))]
+            record.ok = True
+            summary = self._summary(tool, payload) if isinstance(payload, dict) else {}
+            summary["provenance"] = copy.deepcopy(provenance)
+            record.summary = summary
+            return payload, copy.deepcopy(provenance)
+        except BaseException as exc:
+            record.error = f"{type(exc).__name__}: {exc}"
+            raise
+        finally:
+            record.elapsed_s = time.perf_counter() - started
 
     def _perception_source_is_current(self, source) -> bool:
         try:

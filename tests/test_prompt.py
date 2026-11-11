@@ -59,6 +59,9 @@ def test_generated_motion_policy_declares_intents_without_controller_tuning(robo
     assert "Low-level movement and speed selection are disabled" in text
     assert "## Perception" in text and "## Judging progress" in text
     assert "reserve steps for required cleanup" not in text
+    assert "Contingency & Cleanup Reserve" in text
+    assert "never justifies higher-order multi-stage detours" in text
+    assert "wider than the object's full diagonal footprint" in text
     assert "Do not abandon a task" in text
     assert "unknown is not empty" in text
     assert "table-height geometry" in text
@@ -190,3 +193,54 @@ def test_code_prompt_only_describes_visual_apis_when_enabled(mode):
     if mode == "pause":
         assert "explicit HARD visual prerequisites" in text
         assert "unresolved execution receipts remain enforced" in text
+
+
+@pytest.mark.parametrize("robot", ["robodojo", "robodojo_xpl", "robodojo_xpl_rgb"])
+def test_no_sam_prompt_exposes_geometry_without_sam3_and_keeps_intent_invariants(robot):
+    import re
+
+    from pyrualean.play import build_prompt
+    from pyrualean.robots import get_adapter
+
+    card = TaskCard(
+        suite="arx_x5",
+        task="swap_blocks",
+        seed=0,
+        task_language="Swap the two blocks",
+        object_names=[],
+        robot=robot,
+    )
+    cls = get_adapter(robot).robot_cls
+    ref = api_reference(cls, primitives="no-sam")
+    prompt_text = build_prompt(
+        "cells",
+        card,
+        budget_s=900,
+        max_programs=None,
+        images="on-demand",
+        primitives="no-sam",
+    )
+    bundle = render_prompt(card, budget_s=900, primitives="no-sam")
+
+    for doc in (ref, prompt_text, bundle.system):
+        for geom_fn in ("camera_ray", "ray_at_z", "triangulate", "project_point", "crop_grid"):
+            assert f"robo.{geom_fn}(" in doc
+        for geom_cls in ("CameraRay", "PlanePoint", "TriangulatedPoint", "PixelPoint"):
+            assert f"class {geom_cls}(" in doc
+        for hidden_fn in ("locate", "segment", "back_project", "pi0_pick"):
+            assert f"robo.{hidden_fn}(" not in doc
+        for hidden_cls in ("ObjectPose", "ObjectSight", "Segment", "WorldPoint", "SeenPoint", "Pick"):
+            assert f"class {hidden_cls}(" not in doc
+        assert not re.search(r"pi0|lingbot|rldx|vla|sam3", doc, re.IGNORECASE)
+        assert not re.search(r"\brobo\.(locate|segment|back_project)\b", doc)
+
+    # All robodojo-intent.md and coordination invariants remain intact under no-sam.
+    assert "Low-level movement and speed selection are disabled" in prompt_text
+    assert "## Perception" in prompt_text and "## Judging progress" in prompt_text
+    assert "Contingency & Cleanup Reserve" in prompt_text
+    assert "never justifies higher-order multi-stage detours" in prompt_text
+    assert "wider than the object's full diagonal footprint" in prompt_text
+    assert "Do not abandon a task" in prompt_text
+    assert "unknown is not empty" in prompt_text
+    assert "table-height geometry" in prompt_text
+    assert "crop_grid" in prompt_text and "observe_object" in prompt_text and "observe_hold" in prompt_text

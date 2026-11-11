@@ -168,7 +168,11 @@ class Model(ModelTemplate):
                 model=str(self.cfg.get("model") or os.environ["PYRUALEAN_MODEL"]),
                 robot=robot,
                 runtime=str(self.cfg.get("runtime") or "openai"),
-                primitives=str(self.cfg.get("primitives") or "no-vla"),
+                primitives=str(
+                    self.cfg.get("primitives")
+                    or os.environ.get("PYRUALEAN_PRIMITIVES")
+                    or "no-vla"
+                ),
                 images=str(self.cfg.get("images") or "on-demand"),
                 feedback=str(self.cfg.get("feedback") or "pure"),
                 max_turns=int(self.cfg.get("max_turns") or 100),

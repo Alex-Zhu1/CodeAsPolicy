@@ -67,11 +67,14 @@
   Omit the constraint for an unrestricted line. Directions do not authorize
   lateral searches, back-and-forth insertion or a changed grasp.
 - `holding={"right":"empty"}` asserts an observed empty hand; `"retain"`
-  requires the existing closed grip to remain obstructed at every native action;
-  `"keep"` preserves the command without asserting object support. No intent
-  opens, closes or regrips. Use staged grasp or set_gripper for those operations and
-  observe the intended object before declaring retention. A retained opening
-  cannot identify an object or detect all slips. In a push with a closed empty
+  requires the gripper to stay commanded closed without collapsing from a wider
+  initial grasp (thin `<3.5 mm` parts such as key shafts, coins or cards settle
+  at `opening <= 0.01` just like empty jaws, so `retain` permits thin full-closure
+  holds while stopping if a wider grip collapses); `"keep"` preserves the
+  command without asserting object support. No intent opens, closes or regrips.
+  Use staged grasp or set_gripper for those operations and observe the intended
+  object after lifting before declaring retention. A retained opening cannot
+  identify an object or detect all slips. In a push with a closed empty
   gripper, declare empty plus contact; no retained-object requirement applies.
 - `completion` can set position_m/orientation_deg and a short `verify` condition.
   Robot pose is checked at arrival. The executor independently bounds tracking
@@ -80,14 +83,16 @@
   at every action. `verify` returns as needs_observation;
   inspect the actual scene, or use the existing visual watch contract. TCP
   arrival alone never establishes insertion, intended-object grasp or release.
-- Omit `max_steps` and `reserve_steps` normally: all remaining native actions
-  are available, with no required reserve for later manipulation or return.
-  Cost estimates are advisory, not a veto on progress. If the full motion does
-  not fit, the executor tries a shorter part of the same route, ending at rest.
-  `paused`/`segment_complete` means partial progress, not final arrival; inspect
-  and use `resume_motion(id)` to continue. If you explicitly chose a small cap,
-  `resume_motion(id, max_steps=new_total)` increases the cumulative allowance
-  without resetting spent steps or corrections. Never weaken geometry or speed
+- Treat any episode step limit as Primary Execution Budget (~60%–70%) plus a
+  Contingency & Cleanup Reserve (~30%–40% for local alignment/regrasp fixes,
+  release verification, and final arm homing). During late-stage manipulation,
+  pass `reserve_steps` (e.g., keeping at least 60–100 native actions for final
+  release, post-placement adjustment, and homing) or stage `max_steps` so a
+  single corrective move cannot exhaust the tail budget. Cost estimates are
+  advisory: if a full motion does not fit, the executor runs a shorter segment
+  ending at rest. `paused`/`segment_complete` means partial progress; inspect
+  and use `resume_motion(id)` (or `max_steps=new_total` to raise an explicit
+  cumulative cap without resetting spent steps). Never weaken geometry or speed
   constraints to fit an estimate. The actual native episode limit still applies.
 - Do not abandon an incomplete task, return a held object or home the arms
   solely because forecasts suggest the full remaining sequence might not fit.
@@ -153,7 +158,8 @@
   to it, instead of requiring the receiver to reach the original pickup pose.
   Arm roles and exchange poses come from the current scene, not fixed sides.
 - Record the intended use, grasp regions, exchange/working pose and remaining
-  budget briefly in plan()'s goal, next_action, done_when and evidence fields.
+  step split (primary execution budget vs contingency/cleanup reserve) briefly
+  in plan()'s goal, next_action, done_when and evidence fields.
   Compare a small set of geometrically distinct candidates with read-only
   previews before committing to a costly grasp. Batch independent previews.
   Multi-leg previews use `following=[...]` to evaluate chained waypoints under
@@ -163,18 +169,30 @@
   grasp or validate unmodeled inter-arm dynamics without explicit constraints.
   Reobserve the actual object-in-hand pose after lifting, then check the next
   route and finger clearance before approaching or releasing.
-- If the intended grasp is inaccessible, consider repositioning the object or
-  setting it down for a different grasp at a suitable support location. Consider
-  the extra manipulation and verification cost without requiring an up-front reserve.
-  Do not add repositioning when the existing pose already permits the task, and
-  reserve staged grasps/transport for objects whose location must actually change.
-  When drawing a supply or replacement item from one side of the table (e.g. a
-  left-side stack) to stand upright at the opposite end of an arrangement (e.g.
-  the far-right end of a row), plan a two-arm handoff/reorientation so the
-  receiving arm can present and stand the item upright at that destination rather
-  than laying it flat in an interior gap, and use `preview=True` before handoff
-  to confirm the receiving grasp orientation can reach the final upright placement
-  pose without multiple post-handoff reorientation retries.
+- A large remaining step budget never justifies higher-order multi-stage detours
+  (such as moving objects whose pose/location need not change or laying a
+  replacement item flat in an interior arrangement gap): match pickup angle and
+  arm-to-arm transfer to the object's thickness and mass distribution:
+  - **Thin, flat or top-heavy/asymmetric objects** (under ~1 cm thick or
+    `opening <= 0.04`, or narrow stems with an offset heavy end): closed ARX-X5
+    pads retain a ~2.3 mm gap (`GRIP_ZERO_M`), so tilted (`pitch=45°–60°`)
+    pinches or narrow off-centre stem grasps easily twist or pendulum-slip under
+    gravity and carry acceleration. Pick up vertically (`pitch=90°`) centred
+    across the widest flat pad-contact region (such as a wide circular bow or
+    handle), translate smoothly without unnecessary wrist rotation, and prefer a
+    **tabletop set-down regrasp** on a clear central tabletop zone near `x ≈ 0`
+    (donor sets flat, opens wide and withdraws clear; receiving arm observes
+    unoccluded and grasps at the working region/orientation needed for final
+    insertion or turning) over mid-air handoff.
+  - **Thick, rigid parallel-sided blocks or tiles** (`opening > 0.05` across
+    high-friction faces): support firm tilted or side grasps and **direct
+    in-air handoff** verified with `preview=True` so the receiving arm can
+    present and stand the item upright directly at its destination rather than
+    setting it down in an interior gap.
+  Before descending to seat, insert or release an object with a required axis,
+  slot or face/yaw orientation, verify its actual in-hand alignment (including
+  gravity hang, yaw alignment and front/back or tooth direction) in the
+  wrist/head cameras in the air to avoid wrong-angle retries.
 - A changed grasp region, object slip or changed arm role invalidates the
   assumptions used for transfer and later use. Recheck the receiver access,
   resulting working-region clearance and route before proceeding;
@@ -257,8 +275,12 @@
   interruption continues only the unfinished stage; completed open/close and
   motion stages do not replay. `grasp_status(id)` exposes progress. To increase
   an explicitly small allocation, pass max_steps=new_total to grasp_step. This
-  does not reset spending. An empty close stops before probing; an obstructed
-  close is not proof of object identity. Inspect before choosing a new grasp.
+  does not reset spending. `close` settles to full squeeze even when
+  `opening <= 0.01` (because `<3.5 mm` thin parts such as key shafts, coins or
+  cards compress to `0.0–0.01` just like empty air); always run `probe` and
+  inspect wrist/head images (and `object_evidence`) after lifting to verify
+  whether the intended object moved with the fingers before carrying or
+  choosing a new grasp.
 - Use the measured endpoint for every subsequent offset. A requested goal is
   not the actual pose. At most two progressing corrective holds are allowed
   across the whole intent, including resumes. A stall stops; tracking lag is
@@ -276,14 +298,22 @@
   future sequence. A reachable grasp alone does not prove placement reach.
 - set_gripper(arm, CLOSE/OPEN) runs a stroke without moving the arms; use once()
   to retain its identity. CLOSE=1, OPEN=-1. Measured opening instead is 1.0
-  open, 0.0 closed on nothing. Width is about .002 + .109 * opening metres.
-  opening=0.5 limits an open command to about 5.7 cm for narrow clearances.
-  Holding means obstructed closure, not the intended object's identity.
-  Verify a short lift in images before transport, turning or donor release.
+  open, 0.0 closed on nothing. Width is about .002 + .109 * opening metres
+  (`opening <= 0.01` is `<3.4 mm` jaw gap, `2.3 mm` at `0.0`, which occurs for
+  both empty closure and `<3.5 mm` thin parts). Never judge thin-part possession
+  from `opening` alone; verify a short lift in wrist/head images before
+  transport, turning or donor release. opening=0.5 limits an open command to
+  about 5.7 cm for narrow clearances.
 - execute_motion preserves gripper commands throughout. Use holding='retain'
   for a verified held object, and choose a separate release after observing
-  support. After release, retreat from the measured pose with unchanged
-  orientation along a clear direction before turning or sweeping sideways.
+  support. When releasing a standing or thin object onto a support surface,
+  ensure the object is seated at rest on support first, then open the gripper
+  sufficiently wide (normally full `OPEN` / `opening=1.0`, or an opening proven
+  wider than the object's full diagonal footprint) before vertical withdrawal;
+  never withdraw with a tight partial opening (such as `0.5`–`0.6`) that can
+  pinch or drag the standing object upward by pad friction. After release,
+  retreat from the measured pose with unchanged orientation along a clear
+  direction before turning or sweeping sideways.
 - One intent can move both arms simultaneously. keep_relative=True constrains
   their relative TCP transform; simultaneity alone does not preserve it.
   Omitted arms hold their starting poses. Plan finger/inter-arm clearance:

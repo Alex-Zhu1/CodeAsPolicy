@@ -453,7 +453,10 @@ def main(argv: list[str] | None = None) -> int:
         "--primitives",
         choices=PRIMITIVE_SETS,
         default=setting("PRIMITIVES", play_defaults.PRIMITIVES),
-        help="primitive set: full, or no-vla (the VLA primitives hidden and refused)",
+        help=(
+            "primitive set: full, no-vla (the VLA primitives hidden and refused), "
+            "or no-sam (no external VLA or SAM3 service)"
+        ),
     )
     _cell_args(play)
 

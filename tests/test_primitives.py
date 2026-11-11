@@ -37,7 +37,7 @@ def _card() -> TaskCard:
 
 
 def test_primitive_sets_and_the_vla_names_per_robot():
-    assert PRIMITIVE_SETS == ("full", "no-vla")
+    assert PRIMITIVE_SETS == ("full", "no-vla", "no-sam")
     assert LiberoRobot.VLA_PRIMITIVES == ("pi0_pick", "pi0_doubled")
     assert RobotwinRobot.VLA_PRIMITIVES == ("lingbot_act",)
     assert RobocasaRobot.VLA_PRIMITIVES == ("rldx_skill", "rldx_arm")

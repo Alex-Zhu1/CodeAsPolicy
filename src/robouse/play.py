@@ -26,6 +26,7 @@ from __future__ import annotations
 import argparse
 import contextlib
 import hashlib
+import inspect
 import json
 import os
 import re
@@ -690,7 +691,18 @@ def play_episode(
     ledger = Ledger()
     arm_toolkit: ArmToolkit | None = None
     try:
-        toolkit, daemons = host.boot(cell, out_dir, rpent_root=rpent_root, **boot_options)
+        call_options = dict(boot_options)
+        try:
+            boot_params = inspect.signature(host.boot).parameters.values()
+            accepts_primitives = any(
+                p.name == "primitives" or p.kind is inspect.Parameter.VAR_KEYWORD
+                for p in boot_params
+            )
+        except (TypeError, ValueError):
+            accepts_primitives = False
+        if accepts_primitives:
+            call_options.setdefault("primitives", primitives)
+        toolkit, daemons = host.boot(cell, out_dir, rpent_root=rpent_root, **call_options)
         result["host"]["boot_options"] = _recordable(boot_options)
         if runtime == "codex":
             result["host"]["codex_context"] = _codex_context_config(codex_home)
@@ -1175,7 +1187,10 @@ def main(argv: list[str] | None = None) -> int:
         "--primitives",
         choices=PRIMITIVE_SETS,
         default=setting("PRIMITIVES", play_defaults.PRIMITIVES),
-        help="primitive set: full, or no-vla (the VLA primitives hidden and refused)",
+        help=(
+            "primitive set: full, no-vla (the VLA primitives hidden and refused), "
+            "or no-sam (no external VLA or SAM3 service)"
+        ),
     )
     parser.add_argument(
         "--task-acceptance",

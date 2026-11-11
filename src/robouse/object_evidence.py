@@ -75,12 +75,18 @@ def assess_hold(before, after, arm):
     import numpy as np
 
     a, b = before["robot"][arm], after["robot"][arm]
-    obstructed = (b["command"] is not None and b["command"] <= .05
-                  and .01 < b["opening"] < .95)
+    commanded_closed = (b["command"] is not None and b["command"] <= .05
+                        and 0. <= b["opening"] < .95)
+    collapsed = (a.get("opening") is not None and a["opening"] > .025
+                 and b["opening"] <= .01)
+    obstructed = bool(commanded_closed and not collapsed)
+    thin_closure = bool(commanded_closed and b["opening"] <= .01 and not collapsed)
     result = dict(state="unknown", reason=None, arm=arm, grasp_verified=False,
                   identity_verified=False, force_measured=False,
                   gripper=dict(command=b["command"], opening=b["opening"],
-                               obstructed_closure=obstructed, command_epoch=b["command_epoch"]),
+                               obstructed_closure=obstructed,
+                               thin_or_unobstructed_closure=thin_closure,
+                               command_epoch=b["command_epoch"]),
                   features={},
                   interpretation="Observation evidence, not guaranteed future retention.")
     for obs in (before, after):
@@ -364,7 +370,7 @@ class ObjectEvidenceMixin:
         quality = baseline_quality(current, arm)
         grip = current["robot"][arm]
         closed = (grip["command"] is not None and grip["command"] <= .05
-                  and grip["command_epoch"] is not None and .01 < grip["opening"] < .95)
+                  and grip["command_epoch"] is not None and 0. <= grip["opening"] < .95)
         repaired = False
         # A missing baseline is repairable only on the originally captured frame.
         # Later motion may already have slipped: never silently move the origin.
@@ -456,7 +462,7 @@ class ObjectEvidenceMixin:
                 quality = baseline_quality(current, arm)
                 grip = current["robot"][arm]
                 if (self.perception_is_current(current) and quality["ready"]
-                        and .01 < grip["opening"] < .95):
+                        and 0. <= grip["opening"] < .95):
                     hold_key = (ref["object_id"], arm)
                     self._hold_captures[hold_key] = copy.deepcopy(current)
                     self._hold_baselines[hold_key] = copy.deepcopy(current)

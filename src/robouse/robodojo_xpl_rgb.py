@@ -33,14 +33,18 @@ from typing import Any, ClassVar
 from ._backend import ToolError
 from .robodojo import (
     ArmState,
+    CameraRay,
     Gripper,
     Home,
     Move,
     ObjectPose,
     Pick,
+    PixelPoint,
+    PlanePoint,
     RobodojoRobot,
     Segment,
     State,
+    TriangulatedPoint,
     WorldPoint,
     _arm_state,
     _calibration_provenance,
@@ -175,6 +179,26 @@ class RobodojoOfficialColourRobot(RobodojoRobot):
         Pick,
         Segment,
         SeenPoint,
+        CameraRay,
+        PlanePoint,
+        TriangulatedPoint,
+        PixelPoint,
+    )
+    SAM_REFERENCE_EDITS: ClassVar[tuple[tuple[str, str], ...]] = (
+        RobodojoRobot.SAM_REFERENCE_EDITS[0],
+        (
+            "``locate`` finds an object by a\n"
+            "    text prompt and measures it in 3D (centre, top, footprint, heading) from\n"
+            "    the cameras that see it: it takes two of them to measure a height.\n"
+            "    ``segment`` / ``back_project`` give a mask centroid and the world point at\n"
+            "    one pixel.",
+            "``camera_meta`` derives calibrated intrinsics and extrinsics; inspect\n"
+            "    ``image`` / ``crop_grid`` to find ``(row, col)`` features, then map them\n"
+            "    into 3D with ``ray_at_z`` on a known plane or ``triangulate`` /\n"
+            "    ``observe_object`` across two views: it takes two views to measure an\n"
+            "    unknown height.",
+        ),
+        *RobodojoRobot.SAM_REFERENCE_EDITS[2:],
     )
     SUMMARY_KEYS: ClassVar[tuple[str, ...]] = (*RobodojoRobot.SUMMARY_KEYS, "views", "surface")
 
@@ -418,7 +442,17 @@ ADAPTER = RobotAdapter(
     ),
     services="a SAM3 segmentation service",
     services_novla="a SAM3 segmentation service",
+    services_nosam="",
 )
 
 
-__all__ = ["ADAPTER", "ObjectSight", "RobodojoOfficialColourRobot", "SeenPoint"]
+__all__ = [
+    "ADAPTER",
+    "CameraRay",
+    "ObjectSight",
+    "PixelPoint",
+    "PlanePoint",
+    "RobodojoOfficialColourRobot",
+    "SeenPoint",
+    "TriangulatedPoint",
+]

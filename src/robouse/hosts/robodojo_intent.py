@@ -14,7 +14,7 @@ from functools import partial
 
 import numpy as np
 
-from ..motion import MotionWindow, resolve_motion
+from ..motion import MotionProfile, MotionWindow, resolve_motion
 from . import robodojo_kinematics as kin
 from . import robodojo_tools as tools
 from .robodojo_coordination import Controller, _errors, _matrix, _positive
@@ -25,7 +25,8 @@ def capabilities():
     return dict(
         interactions=["free", "approach", "contact"],
         holding=["keep", "empty", "retain"],
-        completion=["tcp_pose", "obstructed_closure", "external_verification_required"],
+        completion=["tcp_pose", "commanded_closure_and_collapse_guard",
+                    "external_verification_required"],
         constraints=["max_tilt_deg", "z_bounds", "keep_out", "corridor_m", "geometry"],
         geometry_scope="explicit_tcp_local_spheres; unrepresented_robot_and_objects_not_checked",
         preview_scope="current_measured_state_to_target; not_future_grasp_or_task_completion",
@@ -164,15 +165,27 @@ class IntentController:
         contract = record["contract"]
         mode = contract["interaction"]
         empty = all(contract["holding"].get(a) == "empty" for a in contract["targets"])
-        far = "transit" if empty else "carry"
+        initial_openings = (record.get("initial") or {}).get("opening") or {}
+        thin_retain = any(
+            contract["holding"].get(a) == "retain"
+            and initial_openings.get(a, 1.0) <= .04
+            for a in contract["targets"]
+        )
+        far_profile = (
+            resolve_motion("transit")
+            if empty
+            else MotionProfile(velocity=1.1, acceleration=6.0, jerk=90.0, phase="carry")
+            if thin_retain
+            else resolve_motion("carry")
+        )
         precise = record["position_m"] < .004 or record["orientation_deg"] < 2.
         near = "precision" if precise else "approach"
         if mode == "free" and not precise:
-            profile = resolve_motion("native" if empty else far)
+            profile = resolve_motion("native") if empty else far_profile
             spacing = .02
         elif mode in ("free", "approach"):
             # Region scales with the requested accuracy, not an object's label.
-            profile = MotionWindow(resolve_motion(far), resolve_motion(near),
+            profile = MotionWindow(far_profile, resolve_motion(near),
                                    distance_m=min(.05, max(.01, 4 * record["position_m"])))
             spacing = .01
         else:
@@ -185,7 +198,8 @@ class IntentController:
         tracking_m, tracking_deg = {
             "free": (.01, 5.), "approach": (.005, 3.), "contact": (.0025, 3.),
         }[mode]
-        return dict(motion=profile.payload(), max_step_m=spacing, max_step_deg=5.,
+        return dict(motion=profile.payload(), max_step_m=spacing,
+                    max_step_deg=8. if (mode == "free" and not precise) else 5.,
                     tracking_position_tolerance_m=tracking_m,
                     tracking_orientation_tolerance_deg=tracking_deg)
 
@@ -372,14 +386,17 @@ class IntentController:
         return None
 
     def _guard(self, record, snapshot):
+        initial_openings = (record.get("initial") or {}).get("opening") or {}
         for arm, requirement in record["contract"]["holding"].items():
             opening, command = snapshot["opening"][arm], snapshot["commands"][arm]
             if not math.isfinite(opening) or not math.isfinite(command):
                 return f"{arm}: invalid_gripper_measurement"
-            closed_on_something = command <= .05 and tools.HOLD_MIN_OPENING < opening < .95
-            if requirement == "retain" and not closed_on_something:
+            if requirement == "retain" and not tools.retained_closure(
+                command, opening, initial_openings.get(arm)
+            ):
                 return f"{arm}: holding_requirement"
-            if requirement == "empty" and closed_on_something:
+            obstructed_closure = command <= .05 and tools.HOLD_MIN_OPENING < opening < .95
+            if requirement == "empty" and obstructed_closure:
                 return f"{arm}: empty_hand_requirement"
         reason = self._geometry(record, snapshot["poses"],
                                 previous_poses=record.get("guard_previous_poses"))
@@ -396,13 +413,14 @@ class IntentController:
             steps_used=dispatch_steps, intent_steps_used=record["spent"],
             remaining_steps=max(0, record["step_limit"] - record["spent"]),
             step_limit=record["step_limit"],
+            reserve_steps=record["contract"]["reserve_steps"],
             needs_model=status in ("rejected", "needs_model"),
             accepted=status not in ("rejected", "needs_model"),
             needs_observation=(status == "completed"
                                and bool(record["contract"]["completion"].get("verify"))),
             verification=record["contract"]["completion"].get("verify"),
             policy=record["policy"], tracking=record["tracker"].summary(),
-            holding_check="obstructed_closure_only", process_restart_resume=False,
+            holding_check="commanded_closure_and_collapse_guard", process_restart_resume=False,
             geometry_coverage=geometry_coverage(record["contract"].get("constraints") or {}),
         )
         if record.get("preview_sequence") is not None:

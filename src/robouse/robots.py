@@ -58,6 +58,22 @@ class RobotAdapter:
     #: The same phrase under the ``no-vla`` primitive set (the VLA left out;
     #: empty when the VLA was the only service).
     services_novla: str = ""
+    #: The same phrase under ``no-sam`` (empty when neither VLA nor SAM3 runs;
+    #: ``None`` falls back to ``""`` if ``robot_cls.SAM_PRIMITIVES`` is nonempty,
+    #: else ``services_novla``).
+    services_nosam: str | None = None
+
+    def services_for(self, primitives: str = "full") -> str:
+        """Return the external-service description phrase for ``primitives``."""
+        if primitives == "full":
+            return self.services
+        if primitives == "no-sam":
+            if self.services_nosam is not None:
+                return self.services_nosam
+            if getattr(self.robot_cls, "SAM_PRIMITIVES", ()):
+                return ""
+            return self.services_novla
+        return self.services_novla
 
     @property
     def cameras(self) -> tuple[str, ...]:

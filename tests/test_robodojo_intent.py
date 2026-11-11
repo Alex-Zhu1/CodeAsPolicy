@@ -187,13 +187,15 @@ def test_reserved_episode_budget_is_preserved(tmp_path):
     result = empty_move(robo, right=robo.observe().right.shifted(dz=.10),
                         max_steps=20, reserve_steps=4)
     assert result["status"] == "paused" and 0 < len(env.actions) <= 3
+    assert result["reserve_steps"] == 4
+    assert robo.motion_status("travel")["reserve_steps"] == 4
     assert env.step_limit - len(env.actions) >= 4
     # A fresh scene isolates the second allocation from the first prefix.
     env, robo, _ = station(tmp_path / "second")
     env.step_limit = 7
     okay = empty_move(robo, "short", right=robo.observe().right.shifted(dz=.04),
                       max_steps=20, reserve_steps=4)
-    assert okay["reached"] and len(env.actions) <= 3
+    assert okay["reached"] and okay["reserve_steps"] == 4 and len(env.actions) <= 3
 
 
 def test_retention_requirement_stops_on_loss_without_opening_or_regrasping(tmp_path):
@@ -213,6 +215,36 @@ def test_retention_requirement_stops_on_loss_without_opening_or_regrasping(tmp_p
     assert result["needs_model"] and len(env.actions) == 1
     assert env.actions[0]["right_ee_joint_state"] == [0.]
     assert result["policy"]["motion"]["phase"] == "carry"
+
+
+def test_retention_permits_thin_object_full_closure_and_sub_millimetre_settle(tmp_path):
+    env, robo, host = station(tmp_path)
+    host._primitives._grip_commands = {"right": 0.0}
+    env.grips["right"] = .01015
+    step = env.step
+
+    def settle(action):
+        value = step(action)
+        env.grips["right"] = .00961
+        return value
+
+    env.step = settle
+    first = robo.execute_motion("lift_thin_shaft", right=robo.observe().right.shifted(dz=.04),
+                                holding={"right": "retain"}, max_steps=100)
+    assert first["reached"], first
+    env.grips["right"] = 0.0
+    second = robo.execute_motion("carry_thin_blade", right=robo.observe().right.shifted(dz=.04),
+                                 holding={"right": "retain"}, max_steps=100)
+    assert second["reached"], second
+    assert second["policy"]["motion"]["phase"] == "carry"
+    assert second["policy"]["motion"]["velocity"] == pytest.approx(1.1)
+    assert second["policy"]["motion"]["acceleration"] == pytest.approx(6.0)
+    windowed = robo.execute_motion(
+        "approach_thin_blade", right=robo.observe().right.shifted(dz=.04),
+        interaction="approach", holding={"right": "retain"}, preview=True,
+    )
+    assert windowed["accepted"]
+    assert windowed["policy"]["motion"]["window"]["far"]["velocity"] == pytest.approx(1.1)
 
 
 def test_known_cancel_resumes_remaining_path_and_never_resets_step_allowance(tmp_path):
@@ -626,3 +658,31 @@ def test_post_contact_retreat_clearance_blocks_low_lateral_sweep(tmp_path):
     sideways = empty_move(robo, "lateral_after_lift",
                           right=robo.observe().right.shifted(dx=-.04), interaction="free")
     assert sideways["reached"], sideways
+
+
+def test_free_space_carry_reorientation_uses_coarser_angular_spacing_than_approach(tmp_path):
+    env, robo, host = station(tmp_path)
+    host._primitives._grip_commands = {"right": 0.0}
+    start = robo.observe().right
+    rotated = {"xyz": list(start.xyz), "angles": [0., 0., 40.]}
+    free_carry = robo.execute_motion(
+        "carry_free", right=rotated, interaction="free",
+        holding={"right": "retain"}, preview=True,
+    )
+    precise_free = robo.execute_motion(
+        "carry_precise", right=rotated, interaction="free",
+        holding={"right": "retain"}, completion={"orientation_deg": 1.5}, preview=True,
+    )
+    approach_carry = robo.execute_motion(
+        "carry_approach", right=rotated, interaction="approach",
+        holding={"right": "retain"}, preview=True,
+    )
+    assert free_carry["accepted"] and approach_carry["accepted"] and precise_free["accepted"]
+    assert free_carry["policy"]["max_step_deg"] == 8.
+    assert precise_free["policy"]["max_step_deg"] == 5.
+    assert approach_carry["policy"]["max_step_deg"] == 5.
+    assert free_carry["trajectory"]["input_segments"] < approach_carry["trajectory"]["input_segments"]
+    executed = robo.execute_motion(
+        "carry_free", right=rotated, interaction="free", holding={"right": "retain"},
+    )
+    assert executed["reached"] and executed["reserve_steps"] == 0

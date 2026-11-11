@@ -141,10 +141,15 @@ def from_pose(name: str, obj_pose_or_point: Any) -> ConstraintElement:
             observation_id = prov.get("observation_id")
             step = prov.get("step")
 
-    # 2. WorldPoint (from robo.back_project)
-    elif hasattr(obj_pose_or_point, "pixel") and hasattr(obj_pose_or_point, "xyz"):
+    # 2. WorldPoint / PlanePoint / TriangulatedPoint (from back_project / ray_at_z / triangulate)
+    elif (hasattr(obj_pose_or_point, "pixel") or hasattr(obj_pose_or_point, "cameras")) and hasattr(
+        obj_pose_or_point, "xyz"
+    ):
         xyz = tuple(float(v) for v in obj_pose_or_point.xyz)
         kind = "point"
+        miss_m = getattr(obj_pose_or_point, "miss_m", None)
+        if miss_m is not None:
+            uncertainty_m = float(miss_m)
         prov = getattr(obj_pose_or_point, "provenance", None)
         if isinstance(prov, dict):
             observation_id = prov.get("observation_id")
@@ -914,8 +919,13 @@ def proactive_constraints(
             raise ValueError("keep_out must be a list of at most 16 obstacle specs")
         cleaned_keep_out = []
         for item in keep_out:
-            # 1. Direct perception result or ConstraintElement (e.g. ObjectPose from robo.locate)
-            if hasattr(item, "center_xyz") or hasattr(item, "pixel") or isinstance(item, ConstraintElement):
+            # 1. Direct perception result or ConstraintElement (e.g. ObjectPose, PlanePoint, TriangulatedPoint)
+            if (
+                hasattr(item, "center_xyz")
+                or hasattr(item, "pixel")
+                or hasattr(item, "cameras")
+                or isinstance(item, ConstraintElement)
+            ):
                 if getattr(item, "found", True) is False:
                     raise ValueError("keep_out obstacle was not found; re-observe before moving")
                 elem = item if isinstance(item, ConstraintElement) else from_pose("obstacle", item)

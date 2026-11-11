@@ -169,13 +169,16 @@ class InteractionMixin:
     def _new_action(self, tool, record) -> dict:
         action_id = f"{self._interaction_session_id}:action:{uuid.uuid4().hex}"
         self._last_action_id = action_id
+        started_at = time.time()
+        env_steps_before = self._backend.env_steps()
         source = self._observations.get(self._latest_observation_id, {})
         context = dict(self._code_context, session_id=self._interaction_session_id,
                        action_id=action_id, observation_id=self._latest_observation_id,
                        source_id=source.get("source_id"),
                        source_native_steps=source.get("native_steps"),
                        action_revision=self._action_revision + 1,
-                       operation_id=self._operation_id)
+                       operation_id=self._operation_id,
+                       started_at=started_at, env_steps_before=env_steps_before)
         receipt = dict(context, schema="pyrualean.action.v1", tool=tool,
                        arguments=record.kwargs,
                        status="running", effect_known=False, execution_complete=False)

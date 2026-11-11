@@ -128,20 +128,78 @@ def test_gripper_interruption_continues_remaining_stroke_without_reopening(tmp_p
     assert len(env.actions) == count + 3
 
 
-def test_empty_close_is_terminal_for_that_stage_and_never_probes(tmp_path):
+def test_thin_or_full_closure_advances_to_probe_for_visual_confirmation(tmp_path):
     env, robo, _, _ = setup(tmp_path)
     through(robo, ("open", "approach", "align"))
     original = env.step
 
-    def empty(action):
+    def thin_shaft(action):
         value = original(action)
         if action["right_ee_joint_state"] == [0.]:
             env.grips["right"] = 0.
         return value
 
-    env.step = empty
+    env.step = thin_shaft
+    closed = robo.grasp_step("pick", "close")
+    assert closed["reached"], closed
+    assert closed["next_stage"] == "probe"
+    assert closed["needs_visual_confirmation"] and not closed["grasp_verified"]
+    assert closed["stage_result"]["closure_obstructed"] is False
+    assert closed["stage_result"]["thin_or_unobstructed_closure"] is True
+    probed = robo.grasp_step("pick", "probe")
+    assert probed["reached"] and probed["grasp_complete"] and probed["retained"]
+    assert probed["needs_visual_confirmation"] and not probed["grasp_verified"]
+    carried = robo.execute_motion(
+        "carry_thin", right=robo.observe().right.shifted(dz=.02),
+        holding={"right": "retain"},
+    )
+    assert carried["reached"], carried
+
+
+def test_thin_handoff_reacquires_after_donor_opens(tmp_path):
+    env, robo, host, _ = setup(tmp_path)
+    tools._remember(host._primitives, "left", 0.0)
+    env.grips["left"] = .005
+    host._primitives._operations.grasps.records["pick"]["expected"] = (
+        host._primitives._operations.intents.motion._snapshot()
+    )
+    through(robo, ("open", "approach", "align"))
+    original = env.step
+
+    def thin_receiver(action):
+        value = original(action)
+        if action["right_ee_joint_state"] == [0.]:
+            env.grips["right"] = .004
+        return value
+
+    env.step = thin_receiver
+    assert robo.grasp_step("pick", "close")["reached"]
+    assert robo.grasp_step("pick", "handoff")["stop_reason"] == "handoff_donor_not_released"
+    robo.set_gripper("left", robo.OPEN)
+    assert robo.execute_motion(
+        "donor_retreat_thin", left=robo.observe().left.shifted(dz=.03),
+        holding={"left": "empty", "right": "retain"},
+    )["reached"]
+    handoff = robo.grasp_step("pick", "handoff")
+    assert handoff["reached"] and handoff["handoff_reacquired"]
+    probed = robo.grasp_step("pick", "probe")
+    assert probed["reached"] and probed["grasp_complete"]
+
+
+def test_jammed_open_close_is_terminal_for_that_stage_and_never_probes(tmp_path):
+    env, robo, _, _ = setup(tmp_path)
+    through(robo, ("open", "approach", "align"))
+    original = env.step
+
+    def jammed_open(action):
+        value = original(action)
+        if action["right_ee_joint_state"] == [0.]:
+            env.grips["right"] = .98
+        return value
+
+    env.step = jammed_open
     failed = robo.grasp_step("pick", "close")
-    assert failed["stop_reason"] == "empty_grasp"
+    assert failed["stop_reason"] == "gripper_opening_not_reached"
     count = len(env.actions)
     assert robo.grasp_step("pick", "close")["steps_used"] == 0
     assert robo.grasp_step("pick", "probe")["stop_reason"] == "grasp_stage_order"

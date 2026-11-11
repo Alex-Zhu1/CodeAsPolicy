@@ -47,6 +47,7 @@ from copy import deepcopy
 from dataclasses import dataclass, field
 from typing import Any, ClassVar
 
+from ._backend import ToolError
 from ._robot import RobotBase
 from .coordination import CoordinationMixin
 from .intent import IntentMixin
@@ -326,6 +327,81 @@ class WorldPoint(PerceptionResult):
     depth_m: float
     camera: str
     provenance: dict[str, Any] | None = field(default=None, kw_only=True)
+
+
+@dataclass(frozen=True, repr=False)
+class CameraRay(PerceptionResult):
+    """Outcome of ``camera_ray``: calibrated 3D ray through one image pixel.
+
+    camera: camera name (``"cam_head"``, ``"cam_left_wrist"`` or ``"cam_right_wrist"``).
+    pixel: ``(row, col)`` in original image coordinates, row 0 at top, col 0 at left.
+    origin: camera optical centre ``(x, y, z)`` in world metres.
+    direction: unit ray vector ``(dx, dy, dz)`` pointing into the scene in world coordinates.
+    provenance: snapshot and calibration provenance; check ``robo.require_current(result)``
+        before depending on the ray for a new action.
+    """
+
+    camera: str
+    pixel: tuple[float, float]
+    origin: tuple[float, float, float]
+    direction: tuple[float, float, float]
+    provenance: dict[str, Any] | None = None
+
+
+@dataclass(frozen=True, repr=False)
+class PlanePoint(WorldPoint):
+    """Outcome of ``ray_at_z``: intersection of a calibrated pixel ray with a horizontal plane.
+
+    pixel: ``(row, col)`` in original image coordinates, row 0 at top, col 0 at left.
+    xyz: world ``(x, y, z)`` on ``z = z_plane``, metres.
+    depth_m: positive distance along the camera's optical axis, metres.
+    camera: the camera the pixel was read from.
+    z_plane: horizontal world height ``z`` intersected (table top is ``0.765`` m).
+    provenance: snapshot, calibration and height-prior geometry provenance; use
+        ``robo.require_current(result)`` before depending on ``xyz`` for a new action.
+    """
+
+    pixel: tuple[float, float]
+    z_plane: float = 0.765
+
+
+@dataclass(frozen=True, repr=False)
+class TriangulatedPoint(PerceptionResult):
+    """Outcome of ``triangulate``: 3D point from two calibrated camera rays on one snapshot.
+
+    xyz: midpoint ``(x, y, z)`` of closest approach between the two rays, world metres.
+    miss_m: skew distance ``||q1 - q2||`` between the two rays at closest approach, metres
+        (tight pixel correspondences typically achieve ``< 0.005`` m).
+    cameras: ``(cam1, cam2)`` pair used for triangulation.
+    pixels: ``((row1, col1), (row2, col2))`` in original image coordinates.
+    depths_m: ``(depth1_m, depth2_m)`` positive optical-axis depths in ``cam1`` and ``cam2``.
+    provenance: snapshot and stereo-ray geometry provenance; use
+        ``robo.require_current(result)`` before depending on ``xyz`` for a new action.
+    """
+
+    xyz: tuple[float, float, float]
+    miss_m: float
+    cameras: tuple[str, str]
+    pixels: tuple[tuple[float, float], tuple[float, float]]
+    depths_m: tuple[float, float]
+    provenance: dict[str, Any] | None = None
+
+
+@dataclass(frozen=True)
+class PixelPoint:
+    """Outcome of ``project_point``: projection of a 3D world point into one camera.
+
+    camera: camera name projected into.
+    row / col: subpixel image coordinates, row 0 at top, col 0 at left.
+    depth_m: positive distance along the camera's optical axis, metres.
+    in_bounds: True when ``0 <= row < H`` and ``0 <= col < W``.
+    """
+
+    camera: str
+    row: float
+    col: float
+    depth_m: float
+    in_bounds: bool
 
 
 @dataclass(frozen=True, repr=False)
@@ -635,6 +711,10 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         Pick,
         Segment,
         WorldPoint,
+        CameraRay,
+        PlanePoint,
+        TriangulatedPoint,
+        PixelPoint,
     )
     NAME: ClassVar[str] = "robodojo"
     #: No success flag while the episode runs (RPent keeps it from its planner
@@ -670,6 +750,56 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
             "",
         ),
     )
+    #: SAM3 / mask-or-depth perception primitives hidden under ``no-sam``.
+    SAM_PRIMITIVES: ClassVar[tuple[str, ...]] = ("locate", "segment", "back_project")
+    #: Docstring edits applied after ``VLA_REFERENCE_EDITS`` under ``no-sam``.
+    SAM_REFERENCE_EDITS: ClassVar[tuple[tuple[str, str], ...]] = (
+        (
+            "    seen from above): ``locate``'s ``grasp_yaw`` is that line across an\n"
+            "    object's narrow side.  The table\n",
+            "    seen from above), across an object's narrow side.  The table\n",
+        ),
+        (
+            "``locate`` finds an object by a text\n"
+            "    prompt and measures it in 3D (centre, top, footprint, heading);\n"
+            "    ``segment`` / ``back_project`` give a mask centroid and the world point at\n"
+            "    one pixel.",
+            "``camera_meta`` gives calibrated intrinsics and extrinsics; inspect\n"
+            "    ``image`` / ``crop_grid`` to find ``(row, col)`` features, then map them\n"
+            "    into 3D with ``ray_at_z`` on a known plane or ``triangulate`` /\n"
+            "    ``observe_object`` across two views.",
+        ),
+        (
+            "    Accept a locate/segment/back_project or object-evidence result from this session.\n",
+            "    Accept a snapshot-bound geometry or object-evidence result from this session.\n",
+        ),
+        (
+            "    Omit landmarks to acquire distinctive material features inside text\n"
+            "    masks, with mutual descriptor matching across views. Once an anchor\n"
+            "    exists, recover its SAME features by distinctive descriptor/template\n"
+            "    matching against that frozen keyframe, even after empty intermediate\n"
+            "    observations. Failed/ambiguous matches are omitted, never substituted\n"
+            "    with old pixels or a predicted rigid-grasp pose. Masks nominate object\n"
+            "    regions; neither their centres nor silhouettes are triangulated.\n",
+            "    Supply landmarks on the initial capture to seed the frozen keyframe.\n"
+            "    Once an anchor exists, recover its SAME features by distinctive\n"
+            "    descriptor/template matching against that frozen keyframe, even after\n"
+            "    empty intermediate observations. Failed/ambiguous matches are omitted,\n"
+            "    never substituted with old pixels or a predicted rigid-grasp pose.\n",
+        ),
+        (
+            "            use its ``step`` here and its ``observation_id`` with\n"
+            "            ``segment`` / ``back_project`` so both read the same capture.",
+            "            use its ``step`` here and its ``observation_id`` with\n"
+            "            ``crop_grid``, ``ray_at_z`` or ``triangulate`` so all read the same capture.",
+        ),
+        (
+            "        held: confirm it moves with the arm (wrist camera, or ``locate``\n"
+            "        it again after a lift).",
+            "        held: confirm it moves with the arm (wrist camera and\n"
+            "        ``observe_hold`` after a lift).",
+        ),
+    )
     SUMMARY_KEYS: ClassVar[tuple[str, ...]] = (
         "success",
         "reached",
@@ -698,10 +828,23 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         "top_z",
         "grasp_yaw",
         "world_xyz",
+        "xyz",
+        "camera",
+        "cameras",
+        "pixel",
+        "pixels",
+        "origin",
+        "direction",
+        "miss_m",
+        "depth_m",
+        "depths_m",
+        "z_plane",
         "truncated",
         "step",
         "phase",
         "retained",
+        "closure_obstructed",
+        "thin_or_unobstructed_closure",
         "needs_visual_confirmation",
         "planned_step_bound",
         "tracking",
@@ -843,6 +986,508 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         return super().artifact(name, step=step)
 
     # -- perception ---------------------------------------------------------
+
+    def _camera_view(
+        self, tool: str, camera: str, source: dict[str, Any] | None = None,
+        *, observation_id: str | None = None,
+    ) -> tuple[Any, dict[str, Any] | None]:
+        """Build a calibrated ``robodojo_sight.View`` from ``camera_meta``."""
+        import numpy as np
+
+        from .hosts import robodojo_sight as sight
+
+        obs_id = source["observation_id"] if source is not None else observation_id
+        meta = self.camera_meta(camera, observation_id=obs_id)
+        try:
+            k = np.asarray(meta.get("intrinsic_matrix"), dtype=np.float64)
+            t = np.asarray(meta.get("extrinsic_matrix"), dtype=np.float64)
+            raw_shape = meta.get("shape") or (480, 640)
+            shape = (int(raw_shape[0]), int(raw_shape[1]))
+            valid = (
+                k.shape == (3, 3)
+                and t.shape == (4, 4)
+                and shape[0] > 0
+                and shape[1] > 0
+                and bool(np.isfinite(k).all())
+                and bool(np.isfinite(t).all())
+                and float(k[0, 0]) > 0.0
+                and float(k[1, 1]) > 0.0
+            )
+        except (TypeError, ValueError, IndexError):
+            valid = False
+            shape = (0, 0)
+        if not valid:
+            raise ToolError(tool, f"Missing or invalid camera calibration for {camera}")
+        return sight.View(k, t, shape), deepcopy(meta.get("provenance"))
+
+    def camera_ray(
+        self,
+        row: float,
+        col: float,
+        camera: str = "cam_head",
+        *,
+        observation_id: str | None = None,
+    ) -> CameraRay:
+        """Return the calibrated 3D camera origin and unit world ray through ``(row, col)``.
+
+        Args:
+            row / col: pixel coordinates in ``camera`` (row 0 at top, col 0 at left).
+            camera: ``"cam_head"`` (default), ``"cam_left_wrist"`` or ``"cam_right_wrist"``.
+            observation_id: snapshot to bind calibration to; None pins the latest capture.
+        Returns:
+            CameraRay with ``origin`` and unit ``direction`` in world metres.
+        Raises:
+            ToolError: camera calibration is missing or invalid.
+        """
+        import numpy as np
+
+        cam = _camera(camera, self.CAMERAS)
+        r_f, c_f = _floats((row, col), 2, "pixel")
+        kwargs: dict[str, Any] = {"row": r_f, "col": c_f, "camera": cam}
+
+        def compute(source: dict[str, Any] | None) -> tuple[dict[str, Any], dict[str, Any]]:
+            view, cal_prov = self._camera_view("camera_ray", cam, source)
+            d_per_depth = np.asarray(view.rays(np.float64(r_f), np.float64(c_f)), dtype=np.float64)
+            norm = float(np.linalg.norm(d_per_depth))
+            if not math.isfinite(norm) or norm <= 1e-12:
+                raise ToolError("camera_ray", f"Degenerate camera ray for {cam}")
+            u = d_per_depth / norm
+            origin = (float(view.pos[0]), float(view.pos[1]), float(view.pos[2]))
+            direction = (float(u[0]), float(u[1]), float(u[2]))
+            payload: dict[str, Any] = {
+                "camera": cam,
+                "pixel": (r_f, c_f),
+                "origin": origin,
+                "direction": direction,
+                "calibration": {cam: cal_prov} if cal_prov is not None else None,
+            }
+            geometry = {
+                "basis": "calibrated_camera_ray",
+                "world_frame": "robodojo_world",
+                "length_unit": "m",
+                "depth_is_measured": False,
+                "height_prior_used": False,
+            }
+            return payload, geometry
+
+        data, provenance = self._local_perception(
+            "camera_ray", kwargs, compute, observation_id=observation_id
+        )
+        return CameraRay(
+            camera=cam,
+            pixel=data["pixel"],
+            origin=data["origin"],
+            direction=data["direction"],
+            provenance=provenance,
+        )
+
+    def ray_at_z(
+        self,
+        row: float,
+        col: float,
+        z: float = 0.765,
+        camera: str = "cam_head",
+        *,
+        observation_id: str | None = None,
+    ) -> PlanePoint:
+        """Intersect the calibrated camera ray at ``(row, col)`` with horizontal plane ``world_z = z``.
+
+        Args:
+            row / col: pixel coordinates in ``camera`` (row 0 at top, col 0 at left).
+            z: world height of the horizontal support plane in metres (default ``0.765`` = table top).
+            camera: ``"cam_head"`` (default), ``"cam_left_wrist"`` or ``"cam_right_wrist"``.
+            observation_id: snapshot to bind calibration to; None pins the latest capture.
+        Returns:
+            PlanePoint (a ``WorldPoint`` subclass) with ``xyz`` on ``z`` and ``depth_m``.
+            Use ``robo.require_current(result)`` before depending on ``xyz`` for an action.
+        Raises:
+            ToolError: ray is parallel to the plane, the plane lies behind the camera,
+                or camera calibration is invalid.
+        """
+        import numpy as np
+
+        cam = _camera(camera, self.CAMERAS)
+        r_f, c_f = _floats((row, col), 2, "pixel")
+        z_f = _floats((z,), 1, "z")[0]
+        kwargs: dict[str, Any] = {"row": r_f, "col": c_f, "z": z_f, "camera": cam}
+
+        def compute(source: dict[str, Any] | None) -> tuple[dict[str, Any], dict[str, Any]]:
+            view, cal_prov = self._camera_view("ray_at_z", cam, source)
+            d_per_depth = np.asarray(view.rays(np.float64(r_f), np.float64(c_f)), dtype=np.float64)
+            norm = float(np.linalg.norm(d_per_depth))
+            if not math.isfinite(norm) or norm <= 1e-12:
+                raise ToolError("ray_at_z", f"Degenerate camera ray for {cam}")
+            u = d_per_depth / norm
+            if abs(float(u[2])) < 1e-8:
+                raise ToolError(
+                    "ray_at_z",
+                    f"Camera ray at ({r_f:.1f}, {c_f:.1f}) in {cam} is nearly parallel to plane z={z_f:.4f}",
+                )
+            t_param = (z_f - float(view.pos[2])) / float(u[2])
+            depth_m = t_param / norm
+            if not math.isfinite(t_param) or t_param <= 0.0 or depth_m <= 0.0:
+                raise ToolError(
+                    "ray_at_z",
+                    f"Plane z={z_f:.4f} lies behind camera {cam} along ray ({r_f:.1f}, {c_f:.1f})",
+                )
+            pt = view.pos + depth_m * d_per_depth
+            xyz = (float(pt[0]), float(pt[1]), float(z_f))
+            payload: dict[str, Any] = {
+                "camera": cam,
+                "pixel": (r_f, c_f),
+                "xyz": xyz,
+                "world_xyz": xyz,
+                "depth_m": float(depth_m),
+                "z_plane": float(z_f),
+                "calibration": {cam: cal_prov} if cal_prov is not None else None,
+            }
+            geometry = {
+                "basis": "calibrated_plane_intersection",
+                "world_frame": "robodojo_world",
+                "length_unit": "m",
+                "table_z_m": float(z_f),
+                "depth_is_measured": False,
+                "height_prior_used": True,
+                "prior_scope": "horizontal_plane_z",
+                "assumptions": [f"point lies on horizontal plane world z = {float(z_f):.6g} m"],
+            }
+            return payload, geometry
+
+        data, provenance = self._local_perception(
+            "ray_at_z", kwargs, compute, observation_id=observation_id
+        )
+        return PlanePoint(
+            pixel=data["pixel"],
+            xyz=data["xyz"],
+            depth_m=data["depth_m"],
+            camera=cam,
+            z_plane=data["z_plane"],
+            provenance=provenance,
+        )
+
+    def triangulate(
+        self,
+        cam1: str,
+        rc1: Sequence[float],
+        cam2: str,
+        rc2: Sequence[float],
+        *,
+        observation_id: str | None = None,
+        max_miss_m: float = 0.025,
+    ) -> TriangulatedPoint:
+        """Triangulate a 3D feature seen at ``rc1`` in ``cam1`` and ``rc2`` in ``cam2`` on one snapshot.
+
+        Args:
+            cam1 / cam2: two distinct cameras observing the same physical 3D point.
+            rc1 / rc2: ``(row, col)`` pixel coordinates in ``cam1`` and ``cam2``.
+            observation_id: snapshot to resolve both cameras against; None pins the latest capture.
+            max_miss_m: maximum allowed ray-to-ray skew distance in metres (default ``0.025``).
+        Returns:
+            TriangulatedPoint with midpoint ``xyz``, skew ``miss_m`` and optical ``depths_m``.
+            Use ``robo.require_current(result)`` before depending on ``xyz`` for an action.
+        Raises:
+            ToolError: cameras are identical, rays are nearly parallel, the intersection lies
+                behind either camera, or ``miss_m > max_miss_m``.
+        """
+        import numpy as np
+
+        c1_name = _camera(cam1, self.CAMERAS)
+        c2_name = _camera(cam2, self.CAMERAS)
+        if c1_name == c2_name:
+            raise ToolError("triangulate", f"triangulate requires two distinct cameras, got {c1_name!r}")
+        r1, col1 = _floats(rc1, 2, "rc1")
+        r2, col2 = _floats(rc2, 2, "rc2")
+        tol = _floats((max_miss_m,), 1, "max_miss_m")[0]
+        if tol <= 0.0:
+            raise ValueError(f"max_miss_m must be positive, got {max_miss_m!r}")
+        kwargs: dict[str, Any] = {
+            "cam1": c1_name,
+            "rc1": [r1, col1],
+            "cam2": c2_name,
+            "rc2": [r2, col2],
+            "max_miss_m": tol,
+        }
+
+        def compute(source: dict[str, Any] | None) -> tuple[dict[str, Any], dict[str, Any]]:
+            view1, cal1 = self._camera_view("triangulate", c1_name, source)
+            view2, cal2 = self._camera_view("triangulate", c2_name, source)
+            d1 = np.asarray(view1.rays(np.float64(r1), np.float64(col1)), dtype=np.float64)
+            d2 = np.asarray(view2.rays(np.float64(r2), np.float64(col2)), dtype=np.float64)
+            n1 = float(np.linalg.norm(d1))
+            n2 = float(np.linalg.norm(d2))
+            if not (math.isfinite(n1) and math.isfinite(n2)) or n1 <= 1e-12 or n2 <= 1e-12:
+                raise ToolError("triangulate", "Degenerate camera ray in triangulation")
+            u1 = d1 / n1
+            u2 = d2 / n2
+            cross_norm = float(np.linalg.norm(np.cross(u1, u2)))
+            if not math.isfinite(cross_norm) or cross_norm < 1e-6:
+                raise ToolError(
+                    "triangulate", "Camera rays are nearly parallel; insufficient stereo baseline"
+                )
+            p1 = np.asarray(view1.pos, dtype=np.float64)
+            p2 = np.asarray(view2.pos, dtype=np.float64)
+            w0 = p1 - p2
+            b = float(np.dot(u1, u2))
+            d = float(np.dot(u1, w0))
+            e = float(np.dot(u2, w0))
+            denom = 1.0 - b * b
+            if denom <= 1e-12:
+                raise ToolError(
+                    "triangulate", "Camera rays are nearly parallel; insufficient stereo baseline"
+                )
+            s1 = (b * e - d) / denom
+            s2 = (e - b * d) / denom
+            if not (math.isfinite(s1) and math.isfinite(s2)) or s1 <= 0.0 or s2 <= 0.0:
+                raise ToolError(
+                    "triangulate", "Triangulated point lies behind at least one camera"
+                )
+            q1 = p1 + s1 * u1
+            q2 = p2 + s2 * u2
+            mid = 0.5 * (q1 + q2)
+            miss_m = float(np.linalg.norm(q1 - q2))
+            _, _, depth1_arr = view1.project(mid)
+            _, _, depth2_arr = view2.project(mid)
+            depth1 = float(depth1_arr)
+            depth2 = float(depth2_arr)
+            if not (math.isfinite(depth1) and math.isfinite(depth2)) or depth1 <= 0.0 or depth2 <= 0.0:
+                raise ToolError(
+                    "triangulate", "Triangulated point lies behind at least one camera"
+                )
+            if miss_m > tol:
+                raise ToolError(
+                    "triangulate",
+                    f"Rays miss by {miss_m*1000:.1f} mm (> {tol*1000:.1f} mm); "
+                    "pixels do not match the same 3D feature",
+                )
+            xyz = (float(mid[0]), float(mid[1]), float(mid[2]))
+            cal_map = {k: v for k, v in ((c1_name, cal1), (c2_name, cal2)) if v is not None}
+            payload: dict[str, Any] = {
+                "xyz": xyz,
+                "world_xyz": xyz,
+                "miss_m": miss_m,
+                "cameras": (c1_name, c2_name),
+                "pixels": ((r1, col1), (r2, col2)),
+                "depths_m": (depth1, depth2),
+                "calibration": cal_map or None,
+            }
+            geometry = {
+                "basis": "calibrated_stereo_rays",
+                "world_frame": "robodojo_world",
+                "length_unit": "m",
+                "depth_is_measured": True,
+                "height_prior_used": False,
+                "agreement_view_count": 2,
+                "uncertainty_note": f"ray skew miss {miss_m * 1000.0:.2f} mm",
+            }
+            return payload, geometry
+
+        data, provenance = self._local_perception(
+            "triangulate", kwargs, compute, observation_id=observation_id
+        )
+        return TriangulatedPoint(
+            xyz=data["xyz"],
+            miss_m=data["miss_m"],
+            cameras=data["cameras"],
+            pixels=data["pixels"],
+            depths_m=data["depths_m"],
+            provenance=provenance,
+        )
+
+    def project_point(
+        self,
+        xyz: Sequence[float],
+        camera: str = "cam_head",
+        *,
+        observation_id: str | None = None,
+    ) -> PixelPoint | None:
+        """Project world ``xyz`` into ``camera`` ``(row, col)`` pixels; return ``None`` if behind camera.
+
+        Args:
+            xyz: world coordinates ``[x, y, z]`` in metres.
+            camera: ``"cam_head"`` (default), ``"cam_left_wrist"`` or ``"cam_right_wrist"``.
+            observation_id: snapshot to bind calibration to; None uses the latest capture.
+        Returns:
+            PixelPoint with ``row``, ``col``, ``depth_m`` and ``in_bounds``, or ``None``
+            when ``depth_m <= 0``.
+        """
+        import numpy as np
+
+        pt = _floats(xyz, 3, "xyz")
+        cam = _camera(camera, self.CAMERAS)
+        view, _ = self._camera_view("project_point", cam, observation_id=observation_id)
+        r_arr, c_arr, depth_arr = view.project(np.asarray(pt, dtype=np.float64))
+        depth_f = float(depth_arr)
+        if not math.isfinite(depth_f) or depth_f <= 0.0:
+            return None
+        r_f, c_f = float(r_arr), float(c_arr)
+        h, w = view.shape
+        return PixelPoint(
+            camera=cam,
+            row=r_f,
+            col=c_f,
+            depth_m=depth_f,
+            in_bounds=bool(0.0 <= r_f < h and 0.0 <= c_f < w),
+        )
+
+    def crop_grid(
+        self,
+        camera: str = "cam_head",
+        box: Sequence[int] | None = None,
+        *,
+        step_px: int = 25,
+        points: Sequence[Sequence[float]] = (),
+        scale: int = 2,
+        observation_id: str | None = None,
+    ) -> Any:
+        """Return an annotated RGB ``uint8`` crop with original-image ``(row, col)`` grid ticks and markers.
+
+        Pass the returned array directly to ``display(robo.crop_grid(...))`` to visually
+        verify candidate ``(row, col)`` points before calling ``ray_at_z``, ``triangulate``
+        or ``observe_object``.
+
+        Args:
+            camera: ``"cam_head"`` (default), ``"cam_left_wrist"`` or ``"cam_right_wrist"``.
+            box: ``(row0, col0, row1, col1)`` in original image pixels; None uses ``(0, 0, H, W)``.
+            step_px: gridline spacing in original image pixels (``>= 5``, default ``25``).
+            points: optional ``[(row, col), ...]`` markers in original image pixels, drawn as
+                numbered crosshairs ``0, 1, ...``.
+            scale: nearest-neighbour integer upscale factor (``>= 1``, default ``2``).
+            observation_id: snapshot whose recorded image to read; None reads the latest step.
+        Returns:
+            RGB ``numpy.ndarray`` of dtype ``uint8`` with top and left coordinate rulers.
+        """
+        import numpy as np
+        from PIL import Image, ImageDraw
+
+        cam = _camera(camera, self.CAMERAS)
+        if isinstance(scale, bool) or int(scale) != scale or int(scale) < 1:
+            raise ValueError(f"scale must be an integer >= 1, got {scale!r}")
+        if isinstance(step_px, bool) or int(step_px) != step_px or int(step_px) < 5:
+            raise ValueError(f"step_px must be an integer >= 5, got {step_px!r}")
+        scale_i = int(scale)
+        step_i = int(step_px)
+        pts = [_floats(pt, 2, "point") for pt in points]
+
+        if observation_id is not None:
+            _, img_step = self._camera_snapshot(-1, observation_id)
+            raw = self.image(cam, step=img_step)
+        else:
+            raw = self.image(cam)
+        arr = np.asarray(raw, dtype=np.uint8)
+        if arr.ndim != 3 or arr.shape[2] < 3:
+            raise ValueError(f"Expected HxWx3 RGB image array, got shape {arr.shape!r}")
+        arr = arr[:, :, :3]
+        h, w = int(arr.shape[0]), int(arr.shape[1])
+
+        if box is None:
+            r0, c0, r1, c1 = 0, 0, h, w
+        else:
+            if isinstance(box, (str, bytes)):
+                raise ValueError(f"box must be (row0, col0, row1, col1), got {box!r}")
+            vals = _floats(box, 4, "box")
+            if any(isinstance(v, bool) or int(f) != f for v, f in zip(box, vals)):
+                raise ValueError(f"box bounds must be integers, got {box!r}")
+            r0, c0, r1, c1 = (int(f) for f in vals)
+            if not (0 <= r0 < r1 <= h and 0 <= c0 < c1 <= w):
+                raise ValueError(
+                    f"box (row0, col0, row1, col1) must satisfy 0 <= r0 < r1 <= {h} and "
+                    f"0 <= c0 < c1 <= {w}, got {(r0, c0, r1, c1)!r}"
+                )
+
+        crop = arr[r0:r1, c0:c1]
+        crop_h, crop_w = r1 - r0, c1 - c0
+        scaled_h, scaled_w = crop_h * scale_i, crop_w * scale_i
+        pil_crop = Image.fromarray(crop)
+        if scale_i > 1:
+            resample = getattr(getattr(Image, "Resampling", Image), "NEAREST")
+            pil_crop = pil_crop.resize((scaled_w, scaled_h), resample=resample)
+
+        margin_top = 26
+        margin_left = 36
+        canvas_w = margin_left + scaled_w
+        canvas_h = margin_top + scaled_h
+
+        # Alpha-composite subtle gridlines over the upscaled crop so features stay visible.
+        crop_rgba = pil_crop.convert("RGBA")
+        grid_layer = Image.new("RGBA", (scaled_w, scaled_h), (0, 0, 0, 0))
+        grid_draw = ImageDraw.Draw(grid_layer)
+
+        first_r = ((r0 + step_i - 1) // step_i) * step_i
+        row_ticks: list[tuple[int, int]] = []
+        for r in range(first_r, r1, step_i):
+            y_local = min(scaled_h - 1, max(0, (r - r0) * scale_i + (scale_i // 2)))
+            grid_draw.line([(0, y_local), (scaled_w - 1, y_local)], fill=(255, 255, 255, 72), width=1)
+            row_ticks.append((r, margin_top + y_local))
+
+        first_c = ((c0 + step_i - 1) // step_i) * step_i
+        col_ticks: list[tuple[int, int]] = []
+        for c in range(first_c, c1, step_i):
+            x_local = min(scaled_w - 1, max(0, (c - c0) * scale_i + (scale_i // 2)))
+            grid_draw.line([(x_local, 0), (x_local, scaled_h - 1)], fill=(255, 255, 255, 72), width=1)
+            col_ticks.append((c, margin_left + x_local))
+
+        blended_crop = Image.alpha_composite(crop_rgba, grid_layer).convert("RGB")
+        canvas = Image.new("RGB", (canvas_w, canvas_h), (24, 26, 30))
+        canvas.paste(blended_crop, (margin_left, margin_top))
+        draw = ImageDraw.Draw(canvas)
+
+        # Ruler borders and original-image (row, col) tick labels.
+        draw.line([(margin_left - 1, 0), (margin_left - 1, canvas_h - 1)], fill=(96, 102, 115), width=1)
+        draw.line([(0, margin_top - 1), (canvas_w - 1, margin_top - 1)], fill=(96, 102, 115), width=1)
+        draw.text((2, 7), "r\\c", fill=(165, 175, 195))
+
+        last_label_y = -100
+        for r, y_canvas in row_ticks:
+            draw.line([(margin_left - 4, y_canvas), (margin_left - 1, y_canvas)], fill=(210, 215, 225), width=1)
+            if y_canvas - last_label_y >= 11:
+                label_y = max(margin_top, min(canvas_h - 10, y_canvas - 5))
+                draw.text((2, label_y), f"r={r}" if r < 100 else f"{r}", fill=(232, 236, 244))
+                last_label_y = y_canvas
+
+        last_label_x = -100
+        for c, x_canvas in col_ticks:
+            draw.line([(x_canvas, margin_top - 4), (x_canvas, margin_top - 1)], fill=(210, 215, 225), width=1)
+            label = f"c={c}" if not col_ticks or c == col_ticks[0][0] else f"{c}"
+            min_gap = max(24, len(label) * 6 + 4)
+            if x_canvas - last_label_x >= min_gap:
+                label_x = max(margin_left, min(canvas_w - len(label) * 6 - 1, x_canvas - 6))
+                draw.text((label_x, 7), label, fill=(232, 236, 244))
+                last_label_x = x_canvas
+
+        palette = (
+            (255, 64, 64),
+            (64, 255, 128),
+            (64, 200, 255),
+            (255, 220, 64),
+            (255, 96, 220),
+            (255, 160, 64),
+        )
+        arm_px = max(5, 3 * scale_i)
+        for idx, (pr, pc) in enumerate(pts):
+            if not (r0 <= pr < r1 and c0 <= pc < c1):
+                continue
+            x_c = margin_left + min(
+                scaled_w - 1, max(0, int(math.floor((pc - c0) * scale_i + (scale_i // 2) + 0.5)))
+            )
+            y_c = margin_top + min(
+                scaled_h - 1, max(0, int(math.floor((pr - r0) * scale_i + (scale_i // 2) + 0.5)))
+            )
+            color = palette[idx % len(palette)]
+            x0_line = max(margin_left, x_c - arm_px)
+            x1_line = min(canvas_w - 1, x_c + arm_px)
+            y0_line = max(margin_top, y_c - arm_px)
+            y1_line = min(canvas_h - 1, y_c + arm_px)
+            draw.line([(x0_line, y_c), (x1_line, y_c)], fill=(0, 0, 0), width=3)
+            draw.line([(x_c, y0_line), (x_c, y1_line)], fill=(0, 0, 0), width=3)
+            draw.line([(x0_line, y_c), (x1_line, y_c)], fill=color, width=1)
+            draw.line([(x_c, y0_line), (x_c, y1_line)], fill=color, width=1)
+            tag = str(idx)
+            tx = min(canvas_w - len(tag) * 6 - 2, x_c + 4)
+            ty = max(margin_top + 1, y_c - 11)
+            draw.rectangle([(tx - 1, ty - 1), (tx + len(tag) * 6, ty + 9)], fill=(0, 0, 0))
+            draw.text((tx, ty), tag, fill=color)
+
+        return np.asarray(canvas, dtype=np.uint8)
 
     def segment(
         self,
@@ -1419,12 +2064,14 @@ ADAPTER = RobotAdapter(
     ),
     services="a frozen Pi0.5 VLA and a SAM3 segmentation service",
     services_novla="a SAM3 segmentation service",
+    services_nosam="",
 )
 
 
 __all__ = [
     "ADAPTER",
     "ArmState",
+    "CameraRay",
     "Gripper",
     "HOME_MAX_ACTIONS",
     "HOME_TOL_RAD",
@@ -1434,11 +2081,14 @@ __all__ = [
     "Move",
     "ObjectPose",
     "Pick",
+    "PixelPoint",
+    "PlanePoint",
     "RobodojoRobot",
     "STATEFUL_TOOLS",
     "Segment",
     "State",
     "TCP_OFFSET",
+    "TriangulatedPoint",
     "VLA_CHUNK_ACTIONS",
     "WorldPoint",
     "gripper_angles",

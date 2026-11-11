@@ -183,18 +183,18 @@ def test_refinement_resume_keeps_adjustment_identity_and_original_offset(tmp_pat
     assert len(env.actions) == count
 
 
-def test_empty_close_requires_replanning_instead_of_resuming_or_advancing(tmp_path):
+def test_failed_close_requires_replanning_instead_of_resuming_or_advancing(tmp_path):
     env, robo, _, _ = setup(tmp_path)
     through(robo, ("open", "approach", "align"))
     original = env.step
 
-    def empty(action):
+    def jammed_open(action):
         result = original(action)
         if action["right_ee_joint_state"] == [0.]:
-            env.grips["right"] = 0.
+            env.grips["right"] = .98
         return result
 
-    env.step = empty
+    env.step = jammed_open
     result = robo.grasp_step("pick", "close")
     assert result["operation"]["state"] == "needs_replan"
     assert result["operation"]["effect"] == "known"
@@ -202,6 +202,28 @@ def test_empty_close_requires_replanning_instead_of_resuming_or_advancing(tmp_pa
     count = len(env.actions)
     robo.resume_operation(ref(result))
     assert len(env.actions) == count
+
+
+def test_thin_full_closure_advances_to_probe_and_requires_visual_verification(tmp_path):
+    env, robo, _, _ = setup(tmp_path)
+    through(robo, ("open", "approach", "align"))
+    original = env.step
+
+    def thin_close(action):
+        result = original(action)
+        if action["right_ee_joint_state"] == [0.]:
+            env.grips["right"] = 0.
+        return result
+
+    env.step = thin_close
+    closed = robo.grasp_step("pick", "close")
+    assert closed["operation"]["state"] == "ready"
+    assert closed["operation"]["progress"]["next_phase"] == "probe"
+    assert closed["operation"]["verification"]["status"] == "required"
+    probed = robo.grasp_step("pick", "probe")
+    assert probed["operation"]["state"] == "completed"
+    assert probed["operation"]["execution_complete"]
+    assert probed["operation"]["verification"]["status"] == "required"
 
 
 def test_handoff_operation_status_reports_ready_advance_instead_of_needs_replan(tmp_path):

@@ -127,10 +127,13 @@ PROBE_TABLE_SHARE = 0.25
 #: ``move_pose`` may take the half-turned pose (fingers swapped) only with a gripper this open.
 OPEN_FOR_HALF_TURN = 0.9
 #: A gripper closed on nothing reads an opening of 0.0 (448 closes in the sweeps read under
-#: 0.0025 and six more under 0.01); after a close, an opening above this means the fingers
-#: stopped on something.  It was 0.05 once: a coin, a key or a mug's handle stops them between
-#: 0.01 and 0.05, and 47 such closes were reported as holding nothing.
+#: 0.0025 and six more under 0.01); above HOLD_MIN_OPENING (~3.4 mm jaw gap), finger separation
+#: alone indicates an obstruction, whereas thin <3.5 mm parts (key shafts, coins, cards) also
+#: settle in 0.00..0.01 and require post-probe visual confirmation rather than opening gating.
 HOLD_MIN_OPENING = 0.01
+#: Minimum initial opening (~5.0 mm jaw gap) from which a drop to <= HOLD_MIN_OPENING during
+#: ``retain`` / ``probe`` / ``handoff`` unambiguously indicates that a wider held object slipped.
+HOLD_COLLAPSE_FROM_OPENING = 0.025
 #: The width of what is held at a measured opening, metres: GRIP_ZERO_M + GRIP_SPAN_M x
 #: opening.  Fitted in the simulator to cubes of 3.0 and 3.5 cm held across two faces
 #: (openings 0.254 and 0.300) and across the diagonal (0.368 and 0.433) and to an 8 cm bottle
@@ -181,6 +184,34 @@ def _command(gripper: Any) -> float | None:
     if g < 0:
         return 1.0
     return None
+
+
+def retained_closure(
+    command: float,
+    opening: float,
+    initial_opening: float | None = None,
+) -> bool:
+    """Return whether a commanded-closed gripper satisfies ``retain`` without thin-part false negatives.
+
+    Parts thinner than ~3.5 mm (e.g. key shafts, coins, cards) settle at
+    ``0.0 <= opening <= HOLD_MIN_OPENING`` just like an empty close, so joint
+    opening alone cannot reject them; possession is verified visually after
+    ``probe``. A collapse from a wider initial hold
+    (``initial_opening > HOLD_COLLAPSE_FROM_OPENING`` down to ``<= HOLD_MIN_OPENING``)
+    still triggers immediate slip loss.
+    """
+    if not (math.isfinite(command) and math.isfinite(opening)):
+        return False
+    if not (command <= 0.05 and 0.0 <= opening < 0.95):
+        return False
+    if (
+        initial_opening is not None
+        and math.isfinite(initial_opening)
+        and initial_opening > HOLD_COLLAPSE_FROM_OPENING
+        and opening <= HOLD_MIN_OPENING
+    ):
+        return False
+    return True
 
 
 def _act(
@@ -1847,6 +1878,7 @@ def register(toolkit: Any) -> None:
 __all__ = [
     "GRIP_SPAN_M",
     "GRIP_ZERO_M",
+    "HOLD_COLLAPSE_FROM_OPENING",
     "HOLD_MIN_OPENING",
     "HOME_MAX_ACTIONS",
     "HOME_TOL_RAD",
@@ -1862,5 +1894,6 @@ __all__ = [
     "object_geometry",
     "probe",
     "register",
+    "retained_closure",
     "world_points",
 ]

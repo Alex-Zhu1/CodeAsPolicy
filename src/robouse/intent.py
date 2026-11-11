@@ -87,9 +87,11 @@ class IntentMixin:
         verify is returned as needs_observation, never silently certified from
         TCP arrival. Without it, reached still means motion completion only.
         The executor chooses spacing, speed and at most two arrival corrections.
-        By default all remaining native actions are available; there is no
-        required future-task or return reserve. Optional max_steps caps the
-        whole intent across continuations; reserve_steps is explicit only.
+        By default all remaining native actions are available (reserve_steps=0).
+        Optional max_steps caps the whole intent across continuations; pass
+        reserve_steps (or max_steps) on late-stage or corrective motions to
+        protect a contingency/cleanup reserve for post-placement recovery,
+        release and homing.
         If the whole route does not fit, the executor attempts a shorter part
         with a resting endpoint and returns paused/segment_complete. This is
         progress, not arrival: inspect and resume the SAME ID. Cost estimates
@@ -97,8 +99,8 @@ class IntentMixin:
         unchanged. The native episode limit remains a hard limit.
 
         Returns status, reached, actual poses, steps_used (this dispatch),
-        intent_steps_used (cumulative), remaining_steps, tracking, needs_model
-        and needs_observation. Inspect stop_reason when needs_model is true:
+        intent_steps_used (cumulative), remaining_steps, reserve_steps, tracking,
+        needs_model and needs_observation. Inspect stop_reason when needs_model is true:
         change the grasp/direction/path or allocation with a new intent only
         after observing the actual state. Normal checkpoints continue locally.
         After a known interruption, reconcile then resume_motion(intent_id);
@@ -303,8 +305,9 @@ class IntentMixin:
         Call grasp_step for open, approach, align, close, probe in that order.
         Each stage returns feedback before the next. Only the CURRENT stage is
         planned: an expensive future probe or task is not a pickup veto.
-        Default budget is remaining native actions, with no return reserve.
-        Explicit max_steps covers all stages and refinements cumulatively.
+        Default budget is remaining native actions; pass explicit max_steps to
+        cap cumulative stages/refinements and preserve a contingency/cleanup
+        reserve for post-placement release, recovery and homing.
         The ID freezes the plan. Use it to continue, never wrap in once().
         constraints uses execute_motion's geometry bounds and is frozen for
         every movement, refinement, and native opening/closing action.
@@ -368,11 +371,13 @@ class IntentMixin:
         must finish before alignment; a failed align may be refined inside its
         bounds. No automatic regrasp/opening, no blind retries.
 
-        close requires measured alignment and reports obstructed closure only.
+        close requires measured alignment and settles to full squeeze (including
+        opening <= 0.01 on <3.5 mm thin parts such as key shafts, coins or cards).
         For a dual-arm handoff, after the receiving arm completes close and the
         donor arm opens and withdraws, call stage='handoff' to verify stationary
         receiver hold and reacquire state/evidence before stage='probe'.
-        probe requires retained closure, keeps squeezing, and stops on loss.
+        probe keeps squeezing (stopping if a wider grasp collapses) so wrist/head
+        images and object_evidence can verify whether the target lifted.
         retained/grasp_complete do NOT verify object identity or stability:
         inspect fresh images and object_evidence (when bound via object_ref)
         before carrying, turning or releasing a donor. image_consistent is

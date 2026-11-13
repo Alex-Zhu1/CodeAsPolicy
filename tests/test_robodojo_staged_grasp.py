@@ -501,3 +501,36 @@ def test_grasp_constraints_stay_frozen_across_operation_resume_and_id_conflicts(
     )
     assert conflict["stop_reason"] == "grasp_identity_conflict"
     assert len(env.actions) == 2
+
+
+def test_five_stage_grasp_with_large_reorientation_completes_within_compact_step_budget(tmp_path):
+    env, robo, _ = _precision_station(tmp_path)
+    original_step = env.step
+
+    def obstructed_close(action):
+        value = original_step(action)
+        if action["left_ee_joint_state"] == [0.]:
+            env.grips["left"] = .158
+        return value
+
+    env.step = obstructed_close
+    target = {
+        "xyz": [-0.1136718057940872, -0.21590945046771678, 0.78],
+        "quat": [0.4473469441437785, 0.5476136517337958, 0.4473469441437785, -0.547613651733796],
+    }
+    prepared = robo.begin_grasp(
+        "compact_pick", target, arm="left",
+        approach=[0., 0., .065], probe=[0., 0., .045], opening=1.0,
+    )
+    assert prepared["status"] == "ready"
+    counts = {}
+    for stage in ("open", "approach", "align", "close", "probe"):
+        before = len(env.actions)
+        result = robo.grasp_step("compact_pick", stage)
+        assert result["reached"], (stage, result)
+        counts[stage] = len(env.actions) - before
+    assert result["grasp_complete"] and result["retained"]
+    assert counts["approach"] <= 25
+    assert counts["align"] <= 10
+    assert counts["probe"] <= 7
+    assert len(env.actions) == result["grasp_steps_used"] <= 45

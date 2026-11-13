@@ -686,3 +686,29 @@ def test_free_space_carry_reorientation_uses_coarser_angular_spacing_than_approa
         "carry_free", right=rotated, interaction="free", holding={"right": "retain"},
     )
     assert executed["reached"] and executed["reserve_steps"] == 0
+
+
+def test_precision_approach_window_and_joint_fallback_keep_step_budget_compact(tmp_path):
+    env, robo, _ = _precision_station(tmp_path)
+    start = robo.observe().right
+    descent = empty_move(
+        robo, "precise_descent", right=start.shifted(dz=.065),
+        interaction="approach", completion={"position_m": .0015, "orientation_deg": 1.},
+        preview=True,
+    )
+    assert descent["accepted"]
+    assert descent["policy"]["motion"]["window"]["distance_m"] == pytest.approx(.01)
+    assert descent["policy"]["motion"]["window"]["near"]["phase"] == "precision"
+    assert descent["planned_steps"] <= 12
+
+    swing_target = {
+        "xyz": [-0.1136718057940872, -0.21590945046771678, 0.845],
+        "quat": [0.4473469441437785, 0.5476136517337958, 0.4473469441437785, -0.547613651733796],
+    }
+    swing = robo.execute_motion(
+        "free_swing_compact", left=swing_target, interaction="free",
+        holding={"left": "empty"}, preview=True,
+    )
+    assert swing["accepted"] and swing["planned_path"] == "joint"
+    assert swing["planned_steps"] <= 23
+    assert not env.actions

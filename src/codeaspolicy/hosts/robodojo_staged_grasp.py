@@ -271,10 +271,10 @@ class GraspController:
                     goal[:3, 3] += record["contract"]["probe"]
                 result = self.intents.prepare(
                     mid, targets={arm: self.intents._pose(goal)},
-                    interaction="free" if stage == "approach" else "approach",
+                    interaction="approach" if stage == "align" else "free",
                     directions={}, holding={arm: "retain" if stage == "probe" else "empty"},
                     completion=(record["completion"] if stage == "align" else
-                                {"position_m": .005 if stage == "approach" else .003,
+                                {"position_m": .005 if stage == "approach" else .004,
                                  "orientation_deg": 3.}),
                     max_steps=available, reserve_steps=0, keep_relative=False,
                     constraints=copy.deepcopy(record["contract"]["constraints"]))

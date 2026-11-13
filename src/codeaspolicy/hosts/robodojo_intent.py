@@ -185,11 +185,11 @@ class IntentController:
             for a in active_arms
         )
         far_profile = (
-            resolve_motion("transit")
+            MotionProfile(velocity=3.0, acceleration=24.0, jerk=950.0, phase="transit")
             if empty
-            else MotionProfile(velocity=1.1, acceleration=6.0, jerk=90.0, phase="carry")
+            else MotionProfile(velocity=1.1, acceleration=6.0, jerk=800.0, phase="carry")
             if thin_retain
-            else resolve_motion("carry")
+            else MotionProfile(velocity=1.8, acceleration=18.0, jerk=900.0, phase="carry")
         )
         precise = record["position_m"] < .004 or record["orientation_deg"] < 2.
         near = "precision" if precise else "approach"
@@ -204,9 +204,15 @@ class IntentController:
             spacing = .02
         elif mode in ("free", "approach"):
             # Region scales with the requested accuracy, not an object's label.
-            profile = MotionWindow(far_profile, resolve_motion(near),
+            near_profile = MotionProfile(
+                velocity=min(far_profile.velocity, 0.9 if precise else 1.4),
+                acceleration=min(far_profile.acceleration, 18.0 if precise else 20.0),
+                jerk=min(far_profile.jerk, 800.0 if precise else 900.0),
+                phase=near,
+            )
+            profile = MotionWindow(far_profile, near_profile,
                                    distance_m=min(.05, max(.01, 4 * record["position_m"])))
-            spacing = .01
+            spacing = .015 if precise else .02
         else:
             profile = resolve_motion(near)
             spacing = .004 if precise else .01
@@ -566,6 +572,15 @@ class IntentController:
                 {a: self._pose(g) for a, g in leg.items()} for leg in remaining_legs[:-1]
             ]
         result = planner.plan(**arguments)
+        if (not result["accepted"] and "budget" in (result.get("stop_reason") or "")
+                and result.get("planned_path") == "joint"
+                and record["policy"]["motion"] == {"mode": "native"}):
+            fast_window = MotionWindow(
+                MotionProfile(velocity=3.75, acceleration=40.0, jerk=1500.0, phase="transit"),
+                MotionProfile(velocity=3.74, acceleration=40.0, jerk=1500.0, phase="approach"),
+                distance_m=.04, at="start",
+            ).payload()
+            result = planner.plan(**{**arguments, "motion": fast_window})
         estimate = (result.get("trajectory") or {}).get("planned_steps")
         partial_waypoint = False
         planned_waypoint_end = None
@@ -631,6 +646,62 @@ class IntentController:
             return self._stop(record, result["stop_reason"])
         plan = planner.plans[result["id"]]
         is_partial = fraction < 1. or partial_waypoint
+        if (plan.get("planned_path") == "joint" and plan.get("clock") is not None
+                and record["policy"]["motion"] == {"mode": "native"}
+                and len(plan["ways"]) > 4):
+            q0 = {a: np.asarray(snap["joints"][a], float) for a in kin.ARMS}
+            q1 = {a: np.asarray(plan["goal_joints"][a], float) for a in kin.ARMS}
+            ramp_path = [
+                {a: (q0[a] + s * (q1[a] - q0[a])).tolist() for a in kin.ARMS}
+                for s in np.linspace(1. / 18., 1., 18)
+            ]
+            fast_motion = MotionProfile(
+                velocity=3.75, acceleration=120.0, jerk=15000.0, phase="transit",
+            ).payload()
+            try:
+                fast_ways, fast_traj = trajectory.parameterize(
+                    snap["joints"], ramp_path, plan["clock"], fast_motion,
+                    max_actions=available,
+                    check=lambda joints: trajectory.check_joints(joints, start=snap["joints"]),
+                    line_tolerance_m=None, _simplify_tolerance=-1.0,
+                )
+                if len(fast_ways) < len(plan["ways"]):
+                    commands = plan["ways"][0]["grippers"]
+                    for way in fast_ways:
+                        way["grippers"] = dict(commands)
+                    plan["ways"] = fast_ways
+                    plan["trajectory"] = fast_traj
+                    plan["motion_steps"] = len(fast_ways)
+                    if not is_partial:
+                        estimate = len(fast_ways)
+            except ValueError:
+                pass
+        elif (plan.get("planned_path") == "line" and plan.get("clock") is not None
+              and record["contract"]["interaction"] in ("free", "approach")
+              and not record.get("waypoints") and not record.get("preview_route")
+              and len(plan["ways"]) > 4):
+            try:
+                orig_input_segs = (plan.get("trajectory") or {}).get("input_segments")
+                fast_ways, fast_traj = trajectory.parameterize(
+                    snap["joints"], [w["joints"] for w in plan["ways"]],
+                    plan["clock"], record["policy"]["motion"],
+                    max_actions=available,
+                    check=lambda joints: trajectory.check_joints(joints, start=snap["joints"]),
+                    line_tolerance_m=.003, _simplify_tolerance=.015,
+                )
+                if orig_input_segs is not None:
+                    fast_traj["input_segments"] = orig_input_segs
+                if len(fast_ways) < len(plan["ways"]):
+                    commands = plan["ways"][0]["grippers"]
+                    for way in fast_ways:
+                        way["grippers"] = dict(commands)
+                    plan["ways"] = fast_ways
+                    plan["trajectory"] = fast_traj
+                    plan["motion_steps"] = len(fast_ways)
+                    if not is_partial:
+                        estimate = len(fast_ways)
+            except ValueError:
+                pass
         record["partial_plan"] = is_partial
         record["full_path_estimate"] = estimate
         # Keep the ORIGINAL relationship and correction allowance on continuation.

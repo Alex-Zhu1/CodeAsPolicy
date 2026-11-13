@@ -57,7 +57,20 @@
   to verify `ok`, `collides`, and `min_margin_rad` across chained poses (e.g.
   selecting between `0°` and `180°` empty-jaw symmetry before grasping so
   downstream `continuous=True` insertion or rotation stays well away from the
-  `±3.1 rad` wrist limit).
+  `±3.1 rad` wrist limit). Whenever an operation involves constrained
+  seating/insertion followed by an in-place twist/turn, call `robo.ik()` across
+  the **entire pose chain** `(grasp_pose, pre_contact_pose, seated_pose,
+  rotated_end_pose)` *before* closing the gripper (0 native steps); never check
+  IK only for `grasp_pose` and discover after pickup and transport that
+  `seated_pose` or `rotated_end_pose` is IK-unreachable.
+- **Align the finger-pointing direction with the required rotation axis**:
+  holding a part with a nearly horizontal gripper (`pitch≈0`) and trying to
+  twist around a vertical world axis forces the 6-DOF arm to sweep an arc and
+  hits wrist singularities or IK rejections. Point along the rotation axis
+  (`pitch=90` pointing straight down for a vertical-axis twist) so the turn runs
+  purely on the terminal wrist joint (`yaw`, `±178°` range) in place; choose a
+  grasp, reorientation, or handoff that puts the working axis along the pointing
+  axis before insertion.
 
 ## Motion intent and executor responsibilities
 - Use `execute_motion(intent_id, left=..., right=..., waypoints=...,
@@ -200,9 +213,10 @@
     across the widest flat pad-contact region (such as a wide circular bow or
     handle), translate smoothly without unnecessary wrist rotation, and prefer a
     **tabletop set-down regrasp** on a clear central tabletop zone near `x ≈ 0`
-    (donor sets flat, opens wide and withdraws clear; receiving arm observes
-    unoccluded and grasps at the working region/orientation needed for final
-    insertion or turning) over mid-air handoff.
+    (donor sets flat, opens wide, retreats, and clears/homes before the
+    receiving arm enters to observe unoccluded and grasp at the working
+    region/orientation needed for final insertion or turning) over mid-air
+    handoff.
   - **Thick, rigid parallel-sided blocks or tiles** (`opening > 0.05` across
     high-friction faces): support firm tilted or side grasps and **direct
     in-air handoff** verified with `preview=True` so the receiving arm can
@@ -336,7 +350,14 @@
 - One intent can move both arms simultaneously. keep_relative=True constrains
   their relative TCP transform; simultaneity alone does not preserve it.
   Omitted arms hold their starting poses. Plan finger/inter-arm clearance:
-  the executor checks sampled arm/table geometry, not all scene collisions.
+  the executor checks sampled arm/table geometry, not all scene collisions or
+  full inter-arm wrist/link volumes. Driving a viewing or receiving arm toward
+  table centre (`x ≈ 0`) at the same time as a carrying arm causes mid-air wrist
+  collisions and visual occlusion: enforce **sequential single-arm clearance**
+  in shared central zones (for a supported set-down transfer, release, retreat,
+  and clear/home the donor arm before bringing the receiver arm in; for an
+  in-air handoff, park the donor arm stationary at a verified pose before
+  advancing only the receiver arm).
 - home(arm or 'both') is a bounded return primitive retaining gripper commands.
   It guards departure from a recorded release and stops if that retreat fails;
   the rest of the route has no scene collision check. Release onto support and

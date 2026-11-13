@@ -116,8 +116,14 @@
   continue only the remaining operation. The primitive refuses to open a
   gripper that may already hold an object. Do not retry the same geometry.
 - Before closing, preview the later carry, orientation change and placement
-  from reachable staging poses. A successful grasp does not prove those paths
-  exist. Limit grasp retries and reserve steps for the rest of the task.
+  from reachable staging poses. Whenever an operation involves constrained
+  seating/insertion followed by an in-place twist/turn, call `robo.ik()` across
+  the **entire pose chain** `(grasp_pose, pre_contact_pose, seated_pose,
+  rotated_end_pose)` *before* closing the gripper (0 native steps), rather than
+  checking IK only for `grasp_pose` and discovering after transport that
+  `seated_pose` or `rotated_end_pose` is IK-unreachable. A successful grasp does
+  not prove those paths exist. Limit grasp retries and reserve steps for the
+  rest of the task.
 
 ## Motion
 - Single-arm moves, coordinated moves and bounded grasps share measured-progress
@@ -209,6 +215,13 @@
 - To twist something held (a key, a cap, a knob), `move_to` the same point
   with another `roll` (straight down: another `yaw`); the last joint turns
   and the grasp point stays.  The wrist joint stops at about +-178 degrees.
+  Holding a part with a nearly horizontal gripper (`pitch≈0`) and trying to
+  twist around a vertical world axis forces the 6-DOF arm to sweep an arc and
+  hits wrist singularities / IK rejections: align the finger-pointing direction
+  with the required rotation axis (`pitch=90` pointing straight down for a
+  vertical-axis twist) so the turn runs purely on the terminal wrist joint
+  (`yaw`, `±178°` range) in place, and choose a grasp, reorientation, or handoff
+  that puts the working axis along the pointing axis before insertion.
 - `home(arm)` returns one arm, or `"both"`, to the joint angles it started
   with and retains each gripper's last command. Near a recorded release it
   first withdraws 6 cm behind the release plane along the negative finger-pointing
@@ -370,7 +383,13 @@
   review requests hand the live scene back to Astra; actions are never rolled back.
 - max_steps/timeout_s limit one call. Preserve planner retry/phase allocations
   across cells; the native episode counter remains cumulative. The host checks
-  sampled arm/table geometry, not full arm-arm or object collision volumes. Read
+  sampled arm/table geometry, not full arm-arm or object collision volumes.
+  Driving a viewing/receiving arm toward table centre at the same time as a
+  carrying arm causes mid-air wrist collisions and visual occlusion: enforce
+  **sequential single-arm clearance** in shared central zones (for a supported
+  set-down transfer, release, retreat, and clear/home the donor arm before
+  bringing the receiver arm in; for an in-air handoff, park the donor arm
+  stationary at a verified pose before advancing only the receiver arm). Read
   motion_capabilities before relying on a check; unsupported requests reject.
 
 ## Gripper
@@ -520,3 +539,16 @@
   variable; do not repeat the same target or the same recovery twice.
 - There is exactly one episode and no reset.  Recover in place: re-observe,
   re-measure, re-grasp.
+- Prevent 0-step kinematic and workspace traps before grasping or entering
+  shared central zones: (1) for constrained seating/insertion followed by an
+  in-place twist/turn, call `robo.ik()` across the **entire pose chain**
+  `(grasp_pose, pre_contact_pose, seated_pose, rotated_end_pose)` *before*
+  closing the gripper (0 native steps); (2) align the finger-pointing direction
+  with the required rotation axis (`pitch=90` pointing straight down for a
+  vertical-axis twist) so the turn runs purely on the terminal wrist joint
+  (`yaw`, `±178°` range) instead of sweeping a horizontal (`pitch≈0`) 6-DOF arc
+  into wrist singularities; (3) enforce **sequential single-arm clearance** in
+  shared central zones (for a supported set-down transfer, release, retreat, and
+  clear/home the donor arm before bringing the receiver arm in; for an in-air
+  handoff, park the donor arm stationary at a verified pose before advancing
+  only the receiver arm).

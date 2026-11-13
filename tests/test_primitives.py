@@ -8,15 +8,15 @@ from types import SimpleNamespace
 
 import pytest
 
-from pyrualean import LiberoRobot, TaskCard, api_reference, knowledge_text, render_prompt
-from pyrualean._robot import NO_VLA_MESSAGE, PRIMITIVE_SETS
-from pyrualean.arms import ArmToolkit, robot_words
-from pyrualean.play import build_prompt, play_episode
-from pyrualean.prompt import _public_members, knowledge_stem, vla_hidden
-from pyrualean.robocasa import RobocasaRobot
-from pyrualean.robodojo import RobodojoRobot
-from pyrualean.robots import get_adapter
-from pyrualean.robotwin import RobotwinRobot
+from codeaspolicy import LiberoRobot, TaskCard, api_reference, knowledge_text, render_prompt
+from codeaspolicy._robot import NO_VLA_MESSAGE, PRIMITIVE_SETS
+from codeaspolicy.arms import ArmToolkit, robot_words
+from codeaspolicy.play import build_prompt, play_episode
+from codeaspolicy.prompt import _public_members, knowledge_stem, vla_hidden
+from codeaspolicy.robocasa import RobocasaRobot
+from codeaspolicy.robodojo import RobodojoRobot
+from codeaspolicy.robots import get_adapter
+from codeaspolicy.robotwin import RobotwinRobot
 
 #: Any mention of a VLA in model-facing text (Pi0.5, LingBot-VLA, RLDX-1, "VLA").
 VLA_TOKENS = re.compile(r"pi0|lingbot|rldx|vla", re.IGNORECASE)
@@ -54,12 +54,20 @@ def test_primitive_sets_and_the_vla_names_per_robot():
 
 @pytest.mark.parametrize("name", ["robodojo_xpl", "robodojo_xpl_rgb"])
 def test_native_hosts_filter_unsupported_vla_even_when_full_is_requested(name, backend):
+    from codeaspolicy._robot import effective_primitives
+
     adapter = get_adapter(name)
+    assert effective_primitives(LiberoRobot, "no-sam") == "no-vla"
+    assert effective_primitives(adapter.robot_cls, "no-sam") == "no-sam"
     card = _card()
     card.robot = name
-    text = build_prompt("cells", card, budget_s=1200, max_programs=None)
-    assert not VLA_TOKENS.search(text)
-    assert "robo.execute_motion(" in text and "robo.locate(" in text
+    default_text = build_prompt("cells", card, budget_s=1200, max_programs=None)
+    assert not VLA_TOKENS.search(default_text)
+    assert "robo.execute_motion(" in default_text and "robo.triangulate(" in default_text
+    assert "robo.locate(" not in default_text
+    full_text = build_prompt("cells", card, budget_s=1200, max_programs=None, primitives="full")
+    assert not VLA_TOKENS.search(full_text)
+    assert "robo.execute_motion(" in full_text and "robo.locate(" in full_text
     assert not VLA_TOKENS.search(render_prompt(card, budget_s=1200).system)
     robot = adapter.robot_cls(backend, primitives="full")
     with pytest.raises(RuntimeError, match="not available"):
@@ -231,7 +239,7 @@ def test_prompts_without_the_vla():
 
 
 def test_play_episode_records_the_primitive_set_even_when_boot_fails(tmp_path, monkeypatch):
-    from pyrualean import play
+    from codeaspolicy import play
 
     def boot(cell, out_dir, *, rpent_root=None, **options):
         raise RuntimeError("no simulator here")

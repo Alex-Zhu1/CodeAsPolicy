@@ -7,10 +7,10 @@ import math
 import numpy as np
 import pytest
 
-from pyrualean.hosts.robodojo_geometry import (
+from codeaspolicy.hosts.robodojo_geometry import (
     geometry_coverage, geometry_violation, validate_geometry,
 )
-from pyrualean.monitor import proactive_constraints
+from codeaspolicy.monitor import proactive_constraints
 
 
 def pose(xyz=(0., 0., 0.), yaw=0.):
@@ -276,9 +276,9 @@ def test_declared_geometry_requires_pose_for_every_represented_arm():
 
 
 def test_public_preview_rejects_rotation_only_volume_crossing_with_clear_endpoints(tmp_path):
-    from pyrualean.coordination import Pose
-    from pyrualean.hosts import robodojo_kinematics as kin
-    from pyrualean.hosts import robodojo_tools as motion
+    from codeaspolicy.coordination import Pose
+    from codeaspolicy.hosts import robodojo_kinematics as kin
+    from codeaspolicy.hosts import robodojo_tools as motion
     from tests.test_robodojo_intent import _precision_station
 
     env, robo, _ = _precision_station(tmp_path)
@@ -305,7 +305,7 @@ def test_public_preview_rejects_rotation_only_volume_crossing_with_clear_endpoin
 
 
 def test_public_preview_checks_uncommanded_arm_volume_and_accepts_clear_sequence(tmp_path):
-    from pyrualean.hosts import robodojo_tools as motion
+    from codeaspolicy.hosts import robodojo_tools as motion
     from tests.test_robodojo_intent import _precision_station
 
     env, robo, _ = _precision_station(tmp_path)
@@ -333,7 +333,7 @@ def test_public_preview_checks_uncommanded_arm_volume_and_accepts_clear_sequence
 
 
 def test_live_cross_arm_guard_preserves_metrics_on_first_measured_departure(tmp_path):
-    from pyrualean.hosts import robodojo_tools as motion
+    from codeaspolicy.hosts import robodojo_tools as motion
     from tests.test_robodojo_intent import _offset_measured_pose, _precision_station
 
     env, robo, _ = _precision_station(tmp_path)

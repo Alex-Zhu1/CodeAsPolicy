@@ -9,16 +9,16 @@ import sys
 import numpy as np
 import pytest
 
-from pyrualean import TaskCard, ToolError, knowledge_text, render_prompt
-from pyrualean import monitor as monitor_mod
-from pyrualean._robot import NO_SAM_MESSAGE, PRIMITIVE_SETS, effective_primitives
-from pyrualean.action_contract import ActionContract
-from pyrualean.cli import main as cli_main
-from pyrualean.hosts import robodojo_sight as sight
-from pyrualean.hosts import sam3_local, xpolicylab_robodojo
-from pyrualean.hosts import xpolicylab_bridge as xb
-from pyrualean.play import build_prompt
-from pyrualean.robodojo import (
+from codeaspolicy import TaskCard, ToolError, knowledge_text, render_prompt
+from codeaspolicy import monitor as monitor_mod
+from codeaspolicy._robot import NO_SAM_MESSAGE, PRIMITIVE_SETS, effective_primitives
+from codeaspolicy.action_contract import ActionContract
+from codeaspolicy.cli import main as cli_main
+from codeaspolicy.hosts import robodojo_sight as sight
+from codeaspolicy.hosts import sam3_local, xpolicylab_robodojo
+from codeaspolicy.hosts import xpolicylab_bridge as xb
+from codeaspolicy.play import build_prompt
+from codeaspolicy.robodojo import (
     CameraRay,
     PixelPoint,
     PlanePoint,
@@ -26,8 +26,8 @@ from pyrualean.robodojo import (
     TriangulatedPoint,
     WorldPoint,
 )
-from pyrualean.robodojo_xpl import RobodojoOfficialRobot
-from pyrualean.robodojo_xpl_rgb import RobodojoOfficialColourRobot
+from codeaspolicy.robodojo_xpl import RobodojoOfficialRobot
+from codeaspolicy.robodojo_xpl_rgb import RobodojoOfficialColourRobot
 from tests.test_perception_api import CapturedBackend
 
 
@@ -354,8 +354,8 @@ def test_no_sam_primitive_set_refusal_and_host_sam3_bypass(monkeypatch, tmp_path
                 for cam in RobodojoRobot.CAMERAS
             },
             "instruction": "Move the block",
-            "additional_info": {"pyrualean": {"step": 0, "max_steps": 1500, "over": False}},
-            "pyrualean_observation": {
+            "additional_info": {"codeaspolicy": {"step": 0, "max_steps": 1500, "over": False}},
+            "codeaspolicy_observation": {
                 "protocol": 1,
                 "source_session_id": "test-src",
                 "source_id": "test-src:1",

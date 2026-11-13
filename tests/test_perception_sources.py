@@ -8,8 +8,8 @@ from types import SimpleNamespace
 import numpy as np
 import pytest
 
-from pyrualean.hosts import robodojo_sight as sight
-from pyrualean.hosts import robodojo_tools as tools
+from codeaspolicy.hosts import robodojo_sight as sight
+from codeaspolicy.hosts import robodojo_tools as tools
 
 
 def _world():

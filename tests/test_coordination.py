@@ -8,12 +8,12 @@ from types import SimpleNamespace
 import numpy as np
 import pytest
 
-from pyrualean.arms import ArmToolkit
-from pyrualean.coordination import CoordinationPause, Pose
-from pyrualean.hosts import robodojo_kinematics as kin
-from pyrualean.hosts.robodojo_native import NativeBackend, NativeToolkit
-from pyrualean.prompt import api_reference
-from pyrualean.robodojo_xpl_rgb import RobodojoOfficialColourRobot
+from codeaspolicy.arms import ArmToolkit
+from codeaspolicy.coordination import CoordinationPause, Pose
+from codeaspolicy.hosts import robodojo_kinematics as kin
+from codeaspolicy.hosts.robodojo_native import NativeBackend, NativeToolkit
+from codeaspolicy.prompt import api_reference
+from codeaspolicy.robodojo_xpl_rgb import RobodojoOfficialColourRobot
 
 
 class JointEnvironment:
@@ -39,7 +39,7 @@ class JointEnvironment:
             state[f"{a}_ee_joint_state"] = [self.grips[a]]
         return {
             "state": state,
-            "pyrualean_observation": {
+            "codeaspolicy_observation": {
                 "observation_id": source_id, "source_id": source_id,
                 "image_source_id": source_id, "source_freshness": "captured",
                 "aligned": True, "captured_at": float(self.captures),
@@ -83,7 +83,7 @@ def lift(robo, **kwargs):
 
 
 def monitored(robo, tmp_path, prediction="yes", **config):
-    from pyrualean.supervision import MonitorConfig, VisualSupervisor
+    from codeaspolicy.supervision import MonitorConfig, VisualSupervisor
 
     packets = []
 
@@ -403,7 +403,7 @@ print('MUST NOT RUN')
 
 
 def test_call_deadline_stops_inside_segment(station, monkeypatch):
-    from pyrualean.hosts import robodojo_coordination as controller
+    from codeaspolicy.hosts import robodojo_coordination as controller
 
     env, robo, _ = station
     clock = [1000.0]
@@ -426,7 +426,7 @@ def test_call_deadline_stops_inside_segment(station, monkeypatch):
 def test_interruption_between_checkpoints_reports_existing_partial_motion(
     station, monkeypatch, change
 ):
-    from pyrualean.hosts import robodojo_coordination as controller
+    from codeaspolicy.hosts import robodojo_coordination as controller
 
     env, robo, host = station
     clock = [1000.0]
@@ -455,7 +455,7 @@ def test_interruption_between_checkpoints_reports_existing_partial_motion(
 
 
 def test_limits_preflight_and_episode_budget_survive_new_calls(station):
-    from pyrualean._backend import EpisodeFinished
+    from codeaspolicy._backend import EpisodeFinished
 
     env, robo, _ = station
     assert lift(robo, max_steps=1).status == "rejected"

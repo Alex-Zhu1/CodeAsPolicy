@@ -1,4 +1,4 @@
-@src/pyrualean/hosts/common.py|定义 RPent 宿主共享的启动位置解析、清理流程和工具包到 Backend 的适配协议。|宿主适配,后端接口,进程清理
+@src/codeaspolicy/hosts/common.py|定义 RPent 宿主共享的启动位置解析、清理流程和工具包到 Backend 的适配协议。|宿主适配,后端接口,进程清理
 resolve_rpent_root|定位 RPent 仓库并加入 Python 导入路径，缺失时明确报错。
 stop_all|关闭工具包并停止其后台服务，清理时容忍个别关闭失败。
 RpentBackend|把 RPent Toolkit 的工具执行、成功状态、产物和取消操作适配为统一机器人后端。
@@ -9,7 +9,7 @@ RpentBackend.solved|读取环境原生成功标志，兼容未实现 solved 的�
 RpentBackend.artifact|从工具包状态存储读取指定步骤的二进制产物。
 RpentBackend.env_steps|从公开或私有原语对象读取累计帧数，后端不提供时返回未知。
 RpentBackend.cancel|取消正在运行的工具调用并等待其结束。
-@src/pyrualean/prompt.py|根据实际机器人类的签名和说明生成模型可见 API，结合任务卡与包内操作知识组装提示，支持移除 VLA 原语的实验配置。|提示生成,接口反射,任务描述
+@src/codeaspolicy/prompt.py|根据实际机器人类的签名和说明生成模型可见 API，结合任务卡与包内操作知识组装提示，支持移除 VLA 原语的实验配置。|提示生成,接口反射,任务描述
 _annotation|将参数或返回值注解转为紧凑文本，省略缺失注解和 typing 前缀。
 _format_parameters|按函数签名生成参数列表，保留默认值和仅限关键字参数标记。
 _render_callable|把方法签名与说明渲染为 API 参考文本，长签名自动换行。
@@ -31,7 +31,7 @@ TaskCard._render_generic|将非 LIBERO 任务的标识、指令、初始事实�
 PromptBundle|封装一次生成所需的系统提示、用户提示和图像附件。
 PromptBundle.messages|返回系统与用户两条结构化消息。
 PromptBundle.text|将系统和用户提示拼接为单段文本。
-@src/pyrualean/runner.py|加载生成的 Python 策略并执行，记录超时和异常结果。宿主子进程使用独立进程组，支持信号转发和超时后的强制清理。|策略执行,进程管理,超时控制
+@src/codeaspolicy/runner.py|加载生成的 Python 策略并执行，记录超时和异常结果。宿主子进程使用独立进程组，支持信号转发和超时后的强制清理。|策略执行,进程管理,超时控制
 policy_sha256|计算策略文件内容的 SHA-256 摘要。
 load_policy|以唯一模块名加载策略并取得指定入口，可注入受限 builtins 约束导入和文件访问。
 run_policy|在墙钟看门狗下执行策略，区分正常结束、回合终止、超时与异常并保留 traceback。
@@ -40,12 +40,12 @@ _kill_group|向宿主进程组发送信号，忽略进程已退出的情况。
 PolicyLoadError|表示策略无法导入或不存在可调用入口。
 PolicyOutcome|记录单次策略调用的结束原因、耗时和错误，与任务是否成功分开保存。
 PolicyOutcome.to_dict|把策略执行结果转换为字典。
-@src/pyrualean/sandbox.py|为模型代码提供受限 builtins、源码审计和反射入口检查，约束工作目录外文件访问与危险导入，并记录越过公开机器人 API 的尝试。|执行约束,源码审计,文件访问
+@src/codeaspolicy/sandbox.py|为模型代码提供受限 builtins、源码审计和反射入口检查，约束工作目录外文件访问与危险导入，并记录越过公开机器人 API 的尝试。|执行约束,源码审计,文件访问
 _workspace_module|判断模块名是否对应工作目录内的 Python 文件或包。
 make_builtins|构造模型执行用的 builtins，限制导入、文件打开以及动态执行入口。
 audit_source|静态标记不允许的导入、宿主私有属性、反射探查和越界路径，供结果审计。
 blocked_names|从属性、名称和字符串常量中检测禁止的反射入口，语法错误留给执行器报告。
-@src/pyrualean/hosts/rpent_libero.py|启动 LIBERO 的 RPent 服务栈，导出初始任务卡并执行单回合策略，保存原生产物与统一结果。|宿主适配,仿真环境,回合执行
+@src/codeaspolicy/hosts/rpent_libero.py|启动 LIBERO 的 RPent 服务栈，导出初始任务卡并执行单回合策略，保存原生产物与统一结果。|宿主适配,仿真环境,回合执行
 add_cell_args|注册LIBERO任务单元的标识、配置与随机种子参数。
 add_boot_args|注册LIBERO宿主服务启动和已有服务连接参数。
 cell_from_args|将命令行参数规范化为LIBERO任务单元。
@@ -61,7 +61,7 @@ _cell|把解析参数转换为 LIBERO 任务单元。
 main|提供LIBERO宿主命令行，在任务卡导出与策略执行之间分发。
 Cell|描述一个LIBERO评估任务的配置、种子与执行预算。
 Cell.tag|根据任务、配置和种子生成输出目录标识。
-@src/pyrualean/hosts/rpent_robocasa.py|启动 RoboCasa365 的 RPent 服务栈，导出初始任务卡并执行单回合策略，保存原生产物与统一结果。|宿主适配,仿真环境,回合执行
+@src/codeaspolicy/hosts/rpent_robocasa.py|启动 RoboCasa365 的 RPent 服务栈，导出初始任务卡并执行单回合策略，保存原生产物与统一结果。|宿主适配,仿真环境,回合执行
 add_cell_args|注册RoboCasa365任务单元的标识、配置与随机种子参数。
 add_boot_args|注册RoboCasa365宿主服务启动和已有服务连接参数。
 cell_from_args|将命令行参数规范化为RoboCasa365任务单元。
@@ -80,14 +80,14 @@ _add_cell_args|为宿主命令补充输出目录、设备、步数和 RPent 路�
 main|提供RoboCasa365宿主命令行，在任务卡导出与策略执行之间分发。
 Cell|描述一个RoboCasa365评估任务的配置、种子与执行预算。
 Cell.tag|根据任务、配置和种子生成输出目录标识。
-@src/pyrualean/hosts/rpent_robodojo.py|启动 RoboDojo 的 RPent 服务栈，导出初始任务卡并执行单回合策略，保存原生产物与统一结果。|宿主适配,仿真环境,回合执行
+@src/codeaspolicy/hosts/rpent_robodojo.py|启动 RoboDojo 的 RPent 服务栈，导出初始任务卡并执行单回合策略，保存原生产物与统一结果。|宿主适配,仿真环境,回合执行
 add_cell_args|注册RoboDojo任务单元的标识、配置与随机种子参数。
 add_boot_args|注册RoboDojo宿主服务启动和已有服务连接参数。
 cell_from_args|将命令行参数规范化为RoboDojo任务单元。
 _connect_reset_default|读取 RoboDojo 连接时是否再次复位的环境开关。
 _connect_without_reset|临时调整 RPent 客户端连接行为，避免场景已复位后对关节物体再次复位造成错误。
 _support_arm_default|根据环境设置决定是否启用项目提供的第三臂支持。
-_env_server_through_pyrualean|在启动期间将 RPent 环境服务器命令包装到本项目入口，以安装基准第三臂行为。
+_env_server_through_codeaspolicy|在启动期间将 RPent 环境服务器命令包装到本项目入口，以安装基准第三臂行为。
 boot_options|从命令行提取RoboDojo启动选项和服务端点。
 _status|尝试读取环境服务器的当前步数与上限，无法读取时返回空对象。
 make_backend|为已启动的RoboDojo工具包创建包含专用步数语义的后端适配器。
@@ -105,7 +105,7 @@ Cell|描述一个RoboDojo评估任务的配置、种子与执行预算。
 Cell.tag|根据任务、配置和种子生成输出目录标识。
 RobodojoBackend|适配 RoboDojo 的原生成功判据，并用仿真原生动作计数替代帧计数。
 RobodojoBackend.env_steps|读取环境状态中的原生动作步数。
-@src/pyrualean/hosts/rpent_robotwin.py|启动 RoboTwin 的 RPent 服务栈，导出初始任务卡并执行单回合策略，保存原生产物与统一结果。|宿主适配,仿真环境,回合执行
+@src/codeaspolicy/hosts/rpent_robotwin.py|启动 RoboTwin 的 RPent 服务栈，导出初始任务卡并执行单回合策略，保存原生产物与统一结果。|宿主适配,仿真环境,回合执行
 add_cell_args|注册RoboTwin任务单元的标识、配置与随机种子参数。
 add_boot_args|注册RoboTwin宿主服务启动和已有服务连接参数。
 cell_from_args|将命令行参数规范化为RoboTwin任务单元。

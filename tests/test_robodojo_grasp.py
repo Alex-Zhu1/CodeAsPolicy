@@ -5,9 +5,9 @@ import copy
 import numpy as np
 import pytest
 
-from pyrualean.hosts import robodojo_kinematics as kin
-from pyrualean.hosts.robodojo_native import NativeBackend, NativeToolkit
-from pyrualean.robodojo_xpl_rgb import RobodojoOfficialColourRobot
+from codeaspolicy.hosts import robodojo_kinematics as kin
+from codeaspolicy.hosts.robodojo_native import NativeBackend, NativeToolkit
+from codeaspolicy.robodojo_xpl_rgb import RobodojoOfficialColourRobot
 from tests.test_coordination import JointEnvironment
 
 TARGET = [.25, -.15, .815]

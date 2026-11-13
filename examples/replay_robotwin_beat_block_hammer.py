@@ -6,7 +6,7 @@ episodes on this exact seed solved it with two VLA calls - lingbot_act(chunks=2)
 then lingbot_act(chunks=1) - reaching native success after 108 actions.  This
 file only proves that the library drives the same primitives to the same
 outcome.  It is NOT a policy that generalises and must never be reported as a
-method result; use `pyrualean generate` / `pyrualean play` for real policies.
+method result; use `codeaspolicy generate` / `codeaspolicy play` for real policies.
 """
 
 

@@ -12,7 +12,7 @@ import argparse
 import json
 from pathlib import Path
 
-from pyrualean.supervision import MonitorConfig, VisualSupervisor
+from codeaspolicy.supervision import MonitorConfig, VisualSupervisor
 
 
 class RecordedRobot:

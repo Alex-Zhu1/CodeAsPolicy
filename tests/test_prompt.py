@@ -6,8 +6,8 @@ import inspect
 
 import pytest
 
-from pyrualean import LiberoRobot, TaskCard, api_reference, render_prompt
-from pyrualean.libero import RESULT_TYPES
+from codeaspolicy import LiberoRobot, TaskCard, api_reference, render_prompt
+from codeaspolicy.libero import RESULT_TYPES
 
 
 def _public_methods():
@@ -42,8 +42,8 @@ def test_signatures_render_defaults_and_keyword_markers():
 @pytest.mark.parametrize("robot", ["robodojo", "robodojo_xpl_rgb"])
 @pytest.mark.parametrize("primitives", ["full", "no-vla"])
 def test_generated_motion_policy_declares_intents_without_controller_tuning(robot, primitives):
-    from pyrualean.play import build_prompt
-    from pyrualean.robots import get_adapter
+    from codeaspolicy.play import build_prompt
+    from codeaspolicy.robots import get_adapter
 
     card = TaskCard(suite="arx_x5", task="test", seed=0, task_language="Move the object",
                     object_names=[], robot=robot)
@@ -70,7 +70,7 @@ def test_generated_motion_policy_declares_intents_without_controller_tuning(robo
 
 @pytest.mark.parametrize("robot", ["robodojo", "robodojo_xpl", "robodojo_xpl_rgb"])
 def test_offline_generation_defaults_to_shared_operations(robot):
-    from pyrualean.robots import get_adapter
+    from codeaspolicy.robots import get_adapter
 
     card = TaskCard(suite="arx_x5", task="test", seed=0, task_language="Move the object",
                     object_names=[], robot=robot)
@@ -81,7 +81,7 @@ def test_offline_generation_defaults_to_shared_operations(robot):
             assert f"robo.{name}(" in text
         for name in ("move_to", "move_both", "motion_profile", "motion_window", "try_grasp"):
             assert f"robo.{name}(\n" not in text
-    assert "pyrualean.operation.v1" in render_prompt(card).system
+    assert "codeaspolicy.operation.v1" in render_prompt(card).system
 
 
 def test_render_prompt_contains_contract_reference_knowledge_and_card(tmp_path):
@@ -112,7 +112,7 @@ def test_render_prompt_contains_contract_reference_knowledge_and_card(tmp_path):
 
 
 def test_default_libero_cells_prompt_keeps_contract_within_budget():
-    from pyrualean.play import build_prompt
+    from codeaspolicy.play import build_prompt
 
     card = TaskCard(suite="libero_object_swap", task=2, seed=0,
                     task_language="Move the object", object_names=[])
@@ -169,8 +169,8 @@ def _dump(tmp_path, card):
 
 @pytest.mark.parametrize("mode", [None, "off", "pause"])
 def test_code_prompt_only_describes_visual_apis_when_enabled(mode):
-    from pyrualean.play import build_prompt
-    from pyrualean.supervision import MonitorConfig
+    from codeaspolicy.play import build_prompt
+    from codeaspolicy.supervision import MonitorConfig
 
     card = TaskCard(
         suite="arx_x5", task="organize_table", seed=0,
@@ -199,8 +199,8 @@ def test_code_prompt_only_describes_visual_apis_when_enabled(mode):
 def test_no_sam_prompt_exposes_geometry_without_sam3_and_keeps_intent_invariants(robot):
     import re
 
-    from pyrualean.play import build_prompt
-    from pyrualean.robots import get_adapter
+    from codeaspolicy.play import build_prompt
+    from codeaspolicy.robots import get_adapter
 
     card = TaskCard(
         suite="arx_x5",
@@ -218,14 +218,32 @@ def test_no_sam_prompt_exposes_geometry_without_sam3_and_keeps_intent_invariants
         budget_s=900,
         max_programs=None,
         images="on-demand",
+    )
+    assert prompt_text == build_prompt(
+        "cells",
+        card,
+        budget_s=900,
+        max_programs=None,
+        images="on-demand",
         primitives="no-sam",
     )
     bundle = render_prompt(card, budget_s=900, primitives="no-sam")
 
     for doc in (ref, prompt_text, bundle.system):
-        for geom_fn in ("camera_ray", "ray_at_z", "triangulate", "project_point", "crop_grid"):
+        for geom_fn in (
+            "camera_ray",
+            "ray_at_z",
+            "triangulate",
+            "project_point",
+            "crop_grid",
+            "pose_from_axes",
+            "fk",
+            "ik",
+        ):
             assert f"robo.{geom_fn}(" in doc
-        for geom_cls in ("CameraRay", "PlanePoint", "TriangulatedPoint", "PixelPoint"):
+        for pose_fn in ("shifted", "axes", "rotated"):
+            assert f"pose.{pose_fn}(" in doc
+        for geom_cls in ("CameraRay", "PlanePoint", "TriangulatedPoint", "PixelPoint", "IKSolution"):
             assert f"class {geom_cls}(" in doc
         for hidden_fn in ("locate", "segment", "back_project", "pi0_pick"):
             assert f"robo.{hidden_fn}(" not in doc

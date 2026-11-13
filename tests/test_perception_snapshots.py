@@ -8,7 +8,7 @@ from types import SimpleNamespace
 import numpy as np
 import pytest
 
-from pyrualean.hosts.robodojo_native import NativeBackend, NativeToolkit
+from codeaspolicy.hosts.robodojo_native import NativeBackend, NativeToolkit
 
 
 def packet(sequence=1, *, depth=1., translation=.2):
@@ -28,7 +28,7 @@ def packet(sequence=1, *, depth=1., translation=.2):
                            intrinsic_matrix=intrinsic.copy(), extrinsic_matrix=pose.copy(),
                            shape=[8, 8, 3])
                 for name in ("cam_head", "cam_left_wrist")},
-        pyrualean_observation=dict(source_id=f"capture:{sequence}",
+        codeaspolicy_observation=dict(source_id=f"capture:{sequence}",
                                   native_steps=sequence - 1, aligned=True,
                                   captured_at=100. + sequence,
                                   capture_clock="client_unix_utc", source_freshness="captured"),
@@ -46,7 +46,7 @@ class Environment:
         return self.packet
 
     def get_status(self):
-        return {"step": self.packet["pyrualean_observation"]["native_steps"], "step_limit": 100}
+        return {"step": self.packet["codeaspolicy_observation"]["native_steps"], "step_limit": 100}
 
     def step(self, action):
         self.actions.append(action)
@@ -114,7 +114,7 @@ def test_segmentation_and_geometry_remain_on_one_packet_when_environment_changes
     assert out["found"] and out["top_z"] == pytest.approx(1.)
     assert out["provenance"]["source_id"] == "capture:1"
     assert np.all(segmenter.images[0] == 1)
-    assert env.packet["pyrualean_observation"]["source_id"] == "capture:2"
+    assert env.packet["codeaspolicy_observation"]["source_id"] == "capture:2"
     assert env.reads == reads and not env.actions
 
 
@@ -163,7 +163,7 @@ def test_repeated_source_exact_step_keeps_each_record_and_raw_depth_dtype(tmp_pa
 
 def test_legacy_source_is_frozen_without_fabricated_capture_evidence(tmp_path):
     env = Environment()
-    env.packet.pop("pyrualean_observation")
+    env.packet.pop("codeaspolicy_observation")
     env.get_status = lambda: {"step": 0}
     backend = NativeBackend(NativeToolkit(env, Segmenter(), tmp_path))
     result = backend.execute_tool("segment", {"text_prompt": "object"})

@@ -1,7 +1,7 @@
 # How It Works
 
 A tool-calling agent spends a full LLM call on every small step of a task and re-sends everything before it each
-time. A PyRUA-Lean agent writes code against a robot object, `robo`, instead: one call can find an object, move
+time. A CodeAsPolicy agent writes code against a robot object, `robo`, instead: one call can find an object, move
 above it, grasp, check the gripper and try again.
 
 The robot manual specifies frames, units, interfaces and capability limits. The
@@ -81,10 +81,10 @@ correction](../guide/strategies.md), then hand uncertain evidence back to the mo
 
 1. The contract: what to do, how the code is run, how the episode is judged.
 2. The API reference of `robo`, generated from the robot class itself, so it cannot drift from the code
-   (`pyrualean api` prints LIBERO-PRO's; each robot page shows its own).
+   (`codeaspolicy api` prints LIBERO-PRO's; each robot page shows its own).
 3. The robot's knowledge text: frames, units, how the primitives behave, what to watch out for. The same for every
    task; no task recipes.
 4. A task card: the instruction, the first camera images and the robot's starting state. Nothing privileged.
 
-A `play` episode saves the whole prompt its model read as `prompt.txt` in the run directory; `pyrualean prompt`
+A `play` episode saves the whole prompt its model read as `prompt.txt` in the run directory; `codeaspolicy prompt`
 prints the prompt of a single shot (`generate`).

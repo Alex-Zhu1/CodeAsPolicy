@@ -35,15 +35,15 @@
 
 ## 现有实现
 
-- `src/pyrualean/arms.py` 的 `ArmToolkit` 提供 cells、program 两种代码交互方式。
+- `src/codeaspolicy/arms.py` 的 `ArmToolkit` 提供 cells、program 两种代码交互方式。
 - `ArmToolkit._python` 在持久命名空间内执行 cell，允许跨调用复用已定义的 helper。
 - `ArmToolkit._run_program` 执行生成的程序文件，并汇总程序结果。
-- `src/pyrualean/runner.py` 的 `load_policy` 使用唯一模块名加载策略入口。
+- `src/codeaspolicy/runner.py` 的 `load_policy` 使用唯一模块名加载策略入口。
 - `run_policy` 生成 `PolicyOutcome`，区分 completed、paused、finished、error、timeout；该类型注明与任务成功独立。
-- `src/pyrualean/execution.py` 的 `ExecutionBudget` 用 trace 检查工作区 Python 帧和动作前预算。
+- `src/codeaspolicy/execution.py` 的 `ExecutionBudget` 用 trace 检查工作区 Python 帧和动作前预算。
 - `ExecutionLimit` 派生自 `BaseException`，避免被普通 `except Exception` 误当作可重试动作错误。
 - `BoundedOutput` 在写入时限制输出内存，`ExecutionLimits` 还约束显示图片数。
-- `src/pyrualean/sandbox.py` 的 `make_builtins`、`blocked_names`、`audit_source` 提供导入、文件访问和源码审计护栏。
+- `src/codeaspolicy/sandbox.py` 的 `make_builtins`、`blocked_names`、`audit_source` 提供导入、文件访问和源码审计护栏。
 - `ArmToolkit._failure_feedback` 汇总错误位置、动作尝试、剩余调用次数和继续建议。
 
 上述代码已具备保留现场、回报错误和重新提交代码的基础。

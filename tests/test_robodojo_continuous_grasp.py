@@ -4,9 +4,9 @@ from types import SimpleNamespace
 
 import pytest
 
-from pyrualean.hosts import robodojo_features as features
-from pyrualean.hosts import robodojo_tools as tools
-from pyrualean.hosts.robodojo_visual_track import VisualTrack
+from codeaspolicy.hosts import robodojo_features as features
+from codeaspolicy.hosts import robodojo_tools as tools
+from codeaspolicy.hosts.robodojo_visual_track import VisualTrack
 from tests.test_robodojo_hold_reacquire import Masker, textured
 from tests.test_robodojo_staged_grasp import setup, through
 
@@ -32,7 +32,7 @@ def visual_station(tmp_path, *, hidden_at_close=False, slip=False):
             intrinsic_matrix=frame['vision']['cam_left_wrist']['intrinsic_matrix'],
             extrinsic_matrix=tools._pose_of('right', obs['state']['right_arm_joint_state']))}
         obs['image_state'] = copy.deepcopy(obs['state'])
-        obs['pyrualean_observation'] = dict(source_id=f'image:{n}', native_steps=n,
+        obs['codeaspolicy_observation'] = dict(source_id=f'image:{n}', native_steps=n,
             aligned=True, source_freshness='captured')
         return obs
 
@@ -109,7 +109,7 @@ def test_motion_relative_to_gripper_accumulates_despite_rolling_image_track(tmp_
 
 def make_track():
     old = textured(1)
-    source = old['pyrualean_observation']
+    source = old['codeaspolicy_observation']
     anchor = dict(provenance=source, landmarks={
         'material': dict(pixels={'cam_left_wrist':[160,66]})})
     return VisualTrack(anchor, old, source, arm='left', epoch=1)
@@ -118,13 +118,13 @@ def make_track():
 def test_lost_frame_recovers_original_identity_and_duplicate_frames_do_not_advance():
     track = make_track()
     hidden = textured(2, hidden=True)
-    track.advance(hidden, hidden['pyrualean_observation'], epoch=1)
+    track.advance(hidden, hidden['codeaspolicy_observation'], epoch=1)
     assert not track.previous['landmarks']
     restored = textured(3, shift=70)
-    result = track.read(restored, restored['pyrualean_observation'], epoch=1)
+    result = track.read(restored, restored['codeaspolicy_observation'], epoch=1)
     assert result['points']['material']['cam_left_wrist'] == pytest.approx([160,136], abs=1)
     count = track.frames
-    track.read(restored, restored['pyrualean_observation'], epoch=1)
+    track.read(restored, restored['codeaspolicy_observation'], epoch=1)
     assert track.frames == count
     assert track.anchor['provenance']['source_id'] == 'capture:1'
 
@@ -133,9 +133,9 @@ def test_lost_frame_recovers_original_identity_and_duplicate_frames_do_not_advan
 def test_invalid_chain_or_ambiguous_reacquisition_never_invents_points(fault):
     track = make_track()
     hidden = textured(2, hidden=True)
-    track.advance(hidden, hidden['pyrualean_observation'], epoch=1)
+    track.advance(hidden, hidden['codeaspolicy_observation'], epoch=1)
     current = textured(3, repeated=fault == 'repeated_pattern')
-    source = current['pyrualean_observation']
+    source = current['codeaspolicy_observation']
     if fault == 'unaligned':
         source['aligned'] = False
     if fault == 'old_frame':
@@ -155,12 +155,12 @@ def test_flow_tracks_observed_translation_not_a_rigid_tcp_prediction():
 
 def test_tracker_owns_its_camera_buffers_and_failure_cannot_erase_motion(tmp_path, monkeypatch):
     old = textured(1)
-    source = old['pyrualean_observation']
+    source = old['codeaspolicy_observation']
     track = VisualTrack(dict(provenance=source, landmarks={'p': dict(
         pixels={'cam_left_wrist':[160,66]})}), old, source, arm='left')
     old['vision']['cam_left_wrist']['color'][:] = 0
     current = textured(2, shift=8)
-    assert track.read(current, current['pyrualean_observation'])['points']
+    assert track.read(current, current['codeaspolicy_observation'])['points']
     env, robot, host, _, _, _ = visual_station(tmp_path)
     def fail(*args, **kwargs):
         raise OSError('decoder failed')

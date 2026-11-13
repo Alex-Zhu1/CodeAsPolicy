@@ -6,7 +6,7 @@ import json
 
 import pytest
 
-from pyrualean.arms import ArmToolkit, arm_contract
+from codeaspolicy.arms import ArmToolkit, arm_contract
 
 
 @pytest.fixture
@@ -177,7 +177,7 @@ def test_display_and_log_helpers(robo, tmp_path):
 
 
 def test_arm_contract_guides_note_is_opt_in():
-    from pyrualean.arms import GUIDES_NOTE
+    from codeaspolicy.arms import GUIDES_NOTE
 
     kwargs = dict(budget_s=1200, max_env_steps=10000, max_programs=None)
     assert GUIDES_NOTE not in arm_contract("cells", **kwargs)
@@ -192,7 +192,7 @@ def test_arm_contract_guides_note_is_opt_in():
 def test_copy_guides_copies_the_three_files_and_hashes_them(tmp_path):
     import hashlib
 
-    from pyrualean.play import GUIDE_NAMES, copy_guides
+    from codeaspolicy.play import GUIDE_NAMES, copy_guides
 
     src = tmp_path / "guides-src"
     src.mkdir(parents=True)

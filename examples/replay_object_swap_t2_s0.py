@@ -5,7 +5,7 @@ the basket").  The coordinates were copied from one of RPent's own successful
 tool-calling episodes on this exact seed, so this file only proves that the
 library drives the same primitives to the same outcome.  It is NOT a policy
 that generalises and must never be reported as a method result; use
-`pyrualean generate` for real policies.
+`codeaspolicy generate` for real policies.
 """
 
 

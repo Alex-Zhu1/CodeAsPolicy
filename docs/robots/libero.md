@@ -30,14 +30,14 @@ The robot is a simulated Franka arm with RPent's scripted servos, the frozen Pi0
 
 ## Installation and Resources
 
-RPent at commit `886b3b2`, in its own Python 3.11 environment, with PyRUA-Lean in the same environment:
+RPent at commit `886b3b2`, in its own Python 3.11 environment, with CodeAsPolicy in the same environment:
 
 ```bash
 git clone https://github.com/RLinf/RPent.git && cd RPent && git checkout 886b3b2
 uv venv --python 3.11 && source .venv/bin/activate
 uv pip install torch==2.7.1 torchvision==0.22.1 --index-url https://download.pytorch.org/whl/cu128
 uv pip install -e ".[libero-pro]"
-uv pip install -e /path/to/PyRUA-Lean
+uv pip install -e /path/to/CodeAsPolicy
 liberopro-download-assets --assets-dir /path/to/liberopro-assets
 ```
 
@@ -81,9 +81,9 @@ export SAM3_CHECKPOINT_PATH=/path/to/sam3/sam3.pt
 
 ```bash
 export RPENT_ROOT=/path/to/rpent
-pyrualean play --arm cells --suite libero_spatial_swap --task 7 --seed 2 \
+codeaspolicy play --arm cells --suite libero_spatial_swap --task 7 --seed 2 \
     --model gpt-6-astra --max-turns 40 --budget-s 7200 --out runs/demo --cuda-device 0
-pyrualean summarize runs/demo
+codeaspolicy summarize runs/demo
 ```
 
 An episode with private servers boots Pi0.5 and SAM3 (~10 GB of GPU memory, ~100 s); attached to running servers
@@ -106,13 +106,13 @@ solved:
 | | Success (%) | LLM calls | Input tokens | Cost |
 |---|---|---|---|---|
 | Tool calling (RPent) | 83.0 | 21.4 | 1.23M | $2.49 |
-| **PyRUA-Lean** | **94.0** | **8.4** | **273k** | **$0.79** |
+| **CodeAsPolicy** | **94.0** | **8.4** | **273k** | **$0.79** |
 
 ## What Runs Where
 
 - **Env server** (RPent) owns the LIBERO MuJoCo environment and its EGL rendering.
 - **Pi0.5 server** and **SAM3 server** (RPent) hold the VLA and the segmentation model.
-- **PyRUA-Lean** boots them for the episode, builds RPent's toolkit and serves the agent's cells against `robo`.
+- **CodeAsPolicy** boots them for the episode, builds RPent's toolkit and serves the agent's cells against `robo`.
 - **Agent runtime** (Codex CLI, Claude Code or the `openai` loop) talks to the model.
 
 ## Primitives the Agent Can Call
@@ -135,6 +135,6 @@ Perception and state:
 
 [How It Works](../getting-started/how-it-works.md#what-robo-returns) gives the rules every call follows.
 
-??? note "API reference: what the agent reads, generated from `pyrualean.libero` when these docs are built"
+??? note "API reference: what the agent reads, generated from `codeaspolicy.libero` when these docs are built"
 
     <!-- api-reference: libero -->

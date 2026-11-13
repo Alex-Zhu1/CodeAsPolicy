@@ -1,4 +1,4 @@
-# RoboUse: Robot-Use for AI Agents
+# CodeAsPolicy: Code Policies for AI Robot Agents
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License"></a> &ensp;
@@ -6,9 +6,9 @@
   <a href="pyproject.toml"><img src="https://img.shields.io/badge/Version-0.2.0-orange.svg" alt="Version"></a>
 </p>
 
-**RoboUse** brings the **Computer-Use** paradigm to physical and simulated robotics.
+**CodeAsPolicy** brings the **Computer-Use** paradigm to physical and simulated robotics.
 
-Instead of treating robot manipulation as fine-grained, single-step tool calling (which introduces heavy latency, high token costs, and fragile error handling), RoboUse turns a robot into a programmable, interactive Python environment. An AI agent writes structured Python code blocks against a unified `robo` object—allowing perception, multi-step motions, closed-loop retries, and conditional recoveries to execute locally in a single decision cycle.
+Instead of treating robot manipulation as fine-grained, single-step tool calling (which introduces heavy latency, high token costs, and fragile error handling), CodeAsPolicy turns a robot into a programmable, interactive Python environment. An AI agent writes structured Python code blocks against a unified `robo` object—allowing perception, multi-step motions, closed-loop retries, and conditional recoveries to execute locally in a single decision cycle.
 
 ---
 
@@ -44,8 +44,8 @@ Instead of treating robot manipulation as fine-grained, single-step tool calling
 Clone the repository and install the package in editable mode:
 
 ```bash
-git clone https://github.com/DAGroup-PKU/PyRUA-Lean.git
-cd PyRUA-Lean
+git clone https://github.com/Alex-Zhu1/CodeAsPolicy.git
+cd CodeAsPolicy
 
 # Install with pip or uv
 pip install -e .
@@ -54,10 +54,8 @@ pip install -e .
 Verify the installation and view the typed robot API:
 
 ```bash
-robouse api
+codeaspolicy api
 ```
-
-*(Note: `pyrualean` is also available as a backward-compatible command alias).*
 
 ---
 
@@ -93,7 +91,7 @@ Run an interactive code-driven episode using the CLI:
 
 ```bash
 # Run one episode using code cells mode
-robouse play \
+codeaspolicy play \
     --robot libero \
     --suite libero_spatial \
     --task 0 \
@@ -102,24 +100,24 @@ robouse play \
     --out runs/demo
 
 # Tabulate and summarize run metrics
-robouse summarize runs/demo
+codeaspolicy summarize runs/demo
 ```
 
 ---
 
 ## 🛠️ CLI Reference
 
-The `robouse` CLI provides tools for inspection, prompt rendering, agent execution, and evaluation:
+The `codeaspolicy` CLI provides tools for inspection, prompt rendering, agent execution, and evaluation:
 
 | Command | Description |
 |---|---|
-| `robouse api` | Print the typed robot API reference and primitive specifications. |
-| `robouse play` | Run an episode driven by an AI agent (supports `cells` and `program` modes). |
-| `robouse prompt` | Render and inspect the full generation prompt and system instructions. |
-| `robouse card` | Boot the simulation environment and dump the task card / initial state. |
-| `robouse summarize` | Tabulate episode outcomes, token consumption, and primitive call ledgers. |
-| `robouse compare` | Perform strict paired comparisons across evaluation runs. |
-| `robouse valen-eval` | Evaluate saved visual supervision checks offline without running a simulator. |
+| `codeaspolicy api` | Print the typed robot API reference and primitive specifications. |
+| `codeaspolicy play` | Run an episode driven by an AI agent (supports `cells` and `program` modes). |
+| `codeaspolicy prompt` | Render and inspect the full generation prompt and system instructions. |
+| `codeaspolicy card` | Boot the simulation environment and dump the task card / initial state. |
+| `codeaspolicy summarize` | Tabulate episode outcomes, token consumption, and primitive call ledgers. |
+| `codeaspolicy compare` | Perform strict paired comparisons across evaluation runs. |
+| `codeaspolicy valen-eval` | Evaluate saved visual supervision checks offline without running a simulator. |
 
 ---
 
@@ -127,10 +125,10 @@ The `robouse` CLI provides tools for inspection, prompt rendering, agent executi
 
 | Robot ID | Benchmark / Stack | Description |
 |---|---|---|
-| `robodojo_xpl_rgb` | [RoboDojo](https://dagroup-pku.github.io/PyRUA-Lean/docs/robots/robodojo/) (via XPolicyLab) | Dual ARX-X5 arms with RGB observations, staged grasping, feature tracking, and motion primitives. |
-| `libero` *(default)* | [LIBERO-PRO](https://dagroup-pku.github.io/PyRUA-Lean/docs/robots/libero/) (via RPent) | Single Franka arm with scripted servos, SAM3 perception, and Pi0.5 VLA integration. |
-| `robotwin` | [RoboTwin 2.0](https://dagroup-pku.github.io/PyRUA-Lean/docs/robots/robotwin/) (via RPent) | Dual-arm manipulation with LingBot-VLA. |
-| `robocasa` | [RoboCasa365](https://dagroup-pku.github.io/PyRUA-Lean/docs/robots/robocasa/) (via RPent) | Mobile manipulation with navigation and RLDX-1 VLA. |
+| `robodojo_xpl_rgb` | [RoboDojo](https://alex-zhu1.github.io/CodeAsPolicy/docs/robots/robodojo/) (via XPolicyLab) | Dual ARX-X5 arms with RGB observations, staged grasping, feature tracking, and motion primitives. |
+| `libero` *(default)* | [LIBERO-PRO](https://alex-zhu1.github.io/CodeAsPolicy/docs/robots/libero/) (via RPent) | Single Franka arm with scripted servos, SAM3 perception, and Pi0.5 VLA integration. |
+| `robotwin` | [RoboTwin 2.0](https://alex-zhu1.github.io/CodeAsPolicy/docs/robots/robotwin/) (via RPent) | Dual-arm manipulation with LingBot-VLA. |
+| `robocasa` | [RoboCasa365](https://alex-zhu1.github.io/CodeAsPolicy/docs/robots/robocasa/) (via RPent) | Mobile manipulation with navigation and RLDX-1 VLA. |
 | *Real Robot* | Physical AF8 / Franka | Dual-arm or single-arm hardware with force-guarded primitives and wrist cameras. |
 
 ---
@@ -138,8 +136,8 @@ The `robouse` CLI provides tools for inspection, prompt rendering, agent executi
 ## 📁 Repository Structure
 
 ```text
-├── src/robouse/             # Core RoboUse package
-│   ├── cli.py               # CLI entrypoint (robouse / pyrualean)
+├── src/codeaspolicy/        # Core CodeAsPolicy package
+│   ├── cli.py               # CLI entrypoint (codeaspolicy)
 │   ├── _robot.py            # Base robot abstractions and primitive definitions
 │   ├── execution.py         # Code execution engine and sandbox limits
 │   ├── staged_grasp.py      # Resumable staged grasping logic

@@ -1,6 +1,6 @@
 ---
 name: astra-valen-supervision
-description: Write robot-control Python with Astra and Valen visual evidence in PyRUA-Lean. Use when choosing manipulation checks, composing single-arm or dual-arm actions, handling uncertain observations, or reconciling completion evidence.
+description: Write robot-control Python with Astra and Valen visual evidence in CodeAsPolicy. Use when choosing manipulation checks, composing single-arm or dual-arm actions, handling uncertain observations, or reconciling completion evidence.
 ---
 
 # Astra–Valen supervision
@@ -14,7 +14,7 @@ fallible evidence with images, measurements and action results to choose the nex
 program. The host executes actions and enforces explicit dependencies and resource
 limits. Ordinary grasp and transport do not require a Valen approval by default.
 
-The packaged [runtime core](../../src/pyrualean/knowledge/astra_valen_supervision.md)
+The packaged [runtime core](../../src/codeaspolicy/knowledge/astra_valen_supervision.md)
 is injected when monitoring is enabled and frozen with its hash for the run.
 Changing this repository skill alone does not update that core. Read
 [contracts and examples](references/contracts.md) for `watch`/evidence semantics,

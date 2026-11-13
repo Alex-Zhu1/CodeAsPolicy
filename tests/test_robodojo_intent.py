@@ -3,10 +3,10 @@
 import numpy as np
 import pytest
 
-from pyrualean.hosts import robodojo_kinematics as kin
-from pyrualean.hosts import robodojo_tools as motion
-from pyrualean.hosts import robodojo_trajectory as trajectory
-from pyrualean.interaction import InteractionPause
+from codeaspolicy.hosts import robodojo_kinematics as kin
+from codeaspolicy.hosts import robodojo_tools as motion
+from codeaspolicy.hosts import robodojo_trajectory as trajectory
+from codeaspolicy.interaction import InteractionPause
 from tests.test_robodojo_trajectory import TimedEnvironment, station
 
 
@@ -361,7 +361,7 @@ def test_visual_completion_is_returned_for_observation_not_claimed_as_verified(t
 @pytest.mark.parametrize("distance,expected", [(.10, "paused"), (.04, "completed")])
 def test_python_deadline_after_checkpoint_preserves_remaining_or_completed_intent(
         tmp_path, monkeypatch, distance, expected):
-    from pyrualean.execution import ExecutionLimit
+    from codeaspolicy.execution import ExecutionLimit
 
     env, robo, _ = station(tmp_path)
     original = robo._stateful
@@ -589,7 +589,7 @@ def test_editing_status_metadata_cannot_change_a_paused_intent(tmp_path):
 
 
 def test_cancel_during_preflight_retains_a_known_zero_action_intent(tmp_path):
-    from pyrualean.coordination import CoordinationPause
+    from codeaspolicy.coordination import CoordinationPause
 
     env, robo, host = station(tmp_path)
     target = robo.observe().right.shifted(dz=.06)

@@ -1,6 +1,6 @@
 import ast,json,math,re,sys
 from pathlib import Path
-root=Path('/mnt/data_hdd/mhzhu/GPTCode/PyRUA-Lean'); ua=root/'.ua'
+root=Path('/mnt/data_hdd/mhzhu/GPTCode/CodeAsPolicy'); ua=root/'.ua'
 indices=[int(x) for x in sys.argv[1:]]
 batches={b['batchIndex']:b for b in json.loads((ua/'intermediate/batches.json').read_text())['batches']}
 scan=json.loads((ua/'intermediate/scan-result.json').read_text()); paths={f['path'] for f in scan['files']}
@@ -53,7 +53,7 @@ for i in indices:
     for a in n.names:alias[a.asname or a.name]=(candidates[0],a.name)
    # Tests have src-layout imports missing in authoritative importMap.
    # Record only tested_by evidence, without changing imports.
-   if path.startswith('tests/') and n.module.startswith('pyrualean'):
+   if path.startswith('tests/') and n.module.startswith('codeaspolicy'):
     target='src/'+suffix+'.py'
     if target in paths:edges.append(edge('file:'+target,fid,'tested_by'))
   for c in r.get('callGraph',[]):

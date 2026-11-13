@@ -8,9 +8,9 @@ from types import SimpleNamespace
 
 import pytest
 
-from pyrualean.hosts.robodojo_card import build_card
-from pyrualean.hosts.rpent_robodojo import Cell
-from pyrualean.prompt import TaskCard
+from codeaspolicy.hosts.robodojo_card import build_card
+from codeaspolicy.hosts.rpent_robodojo import Cell
+from codeaspolicy.prompt import TaskCard
 from tests.test_robodojo_trajectory import station
 
 
@@ -18,7 +18,7 @@ from tests.test_robodojo_trajectory import station
     "rpent_robodojo", "xpolicylab_robodojo", "xpolicylab_robodojo_rgb",
 ])
 def test_hosts_preserve_native_instruction_and_full_startup_capabilities(tmp_path, module):
-    from pyrualean.play import build_prompt
+    from codeaspolicy.play import build_prompt
 
     env, robo, host = station(tmp_path)
     instruction = '  把红块移到左边。\nDo not lift the tray. "left" means robot left.  '
@@ -35,7 +35,7 @@ def test_hosts_preserve_native_instruction_and_full_startup_capabilities(tmp_pat
             state=host.state, _primitives=host._primitives,
             execute_tool=lambda name, args: SimpleNamespace(result=host.execute_tool(name, args)),
         )
-    card = import_module(f"pyrualean.hosts.{module}").dump_card(
+    card = import_module(f"codeaspolicy.hosts.{module}").dump_card(
         toolkit, Cell("arx_x5", "example", 0), tmp_path)
     assert card.task_language == instruction and card.object_names == []
     assert card.acceptance["requirements"] == []
@@ -138,7 +138,7 @@ def test_old_task_cards_without_sources_still_load(tmp_path):
 
 
 def test_unavailable_native_status_uses_labelled_fallback_without_inventing_timing(tmp_path):
-    from pyrualean.hosts.xpolicylab_robodojo import dump_card
+    from codeaspolicy.hosts.xpolicylab_robodojo import dump_card
 
     env, _, host = station(tmp_path)
 
@@ -153,7 +153,7 @@ def test_unavailable_native_status_uses_labelled_fallback_without_inventing_timi
 
 
 def test_zero_native_budget_is_not_replaced_with_configured_budget(tmp_path):
-    from pyrualean.hosts.xpolicylab_robodojo import dump_card
+    from codeaspolicy.hosts.xpolicylab_robodojo import dump_card
 
     env, _, host = station(tmp_path)
     env.step_limit = 0
@@ -205,7 +205,7 @@ def test_missing_provenance_is_unknown_and_mismatched_sources_are_visible(tmp_pa
 
 
 def test_offline_prompt_is_compact_without_advertising_unavailable_plan_helper(tmp_path):
-    from pyrualean.prompt import render_prompt
+    from codeaspolicy.prompt import render_prompt
 
     _, _, host = station(tmp_path)
     card = build_card(cell=Cell("arx_x5", "example", 0), raw={}, instruction="Move",
@@ -216,8 +216,8 @@ def test_offline_prompt_is_compact_without_advertising_unavailable_plan_helper(t
 
 
 def test_dump_card_records_supplied_public_acceptance_and_artifact_provenance(tmp_path):
-    from pyrualean.hosts.xpolicylab_robodojo_rgb import dump_card
-    from pyrualean.task_acceptance import CATALOG_SCHEMA, acceptance_sha256
+    from codeaspolicy.hosts.xpolicylab_robodojo_rgb import dump_card
+    from codeaspolicy.task_acceptance import CATALOG_SCHEMA, acceptance_sha256
 
     _, _, host = station(tmp_path)
     spec_path = tmp_path / "public_acceptance.json"
@@ -256,8 +256,8 @@ def test_dump_card_records_supplied_public_acceptance_and_artifact_provenance(tm
 
 
 def test_dump_card_loads_packaged_robodojo_acceptance_catalog_by_default(tmp_path):
-    from pyrualean.hosts.xpolicylab_robodojo_rgb import dump_card
-    from pyrualean.task_acceptance import acceptance_sha256, default_robodojo_acceptance_path
+    from codeaspolicy.hosts.xpolicylab_robodojo_rgb import dump_card
+    from codeaspolicy.task_acceptance import acceptance_sha256, default_robodojo_acceptance_path
 
     _, _, host = station(tmp_path)
     card = dump_card(host, Cell("arx_x5", "make_kong", 0), tmp_path)

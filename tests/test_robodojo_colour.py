@@ -1,4 +1,4 @@
-# Copyright 2026 PyRUA-Lean Contributors.
+# Copyright 2026 CodeAsPolicy Contributors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,17 +22,17 @@ from typing import Any
 import numpy as np
 import pytest
 
-from pyrualean._backend import EpisodeFinished
-from pyrualean.hosts import robodojo_kinematics as kin
-from pyrualean.hosts import robodojo_native as native
-from pyrualean.hosts import robodojo_sight as sight
-from pyrualean.hosts import robodojo_tools as tools
-from pyrualean.hosts import xpolicylab_bridge as xb
-from pyrualean.hosts.sam3_local import Segmented
-from pyrualean.prompt import api_reference, knowledge_text
-from pyrualean.robodojo_xpl import RobodojoOfficialRobot
-from pyrualean.robodojo_xpl_rgb import ObjectSight, RobodojoOfficialColourRobot, SeenPoint
-from pyrualean.robots import get_adapter
+from codeaspolicy._backend import EpisodeFinished
+from codeaspolicy.hosts import robodojo_kinematics as kin
+from codeaspolicy.hosts import robodojo_native as native
+from codeaspolicy.hosts import robodojo_sight as sight
+from codeaspolicy.hosts import robodojo_tools as tools
+from codeaspolicy.hosts import xpolicylab_bridge as xb
+from codeaspolicy.hosts.sam3_local import Segmented
+from codeaspolicy.prompt import api_reference, knowledge_text
+from codeaspolicy.robodojo_xpl import RobodojoOfficialRobot
+from codeaspolicy.robodojo_xpl_rgb import ObjectSight, RobodojoOfficialColourRobot, SeenPoint
+from codeaspolicy.robots import get_adapter
 
 
 def _sibling(name: str):
@@ -273,8 +273,8 @@ def test_the_reference_and_the_knowledge_of_the_colour_robot_promise_no_depth():
 
 
 def _deploy():
-    path = Path(__file__).resolve().parents[1] / "integrations/xpolicylab/PyRUA_Lean/deploy.py"
-    spec = importlib.util.spec_from_file_location("pyrua_lean_deploy", path)
+    path = Path(__file__).resolve().parents[1] / "integrations/xpolicylab/CodeAsPolicy/deploy.py"
+    spec = importlib.util.spec_from_file_location("codeaspolicy_deploy", path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
@@ -410,7 +410,7 @@ def test_get_action_does_not_keep_the_client_waiting_while_the_program_thinks():
 
 
 def _adapter_model(monkeypatch):
-    """integrations/xpolicylab/PyRUA_Lean/model.py, over XPolicyLab's template as it is."""
+    """integrations/xpolicylab/CodeAsPolicy/model.py, over XPolicyLab's template as it is."""
 
     import sys
     import types
@@ -446,20 +446,20 @@ def _adapter_model(monkeypatch):
     monkeypatch.setitem(sys.modules, "XPolicyLab.model_template", template)
     monkeypatch.setitem(sys.modules, "XPolicyLab.utils", utils)
     monkeypatch.setitem(sys.modules, "XPolicyLab.utils.process_data", process_data)
-    path = Path(__file__).resolve().parents[1] / "integrations/xpolicylab/PyRUA_Lean/model.py"
-    spec = importlib.util.spec_from_file_location("pyrua_lean_model", path)
+    path = Path(__file__).resolve().parents[1] / "integrations/xpolicylab/CodeAsPolicy/model.py"
+    spec = importlib.util.spec_from_file_location("codeaspolicy_model", path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
 
 
 def test_the_adapters_model_runs_an_episode_for_each_reset(monkeypatch, tmp_path):
-    from pyrualean import play
+    from codeaspolicy import play
 
     played: list[dict[str, Any]] = []
 
     def play_episode(cell, out_dir, **kwargs):
-        # what pyrualean.play does with the host, without a model: boot, move, conclude
+        # what codeaspolicy.play does with the host, without a model: boot, move, conclude
         host = get_adapter(kwargs["robot"]).host_module()
         toolkit, daemons = host.boot(cell, out_dir, env_only=True, **kwargs["boot_options"])
         backend = host.make_backend(toolkit)
@@ -480,6 +480,7 @@ def test_the_adapters_model_runs_an_episode_for_each_reset(monkeypatch, tmp_path
         return {"status": "completed", "environment_success": backend.solved(), "task": cell.task}
 
     monkeypatch.setattr(play, "play_episode", play_episode)
+    monkeypatch.delenv("CODEASPOLICY_PRIMITIVES", raising=False)
     module = _adapter_model(monkeypatch)
     model = module.Model(
         {
@@ -499,18 +500,34 @@ def test_the_adapters_model_runs_an_episode_for_each_reset(monkeypatch, tmp_path
         assert not model._episode.is_alive()
         last = played[-1]
         assert last["cell"].task == "stack_blocks" and last["cell"].seed == 3
-        assert last["robot"] == "robodojo_xpl_rgb" and last["primitives"] == "no-vla"
+        assert last["robot"] == "robodojo_xpl_rgb" and last["primitives"] == "no-sam"
         assert last["daemons"] == []  # XPolicyLab started the pair, the host started nothing
         assert last["success"] is (solved_at is not None)
         assert task_env.take_action_cnt[0] == (last["steps"] if solved_at is None else solved_at)
     assert len(played) == 2 and [r["environment_success"] for r in model.results] == [False, True]
 
+    # Environment variable CODEASPOLICY_PRIMITIVES takes precedence over deploy.yml's cfg["primitives"].
+    monkeypatch.setenv("CODEASPOLICY_PRIMITIVES", "no-vla")
+    override_model = module.Model(
+        {
+            "poll_s": 0.05,
+            "model": "some-model",
+            "env_cfg_type": "arx_x5",
+            "result_dir": tmp_path,
+            "robot": "robodojo_xpl_rgb",
+            "primitives": "no-sam",
+        }
+    )
+    deploy.eval_one_episode(TaskEnv(Scene([CUBE]), step_lim=200, solved_at=3), Client(override_model))
+    override_model._episode.join(5.0)
+    assert played[-1]["primitives"] == "no-vla"
+
 
 def test_an_episode_under_the_adapter_runs_the_real_loop(monkeypatch, tmp_path):
-    """model.py with pyrualean.play as it is: only the provider and SAM3 are stood in for."""
+    """model.py with codeaspolicy.play as it is: only the provider and SAM3 are stood in for."""
 
-    from pyrualean import openai_runtime as orun
-    from pyrualean.hosts import sam3_local
+    from codeaspolicy import openai_runtime as orun
+    from codeaspolicy.hosts import sam3_local
 
     scene = DepthScene([CUBE])
 
@@ -554,13 +571,50 @@ def test_an_episode_under_the_adapter_runs_the_real_loop(monkeypatch, tmp_path):
 
     monkeypatch.setattr(sam3_local, "LocalSam3", load)
     monkeypatch.setattr(sam3_local, "_SHARED", {})
+    monkeypatch.delenv("CODEASPOLICY_PRIMITIVES", raising=False)
     monkeypatch.setenv("OPENAI_BASE_URL", "http://provider.test/v1")
     monkeypatch.chdir(tmp_path)  # an episode moves into its workspace; pytest moves back
     module = _adapter_model(monkeypatch)
+
+    # Default adapter config runs no-sam without loading SAM3 at all.
+    nosam_cell = (
+        "pt = robo.ray_at_z(240.0, 320.0, z=0.765, camera='cam_head')\n"
+        "moved = robo.execute_motion('travel', right=robo.observe().right.shifted(dz=.06), "
+        "holding={'right': 'empty'})\n"
+        "print(pt.xyz, moved['reached'])\n"
+    )
+    replies[:] = [
+        reply("python", {"code": nosam_cell}, "n1"),
+        reply("finish", {"status": "success", "summary": "moved"}, "n2"),
+    ]
+    default_model = module.Model(
+        {
+            "poll_s": 0.05,
+            "model": "some-model",
+            "env_cfg_type": "arx_x5",
+            "result_dir": "results_nosam",
+            "max_turns": 5,
+            "openai_options": {"max_tokens": 64, "nudges": 2},
+        }
+    )
+    _deploy().eval_one_episode(TaskEnv(scene, step_lim=200), Client(default_model))
+    assert not default_model._episode.is_alive() and loaded == []
+    (nosam_out,) = (tmp_path / "results_nosam").iterdir()
+    nosam_res = json.loads((nosam_out / "result.json").read_text())
+    assert nosam_res["host"]["primitive_set"] == "no-sam" and nosam_res["status"] == "completed"
+
+    # Explicit primitives="no-vla" opts in to SAM3 and reuses the loaded instance across episodes.
+    monkeypatch.chdir(tmp_path)
+    sent.clear()
+    replies[:] = [
+        reply("python", {"code": cell}, "c1"),
+        reply("finish", {"status": "success", "summary": "moved"}, "c2"),
+    ]
     cfg = {
         "poll_s": 0.05,
         "model": "some-model",
         "env_cfg_type": "arx_x5",
+        "primitives": "no-vla",
         "result_dir": "results",
         "max_turns": 5,
         "openai_options": {"max_tokens": 64, "nudges": 2},
@@ -600,8 +654,8 @@ def test_a_trial_the_client_ends_is_wrapped_up_without_another_request(monkeypat
     point (and a rate limit on it) once held it past the client's timeout, and the trial
     the client had just judged solved was not recorded."""
 
-    from pyrualean import openai_runtime as orun
-    from pyrualean.hosts import sam3_local
+    from codeaspolicy import openai_runtime as orun
+    from codeaspolicy.hosts import sam3_local
 
     scene = DepthScene([CUBE])
     cell = ("moved = robo.execute_motion('travel', right=robo.observe().right.shifted(dz=.06), "
@@ -664,7 +718,7 @@ def test_the_clients_trial_stands_when_the_verdict_cannot_be_delivered():
 
 
 def test_the_adapter_runs_the_colour_robot_whatever_the_client_sends(monkeypatch, tmp_path):
-    from pyrualean import play
+    from codeaspolicy import play
 
     robots: list[str] = []
 
@@ -1038,7 +1092,7 @@ def test_with_depth_in_the_observation_the_tools_read_it(key, tmp_path):
     assert top["world_xyz"][2] == pytest.approx(kin.TABLE_Z + 0.035, abs=0.003)
     assert "surface" not in top and top["depth_m"] > 0.3
     assert "error" in backend.execute_tool("back_project", {"row": 900, "col": 0})
-    # ... and the robot of pyrualean.robodojo runs on it as it is
+    # ... and the robot of codeaspolicy.robodojo runs on it as it is
     robo = RobodojoOfficialRobot(backend, primitives="no-vla")
     pose = robo.locate("the cube")
     assert type(pose).__name__ == "ObjectPose" and _off(pose.center_xyz, CUBE) < 0.003
@@ -1051,9 +1105,9 @@ def test_with_depth_in_the_observation_the_tools_read_it(key, tmp_path):
 
 
 def test_the_xpolicylab_robot_is_the_robodojo_robot_and_asks_for_depth(tmp_path):
-    from pyrualean.hosts import xpolicylab_robodojo as xhost
-    from pyrualean.hosts.rpent_robodojo import Cell
-    from pyrualean.robodojo import ADAPTER as base
+    from codeaspolicy.hosts import xpolicylab_robodojo as xhost
+    from codeaspolicy.hosts.rpent_robodojo import Cell
+    from codeaspolicy.robodojo import ADAPTER as base
 
     adapter = get_adapter("robodojo_xpl")
     assert adapter.knowledge == base.knowledge and adapter.host.endswith("xpolicylab_robodojo")
@@ -1081,7 +1135,7 @@ def _checkout(tmp_path):
 
     import yaml
 
-    from pyrualean.hosts import xpolicylab_robodojo as xhost
+    from codeaspolicy.hosts import xpolicylab_robodojo as xhost
 
     source = tmp_path / "RoboDojo"
     for part in xhost.client_root().SOURCE_PARTS:
@@ -1114,7 +1168,7 @@ def _checkout(tmp_path):
 def test_the_host_switches_depth_on_in_its_own_copy_of_the_config(tmp_path):
     import yaml
 
-    from pyrualean.hosts import xpolicylab_robodojo as xhost
+    from codeaspolicy.hosts import xpolicylab_robodojo as xhost
 
     source, top = _checkout(tmp_path)
     xpl = xhost._xpolicylab_root(None, source)  # the checkout's own
@@ -1140,10 +1194,10 @@ def test_the_host_switches_depth_on_in_its_own_copy_of_the_config(tmp_path):
     # XPolicyLab's own code and this policy, no other policy, nothing of its repository
     assert (bench / "XPolicyLab" / "utils" / "process_data.py").is_file()
     assert sorted(p.name for p in (bench / "XPolicyLab" / "policy").iterdir()) == [
-        "PyRUA_Lean",
+        "CodeAsPolicy",
         "__init__.py",
     ]
-    assert (bench / "XPolicyLab" / "policy" / "PyRUA_Lean" / "deploy.py").is_file()
+    assert (bench / "XPolicyLab" / "policy" / "CodeAsPolicy" / "deploy.py").is_file()
     assert not (bench / "XPolicyLab" / ".git").exists()
     # RoboDojo's own tree is as it was; without depth the copy keeps its switches
     assert yaml.safe_load((source / "env_cfg" / "arx_x5.yml").read_text()) == top
@@ -1152,17 +1206,17 @@ def test_the_host_switches_depth_on_in_its_own_copy_of_the_config(tmp_path):
 
 
 def test_the_host_picks_one_layout_the_way_xpolicylab_does(tmp_path):
-    from pyrualean.hosts import xpolicylab_robodojo as xhost
-    from pyrualean.hosts.rpent_robodojo import Cell
+    from codeaspolicy.hosts import xpolicylab_robodojo as xhost
+    from codeaspolicy.hosts.rpent_robodojo import Cell
 
     source, _ = _checkout(tmp_path)
     bench = xhost.lay_out(tmp_path / "bench", source, source / "XPolicyLab", depth=True)
     cell = Cell(suite="arx_x5", task="stack_blocks", seed=2)
-    info = "ckpt_name=pyrualean,action_type=joint"
+    info = "ckpt_name=codeaspolicy,action_type=joint"
     manifest = xhost.only_layout(bench, cell, eval_seed=0, additional_info=info, run_id="run-7")
     # where RoboDojo's client looks for it, relative to the directory it runs from
     assert manifest == (
-        bench / "eval_result/RoboDojo/stack_blocks/PyRUA_Lean/arx_x5" / f"0_{info}"
+        bench / "eval_result/RoboDojo/stack_blocks/CodeAsPolicy/arx_x5" / f"0_{info}"
         / "_resume_run-7.json"
     )  # fmt: skip
     data = json.loads(manifest.read_text())
@@ -1183,7 +1237,7 @@ def test_the_host_picks_one_layout_the_way_xpolicylab_does(tmp_path):
 def test_a_root_with_depth_can_write_its_results_into_the_checkout(tmp_path):
     import yaml
 
-    from pyrualean.hosts import xpolicylab_robodojo as xhost
+    from codeaspolicy.hosts import xpolicylab_robodojo as xhost
 
     source, top = _checkout(tmp_path)
     module = xhost.client_root()
@@ -1200,7 +1254,7 @@ def test_a_root_with_depth_can_write_its_results_into_the_checkout(tmp_path):
 def test_the_adapter_starts_the_client_as_robodojo_configures_it():
     """The submitted directory holds nothing that changes what the client sends."""
 
-    adapter = Path(__file__).resolve().parents[1] / "integrations/xpolicylab/PyRUA_Lean"
+    adapter = Path(__file__).resolve().parents[1] / "integrations/xpolicylab/CodeAsPolicy"
     assert not (adapter / "client_root.py").exists()
     client = (adapter / "setup_eval_env_client.sh").read_text()
     assert "env_cfg" not in client.replace("env_cfg_type", "") and "client_root" not in client

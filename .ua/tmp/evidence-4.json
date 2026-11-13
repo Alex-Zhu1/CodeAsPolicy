@@ -1,8 +1,8 @@
 [
   {
-    "path": "src/pyrualean/hosts/common.py",
+    "path": "src/codeaspolicy/hosts/common.py",
     "category": "code",
-    "moduleDoc": "What every RPent-backed host shares: locating the checkout and adapting\nan RPent ``Toolkit`` to the :class:`pyrualean.Backend` contract.\n\nA host module (``rpent_libero``, ``rpent_robocasa``, ``rpent_robotwin``,\n``rpent_robodojo``) exposes ``Cell``, ``add_cell_args(parser)``,\n``add_boot_args(parser)``, ``cell_from_args(args)``, ``boot_options(args)``,\n``boot(cell, out_dir, *, rpent_root=None, env_only=False, **options)`` and\n``dump_card(toolkit, cell, out_dir)``; ``pyrualean.play`` drives any of\nthem through the robot's adapter.  A host may also define\n``make_backend(toolkit)`` returning a :class:`RpentBackend` subclass when\nRPent's toolkit lacks ``solved()`` / ``primitives`` or counts steps in\nanother unit than frames.",
+    "moduleDoc": "What every RPent-backed host shares: locating the checkout and adapting\nan RPent ``Toolkit`` to the :class:`codeaspolicy.Backend` contract.\n\nA host module (``rpent_libero``, ``rpent_robocasa``, ``rpent_robotwin``,\n``rpent_robodojo``) exposes ``Cell``, ``add_cell_args(parser)``,\n``add_boot_args(parser)``, ``cell_from_args(args)``, ``boot_options(args)``,\n``boot(cell, out_dir, *, rpent_root=None, env_only=False, **options)`` and\n``dump_card(toolkit, cell, out_dir)``; ``codeaspolicy.play`` drives any of\nthem through the robot's adapter.  A host may also define\n``make_backend(toolkit)`` returning a :class:`RpentBackend` subclass when\nRPent's toolkit lacks ``solved()`` / ``primitives`` or counts steps in\nanother unit than frames.",
     "symbols": [
       {
         "name": "resolve_rpent_root",
@@ -34,7 +34,7 @@
           105
         ],
         "owner": null,
-        "doc": "Adapt an RPent ``Toolkit`` to the :class:`pyrualean.Backend` contract.",
+        "doc": "Adapt an RPent ``Toolkit`` to the :class:`codeaspolicy.Backend` contract.",
         "body": ""
       },
       {
@@ -126,9 +126,9 @@
     ]
   },
   {
-    "path": "src/pyrualean/hosts/rpent_libero.py",
+    "path": "src/codeaspolicy/hosts/rpent_libero.py",
     "category": "code",
-    "moduleDoc": "RPent-backed LIBERO host.\n\nBoots RPent's own LIBERO stack (env server, Pi0.5 server, SAM3 server), builds\nthe same ``LiberoToolkit`` its planners use, wraps it as a :class:`Backend`\nand runs one policy file against it.  Because every primitive still goes\nthrough ``Toolkit.execute_tool``, the run produces RPent's native artifacts\n(``states.json``, ``episode.mp4``, per-step images) and is judged by the same\n``toolkit.solved()`` predicate as an RPent agent run.\n\nThis module needs RPent and its ``libero-pro`` extra importable; run it with\nRPent's interpreter after sourcing its environment (see docs/guide.md).  One\nepisode per process: ``python -m pyrualean.hosts.rpent_libero run ...``.",
+    "moduleDoc": "RPent-backed LIBERO host.\n\nBoots RPent's own LIBERO stack (env server, Pi0.5 server, SAM3 server), builds\nthe same ``LiberoToolkit`` its planners use, wraps it as a :class:`Backend`\nand runs one policy file against it.  Because every primitive still goes\nthrough ``Toolkit.execute_tool``, the run produces RPent's native artifacts\n(``states.json``, ``episode.mp4``, per-step images) and is judged by the same\n``toolkit.solved()`` predicate as an RPent agent run.\n\nThis module needs RPent and its ``libero-pro`` extra importable; run it with\nRPent's interpreter after sourcing its environment (see docs/guide.md).  One\nepisode per process: ``python -m codeaspolicy.hosts.rpent_libero run ...``.",
     "symbols": [
       {
         "name": "add_cell_args",
@@ -138,7 +138,7 @@
           71
         ],
         "owner": null,
-        "doc": "LIBERO cell identifiers (``pyrualean play --robot libero`` and the host CLI).",
+        "doc": "LIBERO cell identifiers (``codeaspolicy play --robot libero`` and the host CLI).",
         "body": "parser.add_argument(\"--suite\", required=True, help=\"e.g. libero_object_swap\")\nparser.add_argument(\"--task\", type=int, required=True, help=\"task index within the suite\")\nparser.add_argument(\"--seed\", type=int, default=0)\nparser.add_argument(\"--libero-type\", default=\"pro\")"
       },
       {
@@ -216,7 +216,7 @@
         ],
         "owner": null,
         "doc": "Run one policy file for one cell and write ``result.json``.",
-        "body": "out_dir.mkdir(parents=True, exist_ok=True)\nstarted = time.perf_counter()\ncreated_at = time.strftime(\"%Y-%m-%dT%H:%M:%S%z\")\nresult: dict[str, Any] = {\n        \"schema\": RESULT_SCHEMA,\n        \"system\": \"pyrualean\",\nshutil.copyfile(policy_path, out_dir / \"policy.py\")\ntoolkit = None\ndaemons: list[Any] = []\nledger = Ledger()\ntry:\n        toolkit, daemons = boot(cell, out_dir, rpent_root=rpent_root)\n        result[\"host\"][\"rpent_root\"] = str(resolve_rpent_root(rpent_root))\nreturn result"
+        "body": "out_dir.mkdir(parents=True, exist_ok=True)\nstarted = time.perf_counter()\ncreated_at = time.strftime(\"%Y-%m-%dT%H:%M:%S%z\")\nresult: dict[str, Any] = {\n        \"schema\": RESULT_SCHEMA,\n        \"system\": \"codeaspolicy\",\nshutil.copyfile(policy_path, out_dir / \"policy.py\")\ntoolkit = None\ndaemons: list[Any] = []\nledger = Ledger()\ntry:\n        toolkit, daemons = boot(cell, out_dir, rpent_root=rpent_root)\n        result[\"host\"][\"rpent_root\"] = str(resolve_rpent_root(rpent_root))\nreturn result"
       },
       {
         "name": "_install_sigterm",
@@ -271,7 +271,7 @@
         ],
         "owner": null,
         "doc": "",
-        "body": "parser = argparse.ArgumentParser(\n        prog=\"python -m pyrualean.hosts.rpent_libero\", description=__doc__\n    )\nsub = parser.add_subparsers(dest=\"command\", required=True)\nrun = sub.add_parser(\"run\", help=\"run one policy file for one cell\")\nrun.add_argument(\"--policy\", type=Path, required=True)\nrun.add_argument(\"--timeout-s\", type=float, default=1200.0)\n_add_cell_args(run)\ncard = sub.add_parser(\"card\", help=\"dump the task card for one cell\")\n_add_cell_args(card)\nargs = parser.parse_args(argv)\nif args.command == \"run\":\n        result = run_episode(\n            args.policy.resolve(),\ncard_obj = card_only(_cell(args), args.out.resolve(), rpent_root=args.rpent_root)\nprint(card_obj.to_json())\nreturn 0"
+        "body": "parser = argparse.ArgumentParser(\n        prog=\"python -m codeaspolicy.hosts.rpent_libero\", description=__doc__\n    )\nsub = parser.add_subparsers(dest=\"command\", required=True)\nrun = sub.add_parser(\"run\", help=\"run one policy file for one cell\")\nrun.add_argument(\"--policy\", type=Path, required=True)\nrun.add_argument(\"--timeout-s\", type=float, default=1200.0)\n_add_cell_args(run)\ncard = sub.add_parser(\"card\", help=\"dump the task card for one cell\")\n_add_cell_args(card)\nargs = parser.parse_args(argv)\nif args.command == \"run\":\n        result = run_episode(\n            args.policy.resolve(),\ncard_obj = card_only(_cell(args), args.out.resolve(), rpent_root=args.rpent_root)\nprint(card_obj.to_json())\nreturn 0"
       },
       {
         "name": "Cell",
@@ -324,9 +324,9 @@
     ]
   },
   {
-    "path": "src/pyrualean/hosts/rpent_robocasa.py",
+    "path": "src/codeaspolicy/hosts/rpent_robocasa.py",
     "category": "code",
-    "moduleDoc": "RPent-backed RoboCasa365 host.\n\nBoots RPent's own RoboCasa stack (robosuite kitchen env server, RLDX-1 VLA\nserver), builds the same ``RoboCasaToolkit`` its planners use, wraps it as a\n:class:`Backend` and runs one policy file against it.  Because every\nprimitive still goes through ``Toolkit.execute_tool``, the run produces\nRPent's native artifacts (``states.json``, ``episode.mp4``,\n``success_criteria.md``, per-step images and world maps) and is judged by\nthe same ``toolkit.solved()`` predicate (the env's own ``_check_success``,\nrecorded as ``success``) as an RPent agent run.\n\n``RoboCasaToolkit`` implements ``solved()`` and counts env steps as recorded\nagentview frames (one per ``env.step``, calibration and VLA steps included),\nthe same unit as LIBERO, so the generic :class:`RpentBackend` is used\nunchanged and this module defines no ``make_backend``.\n\nThis module needs RPent and its ``robocasa`` extra importable; run it with\nthat interpreter and the RoboCasa environment variables set\n(``docs/setup.md``).  One episode per process:\n``python -m pyrualean.hosts.rpent_robocasa run ...``.",
+    "moduleDoc": "RPent-backed RoboCasa365 host.\n\nBoots RPent's own RoboCasa stack (robosuite kitchen env server, RLDX-1 VLA\nserver), builds the same ``RoboCasaToolkit`` its planners use, wraps it as a\n:class:`Backend` and runs one policy file against it.  Because every\nprimitive still goes through ``Toolkit.execute_tool``, the run produces\nRPent's native artifacts (``states.json``, ``episode.mp4``,\n``success_criteria.md``, per-step images and world maps) and is judged by\nthe same ``toolkit.solved()`` predicate (the env's own ``_check_success``,\nrecorded as ``success``) as an RPent agent run.\n\n``RoboCasaToolkit`` implements ``solved()`` and counts env steps as recorded\nagentview frames (one per ``env.step``, calibration and VLA steps included),\nthe same unit as LIBERO, so the generic :class:`RpentBackend` is used\nunchanged and this module defines no ``make_backend``.\n\nThis module needs RPent and its ``robocasa`` extra importable; run it with\nthat interpreter and the RoboCasa environment variables set\n(``docs/setup.md``).  One episode per process:\n``python -m codeaspolicy.hosts.rpent_robocasa run ...``.",
     "symbols": [
       {
         "name": "add_cell_args",
@@ -336,7 +336,7 @@
           101
         ],
         "owner": null,
-        "doc": "RoboCasa cell identifiers (``pyrualean play --robot robocasa`` and the host CLI).",
+        "doc": "RoboCasa cell identifiers (``codeaspolicy play --robot robocasa`` and the host CLI).",
         "body": "parser.add_argument(\"--task\", required=True, help=\"RoboCasa365 task name, e.g. OpenDrawer\")\nparser.add_argument(\n        \"--suite\",\n        default=\"target\",\nparser.add_argument(\n        \"--seed\",\n        type=int,"
       },
       {
@@ -380,7 +380,7 @@
           171
         ],
         "owner": null,
-        "doc": "An empty, read-only memory corpus for the toolkit (zero-shot: nothing is read).\n\n``memory_dir`` when given, else the tracked ``runs/_empty-memory-robocasa``\nwhen this package runs from its repository, else a private empty corpus\nunder the run directory.  RPent's toolkit only binds its file tools to\nit; PyRUA-Lean never exposes those, so nothing is read or written.",
+        "doc": "An empty, read-only memory corpus for the toolkit (zero-shot: nothing is read).\n\n``memory_dir`` when given, else the tracked ``runs/_empty-memory-robocasa``\nwhen this package runs from its repository, else a private empty corpus\nunder the run directory.  RPent's toolkit only binds its file tools to\nit; CodeAsPolicy never exposes those, so nothing is read or written.",
         "body": "if memory_dir:\n        root = Path(memory_dir).expanduser().resolve()\n    elif (EMPTY_MEMORY / \"MEMORY.md\").is_file():\nif not (root / \"MEMORY.md\").is_file():\n        raise FileNotFoundError(f\"memory corpus without a MEMORY.md: {root}\")\nreturn root"
       },
       {
@@ -458,7 +458,7 @@
         ],
         "owner": null,
         "doc": "Run one policy file for one cell and write ``result.json``.",
-        "body": "out_dir.mkdir(parents=True, exist_ok=True)\nstarted = time.perf_counter()\ncreated_at = time.strftime(\"%Y-%m-%dT%H:%M:%S%z\")\noptions = dict(boot_options or {})\nresult: dict[str, Any] = {\n        \"schema\": RESULT_SCHEMA,\n        \"system\": \"pyrualean\",\nshutil.copyfile(policy_path, out_dir / \"policy.py\")\ntoolkit = None\ndaemons: list[Any] = []\nledger = Ledger()\ntry:\n        toolkit, daemons = boot(cell, out_dir, rpent_root=rpent_root, **options)\n        result[\"host\"][\"rpent_root\"] = str(resolve_rpent_root(rpent_root))\nreturn result"
+        "body": "out_dir.mkdir(parents=True, exist_ok=True)\nstarted = time.perf_counter()\ncreated_at = time.strftime(\"%Y-%m-%dT%H:%M:%S%z\")\noptions = dict(boot_options or {})\nresult: dict[str, Any] = {\n        \"schema\": RESULT_SCHEMA,\n        \"system\": \"codeaspolicy\",\nshutil.copyfile(policy_path, out_dir / \"policy.py\")\ntoolkit = None\ndaemons: list[Any] = []\nledger = Ledger()\ntry:\n        toolkit, daemons = boot(cell, out_dir, rpent_root=rpent_root, **options)\n        result[\"host\"][\"rpent_root\"] = str(resolve_rpent_root(rpent_root))\nreturn result"
       },
       {
         "name": "_install_sigterm",
@@ -502,7 +502,7 @@
         ],
         "owner": null,
         "doc": "",
-        "body": "parser = argparse.ArgumentParser(\n        prog=\"python -m pyrualean.hosts.rpent_robocasa\", description=__doc__\n    )\nsub = parser.add_subparsers(dest=\"command\", required=True)\nrun = sub.add_parser(\"run\", help=\"run one policy file for one cell\")\nrun.add_argument(\"--policy\", type=Path, required=True)\nrun.add_argument(\"--timeout-s\", type=float, default=1200.0)\n_add_cell_args(run)\ncard = sub.add_parser(\"card\", help=\"dump the task card for one cell\")\n_add_cell_args(card)\nargs = parser.parse_args(argv)\nif args.command == \"run\":\n        result = run_episode(\n            args.policy.resolve(),\ncard_obj = card_only(\n        cell_from_args(args),\n        args.out.resolve(),\nprint(card_obj.to_json())\nreturn 0"
+        "body": "parser = argparse.ArgumentParser(\n        prog=\"python -m codeaspolicy.hosts.rpent_robocasa\", description=__doc__\n    )\nsub = parser.add_subparsers(dest=\"command\", required=True)\nrun = sub.add_parser(\"run\", help=\"run one policy file for one cell\")\nrun.add_argument(\"--policy\", type=Path, required=True)\nrun.add_argument(\"--timeout-s\", type=float, default=1200.0)\n_add_cell_args(run)\ncard = sub.add_parser(\"card\", help=\"dump the task card for one cell\")\n_add_cell_args(card)\nargs = parser.parse_args(argv)\nif args.command == \"run\":\n        result = run_episode(\n            args.policy.resolve(),\ncard_obj = card_only(\n        cell_from_args(args),\n        args.out.resolve(),\nprint(card_obj.to_json())\nreturn 0"
       },
       {
         "name": "Cell",
@@ -557,9 +557,9 @@
     ]
   },
   {
-    "path": "src/pyrualean/hosts/rpent_robodojo.py",
+    "path": "src/codeaspolicy/hosts/rpent_robodojo.py",
     "category": "code",
-    "moduleDoc": "RPent-backed RoboDojo host.\n\nBoots RPent's own RoboDojo stack (Isaac Sim env server, Pi0.5 VLA server, SAM3\nserver), builds the same ``RoboDojoToolkit`` its planners use in development\nmode, wraps it as a :class:`Backend` and runs one policy file against it.\nBecause every primitive still goes through ``Toolkit.execute_tool``, the run\nproduces RPent's native artifacts (``states.json``, the per-step camera\nimages, one video per camera) and is judged by the same ``env.is_success``\ncall RPent's runner makes after its planner has finished.\n\nA RoboDojo cell is a task name and a layout id (the environment seed):\n``Cell.seed`` is the layout, ``Cell.suite`` the environment config\n(``arx_x5``).  The episode's native-action budget is the task's own\n``step_lim``; ``Cell.max_episode_steps`` is only handed to RPent's env server,\nwhose agent path does not enforce it.\n\nRPent's toolkit counts no frames, so this host provides\n:class:`RobodojoBackend` through ``make_backend(toolkit)``: its ``env_steps``\nis the simulator's native-action counter.\n\nFour tools are this library's own (:mod:`.robodojo_tools`, registered on RPent's\ntoolkit at boot by :func:`register_home`): ``move_pose`` (position and\norientation with the host's IK), ``grip`` (a full gripper stroke that reports\nwhat it holds), ``locate`` (an object's 3D extent from its mask and the depth\nimage) and ``home`` (the joints the episode started with).\nRPent's toolset moves by position only, and its IK lets the wrist drift.\n\nThe host attaches to the simulator without RPent's second reset\n(:func:`_connect_without_reset`): tasks with an articulated object do not\nsurvive it.  ``ROBODOJO_CONNECT_RESET=1`` gives RPent's behaviour back.  It\nstarts the simulator through :mod:`.robodojo_env_server`, which drives the\nbenchmark's third arm (the opponent or demonstrator of three tasks) as\nRoboDojo's own evaluation client does; ``ROBODOJO_SUPPORT_ARM=upstream`` runs\nRPent's server as it is.\n\nThis module needs RPent (a revision with ``robots/robodojo``, i.e. ``d08d712``\nor later) and its ``robodojo`` extra importable; run it with that interpreter\nand the RoboDojo environment variables set (``docs/setup.md``).  One episode\nper process: ``python -m pyrualean.hosts.rpent_robodojo run ...``.",
+    "moduleDoc": "RPent-backed RoboDojo host.\n\nBoots RPent's own RoboDojo stack (Isaac Sim env server, Pi0.5 VLA server, SAM3\nserver), builds the same ``RoboDojoToolkit`` its planners use in development\nmode, wraps it as a :class:`Backend` and runs one policy file against it.\nBecause every primitive still goes through ``Toolkit.execute_tool``, the run\nproduces RPent's native artifacts (``states.json``, the per-step camera\nimages, one video per camera) and is judged by the same ``env.is_success``\ncall RPent's runner makes after its planner has finished.\n\nA RoboDojo cell is a task name and a layout id (the environment seed):\n``Cell.seed`` is the layout, ``Cell.suite`` the environment config\n(``arx_x5``).  The episode's native-action budget is the task's own\n``step_lim``; ``Cell.max_episode_steps`` is only handed to RPent's env server,\nwhose agent path does not enforce it.\n\nRPent's toolkit counts no frames, so this host provides\n:class:`RobodojoBackend` through ``make_backend(toolkit)``: its ``env_steps``\nis the simulator's native-action counter.\n\nFour tools are this library's own (:mod:`.robodojo_tools`, registered on RPent's\ntoolkit at boot by :func:`register_home`): ``move_pose`` (position and\norientation with the host's IK), ``grip`` (a full gripper stroke that reports\nwhat it holds), ``locate`` (an object's 3D extent from its mask and the depth\nimage) and ``home`` (the joints the episode started with).\nRPent's toolset moves by position only, and its IK lets the wrist drift.\n\nThe host attaches to the simulator without RPent's second reset\n(:func:`_connect_without_reset`): tasks with an articulated object do not\nsurvive it.  ``ROBODOJO_CONNECT_RESET=1`` gives RPent's behaviour back.  It\nstarts the simulator through :mod:`.robodojo_env_server`, which drives the\nbenchmark's third arm (the opponent or demonstrator of three tasks) as\nRoboDojo's own evaluation client does; ``ROBODOJO_SUPPORT_ARM=upstream`` runs\nRPent's server as it is.\n\nThis module needs RPent (a revision with ``robots/robodojo``, i.e. ``d08d712``\nor later) and its ``robodojo`` extra importable; run it with that interpreter\nand the RoboDojo environment variables set (``docs/setup.md``).  One episode\nper process: ``python -m codeaspolicy.hosts.rpent_robodojo run ...``.",
     "symbols": [
       {
         "name": "add_cell_args",
@@ -569,7 +569,7 @@
           120
         ],
         "owner": null,
-        "doc": "RoboDojo cell identifiers (``pyrualean play --robot robodojo`` and the host CLI).",
+        "doc": "RoboDojo cell identifiers (``codeaspolicy play --robot robodojo`` and the host CLI).",
         "body": "parser.add_argument(\n        \"--task\", required=True, help=\"RoboDojo task name, e.g. put_bottles_into_dustbin\"\n    )\nparser.add_argument(\n        \"--suite\", default=\"arx_x5\", choices=ENV_CONFIGS, help=\"RoboDojo environment config\"\n    )\nparser.add_argument(\"--seed\", type=int, default=0, help=\"layout id (RPent's --layout)\")"
       },
       {
@@ -628,14 +628,14 @@
         "body": "return os.environ.get(\"ROBODOJO_SUPPORT_ARM\", \"\").strip().lower() != \"upstream\""
       },
       {
-        "name": "_env_server_through_pyrualean",
+        "name": "_env_server_through_codeaspolicy",
         "kind": "function",
         "range": [
           226,
           260
         ],
         "owner": null,
-        "doc": "Start RPent's RoboDojo env server through :mod:`.robodojo_env_server`.\n\nRPent spawns ``robots/robodojo/env_server.py`` with its simulator interpreter; inside this\ncontext the same command runs that script through ``python -m\npyrualean.hosts.robodojo_env_server``, which first attaches what RoboDojo's own evaluation\nclient does for the benchmark's third arm (an opponent, a demonstrator) and then runs the\nscript unchanged.  Every argument and environment variable RPent gives the server is kept;\nthis library's ``src`` is put on its ``PYTHONPATH``.",
+        "doc": "Start RPent's RoboDojo env server through :mod:`.robodojo_env_server`.\n\nRPent spawns ``robots/robodojo/env_server.py`` with its simulator interpreter; inside this\ncontext the same command runs that script through ``python -m\ncodeaspolicy.hosts.robodojo_env_server``, which first attaches what RoboDojo's own evaluation\nclient does for the benchmark's third arm (an opponent, a demonstrator) and then runs the\nscript unchanged.  Every argument and environment variable RPent gives the server is kept;\nthis library's ``src`` is put on its ``PYTHONPATH``.",
         "body": "from robots.robodojo import robot_spec\noriginal = robot_spec.ProcessDaemon\nscript = os.path.join(\"robots\", \"robodojo\", \"env_server.py\")\nsrc = str(Path(__file__).resolve().parents[2])\nrobot_spec.ProcessDaemon = daemon\ntry:\n        yield\n    finally:"
       },
       {
@@ -668,7 +668,7 @@
           308
         ],
         "owner": null,
-        "doc": "The backend ``pyrualean.play`` wraps a booted RoboDojo toolkit in.",
+        "doc": "The backend ``codeaspolicy.play`` wraps a booted RoboDojo toolkit in.",
         "body": "return RobodojoBackend(toolkit)"
       },
       {
@@ -680,7 +680,7 @@
         ],
         "owner": null,
         "doc": "Start RPent's servers and return ``(toolkit, daemons)``.\n\n``env_only`` boots just the simulator (enough to dump a task card); the\nVLA and SAM3 clients are then ``None`` and ``pi0_pick`` / ``segment``\nanswer with an error.  ``vla_endpoint`` / ``sam3_endpoint`` /\n``env_endpoint`` attach to already running servers instead of spawning\nprivate ones (RPent's own flags).  ``sim_python`` / ``pi05_python`` name\nthe interpreters of the simulator and the policy server when they are not\nthis one; ``source_root`` overrides the RoboDojo tree the runtime wheel\nships.  The toolkit is RPent's development-mode toolkit (every robot tool,\nno scoring or safety diagnostics), not the eval-fair replay toolkit.\n``connect_reset`` (default: off; on with ``ROBODOJO_CONNECT_RESET=1``, as\nRPent's development mode) is the client's second reset of an already\nreset episode, which tasks with an articulated object do not survive: see\n:func:`_connect_without_reset`.",
-        "body": "if policy_backend not in POLICY_BACKENDS:\n        raise ValueError(f\"policy_backend must be one of {POLICY_BACKENDS}\")\nif action_type not in ACTION_TYPES:\n        raise ValueError(f\"action_type must be one of {ACTION_TYPES}\")\nresolve_rpent_root(rpent_root)\nfrom robots.robodojo.robot_spec import get_robot_spec\nfrom rpent.dashboard.events import NullDashboardEventSink\nfrom rpent.memory import MemoryManager\nfrom rpent.utils.logging import init_output_dir\nout_dir.mkdir(parents=True, exist_ok=True)\ninit_output_dir(out_dir, verbose=False)\nmemory_dir = out_dir / \"_memory\"\nmemory_dir.mkdir(exist_ok=True)\n(memory_dir / \"MEMORY.md\").touch()\nevents = NullDashboardEventSink()\nargs = Namespace(\n        task=cell.task,\n        layout=cell.seed,\nspec = get_robot_spec()\ncomponents = {\"env\"} if env_only else None\nif connect_reset is None:\n        connect_reset = _connect_reset_default()\nwith (\n        contextlib.nullcontext() if connect_reset else _connect_without_reset(),\n        _env_server_through_pyrualean() if _support_arm_default() else contextlib.nullcontext(),\nfrom robots.robodojo.toolkit import RoboDojoToolkit\ntry:\n        # What RPent's ``get_toolkit`` does, minus the RunConfig it only reads\n        # ``memory_dir`` and the mode from.\nreturn toolkit, daemons"
+        "body": "if policy_backend not in POLICY_BACKENDS:\n        raise ValueError(f\"policy_backend must be one of {POLICY_BACKENDS}\")\nif action_type not in ACTION_TYPES:\n        raise ValueError(f\"action_type must be one of {ACTION_TYPES}\")\nresolve_rpent_root(rpent_root)\nfrom robots.robodojo.robot_spec import get_robot_spec\nfrom rpent.dashboard.events import NullDashboardEventSink\nfrom rpent.memory import MemoryManager\nfrom rpent.utils.logging import init_output_dir\nout_dir.mkdir(parents=True, exist_ok=True)\ninit_output_dir(out_dir, verbose=False)\nmemory_dir = out_dir / \"_memory\"\nmemory_dir.mkdir(exist_ok=True)\n(memory_dir / \"MEMORY.md\").touch()\nevents = NullDashboardEventSink()\nargs = Namespace(\n        task=cell.task,\n        layout=cell.seed,\nspec = get_robot_spec()\ncomponents = {\"env\"} if env_only else None\nif connect_reset is None:\n        connect_reset = _connect_reset_default()\nwith (\n        contextlib.nullcontext() if connect_reset else _connect_without_reset(),\n        _env_server_through_codeaspolicy() if _support_arm_default() else contextlib.nullcontext(),\nfrom robots.robodojo.toolkit import RoboDojoToolkit\ntry:\n        # What RPent's ``get_toolkit`` does, minus the RunConfig it only reads\n        # ``memory_dir`` and the mode from.\nreturn toolkit, daemons"
       },
       {
         "name": "_fmt",
@@ -735,7 +735,7 @@
         ],
         "owner": null,
         "doc": "Run one policy file for one cell and write ``result.json``.",
-        "body": "out_dir.mkdir(parents=True, exist_ok=True)\nstarted = time.perf_counter()\ncreated_at = time.strftime(\"%Y-%m-%dT%H:%M:%S%z\")\noptions = dict(boot_options or {})\nresult: dict[str, Any] = {\n        \"schema\": RESULT_SCHEMA,\n        \"system\": \"pyrualean\",\nshutil.copyfile(policy_path, out_dir / \"policy.py\")\ntoolkit = None\ndaemons: list[Any] = []\nledger = Ledger()\ntry:\n        toolkit, daemons = boot(cell, out_dir, rpent_root=rpent_root, **options)\n        result[\"host\"][\"rpent_root\"] = str(resolve_rpent_root(rpent_root))\nreturn result"
+        "body": "out_dir.mkdir(parents=True, exist_ok=True)\nstarted = time.perf_counter()\ncreated_at = time.strftime(\"%Y-%m-%dT%H:%M:%S%z\")\noptions = dict(boot_options or {})\nresult: dict[str, Any] = {\n        \"schema\": RESULT_SCHEMA,\n        \"system\": \"codeaspolicy\",\nshutil.copyfile(policy_path, out_dir / \"policy.py\")\ntoolkit = None\ndaemons: list[Any] = []\nledger = Ledger()\ntry:\n        toolkit, daemons = boot(cell, out_dir, rpent_root=rpent_root, **options)\n        result[\"host\"][\"rpent_root\"] = str(resolve_rpent_root(rpent_root))\nreturn result"
       },
       {
         "name": "_install_sigterm",
@@ -779,7 +779,7 @@
         ],
         "owner": null,
         "doc": "",
-        "body": "parser = argparse.ArgumentParser(\n        prog=\"python -m pyrualean.hosts.rpent_robodojo\", description=__doc__\n    )\nsub = parser.add_subparsers(dest=\"command\", required=True)\nrun = sub.add_parser(\"run\", help=\"run one policy file for one cell\")\nrun.add_argument(\"--policy\", type=Path, required=True)\nrun.add_argument(\"--timeout-s\", type=float, default=1200.0)\n_add_cell_args(run)\ncard = sub.add_parser(\"card\", help=\"dump the task card for one cell\")\n_add_cell_args(card)\nargs = parser.parse_args(argv)\nif args.command == \"run\":\n        result = run_episode(\n            args.policy.resolve(),\ncard_obj = card_only(\n        cell_from_args(args),\n        args.out.resolve(),\nprint(card_obj.to_json())\nreturn 0"
+        "body": "parser = argparse.ArgumentParser(\n        prog=\"python -m codeaspolicy.hosts.rpent_robodojo\", description=__doc__\n    )\nsub = parser.add_subparsers(dest=\"command\", required=True)\nrun = sub.add_parser(\"run\", help=\"run one policy file for one cell\")\nrun.add_argument(\"--policy\", type=Path, required=True)\nrun.add_argument(\"--timeout-s\", type=float, default=1200.0)\n_add_cell_args(run)\ncard = sub.add_parser(\"card\", help=\"dump the task card for one cell\")\n_add_cell_args(card)\nargs = parser.parse_args(argv)\nif args.command == \"run\":\n        result = run_episode(\n            args.policy.resolve(),\ncard_obj = card_only(\n        cell_from_args(args),\n        args.out.resolve(),\nprint(card_obj.to_json())\nreturn 0"
       },
       {
         "name": "Cell",
@@ -811,7 +811,7 @@
           302
         ],
         "owner": null,
-        "doc": "RPent's RoboDojo toolkit as a :class:`pyrualean.Backend`.\n\n``solved()`` is the toolkit's own (``env.is_success``, the call RPent's\nrunner makes once its planner is done); the host reads it after the\nepisode, the robot class never does.  ``env_steps`` is the simulator's\nnative-action counter: RoboDojo's toolkit records no frame count.",
+        "doc": "RPent's RoboDojo toolkit as a :class:`codeaspolicy.Backend`.\n\n``solved()`` is the toolkit's own (``env.is_success``, the call RPent's\nrunner makes once its planner is done); the host reads it after the\nepisode, the robot class never does.  ``env_steps`` is the simulator's\nnative-action counter: RoboDojo's toolkit records no frame count.",
         "body": ""
       },
       {
@@ -860,9 +860,9 @@
     ]
   },
   {
-    "path": "src/pyrualean/hosts/rpent_robotwin.py",
+    "path": "src/codeaspolicy/hosts/rpent_robotwin.py",
     "category": "code",
-    "moduleDoc": "RPent-backed RoboTwin host.\n\nBoots RPent's own RoboTwin stack (SAPIEN env server, LingBot-VLA server),\nbuilds the same ``RoboTwinToolkit`` its planners use, wraps it as a\n:class:`Backend` and runs one policy file against it.  Because every\nprimitive still goes through ``Toolkit.execute_tool``, the run produces\nRPent's native artifacts (``states.json``, ``episode.mp4``, per-step images\nand world maps) and is judged by the same ``TASK_ENV.eval_success`` predicate\nas an RPent agent run.\n\nRPent's ``RoboTwinToolkit`` leaves ``solved()`` unimplemented and counts\nnative VLA actions rather than frames, so this host provides\n:class:`RobotwinBackend` through ``make_backend(toolkit)``; ``pyrualean.play``\nand :func:`run_episode` wrap the plain toolkit in it.\n\nThis module needs RPent and its ``robotwin`` extra importable; run it with\nthat interpreter and the RoboTwin environment variables set (``docs/setup.md``).\nOne episode per process: ``python -m pyrualean.hosts.rpent_robotwin run ...``.",
+    "moduleDoc": "RPent-backed RoboTwin host.\n\nBoots RPent's own RoboTwin stack (SAPIEN env server, LingBot-VLA server),\nbuilds the same ``RoboTwinToolkit`` its planners use, wraps it as a\n:class:`Backend` and runs one policy file against it.  Because every\nprimitive still goes through ``Toolkit.execute_tool``, the run produces\nRPent's native artifacts (``states.json``, ``episode.mp4``, per-step images\nand world maps) and is judged by the same ``TASK_ENV.eval_success`` predicate\nas an RPent agent run.\n\nRPent's ``RoboTwinToolkit`` leaves ``solved()`` unimplemented and counts\nnative VLA actions rather than frames, so this host provides\n:class:`RobotwinBackend` through ``make_backend(toolkit)``; ``codeaspolicy.play``\nand :func:`run_episode` wrap the plain toolkit in it.\n\nThis module needs RPent and its ``robotwin`` extra importable; run it with\nthat interpreter and the RoboTwin environment variables set (``docs/setup.md``).\nOne episode per process: ``python -m codeaspolicy.hosts.rpent_robotwin run ...``.",
     "symbols": [
       {
         "name": "add_cell_args",
@@ -872,7 +872,7 @@
           90
         ],
         "owner": null,
-        "doc": "RoboTwin cell identifiers (``pyrualean play --robot robotwin`` and the host CLI).",
+        "doc": "RoboTwin cell identifiers (``codeaspolicy play --robot robotwin`` and the host CLI).",
         "body": "parser.add_argument(\"--task\", required=True, help=\"RoboTwin task name, e.g. beat_block_hammer\")\nparser.add_argument(\n        \"--suite\",\n        default=\"demo_randomized\",\nparser.add_argument(\n        \"--seed\",\n        type=int,"
       },
       {
@@ -927,7 +927,7 @@
           168
         ],
         "owner": null,
-        "doc": "The backend ``pyrualean.play`` wraps a booted RoboTwin toolkit in.",
+        "doc": "The backend ``codeaspolicy.play`` wraps a booted RoboTwin toolkit in.",
         "body": "return RobotwinBackend(toolkit)"
       },
       {
@@ -1005,7 +1005,7 @@
         ],
         "owner": null,
         "doc": "Run one policy file for one cell and write ``result.json``.",
-        "body": "out_dir.mkdir(parents=True, exist_ok=True)\nstarted = time.perf_counter()\ncreated_at = time.strftime(\"%Y-%m-%dT%H:%M:%S%z\")\noptions = dict(boot_options or {})\nresult: dict[str, Any] = {\n        \"schema\": RESULT_SCHEMA,\n        \"system\": \"pyrualean\",\nshutil.copyfile(policy_path, out_dir / \"policy.py\")\ntoolkit = None\ndaemons: list[Any] = []\nledger = Ledger()\ntry:\n        toolkit, daemons = boot(cell, out_dir, rpent_root=rpent_root, **options)\n        result[\"host\"][\"rpent_root\"] = str(resolve_rpent_root(rpent_root))\nreturn result"
+        "body": "out_dir.mkdir(parents=True, exist_ok=True)\nstarted = time.perf_counter()\ncreated_at = time.strftime(\"%Y-%m-%dT%H:%M:%S%z\")\noptions = dict(boot_options or {})\nresult: dict[str, Any] = {\n        \"schema\": RESULT_SCHEMA,\n        \"system\": \"codeaspolicy\",\nshutil.copyfile(policy_path, out_dir / \"policy.py\")\ntoolkit = None\ndaemons: list[Any] = []\nledger = Ledger()\ntry:\n        toolkit, daemons = boot(cell, out_dir, rpent_root=rpent_root, **options)\n        result[\"host\"][\"rpent_root\"] = str(resolve_rpent_root(rpent_root))\nreturn result"
       },
       {
         "name": "_install_sigterm",
@@ -1049,7 +1049,7 @@
         ],
         "owner": null,
         "doc": "",
-        "body": "parser = argparse.ArgumentParser(\n        prog=\"python -m pyrualean.hosts.rpent_robotwin\", description=__doc__\n    )\nsub = parser.add_subparsers(dest=\"command\", required=True)\nrun = sub.add_parser(\"run\", help=\"run one policy file for one cell\")\nrun.add_argument(\"--policy\", type=Path, required=True)\nrun.add_argument(\"--timeout-s\", type=float, default=1200.0)\n_add_cell_args(run)\ncard = sub.add_parser(\"card\", help=\"dump the task card for one cell\")\n_add_cell_args(card)\nargs = parser.parse_args(argv)\nif args.command == \"run\":\n        result = run_episode(\n            args.policy.resolve(),\ncard_obj = card_only(\n        cell_from_args(args),\n        args.out.resolve(),\nprint(card_obj.to_json())\nreturn 0"
+        "body": "parser = argparse.ArgumentParser(\n        prog=\"python -m codeaspolicy.hosts.rpent_robotwin\", description=__doc__\n    )\nsub = parser.add_subparsers(dest=\"command\", required=True)\nrun = sub.add_parser(\"run\", help=\"run one policy file for one cell\")\nrun.add_argument(\"--policy\", type=Path, required=True)\nrun.add_argument(\"--timeout-s\", type=float, default=1200.0)\n_add_cell_args(run)\ncard = sub.add_parser(\"card\", help=\"dump the task card for one cell\")\n_add_cell_args(card)\nargs = parser.parse_args(argv)\nif args.command == \"run\":\n        result = run_episode(\n            args.policy.resolve(),\ncard_obj = card_only(\n        cell_from_args(args),\n        args.out.resolve(),\nprint(card_obj.to_json())\nreturn 0"
       },
       {
         "name": "Cell",
@@ -1081,7 +1081,7 @@
           162
         ],
         "owner": null,
-        "doc": "RPent's RoboTwin toolkit as a :class:`pyrualean.Backend`.\n\n``RoboTwinToolkit`` implements neither ``solved()`` nor a public\n``primitives`` attribute, which the generic adapter relies on.",
+        "doc": "RPent's RoboTwin toolkit as a :class:`codeaspolicy.Backend`.\n\n``RoboTwinToolkit`` implements neither ``solved()`` nor a public\n``primitives`` attribute, which the generic adapter relies on.",
         "body": ""
       },
       {
@@ -1138,9 +1138,9 @@
     ]
   },
   {
-    "path": "src/pyrualean/prompt.py",
+    "path": "src/codeaspolicy/prompt.py",
     "category": "code",
-    "moduleDoc": "Model-facing prompt built from the live library.\n\nThe API reference is generated from :class:`pyrualean.libero.LiberoRobot`'s\nsignatures and docstrings (``inspect``), so the model always sees exactly the\nfunctions the host will inject.  The operating knowledge is a hand-written\nmarkdown file that carries the same manipulation lessons RPent gives its\ntool-calling agent, rewritten for someone who writes a program instead of\nissuing one call per turn.",
+    "moduleDoc": "Model-facing prompt built from the live library.\n\nThe API reference is generated from :class:`codeaspolicy.libero.LiberoRobot`'s\nsignatures and docstrings (``inspect``), so the model always sees exactly the\nfunctions the host will inject.  The operating knowledge is a hand-written\nmarkdown file that carries the same manipulation lessons RPent gives its\ntool-calling agent, rewritten for someone who writes a program instead of\nissuing one call per turn.",
     "symbols": [
       {
         "name": "_annotation",
@@ -1272,7 +1272,7 @@
         ],
         "owner": null,
         "doc": "Return the packaged operating-knowledge markdown for a backend.\n\n``primitives=\"no-vla\"`` reads ``knowledge/<name>-novla.md``: the same\ndocument with the sections and sentences about the VLA removed.",
-        "body": "stem = knowledge_stem(name, primitives)\nreturn resources.files(\"pyrualean\").joinpath(f\"knowledge/{stem}.md\").read_text(encoding=\"utf-8\")"
+        "body": "stem = knowledge_stem(name, primitives)\nreturn resources.files(\"codeaspolicy\").joinpath(f\"knowledge/{stem}.md\").read_text(encoding=\"utf-8\")"
       },
       {
         "name": "render_prompt",
@@ -1282,7 +1282,7 @@
           526
         ],
         "owner": null,
-        "doc": "Assemble the generation prompt for one cell (or a cell-less preview).\n\nThe robot comes from ``card.robot`` (``libero`` when there is no card):\nits class supplies the API reference, its knowledge file the operating\nknowledge and its adapter the wording of the contract.  ``primitives``\nis the primitive set (:data:`pyrualean._robot.PRIMITIVE_SETS`).",
+        "doc": "Assemble the generation prompt for one cell (or a cell-less preview).\n\nThe robot comes from ``card.robot`` (``libero`` when there is no card):\nits class supplies the API reference, its knowledge file the operating\nknowledge and its adapter the wording of the contract.  ``primitives``\nis the primitive set (:data:`codeaspolicy._robot.PRIMITIVE_SETS`).",
         "body": "from .robots import get_adapter\nadapter = get_adapter(card.robot if card is not None else \"libero\")\nprimitives = effective_primitives(robot_cls or adapter.robot_cls, primitives)\nmax_env_steps = card.max_env_steps if card is not None else 10000\nservices = adapter.services if primitives == \"full\" else adapter.services_novla\nscoring_head, scoring_limits, scoring_tail = SCORING_NOTES[bool(adapter.live_success)]\ncontract = CONTRACT.format(\n        budget_s=budget_s,\n        max_env_steps=max_env_steps,\nreference = api_reference(robot_cls or adapter.robot_cls, primitives=primitives)\nknow = (\n        knowledge\n        if knowledge is not None\nsystem = \"\\n\\n\".join(\n        [\n            contract.rstrip(),\nif card is None:\n        user = \"# Task card\\n(no cell selected; render with a TaskCard for a real run)\"\n        images: tuple[str, ...] = ()\nreturn PromptBundle(system=system, user=user, images=images)"
       },
       {
@@ -1391,9 +1391,9 @@
     ]
   },
   {
-    "path": "src/pyrualean/runner.py",
+    "path": "src/codeaspolicy/runner.py",
     "category": "code",
-    "moduleDoc": "Load a generated policy file and execute it against a robot.\n\n``load_policy`` imports a file under a unique module name every time, so two\ngenerated programs that both call themselves ``policy.py`` never collide.\n``run_policy`` calls ``run(robo)`` with a wall-clock watchdog that stops the\nepisode through the library (every further motion call raises\n``EpisodeFinished``) and interrupts the primitive in flight through the\nbackend.  Neither function sandboxes the code: evaluations run one episode\nper subprocess (see :mod:`pyrualean.hosts.rpent_libero`) and the parent\nkills the whole process group when the child ignores the watchdog.",
+    "moduleDoc": "Load a generated policy file and execute it against a robot.\n\n``load_policy`` imports a file under a unique module name every time, so two\ngenerated programs that both call themselves ``policy.py`` never collide.\n``run_policy`` calls ``run(robo)`` with a wall-clock watchdog that stops the\nepisode through the library (every further motion call raises\n``EpisodeFinished``) and interrupts the primitive in flight through the\nbackend.  Neither function sandboxes the code: evaluations run one episode\nper subprocess (see :mod:`codeaspolicy.hosts.rpent_libero`) and the parent\nkills the whole process group when the child ignores the watchdog.",
     "symbols": [
       {
         "name": "policy_sha256",
@@ -1414,8 +1414,8 @@
           95
         ],
         "owner": null,
-        "doc": "Import ``path`` as a fresh module and return its ``entrypoint`` callable.\n\n``builtins`` (see :func:`pyrualean.sandbox.make_builtins`) becomes the\nmodule's ``__builtins__``, so the program's imports and ``open`` calls\ngo through the sandbox guards.",
-        "body": "location = Path(path).expanduser().resolve()\nif not location.is_file() or location.suffix != \".py\":\n        raise PolicyLoadError(f\"policy must be an existing .py file: {location}\")\nmodule_name = f\"pyrualean_policy_{location.stem}_{uuid.uuid4().hex}\"\nspec = importlib.util.spec_from_file_location(module_name, location)\nif spec is None or spec.loader is None:\n        raise PolicyLoadError(f\"cannot create an import spec for {location}\")\nmodule = importlib.util.module_from_spec(spec)\nif builtins is not None:\n        module.__dict__[\"__builtins__\"] = builtins\nif bindings:\n        module.__dict__.update(bindings)\nsys.modules[module_name] = module\nparent = str(location.parent)\nif parent not in sys.path:\n        sys.path.insert(0, parent)\ntry:\n        spec.loader.exec_module(module)\n    except (ExecutionLimit, EpisodeFinished):\npolicy = getattr(module, entrypoint, None)\nif not callable(policy):\n        raise PolicyLoadError(f\"{location} does not define a callable {entrypoint!r}\")\nreturn policy"
+        "doc": "Import ``path`` as a fresh module and return its ``entrypoint`` callable.\n\n``builtins`` (see :func:`codeaspolicy.sandbox.make_builtins`) becomes the\nmodule's ``__builtins__``, so the program's imports and ``open`` calls\ngo through the sandbox guards.",
+        "body": "location = Path(path).expanduser().resolve()\nif not location.is_file() or location.suffix != \".py\":\n        raise PolicyLoadError(f\"policy must be an existing .py file: {location}\")\nmodule_name = f\"codeaspolicy_policy_{location.stem}_{uuid.uuid4().hex}\"\nspec = importlib.util.spec_from_file_location(module_name, location)\nif spec is None or spec.loader is None:\n        raise PolicyLoadError(f\"cannot create an import spec for {location}\")\nmodule = importlib.util.module_from_spec(spec)\nif builtins is not None:\n        module.__dict__[\"__builtins__\"] = builtins\nif bindings:\n        module.__dict__.update(bindings)\nsys.modules[module_name] = module\nparent = str(location.parent)\nif parent not in sys.path:\n        sys.path.insert(0, parent)\ntry:\n        spec.loader.exec_module(module)\n    except (ExecutionLimit, EpisodeFinished):\npolicy = getattr(module, entrypoint, None)\nif not callable(policy):\n        raise PolicyLoadError(f\"{location} does not define a callable {entrypoint!r}\")\nreturn policy"
       },
       {
         "name": "run_policy",
@@ -1510,7 +1510,7 @@
     ]
   },
   {
-    "path": "src/pyrualean/sandbox.py",
+    "path": "src/codeaspolicy/sandbox.py",
     "category": "code",
     "moduleDoc": "Execution sandbox and audit for model-written policy code.\n\nIn-process Python cannot be sealed, so the sandbox does three things: it\nremoves the convenient routes out of the documented ``robo`` API (importing\n``os`` / ``subprocess`` / ``pathlib``, opening files outside the workspace,\n``eval`` / ``exec`` with fresh builtins), it refuses to run code that names\nPython's introspection routes (``__globals__``, ``__func__``,\n``__subclasses__``, ...: :data:`BLOCKED_NAMES`, checked by\n``blocked_names``), and it records what a cell *tried* (``audit_source``),\nso an episode that reached for the simulator's internals is visible in\n``result.json`` instead of silently counting as a success.",
     "symbols": [

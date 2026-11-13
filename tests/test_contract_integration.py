@@ -4,8 +4,8 @@ import json
 
 import pytest
 
-from pyrualean.action_contract import ActionContractPause
-from pyrualean.arms import ArmToolkit
+from codeaspolicy.action_contract import ActionContractPause
+from codeaspolicy.arms import ArmToolkit
 from tests.test_robodojo_intent import _precision_station
 
 
@@ -109,7 +109,7 @@ def test_arrival_does_not_satisfy_semantic_completion_or_finish(robo, tmp_path):
 
 
 def test_restart_requires_rebinding_live_protections(tmp_path):
-    from pyrualean.libero import LiberoRobot
+    from codeaspolicy.libero import LiberoRobot
     from tests.test_interaction_contracts import ProtocolBackend
 
     backend = ProtocolBackend()
@@ -189,7 +189,7 @@ def test_explicit_constraint_cannot_relax_inherited_bounds(tmp_path):
 
 def test_obstacle_contact_by_volume_is_rejected_when_tcp_is_clear(tmp_path):
     import numpy as np
-    from pyrualean.hosts import robodojo_kinematics as kin
+    from codeaspolicy.hosts import robodojo_kinematics as kin
 
     env, robo, _ = _precision_station(tmp_path)
     pose = robo.observe().right

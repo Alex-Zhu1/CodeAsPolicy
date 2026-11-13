@@ -69,14 +69,14 @@ L1 候选包括 xhigh→high 单因素对照；这些数据不是延迟改善结
 
 | 环节 | 现有实现 | 对延迟分析的含义 |
 | --- | --- | --- |
-| 初始上下文 | `src/pyrualean/play.py::build_prompt` 组装执行约定、完整 API、知识、任务及启用的监督 core、stuck 触发协议 | 需测实际请求输入；恢复 skill 正文按触发下发；prompt 字符数不等于 token 数或完整客户端上下文 |
+| 初始上下文 | `src/codeaspolicy/play.py::build_prompt` 组装执行约定、完整 API、知识、任务及启用的监督 core、stuck 触发协议 | 需测实际请求输入；恢复 skill 正文按触发下发；prompt 字符数不等于 token 数或完整客户端上下文 |
 | Codex 推理投入 | `play_episode` 和 CLI 的默认值为 `xhigh`，`_codex_argv` 传递 `model_reasoning_effort` | 默认值不是所有运行的实际配置；下述样本多数为 `high` |
 | 直接 OpenAI 配置 | `play_episode` 透传 `openai_options`，未把通用 `reasoning_effort` 自动映射进去 | 应核对 `extra_body`；仅调整 CLI `--reasoning` 不能保证此路径变化 |
-| XPolicyLab 部署 | `integrations/xpolicylab/PyRUA_Lean/deploy.yml` 使用 `runtime: openai`，`extra_body.reasoning_effort: high` | `max_tokens: 8192` 是上限，不是实际输出量；`poll_s` 是客户端轮询约定，不能代替模型响应优化 |
-| 直接 OpenAI 请求 | `src/pyrualean/openai_runtime.py::httpx_transport` 同步 `client.post` 后解析完整 JSON，`run_openai_agent` 再派发工具 | 默认 transport 明确非流式；可测完整回复屏障，不可推广到全部 runtime |
+| XPolicyLab 部署 | `integrations/xpolicylab/CodeAsPolicy/deploy.yml` 使用 `runtime: openai`，`extra_body.reasoning_effort: high` | `max_tokens: 8192` 是上限，不是实际输出量；`poll_s` 是客户端轮询约定，不能代替模型响应优化 |
+| 直接 OpenAI 请求 | `src/codeaspolicy/openai_runtime.py::httpx_transport` 同步 `client.post` 后解析完整 JSON，`run_openai_agent` 再派发工具 | 默认 transport 明确非流式；可测完整回复屏障，不可推广到全部 runtime |
 | 其他 runtime | Codex 使用外部客户端事件流；Claude runtime 消费 SDK stream | 外部流式事件不等于已取得统一的完整代码就绪时间 |
 | 历史上下文 | 直接 OpenAI 每轮发送 `transcript.messages`，当前无框架级 compaction；Codex 自己管理历史和压缩 | 需记录实际输入与 cache 命中；重复发送不能直接推定重复计算 |
-| 代码执行 | `src/pyrualean/arms.py::ArmToolkit._python` 先完整解析、编译，再执行；cells 保留 namespace 和 helper | 有完整代码边界和复用基础；不能将可解析的流式前缀直接执行 |
+| 代码执行 | `src/codeaspolicy/arms.py::ArmToolkit._python` 先完整解析、编译，再执行；cells 保留 namespace 和 helper | 有完整代码边界和复用基础；不能将可解析的流式前缀直接执行 |
 | 已有计时 | 原有请求/工具耗时继续保留；首批新增 `interaction_events.jsonl` 和离线汇总 | 可区分 host 排队、cell 校验、执行和反馈；直接 OpenAI 另有请求与重试；外部客户端供应端时间和 TTFT 仍缺失 |
 
 `policy_wall_s` 包含模型、工具执行、反馈、重试和收尾；不能称为模型生成耗时。

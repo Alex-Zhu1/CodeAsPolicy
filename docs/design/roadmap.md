@@ -272,11 +272,11 @@ cell 执行中位 2.89 s；因此 `xhigh → high` 仍是 L1 候选，另一候�
 
 | 位置（仓库相对路径） | 本批能力 |
 | --- | --- |
-| `src/pyrualean/interaction_trace.py` | session、时钟域、事件和本地调用 ID；线程安全 JSONL；写入失败单独计数 |
-| `src/pyrualean/play.py` | 建立 trace，记录选定配置、上下文与客户端尝试边界，结果引用 sidecar；区分请求配置与供应端确认 |
-| `src/pyrualean/mcp_server.py`、`arms.py` | MCP 排队前到达、toolkit 开始、完整 cell 校验、执行、反馈准备；不改变模型可见输出协议 |
-| `src/pyrualean/openai_runtime.py` | 请求/重试、完整工具参数及反馈时点，关联 decision、attempt、本地调用与可得 provider ID |
-| `src/pyrualean/evaluation/latency.py` | 独立汇总 host trace 与已有 Codex rollout；保留缺失、并发、错误及历史代理指标的边界 |
+| `src/codeaspolicy/interaction_trace.py` | session、时钟域、事件和本地调用 ID；线程安全 JSONL；写入失败单独计数 |
+| `src/codeaspolicy/play.py` | 建立 trace，记录选定配置、上下文与客户端尝试边界，结果引用 sidecar；区分请求配置与供应端确认 |
+| `src/codeaspolicy/mcp_server.py`、`arms.py` | MCP 排队前到达、toolkit 开始、完整 cell 校验、执行、反馈准备；不改变模型可见输出协议 |
+| `src/codeaspolicy/openai_runtime.py` | 请求/重试、完整工具参数及反馈时点，关联 decision、attempt、本地调用与可得 provider ID |
+| `src/codeaspolicy/evaluation/latency.py` | 独立汇总 host trace 与已有 Codex rollout；保留缺失、并发、错误及历史代理指标的边界 |
 
 产物是 `interaction_events.jsonl`、`result.json.interaction` 和显式指定位置的离线汇总 JSON；
 用法见 [输出文件](../guide/outputs.md#interaction-timing)。新增测试使用 fake backend、合成轨迹与真实 MCP handler，

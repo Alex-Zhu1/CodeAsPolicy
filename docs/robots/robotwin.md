@@ -31,13 +31,13 @@ motion planning and the frozen LingBot-VLA.
 ## Installation and Resources
 
 RPent at commit `886b3b2`, in its own Python 3.11 environment (the same torch build as for LIBERO-PRO), with
-PyRUA-Lean in the same environment:
+CodeAsPolicy in the same environment:
 
 ```bash
 uv pip install -e ".[rlinf]" rlinf-robotwin-runtime==0.1.1 rlinf-lingbotvla==0.1.1 imageio-ffmpeg
 git clone --branch v0.7.8 https://github.com/NVlabs/curobo.git
 uv pip install --no-build-isolation ./curobo         # against that torch: CUDA_HOME (12.8) and TORCH_CUDA_ARCH_LIST set
-uv pip install -e /path/to/PyRUA-Lean
+uv pip install -e /path/to/CodeAsPolicy
 robotwin-download-assets --output /path/to/robotwin-assets      # the Hugging Face dataset TianxingChen/RoboTwin2.0, 16 GB
 export ROBOTWIN_ASSETS_PATH=/path/to/robotwin-assets
 ```
@@ -62,15 +62,15 @@ export LINGBOT_MODEL_PATH=/path/to/lingbot
 |---|---|
 | `--task` | A RoboTwin task name, e.g. `beat_block_hammer`. |
 | `--suite` | The task config (default `demo_randomized`, the evaluation setting). |
-| `--seed` | The exact scene seed, e.g. `100000`; RPent lists verified seeds in `robots/robotwin/eval/demo_randomized.json`. Always pass it: `pyrualean play` sends `0` when it is left out. |
+| `--seed` | The exact scene seed, e.g. `100000`; RPent lists verified seeds in `robots/robotwin/eval/demo_randomized.json`. Always pass it: `codeaspolicy play` sends `0` when it is left out. |
 
 ## Run a Task
 
 ```bash
 export RPENT_ROOT=/path/to/rpent
-pyrualean play --robot robotwin --arm cells --task beat_block_hammer --suite demo_randomized --seed 100000 \
+codeaspolicy play --robot robotwin --arm cells --task beat_block_hammer --suite demo_randomized --seed 100000 \
     --model gpt-6-astra --max-turns 40 --budget-s 7200 --out runs/robotwin-demo --cuda-device 0
-pyrualean summarize runs/robotwin-demo
+codeaspolicy summarize runs/robotwin-demo
 ```
 
 An episode boots private env and VLA servers (~7 GB + ~9 GB of GPU memory); `--vla-endpoint` attaches it to a
@@ -92,13 +92,13 @@ solved:
 | | Success (%) | LLM calls | Input tokens | Cost |
 |---|---|---|---|---|
 | Tool calling (RPent) | 60.0 | 12.2 | 415k | $1.00 |
-| **PyRUA-Lean** | **69.2** | **8.9** | **245k** | **$0.66** |
+| **CodeAsPolicy** | **69.2** | **8.9** | **245k** | **$0.66** |
 
 ## What Runs Where
 
 - **Env server** (RPent) owns the RoboTwin task environment and its SAPIEN rendering.
 - **LingBot-VLA server** (RPent) holds the VLA.
-- **PyRUA-Lean** boots them for the episode, builds RPent's toolkit and serves the agent's cells against `robo`.
+- **CodeAsPolicy** boots them for the episode, builds RPent's toolkit and serves the agent's cells against `robo`.
 - **Agent runtime** (Codex CLI, Claude Code or the `openai` loop) talks to the model.
 
 ## Primitives the Agent Can Call
@@ -117,6 +117,6 @@ Perception and state:
 - `state()`, `image(camera)`, `depth(camera)`, `world_map(camera)`, `render()`, `show(camera)`, `camera_meta(camera)`,
   `artifact(name)`, `done`.
 
-??? note "API reference: what the agent reads, generated from `pyrualean.robotwin` when these docs are built"
+??? note "API reference: what the agent reads, generated from `codeaspolicy.robotwin` when these docs are built"
 
     <!-- api-reference: robotwin -->

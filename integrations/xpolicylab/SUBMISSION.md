@@ -1,7 +1,7 @@
-# Submitting `PyRUA_Lean` to XPolicyLab / the RoboDojo leaderboard
+# Submitting `CodeAsPolicy` to XPolicyLab / the RoboDojo leaderboard
 
-`PyRUA_Lean/` in this directory is the adapter: the directory a submission adds to
-[XPolicyLab](https://github.com/XPolicyLab/XPolicyLab) as `policy/PyRUA_Lean/`. It was written and verified
+`CodeAsPolicy/` in this directory is the adapter: the directory a submission adds to
+[XPolicyLab](https://github.com/XPolicyLab/XPolicyLab) as `policy/CodeAsPolicy/`. It was written and verified
 against RoboDojo `main` `cb2a37d` (2026-10-08) and the XPolicyLab commit that pins, `53c5da5`.
 
 The submission is one fixed system for every task: a language model writes Python against a small robot API
@@ -14,25 +14,25 @@ Model types: **Agent, LLM**.
 
 ```bash
 # 1. the adapter, beside the other policies of the XPolicyLab checkout inside RoboDojo
-git clone <this repository> PyRUA-Lean
-ln -s "$PWD/PyRUA-Lean/integrations/xpolicylab/PyRUA_Lean" <RoboDojo>/XPolicyLab/policy/PyRUA_Lean
+git clone <this repository> CodeAsPolicy
+ln -s "$PWD/CodeAsPolicy/integrations/xpolicylab/CodeAsPolicy" <RoboDojo>/XPolicyLab/policy/CodeAsPolicy
 #    (or copy the directory there)
 
 # 2. the policy environment: any environment with a CUDA build of torch and the torchvision built for it
 #    (install.sh installs neither and keeps both as they are)
-bash <RoboDojo>/XPolicyLab/policy/PyRUA_Lean/install.sh                     # XPolicyLab's server, PyRUA-Lean (this checkout), sam3
-bash <RoboDojo>/XPolicyLab/policy/PyRUA_Lean/download_assets.sh             # SAM3's checkpoint, 3.4 GB
+bash <RoboDojo>/XPolicyLab/policy/CodeAsPolicy/install.sh                     # XPolicyLab's server, CodeAsPolicy (this checkout), sam3
+bash <RoboDojo>/XPolicyLab/policy/CodeAsPolicy/download_assets.sh             # SAM3's checkpoint, 3.4 GB
 
 # 3. the model that writes the programs: any OpenAI-compatible chat endpoint
 export OPENAI_BASE_URL=https://YOUR_API_HOST/v1
 export OPENAI_API_KEY=...
-export PYRUALEAN_MODEL=gpt-6-astra       # the model's name at that endpoint
+export CODEASPOLICY_MODEL=gpt-6-astra       # the model's name at that endpoint
 
 # 4. RoboDojo's own entry point, from the RoboDojo root
-bash scripts/robodojo.sh eval --policy-dir XPolicyLab/policy/PyRUA_Lean --task stack_blocks \
+bash scripts/robodojo.sh eval --policy-dir XPolicyLab/policy/CodeAsPolicy --task stack_blocks \
   --ckpt no-checkpoint --policy-env <policy_env> --eval-env <eval_env> --env-cfg arx_x5 \
   --action-type joint --seed 0 --policy-gpu 0 --env-gpu 0 --eval-num 2
-bash scripts/robodojo.sh benchmark --policy-dir XPolicyLab/policy/PyRUA_Lean --ckpt no-checkpoint \
+bash scripts/robodojo.sh benchmark --policy-dir XPolicyLab/policy/CodeAsPolicy --ckpt no-checkpoint \
   --policy-env <policy_env> --env-cfg arx_x5 --action-type joint --eval-num native --seed 0
 ```
 
@@ -72,38 +72,38 @@ The adapter's README ("Observation" and "Notes") is the full statement. In short
 ```bash
 # 1. static (repository root)
 git diff --check
-bash -n policy/PyRUA_Lean/*.sh
-python -m py_compile policy/PyRUA_Lean/model.py policy/PyRUA_Lean/deploy.py
-grep -rnE 'cv2\.imdecode|np\.frombuffer|Image\.open' policy/PyRUA_Lean/      # nothing
-grep -rn 'cv2\.imencode' policy/PyRUA_Lean/                                  # nothing
-grep -rnE 'COLOR_BGR2RGB|COLOR_RGB2BGR|\.\.\., ::-1' policy/PyRUA_Lean/      # nothing
+bash -n policy/CodeAsPolicy/*.sh
+python -m py_compile policy/CodeAsPolicy/model.py policy/CodeAsPolicy/deploy.py
+grep -rnE 'cv2\.imdecode|np\.frombuffer|Image\.open' policy/CodeAsPolicy/      # nothing
+grep -rn 'cv2\.imencode' policy/CodeAsPolicy/                                  # nothing
+grep -rnE 'COLOR_BGR2RGB|COLOR_RGB2BGR|\.\.\., ::-1' policy/CodeAsPolicy/      # nothing
 
 # 2. debug closed loop (no simulator, no model call); both must end in "[MAIN] eval finished"
-cd policy/PyRUA_Lean
+cd policy/CodeAsPolicy
 EVAL_ENV_TYPE=debug bash eval.sh RoboDojo stack_bowls no-checkpoint arx_x5 joint 0 0 0 <policy_env> <eval_env>
 EVAL_ENV_TYPE=debug DEBUG_OBS_ENCODED=1 bash eval.sh RoboDojo stack_bowls no-checkpoint arx_x5 joint 0 0 0 <policy_env> <eval_env>
 
 # 3. simulator, from the RoboDojo root
-bash scripts/robodojo.sh eval --policy-dir XPolicyLab/policy/PyRUA_Lean --task stack_blocks \
+bash scripts/robodojo.sh eval --policy-dir XPolicyLab/policy/CodeAsPolicy --task stack_blocks \
   --ckpt no-checkpoint --policy-env <policy_env> --eval-env <eval_env> --env-cfg arx_x5 \
   --action-type joint --seed 0 --policy-gpu 0 --env-gpu 0 --eval-num 2
 ```
 
 ## Before the pull request is opened
 
-1. **PyRUA-Lean has to be installable from a source the evaluators can reach.** `install.sh` installs `pyrualean`
+1. **CodeAsPolicy has to be installable from a source the evaluators can reach.** `install.sh` installs `codeaspolicy`
    from the checkout the adapter is linked from, or from its argument (a checkout or a pip requirement); for a
-   copied adapter the default is the public repository, `https://github.com/DAGroup-PKU/PyRUA-Lean`, at the
+   copied adapter the default is the public repository, `https://github.com/Alex-Zhu1/CodeAsPolicy`, at the
    revision pinned in `install.sh`: the one the adapter was evaluated with.
 2. Decide who serves the model during the official evaluation (see "Model calls" above).
 
 ## Pull request
 
-Title: `[policy] PyRUA_Lean: add eval-only RoboDojo adapter`
+Title: `[policy] CodeAsPolicy: add eval-only RoboDojo adapter`
 
 ````markdown
 ## Policy
-- Name / paper / upstream repo: PyRUA-Lean / [arXiv 2610.01939](https://arxiv.org/abs/2610.01939) / https://github.com/DAGroup-PKU/PyRUA-Lean
+- Name / paper / upstream repo: CodeAsPolicy / [arXiv 2610.01939](https://arxiv.org/abs/2610.01939) / https://github.com/Alex-Zhu1/CodeAsPolicy
 - Contributor: PKU DAGroup
 - Type: Agent, LLM. A language model writes Python against a robot API while the episode runs; each motion call becomes joint targets.
 - Supported: `bench_name=RoboDojo`, `env_cfg_type=arx_x5`, `action_type=joint`
@@ -131,15 +131,15 @@ Title: `[policy] PyRUA_Lean: add eval-only RoboDojo adapter`
 
 - [x] Simulator eval: eval seed 0, all 54 task configs at their native counts (2,100 episodes), stock `arx_x5`
       observation; output of `bash scripts/robodojo.sh summarize`:
-      https://github.com/DAGroup-PKU/PyRUA-Lean/blob/main/integrations/xpolicylab/evaluation/robodojo_summary_rgb.md
+      https://github.com/Alex-Zhu1/CodeAsPolicy/blob/main/integrations/xpolicylab/evaluation/robodojo_summary_rgb.md
 
 ## Checkpoint (required for leaderboard evaluation)
 ```bash
-bash policy/PyRUA_Lean/download_assets.sh    # SAM3 (segmentation); there is no policy checkpoint
+bash policy/CodeAsPolicy/download_assets.sh    # SAM3 (segmentation); there is no policy checkpoint
 ```
 
 ## Limitations / notes
 - The model (GPT-6 Astra, reasoning effort `high`, set in `deploy.yml`) is called through an OpenAI-compatible
-  endpoint: `OPENAI_BASE_URL`, `OPENAI_API_KEY`, `PYRUALEAN_MODEL`.
+  endpoint: `OPENAI_BASE_URL`, `OPENAI_API_KEY`, `CODEASPOLICY_MODEL`.
 - One conversation drives one environment (`eval_batch: false`).
 ````

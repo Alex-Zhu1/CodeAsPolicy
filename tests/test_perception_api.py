@@ -5,10 +5,10 @@ from copy import deepcopy
 import numpy as np
 import pytest
 
-from pyrualean import ToolError
-from pyrualean.hosts import robodojo_sight as sight
-from pyrualean.robodojo import ObjectPose, RobodojoRobot, Segment, WorldPoint
-from pyrualean.robodojo_xpl_rgb import ObjectSight, RobodojoOfficialColourRobot, SeenPoint
+from codeaspolicy import ToolError
+from codeaspolicy.hosts import robodojo_sight as sight
+from codeaspolicy.robodojo import ObjectPose, RobodojoRobot, Segment, WorldPoint
+from codeaspolicy.robodojo_xpl_rgb import ObjectSight, RobodojoOfficialColourRobot, SeenPoint
 from tests.test_robodojo import FakeRobodojoBackend
 
 
@@ -27,7 +27,7 @@ class CapturedBackend(FakeRobodojoBackend):
         index = step if step >= 0 else len(self.steps) + step
         source = f"capture-{index}"
         return dict(
-            schema="pyrualean.observation.v1", session_id=self.session_id,
+            schema="codeaspolicy.observation.v1", session_id=self.session_id,
             observation_id=source, source_id=source, step=index,
             native_steps=self.steps[index]["native_steps"],
             source_freshness="captured", aligned=True,
@@ -53,7 +53,7 @@ class CapturedBackend(FakeRobodojoBackend):
         assert arguments.pop("observation_id") == self.observation_metadata(step)["observation_id"]
         result = super().execute_tool(name, arguments)
         result.result["provenance"] = dict(
-            self.observation_metadata(step), schema="pyrualean.perception.v1",
+            self.observation_metadata(step), schema="codeaspolicy.perception.v1",
             operation=name, frozen=True,
         )
         self.last_payload = result.result

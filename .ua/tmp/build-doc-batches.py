@@ -1,7 +1,7 @@
 import json, math, posixpath, re
 from pathlib import Path
 
-root = Path('/mnt/data_hdd/mhzhu/GPTCode/PyRUA-Lean')
+root = Path('/mnt/data_hdd/mhzhu/GPTCode/CodeAsPolicy')
 ua = root / '.ua'
 scan = json.loads((ua/'intermediate/scan-result.json').read_text())
 batches = json.loads((ua/'intermediate/batches.json').read_text())['batches']
@@ -14,7 +14,7 @@ summaries = {
 '.github/workflows/docs.yml':'构建 MkDocs 文档站，使用 Python 3.11 安装文档依赖并执行严格构建。主分支推送且仓库身份匹配时，将站点发布到指定页面分支。',
 'README.md':'介绍通过 Python 对象控制机器人的代码生成框架，区分在线模型执行与离线 RSI 固定程序。提供安装、机器人环境、运行入口和基准报告链接。',
 'mkdocs.yml':'配置 Material 文档站的导航、主题、Markdown 扩展和 API 生成钩子，将入门、机器人、运行指南及架构设计组织为可浏览站点。',
-'pyproject.toml':'定义 pyrualean Python 包、setuptools 构建和命令行入口，以及开发与可选工具依赖、测试和代码检查配置；包本身不声明必需运行依赖。',
+'pyproject.toml':'定义 codeaspolicy Python 包、setuptools 构建和命令行入口，以及开发与可选工具依赖、测试和代码检查配置；包本身不声明必需运行依赖。',
 'docs/design/architecture.md':'梳理现有在线执行链、Python 单元与完整程序边界，以及控制、代码和模型三类反馈循环。提出统一上下文、动作凭据和证据契约；这些设计项不等同于已实现的公共类型。',
 'docs/design/index.md':'作为架构设计文档入口，连接十个职责切面、总体架构和演进路线。明确文档依据当前源码静态梳理，并区分现有能力与建议中的公共契约。',
 'docs/design/roadmap.md':'提出分阶段演进顺序：先统一契约，再完善观测与执行，随后补齐证据、恢复、上下文和评估。记录验收目标与迁移原则，属于规划而非完成状态。',
@@ -46,8 +46,8 @@ summaries = {
 'integrations/xpolicylab/evaluation/robodojo_summary_rgb.md':'记录默认 RGB 观测协议下的任务结果和当时已完成的种子覆盖情况，提供整体与任务级指标。与 RGB-D 和其他任务数量的报告分别解释。',
 'integrations/xpolicylab/evaluation/robodojo_summary_rgbd.md':'记录使用深度与相机矩阵的 RGB-D 历史实验，覆盖 54 个配置和多个种子。明确这与发布策略默认的 RGB 输入协议不同。',
 'integrations/xpolicylab/evaluation/robodojo_summary_rsi.md':'记录离线固定程序 RSI 的任务级和总体评估，区分开发种子与留出种子结果。描述固定程序协议，避免与在线模型策略直接混同。',
-'src/pyrualean/knowledge/astra_stuck_recovery.md':'作为确认卡住后注入的恢复知识，要求沿用当前场景、Python 命名空间与剩余预算重新规划。强调先检查新证据，再开展依赖这些事实的动作。',
-'src/pyrualean/knowledge/astra_valen_supervision.md':'作为运行时监督规划知识，说明模型如何编写 Python 回调、核验原子视觉事实并声明执行前置条件。把观察判断、宿主门控和局部修正结合起来，不提供固定任务答案。',
+'src/codeaspolicy/knowledge/astra_stuck_recovery.md':'作为确认卡住后注入的恢复知识，要求沿用当前场景、Python 命名空间与剩余预算重新规划。强调先检查新证据，再开展依赖这些事实的动作。',
+'src/codeaspolicy/knowledge/astra_valen_supervision.md':'作为运行时监督规划知识，说明模型如何编写 Python 回调、核验原子视觉事实并声明执行前置条件。把观察判断、宿主门控和局部修正结合起来，不提供固定任务答案。',
 }
 
 summaries.update({'mkdocs.yml': '配置 Material 文档站的导航、主题、Markdown 扩展和 API 生成钩子，新增交互延迟专题并连接十个架构职责切面及演进路线。', 'docs/design/architecture.md': '梳理现有在线执行链、cells/program/RSI 模式边界和三类闭环，并提出任务、观测、动作、证据及恢复的公共契约。新增完整代码就绪计时、决策期限与流式完整工具项的跨模块要求，均明确为待补设计。', 'docs/design/index.md': '作为框架设计入口，连接总体架构、交互延迟专题、十个职责切面与推进路线。明确现有实现、部分实现、待补契约和未来验收的区别，并注明当前内容包含未提交工作区实现。', 'docs/design/interaction-latency.md': '分析已有 Astra/Codex 日志中反馈到下一段代码的等待，区分历史代理指标、总策略时间与尚未实现的统一分项计时。提出决策与请求身份、派发前期限及证据复查、流式完整工具项边界，以及同时衡量响应时间和任务质量的对照实验。', 'docs/design/roadmap.md': '提出从公共契约到观测、动作回执、独立验证、恢复和上下文的分阶段推进路线。将交互延迟基线与接口兼容性核查前移到 P0，并明确流式派发和候选预计算所依赖的基础契约；阶段与验收均为规划。', 'docs/design/parts/code-runtime.md': '分析持久 Python 单元与完整程序的执行、反馈、沙箱和预算边界，以及故障后真实副作用与命名空间的保留。提出完整工具项的计时、编译、去重和派发准入契约，要求排队后重新核查期限、会话与证据依赖，不执行流式代码前缀。', 'docs/design/parts/planner-context.md': '分析提示构建、在线模型循环与持久辅助函数，提出版本化决策上下文和失败交接内容。新增出码延迟与判断粒度设计：按实际运行路径记录推理配置和缓存，比较本地规则与模型往返，拒绝直接派发依赖过期证据的候选。', 'docs/design/parts/task-session.md': '梳理权威任务、环境生命周期、分散预算及模型与原生判定，提出统一任务和预算快照。新增每次决策的身份、交互目标与期限，区分取消生成、动作在途与设备停止确认，并明确迟到代码不得恢复原派发许可。', 'docs/design/parts/records-evaluation.md': '分析调用、观测、监督、恢复和评估记录的现有基础，提出跨层因果事件与分层判定协议。新增反馈就绪到完整代码就绪的计时和分组统计设计，要求保留失败、重试、断流、压缩与缺失时点，避免把总策略时间解释为模型推理时间。'})
@@ -61,44 +61,44 @@ robot_notes={
 }
 for robot,note in robot_notes.items():
     for suffix in ['', '-novla']:
-        p=f'src/pyrualean/knowledge/{robot}{suffix}.md'
+        p=f'src/codeaspolicy/knowledge/{robot}{suffix}.md'
         summaries[p]=note+'。'+('该版本仅使用原生控制与感知能力，不包含 VLA 操作指导。' if suffix else '手册还包含 VLA 使用指导，实际可用原语取决于运行配置。')
 
-for policy in ['PyRUA_Lean','PyRUA_RSI']:
+for policy in ['CodeAsPolicy','CodeAsPolicy_RSI']:
     base=f'integrations/xpolicylab/{policy}/'
     rsi=policy.endswith('RSI')
     texts={
-      'README.md': ('说明 XPolicyLab 离线固定程序策略的安装、启动与评估：按任务加载程序，首次返回完整 Python，随后结束，不在线请求语言模型。' if rsi else '说明 XPolicyLab 在线机器人代码生成策略的安装、模型配置和评估入口，连接策略服务、环境客户端与本地 PyRUA 执行栈。'),
+      'README.md': ('说明 XPolicyLab 离线固定程序策略的安装、启动与评估：按任务加载程序，首次返回完整 Python，随后结束，不在线请求语言模型。' if rsi else '说明 XPolicyLab 在线机器人代码生成策略的安装、模型配置和评估入口，连接策略服务、环境客户端与本地 CodeAsPolicy 执行栈。'),
       'deploy.yml': ('配置 RoboDojo RGB 离线程序策略、机器人接口、执行预算和输出目录，部分模型配置仅为接口兼容而保留。' if rsi else '配置 RoboDojo RGB 在线 OpenAI 策略、无 VLA 原语、按需图像、执行预算和结果目录。'),
       'download_assets.sh':'从 Hugging Face 或 ModelScope 下载 SAM3 检查点，并验证目标文件非空，供策略服务加载感知模型。',
       'eval.sh':'选择空闲端口启动策略服务，等待服务就绪后运行环境客户端，并通过退出清理停止后台服务。',
-      'install.sh':'在已有 CUDA PyTorch 环境中安装 PyRUA、XPolicyLab 和感知依赖，用约束保留现有 torch 与 torchvision 版本，并执行导入检查。'+('额外安装离线程序所需的 SciPy。' if rsi else ''),
+      'install.sh':'在已有 CUDA PyTorch 环境中安装 CodeAsPolicy、XPolicyLab 和感知依赖，用约束保留现有 torch 与 torchvision 版本，并执行导入检查。'+('额外安装离线程序所需的 SciPy。' if rsi else ''),
       'setup_eval_env_client.sh':'整理任务、种子、GPU、Conda 环境和策略配置参数，调用 XPolicyLab 公共环境客户端启动流程。',
       'setup_eval_policy_server.sh':'激活策略环境，配置 GPU、Python 路径和 SAM3 检查点，将部署配置及覆盖参数传给 XPolicyLab 策略服务器。',
     }
     summaries.update({base+k:v for k,v in texts.items()})
 
 explicit={
-'README.md':['src/pyrualean/cli.py','src/pyrualean/play.py','integrations/xpolicylab/PyRUA_Lean/model.py','integrations/xpolicylab/PyRUA_RSI/model.py'],
-'docs/guide/agents.md':['src/pyrualean/openai_runtime.py','src/pyrualean/claude_runtime.py','src/pyrualean/generate.py','src/pyrualean/prompt.py'],
-'docs/guide/cli.md':['src/pyrualean/cli.py'],
-'docs/guide/coordination.md':['src/pyrualean/coordination.py','src/pyrualean/hosts/robodojo_coordination.py','src/pyrualean/robodojo.py'],
-'docs/guide/outputs.md':['src/pyrualean/play.py','src/pyrualean/_backend.py','src/pyrualean/supervision.py'],
-'docs/guide/recovery.md':['src/pyrualean/recovery.py','src/pyrualean/stuck_recovery.py','src/pyrualean/arms.py'],
-'docs/guide/running.md':['src/pyrualean/play.py','src/pyrualean/cli.py','src/pyrualean/arms.py'],
-'docs/guide/strategies.md':['src/pyrualean/strategies.py'],
-'docs/guide/valen-evaluation.md':['src/pyrualean/evaluation/valen.py','src/pyrualean/cli.py'],
-'docs/robots/adding-a-robot.md':['src/pyrualean/robots.py','src/pyrualean/_robot.py','src/pyrualean/hosts/robodojo_xpolicylab.py'],
-'docs/robots/index.md':['src/pyrualean/robots.py'],
-'src/pyrualean/knowledge/astra_stuck_recovery.md':['src/pyrualean/stuck_recovery.py'],
-'src/pyrualean/knowledge/astra_valen_supervision.md':['src/pyrualean/supervision.py','src/pyrualean/prompt.py'],
+'README.md':['src/codeaspolicy/cli.py','src/codeaspolicy/play.py','integrations/xpolicylab/CodeAsPolicy/model.py','integrations/xpolicylab/CodeAsPolicy_RSI/model.py'],
+'docs/guide/agents.md':['src/codeaspolicy/openai_runtime.py','src/codeaspolicy/claude_runtime.py','src/codeaspolicy/generate.py','src/codeaspolicy/prompt.py'],
+'docs/guide/cli.md':['src/codeaspolicy/cli.py'],
+'docs/guide/coordination.md':['src/codeaspolicy/coordination.py','src/codeaspolicy/hosts/robodojo_coordination.py','src/codeaspolicy/robodojo.py'],
+'docs/guide/outputs.md':['src/codeaspolicy/play.py','src/codeaspolicy/_backend.py','src/codeaspolicy/supervision.py'],
+'docs/guide/recovery.md':['src/codeaspolicy/recovery.py','src/codeaspolicy/stuck_recovery.py','src/codeaspolicy/arms.py'],
+'docs/guide/running.md':['src/codeaspolicy/play.py','src/codeaspolicy/cli.py','src/codeaspolicy/arms.py'],
+'docs/guide/strategies.md':['src/codeaspolicy/strategies.py'],
+'docs/guide/valen-evaluation.md':['src/codeaspolicy/evaluation/valen.py','src/codeaspolicy/cli.py'],
+'docs/robots/adding-a-robot.md':['src/codeaspolicy/robots.py','src/codeaspolicy/_robot.py','src/codeaspolicy/hosts/robodojo_xpolicylab.py'],
+'docs/robots/index.md':['src/codeaspolicy/robots.py'],
+'src/codeaspolicy/knowledge/astra_stuck_recovery.md':['src/codeaspolicy/stuck_recovery.py'],
+'src/codeaspolicy/knowledge/astra_valen_supervision.md':['src/codeaspolicy/supervision.py','src/codeaspolicy/prompt.py'],
 }
-explicit['docs/design/interaction-latency.md'] = ['src/pyrualean/play.py', 'src/pyrualean/cli.py', 'src/pyrualean/generate.py', 'src/pyrualean/openai_runtime.py', 'src/pyrualean/claude_runtime.py', 'src/pyrualean/arms.py', 'integrations/xpolicylab/PyRUA_Lean/deploy.yml']
+explicit['docs/design/interaction-latency.md'] = ['src/codeaspolicy/play.py', 'src/codeaspolicy/cli.py', 'src/codeaspolicy/generate.py', 'src/codeaspolicy/openai_runtime.py', 'src/codeaspolicy/claude_runtime.py', 'src/codeaspolicy/arms.py', 'integrations/xpolicylab/CodeAsPolicy/deploy.yml']
 for robot in ['libero','robocasa','robodojo','robotwin']:
-    explicit[f'docs/robots/{robot}.md']=[f'src/pyrualean/{robot}.py']
+    explicit[f'docs/robots/{robot}.md']=[f'src/codeaspolicy/{robot}.py']
 for robot in robot_notes:
     for suffix in ['','-novla']:
-        explicit[f'src/pyrualean/knowledge/{robot}{suffix}.md']=[f'src/pyrualean/{robot}.py','src/pyrualean/prompt.py']
+        explicit[f'src/codeaspolicy/knowledge/{robot}{suffix}.md']=[f'src/codeaspolicy/{robot}.py','src/codeaspolicy/prompt.py']
 
 for batch in batches:
     idx=batch['batchIndex']
@@ -135,10 +135,10 @@ for batch in batches:
             for q in inventory:
                 if q.startswith('docs/') and (q in text or q[5:] in text): edge(p,q,'configures')
         if p=='pyproject.toml':
-            for q in ['src/pyrualean/cli.py','src/pyrualean/__init__.py']: edge(p,q,'configures')
+            for q in ['src/codeaspolicy/cli.py','src/codeaspolicy/__init__.py']: edge(p,q,'configures')
         if p=='.github/workflows/docs.yml':
             edge(p,'mkdocs.yml','depends_on'); edge(p,'docs/hooks/api_reference.py','triggers')
-        if '/PyRUA_' in p:
+        if '/CodeAsPolicy_' in p:
             base=posixpath.dirname(p)+'/'
             if p.endswith('README.md'):
                 for q in inventory:

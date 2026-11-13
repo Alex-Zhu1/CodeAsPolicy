@@ -8,8 +8,8 @@ from pathlib import Path
 
 import pytest
 
-from pyrualean.arms import MAX_TEXT_CHARS, ArmToolkit
-from pyrualean.execution import BoundedOutput, ExecutionLimits
+from codeaspolicy.arms import MAX_TEXT_CHARS, ArmToolkit
+from codeaspolicy.execution import BoundedOutput, ExecutionLimits
 
 MOVE = "robo.move_to([0.05, -0.1, 0.6])"
 
@@ -38,9 +38,9 @@ import sys
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 from conftest import FakeLiberoBackend
-from pyrualean.arms import ArmToolkit
-from pyrualean.execution import ExecutionLimits
-from pyrualean.libero import LiberoRobot
+from codeaspolicy.arms import ArmToolkit
+from codeaspolicy.execution import ExecutionLimits
+from codeaspolicy.libero import LiberoRobot
 mode, directory = sys.argv[1:]
 backend = FakeLiberoBackend()
 kit = ArmToolkit(LiberoRobot(backend), arm="program" if mode in ("program", "load") else "cells",

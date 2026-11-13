@@ -1,11 +1,11 @@
 # Running Episodes
 
-`pyrualean play` runs one episode: it boots the robot, gives the agent the task and serves its code until the
+`codeaspolicy play` runs one episode: it boots the robot, gives the agent the task and serves its code until the
 episode is over.
 
 The default launch uses `cells`, Codex with `gpt-6-astra` at `high` reasoning,
 100 code calls and a 5400-second wall-clock ceiling. Images are requested on demand,
-feedback is `pure`, and the primitive set is `no-vla`. Both CLI entry points and
+feedback is `pure`, and the primitive set is `no-sam` (intersected with adapter capabilities, so adapters without a no-SAM geometry mode run `no-vla`). Both CLI entry points and
 Python's `play_episode` share these launch settings.
 
 Valen monitoring and confirmed-stuck recovery are off by default. A normal run
@@ -23,7 +23,7 @@ of Valen: public task invariants require check bindings before motion. The plann
 declares stage prerequisites, completion checks, geometry and multi-stage previews.
 
 ```bash
-pyrualean play --arm cells --suite libero_spatial_swap --task 7 --seed 2 \
+codeaspolicy play --arm cells --suite libero_spatial_swap --task 7 --seed 2 \
     --model gpt-6-astra --max-turns 40 --budget-s 7200 --out runs/demo --cuda-device 0
 ```
 
@@ -58,8 +58,8 @@ still sees.
 
 ## VLA policies, guides and shared servers
 
-- `--primitives no-vla` is the default: VLA primitives disappear from the API reference and the
-  knowledge text, and calling one is refused. Use `--primitives full` when the adapter supports a VLA.
+- `--primitives no-sam` is the default: VLA primitives (and SAM3 primitives on adapters with a calibrated geometry mode such as RoboDojo) disappear from the API reference and the
+  knowledge text, and calling one is refused. Use `--primitives no-vla` to enable SAM3 without a VLA, or `--primitives full` when the adapter supports a VLA.
 - `--guides` gives the agent RPent's three LIBERO operating guides in its workspace (optional reading);
   `--guides-dir <dir>` gives it the `*.md` files of another directory.
 - `--vla-endpoint host:port` (and `--sam3-endpoint` on LIBERO-PRO) attach the episode to running model servers
@@ -70,9 +70,9 @@ still sees.
 The strictest setting: one reply, one program, no feedback.
 
 ```bash
-pyrualean card --suite libero_object_swap --task 2 --seed 0 --out runs/card --cuda-device 0
-pyrualean generate --card runs/card/card.json --out runs/gen --model gpt-6-astra
-pyrualean run --policy runs/gen/policy.py --suite libero_object_swap --task 2 --seed 0 \
+codeaspolicy card --suite libero_object_swap --task 2 --seed 0 --out runs/card --cuda-device 0
+codeaspolicy generate --card runs/card/card.json --out runs/gen --model gpt-6-astra
+codeaspolicy run --policy runs/gen/policy.py --suite libero_object_swap --task 2 --seed 0 \
     --out runs/code --cuda-device 0
 ```
 

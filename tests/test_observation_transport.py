@@ -11,9 +11,9 @@ from types import ModuleType, SimpleNamespace
 import numpy as np
 import pytest
 
-from pyrualean.hosts import robodojo_tools as tools
-from pyrualean.hosts.robodojo_native import NativeBackend, NativeToolkit
-from pyrualean.hosts.xpolicylab_bridge import (
+from codeaspolicy.hosts import robodojo_tools as tools
+from codeaspolicy.hosts.robodojo_native import NativeBackend, NativeToolkit
+from codeaspolicy.hosts.xpolicylab_bridge import (
     OBSERVATION_KEY,
     REQUEST_KEY,
     WAIT,
@@ -26,7 +26,7 @@ from pyrualean.hosts.xpolicylab_bridge import (
 def observation(sequence, receipt=None, source_session="client", behind=0):
     return {
         "state": {"sample": sequence}, "vision": {},
-        "additional_info": {"pyrualean": {"step": sequence - 1, "pictures_behind": behind}},
+        "additional_info": {"codeaspolicy": {"step": sequence - 1, "pictures_behind": behind}},
         OBSERVATION_KEY: dict(protocol=1, source_session_id=source_session,
                               source_id=f"{source_session}:{sequence}", sequence=sequence,
                               captured_at=123.0 + sequence, source_freshness="captured",
@@ -160,7 +160,7 @@ def test_old_client_readonly_refresh_keeps_image_provenance_and_pose():
     bridge.update_obs(moved)
     assert bridge.get_obs()["image_state"] == {"sample": 1}
     refresh = observation(3, behind=1)
-    refresh["additional_info"]["pyrualean"]["step"] = 1  # no native action
+    refresh["additional_info"]["codeaspolicy"]["step"] = 1  # no native action
     refresh["vision"] = {"wrist": {"extrinsic_matrix": "second"}}
     bridge.update_obs(refresh)
     obs = bridge.get_obs()
@@ -340,7 +340,7 @@ class Client:
         return method() if obs is None else method(obs)
 
 
-@pytest.mark.parametrize("adapter", ["PyRUA_Lean", "PyRUA_RSI"])
+@pytest.mark.parametrize("adapter", ["CodeAsPolicy", "CodeAsPolicy_RSI"])
 def test_readonly_capture_and_action_receipts_through_real_deploy(adapter, tmp_path, monkeypatch):
     bridge = Bridge(poll_s=.02)
     env = IsaacEnvironment()
@@ -431,7 +431,7 @@ def test_live_source_is_separate_from_recorded_artifacts_at_same_native_step(tmp
     newer = Environment().get_obs()
     newer.update({key: value for key, value in observation(2).items()
                   if key not in ("state", "vision")})
-    newer["additional_info"]["pyrualean"]["step"] = 0
+    newer["additional_info"]["codeaspolicy"]["step"] = 0
     bridge.update_obs(newer)
     live = backend.current_observation_source()
     assert live["session_id"] == recorded["session_id"]
@@ -515,7 +515,7 @@ def test_terminal_action_ack_and_observation_are_published_atomically(monkeypatc
     env = IsaacEnvironment()
     env.step_limit = 1
     install_renderer(monkeypatch, env)
-    client = deploy("PyRUA_Lean")
+    client = deploy("CodeAsPolicy")
     thread, results = start(lambda: client.eval_one_episode(env, Client(bridge)))
     initial = bridge.first_obs(1)[OBSERVATION_KEY]["source_id"]
     obs, _, done, _ = BridgeEnv(bridge).step({"joint": [0.]})
@@ -525,7 +525,7 @@ def test_terminal_action_ack_and_observation_are_published_atomically(monkeypatc
     assert obs[OBSERVATION_KEY]["action_receipt"]["status"] == "completed"
 
 
-@pytest.mark.parametrize("adapter", ["PyRUA_Lean", "PyRUA_RSI"])
+@pytest.mark.parametrize("adapter", ["CodeAsPolicy", "CodeAsPolicy_RSI"])
 def test_capture_synchronizes_stale_renderer_without_physics_or_native_steps(adapter, monkeypatch):
     env = IsaacEnvironment()
     install_renderer(monkeypatch, env)
@@ -544,7 +544,7 @@ def test_capture_synchronizes_stale_renderer_without_physics_or_native_steps(ada
     assert env.forward_calls == len(env.render_calls) == 2
 
 
-@pytest.mark.parametrize("adapter", ["PyRUA_Lean", "PyRUA_RSI"])
+@pytest.mark.parametrize("adapter", ["CodeAsPolicy", "CodeAsPolicy_RSI"])
 def test_capture_detects_physics_advance_instead_of_asserting_alignment(adapter, monkeypatch):
     env = IsaacEnvironment()
     original = env.render
@@ -561,7 +561,7 @@ def test_capture_detects_physics_advance_instead_of_asserting_alignment(adapter,
     assert not env.actions
 
 
-@pytest.mark.parametrize("adapter", ["PyRUA_Lean", "PyRUA_RSI"])
+@pytest.mark.parametrize("adapter", ["CodeAsPolicy", "CodeAsPolicy_RSI"])
 def test_unsupported_capture_reports_unknown_not_guessed_picture_lag(adapter):
     env = Environment()
     _, evidence = deploy(adapter)._capture_observation(env)
@@ -599,12 +599,12 @@ def test_explicit_alignment_requires_nonempty_basis(alignment):
 
 def test_standalone_adapter_capture_implementations_stay_identical():
     root = Path(__file__).resolve().parents[1] / "integrations/xpolicylab"
-    assert (root / "PyRUA_Lean/deploy.py").read_text() == (
-        root / "PyRUA_RSI/deploy.py"
+    assert (root / "CodeAsPolicy/deploy.py").read_text() == (
+        root / "CodeAsPolicy_RSI/deploy.py"
     ).read_text()
 
 
-@pytest.mark.parametrize("adapter", ["PyRUA_Lean", "PyRUA_RSI"])
+@pytest.mark.parametrize("adapter", ["CodeAsPolicy", "CodeAsPolicy_RSI"])
 def test_skipped_render_is_not_successful_capture(adapter, monkeypatch):
     env = IsaacEnvironment()
     install_renderer(monkeypatch, env)
@@ -616,7 +616,7 @@ def test_skipped_render_is_not_successful_capture(adapter, monkeypatch):
     assert env.annotator_syncs == 0
 
 
-@pytest.mark.parametrize("adapter", ["PyRUA_Lean", "PyRUA_RSI"])
+@pytest.mark.parametrize("adapter", ["CodeAsPolicy", "CodeAsPolicy_RSI"])
 @pytest.mark.parametrize("lag,missing", [(20, set()), (0, {"/Render/wrist"})])
 def test_capture_requires_new_completion_for_every_camera(adapter, monkeypatch, lag, missing):
     env = IsaacEnvironment()
@@ -632,7 +632,7 @@ def test_capture_requires_new_completion_for_every_camera(adapter, monkeypatch, 
     assert not env.actions
 
 
-@pytest.mark.parametrize("adapter", ["PyRUA_Lean", "PyRUA_RSI"])
+@pytest.mark.parametrize("adapter", ["CodeAsPolicy", "CodeAsPolicy_RSI"])
 def test_capture_completes_annotators_and_restores_settings(adapter, monkeypatch):
     env = IsaacEnvironment()
     install_renderer(monkeypatch, env)

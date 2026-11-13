@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import pytest
 
-from pyrualean.arms import ArmToolkit
-from pyrualean.runner import PolicyLoadError, load_policy
-from pyrualean.sandbox import ALLOWED_MODULES, audit_source, make_builtins
+from codeaspolicy.arms import ArmToolkit
+from codeaspolicy.runner import PolicyLoadError, load_policy
+from codeaspolicy.sandbox import ALLOWED_MODULES, audit_source, make_builtins
 
 
 @pytest.fixture
@@ -83,7 +83,7 @@ def test_load_policy_with_sandbox_builtins(tmp_path):
 
 
 def test_cells_refuse_python_internals_before_running(cells):
-    from pyrualean.sandbox import BLOCKED_NAMES, blocked_names
+    from codeaspolicy.sandbox import BLOCKED_NAMES, blocked_names
 
     patched = cells.execute_tool(
         "python", {"code": "MARK = 1\nrobo.state.__func__.__globals__['x'] = 1"}

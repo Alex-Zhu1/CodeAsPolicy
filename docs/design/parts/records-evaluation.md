@@ -36,14 +36,14 @@
 
 ## 现有实现
 
-- `src/pyrualean/_backend.py`：`CallRecord`、`Ledger` 保存 primitive 参数、结果、耗时和环境步数。
-- `src/pyrualean/arms.py`：`ArmToolkit.execute_tool()` 记录每次代码工具的执行情况；`_observe_result()` 关联观测编号、动作版本和 ledger 索引。
-- `src/pyrualean/arms.py`：`_failure_feedback()` 保存失败位置、部分执行、最后动作、状态、剩余调用数和不回滚语义。
-- `src/pyrualean/play.py`：`play_episode()` 写入 prompt、工具记录、调用日志和最终结果，并分别保存模型 finish 与 backend 成功判定。
-- `src/pyrualean/evaluation/metrics.py`：`EpisodeMetrics`、`load_episode_result()`、`summarize()` 汇总成功率、调用、步数、时间与 token。
-- `src/pyrualean/evaluation/valen.py`：`load_samples()` 读取已保存检查，`threshold_metrics()` 使用独立标注，`evaluate()` 默认执行缓存评估。
-- `src/pyrualean/stuck_recovery.py`：`StuckRecoveryConfig.record()` 记录恢复文本 hash；恢复事件另存 `stuck_recovery.jsonl`。
-- 首批 P0/L0 新增 `src/pyrualean/interaction_trace.py` 和 `evaluation/latency.py`：记录 host 调用阶段、可得的模型请求时点，离线汇总现有日志；`play.py` 将日志与配置引用写入结果。
+- `src/codeaspolicy/_backend.py`：`CallRecord`、`Ledger` 保存 primitive 参数、结果、耗时和环境步数。
+- `src/codeaspolicy/arms.py`：`ArmToolkit.execute_tool()` 记录每次代码工具的执行情况；`_observe_result()` 关联观测编号、动作版本和 ledger 索引。
+- `src/codeaspolicy/arms.py`：`_failure_feedback()` 保存失败位置、部分执行、最后动作、状态、剩余调用数和不回滚语义。
+- `src/codeaspolicy/play.py`：`play_episode()` 写入 prompt、工具记录、调用日志和最终结果，并分别保存模型 finish 与 backend 成功判定。
+- `src/codeaspolicy/evaluation/metrics.py`：`EpisodeMetrics`、`load_episode_result()`、`summarize()` 汇总成功率、调用、步数、时间与 token。
+- `src/codeaspolicy/evaluation/valen.py`：`load_samples()` 读取已保存检查，`threshold_metrics()` 使用独立标注，`evaluate()` 默认执行缓存评估。
+- `src/codeaspolicy/stuck_recovery.py`：`StuckRecoveryConfig.record()` 记录恢复文本 hash；恢复事件另存 `stuck_recovery.jsonl`。
+- 首批 P0/L0 新增 `src/codeaspolicy/interaction_trace.py` 和 `evaluation/latency.py`：记录 host 调用阶段、可得的模型请求时点，离线汇总现有日志；`play.py` 将日志与配置引用写入结果。
 
 当前 acknowledged / completed_motion_calls 统计正常返回的 primitive，不能推断 `reached` 或 `holding` 达成。
 code arm 的汇总约定把缺失成功结果视为失败；RPent 缺原生结果可为 unknown，比较时必须保留这一差异。

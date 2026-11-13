@@ -17,7 +17,7 @@ unknown alone does not activate this skill. It complements
 reclassifying conditions and restoring them later.
 
 The `play` CLIs configure this skill's packaged
-[runtime core](../../src/pyrualean/knowledge/astra_stuck_recovery.md) by default for
+[runtime core](../../src/codeaspolicy/knowledge/astra_stuck_recovery.md) by default for
 cells. `--stuck-recovery-skill FILE` overrides that core; `--no-stuck-recovery`
 disables dispatch. The host records the confirmed blockage and dispatches recovery
 without finalizing the episode. Read the tool

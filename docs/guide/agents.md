@@ -3,7 +3,7 @@
 Pick who runs the agent loop with one flag:
 
 ```bash
-pyrualean play --runtime {codex,claude,openai} ...
+codeaspolicy play --runtime {codex,claude,openai} ...
 ```
 
 Every runtime gets the same prompt, the same `python` (or `run_program`) and `finish` tools and the same budgets,
@@ -13,9 +13,9 @@ Codex keeps its own shell, sandboxed to the workspace; Claude Code its read-only
 
 | `--runtime` | What it is | When to pick it |
 |---|---|---|
-| `codex` (default) | The [Codex CLI](https://github.com/openai/codex) runs the loop; PyRUA-Lean serves it the tools. | GPT models, with a Codex login or an OpenAI Responses endpoint. |
+| `codex` (default) | The [Codex CLI](https://github.com/openai/codex) runs the loop; CodeAsPolicy serves it the tools. | GPT models, with a Codex login or an OpenAI Responses endpoint. |
 | `claude` | Claude Code, through the Claude Agent SDK. | Claude models. |
-| `openai` | A plain loop in PyRUA-Lean against any OpenAI-compatible chat-completions endpoint: a gateway, or a local SGLang or vLLM server. | Open models such as [PyRUA-Lean Coder](../models/coder.md); RoboDojo. |
+| `openai` | A plain loop in CodeAsPolicy against any OpenAI-compatible chat-completions endpoint: a gateway, or a local SGLang or vLLM server. | Open models such as [CodeAsPolicy Coder](../models/coder.md); RoboDojo. |
 
 `--model` names the model as the endpoint knows it (`gpt-6-astra` by default for `play`).
 `--reasoning` sets the reasoning effort of Codex and Claude Code (`high` by default for
@@ -43,7 +43,7 @@ npm install -g @openai/codex@0.155.1
 
 !!! tip "GPT-6 Astra on Codex 0.155.1"
 
-    Codex 0.155.1 runs `gpt-6-astra` in "code mode", which hides every tool behind one JavaScript tool. PyRUA-Lean
+    Codex 0.155.1 runs `gpt-6-astra` in "code mode", which hides every tool behind one JavaScript tool. CodeAsPolicy
     passes Codex a model catalog that turns this off (direct function calls, as in the paper's runs), so nothing needs
     to be done for `play` and `generate`.
 
@@ -51,7 +51,7 @@ npm install -g @openai/codex@0.155.1
 
 ```bash
 pip install claude-agent-sdk          # into the robot stack's environment
-pyrualean play --runtime claude --model <claude model> --claude-cli /path/to/claude ...
+codeaspolicy play --runtime claude --model <claude model> --claude-cli /path/to/claude ...
 ```
 
 Claude Code reaches the model the way it is configured to (`ANTHROPIC_*` variables). Opus 5.5 needs Claude Code
@@ -60,7 +60,7 @@ Claude Code reaches the model the way it is configured to (`ANTHROPIC_*` variabl
 ## OpenAI-compatible endpoints
 
 ```bash
-pyrualean play --runtime openai --base-url http://127.0.0.1:30000/v1 --api-key-env MY_KEY \
+codeaspolicy play --runtime openai --base-url http://127.0.0.1:30000/v1 --api-key-env MY_KEY \
     --model <model name> ...
 ```
 

@@ -8,8 +8,8 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 
 import pytest
 
-from pyrualean.arms import ArmToolkit
-from pyrualean.supervision import (
+from codeaspolicy.arms import ArmToolkit
+from codeaspolicy.supervision import (
     MonitorConfig,
     ValenClient,
     VisualSupervisor,
@@ -66,7 +66,7 @@ def setup(robo, tmp_path, outputs, **options):
 @pytest.fixture
 def snapshot_robo(backend, monkeypatch):
     """A test sensor protocol: new read-only captures do not advance physics."""
-    from pyrualean import LiberoRobot
+    from codeaspolicy import LiberoRobot
 
     original_view = backend._view
 
@@ -74,7 +74,7 @@ def snapshot_robo(backend, monkeypatch):
         index = backend.steps[step]["step_idx"]
         source = f"test-sensor-frame-{index}"
         return dict(
-            schema="pyrualean.observation.v1", session_id="test-sensor-session",
+            schema="codeaspolicy.observation.v1", session_id="test-sensor-session",
             observation_id=source, source_id=source, step=index,
             native_steps=backend.frames, captured_at=1000.0 + index,
             recorded_at=2000.0 + index, source_freshness="captured", aligned=True,
@@ -557,7 +557,7 @@ def test_invalid_configuration(options):
 
 
 def test_cli_forwards_monitor_configuration(tmp_path, monkeypatch):
-    from pyrualean import cli
+    from codeaspolicy import cli
 
     commands = []
     out = tmp_path / "run"
@@ -603,7 +603,7 @@ def test_cli_forwards_monitor_configuration(tmp_path, monkeypatch):
 
 
 def test_host_cli_receives_monitor_configuration(tmp_path, monkeypatch):
-    from pyrualean import play
+    from codeaspolicy import play
 
     configs = []
 
@@ -637,8 +637,8 @@ def test_host_cli_receives_monitor_configuration(tmp_path, monkeypatch):
 
 
 def test_supervision_prompt_is_opt_in():
-    from pyrualean.play import build_prompt
-    from pyrualean.prompt import TaskCard
+    from codeaspolicy.play import build_prompt
+    from codeaspolicy.prompt import TaskCard
 
     card = TaskCard(suite="test", task=0, seed=0, task_language="Move the bowl", object_names=[])
     options = dict(budget_s=100, max_programs=None)
@@ -652,7 +652,7 @@ def test_supervision_prompt_is_opt_in():
     )
     assert original == disabled and "watch(phase" not in original
     assert "watch(phase" in enabled and "interrupted assignment" in enabled
-    from pyrualean.supervision import planning_instructions
+    from codeaspolicy.supervision import planning_instructions
 
     assert planning_instructions() in enabled
     assert "Astra–Valen planning skill" not in original
@@ -753,7 +753,7 @@ def test_visual_review_handoff_does_not_clear_explicit_requirement(robo, tmp_pat
 
 
 def test_visual_review_handoff_cannot_clear_unknown_execution(tmp_path):
-    from pyrualean import LiberoRobot
+    from codeaspolicy import LiberoRobot
     from tests.test_interaction_contracts import ProtocolBackend
 
     backend = ProtocolBackend()
@@ -967,9 +967,9 @@ def test_supervision_skill_is_frozen_and_hashed_even_if_boot_fails(tmp_path, mon
     import hashlib
     from types import SimpleNamespace
 
-    from pyrualean import play, supervision
-    from pyrualean.robots import get_adapter
-    from pyrualean.supervision import planning_instructions
+    from codeaspolicy import play, supervision
+    from codeaspolicy.robots import get_adapter
+    from codeaspolicy.supervision import planning_instructions
 
     frozen_core = planning_instructions()
 

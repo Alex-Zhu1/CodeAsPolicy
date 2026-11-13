@@ -1,6 +1,6 @@
 # Write dual-arm strategy in Python
 
-PyRUA-Lean supplies a robot manual, executable `robo` methods and observations.
+CodeAsPolicy supplies a robot manual, executable `robo` methods and observations.
 Astra chooses arm roles, target positions/orientations, ordering, release timing
 and bounded corrections in generated Python. Skills provide manipulation knowledge;
 Valen supplies visual evidence for the checks Astra declares. Neither supplies a
@@ -15,9 +15,9 @@ For controller development, `api_reference(..., intent_only=False)` and
 `knowledge_text(..., intent_only=False)` explicitly expose the legacy reference.
 Directly instantiated robots retain the legacy calls for existing scripts.
 
-Motion intents, local alignment and staged grasp expose `pyrualean.operation.v1`
+Motion intents, local alignment and staged grasp expose `codeaspolicy.operation.v1`
 in `result["operation"]`, alongside their existing domain feedback. The shared
-implementation in `pyrualean.operations` has no robot geometry or task names.
+implementation in `codeaspolicy.operations` has no robot geometry or task names.
 Adapters supply their existing execution state, budget units and continuation;
 the registry does not introduce a second execution state machine.
 
@@ -269,7 +269,7 @@ This motion API never changes a grasp or opens/closes fingers. Do not wrap it in
 
 The benchmark instruction and initial facts remain authoritative on the task
 card. Astra supplies the current intent; the host retains its execution state.
-Generated RoboDojo sessions launched by `pyrualean.play` expose this intent
+Generated RoboDojo sessions launched by `codeaspolicy.play` expose this intent
 contract and reject low-level movement/profile calls before dispatch. Their
 operating knowledge omits controller tuning instructions. Directly instantiated
 robot objects and the full library reference retain the following low-level

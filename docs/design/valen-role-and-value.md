@@ -53,9 +53,9 @@ Valen 有潜在价值的角色是：对明确、可观察的局部关系提供�
 | 阻止后续动作 | `requires` 不满足，以及仍标为 critical 的事实达到 unknown 上限 | 跨 cell 保留；默认 `critical=None` 表示全部问题 |
 | 解除视觉依赖 | 现有事实账本由 Valen 观测路径写入，`evidence()` 只返回副本 | Astra 自查图像、夹爪宽度和随动证据，没有通用的有据裁决入口 |
 
-实现依据：[`supervision.py`](../../src/pyrualean/supervision.py) 的 `watch`、`before_action`、
-`_evaluate`、`monitor_prompt`；[`evidence.py`](../../src/pyrualean/evidence.py) 的 `blockers`；
-[`监督知识`](../../src/pyrualean/knowledge/astra_valen_supervision.md)。
+实现依据：[`supervision.py`](../../src/codeaspolicy/supervision.py) 的 `watch`、`before_action`、
+`_evaluate`、`monitor_prompt`；[`evidence.py`](../../src/codeaspolicy/evidence.py) 的 `blockers`；
+[`监督知识`](../../src/codeaspolicy/knowledge/astra_valen_supervision.md)。
 
 启用后的 Valen 在动作原语结束后同步调用，不检查 `move_to` 内部的连续轨迹，不能承担伺服层的即时停止职责。
 `shadow` 也同步调用、产生反馈并注入监督知识，只是不执行相同的暂停行为；它不是零成本、零策略影响的旁路。

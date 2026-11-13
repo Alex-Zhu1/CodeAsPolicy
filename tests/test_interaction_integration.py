@@ -5,9 +5,9 @@ from types import SimpleNamespace
 
 import pytest
 
-from pyrualean.arms import ArmToolkit
-from pyrualean.interaction_trace import InteractionTrace
-from pyrualean.play import _interaction_config
+from codeaspolicy.arms import ArmToolkit
+from codeaspolicy.interaction_trace import InteractionTrace
+from codeaspolicy.play import _interaction_config
 
 
 def _events(path):
@@ -110,9 +110,9 @@ def test_uncaught_interrupt_is_not_reported_as_success(robo, tmp_path):
 def test_play_writes_sidecar_and_actual_configuration_without_model(
     backend, robo, tmp_path, monkeypatch,
 ):
-    import pyrualean.mcp_server as mcp
-    import pyrualean.play as play
-    from pyrualean.prompt import TaskCard
+    import codeaspolicy.mcp_server as mcp
+    import codeaspolicy.play as play
+    from codeaspolicy.prompt import TaskCard
 
     monkeypatch.chdir(tmp_path)  # restore the process cwd after play enters its workspace
 
@@ -168,7 +168,7 @@ def test_play_writes_sidecar_and_actual_configuration_without_model(
     assert any(e["event"] == "request_started" for e in events)
     assert len([e for e in events if e["event"] == "feedback_ready"]) == 2
 
-    from pyrualean.evaluation.latency import summarize_interaction
+    from codeaspolicy.evaluation.latency import summarize_interaction
 
     report = summarize_interaction(out / "interaction_events.jsonl")
     assert report["gaps"] == []

@@ -4,7 +4,7 @@ import json
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-from pyrualean.interaction_trace import SCHEMA, InteractionTrace
+from codeaspolicy.interaction_trace import SCHEMA, InteractionTrace
 
 
 def _events(path):

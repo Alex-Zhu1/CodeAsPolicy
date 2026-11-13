@@ -1,4 +1,4 @@
-"""Offline checks of the OpenAI chat-completions runtime (``pyrualean.openai_runtime``).
+"""Offline checks of the OpenAI chat-completions runtime (``codeaspolicy.openai_runtime``).
 
 The provider is a scripted ``transport`` (no network): each call returns the
 next canned chat completion.  The robot is the fake LIBERO backend of
@@ -14,9 +14,9 @@ from typing import Any
 
 import pytest
 
-from pyrualean import openai_runtime as orun
-from pyrualean.arms import ArmToolkit
-from pyrualean.interaction_trace import InteractionTrace
+from codeaspolicy import openai_runtime as orun
+from codeaspolicy.arms import ArmToolkit
+from codeaspolicy.interaction_trace import InteractionTrace
 
 
 def _reply(
@@ -438,7 +438,7 @@ def test_two_tool_calls_in_one_reply_keep_the_message_order_legal(robo, tmp_path
 def test_failure_skips_queued_actions_then_model_repairs(
     robo, backend, tmp_path, card_images, tail, kind
 ):
-    from pyrualean.execution import ExecutionLimits
+    from codeaspolicy.execution import ExecutionLimits
 
     toolkit = _toolkit(robo, tmp_path, images="none", feedback="pure",
                        execution_limits=ExecutionLimits(max_actions=1))
@@ -468,7 +468,7 @@ def test_failure_skips_queued_actions_then_model_repairs(
 
 
 def test_supervisor_pause_also_skips_queued_calls(robo, tmp_path, card_images):
-    from pyrualean.supervision import MonitorConfig, VisualSupervisor
+    from codeaspolicy.supervision import MonitorConfig, VisualSupervisor
 
     supervisor = VisualSupervisor(
         MonitorConfig(mode="pause", url="http://localhost:1/predict"),
@@ -587,7 +587,7 @@ def test_a_long_tool_call_is_cut_off_at_the_wall_clock(robo, tmp_path, card_imag
 
 
 def test_confirmed_stuck_dispatch_waits_for_new_decision(robo, tmp_path, card_images):
-    from pyrualean.stuck_recovery import StuckRecoveryConfig
+    from codeaspolicy.stuck_recovery import StuckRecoveryConfig
 
     toolkit = _toolkit(robo, tmp_path, stuck_recovery=StuckRecoveryConfig("Replan dependencies."))
     transport = ScriptedTransport([

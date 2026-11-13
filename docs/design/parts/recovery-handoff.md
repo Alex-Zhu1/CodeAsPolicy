@@ -38,19 +38,19 @@
 
 ## 现有实现
 
-- `src/pyrualean/recovery.py` 的 `failure_details` 分类 syntax、primitive、verification、import、runtime 和执行限额。
+- `src/codeaspolicy/recovery.py` 的 `failure_details` 分类 syntax、primitive、verification、import、runtime 和执行限额。
 - `failure_details` 保留生成代码位置，`result_is_error` 统一部分运行时错误标识。
-- `src/pyrualean/arms.py` 的 `ArmToolkit._failure_feedback` 返回动作尝试、最后动作、剩余调用数和 retry_allowed。
+- `src/codeaspolicy/arms.py` 的 `ArmToolkit._failure_feedback` 返回动作尝试、最后动作、剩余调用数和 retry_allowed。
 - 同方法明确 `automatic_replay=False`、`scene_rolled_back=False`，提示命名空间可能已改变。
 - 连续同类代码失败通过 fingerprint 计数，达到阈值时建议 change_approach_or_finish。
 - `ArmToolkit._feedback` 关联 coordination 和 supervisor 反馈，保留最后动作及当前状态。
-- `src/pyrualean/coordination.py` 的 `CoordinationPause` 将关键执行问题交回，recoverable partial 仍可由 Python 处理。
-- `src/pyrualean/stuck_recovery.py` 的 `StuckRecoveryConfig` 配置模型确认 stuck 后的恢复指令和轮数。
+- `src/codeaspolicy/coordination.py` 的 `CoordinationPause` 将关键执行问题交回，recoverable partial 仍可由 Python 处理。
+- `src/codeaspolicy/stuck_recovery.py` 的 `StuckRecoveryConfig` 配置模型确认 stuck 后的恢复指令和轮数。
 - `ArmToolkit._finish` 在 cells 模式处理 `finish(status='stuck')`，有额度时返回 `episode_finished=false` 并交付恢复 skill。
 - stuck 恢复沿用同一 episode，不重置动作、调用或时间预算；终止现场及耗尽预算不能恢复。
 
 目前已有结构化代码修复、关键执行暂停和确认 stuck 后的策略恢复。
-反馈已有 `pyrualean.handoff.v1` 最小字段：来源、最后动作、未决动作、下一责任方和可执行边界；pure 和压缩反馈均保留。
+反馈已有 `codeaspolicy.handoff.v1` 最小字段：来源、最后动作、未决动作、下一责任方和可执行边界；pure 和压缩反馈均保留。
 native/XPL 在途动作可对账；unknown 时新 cell 也不能派发，视觉 yes 不会清除执行门槛。完整预算、依赖图和实机停止确认仍待补齐。
 `retry_allowed` 当前是基于已知停止原因和调用额度给出的建议；执行前仍需复查预算和现场，不能解释为重试许可或效果确定性保证。
 

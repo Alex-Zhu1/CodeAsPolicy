@@ -4,10 +4,10 @@ import json
 
 import pytest
 
-from pyrualean import cli, play
-from pyrualean.arms import ArmToolkit
-from pyrualean.stuck_recovery import recovery_instructions
-from pyrualean.supervision import DEFAULT_VALEN_URL, planning_instructions
+from codeaspolicy import cli, play
+from codeaspolicy.arms import ArmToolkit
+from codeaspolicy.stuck_recovery import recovery_instructions
+from codeaspolicy.supervision import DEFAULT_VALEN_URL, planning_instructions
 
 
 def capture_episode(monkeypatch):
@@ -21,7 +21,7 @@ def capture_episode(monkeypatch):
         return result
 
     def run_host(argv, **kwargs):
-        assert argv[1:3] == ["-m", "pyrualean.play"]
+        assert argv[1:3] == ["-m", "codeaspolicy.play"]
         return play.main(argv[3:])
 
     monkeypatch.setattr(play, "play_episode", episode)
@@ -34,9 +34,9 @@ def capture_episode(monkeypatch):
 def test_play_defaults_and_explicit_bundled_recovery(
     tmp_path, monkeypatch, robo, entry, recovery_enabled
 ):
-    monkeypatch.delenv("PYRUALEAN_VALEN_URL", raising=False)
-    monkeypatch.delenv("PYRUALEAN_RUNTIME", raising=False)
-    monkeypatch.delenv("PYRUALEAN_PRIMITIVES", raising=False)
+    monkeypatch.delenv("CODEASPOLICY_VALEN_URL", raising=False)
+    monkeypatch.delenv("CODEASPOLICY_RUNTIME", raising=False)
+    monkeypatch.delenv("CODEASPOLICY_PRIMITIVES", raising=False)
     captured = capture_episode(monkeypatch)
     args = ["--robot", "robodojo_xpl_rgb", "--suite", "arx_x5",
             "--task", "insert_key", "--out", str(tmp_path / "run")]
@@ -50,11 +50,11 @@ def test_play_defaults_and_explicit_bundled_recovery(
     assert config["reasoning_effort"] == "high"
     assert config["budget_s"] == 5400 and config["max_turns"] == 100
     assert config["images"] == "on-demand" and config["feedback"] == "pure"
-    assert config["primitives"] == "no-vla"
+    assert config["primitives"] == "no-sam"
     recovery = config["stuck_recovery"]
     assert config["code_limits"].timeout_s == 120
 
-    from pyrualean.prompt import TaskCard
+    from codeaspolicy.prompt import TaskCard
 
     card = TaskCard(suite="test", task=0, seed=0, task_language="Insert the key", object_names=[])
     prompt = play.build_prompt("cells", card, budget_s=100, max_programs=None,
@@ -86,7 +86,7 @@ def test_play_defaults_and_explicit_bundled_recovery(
 def test_explicit_modes_survive_outer_to_host_forwarding(
     tmp_path, monkeypatch, entry, options, mode, recovery_enabled
 ):
-    monkeypatch.delenv("PYRUALEAN_VALEN_URL", raising=False)
+    monkeypatch.delenv("CODEASPOLICY_VALEN_URL", raising=False)
     captured = capture_episode(monkeypatch)
     args = ["--suite", "libero_spatial_swap", "--task", "0", "--out", str(tmp_path), *options]
     assert (cli.main(["play", *args]) if entry == "outer" else play.main(args)) == 0
@@ -102,7 +102,7 @@ def test_explicit_modes_survive_outer_to_host_forwarding(
 @pytest.mark.parametrize("entry", ["outer", "host"])
 @pytest.mark.parametrize("override", [False, True])
 def test_valen_address_parameter_overrides_environment(tmp_path, monkeypatch, entry, override):
-    monkeypatch.setenv("PYRUALEAN_VALEN_URL", "http://127.0.0.1:28001/predict")
+    monkeypatch.setenv("CODEASPOLICY_VALEN_URL", "http://127.0.0.1:28001/predict")
     captured = capture_episode(monkeypatch)
     args = ["--suite", "libero_spatial_swap", "--task", "0", "--out", str(tmp_path),
             "--monitor-mode", "pause"]
@@ -115,7 +115,7 @@ def test_valen_address_parameter_overrides_environment(tmp_path, monkeypatch, en
 
 @pytest.mark.parametrize("entry", ["outer", "host"])
 def test_valen_address_alone_does_not_enable_supervision(tmp_path, monkeypatch, entry):
-    monkeypatch.setenv("PYRUALEAN_VALEN_URL", "http://127.0.0.1:28001/predict")
+    monkeypatch.setenv("CODEASPOLICY_VALEN_URL", "http://127.0.0.1:28001/predict")
     captured = capture_episode(monkeypatch)
     args = ["--suite", "libero_spatial_swap", "--task", "0", "--out", str(tmp_path),
             "--valen-url", "http://127.0.0.1:38001/predict"]
@@ -181,8 +181,8 @@ def test_program_cannot_silently_accept_unsupported_features(
 def test_explicit_launch_overrides_survive_environment_and_host_defaults(
     tmp_path, monkeypatch, entry
 ):
-    monkeypatch.setenv("PYRUALEAN_RUNTIME", "openai")
-    monkeypatch.setenv("PYRUALEAN_PRIMITIVES", "no-vla")
+    monkeypatch.setenv("CODEASPOLICY_RUNTIME", "openai")
+    monkeypatch.setenv("CODEASPOLICY_PRIMITIVES", "no-vla")
     captured = capture_episode(monkeypatch)
     args = ["--suite", "libero_spatial_swap", "--task", "0", "--out", str(tmp_path),
             "--runtime", "codex",

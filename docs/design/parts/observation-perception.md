@@ -35,22 +35,22 @@
 
 ## 现有实现
 
-`src/pyrualean/_robot.py` 的 `RobotBase.state`、`image`、`artifact` 按录制步骤读取状态和图像；`show` 请求在代码反馈中附图。
-`src/pyrualean/robodojo.py` 的 `RobodojoRobot.camera_meta` 提供录制步骤的相机标定；像素约定是行、列。
+`src/codeaspolicy/_robot.py` 的 `RobotBase.state`、`image`、`artifact` 按录制步骤读取状态和图像；`show` 请求在代码反馈中附图。
+`src/codeaspolicy/robodojo.py` 的 `RobodojoRobot.camera_meta` 提供录制步骤的相机标定；像素约定是行、列。
 这些历史读取能力已存在，不应为建立统一协议而丢失其显式步骤选择能力。
 
-`src/pyrualean/hosts/robodojo_native.py` 的 `Steps.record` 保存图像、状态、任务、标定与截断标记。
+`src/codeaspolicy/hosts/robodojo_native.py` 的 `Steps.record` 保存图像、状态、任务、标定与截断标记。
 其录制索引与原生控制步数分别存为 `step / native_steps`；`observation.json` 保存源 ID、源采集时间、落盘时间、图像来源与对齐标记。无来源协议时明确标记 unverified。
 
-`src/pyrualean/coordination.py` 的 `CoordinationMixin.observe` 先读录制状态，再请求双臂运动状态。
-`src/pyrualean/hosts/robodojo_coordination.py` 的 `Controller.observe` 为状态查询保存快照 token，供后续规划检查使用。
+`src/codeaspolicy/coordination.py` 的 `CoordinationMixin.observe` 先读录制状态，再请求双臂运动状态。
+`src/codeaspolicy/hosts/robodojo_coordination.py` 的 `Controller.observe` 为状态查询保存快照 token，供后续规划检查使用。
 因此已有双臂状态观测；它还不是把图像、标定和状态一起冻结的原子视觉快照。
 
-`src/pyrualean/arms.py` 的 `_observe_result`、`_camera_evidence` 已为反馈提供观测编号、状态版本、图像来源与读取期间变化标记。
+`src/codeaspolicy/arms.py` 的 `_observe_result`、`_camera_evidence` 已为反馈提供观测编号、状态版本、图像来源与读取期间变化标记。
 `display` 图和来源不明的图不会被自动声明为当前相机图；这项区别应保留。
-`src/pyrualean/_robot.py` 的 `_action_revision` 在动作尝试开始时递增，它不是传感器帧版本。
+`src/codeaspolicy/_robot.py` 的 `_action_revision` 在动作尝试开始时递增，它不是传感器帧版本。
 
-`src/pyrualean/hosts/xpolicylab_bridge.py` 的 `Bridge.update_obs` 已处理部分客户端图片落后一帧的情况，保存 `image_state` 并修正对应相机位姿。
+`src/codeaspolicy/hosts/xpolicylab_bridge.py` 的 `Bridge.update_obs` 已处理部分客户端图片落后一帧的情况，保存 `image_state` 并修正对应相机位姿。
 `Steps.record` 和新版视觉核验保留该来源关系。旧客户端图片不与当前状态对齐时拒绝严格核验；同一步反复刷新不会给旧图片制造新来源。
 `InteractionMixin.snapshot(refresh=True)` 通过只读采集入口获取新来源；默认 `snapshot()` 读取记录。`current_observation_source()` 单独检查实时来源，不把新来源贴到旧 artifact。
 

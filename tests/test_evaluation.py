@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 
-from pyrualean.evaluation import (
+from codeaspolicy.evaluation import (
     EpisodeMetrics,
     compare_metric_files,
     env_steps_from_states,
@@ -16,8 +16,8 @@ from pyrualean.evaluation import (
 
 def _result(tmp_path, name, **overrides):
     payload = {
-        "schema": "pyrualean-episode-v2",
-        "system": "pyrualean",
+        "schema": "codeaspolicy-episode-v2",
+        "system": "codeaspolicy",
         "backend": "libero",
         "suite": "libero_object_swap",
         "task": 2,
@@ -317,7 +317,7 @@ def test_parse_rpent_run_normalises_claude_sdk_token_stats(tmp_path):
 
 
 def test_claude_stream_usage_counts_each_model_request_once(tmp_path):
-    from pyrualean.evaluation.rpent import claude_stream_usage
+    from codeaspolicy.evaluation.rpent import claude_stream_usage
 
     usage_a = {"input_tokens": 2, "cache_read_input_tokens": 100, "cache_creation_input_tokens": 10}
     usage_b = {"input_tokens": 2, "cache_read_input_tokens": 200, "cache_creation_input_tokens": 0}
@@ -374,7 +374,7 @@ def test_claude_stream_usage_counts_each_model_request_once(tmp_path):
 
 
 def test_claude_stream_usage_takes_output_from_the_transcript(tmp_path):
-    from pyrualean.evaluation.rpent import claude_stream_usage
+    from codeaspolicy.evaluation.rpent import claude_stream_usage
 
     def usage(cache_read, output):
         return {

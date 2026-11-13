@@ -10,9 +10,9 @@ import pytest
 
 np = pytest.importorskip("numpy")
 
-from pyrualean.hosts import robodojo_kinematics as kin  # noqa: E402
-from pyrualean.hosts import robodojo_tools as tools  # noqa: E402
-from pyrualean.robodojo import gripper_angles  # noqa: E402
+from codeaspolicy.hosts import robodojo_kinematics as kin  # noqa: E402
+from codeaspolicy.hosts import robodojo_tools as tools  # noqa: E402
+from codeaspolicy.robodojo import gripper_angles  # noqa: E402
 
 #: (arm, the six joints, the reported end-effector pose [x, y, z, w, qx, qy, qz]) from RoboDojo
 #: runs: the start pose and three far from it per arm.
@@ -816,7 +816,7 @@ def test_register_adds_motion_and_coordination_tools_with_readonly_planning(sim)
     intents = {f"intent_{n}" for n in ("prepare", "execute", "status", "pause", "extend")}
     staged = {"grasp_prepare", "grasp_status", "grasp_step", "local_prepare",
               "operation_status", "operation_resume"}
-    from pyrualean.hosts.robodojo_grasp import SPECS as grasp_specs
+    from codeaspolicy.hosts.robodojo_grasp import SPECS as grasp_specs
 
     assert set(added) == (
         {"move_pose", "preview_move_pose", "grip", "locate", "home"}

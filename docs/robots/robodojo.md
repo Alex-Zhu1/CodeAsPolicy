@@ -1,9 +1,9 @@
 # RoboDojo
 
 [RoboDojo](https://github.com/RoboDojo-Benchmark/RoboDojo) is a bimanual manipulation benchmark in Isaac Sim with a
-public [leaderboard](https://robodojo-benchmark.com/LeaderBoard). PyRUA-Lean runs on it as an
+public [leaderboard](https://robodojo-benchmark.com/LeaderBoard). CodeAsPolicy runs on it as an
 [XPolicyLab](https://github.com/XPolicyLab/XPolicyLab) policy: RoboDojo's own evaluation client runs the simulator
-and judges every episode, and PyRUA-Lean answers it as a policy server. A language model writes Python against
+and judges every episode, and CodeAsPolicy answers it as a policy server. A language model writes Python against
 `robo`, one cell at a time, while the episode runs. No VLA policy, no privileged information.
 
 ## Overview
@@ -29,19 +29,19 @@ and judges every episode, and PyRUA-Lean answers it as a policy server. A langua
 
 1. Install RoboDojo with its XPolicyLab submodule and the simulator's environment, as
    [RoboDojo](https://github.com/RoboDojo-Benchmark/RoboDojo) describes.
-2. Put the adapter into XPolicyLab: copy `integrations/xpolicylab/PyRUA_Lean` of this repository to
-   `XPolicyLab/policy/PyRUA_Lean` (or link it from a PyRUA-Lean checkout).
+2. Put the adapter into XPolicyLab: copy `integrations/xpolicylab/CodeAsPolicy` of this repository to
+   `XPolicyLab/policy/CodeAsPolicy` (or link it from a CodeAsPolicy checkout).
 3. In the policy environment, a conda environment (XPolicyLab's scripts `conda activate` it by name) with a CUDA
    build of `torch` and the `torchvision` built for it:
 
 ```bash
-cd XPolicyLab/policy/PyRUA_Lean
-bash install.sh              # XPolicyLab's server, PyRUA-Lean, the sam3 package
+cd XPolicyLab/policy/CodeAsPolicy
+bash install.sh              # XPolicyLab's server, CodeAsPolicy, the sam3 package
 hf auth login                # facebook/sam3 is gated: accept its licence on Hugging Face first
 bash download_assets.sh      # SAM3's checkpoint (3.4 GB) into ./checkpoints/sam3.pt
 ```
 
-`install.sh` installs PyRUA-Lean from the checkout the directory is linked from, or from the public repository when
+`install.sh` installs CodeAsPolicy from the checkout the directory is linked from, or from the public repository when
 the directory was copied; it keeps the environment's `torch` and `torchvision` as they are.
 `download_assets.sh modelscope` fetches the checkpoint from the ModelScope mirror, and `SAM3_CHECKPOINT_PATH` names a
 checkpoint kept elsewhere. The simulator's environment needs nothing beyond RoboDojo's own installation.
@@ -53,7 +53,7 @@ The cells are written by a model behind an OpenAI-compatible chat endpoint:
 ```bash
 export OPENAI_BASE_URL=https://YOUR_API_HOST/v1
 export OPENAI_API_KEY=...
-export PYRUALEAN_MODEL=gpt-6-astra          # the model's name at that endpoint
+export CODEASPOLICY_MODEL=gpt-6-astra          # the model's name at that endpoint
 ```
 
 The adapter's `deploy.yml` sets the episode:
@@ -82,7 +82,7 @@ The adapter's `deploy.yml` sets the episode:
     From the RoboDojo checkout, the official entry point:
 
     ```bash
-    bash scripts/robodojo.sh eval --policy-dir XPolicyLab/policy/PyRUA_Lean --task stack_blocks \
+    bash scripts/robodojo.sh eval --policy-dir XPolicyLab/policy/CodeAsPolicy --task stack_blocks \
         --ckpt no-checkpoint --policy-env <policy env> --eval-env <simulator env> \
         --env-cfg arx_x5 --action-type joint --seed 0 --eval-num native
     ```
@@ -94,12 +94,12 @@ The adapter's `deploy.yml` sets the episode:
 === "Adapter"
 
     ```bash
-    cd XPolicyLab/policy/PyRUA_Lean
+    cd XPolicyLab/policy/CodeAsPolicy
     bash eval.sh <bench_name> <task_name> <ckpt_name> <env_cfg_type> <action_type> <seed> \
       <policy_gpu_id> <env_gpu_id> <policy_conda_env> <eval_env_conda_env>
 
     # example
-    bash eval.sh RoboDojo stack_blocks no-checkpoint arx_x5 joint 0 0 0 pyrualean RoboDojo
+    bash eval.sh RoboDojo stack_blocks no-checkpoint arx_x5 joint 0 0 0 codeaspolicy RoboDojo
     ```
 
 === "Wiring check"
@@ -108,8 +108,8 @@ The adapter's `deploy.yml` sets the episode:
     dimensions.
 
     ```bash
-    cd XPolicyLab/policy/PyRUA_Lean
-    EVAL_ENV_TYPE=debug bash eval.sh RoboDojo stack_bowls no-checkpoint arx_x5 joint 0 0 0 pyrualean RoboDojo
+    cd XPolicyLab/policy/CodeAsPolicy
+    EVAL_ENV_TYPE=debug bash eval.sh RoboDojo stack_bowls no-checkpoint arx_x5 joint 0 0 0 codeaspolicy RoboDojo
     ```
 
 ## View Results
@@ -137,7 +137,7 @@ An episode takes 25.7 LLM calls on average.
 
 - **Evaluation client** (RoboDojo, in the simulator's environment) owns Isaac Sim: it builds the observation,
   counts the task's action budget and gives the verdict.
-- **Policy server** (XPolicyLab's server with the adapter, in the policy environment) runs the PyRUA-Lean episode:
+- **Policy server** (XPolicyLab's server with the adapter, in the policy environment) runs the CodeAsPolicy episode:
   the agent loop, the sandboxed cells, the primitives (inverse kinematics, gripper, perception) and SAM3.
 - **Model endpoint** writes the cells.
 
@@ -150,7 +150,7 @@ no request is held longer than `poll_s` (20 s).
 Motion:
 
 Generated policies default to the shared operation protocol below, including
-`pyrualean.play`, offline prompts and policy generation. Low-level movement and
+`codeaspolicy.play`, offline prompts and policy generation. Low-level movement and
 profile selection reject before dispatch in interactive `play` sessions; directly
 instantiated robot objects retain the full legacy API for existing scripts.
 
@@ -204,6 +204,6 @@ tracking failure; corrective holds are permitted at their final resting target.
 The `tracking` result reports these decisions without inferring contact or grasp
 success from tracking error.
 
-??? note "API reference: what the agent reads, generated from `pyrualean.robodojo_xpl_rgb` when these docs are built"
+??? note "API reference: what the agent reads, generated from `codeaspolicy.robodojo_xpl_rgb` when these docs are built"
 
     <!-- api-reference: robodojo_xpl_rgb primitives=no-vla -->

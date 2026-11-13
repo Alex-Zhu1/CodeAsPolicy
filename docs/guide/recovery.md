@@ -226,7 +226,7 @@ Claude own their external agent loops; the common prompt requests one dependent
 code call at a time, and MCP delivers the error, but this host cannot cancel
 already queued requests inside those clients.
 
-`generate` followed by offline execution and the fixed PyRUA-RSI programs still
+`generate` followed by offline execution and the fixed CodeAsPolicy-RSI programs still
 have no model running during evaluation. They can recover only through their
 own code. Online model repair requires `play --arm cells` or a multi-attempt
 `program` run; it must not be added silently to a single-shot benchmark.

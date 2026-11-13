@@ -6,9 +6,9 @@ from pathlib import Path
 
 import pytest
 
-from pyrualean.arms import MAX_TEXT_CHARS, ArmResult, ArmToolkit
-from pyrualean.robodojo import RobodojoRobot
-from pyrualean.robodojo_xpl_rgb import ObjectSight, RobodojoOfficialColourRobot
+from codeaspolicy.arms import MAX_TEXT_CHARS, ArmResult, ArmToolkit
+from codeaspolicy.robodojo import RobodojoRobot
+from codeaspolicy.robodojo_xpl_rgb import ObjectSight, RobodojoOfficialColourRobot
 from tests.test_perception_api import CapturedBackend
 
 
@@ -250,7 +250,7 @@ def test_normal_feedback_omits_repeated_audit_and_does_not_invent_permission():
                  source_freshness="captured", step_id=4, state_version=1)
     result = dict(stdout="Move(reached=True, final_xyz=(0.1, 0.2, 0.3))\n",
                   action_receipts=[receipt],
-                  handoff=dict(schema="pyrualean.handoff.v1", session_id="session",
+                  handoff=dict(schema="codeaspolicy.handoff.v1", session_id="session",
                                observation_id="capture-2", last_action=receipt,
                                unresolved_actions=[], next_owner="program_or_planner",
                                allowed_next="check_prerequisites", new_motion_allowed=None,

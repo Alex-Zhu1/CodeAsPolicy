@@ -1,7 +1,7 @@
 import json, os, re, subprocess, time, urllib.request
 from pathlib import Path
 
-root=Path('/mnt/data_hdd/mhzhu/GPTCode/PyRUA-Lean')
+root=Path('/mnt/data_hdd/mhzhu/GPTCode/CodeAsPolicy')
 ua=root/'.ua'
 assert (ua/'knowledge-graph.json').is_file()
 with (ua/'dashboard.log').open('a') as log:

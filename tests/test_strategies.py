@@ -4,8 +4,8 @@ from types import SimpleNamespace
 
 import pytest
 
-from pyrualean.arms import ArmToolkit
-from pyrualean.strategies import GraspObservation, correct, relocalize, verify_grasp
+from codeaspolicy.arms import ArmToolkit
+from codeaspolicy.strategies import GraspObservation, correct, relocalize, verify_grasp
 
 
 def grasp_obs(version, *, held=True, holding=True, fresh=True):
@@ -78,7 +78,7 @@ def test_grasp_budget_preserves_closed_state_and_does_not_start_probe():
 
 
 def test_grasp_pause_never_retries_or_calls_next_callback():
-    from pyrualean.supervision import SupervisionPause
+    from codeaspolicy.supervision import SupervisionPause
 
     calls = []
 

@@ -3,9 +3,9 @@
 import numpy as np
 import pytest
 
-from pyrualean._backend import EpisodeFinished
-from pyrualean.hosts import robodojo_tools as tools
-from pyrualean.interaction import InteractionPause
+from codeaspolicy._backend import EpisodeFinished
+from codeaspolicy.hosts import robodojo_tools as tools
+from codeaspolicy.interaction import InteractionPause
 from tests.test_robodojo_intent import _offset_measured_pose, _precision_station
 
 

@@ -92,9 +92,9 @@ def modpath(mod):
   if cand in base.ALLFILES:return cand
  return None
 rootexports={}
-for n in ast.parse(pathlib.Path('src/pyrualean/__init__.py').read_text()).body:
+for n in ast.parse(pathlib.Path('src/codeaspolicy/__init__.py').read_text()).body:
  if isinstance(n,ast.ImportFrom) and n.level==1 and n.module:
-  for a in n.names:rootexports[a.asname or a.name]=modpath('pyrualean.'+n.module)
+  for a in n.names:rootexports[a.asname or a.name]=modpath('codeaspolicy.'+n.module)
 
 ns=[];es=[];missing=[]
 for r in json.load(open('.ua/tmp/docs-tests-extract-20.json'))['results']:
@@ -125,8 +125,8 @@ for r in json.load(open('.ua/tmp/docs-tests-extract-20.json'))['results']:
  # 导入 map 原样保留为空；下面只记录源码确认的测试覆盖关系。
  covered=set()
  for im in ast.walk(tree):
-  if isinstance(im,ast.ImportFrom) and im.module and im.module.startswith('pyrualean'):
-   if im.module=='pyrualean':
+  if isinstance(im,ast.ImportFrom) and im.module and im.module.startswith('codeaspolicy'):
+   if im.module=='codeaspolicy':
     for a in im.names:
      q=rootexports.get(a.name) or modpath(im.module+'.'+a.name)
      if q:covered.add(q)
@@ -138,7 +138,7 @@ for r in json.load(open('.ua/tmp/docs-tests-extract-20.json'))['results']:
      if q:covered.add(q)
   elif isinstance(im,ast.Import):
    for a in im.names:
-    if a.name.startswith('pyrualean'):
+    if a.name.startswith('codeaspolicy'):
      q=modpath(a.name)
      if q:covered.add(q)
  for q in base.ALLFILES:

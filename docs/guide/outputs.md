@@ -66,8 +66,8 @@ record first-token timing either.
 After installing the package, summarize a trace without calling a model or robot:
 
 ```bash
-python -m pyrualean.evaluation.latency runs/demo/interaction_events.jsonl --format interaction --output /tmp/interaction-summary.json
-python -m pyrualean.evaluation.latency /path/to/rollout.jsonl --format codex-rollout --output /tmp/rollout-summary.json
+python -m codeaspolicy.evaluation.latency runs/demo/interaction_events.jsonl --format interaction --output /tmp/interaction-summary.json
+python -m codeaspolicy.evaluation.latency /path/to/rollout.jsonl --format codex-rollout --output /tmp/rollout-summary.json
 ```
 
 Summaries preserve missing or ambiguous intervals and report sample counts with distributions.
@@ -81,8 +81,8 @@ The original logs and historical `result.json` are not rewritten by analysis.
 ## Tables
 
 ```bash
-pyrualean summarize runs/demo runs/other           # one row per episode
-pyrualean summarize --json runs/demo runs/other    # the same rows, then the totals as JSON: success rate, statuses, mean calls and tokens
+codeaspolicy summarize runs/demo runs/other           # one row per episode
+codeaspolicy summarize --json runs/demo runs/other    # the same rows, then the totals as JSON: success rate, statuses, mean calls and tokens
 ```
 
 Give `summarize` run directories, not a folder that also holds other things.

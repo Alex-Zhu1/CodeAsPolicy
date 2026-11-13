@@ -2,8 +2,8 @@
 
 import pytest
 
-from pyrualean._backend import EpisodeFinished
-from pyrualean.interaction import InteractionPause
+from codeaspolicy._backend import EpisodeFinished
+from codeaspolicy.interaction import InteractionPause
 from tests.test_robodojo_continuous_grasp import visual_station
 from tests.test_robodojo_intent import _precision_station
 from tests.test_robodojo_staged_grasp import setup, through

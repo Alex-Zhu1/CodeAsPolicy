@@ -36,14 +36,14 @@ Computer Use 仅作为接口设计参照；本设计不要求增加 Computer 适
 
 ## 现有实现
 
-- `src/pyrualean/prompt.py` 的 `api_reference` 从实际类签名、docstring 和结果类型生成参考。
+- `src/codeaspolicy/prompt.py` 的 `api_reference` 从实际类签名、docstring 和结果类型生成参考。
 - 同文件的 `_public_members` 排除私有成员和 `ABSENT_MEMBERS`，`vla_hidden` 处理不可用的 VLA 能力。
-- `src/pyrualean/_robot.py` 的 `effective_primitives` 结合请求配置与 `SUPPORTS_VLA` 决定能力集。
+- `src/codeaspolicy/_robot.py` 的 `effective_primitives` 结合请求配置与 `SUPPORTS_VLA` 决定能力集。
 - `RobotBase._refuse_hidden` 在调用端拒绝隐藏能力并记录；因此限制不只是提示词约定。
 - `RobotBase` 用 `CAMERAS`、`IMAGE_ARTIFACTS`、`STATEFUL_TOOLS` 等类级信息描述部分设备属性。
-- `src/pyrualean/knowledge/` 存放按机器人和配置区分的操作知识。
-- `src/pyrualean/arms.py` 的 `arm_contract`、`robot_words` 组装执行方式相关说明。
-- `src/pyrualean/coordination.py` 的 `Pose` 明确 world/TCP、米和 `[w,x,y,z]` 单位四元数。
+- `src/codeaspolicy/knowledge/` 存放按机器人和配置区分的操作知识。
+- `src/codeaspolicy/arms.py` 的 `arm_contract`、`robot_words` 组装执行方式相关说明。
+- `src/codeaspolicy/coordination.py` 的 `Pose` 明确 world/TCP、米和 `[w,x,y,z]` 单位四元数。
 - `CoordinationMixin.motion_capabilities` 可查询同步执行器实际声明的能力覆盖。
 - `Controller.capabilities` 根据客户端实际时钟和子步协议声明时间参数化能力；支持时，
   `move_to` / `move_both` 默认使用带关节速度、加速度、jerk 上限的轨迹。

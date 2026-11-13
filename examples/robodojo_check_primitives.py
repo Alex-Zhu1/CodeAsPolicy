@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Do PyRUA-Lean's own RoboDojo tools work in the simulator?  A scripted run, no planner, no VLA.
+"""Do CodeAsPolicy's own RoboDojo tools work in the simulator?  A scripted run, no planner, no VLA.
 
     python examples/robodojo_check_primitives.py --task stack_blocks --seed 0 --cuda-device 0 \
         --out <dir> --objects "purple block,white block,yellow block" [--stack] [--side]
@@ -26,9 +26,9 @@ import math
 import time
 from pathlib import Path
 
-from pyrualean.hosts import robodojo_kinematics as kin
-from pyrualean.hosts import robodojo_tools as tools
-from pyrualean.hosts import rpent_robodojo as host
+from codeaspolicy.hosts import robodojo_kinematics as kin
+from codeaspolicy.hosts import robodojo_tools as tools
+from codeaspolicy.hosts import rpent_robodojo as host
 
 ap = argparse.ArgumentParser(
     description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter

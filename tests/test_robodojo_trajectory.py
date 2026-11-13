@@ -8,10 +8,10 @@ from types import SimpleNamespace
 import numpy as np
 import pytest
 
-from pyrualean.hosts import robodojo_trajectory as trajectory
-from pyrualean.hosts.robodojo_native import NativeBackend, NativeToolkit
-from pyrualean.motion import MotionProfile, MotionWindow, motion_from_payload, resolve_motion
-from pyrualean.robodojo_xpl_rgb import RobodojoOfficialColourRobot
+from codeaspolicy.hosts import robodojo_trajectory as trajectory
+from codeaspolicy.hosts.robodojo_native import NativeBackend, NativeToolkit
+from codeaspolicy.motion import MotionProfile, MotionWindow, motion_from_payload, resolve_motion
+from codeaspolicy.robodojo_xpl_rgb import RobodojoOfficialColourRobot
 from tests.test_coordination import JointEnvironment
 from tests.test_observation_transport import deploy
 
@@ -255,7 +255,7 @@ def test_invalid_limits_reject(value):
 class TimedEnvironment(JointEnvironment):
     """Execute real adapter expansion, then ideal joint tracking, without Isaac."""
 
-    def __init__(self, adapter="PyRUA_Lean"):
+    def __init__(self, adapter="CodeAsPolicy"):
         super().__init__()
         self.adapter = deploy(adapter)
         self.obs_manager = SimpleNamespace(dt=.004, collect_interval=10.)
@@ -296,7 +296,7 @@ def station(tmp_path, env=None):
     return env, RobodojoOfficialColourRobot(NativeBackend(host)), host
 
 
-@pytest.mark.parametrize("adapter", ["PyRUA_Lean", "PyRUA_RSI"])
+@pytest.mark.parametrize("adapter", ["CodeAsPolicy", "CodeAsPolicy_RSI"])
 def test_timed_dual_route_uses_substeps_and_preserves_gripper_support_arm(tmp_path, adapter):
     env, robo, host = station(tmp_path, TimedEnvironment(adapter))
     caps = robo.motion_capabilities()
@@ -378,7 +378,7 @@ def test_native_mode_uses_original_waypoints_and_keeps_squeeze(tmp_path):
     assert not env.wire_actions
     result = robo.move_to(target.xyz, motion="native")
     assert result.reached and result.trajectory is None
-    assert all("__pyrualean_trajectory__" not in a for a in env.wire_actions)
+    assert all("__codeaspolicy_trajectory__" not in a for a in env.wire_actions)
     assert all(a["left_ee_joint_state"] == [0.] for a in env.wire_actions)
     target = robo.observe().right.shifted(dz=.02)
     assert robo.move_both(right=target, motion="native").reached
@@ -435,7 +435,7 @@ def test_single_preview_budget_rejection_keeps_estimate_without_dispatch(tmp_pat
 
 
 def test_local_blending_refits_without_relaxing_cartesian_tolerance(tmp_path):
-    from pyrualean.hosts import robodojo_tools as tools
+    from codeaspolicy.hosts import robodojo_tools as tools
 
     env, robo, _ = station(tmp_path)
     start = np.array(robo.state().right.tcp_pos)
@@ -545,7 +545,7 @@ def test_gripper_completion_holds_timed_endpoint_without_native_reinterpolation(
 
 
 def test_substep_geometry_checks_can_reject_between_ik_knots(monkeypatch):
-    from pyrualean.hosts import robodojo_kinematics as kin
+    from codeaspolicy.hosts import robodojo_kinematics as kin
 
     def clearance(arm, q):
         return ["table"] if arm == "right" and .03 < q[0] < .04 else []
@@ -571,9 +571,9 @@ def test_adapter_restores_native_method_after_execution_exception():
 
 
 def test_startup_card_and_generated_api_describe_live_support(tmp_path):
-    from pyrualean.hosts.rpent_robodojo import Cell
-    from pyrualean.hosts.xpolicylab_robodojo import dump_card
-    from pyrualean.prompt import api_reference, knowledge_text
+    from codeaspolicy.hosts.rpent_robodojo import Cell
+    from codeaspolicy.hosts.xpolicylab_robodojo import dump_card
+    from codeaspolicy.prompt import api_reference, knowledge_text
 
     env, robo, host = station(tmp_path)
     card = dump_card(host, Cell("arx_x5", "example", 0), tmp_path)
@@ -612,7 +612,7 @@ def test_single_arm_outcomes_distinguish_geometry_completion_and_partial(tmp_pat
 
 
 def test_timing_refusal_does_not_claim_a_selected_near_pose_was_executed(tmp_path, monkeypatch):
-    from pyrualean.hosts import robodojo_tools
+    from codeaspolicy.hosts import robodojo_tools
 
     env, robo, _ = station(tmp_path)
     env.step_limit = 1
@@ -646,7 +646,7 @@ print(r.status, r.stop_reason, r.steps_used)
 
 
 def test_clock_change_invalidates_plan_before_dispatch(tmp_path):
-    from pyrualean.coordination import CoordinationPause
+    from codeaspolicy.coordination import CoordinationPause
 
     env, robo, host = station(tmp_path)
     execute = host._tools["motion_execute"]

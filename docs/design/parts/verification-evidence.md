@@ -40,7 +40,7 @@ Valen 是视觉事实核验组件，数值误差、位姿和传感器检查也�
 
 ## 现有实现
 
-`src/pyrualean/supervision.py` 的 `VisualSupervisor.watch` 接受阶段、原子视觉问题、告警、关键事实、完成候选、依赖和失效声明。
+`src/codeaspolicy/supervision.py` 的 `VisualSupervisor.watch` 接受阶段、原子视觉问题、告警、关键事实、完成候选、依赖和失效声明。
 `begin_cell` 清空当前 contract 与局部计数，保留 episode 内事实、unknown 连续计数及同阶段同规则的来源确认窗口。
 `decode_answers` 严格检查 fact 集、`yes/no/unknown` 概率及总和，再按阈值产生三值判断。
 阈值是决策配置，不能直接解释成已经校准的正确率。
@@ -53,7 +53,7 @@ Valen 是视觉事实核验组件，数值误差、位姿和传感器检查也�
 告警/完成条件同样只对持续匹配通知一次，遇到新的明确反证后重新启用。原 unknown 记录和显式依赖不被清除。
 核验期间物理动作被拒绝；单独计数核验次数。无来源协议的兼容后动作路径仍标 unverified，独立 verify 不接受这类输入。
 
-`src/pyrualean/evidence.py` 的 `EvidenceLedger` 已记录问题版本、真值、`fresh`、观测引用、概率与失效原因。
+`src/codeaspolicy/evidence.py` 的 `EvidenceLedger` 已记录问题版本、真值、`fresh`、观测引用、概率与失效原因。
 `configure` 和 `defer` 保存跨 cell 的阶段依赖；延后核验只建立未来门槛，不改变事实真值。
 被依赖引用的问题不能直接改义；其他问题改义时旧证据失效。
 `snapshot` 返回副本，程序改写返回值不能伪造宿主账本中的事实。
@@ -64,13 +64,13 @@ Valen 是视觉事实核验组件，数值误差、位姿和传感器检查也�
 
 `shadow` 模式记录规则结果而不中止执行；`pause` 模式用 `SupervisionPause` 展开当前 cell。
 告警、关键事实连续未知、监控错误和动作数预算均可触发交接；`completion_review` 只请求复核。
-`src/pyrualean/_robot.py` 的 `_stateful` 在动作记账后调用监督，避免将监督暂停误标为动作未执行。
+`src/codeaspolicy/_robot.py` 的 `_stateful` 在动作记账后调用监督，避免将监督暂停误标为动作未执行。
 
-`src/pyrualean/strategies.py` 已有 `relocalize`、`correct` 和 `verify_grasp`，支持有限纠偏及不确定时交回。
+`src/codeaspolicy/strategies.py` 已有 `relocalize`、`correct` 和 `verify_grasp`，支持有限纠偏及不确定时交回。
 `verify_grasp` 检查前后观测 ID、动作版本、谓词版本与随动证据；普通回调仍主要依赖调用者保证数据新鲜。
 这些局部结果不代表 episode 成功，异常和宿主暂停不会被 helper 自动吞掉并重放。
 
-`src/pyrualean/evaluation/valen.py` 已支持保存记录上的阈值分析和显式 Valen 重评。
+`src/codeaspolicy/evaluation/valen.py` 已支持保存记录上的阈值分析和显式 Valen 重评。
 没有独立、问题匹配的人工标签时不报告准确率；裁剪仍被标作同一观测，视觉评估不替代任务成功评估。
 
 ## 待补齐契约

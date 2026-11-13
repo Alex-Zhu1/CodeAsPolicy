@@ -4,9 +4,9 @@ from types import SimpleNamespace
 import numpy as np
 import pytest
 
-from pyrualean.hosts import robodojo_features as features
-from pyrualean.hosts import robodojo_tools as tools
-from pyrualean.object_evidence import assess_hold
+from codeaspolicy.hosts import robodojo_features as features
+from codeaspolicy.hosts import robodojo_tools as tools
+from codeaspolicy.object_evidence import assess_hold
 from tests.test_robodojo_object_evidence import (
     packet,
     pixels,

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from pyrualean import EpisodeFinished, LiberoRobot, Move, Pick, Segment, State, ToolError
+from codeaspolicy import EpisodeFinished, LiberoRobot, Move, Pick, Segment, State, ToolError
 
 
 def test_state_and_task_come_from_the_envelope(robo, backend):

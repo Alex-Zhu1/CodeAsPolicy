@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 import re
 
-root = Path('/mnt/data_hdd/mhzhu/GPTCode/PyRUA-Lean')
+root = Path('/mnt/data_hdd/mhzhu/GPTCode/CodeAsPolicy')
 ua = root / '.ua'
 scan = json.loads((ua / 'intermediate/scan-result.json').read_text())
 graph = json.loads((ua / 'intermediate/assembled-graph.json').read_text())

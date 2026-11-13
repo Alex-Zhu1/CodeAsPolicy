@@ -1,6 +1,6 @@
 # RoboDojo Evaluation Summary (official)
 
-Run by the RoboDojo team with the `PyRUA_Lean` adapter in this directory, on all 42 tasks with seed 3; the file is
+Run by the RoboDojo team with the `CodeAsPolicy` adapter in this directory, on all 42 tasks with seed 3; the file is
 reproduced as they sent it. Our own run of the same adapter is in [robodojo_summary_rgb.md](robodojo_summary_rgb.md).
 
 ## Overview (by capability dimension)
@@ -9,7 +9,7 @@ Progress † marks incomplete evaluation (42 = 42 tasks × seed 3). Cells show `
 
 | Policy | Progress | Generalization SR (%) | Generalization Score | Precision SR (%) | Precision Score | Long-Horizon SR (%) | Long-Horizon Score | Memory SR (%) | Memory Score | Open SR (%) | Open Score | Avg SR (%) | Avg Score |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| PyRUA_Lean | 100% | 43.17 ±0.00 | 48.27 ±0.00 | 38.25 ±0.00 | 44.77 ±0.00 | 43.75 ±0.00 | 54.30 ±0.00 | 68.33 ±0.00 | 68.40 ±0.00 | 58.25 ±0.00 | 60.56 ±0.00 | 50.35 ±0.00 | 55.26 ±0.00 |
+| CodeAsPolicy | 100% | 43.17 ±0.00 | 48.27 ±0.00 | 38.25 ±0.00 | 44.77 ±0.00 | 43.75 ±0.00 | 54.30 ±0.00 | 68.33 ±0.00 | 68.40 ±0.00 | 58.25 ±0.00 | 60.56 ±0.00 | 50.35 ±0.00 | 55.26 ±0.00 |
 
 ## Generalization: Standard vs Random (25 episodes each)
 
@@ -17,13 +17,13 @@ Each cell shows `mean ±std` across seeds, averaged over the 12 Generalization t
 
 | Policy | Standard SR (%) | Standard Score | Random SR (%) | Random Score | Δ SR | Δ Score |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| PyRUA_Lean | 45.33 ±0.00 | 50.47 ±0.00 | 41.00 ±0.00 | 46.07 ±0.00 | -4.33 | -4.40 |
+| CodeAsPolicy | 45.33 ±0.00 | 50.47 ±0.00 | 41.00 ±0.00 | 46.07 ±0.00 | -4.33 | -4.40 |
 
 ### Per-task Standard vs Random
 
 Additional view only: each of the 12 Generalization tasks is listed as the 25-episode standard split and its `_random` sibling. Columns match the per-policy all-task tables. Existing merged 50-episode scores are unchanged.
 
-#### PyRUA_Lean
+#### CodeAsPolicy
 
 | Task | Seed 3 SR (%) | Seed 3 Score | Avg SR (%) | Avg Score |
 | --- | ---: | ---: | ---: | ---: |
@@ -54,7 +54,7 @@ Additional view only: each of the 12 Generalization tasks is listed as the 25-ep
 | **Avg Standard** | 45.33 | 50.47 | 45.33 ±0.00 | 50.47 ±0.00 |
 | **Avg Random** | 41.00 | 46.07 | 41.00 ±0.00 | 46.07 ±0.00 |
 
-## PyRUA_Lean
+## CodeAsPolicy
 
 | Task | Seed 3 SR (%) | Seed 3 Score | Avg SR (%) | Avg Score |
 | --- | ---: | ---: | ---: | ---: |

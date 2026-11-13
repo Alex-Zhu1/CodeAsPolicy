@@ -1,6 +1,6 @@
 [
   {
-    "path": "src/pyrualean/arms.py",
+    "path": "src/codeaspolicy/arms.py",
     "category": "code",
     "moduleDoc": "Tool surfaces for the code arms, served to an agent loop through MCP.\n\nTwo arms, one contract.  Each is a tiny toolkit (``get_tools_spec`` /\n``execute_tool``) that an MCP server can expose to Codex:\n\n* ``cells``  - one tool ``python(code)``: the code runs in a *persistent*\n  namespace where ``robo`` lives, like a notebook or OpenAI's python tool.\n  Variables and functions defined in one cell are available in the next.\n* ``program`` - one tool ``run_program(code | path)``: the code is a complete\n  file defining ``run(robo)``; every program starts from a fresh namespace\n  (files in the workspace persist and can be imported).  ``max_programs=1``\n  is the single-shot protocol.\n\nBoth arms also get ``finish(status, summary)``.  Every tool result is text\n(stdout, errors, the ledger of primitive calls, the robot state) plus the two\ncurrent camera images whenever the robot moved, so the agent's per-turn\nperception matches what a tool-calling agent receives after each primitive.",
     "symbols": [
@@ -67,7 +67,7 @@
           1198
         ],
         "owner": null,
-        "doc": "Contract wording for a :class:`pyrualean.robots.RobotAdapter`.\n\n``primitives=\"no-vla\"`` names the adapter's ``services_novla`` (the\nservices left once the VLA is removed) instead of ``services``.",
+        "doc": "Contract wording for a :class:`codeaspolicy.robots.RobotAdapter`.\n\n``primitives=\"no-vla\"`` names the adapter's ``services_novla`` (the\nservices left once the VLA is removed) instead of ``services``.",
         "body": "primitives = effective_primitives(adapter.robot_cls, primitives)\nkey = \"services\" if primitives == \"full\" else \"services_novla\"\nphrase = getattr(adapter, key, \"\") or \"\"\nhead, _, tail = phrase.partition(\" \")\nreturn {\n        \"robot_blurb\": adapter.blurb,\n        \"cls\": adapter.robot_cls.__name__,"
       },
       {
@@ -279,9 +279,9 @@
     ]
   },
   {
-    "path": "src/pyrualean/claude_runtime.py",
+    "path": "src/codeaspolicy/claude_runtime.py",
     "category": "code",
-    "moduleDoc": "Drive one code-arm episode with Claude Code through the Claude Agent SDK.\n\nThe second agent runtime of :mod:`pyrualean.play` (``--runtime claude``).\nEverything around the agent loop is the Codex runtime's: the same HTTP MCP\nserver over :class:`~pyrualean.arms.ArmToolkit`, the same prompt text and\nstep-0 card images.  Claude Code owns the loop (``claude_agent_sdk.query``)\nand keeps its default system prompt, as RPent's Claude planner does: our\nprompt is the first user message, the card images ride along as base64\nimage blocks.  This module owns the wall clock, the event dump\n(``claude_events.jsonl``) and the usage audit that becomes\n``result[\"generation\"]``.",
+    "moduleDoc": "Drive one code-arm episode with Claude Code through the Claude Agent SDK.\n\nThe second agent runtime of :mod:`codeaspolicy.play` (``--runtime claude``).\nEverything around the agent loop is the Codex runtime's: the same HTTP MCP\nserver over :class:`~codeaspolicy.arms.ArmToolkit`, the same prompt text and\nstep-0 card images.  Claude Code owns the loop (``claude_agent_sdk.query``)\nand keeps its default system prompt, as RPent's Claude planner does: our\nprompt is the first user message, the card images ride along as base64\nimage blocks.  This module owns the wall clock, the event dump\n(``claude_events.jsonl``) and the usage audit that becomes\n``result[\"generation\"]``.",
     "symbols": [
       {
         "name": "sdk_max_turns",
@@ -634,7 +634,7 @@
     ]
   },
   {
-    "path": "src/pyrualean/execution.py",
+    "path": "src/codeaspolicy/execution.py",
     "category": "code",
     "moduleDoc": "Limits for generated Python, without discarding its persistent namespace.\n\nTracing interrupts Python loops in policy/workspace frames, including helpers\nfrom earlier cells. Native calls are checked when they return; a process-level\nwatchdog is still required for uncooperative native code. This is an execution\nguard, not an isolation boundary against deliberately hostile Python.",
     "symbols": [
@@ -838,7 +838,7 @@
     ]
   },
   {
-    "path": "src/pyrualean/mcp_server.py",
+    "path": "src/codeaspolicy/mcp_server.py",
     "category": "code",
     "moduleDoc": "In-process streamable-HTTP MCP server over an :class:`ArmToolkit`.\n\nAdapted from RPent's ``HttpMcpServer`` (same wire behaviour: a lowlevel MCP\n``Server`` served by uvicorn on a background thread) with two differences:\nit does not import RPent, and every tool is published with MCP annotations\nso an agent runtime can apply its tool-approval policy without a human or a\nreviewer model in the loop.",
     "symbols": [
@@ -947,9 +947,9 @@
     ]
   },
   {
-    "path": "src/pyrualean/openai_runtime.py",
+    "path": "src/codeaspolicy/openai_runtime.py",
     "category": "code",
-    "moduleDoc": "A plain OpenAI chat-completions agent loop for the code arms (``--runtime openai``).\n\nThe Codex and Claude runtimes hand the agent loop to a coding-agent product\nwith its own system prompt, tools and transcript format.  This runtime is the\nthird option: the loop lives here, talks to *any* OpenAI-compatible\n``/v1/chat/completions`` endpoint (a gateway, a local SGLang / vLLM server, a\ntraining framework's rollout engine) with function calling, and executes the\narm's tools in-process through :class:`pyrualean.arms.ArmToolkit` (no MCP\nserver, no subprocess).  It is what a small open model, a distillation\nteacher and an RL rollout all share.\n\nProtocol (one episode):\n\n1. The first user message carries the full prompt text and the task card\n   images as ``image_url`` data URIs (same content Codex / Claude get).\n2. Each assistant reply may carry ``tool_calls``; they are executed in order\n   through ``ArmToolkit.execute_tool`` and answered with one ``tool`` message\n   each.  Images returned by a tool (``on-motion`` or ``robo.show()``) cannot\n   travel in a ``tool`` message under the OpenAI schema, so they follow in one\n   extra ``user`` message that names the tool call they belong to.\n3. The episode ends when the agent calls ``finish``, when it replies without\n   a tool call (after ``nudges`` reminders), when the decision budget is\n   spent (``ArmToolkit`` refuses further ``python`` calls), when the wall\n   clock ``budget_s`` runs out, or when the provider keeps failing.\n\nEverything the model saw and said is written to ``messages.json`` (images\nreplaced by references to PNG files under ``images/``), every request to\n``openai_events.jsonl``, and the usual ``generation`` record (Codex's token\nconventions: ``input_tokens`` includes cached tokens) goes into\n``result.json`` by :mod:`pyrualean.play`.",
+    "moduleDoc": "A plain OpenAI chat-completions agent loop for the code arms (``--runtime openai``).\n\nThe Codex and Claude runtimes hand the agent loop to a coding-agent product\nwith its own system prompt, tools and transcript format.  This runtime is the\nthird option: the loop lives here, talks to *any* OpenAI-compatible\n``/v1/chat/completions`` endpoint (a gateway, a local SGLang / vLLM server, a\ntraining framework's rollout engine) with function calling, and executes the\narm's tools in-process through :class:`codeaspolicy.arms.ArmToolkit` (no MCP\nserver, no subprocess).  It is what a small open model, a distillation\nteacher and an RL rollout all share.\n\nProtocol (one episode):\n\n1. The first user message carries the full prompt text and the task card\n   images as ``image_url`` data URIs (same content Codex / Claude get).\n2. Each assistant reply may carry ``tool_calls``; they are executed in order\n   through ``ArmToolkit.execute_tool`` and answered with one ``tool`` message\n   each.  Images returned by a tool (``on-motion`` or ``robo.show()``) cannot\n   travel in a ``tool`` message under the OpenAI schema, so they follow in one\n   extra ``user`` message that names the tool call they belong to.\n3. The episode ends when the agent calls ``finish``, when it replies without\n   a tool call (after ``nudges`` reminders), when the decision budget is\n   spent (``ArmToolkit`` refuses further ``python`` calls), when the wall\n   clock ``budget_s`` runs out, or when the provider keeps failing.\n\nEverything the model saw and said is written to ``messages.json`` (images\nreplaced by references to PNG files under ``images/``), every request to\n``openai_events.jsonl``, and the usual ``generation`` record (Codex's token\nconventions: ``input_tokens`` includes cached tokens) goes into\n``result.json`` by :mod:`codeaspolicy.play`.",
     "symbols": [
       {
         "name": "_resize_png",
@@ -1113,9 +1113,9 @@
     ]
   },
   {
-    "path": "src/pyrualean/play.py",
+    "path": "src/codeaspolicy/play.py",
     "category": "code",
-    "moduleDoc": "Drive one episode of a code arm with an agent runtime: Codex, Claude Code or OpenAI.\n\nThe host boots RPent's stack for the chosen robot (``--robot``), wraps it in\nthe adapter's robot class (:class:`LiberoRobot` for LIBERO),\nexposes the arm's tools (``python`` / ``run_program`` + ``finish``) through\nRPent's in-process HTTP MCP server and launches the agent against it:\n``codex exec`` (``--runtime codex``, the default), Claude Code through the\nClaude Agent SDK (``--runtime claude``, :mod:`pyrualean.claude_runtime`), or\nan in-process chat-completions loop against any OpenAI-compatible endpoint\n(``--runtime openai``, :mod:`pyrualean.openai_runtime`: the arm's tools are\ncalled directly, no MCP server is needed by the agent).\nThe runtime owns the agent loop; this module owns the budget, the audit of\nthe event stream and ``result.json``.  One episode per process.",
+    "moduleDoc": "Drive one episode of a code arm with an agent runtime: Codex, Claude Code or OpenAI.\n\nThe host boots RPent's stack for the chosen robot (``--robot``), wraps it in\nthe adapter's robot class (:class:`LiberoRobot` for LIBERO),\nexposes the arm's tools (``python`` / ``run_program`` + ``finish``) through\nRPent's in-process HTTP MCP server and launches the agent against it:\n``codex exec`` (``--runtime codex``, the default), Claude Code through the\nClaude Agent SDK (``--runtime claude``, :mod:`codeaspolicy.claude_runtime`), or\nan in-process chat-completions loop against any OpenAI-compatible endpoint\n(``--runtime openai``, :mod:`codeaspolicy.openai_runtime`: the arm's tools are\ncalled directly, no MCP server is needed by the agent).\nThe runtime owns the agent loop; this module owns the budget, the audit of\nthe event stream and ``result.json``.  One episode per process.",
     "symbols": [
       {
         "name": "_recordable",
@@ -1246,7 +1246,7 @@
           928
         ],
         "owner": null,
-        "doc": "Run one episode of ``arm`` on ``cell`` and write ``result.json``.\n\n``robot`` selects the adapter (robot class, host module, knowledge);\n``cell`` is that host's ``Cell`` and ``boot_options`` its ``boot``\nkeyword arguments (shared servers, model paths).  ``primitives`` is the\nprimitive set the policy may use (``full`` or ``no-vla``: the robot's VLA\nprimitives are hidden from the prompt and refused at call time; the\nservers boot as usual); ``result.json`` records it as\n``host.primitive_set``.\n\n``runtime`` picks the agent: ``codex`` runs ``codex exec`` in a\nsubprocess, ``claude`` runs Claude Code through the Claude Agent SDK\n(:func:`pyrualean.claude_runtime.run_claude_agent`; ``claude_cli`` names\nthe ``claude`` executable, the SDK's bundled one when it cannot be\nfound), ``openai`` runs :func:`pyrualean.openai_runtime.run_openai_agent`\nin-process against ``base_url`` (the key read from ``api_key_env``;\n``openai_options`` are its keyword arguments: ``temperature``,\n``max_tokens``, ``extra_body``, ``image_max_side``, ``nudges`` ...).\nBoot, prompt, MCP server, budgets and ``result.json`` are the same for\nall; only the event stream files (``<runtime>_events.jsonl``,\n``<runtime>_stderr.txt``) and ``generation`` are runtime-specific.\n\n``codex_home`` points Codex at a clean ``CODEX_HOME`` (no memories, no\nhistory) so nothing from earlier sessions leaks into the episode.\n``guides=True`` copies the robot's operating guides (LIBERO's three by\ndefault) into ``workspace/guides/`` and tells the agent they are there;\n``guides_dir`` names the directory (default: the adapter's guides under\nRPent's checkout).  ``max_turns`` switches the episode to a decision\nbudget: at most that many tool calls, ``budget_s`` then being only a\nsafety ceiling that the prompt does not mention.",
+        "doc": "Run one episode of ``arm`` on ``cell`` and write ``result.json``.\n\n``robot`` selects the adapter (robot class, host module, knowledge);\n``cell`` is that host's ``Cell`` and ``boot_options`` its ``boot``\nkeyword arguments (shared servers, model paths).  ``primitives`` is the\nprimitive set the policy may use (``full`` or ``no-vla``: the robot's VLA\nprimitives are hidden from the prompt and refused at call time; the\nservers boot as usual); ``result.json`` records it as\n``host.primitive_set``.\n\n``runtime`` picks the agent: ``codex`` runs ``codex exec`` in a\nsubprocess, ``claude`` runs Claude Code through the Claude Agent SDK\n(:func:`codeaspolicy.claude_runtime.run_claude_agent`; ``claude_cli`` names\nthe ``claude`` executable, the SDK's bundled one when it cannot be\nfound), ``openai`` runs :func:`codeaspolicy.openai_runtime.run_openai_agent`\nin-process against ``base_url`` (the key read from ``api_key_env``;\n``openai_options`` are its keyword arguments: ``temperature``,\n``max_tokens``, ``extra_body``, ``image_max_side``, ``nudges`` ...).\nBoot, prompt, MCP server, budgets and ``result.json`` are the same for\nall; only the event stream files (``<runtime>_events.jsonl``,\n``<runtime>_stderr.txt``) and ``generation`` are runtime-specific.\n\n``codex_home`` points Codex at a clean ``CODEX_HOME`` (no memories, no\nhistory) so nothing from earlier sessions leaks into the episode.\n``guides=True`` copies the robot's operating guides (LIBERO's three by\ndefault) into ``workspace/guides/`` and tells the agent they are there;\n``guides_dir`` names the directory (default: the adapter's guides under\nRPent's checkout).  ``max_turns`` switches the episode to a decision\nbudget: at most that many tool calls, ``budget_s`` then being only a\nsafety ceiling that the prompt does not mention.",
         "body": "if arm not in ARMS:\n        raise ValueError(f\"arm must be one of {ARMS}\")\nmonitor = monitor or MonitorConfig()\nsupervision_instructions = planning_instructions() if monitor.mode != \"off\" else None\ncode_limits = code_limits or ExecutionLimits()\nif monitor.mode != \"off\" and arm != \"cells\":\n        raise ValueError(\"Visual supervision currently supports only --arm cells\")\nif stuck_recovery is not None and arm != \"cells\":\n        raise ValueError(\"Stuck recovery currently supports only --arm cells\")\nif runtime not in RUNTIMES:\n        raise ValueError(f\"runtime must be one of {RUNTIMES}\")\nif primitives not in PRIMITIVE_SETS:\n        raise ValueError(f\"primitives must be one of {PRIMITIVE_SETS}\")\nadapter = get_adapter(robot)\nprimitives = effective_primitives(adapter.robot_cls, primitives)\nhost = adapter.host_module()\nboot_options = dict(boot_options or {})\nout_dir.mkdir(parents=True, exist_ok=True)\nworkspace = out_dir / \"workspace\"\nif workspace.exists():\n        shutil.rmtree(workspace)\nworkspace.mkdir()\nif stuck_recovery is not None:\n        (out_dir / \"stuck_recovery_skill.md\").write_text(\n            stuck_recovery.instructions, encoding=\"utf-8\"\nif monitor.mode != \"off\":\n        (out_dir / \"supervision_skill.md\").write_text(supervision_instructions, encoding=\"utf-8\")\nguide_record: dict[str, Any] | bool = False\nif guides:\n        if guides_dir:\n            source = Path(guides_di"
       },
       {
@@ -1269,7 +1269,7 @@
         ],
         "owner": null,
         "doc": "",
-        "body": "pre = argparse.ArgumentParser(add_help=False)\npre.add_argument(\"--robot\", default=\"libero\", choices=ROBOTS)\nknown, _ = pre.parse_known_args(argv)\nadapter = get_adapter(known.robot)\nhost = adapter.host_module()\nparser = argparse.ArgumentParser(prog=\"python -m pyrualean.play\", description=__doc__)\nadd_monitor_arguments(parser)\nadd_stuck_recovery_arguments(parser)\nadd_execution_arguments(parser)\nparser.add_argument(\"--robot\", default=\"libero\", help=\"libero | robocasa | robotwin | robodojo\")\nparser.add_argument(\"--arm\", choices=ARMS, default=\"cells\",\n                        help=\"code execution mode (default: cells)\")\nhost.add_cell_args(parser)\nhost.add_boot_args(parser)\nparser.add_argument(\"--out\", type=Path, required=True)\nparser.add_argument(\"--cuda-device\", type=int, default=None)\nparser.add_argument(\"--max-episode-steps\", type=int, default=10000)\nparser.add_argument(\"--rpent-root\", default=None)\nparser.add_argument(\"--model\", default=\"gpt-6-astra\")\nparser.add_argument(\"--reasoning\", default=\"xhigh\")\nparser.add_argument(\"--budget-s\", type=float, default=1200.0)\nparser.add_argument(\"--max-programs\", type=int, default=None)\nparser.add_argument(\n        \"--codex-bin\",\n        default=setting(\"CODEX_BIN\", \"codex\"),\nparser.add_argument(\"--base-url\", default=None)\nparser.add_argument(\"--api-key-env\", default=None)\nparser.add_argument(\n        \"--images\",\n        choices=(\"on-motion\","
+        "body": "pre = argparse.ArgumentParser(add_help=False)\npre.add_argument(\"--robot\", default=\"libero\", choices=ROBOTS)\nknown, _ = pre.parse_known_args(argv)\nadapter = get_adapter(known.robot)\nhost = adapter.host_module()\nparser = argparse.ArgumentParser(prog=\"python -m codeaspolicy.play\", description=__doc__)\nadd_monitor_arguments(parser)\nadd_stuck_recovery_arguments(parser)\nadd_execution_arguments(parser)\nparser.add_argument(\"--robot\", default=\"libero\", help=\"libero | robocasa | robotwin | robodojo\")\nparser.add_argument(\"--arm\", choices=ARMS, default=\"cells\",\n                        help=\"code execution mode (default: cells)\")\nhost.add_cell_args(parser)\nhost.add_boot_args(parser)\nparser.add_argument(\"--out\", type=Path, required=True)\nparser.add_argument(\"--cuda-device\", type=int, default=None)\nparser.add_argument(\"--max-episode-steps\", type=int, default=10000)\nparser.add_argument(\"--rpent-root\", default=None)\nparser.add_argument(\"--model\", default=\"gpt-6-astra\")\nparser.add_argument(\"--reasoning\", default=\"xhigh\")\nparser.add_argument(\"--budget-s\", type=float, default=1200.0)\nparser.add_argument(\"--max-programs\", type=int, default=None)\nparser.add_argument(\n        \"--codex-bin\",\n        default=setting(\"CODEX_BIN\", \"codex\"),\nparser.add_argument(\"--base-url\", default=None)\nparser.add_argument(\"--api-key-env\", default=None)\nparser.add_argument(\n        \"--images\",\n        choices=(\"on-motion\","
       }
     ],
     "imports": [
@@ -1305,7 +1305,7 @@
     ]
   },
   {
-    "path": "src/pyrualean/recovery.py",
+    "path": "src/codeaspolicy/recovery.py",
     "category": "code",
     "moduleDoc": "Structured execution failures shared by code tools and agent runtimes.\n\nThese reports describe execution, not task success. Recovery belongs to the\nplanner: the host never replays a failed action or rolls the scene back.",
     "symbols": [
@@ -1342,7 +1342,7 @@
     ]
   },
   {
-    "path": "src/pyrualean/strategies.py",
+    "path": "src/codeaspolicy/strategies.py",
     "category": "code",
     "moduleDoc": "Small feedback loops extracted from the RSI relocalization/correction pattern.\n\nThese helpers contain no task geometry or robot-specific primitive calls.\nCallbacks use the current robot's public API. Exceptions and host pauses\npropagate to the outer model loop; no helper replays a failed code block.",
     "symbols": [
@@ -1465,7 +1465,7 @@
     ]
   },
   {
-    "path": "src/pyrualean/stuck_recovery.py",
+    "path": "src/codeaspolicy/stuck_recovery.py",
     "category": "code",
     "moduleDoc": "Recovery instructions delivered only after a planner declares stuck.",
     "symbols": [
@@ -1500,7 +1500,7 @@
         ],
         "owner": null,
         "doc": "Packaged core of astra-stuck-recovery, available without a repository checkout.",
-        "body": "return files(\"pyrualean\").joinpath(\"knowledge/astra_stuck_recovery.md\").read_text(\n        encoding=\"utf-8\"\n    )"
+        "body": "return files(\"codeaspolicy\").joinpath(\"knowledge/astra_stuck_recovery.md\").read_text(\n        encoding=\"utf-8\"\n    )"
       },
       {
         "name": "StuckRecoveryConfig",

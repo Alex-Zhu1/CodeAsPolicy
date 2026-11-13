@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """Where does each ARX-X5 joint stop in RoboDojo's simulator?  The URDF says +-10 rad (joint6
-+-3.14), but joint5 stopped at -1.548 when PyRUA-Lean's IK asked for -pi.
++-3.14), but joint5 stopped at -1.548 when CodeAsPolicy's IK asked for -pi.
 
     python examples/robodojo_joint_limits.py --cuda-device 0 --out <dir> [--task stack_blocks]
 
@@ -18,8 +18,8 @@ import argparse
 import json
 from pathlib import Path
 
-from pyrualean.hosts import robodojo_kinematics as kin
-from pyrualean.hosts import rpent_robodojo as host
+from codeaspolicy.hosts import robodojo_kinematics as kin
+from codeaspolicy.hosts import rpent_robodojo as host
 
 ap = argparse.ArgumentParser(
     description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter

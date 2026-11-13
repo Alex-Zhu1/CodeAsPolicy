@@ -4,8 +4,8 @@ import copy
 
 import pytest
 
-from pyrualean import LiberoRobot
-from pyrualean.arms import ArmToolkit
+from codeaspolicy import LiberoRobot
+from codeaspolicy.arms import ArmToolkit
 from tests.test_interaction_contracts import ProtocolBackend
 
 MOVE = "m = robo.move_to([0.05, -0.1, 1.5])"

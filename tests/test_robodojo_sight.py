@@ -1,4 +1,4 @@
-# Copyright 2026 PyRUA-Lean Contributors.
+# Copyright 2026 CodeAsPolicy Contributors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ from typing import Any
 import numpy as np
 import pytest
 
-from pyrualean.hosts import robodojo_kinematics as kin
-from pyrualean.hosts import robodojo_sight as sight
-from pyrualean.hosts import robodojo_tools as tools
+from codeaspolicy.hosts import robodojo_kinematics as kin
+from codeaspolicy.hosts import robodojo_sight as sight
+from codeaspolicy.hosts import robodojo_tools as tools
 
 #: The end-effector poses the arms start an episode with (the simulator's ``<arm>_ee_pose``).
 HOME = {

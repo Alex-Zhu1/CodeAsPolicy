@@ -6,8 +6,8 @@ on:
     paths:
       - 'docs/**'
       - 'mkdocs.yml'
-      - 'src/pyrualean/**'
-      - 'integrations/xpolicylab/PyRUA_Lean/README.md'
+      - 'src/codeaspolicy/**'
+      - 'integrations/xpolicylab/CodeAsPolicy/README.md'
       - '.github/workflows/docs.yml'
   pull_request:
     branches:
@@ -15,8 +15,8 @@ on:
     paths:
       - 'docs/**'
       - 'mkdocs.yml'
-      - 'src/pyrualean/**'
-      - 'integrations/xpolicylab/PyRUA_Lean/README.md'
+      - 'src/codeaspolicy/**'
+      - 'integrations/xpolicylab/CodeAsPolicy/README.md'
       - '.github/workflows/docs.yml'
   workflow_dispatch: # Allow manual trigger
 permissions:
@@ -45,7 +45,7 @@ jobs:
           mkdocs build --strict
       - name: Deploy to GitHub Pages (docs/ subdirectory)
         # only the public repository publishes; a mirror of main (the team repository) builds and stops here
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'DAGroup-PKU/PyRUA-Lean'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'Alex-Zhu1/CodeAsPolicy'
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"

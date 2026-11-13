@@ -12,7 +12,7 @@ from typing import Any
 
 import pytest
 
-from pyrualean import (
+from codeaspolicy import (
     EpisodeFinished,
     TaskCard,
     ToolError,
@@ -21,12 +21,12 @@ from pyrualean import (
     knowledge_text,
     render_prompt,
 )
-from pyrualean.arms import ArmToolkit, arm_contract, robot_words
-from pyrualean.hosts import robodojo_env_server as support_arm
-from pyrualean.hosts import rpent_robodojo as host
-from pyrualean.play import build_prompt
-from pyrualean.prompt import _public_members
-from pyrualean.robodojo import (
+from codeaspolicy.arms import ArmToolkit, arm_contract, robot_words
+from codeaspolicy.hosts import robodojo_env_server as support_arm
+from codeaspolicy.hosts import rpent_robodojo as host
+from codeaspolicy.play import build_prompt
+from codeaspolicy.prompt import _public_members
+from codeaspolicy.robodojo import (
     HOME_TOL_RAD,
     ArmState,
     Gripper,
@@ -86,7 +86,7 @@ class FakeRobodojoBackend:
     state-changing tool returns a ``view_env_state`` dict whose ``log.result``
     holds the primitive's own return value; ``segment`` / ``back_project`` /
     ``locate`` return their payload directly.  The motion tools are
-    PyRUA-Lean's own (``hosts/robodojo_tools.py``): an arm is its grasp point
+    CodeAsPolicy's own (``hosts/robodojo_tools.py``): an arm is its grasp point
     and its pitch / yaw / roll; the recorded ``*_ee_pose`` is the flange, 0.145 m
     behind the grasp point.  The recorded state never says whether the task is
     solved (``solved()`` does: bottle released over the bin).
@@ -332,7 +332,7 @@ class FakeRobodojoBackend:
             "terminated": self._spent(),
         }
 
-    # -- PyRUA-Lean's own tools (payload keys as in hosts/robodojo_tools.py) --
+    # -- CodeAsPolicy's own tools (payload keys as in hosts/robodojo_tools.py) --
 
     def _do_locate(
         self, text_prompt: str, camera: str = "cam_head", min_score: float = 0.2
@@ -501,7 +501,7 @@ def test_state_reads_both_arms_and_never_reports_success(rd, rd_backend):
 
 
 def test_gripper_angles_follow_the_documented_convention():
-    from pyrualean.robodojo import gripper_angles
+    from codeaspolicy.robodojo import gripper_angles
 
     for pitch, yaw, roll in ((0, 0, 0), (30, -40, 25), (-20, 170, -90), (60, 90, 10)):
         assert gripper_angles(_quat(pitch, yaw, roll)) == pytest.approx(
@@ -869,7 +869,7 @@ def test_ledger_marks_stateful_calls_and_counts_native_actions(rd, rd_backend):
     assert [r.tool for r in records] == ["segment", "locate", "move_pose", "pi0_pick"]
     assert [r.stateful for r in records] == [False, False, True, True]
     assert {k: v for k, v in records[0].summary.items() if k != "provenance"} == {
-        "found": True, "score": 0.83, "centroid_rc": [200, 300],
+        "found": True, "score": 0.83, "centroid_rc": [200, 300], "camera": "cam_head",
     }
     assert records[0].summary["provenance"]["source_freshness"] == "unverified"
     assert records[1].summary["center_xyz"] == rd_backend.BOTTLE
@@ -940,7 +940,7 @@ def test_adapter_and_prompt_say_that_nothing_reports_success():
     adapter = get_adapter("robodojo")
     assert adapter.robot_cls is RobodojoRobot and adapter.knowledge == "robodojo"
     assert adapter.cameras == ("cam_head", "cam_left_wrist", "cam_right_wrist")
-    assert adapter.host == "pyrualean.hosts.rpent_robodojo"
+    assert adapter.host == "codeaspolicy.hosts.rpent_robodojo"
     assert adapter.guides_subdir == "" and adapter.guide_names == ()
     assert adapter.live_success is False
     assert all(get_adapter(name).live_success for name in ("libero", "robocasa", "robotwin"))
@@ -1477,7 +1477,7 @@ def test_host_starts_the_env_server_through_this_library(monkeypatch):
     monkeypatch.setattr(sys.modules["robots.robodojo"], "robot_spec", robot_spec, raising=False)
     monkeypatch.setenv("PYTHONPATH", "/rpent")
     script = os.path.join("/r", "robots", "robodojo", "env_server.py")
-    with host._env_server_through_pyrualean():
+    with host._env_server_through_codeaspolicy():
         robot_spec.ProcessDaemon(
             name="robodojo_env_server",
             cmd=["/sim/python", "-u", script, "--task", "make_kong"],
@@ -1490,13 +1490,13 @@ def test_host_starts_the_env_server_through_this_library(monkeypatch):
         "/sim/python",
         "-u",
         "-m",
-        "pyrualean.hosts.robodojo_env_server",
+        "codeaspolicy.hosts.robodojo_env_server",
         script,
         "--task",
         "make_kong",
     ]
     paths = env_server["env_overrides"]["PYTHONPATH"].split(os.pathsep)
-    assert paths[-1] == "/rpent" and Path(paths[0], "pyrualean", "robodojo.py").is_file()
+    assert paths[-1] == "/rpent" and Path(paths[0], "codeaspolicy", "robodojo.py").is_file()
     assert env_server["env_overrides"]["A"] == "1"
     assert vla == {"name": "robodojo_vla_server", "cmd": ["/py", "serve.py"]}  # untouched
     monkeypatch.setenv("ROBODOJO_SUPPORT_ARM", "upstream")

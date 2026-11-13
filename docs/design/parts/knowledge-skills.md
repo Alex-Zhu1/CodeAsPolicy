@@ -35,15 +35,15 @@ Astra 决定具体策略，skill 不自动执行预设任务流程，也不赋�
 
 ## 现有实现
 
-- `src/pyrualean/prompt.py`：`api_reference()` 生成实际类的接口说明；`knowledge_text()` 按机器人与 primitive set 读取打包 Markdown。
-- `src/pyrualean/play.py`：`build_prompt()` 加入环境知识；监控启用时加入 planning core，stuck 只先加入触发协议。
-- `src/pyrualean/supervision.py`：`planning_instructions()` 读取 `knowledge/astra_valen_supervision.md`；`config_record()` 记录配置及内容信息。
-- `src/pyrualean/stuck_recovery.py`：`recovery_instructions()` 读取 `knowledge/astra_stuck_recovery.md`；`StuckRecoveryConfig` 保存文本、轮次和 hash。
-- `src/pyrualean/arms.py`：`ArmToolkit._finish()` 在确认 stuck 且允许继续时下发恢复正文、状态和可用图像。
-- `src/pyrualean/play.py`：`play_episode()` 保存 `supervision_skill.md`、`stuck_recovery_skill.md`；可选 guides 被复制到工作区。
+- `src/codeaspolicy/prompt.py`：`api_reference()` 生成实际类的接口说明；`knowledge_text()` 按机器人与 primitive set 读取打包 Markdown。
+- `src/codeaspolicy/play.py`：`build_prompt()` 加入环境知识；监控启用时加入 planning core，stuck 只先加入触发协议。
+- `src/codeaspolicy/supervision.py`：`planning_instructions()` 读取 `knowledge/astra_valen_supervision.md`；`config_record()` 记录配置及内容信息。
+- `src/codeaspolicy/stuck_recovery.py`：`recovery_instructions()` 读取 `knowledge/astra_stuck_recovery.md`；`StuckRecoveryConfig` 保存文本、轮次和 hash。
+- `src/codeaspolicy/arms.py`：`ArmToolkit._finish()` 在确认 stuck 且允许继续时下发恢复正文、状态和可用图像。
+- `src/codeaspolicy/play.py`：`play_episode()` 保存 `supervision_skill.md`、`stuck_recovery_skill.md`；可选 guides 被复制到工作区。
 - `skills/astra-valen-supervision/SKILL.md`、`skills/astra-stuck-recovery/SKILL.md`：提供较完整的指导及参考示例，供开发和显式加载。
 
-仓库完整 SKILL 与 `src/pyrualean/knowledge/` 中的 runtime core 是不同文件。
+仓库完整 SKILL 与 `src/codeaspolicy/knowledge/` 中的 runtime core 是不同文件。
 修改完整 SKILL 不会自动改变下一次运行实际注入的 packaged core；需要核对真实 `prompt.txt` 和冻结文本。
 当前不会自动发现任意 skill 目录；不要把“文件存在”写成“模型已经读取”。
 CLI cells 默认配置 stuck recovery；一般库调用是否配置取决于调用方，不能笼统认为所有入口都启用。

@@ -1,13 +1,13 @@
 # Adding a Robot
 
 Robots are added through [XPolicyLab](https://github.com/XPolicyLab/XPolicyLab). The benchmark's own evaluation
-client keeps the simulator, the observation and the verdict; PyRUA-Lean answers it as a policy, through the
+client keeps the simulator, the observation and the verdict; CodeAsPolicy answers it as a policy, through the
 adapter that every benchmark XPolicyLab integrates already talks to. [RoboDojo](robodojo.md) is the reference
 implementation.
 
 ## How an episode runs
 
-1. The client sends an observation (`update_obs`). On the first one of a trial, the adapter starts a PyRUA-Lean
+1. The client sends an observation (`update_obs`). On the first one of a trial, the adapter starts a CodeAsPolicy
    episode: the agent loop, the sandboxed cells and the robot `robo`.
 2. A cell calls a primitive; the primitive turns what it was asked into native actions, computed from the
    observation.
@@ -18,19 +18,19 @@ implementation.
 5. When the episode is over (the task solved, the action budget spent, or the program finished), the client
    reports the verdict (`trial_end`).
 
-`pyrualean.hosts.xpolicylab_bridge` turns XPolicyLab's two calls into an environment a primitive can step; it is
+`codeaspolicy.hosts.xpolicylab_bridge` turns XPolicyLab's two calls into an environment a primitive can step; it is
 the same for every robot.
 
 ## What a robot needs
 
 | Piece | File | RoboDojo |
 |---|---|---|
-| Robot class: the API the agent writes against, one method per primitive with typed results; its docstrings are the API reference in the prompt | `src/pyrualean/<robot>.py` | `robodojo.py` (`RobodojoRobot`), specialised by `robodojo_xpl_rgb.py` |
-| Primitives: motion, gripper and perception of this library's own, computed from the observation | `src/pyrualean/hosts/<robot>_tools.py` and helpers | `robodojo_tools.py`, `robodojo_kinematics.py`, `robodojo_sight.py` |
-| Toolkit: the primitives over an environment that has only an observation and an action, with each step's images and state recorded | `src/pyrualean/hosts/<robot>_native.py` | `robodojo_native.py` |
-| Host: builds the toolkit over the bridge and writes the task card; for `pyrualean play` on one machine it also starts the benchmark's client | `src/pyrualean/hosts/xpolicylab_<benchmark>.py` | `xpolicylab_robodojo.py`, `xpolicylab_robodojo_rgb.py` |
-| Knowledge: one text for every task | `src/pyrualean/knowledge/<robot>.md`, `<robot>-novla.md` | `robodojo_xpl_rgb.md`, `robodojo_xpl_rgb-novla.md` |
-| Adapter: XPolicyLab's policy directory | `integrations/xpolicylab/PyRUA_Lean/` | the same directory |
+| Robot class: the API the agent writes against, one method per primitive with typed results; its docstrings are the API reference in the prompt | `src/codeaspolicy/<robot>.py` | `robodojo.py` (`RobodojoRobot`), specialised by `robodojo_xpl_rgb.py` |
+| Primitives: motion, gripper and perception of this library's own, computed from the observation | `src/codeaspolicy/hosts/<robot>_tools.py` and helpers | `robodojo_tools.py`, `robodojo_kinematics.py`, `robodojo_sight.py` |
+| Toolkit: the primitives over an environment that has only an observation and an action, with each step's images and state recorded | `src/codeaspolicy/hosts/<robot>_native.py` | `robodojo_native.py` |
+| Host: builds the toolkit over the bridge and writes the task card; for `codeaspolicy play` on one machine it also starts the benchmark's client | `src/codeaspolicy/hosts/xpolicylab_<benchmark>.py` | `xpolicylab_robodojo.py`, `xpolicylab_robodojo_rgb.py` |
+| Knowledge: one text for every task | `src/codeaspolicy/knowledge/<robot>.md`, `<robot>-novla.md` | `robodojo_xpl_rgb.md`, `robodojo_xpl_rgb-novla.md` |
+| Adapter: XPolicyLab's policy directory | `integrations/xpolicylab/CodeAsPolicy/` | the same directory |
 
 Shared, and not changed by a new robot: the bridge, the agent runtimes ([Agent Configuration](../guide/agents.md)),
 the cells and their sandbox, and the prompt with its API reference generated from the robot class.
@@ -48,21 +48,21 @@ the cells and their sandbox, and the prompt with its API reference generated fro
   the rest (on RoboDojo a twist is a `move_to` with another `roll`, a button press a `move_to` past the surface).
 - Nothing privileged: the primitives read the observation the client sends, and constants of the embodiment and
   the default scene taken from the benchmark's public configuration.
-- The class subclasses `RobotBase` (`src/pyrualean/_robot.py`): it declares `CAMERAS`, `IMAGE_ARTIFACTS`,
+- The class subclasses `RobotBase` (`src/codeaspolicy/_robot.py`): it declares `CAMERAS`, `IMAGE_ARTIFACTS`,
   `ON_MOTION_IMAGES`, `STATEFUL_TOOLS`, `RESULT_TYPES` and `VLA_PRIMITIVES`, implements `_state_from_envelope` and
   `_summary_dict`, and sends every primitive through `_readonly` or `_stateful`.
 - The module ends with its registration, `ADAPTER = RobotAdapter(name=..., robot_cls=..., host=..., knowledge=...,
   blurb=...)`, with the XPolicyLab host as `host`, and the robot's name goes into `ROBOTS` in
-  `src/pyrualean/robots.py`: `get_adapter` refuses any other name.
+  `src/codeaspolicy/robots.py`: `get_adapter` refuses any other name.
 
 ## The adapter
 
-`integrations/xpolicylab/PyRUA_Lean/` is one directory for every benchmark, as XPolicyLab keeps one per policy.
+`integrations/xpolicylab/CodeAsPolicy/` is one directory for every benchmark, as XPolicyLab keeps one per policy.
 
 | File | Role |
 |---|---|
 | `deploy.yml` | The robot, the primitive set, the runtime, the model, the budgets, when the model sees images and what a tool call returns. |
-| `model.py` | XPolicyLab's model: starts one PyRUA-Lean episode per trial on the first observation and serves it through the bridge. It knows RoboDojo today; a new benchmark adds its robot and host here, chosen by `bench_name`. |
+| `model.py` | XPolicyLab's model: starts one CodeAsPolicy episode per trial on the first observation and serves it through the bridge. It knows RoboDojo today; a new benchmark adds its robot and host here, chosen by `bench_name`. |
 | `deploy.py` | XPolicyLab's evaluation loop with three changes for a policy that thinks between actions: ask again on "wait", end the episode on an empty answer, and pass the step count and limit with every observation. It reports the verdict back through `trial_end`. |
 | `eval.sh`, `setup_eval_policy_server.sh`, `setup_eval_env_client.sh` | XPolicyLab's entry scripts. |
 | `install.sh`, `download_assets.sh` | The policy environment and SAM3's checkpoint. |
@@ -80,7 +80,7 @@ recipes.
 1. Unit tests against a scripted environment, for every primitive and the API reference (`tests/test_robodojo*.py`).
 2. XPolicyLab's debug client, which exercises the loop, the action keys and their dimensions without a simulator
    or a model: `EVAL_ENV_TYPE=debug bash eval.sh <bench_name> <task> ...`.
-3. One episode with `pyrualean play --robot <robot>`, which starts the benchmark's client itself (for RoboDojo it needs
+3. One episode with `codeaspolicy play --robot <robot>`, which starts the benchmark's client itself (for RoboDojo it needs
    `ROBODOJO_SOURCE_ROOT` and one environment with both sides).
 4. A few episodes with a model through the benchmark's official entry (RoboDojo: `scripts/robodojo.sh eval`), then
    the full task set.

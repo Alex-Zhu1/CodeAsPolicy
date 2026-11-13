@@ -7,10 +7,10 @@ from typing import Any, ClassVar
 
 import pytest
 
-from pyrualean import LiberoRobot, RobotBase, TaskCard, api_reference, get_adapter
-from pyrualean.arms import ArmToolkit, arm_contract, robot_words
-from pyrualean.prompt import _public_members
-from pyrualean.robots import ROBOTS, RobotAdapter
+from codeaspolicy import LiberoRobot, RobotBase, TaskCard, api_reference, get_adapter
+from codeaspolicy.arms import ArmToolkit, arm_contract, robot_words
+from codeaspolicy.prompt import _public_members
+from codeaspolicy.robots import ROBOTS, RobotAdapter
 
 
 @dataclass(frozen=True)
@@ -127,7 +127,7 @@ def test_generic_task_card_and_contract_wording(tmp_path):
     adapter = RobotAdapter(
         name="toy",
         robot_cls=ToyRobot,
-        host="pyrualean.hosts.rpent_libero",
+        host="codeaspolicy.hosts.rpent_libero",
         knowledge="libero",
         blurb="a toy robot",
         show_examples="`robo.show('head')`",
@@ -231,7 +231,7 @@ def test_task_card_without_a_single_arm_pose_renders_and_round_trips(tmp_path):
 
 
 def test_rpent_backend_falls_back_to_rpent_internals():
-    from pyrualean.hosts.common import RpentBackend
+    from codeaspolicy.hosts.common import RpentBackend
 
     class _Primitives:
         def recorded_frame_count(self) -> int:

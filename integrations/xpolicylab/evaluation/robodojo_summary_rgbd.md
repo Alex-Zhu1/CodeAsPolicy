@@ -1,9 +1,9 @@
-# PyRUA-Lean on RoboDojo: RGB-D observation, three eval seeds
+# CodeAsPolicy on RoboDojo: RGB-D observation, three eval seeds
 
 RoboDojo's own summary (`bash scripts/robodojo.sh summarize`) of the full protocol: 54 task configurations at
 their native episode counts, eval seeds 0, 1 and 2 (6,300 episodes), GPT-6 Astra, RoboDojo `main` `cb2a37d`.
 In these runs the evaluation client's depth image and camera matrices were enabled. The XPolicyLab policy in
-[`../PyRUA_Lean`](../PyRUA_Lean) reads the default RGB-only observation instead; its summary (eval seed 0) is
+[`../CodeAsPolicy`](../CodeAsPolicy) reads the default RGB-only observation instead; its summary (eval seed 0) is
 [`robodojo_summary_rgb.md`](robodojo_summary_rgb.md).
 
 Everything below this line is the script's output, unedited.
@@ -18,7 +18,7 @@ Progress † marks incomplete evaluation (126 = 42 tasks × 3 seeds). Cells show
 
 | Policy | Progress | Generalization SR (%) | Generalization Score | Precision SR (%) | Precision Score | Long-Horizon SR (%) | Long-Horizon Score | Memory SR (%) | Memory Score | Open SR (%) | Open Score | Avg SR (%) | Avg Score |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| PyRUA_Lean | 100% | 45.44 ±1.23 | 51.11 ±1.10 | 41.08 ±0.51 | 49.78 ±0.57 | 51.75 ±2.15 | 64.73 ±1.39 | 64.00 ±0.00 | 64.02 ±0.02 | 62.25 ±2.16 | 64.39 ±2.16 | 52.91 ±0.35 | 58.81 ±0.15 |
+| CodeAsPolicy | 100% | 45.44 ±1.23 | 51.11 ±1.10 | 41.08 ±0.51 | 49.78 ±0.57 | 51.75 ±2.15 | 64.73 ±1.39 | 64.00 ±0.00 | 64.02 ±0.02 | 62.25 ±2.16 | 64.39 ±2.16 | 52.91 ±0.35 | 58.81 ±0.15 |
 
 ## Generalization: Standard vs Random (25 episodes each)
 
@@ -26,13 +26,13 @@ Each cell shows `mean ±std` across seeds, averaged over the 12 Generalization t
 
 | Policy | Standard SR (%) | Standard Score | Random SR (%) | Random Score | Δ SR | Δ Score |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| PyRUA_Lean | 46.78 ±2.08 | 52.28 ±2.02 | 44.11 ±1.66 | 49.93 ±1.41 | -2.67 | -2.35 |
+| CodeAsPolicy | 46.78 ±2.08 | 52.28 ±2.02 | 44.11 ±1.66 | 49.93 ±1.41 | -2.67 | -2.35 |
 
 ### Per-task Standard vs Random
 
 Additional view only: each of the 12 Generalization tasks is listed as the 25-episode standard split and its `_random` sibling. Columns match the per-policy all-task tables. Existing merged 50-episode scores are unchanged.
 
-#### PyRUA_Lean
+#### CodeAsPolicy
 
 | Task | Seed 0 SR (%) | Seed 0 Score | Seed 1 SR (%) | Seed 1 Score | Seed 2 SR (%) | Seed 2 Score | Avg SR (%) | Avg Score |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -63,7 +63,7 @@ Additional view only: each of the 12 Generalization tasks is listed as the 25-ep
 | **Avg Standard** | 44.0 | 49.50 | 47.3 | 53.10 | 49.0 | 54.25 | 47 ±2 | 52.28 ±2.38 |
 | **Avg Random** | 43.7 | 49.92 | 46.3 | 51.67 | 42.3 | 48.22 | 44 ±2 | 49.93 ±1.72 |
 
-## PyRUA_Lean
+## CodeAsPolicy
 
 | Task | Seed 0 SR (%) | Seed 0 Score | Seed 1 SR (%) | Seed 1 Score | Seed 2 SR (%) | Seed 2 Score | Avg SR (%) | Avg Score |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |

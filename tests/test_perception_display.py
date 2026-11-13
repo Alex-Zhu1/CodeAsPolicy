@@ -6,8 +6,8 @@ from pathlib import Path
 
 import pytest
 
-from pyrualean import ToolError
-from pyrualean.robodojo_xpl_rgb import ObjectSight, RobodojoOfficialColourRobot
+from codeaspolicy import ToolError
+from codeaspolicy.robodojo_xpl_rgb import ObjectSight, RobodojoOfficialColourRobot
 from tests.test_perception_api import CapturedBackend
 
 

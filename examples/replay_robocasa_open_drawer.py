@@ -6,8 +6,8 @@ the drawer handle and then solved
 the task with a single rldx_skill call (26 chunks, 208 env steps, status
 "success").  This file only proves that the library drives the same
 primitives to the same outcome.  It is NOT a policy that generalises and
-must never be reported as a method result; use `pyrualean generate` /
-`pyrualean play` for real policies.
+must never be reported as a method result; use `codeaspolicy generate` /
+`codeaspolicy play` for real policies.
 """
 
 

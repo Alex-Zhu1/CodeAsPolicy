@@ -1,4 +1,4 @@
-# Copyright 2026 PyRUA-Lean Contributors.
+# Copyright 2026 CodeAsPolicy Contributors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,11 +17,11 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from pyrualean import monitor
-from pyrualean.arms import ArmToolkit
-from pyrualean.libero import LiberoRobot
-from pyrualean.robodojo import ArmState, ObjectPose, State, WorldPoint
-from pyrualean.supervision import MonitorConfig, SupervisionPause, VisualSupervisor
+from codeaspolicy import monitor
+from codeaspolicy.arms import ArmToolkit
+from codeaspolicy.libero import LiberoRobot
+from codeaspolicy.robodojo import ArmState, ObjectPose, State, WorldPoint
+from codeaspolicy.supervision import MonitorConfig, SupervisionPause, VisualSupervisor
 from tests.test_robodojo_trajectory import station
 
 
@@ -709,7 +709,7 @@ def test_proactive_constraints_reference_axis_requires_finite_nonzero_vector(axi
 
 
 def test_execute_motion_preserves_custom_constraint_reference_axis(tmp_path):
-    from pyrualean.hosts.robodojo_kinematics import rot_from_quat
+    from codeaspolicy.hosts.robodojo_kinematics import rot_from_quat
 
     env, robo, _ = station(tmp_path)
     obs = robo.observe()
@@ -729,7 +729,7 @@ def test_execute_motion_preserves_custom_constraint_reference_axis(tmp_path):
     (0.0, 0.0), (0.0, 90.0), (30.0, -45.0), (89.5, 35.0), (90.0, 0.0),
 ])
 def test_from_arm_pointing_axis_matches_robodojo_quaternion(pitch, yaw):
-    from pyrualean.hosts.robodojo_kinematics import orientation, quat_wxyz
+    from codeaspolicy.hosts.robodojo_kinematics import orientation, quat_wxyz
 
     rotation = orientation(pitch, yaw, 20.0)
     states = (
@@ -741,7 +741,7 @@ def test_from_arm_pointing_axis_matches_robodojo_quaternion(pitch, yaw):
 
 
 def test_from_arm_live_state_agrees_with_public_quaternion(tmp_path):
-    from pyrualean.hosts.robodojo_kinematics import rot_from_quat
+    from codeaspolicy.hosts.robodojo_kinematics import rot_from_quat
 
     _, robo, _ = station(tmp_path)
     state = robo.state()

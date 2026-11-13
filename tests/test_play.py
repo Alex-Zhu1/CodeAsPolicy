@@ -1,4 +1,4 @@
-"""Offline checks of the Codex event audit in ``pyrualean.play``."""
+"""Offline checks of the Codex event audit in ``codeaspolicy.play``."""
 
 from __future__ import annotations
 
@@ -6,9 +6,9 @@ import json
 from pathlib import Path
 from types import SimpleNamespace
 
-from pyrualean.generate import CODEX_CATALOG, codex_catalog_flags
-from pyrualean.hosts.common import RpentBackend
-from pyrualean.play import (
+from codeaspolicy.generate import CODEX_CATALOG, codex_catalog_flags
+from codeaspolicy.hosts.common import RpentBackend
+from codeaspolicy.play import (
     _agent_environment,
     _audit_events,
     _codex_argv,

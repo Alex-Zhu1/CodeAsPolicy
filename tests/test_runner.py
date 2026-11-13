@@ -6,7 +6,7 @@ import time
 
 import pytest
 
-from pyrualean import LiberoRobot, PolicyLoadError, load_policy, run_policy
+from codeaspolicy import LiberoRobot, PolicyLoadError, load_policy, run_policy
 
 
 def _write(tmp_path, name, body):

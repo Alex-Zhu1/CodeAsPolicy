@@ -38,13 +38,13 @@ Astra 根据任务、当前现场和能力说明选择目标、动作顺序、�
 
 ## 现有实现
 
-- `src/pyrualean/play.py`：`build_prompt()` 按执行契约、API、机器人知识、任务卡拼接初始上下文。
-- `src/pyrualean/prompt.py`：`api_reference()` 从实际类签名和 docstring 生成接口；`render_prompt()` 生成离线程序提示。
-- `src/pyrualean/arms.py`：`arm_contract()` 加入恢复语义和策略 helper 说明；`RECOVERY_NOTE` 要求检查返回值并逐次读取依赖反馈。
-- `src/pyrualean/arms.py`：`ArmToolkit._python()` 保存 cell 源码、保留 namespace、捕获暂停和错误，并返回现场反馈。
-- `src/pyrualean/arms.py`：`_observe_result()` 附 observation_id、state_version、动作 ledger 范围和图像来源信息。
-- `src/pyrualean/openai_runtime.py`：`run_openai_agent()` 处理直接模型循环，失败或暂停后跳过同批后续依赖工具请求。
-- `src/pyrualean/play.py`：`play_episode()` 保存实际 prompt 及 hash；外部 Codex、Claude 客户端各自管理对话循环。
+- `src/codeaspolicy/play.py`：`build_prompt()` 按执行契约、API、机器人知识、任务卡拼接初始上下文。
+- `src/codeaspolicy/prompt.py`：`api_reference()` 从实际类签名和 docstring 生成接口；`render_prompt()` 生成离线程序提示。
+- `src/codeaspolicy/arms.py`：`arm_contract()` 加入恢复语义和策略 helper 说明；`RECOVERY_NOTE` 要求检查返回值并逐次读取依赖反馈。
+- `src/codeaspolicy/arms.py`：`ArmToolkit._python()` 保存 cell 源码、保留 namespace、捕获暂停和错误，并返回现场反馈。
+- `src/codeaspolicy/arms.py`：`_observe_result()` 附 observation_id、state_version、动作 ledger 范围和图像来源信息。
+- `src/codeaspolicy/openai_runtime.py`：`run_openai_agent()` 处理直接模型循环，失败或暂停后跳过同批后续依赖工具请求。
+- `src/codeaspolicy/play.py`：`play_episode()` 保存实际 prompt 及 hash；外部 Codex、Claude 客户端各自管理对话循环。
 
 正常返回值如 `reached=False` 可以由 Python 自行处理；代码错误和监督暂停要求先读取现场再重规划。
 cell 中断不会回滚先前赋值；赋值右侧被中断时，目标变量甚至可能仍保存上一轮值。
@@ -53,7 +53,7 @@ cell 中断不会回滚先前赋值；赋值右侧被中断时，目标变量甚
 
 ### 任务卡完整记录与精简摘要
 
-保留现有分工：RoboDojo 提供任务和公开观测，PyRUA 确定性整理 `TaskCard`，Astra 根据它规划。
+保留现有分工：RoboDojo 提供任务和公开观测，CodeAsPolicy 确定性整理 `TaskCard`，Astra 根据它规划。
 `card.json` 保存原文、未舍入的机械臂初始测量、完整能力快照、字段来源、观测 ID 和时间域、
 图片来源及校验值；原生 host 另存观测文件的路径与校验值。没有来源 ID 时保留 unknown。
 记录索引 step 0、该次观测的 native steps、建卡时的剩余预算分别记录，避免混为同一时刻。

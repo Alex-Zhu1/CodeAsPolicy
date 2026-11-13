@@ -31,7 +31,7 @@ arm, with navigation, scripted arm motions and the frozen RLDX-1 VLA.
 ## Installation and Resources
 
 RPent at commit `886b3b2`, in its own environment with Python 3.10 (RLDX-1 requires it) and the same torch build as
-for LIBERO-PRO, with PyRUA-Lean in the same environment. RPent's `[robocasa]` extra follows three moving branches;
+for LIBERO-PRO, with CodeAsPolicy in the same environment. RPent's `[robocasa]` extra follows three moving branches;
 install `.[rlinf]` and those three sources at the commits the paper used instead, with the Target50 constraints
 (RPent's pyproject allows pre-releases):
 
@@ -41,7 +41,7 @@ uv pip install -e ".[rlinf]" \
     "rlinf-rldx @ git+https://github.com/RLinf/RLDX-1.git@ebcfd13df5177e4b3e574bdf5a3b427c7c4a1e8a" \
     "robosuite @ git+https://github.com/RLinf/robosuite.git@97cfbde4b68d8ec43dad20cf4747297866a6ca2e" \
     --constraint robots/robocasa/eval/target50-constraints.txt --prerelease=if-necessary-or-explicit
-uv pip install -e /path/to/PyRUA-Lean
+uv pip install -e /path/to/CodeAsPolicy
 robocasa-download-assets --assets-path /path/to/robocasa-assets --no-macros      # 23 GB
 ```
 
@@ -64,7 +64,7 @@ unset RLDX_RESET_SEED RLDX_ALLOW_RESET CUDA_VISIBLE_DEVICES
         "$(python -c 'import importlib.util as u, pathlib as p; print(p.Path(u.find_spec("robocasa").origin).parent / "models/fixtures/counter.py")')"
     ```
 
-    PyRUA-Lean also starts the env server with `PYTHONHASHSEED=0`.
+    CodeAsPolicy also starts the env server with `PYTHONHASHSEED=0`.
 
 ## VLA Configuration
 
@@ -86,15 +86,15 @@ hf download RLWRLD/RLDX-1-VLM --include '*.json' '*.txt' '*.jinja' '*.md' '*.png
 |---|---|
 | `--task` | A RoboCasa365 task name, e.g. `OpenDrawer`. |
 | `--suite` | The data split (default `target`, the Target50 evaluation setting). |
-| `--seed` | The scene seed: 1-10 for atomic tasks, 1-5 for composite ones. Always pass it: `pyrualean play` sends `0` when it is left out. |
+| `--seed` | The scene seed: 1-10 for atomic tasks, 1-5 for composite ones. Always pass it: `codeaspolicy play` sends `0` when it is left out. |
 
 ## Run a Task
 
 ```bash
 export RPENT_ROOT=/path/to/rpent
-pyrualean play --robot robocasa --arm cells --task OpenDrawer --suite target --seed 1 \
+codeaspolicy play --robot robocasa --arm cells --task OpenDrawer --suite target --seed 1 \
     --model gpt-6-astra --max-turns 40 --budget-s 7200 --out runs/robocasa-demo --cuda-device 0
-pyrualean summarize runs/robocasa-demo
+codeaspolicy summarize runs/robocasa-demo
 ```
 
 An episode boots private env and VLA servers (~3 GB + ~15-17 GB of GPU memory); `--vla-endpoint` attaches it
@@ -117,15 +117,15 @@ the instances both solved:
 | | Success (%) | LLM calls | Input tokens | Cost |
 |---|---|---|---|---|
 | Atomic (90 task instances), tool calling (RPent) | 78.9 | 10.4 | 261k | $0.62 |
-| Atomic, **PyRUA-Lean** | **86.7** | **5.6** | **171k** | **$0.54** |
+| Atomic, **CodeAsPolicy** | **86.7** | **5.6** | **171k** | **$0.54** |
 | Composite (160 task instances), tool calling (RPent) | 34.4 | 28.4 | 1.22M | $2.01 |
-| Composite, **PyRUA-Lean** | **39.4** | **14.9** | **603k** | **$1.25** |
+| Composite, **CodeAsPolicy** | **39.4** | **14.9** | **603k** | **$1.25** |
 
 ## What Runs Where
 
 - **Env server** (RPent) owns the RoboCasa kitchen environment and its EGL rendering.
 - **RLDX-1 server** (RPent) holds the VLA.
-- **PyRUA-Lean** boots them for the episode, builds RPent's toolkit and serves the agent's cells against `robo`.
+- **CodeAsPolicy** boots them for the episode, builds RPent's toolkit and serves the agent's cells against `robo`.
 - **Agent runtime** (Codex CLI, Claude Code or the `openai` loop) talks to the model.
 
 ## Primitives the Agent Can Call
@@ -149,6 +149,6 @@ Perception and state:
 - `state()`, `image(camera)`, `depth(camera)`, `world_map(camera)`, `show(camera)`, `camera_meta(camera)`,
   `success_criteria()`, `artifact(name)`, `done`.
 
-??? note "API reference: what the agent reads, generated from `pyrualean.robocasa` when these docs are built"
+??? note "API reference: what the agent reads, generated from `codeaspolicy.robocasa` when these docs are built"
 
     <!-- api-reference: robocasa -->

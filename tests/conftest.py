@@ -291,6 +291,6 @@ def backend() -> FakeLiberoBackend:
 
 @pytest.fixture
 def robo(backend):
-    from pyrualean import LiberoRobot
+    from codeaspolicy import LiberoRobot
 
     return LiberoRobot(backend)

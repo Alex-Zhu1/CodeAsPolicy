@@ -1,8 +1,8 @@
 [
   {
-    "path": "src/pyrualean/__init__.py",
+    "path": "src/codeaspolicy/__init__.py",
     "category": "code",
-    "moduleDoc": "PyRUA-Lean: a pyautogui-style robot library for code policies.\n\nA policy is an ordinary Python file that defines ``run(robo)``.  ``robo`` is a\ntyped library (``robo.move_to(...)``, ``robo.pi0_pick(...)``,\n``robo.segment(...)``) whose calls are executed by a real backend; the first\nbackend is RPent's LIBERO toolkit, so the very same primitives that RPent's\ntool-calling agent uses are available as plain Python functions.",
+    "moduleDoc": "CodeAsPolicy: a pyautogui-style robot library for code policies.\n\nA policy is an ordinary Python file that defines ``run(robo)``.  ``robo`` is a\ntyped library (``robo.move_to(...)``, ``robo.pi0_pick(...)``,\n``robo.segment(...)``) whose calls are executed by a real backend; the first\nbackend is RPent's LIBERO toolkit, so the very same primitives that RPent's\ntool-calling agent uses are available as plain Python functions.",
     "symbols": [],
     "imports": [
       "from ._backend import Backend, CallRecord, EpisodeFinished, Ledger, ToolError",
@@ -14,7 +14,7 @@
     ]
   },
   {
-    "path": "src/pyrualean/_backend.py",
+    "path": "src/codeaspolicy/_backend.py",
     "category": "code",
     "moduleDoc": "Backend contract, error types and the per-episode call ledger.\n\nA backend is whatever executes a primitive for real: RPent's ``Toolkit`` is\nthe reference implementation (``execute_tool`` / ``solved``).  The robot\nclasses in this package only ever talk to a backend through this small\ncontract, so the same policy code runs against a fake backend in tests and\nagainst a live simulator in an evaluation.",
     "symbols": [
@@ -272,9 +272,9 @@
     ]
   },
   {
-    "path": "src/pyrualean/_robot.py",
+    "path": "src/codeaspolicy/_robot.py",
     "category": "code",
-    "moduleDoc": "Robot-independent core of a PyRUA-Lean robot class.\n\nA robot class (``LiberoRobot``, ``RobocasaRobot``, ``RobotwinRobot``,\n``RobodojoRobot``) is the only object a policy sees.  Every public method maps\n1:1 onto one RPent tool of that robot and returns a frozen dataclass; this\nmodule holds what all of them share: the backend dispatch with the call ledger, the episode guard\n(``EpisodeFinished`` once the task predicate fired or the host stopped the\nepisode), image / world-map / artifact access and the ``show`` request used\nby the ``on-demand`` image policy.\n\nSubclasses set the class attributes below and implement\n:meth:`_state_from_envelope` (turn RPent's observation envelope into their\n``State`` dataclass) and :meth:`_summary_dict` (a small dict the tool\nfeedback shows after every turn).  Public methods are rendered into the model-facing\nAPI reference from their signatures and docstrings, so every attribute or\nmethod that is not meant for the policy must start with an underscore.",
+    "moduleDoc": "Robot-independent core of a CodeAsPolicy robot class.\n\nA robot class (``LiberoRobot``, ``RobocasaRobot``, ``RobotwinRobot``,\n``RobodojoRobot``) is the only object a policy sees.  Every public method maps\n1:1 onto one RPent tool of that robot and returns a frozen dataclass; this\nmodule holds what all of them share: the backend dispatch with the call ledger, the episode guard\n(``EpisodeFinished`` once the task predicate fired or the host stopped the\nepisode), image / world-map / artifact access and the ``show`` request used\nby the ``on-demand`` image policy.\n\nSubclasses set the class attributes below and implement\n:meth:`_state_from_envelope` (turn RPent's observation envelope into their\n``State`` dataclass) and :meth:`_summary_dict` (a small dict the tool\nfeedback shows after every turn).  Public methods are rendered into the model-facing\nAPI reference from their signatures and docstrings, so every attribute or\nmethod that is not meant for the policy must start with an underscore.",
     "symbols": [
       {
         "name": "effective_primitives",
@@ -434,9 +434,9 @@
     ]
   },
   {
-    "path": "src/pyrualean/libero.py",
+    "path": "src/codeaspolicy/libero.py",
     "category": "code",
-    "moduleDoc": "LIBERO robot API for code policies.\n\nEvery public method of :class:`LiberoRobot` maps 1:1 onto one RPent LIBERO\nprimitive (the same scripted OSC servos, the same frozen Pi0.5 VLA calls and\nthe same SAM3 / back-projection helpers that RPent's tool-calling agent uses).\nThe difference is the calling convention: a policy is an ordinary Python\nprogram that calls these methods and branches on their typed return values,\ninstead of a language model emitting one tool call per turn.\n\nThe docstrings in this module are the model-facing documentation: the prompt\nis generated from them (see :mod:`pyrualean.prompt`), so keep them accurate.",
+    "moduleDoc": "LIBERO robot API for code policies.\n\nEvery public method of :class:`LiberoRobot` maps 1:1 onto one RPent LIBERO\nprimitive (the same scripted OSC servos, the same frozen Pi0.5 VLA calls and\nthe same SAM3 / back-projection helpers that RPent's tool-calling agent uses).\nThe difference is the calling convention: a policy is an ordinary Python\nprogram that calls these methods and branches on their typed return values,\ninstead of a language model emitting one tool call per turn.\n\nThe docstrings in this module are the model-facing documentation: the prompt\nis generated from them (see :mod:`codeaspolicy.prompt`), so keep them accurate.",
     "symbols": [
       {
         "name": "_quat_to_matrix",
@@ -891,9 +891,9 @@
     ]
   },
   {
-    "path": "src/pyrualean/robocasa.py",
+    "path": "src/codeaspolicy/robocasa.py",
     "category": "code",
-    "moduleDoc": "RoboCasa365 robot API for code policies.\n\nEvery public method of :class:`RobocasaRobot` maps 1:1 onto one RPent RoboCasa\ntool (the same OSC arm servos and base controller, the same frozen RLDX-1 VLA\ncalls and the same world-map queries that RPent's tool-calling agent uses),\nwith RPent's argument names and defaults.  The difference is the calling\nconvention: a policy is an ordinary Python program that calls these methods\nand branches on their typed return values.\n\nThe docstrings in this module are the model-facing documentation: the prompt\nis generated from them (see :mod:`pyrualean.prompt`), so keep them accurate.",
+    "moduleDoc": "RoboCasa365 robot API for code policies.\n\nEvery public method of :class:`RobocasaRobot` maps 1:1 onto one RPent RoboCasa\ntool (the same OSC arm servos and base controller, the same frozen RLDX-1 VLA\ncalls and the same world-map queries that RPent's tool-calling agent uses),\nwith RPent's argument names and defaults.  The difference is the calling\nconvention: a policy is an ordinary Python program that calls these methods\nand branches on their typed return values.\n\nThe docstrings in this module are the model-facing documentation: the prompt\nis generated from them (see :mod:`codeaspolicy.prompt`), so keep them accurate.",
     "symbols": [
       {
         "name": "_floats",
@@ -1542,9 +1542,9 @@
     ]
   },
   {
-    "path": "src/pyrualean/robots.py",
+    "path": "src/codeaspolicy/robots.py",
     "category": "code",
-    "moduleDoc": "Registry of the robots PyRUA-Lean can drive.\n\nEach robot module (``pyrualean.libero``, ``pyrualean.robocasa``,\n``pyrualean.robotwin``, ``pyrualean.robodojo``) defines a module-level\n``ADAPTER`` describing the robot class, the host module that boots RPent's\nstack for it, the knowledge file and the words the contract uses for it.\n``get_adapter(name)`` imports the module lazily so a robot whose dependencies\nare missing does not break the others.",
+    "moduleDoc": "Registry of the robots CodeAsPolicy can drive.\n\nEach robot module (``codeaspolicy.libero``, ``codeaspolicy.robocasa``,\n``codeaspolicy.robotwin``, ``codeaspolicy.robodojo``) defines a module-level\n``ADAPTER`` describing the robot class, the host module that boots RPent's\nstack for it, the knowledge file and the words the contract uses for it.\n``get_adapter(name)`` imports the module lazily so a robot whose dependencies\nare missing does not break the others.",
     "symbols": [
       {
         "name": "get_adapter",
@@ -1555,7 +1555,7 @@
         ],
         "owner": null,
         "doc": "Return the adapter of robot ``name`` (one of :data:`ROBOTS`).",
-        "body": "if name not in ROBOTS:\n        raise ValueError(f\"unknown robot {name!r}; known: {ROBOTS}\")\nmodule = importlib.import_module(f\"pyrualean.{name}\")\nadapter = getattr(module, \"ADAPTER\", None)\nif not isinstance(adapter, RobotAdapter):\n        raise ImportError(f\"pyrualean.{name} defines no ADAPTER\")\nreturn adapter"
+        "body": "if name not in ROBOTS:\n        raise ValueError(f\"unknown robot {name!r}; known: {ROBOTS}\")\nmodule = importlib.import_module(f\"codeaspolicy.{name}\")\nadapter = getattr(module, \"ADAPTER\", None)\nif not isinstance(adapter, RobotAdapter):\n        raise ImportError(f\"codeaspolicy.{name} defines no ADAPTER\")\nreturn adapter"
       },
       {
         "name": "RobotAdapter",
@@ -1610,9 +1610,9 @@
     ]
   },
   {
-    "path": "src/pyrualean/robotwin.py",
+    "path": "src/codeaspolicy/robotwin.py",
     "category": "code",
-    "moduleDoc": "RoboTwin robot API for code policies.\n\nEvery public method of :class:`RobotwinRobot` maps 1:1 onto one RPent RoboTwin\ntool (the same cuRobo-planned arm motions, the same frozen LingBot-VLA calls\nand the same world-map queries that RPent's tool-calling agent uses), with\nRPent's argument names and defaults.  The difference is the calling\nconvention: a policy is an ordinary Python program that calls these methods\nand branches on their typed return values.\n\nThe docstrings in this module are the model-facing documentation: the prompt\nis generated from them (see :mod:`pyrualean.prompt`), so keep them accurate.",
+    "moduleDoc": "RoboTwin robot API for code policies.\n\nEvery public method of :class:`RobotwinRobot` maps 1:1 onto one RPent RoboTwin\ntool (the same cuRobo-planned arm motions, the same frozen LingBot-VLA calls\nand the same world-map queries that RPent's tool-calling agent uses), with\nRPent's argument names and defaults.  The difference is the calling\nconvention: a policy is an ordinary Python program that calls these methods\nand branches on their typed return values.\n\nThe docstrings in this module are the model-facing documentation: the prompt\nis generated from them (see :mod:`codeaspolicy.prompt`), so keep them accurate.",
     "symbols": [
       {
         "name": "_floats",

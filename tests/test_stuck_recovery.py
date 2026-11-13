@@ -4,9 +4,9 @@ import json
 
 import pytest
 
-from pyrualean.arms import ArmToolkit
-from pyrualean.stuck_recovery import StuckRecoveryConfig
-from pyrualean.supervision import MonitorConfig, VisualSupervisor
+from codeaspolicy.arms import ArmToolkit
+from codeaspolicy.stuck_recovery import StuckRecoveryConfig
+from codeaspolicy.supervision import MonitorConfig, VisualSupervisor
 
 SKILL = "Reassess causal prerequisites; defer later checks with a reactivation gate."
 
@@ -134,7 +134,7 @@ def test_empty_stuck_summary_does_not_dispatch(robo, tmp_path):
 def test_initial_prompt_contains_trigger_not_recovery_procedure():
     from types import SimpleNamespace
 
-    from pyrualean.play import build_prompt
+    from codeaspolicy.play import build_prompt
 
     prompt = build_prompt(
         "cells",

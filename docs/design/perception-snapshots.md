@@ -60,7 +60,7 @@ robo.require_current(target)
 复跑后 partial 摘要另有关键字段保护补丁，通过离线回放及当前代码 703 项全量回归；
 尚未重跑整轮任务，不能计入本次冻结版本表现。
 
-结果中的 `provenance` 使用 `pyrualean.perception.v1`：
+结果中的 `provenance` 使用 `codeaspolicy.perception.v1`：
 
 | 字段 | 含义 |
 | --- | --- |

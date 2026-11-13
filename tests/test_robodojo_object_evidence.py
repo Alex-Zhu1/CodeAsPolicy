@@ -6,11 +6,11 @@ from types import SimpleNamespace
 import numpy as np
 import pytest
 
-from pyrualean.hosts import robodojo_object_evidence as evidence
-from pyrualean.hosts import robodojo_tools as tools
-from pyrualean.hosts.robodojo_native import NativeBackend, NativeToolkit
-from pyrualean.object_evidence import assess_hold
-from pyrualean.robodojo_xpl_rgb import RobodojoOfficialColourRobot
+from codeaspolicy.hosts import robodojo_object_evidence as evidence
+from codeaspolicy.hosts import robodojo_tools as tools
+from codeaspolicy.hosts.robodojo_native import NativeBackend, NativeToolkit
+from codeaspolicy.object_evidence import assess_hold
+from codeaspolicy.robodojo_xpl_rgb import RobodojoOfficialColourRobot
 
 
 def packet(sequence=1):
@@ -25,7 +25,7 @@ def packet(sequence=1):
             intrinsic_matrix=np.array([[300., 0, 160], [0, 300, 160], [0, 0, 1]]),
             extrinsic_matrix=transform)
     return dict(state=state, image_state=copy.deepcopy(state), vision=vision,
-        instruction='Inspect the object', pyrualean_observation=dict(
+        instruction='Inspect the object', codeaspolicy_observation=dict(
             source_id=f'capture:{sequence}', native_steps=sequence-1,
             aligned=True, captured_at=sequence, source_freshness='captured'))
 
@@ -39,7 +39,7 @@ class Environment:
         return self.packet
 
     def get_status(self):
-        return dict(step=self.packet['pyrualean_observation']['native_steps'], step_limit=100)
+        return dict(step=self.packet['codeaspolicy_observation']['native_steps'], step_limit=100)
 
     def step(self, action):
         self.actions.append(action)
@@ -65,7 +65,7 @@ def pixels(obs, point=(0., 0., 1.2)):
 
 def advance(scene):
     env, toolkit, backend, robot = scene
-    env.packet = packet(env.packet['pyrualean_observation']['native_steps'] + 2)
+    env.packet = packet(env.packet['codeaspolicy_observation']['native_steps'] + 2)
     robot.snapshot(refresh=True)
 
 
@@ -215,7 +215,7 @@ def test_ambiguous_or_invalid_geometry_stays_unknown(kind, reason):
     {'tip': {'cam_head': [float('nan'), 4]}}, {'tip': {'missing': [3, 4]}},
     {'tip': {'cam_head': [999, 4]}}])
 def test_invalid_landmarks_reject_without_motion(scene, landmarks):
-    from pyrualean._backend import ToolError
+    from codeaspolicy._backend import ToolError
     env, toolkit, backend, robot = scene
     with pytest.raises((ToolError, ValueError)):
         robot.observe_object(robot.object_ref('item', 'red cube'), landmarks=landmarks)

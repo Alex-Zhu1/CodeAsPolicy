@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 
-from pyrualean.cli import main
+from codeaspolicy.cli import main
 
 
 def test_api_and_prompt_render_offline(capsys):
@@ -21,7 +21,7 @@ def test_summarize_reads_result_dirs(tmp_path, capsys):
     (directory / "result.json").write_text(
         json.dumps(
             {
-                "schema": "pyrualean-episode-v2",
+                "schema": "codeaspolicy-episode-v2",
                 "suite": "libero_10",
                 "task": 0,
                 "seed": 1,
@@ -40,19 +40,19 @@ def test_summarize_reads_result_dirs(tmp_path, capsys):
 
 
 def test_provider_overrides_shape():
-    from pyrualean.generate import provider_overrides
+    from codeaspolicy.generate import provider_overrides
 
     assert provider_overrides(None, None) == []
     overrides = provider_overrides("https://gw.example.com", "MY_KEY")
     joined = " ".join(overrides)
-    assert 'model_provider="pyrualean"' in joined
-    assert 'model_providers.pyrualean.base_url="https://gw.example.com/v1"' in joined
-    assert 'model_providers.pyrualean.wire_api="responses"' in joined
-    assert 'model_providers.pyrualean.env_key="MY_KEY"' in joined
+    assert 'model_provider="codeaspolicy"' in joined
+    assert 'model_providers.codeaspolicy.base_url="https://gw.example.com/v1"' in joined
+    assert 'model_providers.codeaspolicy.wire_api="responses"' in joined
+    assert 'model_providers.codeaspolicy.env_key="MY_KEY"' in joined
 
 
 def test_execution_options_reach_the_host(tmp_path, monkeypatch):
-    from pyrualean import cli
+    from codeaspolicy import cli
 
     captured = []
 

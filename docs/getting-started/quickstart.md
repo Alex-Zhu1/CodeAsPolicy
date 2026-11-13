@@ -1,6 +1,6 @@
 # Quick Start
 
-Install PyRUA-Lean, run one LIBERO-PRO episode and look at what the agent did. In this example GPT-6 Astra writes
+Install CodeAsPolicy, run one LIBERO-PRO episode and look at what the agent did. In this example GPT-6 Astra writes
 the code through the Codex CLI, Pi0.5 does the grasping and SAM3 finds the objects.
 
 For RoboDojo, follow [RoboDojo](../robots/robodojo.md) instead: it runs through XPolicyLab and needs none of the
@@ -29,17 +29,17 @@ export RPENT_ROOT=$PWD
 cd ..
 ```
 
-## 2. Install PyRUA-Lean
+## 2. Install CodeAsPolicy
 
 Into the same environment:
 
 ```bash
-git clone https://github.com/DAGroup-PKU/PyRUA-Lean.git
-uv pip install -e ./PyRUA-Lean
-pyrualean api             # the robot API the agent will see; no simulator needed
+git clone https://github.com/Alex-Zhu1/CodeAsPolicy.git
+uv pip install -e ./CodeAsPolicy
+codeaspolicy api             # the robot API the agent will see; no simulator needed
 ```
 
-PyRUA-Lean declares no dependencies of its own: what it imports (numpy, Pillow and, for `play`, `mcp` 1.x, uvicorn
+CodeAsPolicy declares no dependencies of its own: what it imports (numpy, Pillow and, for `play`, `mcp` 1.x, uvicorn
 and httpx) comes with RPent's environment.
 
 ## 3. Download Assets and Models
@@ -73,7 +73,7 @@ The Codex CLI speaks the OpenAI Responses API; a server that only serves chat co
 ## 5. Run Your First Episode
 
 Start a [Valen service](../visual-supervision.md#run) at
-`http://127.0.0.1:18001/predict`, or set `PYRUALEAN_VALEN_URL` to your service.
+`http://127.0.0.1:18001/predict`, or set `CODEASPOLICY_VALEN_URL` to your service.
 CLI cells runs now enable visual supervision and the two bundled skill cores by
 default; recovery text is supplied only after confirmed stuck. If running without
 Valen, add `--monitor-mode off --no-stuck-recovery` to the command below.
@@ -81,7 +81,7 @@ Valen, add `--monitor-mode off --no-stuck-recovery` to the command below.
 Task 7 of `libero_spatial_swap` at seed 2, with at most 40 code cells and two hours:
 
 ```bash
-pyrualean play --arm cells --suite libero_spatial_swap --task 7 --seed 2 \
+codeaspolicy play --arm cells --suite libero_spatial_swap --task 7 --seed 2 \
     --model gpt-6-astra --max-turns 40 --budget-s 7200 --out runs/demo --cuda-device 0
 ```
 
@@ -91,7 +91,7 @@ attached to running ones ([Running Episodes](../guide/running.md#vla-policies-gu
 ## 6. Look at the Result
 
 ```bash
-pyrualean summarize runs/demo
+codeaspolicy summarize runs/demo
 ```
 
 `runs/demo` keeps the episode video, every cell the agent ran and what it printed, the primitives it called, the

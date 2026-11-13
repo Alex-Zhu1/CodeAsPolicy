@@ -6,8 +6,8 @@ import textwrap
 
 import pytest
 
-from pyrualean.arms import ArmToolkit
-from pyrualean.interaction_trace import InteractionTrace
+from codeaspolicy.arms import ArmToolkit
+from codeaspolicy.interaction_trace import InteractionTrace
 
 
 def execute(toolkit, code):

@@ -1,6 +1,6 @@
 [
   {
-    "path": "src/pyrualean/coordination.py",
+    "path": "src/codeaspolicy/coordination.py",
     "category": "code",
     "moduleDoc": "Small code-policy API for synchronized motion; task strategy stays in Python.",
     "symbols": [
@@ -178,14 +178,14 @@
     ]
   },
   {
-    "path": "src/pyrualean/hosts/__init__.py",
+    "path": "src/codeaspolicy/hosts/__init__.py",
     "category": "code",
     "moduleDoc": "Backend hosts: boot a real simulator stack and expose it as a ``Backend``.",
     "symbols": [],
     "imports": []
   },
   {
-    "path": "src/pyrualean/hosts/robodojo_coordination.py",
+    "path": "src/codeaspolicy/hosts/robodojo_coordination.py",
     "category": "code",
     "moduleDoc": "Bounded dual-arm trajectories over RoboDojo's single native action clock.\n\nNo threads, no hidden object state, no silent sequential fallback. Geometry\nchecks cover sampled arm/table clearance only; inter-arm collision and force\ncontrol are deliberately not advertised.",
     "symbols": [
@@ -401,7 +401,7 @@
     ]
   },
   {
-    "path": "src/pyrualean/hosts/robodojo_kinematics.py",
+    "path": "src/codeaspolicy/hosts/robodojo_kinematics.py",
     "category": "code",
     "moduleDoc": "Kinematics of RoboDojo's two ARX-X5 arms, computed in the host: full pose, no RPC.\n\nRPent's RoboDojo environment exposes one IK call, ``solve_ik_position``: a target position, a\nfew candidate orientations (the current one, the starting one, 25 degree tilts of the current\none about world x and y), the one needing the least joint motion.  Nothing can ask for an\norientation, and the tilts accumulate: an arm sent away and back to its starting position by\n``move_to`` came back rotated by 47 to 52 degrees.  The simulator's own full-pose action path\n(``<arm>_ee_pose``) swings the arm when its IK diverges.\n\nSo the host solves IK itself.  The chain is the benchmark's URDF (``Assets/Robots/x5/X5A.urdf``,\njoints ``joint1`` .. ``joint6``, ending at ``link6``), and each arm's base pose was fitted to\n113 (joint angles, reported end-effector pose) pairs recorded in four episodes: the\nreported ``<arm>_ee_pose`` is exactly the pose of ``link6`` in the world (0.00 mm and 0.000\ndegrees of residual), with the bases on the table edge at x = -0.30 / +0.30, y = -0.45,\nz = 0.765, turned 90 degrees about z.  The solution is commanded as joint angles, the action\npath RPent's ``move_to`` uses for its own IK solutions.\n\nFrames.  ``link6``'s x axis is the gripper's pointing direction (wrist to fingertips) and the\ntwo fingers close along its y axis.  At the start both grippers point away from the robot\n(+y in the world) with the fingers side by side (closing along world x).  :data:`TCP_OFFSET`\nplaces the grasp point, between the fingertips, on the pointing axis.\n\nOrientation for people: ``pitch`` is how far the pointing direction is below the horizontal\n(0 level, 90 straight down), ``yaw`` its heading on the table (0 away from the robot, +90 to\nthe robot's left, i.e. world -x), ``roll`` the turn of the fingers about the pointing direction\n(0 as at the start).  The rotation is ``Rz(90 + yaw) @ Ry(pitch) @ Rx(roll)``; pointing straight\ndown, ``yaw`` and ``roll`` both turn about the vertical, and :func:`angles` reports roll 0.",
     "symbols": [
@@ -669,9 +669,9 @@
     ]
   },
   {
-    "path": "src/pyrualean/hosts/robodojo_native.py",
+    "path": "src/codeaspolicy/hosts/robodojo_native.py",
     "category": "code",
-    "moduleDoc": "A RoboDojo toolkit that needs nothing but an environment.\n\nRPent's ``RoboDojoToolkit`` wraps RPent's simulator bridge and records RPent's artifacts.  Under\nRoboDojo's own evaluation client there is no RPent: there is an observation (three colour\nimages and the robot's state, with a depth image and the cameras' matrices when the client's\nconfiguration switches them on) and an action that takes joint targets.\n:class:`NativeToolkit` is what the robot class needs on top of that and no more: the tools of\n:mod:`.robodojo_tools` (through the depth image where the observation has one, from colour\nalone where it has not), ``segment``, the recorded steps (``view_env_state``, the images and\nthe cameras' calibration of each step) and the envelope RPent's toolkit wraps a\nstate-changing tool's result in, which :func:`pyrualean._backend.unwrap` reads.\n\n``env`` is anything with ``get_obs() -> dict`` (``vision`` / ``state`` / ``instruction``),\n``step(action) -> (obs, reward, done, info)`` with ``info[\"status\"]`` holding ``step`` and\n``step_limit``, and ``get_status()``.  ``sam3_client`` segments an image by words or by a pixel\n(RPent's ``Sam3Client`` interface).",
+    "moduleDoc": "A RoboDojo toolkit that needs nothing but an environment.\n\nRPent's ``RoboDojoToolkit`` wraps RPent's simulator bridge and records RPent's artifacts.  Under\nRoboDojo's own evaluation client there is no RPent: there is an observation (three colour\nimages and the robot's state, with a depth image and the cameras' matrices when the client's\nconfiguration switches them on) and an action that takes joint targets.\n:class:`NativeToolkit` is what the robot class needs on top of that and no more: the tools of\n:mod:`.robodojo_tools` (through the depth image where the observation has one, from colour\nalone where it has not), ``segment``, the recorded steps (``view_env_state``, the images and\nthe cameras' calibration of each step) and the envelope RPent's toolkit wraps a\nstate-changing tool's result in, which :func:`codeaspolicy._backend.unwrap` reads.\n\n``env`` is anything with ``get_obs() -> dict`` (``vision`` / ``state`` / ``instruction``),\n``step(action) -> (obs, reward, done, info)`` with ``info[\"status\"]`` holding ``step`` and\n``step_limit``, and ``get_status()``.  ``sam3_client`` segments an image by words or by a pixel\n(RPent's ``Sam3Client`` interface).",
     "symbols": [
       {
         "name": "_png",
@@ -912,7 +912,7 @@
           318
         ],
         "owner": null,
-        "doc": "A :class:`NativeToolkit` as a :class:`pyrualean.Backend`.",
+        "doc": "A :class:`NativeToolkit` as a :class:`codeaspolicy.Backend`.",
         "body": ""
       },
       {
@@ -1041,7 +1041,7 @@
     ]
   },
   {
-    "path": "src/pyrualean/hosts/robodojo_sight.py",
+    "path": "src/codeaspolicy/hosts/robodojo_sight.py",
     "category": "code",
     "moduleDoc": "An object's 3D extent from its masks in colour cameras alone: no depth image.\n\nRoboDojo's evaluation client, as configured, hands a policy three colour images and the\nrobot's state: depth and camera matrices are switched off in its config.  The cameras' poses\nare nevertheless known.  The head\ncamera never moves, and each wrist camera is bolted to its arm's end-effector link, whose pose\nis part of the state (:func:`head_view`, :func:`wrist_view`; the numbers were read off the\nsimulator once).  So every pixel is a known ray, and an object that stands on a known plane\n(the table) can be measured from where the rays of its mask go:\n\n*   A mask in ONE camera says where the object's shadow falls on the table as seen from that\n    camera: the object fills some of the space between the camera and that shadow.  How tall it\n    is cannot be read from it: a low deep thing and a tall shallow one cast the same shadow.\n*   For a height ``h`` there are two readings of one mask.  An upright ``prism``: the table cells\n    that are in the shadow and whose column up to ``h`` stays in the mask; for a box or a can\n    of that height these cells are its footprint, exactly.  Something that ``hangs`` from that\n    height: every cell whose point at ``h`` is in the mask, with as much below it as the mask\n    allows, standing on the table or not; that is a bowl from its rim down, or anything wider\n    above than below.\n*   A SECOND camera that sees the object from elsewhere settles the height: the solid a reading\n    describes is projected into it and compared with the object's mask there.  The reading and\n    height that match best are taken (:func:`measure`); the hanging one only where it matches\n    clearly better, since whatever stands on its own footprint is a prism.  With only one mask\n    the height is the tallest prism that still accounts for the whole mask, which is right for\n    boxes and cans and a guess for a bowl.\n\n:func:`measure` answers with the world point each pixel of the mask shows on that solid: what a\ndepth image would have given for an object of that shape.\n\nA wrist camera always sees its own two fingers, and sometimes the other arm.  Those pixels\n(:func:`robot_pixels`) are ``unknown`` in that view: what a reading puts behind them counts\nneither for nor against it, and a mask that lies on them is the robot's, not the object's.",
     "symbols": [
@@ -1509,7 +1509,7 @@
     ]
   },
   {
-    "path": "src/pyrualean/hosts/robodojo_tools.py",
+    "path": "src/codeaspolicy/hosts/robodojo_tools.py",
     "category": "code",
     "moduleDoc": "RoboDojo tools of this library's own, registered on RPent's toolkit at boot.\n\nRPent's RoboDojo toolset moves an arm only by position (``move_to``) and grips one native\naction at a time (``set_gripper``); its perception returns one mask centroid and one surface\npoint.  The tools here are what a program needs on top of that, computed in the host from the\nsame observations and commanded through the same action path:\n\n``move_pose``    the grasp point to a position AND an orientation, along a straight line,\n                 with the host's own IK (:mod:`.robodojo_kinematics`);\n``grip``         a full gripper stroke, repeated until the fingers stop, with what they hold;\n``locate``       an object's 3D extent, heading and top from its mask and the depth image;\n``home``         the joints the episode started with (:func:`home`, kept from before).\n\nEvery tool is registered as a stateful (not read-only) tool, so RPent's toolkit records a step\nafter it like after its own motions.  Each native action is one ``env.step`` and counts against\nthe episode's budget; a tool stops at the step limit.",
     "symbols": [
@@ -1969,9 +1969,9 @@
     ]
   },
   {
-    "path": "src/pyrualean/hosts/xpolicylab_bridge.py",
+    "path": "src/codeaspolicy/hosts/xpolicylab_bridge.py",
     "category": "code",
-    "moduleDoc": "Between XPolicyLab's two calls and an environment a program steps.\n\nXPolicyLab's evaluation client owns the simulator and asks a policy for actions: it sends an\nobservation (``update_obs``) and asks what to do (``get_action``).  A PyRUA-Lean episode is the\nother way round: a program calls a tool, the tool steps the environment and reads what came\nof it.  :class:`Bridge` turns one into the other.  The policy server answers ``get_action``\nwith the next native action a tool has asked for; the tool's ``step`` returns when the client\nhas taken it and sent the observation that followed.\n\nA model thinks for minutes between two actions, far longer than the client waits for one\nanswer, so ``get_action`` never holds the client longer than ``poll_s``: when no tool has\nstepped by then it answers :data:`WAIT`, and the adapter's ``deploy.py`` asks again.  An empty\nanswer means the program has finished.  ``deploy.py`` adds the episode's step count and limit\nto each observation (``additional_info[\"pyrualean\"]``) and reports the benchmark's verdict\nwhen the episode is over (the protocol's ``trial_end``, which the server hands to\n``on_trial_end``).\n\nAn older RoboDojo client's pictures run one observation behind its state (fixed upstream\nin 6e3190f).  ``deploy.py`` says which client it is, and the bridge adds to each observation\nthe state its pictures show (``image_state``: the previous observation's for such a client),\nwhich is what the tools take a wrist camera's pose from; where the client sends the cameras'\nmatrices, a late picture gets the matrix of the observation before as well.\n\n:class:`PolicyModel` is the object XPolicyLab's policy server serves (its ``Model``);\n:func:`serve` runs that server in this process.",
+    "moduleDoc": "Between XPolicyLab's two calls and an environment a program steps.\n\nXPolicyLab's evaluation client owns the simulator and asks a policy for actions: it sends an\nobservation (``update_obs``) and asks what to do (``get_action``).  A CodeAsPolicy episode is the\nother way round: a program calls a tool, the tool steps the environment and reads what came\nof it.  :class:`Bridge` turns one into the other.  The policy server answers ``get_action``\nwith the next native action a tool has asked for; the tool's ``step`` returns when the client\nhas taken it and sent the observation that followed.\n\nA model thinks for minutes between two actions, far longer than the client waits for one\nanswer, so ``get_action`` never holds the client longer than ``poll_s``: when no tool has\nstepped by then it answers :data:`WAIT`, and the adapter's ``deploy.py`` asks again.  An empty\nanswer means the program has finished.  ``deploy.py`` adds the episode's step count and limit\nto each observation (``additional_info[\"codeaspolicy\"]``) and reports the benchmark's verdict\nwhen the episode is over (the protocol's ``trial_end``, which the server hands to\n``on_trial_end``).\n\nAn older RoboDojo client's pictures run one observation behind its state (fixed upstream\nin 6e3190f).  ``deploy.py`` says which client it is, and the bridge adds to each observation\nthe state its pictures show (``image_state``: the previous observation's for such a client),\nwhich is what the tools take a wrist camera's pose from; where the client sends the cameras'\nmatrices, a late picture gets the matrix of the observation before as well.\n\n:class:`PolicyModel` is the object XPolicyLab's policy server serves (its ``Model``);\n:func:`serve` runs that server in this process.",
     "symbols": [
       {
         "name": "serve",
@@ -2234,7 +2234,7 @@
           277
         ],
         "owner": null,
-        "doc": "XPolicyLab's ``Model`` for a PyRUA-Lean episode: every call goes to a :class:`Bridge`.",
+        "doc": "XPolicyLab's ``Model`` for a CodeAsPolicy episode: every call goes to a :class:`Bridge`.",
         "body": ""
       },
       {
@@ -2358,9 +2358,9 @@
     ]
   },
   {
-    "path": "src/pyrualean/hosts/xpolicylab_robodojo.py",
+    "path": "src/codeaspolicy/hosts/xpolicylab_robodojo.py",
     "category": "code",
-    "moduleDoc": "RoboDojo through its own evaluation client and XPolicyLab.\n\nThe host of ``--robot robodojo_xpl``.  RoboDojo's evaluation runs a policy as two processes\nthat talk XPolicyLab's websocket protocol: the evaluation client owns the simulator\n(``src/eval_client/main.py``), builds the observation (three colour images and the robot's\nstate; a depth image and the camera matrices where its config switches them on, which this\nhost does for the client it starts) and counts the task's own action budget; a policy server\nanswers ``update_obs`` / ``get_action``.  This host is the policy server.  :func:`boot`\n\n*   builds the directory the client runs from (:mod:`.robodojo_client_root`): RoboDojo's\n    code and configuration copied, XPolicyLab's code and the adapter\n    (``integrations/xpolicylab/PyRUA_Lean``) beside them, ``Assets`` linked;\n*   serves a :class:`.xpolicylab_bridge.Bridge` with XPolicyLab's policy server, in a thread;\n*   starts the evaluation client on one task and one layout (``scripts/eval_policy.sh``, the\n    script RoboDojo's own CLI ends in), which connects to that server;\n*   and returns a :class:`.robodojo_native.NativeToolkit` over the bridge once the first\n    observation has arrived.\n\nWhat the client decides stays the client's: when the task is solved it ends the episode at\nonce, and when the program has finished it judges the scene as it stands\n(``backend.conclude()``).  ``Cell.seed`` is the layout; ``eval_seed`` (0, 1 or 2) picks which\nof RoboDojo's three layout sets it is taken from.  The one layout is picked the way\nXPolicyLab's ``scripts/run_robodojo_layout_range.sh`` picks layouts: a resume manifest that\nleaves every other one out.\n\nNeeds: a RoboDojo checkout with its XPolicyLab submodule (``--source-root`` /\n``ROBODOJO_SOURCE_ROOT``; ``Assets`` in it, or ``ROBODOJO_ASSETS_ROOT``), ``msgpack-numpy``\nfor both sides and ``websockets >= 13`` for the server.  ``ROBODOJO_XPL_SITE`` may name a\ndirectory with ``common/`` (what both sides lack) and ``server/`` (what only the server may\nsee): the simulator's environment keeps the websockets it was built with.  Without a\ncheckout the tree ``rlinf-robodojo-runtime`` ships is used (an older client), with the\nXPolicyLab checkout ``--xpolicylab-root`` / ``ROBODOJO_XPOLICYLAB_ROOT`` names.",
+    "moduleDoc": "RoboDojo through its own evaluation client and XPolicyLab.\n\nThe host of ``--robot robodojo_xpl``.  RoboDojo's evaluation runs a policy as two processes\nthat talk XPolicyLab's websocket protocol: the evaluation client owns the simulator\n(``src/eval_client/main.py``), builds the observation (three colour images and the robot's\nstate; a depth image and the camera matrices where its config switches them on, which this\nhost does for the client it starts) and counts the task's own action budget; a policy server\nanswers ``update_obs`` / ``get_action``.  This host is the policy server.  :func:`boot`\n\n*   builds the directory the client runs from (:mod:`.robodojo_client_root`): RoboDojo's\n    code and configuration copied, XPolicyLab's code and the adapter\n    (``integrations/xpolicylab/CodeAsPolicy``) beside them, ``Assets`` linked;\n*   serves a :class:`.xpolicylab_bridge.Bridge` with XPolicyLab's policy server, in a thread;\n*   starts the evaluation client on one task and one layout (``scripts/eval_policy.sh``, the\n    script RoboDojo's own CLI ends in), which connects to that server;\n*   and returns a :class:`.robodojo_native.NativeToolkit` over the bridge once the first\n    observation has arrived.\n\nWhat the client decides stays the client's: when the task is solved it ends the episode at\nonce, and when the program has finished it judges the scene as it stands\n(``backend.conclude()``).  ``Cell.seed`` is the layout; ``eval_seed`` (0, 1 or 2) picks which\nof RoboDojo's three layout sets it is taken from.  The one layout is picked the way\nXPolicyLab's ``scripts/run_robodojo_layout_range.sh`` picks layouts: a resume manifest that\nleaves every other one out.\n\nNeeds: a RoboDojo checkout with its XPolicyLab submodule (``--source-root`` /\n``ROBODOJO_SOURCE_ROOT``; ``Assets`` in it, or ``ROBODOJO_ASSETS_ROOT``), ``msgpack-numpy``\nfor both sides and ``websockets >= 13`` for the server.  ``ROBODOJO_XPL_SITE`` may name a\ndirectory with ``common/`` (what both sides lack) and ``server/`` (what only the server may\nsee): the simulator's environment keeps the websockets it was built with.  Without a\ncheckout the tree ``rlinf-robodojo-runtime`` ships is used (an older client), with the\nXPolicyLab checkout ``--xpolicylab-root`` / ``ROBODOJO_XPOLICYLAB_ROOT`` names.",
     "symbols": [
       {
         "name": "add_boot_args",
@@ -2414,7 +2414,7 @@
           143
         ],
         "owner": null,
-        "doc": "This library's XPolicyLab adapter (``policy/PyRUA_Lean`` of a submission).",
+        "doc": "This library's XPolicyLab adapter (``policy/CodeAsPolicy`` of a submission).",
         "body": "here = Path(__file__).resolve()\nfor parent in here.parents:\n        if (parent / ADAPTER_DIR / \"deploy.py\").is_file():\n            return parent / ADAPTER_DIR\nraise FileNotFoundError(f\"{ADAPTER_DIR} not found above {here}\")"
       },
       {
@@ -2622,7 +2622,7 @@
     ]
   },
   {
-    "path": "src/pyrualean/hosts/xpolicylab_robodojo_rgb.py",
+    "path": "src/codeaspolicy/hosts/xpolicylab_robodojo_rgb.py",
     "category": "code",
     "moduleDoc": "RoboDojo's evaluation client as it is configured: colour images and the robot's state.\n\nThe host of ``--robot robodojo_xpl_rgb``: everything :mod:`.xpolicylab_robodojo` does, with\nthe client's configuration left alone and nothing read that it does not send by default (no\ndepth image, no camera matrices).",
     "symbols": [
@@ -2658,9 +2658,9 @@
     ]
   },
   {
-    "path": "src/pyrualean/robodojo.py",
+    "path": "src/codeaspolicy/robodojo.py",
     "category": "code",
-    "moduleDoc": "RoboDojo robot API for code policies.\n\nPerception (``segment``, ``back_project``) and the frozen Pi0.5 policy\n(``pi0_pick``) are RPent's RoboDojo tools (``robots/robodojo/tools.py``) with\nRPent's argument names and defaults.  Motion and grasping are this library's\nown (``hosts/robodojo_tools.py``, registered on RPent's toolkit at boot, so they\nare executed and recorded like RPent's tools): RPent's toolset moves an arm by\nposition only and its IK lets the wrist drift, which leaves a program unable to\norient the fingers for a grasp or to bring an arm back to its starting pose,\nand RoboDojo counts 45 of its 54 tasks as solved only with both arms back.\n``move_to`` solves a full-pose IK in the host (``hosts/robodojo_kinematics.py``,\nthe benchmark's URDF fitted to the reported poses exactly) and moves the grasp\npoint along a straight line; ``set_gripper`` (a full stroke that reports what\nit holds), ``locate`` (an object's 3D extent from its mask and the depth image)\nand ``home`` complete the set.  Only what a program cannot compose from the\nothers is a primitive: a button press is a ``move_to`` past the surface, a\ntwist is a ``move_to`` with another ``roll``.  The calling convention is\nthe library's: a policy is an ordinary Python program that calls these methods\nand branches on their typed return values.\n\nRoboDojo is the one robot whose success flag RPent keeps from its planner:\nofficial success is read by the runner after the planner has finished, and no\ntool result carries it.  This class keeps that regime, so the code arm sees\nwhat the tool-calling arm sees: it has no ``done`` (``ABSENT_MEMBERS``; the\nattribute raises rather than answering a constant False that a\n``while not robo.done`` loop would spin on), its ``State`` has no\n``terminated`` and no result has a success-of-the-task field.  The host reads\nthe verdict from the backend when the episode is over.\n\nThe docstrings in this module are the model-facing documentation: the prompt\nis generated from them (see :mod:`pyrualean.prompt`), so keep them accurate.",
+    "moduleDoc": "RoboDojo robot API for code policies.\n\nPerception (``segment``, ``back_project``) and the frozen Pi0.5 policy\n(``pi0_pick``) are RPent's RoboDojo tools (``robots/robodojo/tools.py``) with\nRPent's argument names and defaults.  Motion and grasping are this library's\nown (``hosts/robodojo_tools.py``, registered on RPent's toolkit at boot, so they\nare executed and recorded like RPent's tools): RPent's toolset moves an arm by\nposition only and its IK lets the wrist drift, which leaves a program unable to\norient the fingers for a grasp or to bring an arm back to its starting pose,\nand RoboDojo counts 45 of its 54 tasks as solved only with both arms back.\n``move_to`` solves a full-pose IK in the host (``hosts/robodojo_kinematics.py``,\nthe benchmark's URDF fitted to the reported poses exactly) and moves the grasp\npoint along a straight line; ``set_gripper`` (a full stroke that reports what\nit holds), ``locate`` (an object's 3D extent from its mask and the depth image)\nand ``home`` complete the set.  Only what a program cannot compose from the\nothers is a primitive: a button press is a ``move_to`` past the surface, a\ntwist is a ``move_to`` with another ``roll``.  The calling convention is\nthe library's: a policy is an ordinary Python program that calls these methods\nand branches on their typed return values.\n\nRoboDojo is the one robot whose success flag RPent keeps from its planner:\nofficial success is read by the runner after the planner has finished, and no\ntool result carries it.  This class keeps that regime, so the code arm sees\nwhat the tool-calling arm sees: it has no ``done`` (``ABSENT_MEMBERS``; the\nattribute raises rather than answering a constant False that a\n``while not robo.done`` loop would spin on), its ``State`` has no\n``terminated`` and no result has a success-of-the-task field.  The host reads\nthe verdict from the backend when the episode is over.\n\nThe docstrings in this module are the model-facing documentation: the prompt\nis generated from them (see :mod:`codeaspolicy.prompt`), so keep them accurate.",
     "symbols": [
       {
         "name": "_floats",
@@ -3148,9 +3148,9 @@
     ]
   },
   {
-    "path": "src/pyrualean/robodojo_xpl.py",
+    "path": "src/codeaspolicy/robodojo_xpl.py",
     "category": "code",
-    "moduleDoc": "The RoboDojo robot under RoboDojo's own evaluation client, through XPolicyLab.\n\nThe same robot as ``pyrualean.robodojo`` (the same API, the same tools, the same knowledge\nfile), served to RoboDojo's evaluation client as an XPolicyLab policy instead of being run on\nRPent's simulator bridge: the client owns the simulator and gives the verdict\n(:mod:`pyrualean.hosts.xpolicylab_robodojo`).\n\nIts perception reads what ``pyrualean.robodojo`` reads: a depth image and the camera matrices.\nRoboDojo's simulator emits both, its released data is RGB-D, and the client's configuration\nshipped with them on; they have been off by default since RoboDojo PR 2.  The host switches\nthem on in the configuration of the client it starts.  Under a client somebody else starts\nthey have to be on there (``observation.vision.depth`` or ``approximate_depth``,\n``intrinsic_matrix``, ``extrinsic_matrix`` in ``env_cfg/<config>.yml`` and the\n``distance_to_image_plane`` capture in its camera file); where they are not,\n``pyrualean.robodojo_xpl_rgb`` is the robot that needs none of it.\n\nThere is no VLA in this host; capability filtering selects ``no-vla`` automatically.",
+    "moduleDoc": "The RoboDojo robot under RoboDojo's own evaluation client, through XPolicyLab.\n\nThe same robot as ``codeaspolicy.robodojo`` (the same API, the same tools, the same knowledge\nfile), served to RoboDojo's evaluation client as an XPolicyLab policy instead of being run on\nRPent's simulator bridge: the client owns the simulator and gives the verdict\n(:mod:`codeaspolicy.hosts.xpolicylab_robodojo`).\n\nIts perception reads what ``codeaspolicy.robodojo`` reads: a depth image and the camera matrices.\nRoboDojo's simulator emits both, its released data is RGB-D, and the client's configuration\nshipped with them on; they have been off by default since RoboDojo PR 2.  The host switches\nthem on in the configuration of the client it starts.  Under a client somebody else starts\nthey have to be on there (``observation.vision.depth`` or ``approximate_depth``,\n``intrinsic_matrix``, ``extrinsic_matrix`` in ``env_cfg/<config>.yml`` and the\n``distance_to_image_plane`` capture in its camera file); where they are not,\n``codeaspolicy.robodojo_xpl_rgb`` is the robot that needs none of it.\n\nThere is no VLA in this host; capability filtering selects ``no-vla`` automatically.",
     "symbols": [
       {
         "name": "RobodojoOfficialRobot",
@@ -3173,9 +3173,9 @@
     ]
   },
   {
-    "path": "src/pyrualean/robodojo_xpl_rgb.py",
+    "path": "src/codeaspolicy/robodojo_xpl_rgb.py",
     "category": "code",
-    "moduleDoc": "RoboDojo under its own evaluation client as that client is configured: no depth image.\n\n``pyrualean.robodojo_xpl`` is the RoboDojo robot under RoboDojo's own evaluation client with\nthe depth image and the camera matrices its simulator can give.  Those are switched off in\nthe client's configuration (``env_cfg/arx_x5.yml``: ``approximate_depth``, ``depth``,\n``intrinsic_matrix``, ``extrinsic_matrix``; RoboDojo PR 2), a policy cannot switch them on\nfrom its side, and no adapter on the leaderboard reads them.  The robot here is the same\nrobot with perception that needs no more than that default: ``locate`` measures an object\nfrom its masks in the cameras that see it (:mod:`pyrualean.hosts.robodojo_sight`),\n``back_project`` answers for the object under a pixel, ``camera_meta`` is worked out from the\nrobot's state.  Motion and the gripper are unchanged.\n\nThe host is :mod:`pyrualean.hosts.xpolicylab_robodojo_rgb`.  There is no VLA in that host:\ncapability filtering selects ``no-vla`` automatically.",
+    "moduleDoc": "RoboDojo under its own evaluation client as that client is configured: no depth image.\n\n``codeaspolicy.robodojo_xpl`` is the RoboDojo robot under RoboDojo's own evaluation client with\nthe depth image and the camera matrices its simulator can give.  Those are switched off in\nthe client's configuration (``env_cfg/arx_x5.yml``: ``approximate_depth``, ``depth``,\n``intrinsic_matrix``, ``extrinsic_matrix``; RoboDojo PR 2), a policy cannot switch them on\nfrom its side, and no adapter on the leaderboard reads them.  The robot here is the same\nrobot with perception that needs no more than that default: ``locate`` measures an object\nfrom its masks in the cameras that see it (:mod:`codeaspolicy.hosts.robodojo_sight`),\n``back_project`` answers for the object under a pixel, ``camera_meta`` is worked out from the\nrobot's state.  Motion and the gripper are unchanged.\n\nThe host is :mod:`codeaspolicy.hosts.xpolicylab_robodojo_rgb`.  There is no VLA in that host:\ncapability filtering selects ``no-vla`` automatically.",
     "symbols": [
       {
         "name": "ObjectSight",

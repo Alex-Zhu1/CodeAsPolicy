@@ -2,7 +2,7 @@
 
 import pytest
 
-from pyrualean.evidence import EvidenceLedger
+from codeaspolicy.evidence import EvidenceLedger
 
 
 @pytest.mark.parametrize("requires,invalidates", [

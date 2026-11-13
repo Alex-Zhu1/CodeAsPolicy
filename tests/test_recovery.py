@@ -6,7 +6,7 @@ import json
 
 import pytest
 
-from pyrualean.arms import MAX_TEXT_CHARS, ArmToolkit
+from codeaspolicy.arms import MAX_TEXT_CHARS, ArmToolkit
 
 MOVE = "robo.move_to([0.05, -0.10, 0.6])"
 
@@ -215,7 +215,7 @@ def test_long_output_keeps_parseable_failure_and_recovery(robo, tmp_path):
 
 def test_mcp_marks_execution_failures_but_not_normal_completion(robo, tmp_path):
     pytest.importorskip("mcp")
-    from pyrualean.mcp_server import _result_to_mcp
+    from codeaspolicy.mcp_server import _result_to_mcp
 
     kit = ArmToolkit(robo, arm="cells", workspace=tmp_path)
     failed = kit.execute_tool("python", {"code": "1 / 0"})

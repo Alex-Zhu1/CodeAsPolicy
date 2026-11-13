@@ -6,7 +6,7 @@ Progress † marks incomplete evaluation (126 = 42 tasks × 3 seeds). Cells show
 
 | Policy | Progress | Generalization SR (%) | Generalization Score | Precision SR (%) | Precision Score | Long-Horizon SR (%) | Long-Horizon Score | Memory SR (%) | Memory Score | Open SR (%) | Open Score | Avg SR (%) | Avg Score |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| PyRUA_Lean | 33.3% † (42/126) | 45.83 ±0.00 | 50.65 ±0.00 | 37.25 ±0.00 | 47.02 ±0.00 | 48.00 ±0.00 | 63.26 ±0.00 | 63.00 ±0.00 | 63.00 ±0.00 | 64.00 ±0.00 | 67.09 ±0.00 | 51.62 ±0.00 | 58.20 ±0.00 |
+| CodeAsPolicy | 33.3% † (42/126) | 45.83 ±0.00 | 50.65 ±0.00 | 37.25 ±0.00 | 47.02 ±0.00 | 48.00 ±0.00 | 63.26 ±0.00 | 63.00 ±0.00 | 63.00 ±0.00 | 64.00 ±0.00 | 67.09 ±0.00 | 51.62 ±0.00 | 58.20 ±0.00 |
 
 ## Generalization: Standard vs Random (25 episodes each)
 
@@ -14,13 +14,13 @@ Each cell shows `mean ±std` across seeds, averaged over the 12 Generalization t
 
 | Policy | Standard SR (%) | Standard Score | Random SR (%) | Random Score | Δ SR | Δ Score |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| PyRUA_Lean | 49.33 ±0.00 | 53.60 ±0.00 | 42.33 ±0.00 | 47.70 ±0.00 | -7.00 | -5.90 |
+| CodeAsPolicy | 49.33 ±0.00 | 53.60 ±0.00 | 42.33 ±0.00 | 47.70 ±0.00 | -7.00 | -5.90 |
 
 ### Per-task Standard vs Random
 
 Additional view only: each of the 12 Generalization tasks is listed as the 25-episode standard split and its `_random` sibling. Columns match the per-policy all-task tables. Existing merged 50-episode scores are unchanged.
 
-#### PyRUA_Lean
+#### CodeAsPolicy
 
 | Task | Seed 0 SR (%) | Seed 0 Score | Seed 1 SR (%) | Seed 1 Score | Seed 2 SR (%) | Seed 2 Score | Avg SR (%) | Avg Score |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -51,7 +51,7 @@ Additional view only: each of the 12 Generalization tasks is listed as the 25-ep
 | **Avg Standard** | 49.3 | 53.60 |  |  |  |  | 49 ±0 | 53.60 ±0.00 |
 | **Avg Random** | 42.3 | 47.70 |  |  |  |  | 42 ±0 | 47.70 ±0.00 |
 
-## PyRUA_Lean
+## CodeAsPolicy
 
 | Task | Seed 0 SR (%) | Seed 0 Score | Seed 1 SR (%) | Seed 1 Score | Seed 2 SR (%) | Seed 2 Score | Avg SR (%) | Avg Score |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |

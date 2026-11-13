@@ -4,9 +4,9 @@ import copy
 
 import pytest
 
-from pyrualean._backend import ToolError
-from pyrualean.arms import ArmToolkit
-from pyrualean.robodojo import RobodojoRobot
+from codeaspolicy._backend import ToolError
+from codeaspolicy.arms import ArmToolkit
+from codeaspolicy.robodojo import RobodojoRobot
 from tests.test_perception_snapshots import Segmenter, packet, setup
 
 
@@ -53,7 +53,7 @@ def test_same_native_step_new_capture_invalidates_result(tmp_path):
     result = robo.locate("object")
     assert result.provenance["current_at_return"]
     env.packet = packet(2)
-    env.packet["pyrualean_observation"]["native_steps"] = 0
+    env.packet["codeaspolicy_observation"]["native_steps"] = 0
     assert backend.env_steps() == 0
     assert not robo.perception_is_current(result)
 

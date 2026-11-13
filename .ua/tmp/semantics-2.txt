@@ -1,8 +1,8 @@
-@src/pyrualean/__main__.py|通过 python -m pyrualean 调用统一命令行入口。|入口点,命令行,模块执行
-@src/pyrualean/_env.py|统一读取 PYRUALEAN_ 前缀的环境设置，并保留空字符串与未设置值之间的区别。|配置,环境变量,工具函数
-setting_var|给设置名添加包统一使用的 PYRUALEAN_ 前缀。
+@src/codeaspolicy/__main__.py|通过 python -m codeaspolicy 调用统一命令行入口。|入口点,命令行,模块执行
+@src/codeaspolicy/_env.py|统一读取 CODEASPOLICY_ 前缀的环境设置，并保留空字符串与未设置值之间的区别。|配置,环境变量,工具函数
+setting_var|给设置名添加包统一使用的 CODEASPOLICY_ 前缀。
 setting|读取对应环境变量，变量不存在时返回默认值。
-@src/pyrualean/cli.py|实现任务卡导出、策略生成、单次执行、交互运行和评估汇总等命令。需要仿真环境的命令通过独立宿主进程运行，并记录输出与超时。|入口点,命令行,任务调度
+@src/codeaspolicy/cli.py|实现任务卡导出、策略生成、单次执行、交互运行和评估汇总等命令。需要仿真环境的命令通过独立宿主进程运行，并记录输出与超时。|入口点,命令行,任务调度
 _cell_args|注册机器人、任务、种子、输出目录和 RPent 环境相关命令行参数。
 _host_argv|根据机器人与任务配置构造 card 或 run 宿主子进程的命令参数。
 cmd_card|启动宿主生成任务卡，检查 card.json 是否存在并返回命令状态。
@@ -12,8 +12,8 @@ cmd_play|组装交互式运行配置，包括执行限制、模型网关、视�
 _load_any|识别原生结果目录与 RPent 对话产物，转换为统一回合指标。
 cmd_summarize|读取多次运行结果，打印逐回合指标表并按需输出聚合 JSON。
 main|注册全部子命令及参数，解析用户输入并分发到对应处理函数。
-@src/pyrualean/evaluation/__init__.py|集中导出统一回合指标、RPent 产物解析以及严格配对比较接口。|入口点,评估,导出
-@src/pyrualean/evaluation/compare.py|按机器人后端、任务与种子严格配对两个系统的回合，报告缺失与重复记录并计算指标差值。|评估,配对比较,结果校验
+@src/codeaspolicy/evaluation/__init__.py|集中导出统一回合指标、RPent 产物解析以及严格配对比较接口。|入口点,评估,导出
+@src/codeaspolicy/evaluation/compare.py|按机器人后端、任务与种子严格配对两个系统的回合，报告缺失与重复记录并计算指标差值。|评估,配对比较,结果校验
 _extract_records|从列表、统一结果或嵌套指标对象中递归提取回合记录，拒绝不支持的结构。
 load_metrics_file|读取指标 JSON 或运行目录中的 result.json，并转换为统一记录列表。
 _key|以机器人后端、任务和随机种子构造回合配对键。
@@ -21,7 +21,7 @@ _delta|计算右侧减左侧的指标差值，缺失值或不兼容类型返回�
 compare_runs|验证两个系统名称并逐键配对回合；重复或缺失会使比较报告失效。
 compare_metric_files|合并多个指标文件中的回合记录，再执行两个系统的严格配对比较。
 main|提供配对比较命令行，读取输入指标并将 JSON 报告打印或保存。
-@src/pyrualean/evaluation/metrics.py|定义跨系统通用的回合指标并重建仿真步数。聚合统计明确区分环境成功、失败与产物不足导致的未知结果。|评估,数据模型,统计
+@src/codeaspolicy/evaluation/metrics.py|定义跨系统通用的回合指标并重建仿真步数。聚合统计明确区分环境成功、失败与产物不足导致的未知结果。|评估,数据模型,统计
 EpisodeMetrics|记录系统、任务、原生成功状态、调用数、步数、时间与词元消耗，供不同执行方式比较。
 EpisodeMetrics.to_dict|将回合指标数据类转换为字典。
 EpisodeMetrics.from_dict|仅接收指标模型支持的字段，补齐来源和默认标识并规范化备注。
@@ -35,7 +35,7 @@ _int|将可用值安全转换为整数，缺失或非法输入返回未知。
 _float|将可用值安全转换为浮点数，缺失或非法输入返回未知。
 load_episode_result|解析统一 result.json，合并错误备注、生成词元统计和宿主回合指标。
 summarize|聚合成功率、状态分布及调用、步数、时间和词元指标，同时保留未知结果数量。
-@src/pyrualean/evaluation/rpent.py|只读解析 RPent 的对话、状态和 Claude 流式产物，无需导入 RPent。环境终止标志与智能体自报完成状态分别统计。|评估,产物解析,只读
+@src/codeaspolicy/evaluation/rpent.py|只读解析 RPent 的对话、状态和 Claude 流式产物，无需导入 RPent。环境终止标志与智能体自报完成状态分别统计。|评估,产物解析,只读
 _load_json|读取 JSON 并要求顶层为对象，避免静默接受错误格式。
 _single_match|要求目录下给定产物模式恰好匹配一个文件。
 parse_rpent_run|合并 RPent 对话统计与环境状态，转换为统一回合指标并记录缺失或矛盾证据。
@@ -44,7 +44,7 @@ claude_transcript_output|查找运行目录或本地 Claude 会话记录，按�
 _moves|识别真正移动机器人的步骤，排除复位记录。
 _int|安全转换可选整数统计，非法值返回未知。
 _float|安全转换可选浮点统计，非法值返回未知。
-@src/pyrualean/evaluation/valen.py|从保存的视觉监督审计中重放判断并评估弃答阈值。支持问题或裁剪变体，准确率计算要求独立且问题匹配的人工标签。|评估,视觉监督,审计
+@src/codeaspolicy/evaluation/valen.py|从保存的视觉监督审计中重放判断并评估弃答阈值。支持问题或裁剪变体，准确率计算要求独立且问题匹配的人工标签。|评估,视觉监督,审计
 _read|从 UTF-8 文件读取 JSON 数据。
 load_samples|读取并去重已成功的视觉检查，错误事件不会被计为额外观测。
 _variant_packet|在保留完整场景的基础上替换指定问题并追加带标签的局部裁剪。
@@ -53,7 +53,7 @@ threshold_metrics|逐阈值统计确定判断与弃答；仅在有独立匹配�
 evaluate|加载审计样本、校验人工标签并运行缓存评估或显式 Valen 重放，输出可复查报告。
 add_arguments|注册审计目录、阈值、人工标签与重放变体等评估参数。
 run|将命令行参数传入视觉评估器并打印核心统计。
-@src/pyrualean/evidence.py|维护单回合的视觉事实、有效期和规划者声明的阶段前置条件。只检查显式声明，不推断物理动作之间的依赖。|视觉证据,状态管理,前置条件
+@src/codeaspolicy/evidence.py|维护单回合的视觉事实、有效期和规划者声明的阶段前置条件。只检查显式声明，不推断物理动作之间的依赖。|视觉证据,状态管理,前置条件
 EvidenceLedger|保存视觉事实及各阶段门控条件，支持失效、观测更新、延期和阻塞查询。
 EvidenceLedger.__init__|初始化事实表和阶段需求表。
 EvidenceLedger.configure|先完整验证事实、前置条件和失效声明，再更新持久证据记录。
@@ -63,14 +63,14 @@ EvidenceLedger.observe|写入最新事实判断、概率和观测来源，恢复
 EvidenceLedger.blockers|列出当前阶段中证据过期或取值不满足要求的前置条件。
 EvidenceLedger.snapshot|返回深拷贝的完整证据账本，防止调用方修改原始状态。
 EvidenceLedger.summary|返回删除冗长问题与概率字段后的证据摘要，供模型反馈使用。
-@src/pyrualean/generate.py|通过 Codex CLI 单次生成 Python 策略，并保存提示、回复、事件和用量。生成会话使用只读空目录，事件记录可用于核查工具调用。|策略生成,命令行,审计
+@src/codeaspolicy/generate.py|通过 Codex CLI 单次生成 Python 策略，并保存提示、回复、事件和用量。生成会话使用只读空目录，事件记录可用于核查工具调用。|策略生成,命令行,审计
 extract_python_block|从模型回复中提取最长的 Python 围栏代码块，没有代码时明确报错。
 _usage_from_events|汇总 Codex 事件中的完成轮次、工具事件与各类词元用量。
 _retries|读取 Codex 请求和流式重试次数设置。
 provider_overrides|构造自定义兼容 Responses 网关的 Codex 配置，包括接口地址、密钥环境变量名和重试次数。
 codex_catalog_flags|仅对符合匹配规则的 gpt-6-astra 模型启用包内模型目录配置。
 generate_with_codex|构建提示并在隔离的只读临时目录运行 Codex，保存策略、回复、事件与生成统计。
-@src/pyrualean/supervision.py|在机器人原语边界同步调用 Valen 获取视觉事实，由宿主规则判断继续、暂停或复查。维护阶段契约、证据新鲜度和可追溯审计产物。|视觉监督,执行控制,审计
+@src/codeaspolicy/supervision.py|在机器人原语边界同步调用 Valen 获取视觉事实，由宿主规则判断继续、暂停或复查。维护阶段契约、证据新鲜度和可追溯审计产物。|视觉监督,执行控制,审计
 SupervisionPause|中断当前执行单元并返回规划者，同时保留机器人回合。
 MonitorConfig|保存监督模式、服务地址、阈值、未知容忍度和动作复查预算。
 MonitorConfig.__post_init__|验证监督模式、服务地址协议与有限数值参数，拒绝非法阈值和计数范围。

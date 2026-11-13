@@ -6,8 +6,8 @@ from types import SimpleNamespace
 
 import pytest
 
-from pyrualean.action_contract import ActionContract, ActionContractPause
-from pyrualean.monitor import ConstraintCheck, check_distance
+from codeaspolicy.action_contract import ActionContract, ActionContractPause
+from codeaspolicy.monitor import ConstraintCheck, check_distance
 
 
 @pytest.fixture
@@ -367,11 +367,11 @@ def test_completion_cannot_skip_missing_public_invariant_binding(robot):
 
 
 def test_load_policy_cleans_sys_modules_on_pause(tmp_path):
-    from pyrualean.runner import load_policy
-    from pyrualean.supervision import SupervisionPause
+    from codeaspolicy.runner import load_policy
+    from codeaspolicy.supervision import SupervisionPause
 
     code_contract = (
-        "from pyrualean.action_contract import ActionContractPause\n"
+        "from codeaspolicy.action_contract import ActionContractPause\n"
         "raise ActionContractPause({'reason': 'top_level_contract_pause', 'passed': False})\n"
         "def run(robo):\n    pass\n"
     )
@@ -382,10 +382,10 @@ def test_load_policy_cleans_sys_modules_on_pause(tmp_path):
     with pytest.raises(ActionContractPause):
         load_policy(path_contract)
     modules_after = set(sys.modules.keys())
-    assert not [m for m in modules_after - modules_before if m.startswith("pyrualean_policy_")]
+    assert not [m for m in modules_after - modules_before if m.startswith("codeaspolicy_policy_")]
 
     code_supervision = (
-        "from pyrualean.supervision import SupervisionPause\n"
+        "from codeaspolicy.supervision import SupervisionPause\n"
         "raise SupervisionPause('top_level_supervision_pause')\n"
         "def run(robo):\n    pass\n"
     )
@@ -396,12 +396,12 @@ def test_load_policy_cleans_sys_modules_on_pause(tmp_path):
     with pytest.raises(SupervisionPause):
         load_policy(path_supervision)
     modules_after = set(sys.modules.keys())
-    assert not [m for m in modules_after - modules_before if m.startswith("pyrualean_policy_")]
+    assert not [m for m in modules_after - modules_before if m.startswith("codeaspolicy_policy_")]
 
 
 def test_run_policy_catches_action_contract_and_supervision_pause(robo):
-    from pyrualean.runner import run_policy
-    from pyrualean.supervision import SupervisionPause
+    from codeaspolicy.runner import run_policy
+    from codeaspolicy.supervision import SupervisionPause
 
     def contract_policy(r):
         raise ActionContractPause({"reason": "precondition_failed", "passed": False})
@@ -430,7 +430,7 @@ def test_run_policy_catches_action_contract_and_supervision_pause(robo):
 
 
 def test_arm_toolkit_run_program_with_action_contract_pause(robo, tmp_path):
-    from pyrualean.arms import ArmToolkit
+    from codeaspolicy.arms import ArmToolkit
 
     kit = ArmToolkit(robo, arm="program", workspace=tmp_path / "ws_contract")
 
@@ -460,14 +460,14 @@ def test_arm_toolkit_run_program_with_action_contract_pause(robo, tmp_path):
 
 
 def test_arm_toolkit_run_program_with_supervision_pause(robo, tmp_path):
-    from pyrualean.arms import ArmToolkit
-    from pyrualean.supervision import SupervisionPause
+    from codeaspolicy.arms import ArmToolkit
+    from codeaspolicy.supervision import SupervisionPause
 
     kit = ArmToolkit(robo, arm="program", workspace=tmp_path / "ws_supervision")
 
     # Top-level SupervisionPause via workspace module helper
     (kit.workspace / "alarm.py").write_text(
-        "from pyrualean.supervision import SupervisionPause\n"
+        "from codeaspolicy.supervision import SupervisionPause\n"
         "def trigger():\n"
         "    raise SupervisionPause('top_level_alarm')\n",
         encoding="utf-8",

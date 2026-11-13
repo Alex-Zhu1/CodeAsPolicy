@@ -36,15 +36,15 @@
 
 ## 现有实现
 
-- `src/pyrualean/_robot.py` 的 `RobotBase._stateful` 实现动作前检查、动作版本递增、回包吸收及账本记录。
-- `src/pyrualean/_backend.py` 的 `Backend` 提供 `execute_tool`、`env_steps`、`cancel` 等接口。
+- `src/codeaspolicy/_robot.py` 的 `RobotBase._stateful` 实现动作前检查、动作版本递增、回包吸收及账本记录。
+- `src/codeaspolicy/_backend.py` 的 `Backend` 提供 `execute_tool`、`env_steps`、`cancel` 等接口。
 - `unwrap` 解析 payload/envelope；`CallRecord` 记录本地调用 index、参数、耗时、ok、错误和摘要。
-- `src/pyrualean/hosts/robodojo_native.py` 的 `NativeToolkit.execute_tool` 用锁串行派发，并为 stateful 调用记录观测。
-- `src/pyrualean/coordination.py` 的 `move_both` 使用 observe、plan、execute/checkpoint、stop/discard 协议。
+- `src/codeaspolicy/hosts/robodojo_native.py` 的 `NativeToolkit.execute_tool` 用锁串行派发，并为 stateful 调用记录观测。
+- `src/codeaspolicy/coordination.py` 的 `move_both` 使用 observe、plan、execute/checkpoint、stop/discard 协议。
 - `DualMove` 已表达 completed、rejected、partial，以及 recoverable、双臂误差、局部剩余步数和检查覆盖。
-- `src/pyrualean/hosts/robodojo_coordination.py` 的 `Controller` 检查 stale plan、路径、跟踪误差、相对位姿和局部预算。
-- `src/pyrualean/hosts/robodojo_tools.py` 的 `_act` 把两臂 joint/gripper 指令放入同一次 `env.step`。
-- `src/pyrualean/hosts/xpolicylab_bridge.py` 的 `Bridge` 连接客户端的 update_obs/get_action 与工具的 step。
+- `src/codeaspolicy/hosts/robodojo_coordination.py` 的 `Controller` 检查 stale plan、路径、跟踪误差、相对位姿和局部预算。
+- `src/codeaspolicy/hosts/robodojo_tools.py` 的 `_act` 把两臂 joint/gripper 指令放入同一次 `env.step`。
+- `src/codeaspolicy/hosts/xpolicylab_bridge.py` 的 `Bridge` 连接客户端的 update_obs/get_action 与工具的 step。
 
 部分执行和有限纠偏已有实现，不能把它们列为完全空白。
 同步保证是共享原生动作时钟与受限跟踪，不是刚性耦合或力控。

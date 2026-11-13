@@ -10,8 +10,8 @@ from pathlib import Path
 
 import pytest
 
-from pyrualean.arms import ArmResult, ArmToolkit
-from pyrualean.libero import LiberoRobot
+from codeaspolicy.arms import ArmResult, ArmToolkit
+from codeaspolicy.libero import LiberoRobot
 from tests.test_interaction_contracts import ProtocolBackend
 
 MOVE = "robo.move_to([0.05, -0.10, 0.6])"
@@ -178,8 +178,8 @@ def test_crash_after_effect_before_reply_leaves_durable_unknown_and_no_replay(tm
     script = '''
 import os, sys
 from pathlib import Path
-from pyrualean.arms import ArmToolkit
-from pyrualean.libero import LiberoRobot
+from codeaspolicy.arms import ArmToolkit
+from codeaspolicy.libero import LiberoRobot
 from tests.test_interaction_contracts import ProtocolBackend
 root = Path(sys.argv[1])
 class Backend(ProtocolBackend):
@@ -230,7 +230,7 @@ def test_restart_preserves_exhausted_call_budget(tmp_path):
 
 
 def test_restart_keeps_wall_deadline_including_downtime(tmp_path, monkeypatch):
-    import pyrualean.arms as arms
+    import codeaspolicy.arms as arms
 
     monkeypatch.setattr(arms.time, "time", lambda: 1000.0)
     backend, kit = toolkit(tmp_path, durable=True, program_timeout_s=10)

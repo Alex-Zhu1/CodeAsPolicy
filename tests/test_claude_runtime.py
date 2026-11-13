@@ -1,4 +1,4 @@
-"""Offline checks of the Claude Agent SDK runtime (``pyrualean.claude_runtime``).
+"""Offline checks of the Claude Agent SDK runtime (``codeaspolicy.claude_runtime``).
 
 The SDK is replaced by a fake module whose ``query`` is an async generator of
 message-like dataclasses named as the SDK's; nothing touches the network.
@@ -17,7 +17,7 @@ from typing import Any
 
 import pytest
 
-from pyrualean import claude_runtime as cr
+from codeaspolicy import claude_runtime as cr
 
 # -- message-like fakes (same class names as claude_agent_sdk.types) ------------
 
@@ -135,8 +135,8 @@ INIT = SystemMessage(
     {
         "session_id": "s1",
         "model": MODEL,
-        "tools": ["Read", "Glob", "Grep", "mcp__pyrualean__python", "mcp__pyrualean__finish"],
-        "mcp_servers": [{"name": "pyrualean", "status": "connected"}],
+        "tools": ["Read", "Glob", "Grep", "mcp__codeaspolicy__python", "mcp__codeaspolicy__finish"],
+        "mcp_servers": [{"name": "codeaspolicy", "status": "connected"}],
     },
 )
 
@@ -162,7 +162,7 @@ def episode_messages(*, with_result=True):
             [TextBlock("Plan: grasp the bowl.")], MODEL, usage=PLACEHOLDERS[1], message_id="m2"
         ),
         AssistantMessage(
-            [ToolUseBlock("t2", "mcp__pyrualean__python", {"code": "robo.state()"})],
+            [ToolUseBlock("t2", "mcp__codeaspolicy__python", {"code": "robo.state()"})],
             MODEL,
             usage=PLACEHOLDERS[1],
             message_id="m2",
@@ -171,7 +171,7 @@ def episode_messages(*, with_result=True):
         AssistantMessage(
             [
                 ToolUseBlock(
-                    "t3", "mcp__pyrualean__finish", {"status": "success", "summary": "done"}
+                    "t3", "mcp__codeaspolicy__finish", {"status": "success", "summary": "done"}
                 )
             ],
             MODEL,
@@ -247,7 +247,7 @@ def test_usage_totals_from_result_and_profile_from_assistant_messages(tmp_path, 
     assert generation["turns"] == 3 and generation["max_turns_hit"] is False
     assert generation["permission_denials"] == 0 and generation["compactions"] == 0
     assert len(generation["request_latency_s"]) == 3
-    assert generation["init"]["mcp_servers"] == [{"name": "pyrualean", "status": "connected"}]
+    assert generation["init"]["mcp_servers"] == [{"name": "codeaspolicy", "status": "connected"}]
     assert generation["options"]["max_turns"] == 45 and generation["options"]["images"] == 1
     out = tmp_path / "out"
     lines = [json.loads(line) for line in (out / "claude_events.jsonl").read_text().splitlines()]
@@ -269,10 +269,12 @@ def test_options_and_initial_message(tmp_path, monkeypatch):
         "Read",
         "Glob",
         "Grep",
-        "mcp__pyrualean__python",
-        "mcp__pyrualean__finish",
+        "mcp__codeaspolicy__python",
+        "mcp__codeaspolicy__finish",
     ]
-    assert options.mcp_servers == {"pyrualean": {"type": "http", "url": "http://127.0.0.1:1/mcp/"}}
+    assert options.mcp_servers == {
+        "codeaspolicy": {"type": "http", "url": "http://127.0.0.1:1/mcp/"}
+    }
     assert options.strict_mcp_config is True and options.setting_sources == []
     assert options.effort == "high" and options.thinking is None
     assert options.cli_path == "/opt/claude"
@@ -304,7 +306,10 @@ def test_effort_none_disables_thinking_and_program_arm_tools(tmp_path, monkeypat
     options = captured["options"]
     assert options.thinking == {"type": "disabled"} and options.effort is None
     assert options.max_turns == cr.UNBOUNDED_TURNS
-    assert options.allowed_tools[-2:] == ["mcp__pyrualean__run_program", "mcp__pyrualean__finish"]
+    assert options.allowed_tools[-2:] == [
+        "mcp__codeaspolicy__run_program",
+        "mcp__codeaspolicy__finish",
+    ]
 
 
 def test_wall_clock_timeout_cancels_and_reports(tmp_path, monkeypatch):
@@ -352,10 +357,10 @@ def test_sdk_exception_and_failed_mcp_server_are_errors(tmp_path, monkeypatch):
     assert generation["status"] == "error" and generation["returncode"] == 2
     assert generation["errors"] == ["RuntimeError: boom"]
     failed = SystemMessage(
-        "init", {"session_id": "s2", "mcp_servers": [{"name": "pyrualean", "status": "failed"}]}
+        "init", {"session_id": "s2", "mcp_servers": [{"name": "codeaspolicy", "status": "failed"}]}
     )
     generation, _, _ = run(tmp_path, monkeypatch, [failed])
-    assert "mcp server pyrualean: failed" in generation["errors"]
+    assert "mcp server codeaspolicy: failed" in generation["errors"]
     assert generation["returncode"] == 3  # the stream ended without a result message
     assert "stream ended without a result message" in generation["errors"]
 
@@ -407,8 +412,11 @@ def test_replay_events_reproduces_the_live_audit(tmp_path, monkeypatch):
 
 def test_helpers(tmp_path):
     assert cr.sdk_max_turns(40) == 45 and cr.sdk_max_turns(None) == cr.UNBOUNDED_TURNS
-    assert cr.arm_tools("cells") == ["mcp__pyrualean__python", "mcp__pyrualean__finish"]
-    assert cr.arm_tools("program") == ["mcp__pyrualean__run_program", "mcp__pyrualean__finish"]
+    assert cr.arm_tools("cells") == ["mcp__codeaspolicy__python", "mcp__codeaspolicy__finish"]
+    assert cr.arm_tools("program") == [
+        "mcp__codeaspolicy__run_program",
+        "mcp__codeaspolicy__finish",
+    ]
     assert cr.resolve_cli(None) is None and cr.resolve_cli("/nonexistent/claude-xyz") is None
     binary = tmp_path / "claude"
     binary.write_text("#!/bin/sh\n")
@@ -427,9 +435,9 @@ def test_play_episode_wires_the_claude_runtime(tmp_path, monkeypatch, backend):
     # play_episode serves the arm's tools through the real in-process MCP server
     for module in ("mcp", "uvicorn", "httpx"):
         pytest.importorskip(module, reason=f"the MCP server needs {module} (the dev extra has it)")
-    from pyrualean import play
-    from pyrualean.prompt import TaskCard
-    from pyrualean.robots import get_adapter
+    from codeaspolicy import play
+    from codeaspolicy.prompt import TaskCard
+    from codeaspolicy.robots import get_adapter
 
     captured = fake_sdk(monkeypatch, episode_messages())
     monkeypatch.chdir(tmp_path)
@@ -482,7 +490,7 @@ def test_play_episode_wires_the_claude_runtime(tmp_path, monkeypatch, backend):
     assert generation["sandbox_flags"] == [] and generation["options"]["max_turns"] == 15
     options = captured["options"]
     assert options.cwd == str(out / "workspace")
-    assert options.mcp_servers["pyrualean"]["url"].startswith("http://127.0.0.1:")
+    assert options.mcp_servers["codeaspolicy"]["url"].startswith("http://127.0.0.1:")
     assert options.env["no_proxy"].endswith("localhost,127.0.0.1,::1")
     prompt = captured["prompt"][0]["message"]["content"]
     assert prompt[0]["text"] == (out / "prompt.txt").read_text()

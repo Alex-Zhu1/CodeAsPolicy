@@ -10,8 +10,8 @@ from types import SimpleNamespace
 
 import pytest
 
-from pyrualean import mcp_server
-from pyrualean.interaction_trace import InteractionTrace
+from codeaspolicy import mcp_server
+from codeaspolicy.interaction_trace import InteractionTrace
 
 
 def _run(coroutine):
@@ -171,7 +171,7 @@ def test_mcp_receives_queued_calls_before_execution_and_keeps_ids_separate(monke
         monkeypatch.setattr(mcp_server, "_result_to_mcp", convert)
         handler = _handler(monkeypatch, toolkit)
         tasks = [asyncio.create_task(_call(
-            handler, "first", wire_id="mcp-first", name="mcp__pyrualean__python",
+            handler, "first", wire_id="mcp-first", name="mcp__codeaspolicy__python",
         ))]
         try:
             await asyncio.wait_for(first_started.wait(), timeout=3)
@@ -250,8 +250,8 @@ def test_mcp_without_trace_supports_existing_toolkit_signature(monkeypatch):
 
 
 def test_real_toolkit_mcp_blocks_prequeued_dependents_without_trace(monkeypatch, tmp_path):
-    from pyrualean.arms import ArmToolkit
-    from pyrualean.libero import LiberoRobot
+    from codeaspolicy.arms import ArmToolkit
+    from codeaspolicy.libero import LiberoRobot
     from tests.test_interaction_contracts import ProtocolBackend
 
     backend = ProtocolBackend()

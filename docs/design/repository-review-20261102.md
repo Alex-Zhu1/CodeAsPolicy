@@ -141,7 +141,7 @@ RPent 没有因 Python 层新增接口就自动获得 XPL 客户端的子步能�
 | MkDocs 网站构建 | 未执行 | 当前验证环境未安装 mkdocs、material、pymdownx；没有声明文档站构建通过 |
 
 测试解释器为本地 `runs/organize-table-astra-20261030/venv/bin/python`（Python 3.11），
-lint 使用已有 `/tmp/pyrualean-supervision-lint/bin/ruff`（0.17.3）。复核命令：
+lint 使用已有 `/tmp/codeaspolicy-supervision-lint/bin/ruff`（0.17.3）。复核命令：
 
 ```bash
 python -m pytest -q

@@ -3,8 +3,8 @@
 import numpy as np
 import pytest
 
-from pyrualean.hosts.robodojo_native import NativeBackend, NativeToolkit
-from pyrualean.robodojo_xpl_rgb import RobodojoOfficialColourRobot
+from codeaspolicy.hosts.robodojo_native import NativeBackend, NativeToolkit
+from codeaspolicy.robodojo_xpl_rgb import RobodojoOfficialColourRobot
 from tests.test_coordination import JointEnvironment
 
 
@@ -106,7 +106,7 @@ def test_cancel_during_correction_keeps_partial_receipt_and_refuses_replay(tmp_p
 
 
 def test_timed_endpoint_corrections_use_resting_blocks_without_native_fallback(tmp_path):
-    from pyrualean.hosts import robodojo_trajectory as trajectory
+    from codeaspolicy.hosts import robodojo_trajectory as trajectory
     from tests.test_robodojo_trajectory import TimedEnvironment
 
     env = TimedEnvironment()
@@ -137,8 +137,8 @@ def test_timed_endpoint_corrections_use_resting_blocks_without_native_fallback(t
 @pytest.mark.parametrize("angle,can_correct,expected", [
     (4., True, "advance"), (9., True, "correct"), (9., False, "stop")])
 def test_rotation_progress_and_trajectory_continuity(angle, can_correct, expected):
-    from pyrualean.hosts import robodojo_kinematics as kin
-    from pyrualean.hosts.robodojo_feedback import ProgressTracker, TrackingLimits
+    from codeaspolicy.hosts import robodojo_kinematics as kin
+    from codeaspolicy.hosts.robodojo_feedback import ProgressTracker, TrackingLimits
 
     goal = np.eye(4)
     before, actual = goal.copy(), goal.copy()

@@ -5,8 +5,8 @@ import json
 
 import pytest
 
-from pyrualean.action_contract import ActionContract, ActionContractPause
-from pyrualean.contract_evidence import check_fact, check_hold
+from codeaspolicy.action_contract import ActionContract, ActionContractPause
+from codeaspolicy.contract_evidence import check_fact, check_hold
 
 
 def evidence(space="image"):
@@ -176,7 +176,7 @@ def test_hold_bridge_reads_real_grasp_and_snapshot_evidence(tmp_path):
 
 @pytest.fixture
 def fact_station(tmp_path):
-    from pyrualean.supervision import MonitorConfig, VisualSupervisor
+    from codeaspolicy.supervision import MonitorConfig, VisualSupervisor
     from tests.test_robodojo_trajectory import station
     from tests.test_supervision import ScriptedValen, answer
 

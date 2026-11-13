@@ -4,7 +4,7 @@
   "original_text_chars": 14106,
   "result": {
     "cell": 30,
-    "exception": "Traceback (most recent call last):\n  File \"/mnt/data_hdd/mhzhu/GPTCode/PyRUA-Lean/runs/organize-table-handoff-rerun-20261101-093121/frozen/src/pyrualean/arms.py\", line 960, in _python\n    exec(body_code, self._globals)  # noqa: S102 - code arm\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/data_hdd/mhzhu/GPTCode/PyRUA-Lean/runs/organize-table-handoff-rerun-20261101-093121/episode/workspace/cell_030.py\", line 2, in <module>\n    result=robo.move_to([-0.40,0.17,1.10],arm='left',gripper=robo.CLOSE,path='line');print(result);assert result.reached\n                                                                                                          ^^^^^^^^^^^^^^\nAssertionError\n",
+    "exception": "Traceback (most recent call last):\n  File \"/mnt/data_hdd/mhzhu/GPTCode/Code_As_Policy/runs/organize-table-handoff-rerun-20261101-093121/frozen/src/codeaspolicy/arms.py\", line 960, in _python\n    exec(body_code, self._globals)  # noqa: S102 - code arm\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/data_hdd/mhzhu/GPTCode/Code_As_Policy/runs/organize-table-handoff-rerun-20261101-093121/episode/workspace/cell_030.py\", line 2, in <module>\n    result=robo.move_to([-0.40,0.17,1.10],arm='left',gripper=robo.CLOSE,path='line');print(result);assert result.reached\n                                                                                                          ^^^^^^^^^^^^^^\nAssertionError\n",
     "stdout": "Move(arm='left', target_xyz=(-0.36, -0.07, 1.1), start_xyz=(-0.3649, -0.0929, 0.9193), final_xyz=(-0.3601, -0.07, 1.0994), dist_to_target_m=0.0006, orientation_error_deg=0.2, pitch=30.1, yaw=0.1, roll=-0.1, reached=True, path='line', ik_error=None, note=None, blocked=False, steps_used=11, truncated=False)\nMove(arm='left', target_xyz=(-0.4, 0.17, 1.1), start_xyz=(-0.3601, -0.07, 1.0994), final_xyz=(-0.3984, 0.1628, 1.0919), dist_to_target_m=0.011, orientation_error_deg=3.0, pitch=27.2, yaw=0.6, roll=0.2, reached=False, path='line', ik_error=None, note='the exact pose is out of reach; went to the closest one, 0.010 m and 3 deg from it', blocked=False, steps_used=16, truncated=False)\n",
     "stderr": "",
     "elapsed_s": 9.94,
@@ -14,7 +14,7 @@
       "type": "AssertionError",
       "message": "",
       "location": {
-        "file": "/mnt/data_hdd/mhzhu/GPTCode/PyRUA-Lean/runs/organize-table-handoff-rerun-20261101-093121/episode/workspace/cell_030.py",
+        "file": "/mnt/data_hdd/mhzhu/GPTCode/Code_As_Policy/runs/organize-table-handoff-rerun-20261101-093121/episode/workspace/cell_030.py",
         "line": 2
       }
     },
@@ -78,7 +78,7 @@
           "observation_id": "7a17b146aa634567a7954776e265de27:662",
           "source_id": "7a17b146aa634567a7954776e265de27:646",
           "source_native_steps": 645,
-          "schema": "pyrualean.action.v1",
+          "schema": "codeaspolicy.action.v1",
           "status": "partial",
           "effect_known": true,
           "execution_complete": true,
@@ -327,7 +327,7 @@
       }
     },
     "handoff": {
-      "schema": "pyrualean.handoff.v1",
+      "schema": "codeaspolicy.handoff.v1",
       "session_id": "ae216480453b42d8b278e03d3ccef55f",
       "observation_id": "7a17b146aa634567a7954776e265de27:662",
       "last_action": {

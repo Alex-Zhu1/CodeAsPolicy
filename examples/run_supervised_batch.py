@@ -243,7 +243,7 @@ class Batch:
         temporary.replace(path)
 
     def start_valen(self):
-        from pyrualean.supervision import CRITERIA, MonitorConfig, ValenClient, decode_answers
+        from codeaspolicy.supervision import CRITERIA, MonitorConfig, ValenClient, decode_answers
 
         c = self.config
         with socket.socket() as sock:

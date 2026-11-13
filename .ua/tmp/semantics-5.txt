@@ -1,5 +1,5 @@
-@src/pyrualean/__init__.py|导出机器人类、后端协议、结果数据和执行辅助接口，定义 PyRUA-Lean 包的公开 Python API。|入口点,公开接口,导出
-@src/pyrualean/_backend.py|定义机器人后端最小协议、统一错误和单回合调用账本，使策略可在模拟后端和真实宿主之间复用。|后端接口,调用账本,错误处理
+@src/codeaspolicy/__init__.py|导出机器人类、后端协议、结果数据和执行辅助接口，定义 CodeAsPolicy 包的公开 Python API。|入口点,公开接口,导出
+@src/codeaspolicy/_backend.py|定义机器人后端最小协议、统一错误和单回合调用账本，使策略可在模拟后端和真实宿主之间复用。|后端接口,调用账本,错误处理
 unwrap|拆分原语返回负载与 RPent 观测封装，兼容只读工具直接返回结果。
 raise_for_error|检测负载中的后端错误并抛出携带工具信息的 ToolError。
 _jsonable|保留可 JSON 序列化的值，否则转换为对象文本表示。
@@ -22,7 +22,7 @@ Ledger.open|创建带连续编号和起始时间的调用记录并追加到账�
 Ledger.stateful_calls|统计会改变机器人环境状态的调用数量。
 Ledger.env_steps|汇总所有已记录调用消耗的环境步数。
 Ledger.write_jsonl|将每次调用逐行写为 JSON，便于回合审计。
-@src/pyrualean/_robot.py|实现各机器人共享的后端派发、调用账本、回合终止守卫和图像访问。运动调用同时接入执行预算、视觉监督和动作版本跟踪。|机器人核心,工具派发,状态管理
+@src/codeaspolicy/_robot.py|实现各机器人共享的后端派发、调用账本、回合终止守卫和图像访问。运动调用同时接入执行预算、视觉监督和动作版本跟踪。|机器人核心,工具派发,状态管理
 RobotBase|为具体机器人提供统一状态、观测、动作派发和回合守卫机制。
 effective_primitives|将请求的原语集与机器人适配器实际能力求交。
 RobotBase.__init__|保存后端与账本，初始化状态、回合标志、观测请求以及执行监督钩子。
@@ -36,7 +36,7 @@ RobotBase.image|读取指定相机及记录步骤的 RGB 图像数组。
 RobotBase.world_map|读取图像对应的逐像素世界坐标图，供策略计算几何关系。
 RobotBase.show|登记当前相机图像，让本轮工具反馈将其展示给规划者。
 RobotBase.artifact|读取指定记录产物的原始字节。
-@src/pyrualean/libero.py|提供 LIBERO 单臂机器人的强类型 Python API，逐一映射 RPent 的位置姿态伺服、Pi0.5 操作和 SAM3 几何感知原语。|机器人接口,LIBERO,操作原语
+@src/codeaspolicy/libero.py|提供 LIBERO 单臂机器人的强类型 Python API，逐一映射 RPent 的位置姿态伺服、Pi0.5 操作和 SAM3 几何感知原语。|机器人接口,LIBERO,操作原语
 _quat_to_matrix|把 xyzw 四元数转换为旋转矩阵。
 _xyz|验证目标为三个有限数值并转换为坐标元组。
 _tuple3|将可用坐标转换为三元素浮点元组，缺失或长度不符时返回空。
@@ -77,7 +77,7 @@ LiberoRobot.show|登记当前相机图像，让本轮工具反馈将其展示给
 LiberoRobot.artifact|读取指定记录产物的原始字节。
 LiberoRobot.camera_meta|读取与图像步骤对应的相机内参与外参。
 LiberoRobot._summary_dict|生成包含当前本体状态和回合信息的紧凑工具反馈。
-@src/pyrualean/robocasa.py|提供 RoboCasa365 移动机械臂 API，统一包装基座导航、手臂伺服、RLDX-1 和世界坐标图查询，并返回可检查的真实执行结果。|机器人接口,RoboCasa,移动操作
+@src/codeaspolicy/robocasa.py|提供 RoboCasa365 移动机械臂 API，统一包装基座导航、手臂伺服、RLDX-1 和世界坐标图查询，并返回可检查的真实执行结果。|机器人接口,RoboCasa,移动操作
 _floats|验证向量长度和数值有限性并转换为浮点元组。
 _tuple_n|安全解析指定长度的可选浮点元组，兼容数组且容忍缺失或畸形值。
 _tuple3|解析可选三维浮点坐标。
@@ -135,13 +135,13 @@ RobocasaRobot.camera_meta|读取与图像步骤对应的相机内参与外参。
 RobocasaRobot.show|登记当前相机图像，让本轮工具反馈将其展示给规划者。
 RobocasaRobot.artifact|读取指定记录产物的原始字节。
 RobocasaRobot._summary_dict|生成包含当前本体状态和回合信息的紧凑工具反馈。
-@src/pyrualean/robots.py|维护机器人适配器注册表，按需导入具体机器人与宿主，使缺少某一后端依赖不会阻断其他机器人。|适配注册,延迟加载,配置
+@src/codeaspolicy/robots.py|维护机器人适配器注册表，按需导入具体机器人与宿主，使缺少某一后端依赖不会阻断其他机器人。|适配注册,延迟加载,配置
 get_adapter|验证机器人名称并延迟加载其 ADAPTER 描述。
 RobotAdapter|保存机器人类、宿主模块、知识文件和提示契约所需信息。
 RobotAdapter.cameras|读取机器人类声明的相机列表。
 RobotAdapter.live_success|根据公开接口判断环境是否在执行过程中暴露成功判据。
 RobotAdapter.host_module|按适配器记录动态导入宿主模块。
-@src/pyrualean/robotwin.py|提供 RoboTwin 双臂 API，包装 cuRobo 碰撞感知运动、LingBot-VLA 和图像几何查询，并保留原生动作预算和实际执行结果。|机器人接口,RoboTwin,双臂操作
+@src/codeaspolicy/robotwin.py|提供 RoboTwin 双臂 API，包装 cuRobo 碰撞感知运动、LingBot-VLA 和图像几何查询，并保留原生动作预算和实际执行结果。|机器人接口,RoboTwin,双臂操作
 _floats|验证输入向量包含指定数量的有限浮点数。
 _tuple3|解析可选三维坐标，缺失或长度不符时返回空。
 _arm|验证手臂名称只能为左臂或右臂。

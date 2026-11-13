@@ -5,7 +5,7 @@ import json
 
 import pytest
 
-from pyrualean.prompt import TaskCard, render_prompt
+from codeaspolicy.prompt import TaskCard, render_prompt
 
 
 def card(**kwargs):
@@ -49,7 +49,7 @@ def test_legacy_card_does_not_invent_requirements_or_assume_complete_coverage(tm
 
 @pytest.mark.parametrize("robot", ["libero", "robodojo_xpl_rgb"])
 def test_all_requirement_kinds_and_sources_survive_round_trip_and_prompts(tmp_path, robot):
-    from pyrualean.play import build_prompt
+    from codeaspolicy.play import build_prompt
 
     supplied = dict(requirements=requirements(), coverage="complete",
                     coverage_source="public task sheet revision 2")
@@ -108,10 +108,10 @@ def test_complete_coverage_forbids_assumption_waivers_without_unknown_coverage_w
 
 
 def test_load_acceptance_supports_single_file_and_task_catalog_with_provenance(tmp_path):
-    from pyrualean.task_acceptance import CATALOG_SCHEMA, acceptance_sha256, load_acceptance
+    from codeaspolicy.task_acceptance import CATALOG_SCHEMA, acceptance_sha256, load_acceptance
 
     single_payload = dict(
-        schema="pyrualean.task_acceptance.v1",
+        schema="codeaspolicy.task_acceptance.v1",
         requirements=requirements(),
         coverage="complete",
         coverage_source="public benchmark manual",

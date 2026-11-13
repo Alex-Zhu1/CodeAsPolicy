@@ -12,7 +12,7 @@ from typing import Any
 
 import pytest
 
-from pyrualean import (
+from codeaspolicy import (
     EpisodeFinished,
     TaskCard,
     ToolError,
@@ -21,11 +21,11 @@ from pyrualean import (
     knowledge_text,
     render_prompt,
 )
-from pyrualean.arms import ArmToolkit
-from pyrualean.hosts import rpent_robocasa as host
-from pyrualean.play import build_prompt
-from pyrualean.prompt import _public_members
-from pyrualean.robocasa import (
+from codeaspolicy.arms import ArmToolkit
+from codeaspolicy.hosts import rpent_robocasa as host
+from codeaspolicy.play import build_prompt
+from codeaspolicy.prompt import _public_members
+from codeaspolicy.robocasa import (
     BackProjection,
     BaseMove,
     Grasp,
@@ -928,7 +928,7 @@ def test_vla_refusals_become_tool_errors_and_remain_unresolved_without_receipt(r
     with pytest.raises(ToolError, match="VLA was not executed") as info:
         rc.rldx_skill()
     assert info.value.tool == "rldx_skill" and rc._ledger.records[-1].ok is False
-    from pyrualean.interaction import InteractionPause
+    from codeaspolicy.interaction import InteractionPause
 
     calls = len(rc_backend.calls)
     with pytest.raises(InteractionPause):
@@ -1145,7 +1145,7 @@ def test_adapter_and_prompt_wording():
     adapter = get_adapter("robocasa")
     assert adapter.robot_cls is RobocasaRobot and adapter.knowledge == "robocasa"
     assert adapter.cameras == ("agentview", "navview", "wrist")
-    assert adapter.host == "pyrualean.hosts.rpent_robocasa"
+    assert adapter.host == "codeaspolicy.hosts.rpent_robocasa"
     assert adapter.guides_subdir == "" and adapter.guide_names == ()
     card = TaskCard(
         robot="robocasa",

@@ -63,7 +63,7 @@ sequence is inspect identities -> grasp cup -> transport -> release in tray ->
 verify placement -> close drawer while preserving placement -> final inspection.
 The real task and geometry determine whether this sequence is feasible.
 
-For a PyRUA-Lean `cells` run, the following are valid contract declarations; actual
+For a CodeAsPolicy `cells` run, the following are valid contract declarations; actual
 motion targets must be planned from the current robot and observations. These
 are separate phases/cells, not a script to execute top-to-bottom without evidence.
 
@@ -153,7 +153,7 @@ and use visible identifiers that remain distinguishable in the selected evidence
 
 ## Current host constraints
 
-Consult [the implementation](../../../src/pyrualean/supervision.py) if the API
+Consult [the implementation](../../../src/codeaspolicy/supervision.py) if the API
 changes. At the time this skill was written:
 
 - `watch(phase, facts, alerts=[], critical=None, completion=None, requires=None,

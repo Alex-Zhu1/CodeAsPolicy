@@ -7,9 +7,9 @@ from types import SimpleNamespace
 import pytest
 
 from tests.conftest import FakeLiberoBackend
-from pyrualean import LiberoRobot
-from pyrualean.arms import ArmResult, ArmToolkit
-from pyrualean.supervision import MonitorConfig, VisualSupervisor
+from codeaspolicy import LiberoRobot
+from codeaspolicy.arms import ArmResult, ArmToolkit
+from codeaspolicy.supervision import MonitorConfig, VisualSupervisor
 
 
 class ProtocolBackend(FakeLiberoBackend):
@@ -26,7 +26,7 @@ class ProtocolBackend(FakeLiberoBackend):
         index = record["step_idx"]
         source = f"capture-{index}"
         return dict(
-            schema="pyrualean.observation.v1", session_id=self.session_id,
+            schema="codeaspolicy.observation.v1", session_id=self.session_id,
             observation_id=source, source_id=source, step=index, native_steps=self.frames,
             captured_at=1000 + index, source_freshness="captured", aligned=True,
             images={c: dict(source_id=source, artifact=f"{c}_high.png", aligned=True)
@@ -182,10 +182,10 @@ def test_compressed_feedback_retains_handoff_after_many_actions():
 
 def test_native_bridge_receipt_reaches_cells_and_late_recovery(tmp_path, monkeypatch):
     """Exercise the real native adapter, transport and supervision in one chain."""
-    from pyrualean.hosts import robodojo_tools as native_tools
-    from pyrualean.hosts.robodojo_native import NativeBackend, NativeToolkit
-    from pyrualean.hosts.xpolicylab_bridge import REQUEST_KEY, Bridge, BridgeEnv
-    from pyrualean.robodojo_xpl_rgb import RobodojoOfficialColourRobot
+    from codeaspolicy.hosts import robodojo_tools as native_tools
+    from codeaspolicy.hosts.robodojo_native import NativeBackend, NativeToolkit
+    from codeaspolicy.hosts.xpolicylab_bridge import REQUEST_KEY, Bridge, BridgeEnv
+    from codeaspolicy.robodojo_xpl_rgb import RobodojoOfficialColourRobot
     from tests.test_observation_transport import Environment, acknowledge, observation, start
     from tests.test_supervision import setup
 

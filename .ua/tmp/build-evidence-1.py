@@ -1,6 +1,6 @@
 import ast,json
 from pathlib import Path
-root=Path('/mnt/data_hdd/mhzhu/GPTCode/PyRUA-Lean')
+root=Path('/mnt/data_hdd/mhzhu/GPTCode/CodeAsPolicy')
 for i in [1,2,3,4,5,19]:
  result=json.loads((root/f'.ua/tmp/ua-file-extract-results-{i}.json').read_text())
  evidence=[]

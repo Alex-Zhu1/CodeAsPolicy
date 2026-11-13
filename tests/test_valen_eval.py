@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 from PIL import Image
 
-from pyrualean.evaluation.valen import evaluate
+from codeaspolicy.evaluation.valen import evaluate
 
 
 @pytest.fixture
@@ -32,8 +32,8 @@ def audit(tmp_path):
 
 
 def test_cached_cli_exports_template_without_model_or_robot(audit, tmp_path, monkeypatch):
-    from pyrualean.cli import main
-    from pyrualean.evaluation import valen
+    from codeaspolicy.cli import main
+    from codeaspolicy.evaluation import valen
 
     def unexpected(*args, **kwargs):
         pytest.fail("Cached evaluation must not construct a live Valen client")

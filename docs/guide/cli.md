@@ -4,14 +4,14 @@
 
 | Command | What it does |
 |---|---|
-| `pyrualean api` | Print the API reference the agent reads (LIBERO-PRO's robot). `--primitives no-vla` leaves the VLA out. |
-| `pyrualean prompt` | Print the prompt of a single shot (`generate`); `--card` renders it for a task card. A `play` episode saves the prompt its model read as `prompt.txt` in the run directory. |
-| `pyrualean play` | Run one episode with an agent ([Running Episodes](running.md)). |
-| `pyrualean card` | Boot only the simulator and save a task card. |
-| `pyrualean generate` | Ask the model for a whole program from a task card (single shot). |
-| `pyrualean run` | Run a program file for one episode. |
-| `pyrualean summarize` | Tabulate run directories ([Output Files](outputs.md)). |
-| `pyrualean valen-eval` | Compare saved visual checks, export human labels, or replay question/crop variants without a robot ([Valen Evaluation](valen-evaluation.md)). |
+| `codeaspolicy api` | Print the API reference the agent reads (LIBERO-PRO's robot). `--primitives no-vla` leaves the VLA out. |
+| `codeaspolicy prompt` | Print the prompt of a single shot (`generate`); `--card` renders it for a task card. A `play` episode saves the prompt its model read as `prompt.txt` in the run directory. |
+| `codeaspolicy play` | Run one episode with an agent ([Running Episodes](running.md)). |
+| `codeaspolicy card` | Boot only the simulator and save a task card. |
+| `codeaspolicy generate` | Ask the model for a whole program from a task card (single shot). |
+| `codeaspolicy run` | Run a program file for one episode. |
+| `codeaspolicy summarize` | Tabulate run directories ([Output Files](outputs.md)). |
+| `codeaspolicy valen-eval` | Compare saved visual checks, export human labels, or replay question/crop variants without a robot ([Valen Evaluation](valen-evaluation.md)). |
 
 ## The task instance
 
@@ -47,7 +47,7 @@ cannot enable missing capabilities; `result.json` records the effective set.
 | `--code-max-actions` | optional maximum motion attempts per code call |
 | `--code-output-chars` | maximum retained characters per stdout/stderr stream (`8000`) |
 | `--monitor-mode` | `pause`, `shadow` or `off` (default) |
-| `--valen-url` | existing Valen service (`$PYRUALEAN_VALEN_URL` or `http://127.0.0.1:18001/predict`) |
+| `--valen-url` | existing Valen service (`$CODEASPOLICY_VALEN_URL` or `http://127.0.0.1:18001/predict`) |
 | `--monitor-timeout-s`, `--monitor-threshold` | visual request budget (`30` seconds) and choice threshold (`0.8`) |
 | `--monitor-unknown-limit`, `--monitor-max-actions` | consecutive critical unknowns (`2`) and per-cell successful actions before review (`8`) |
 | `--stuck-recovery` | enable the bundled recovery core for cells; recovery is off by default |
@@ -56,13 +56,13 @@ cannot enable missing capabilities; `result.json` records the effective set.
 | `--no-stuck-recovery` | explicitly disable stuck recovery; cannot be combined with either enabling flag |
 | `--images` | `on-motion`, `on-demand` or `none` (`on-demand`) |
 | `--feedback` | `rich` or `pure` (`pure`) |
-| `--primitives` | `full` or `no-vla` (`no-vla`) |
+| `--primitives` | `full`, `no-vla` or `no-sam` (`no-sam`; adapters without `SAM_PRIMITIVES` intersect to `no-vla`) |
 | `--max-programs` | the most programs on the `program` arm |
 | `--guides`, `--guides-dir` | operating guides in the agent's workspace |
 | `--vla-endpoint`, `--sam3-endpoint` | running model servers to attach to |
 | `--codex-home`, `--codex-bin`, `--claude-cli` | the runtimes' homes and executables |
 
-Both `pyrualean play` and `python -m pyrualean.play` use the defaults above;
+Both `codeaspolicy play` and `python -m codeaspolicy.play` use the defaults above;
 `play_episode` uses the same launch settings when its optional arguments are omitted.
 Executable [action contracts](action-contracts.md) are active in the execution loop:
 public task invariants require check bindings before motion. Stage prerequisites,
@@ -87,15 +87,15 @@ native benchmark action budgets are selected separately.
 | Variable | Meaning |
 |---|---|
 | `RPENT_ROOT` | the RPent checkout, when RPent is not installed as a package |
-| `PYRUALEAN_RUNTIME` | default of `--runtime` |
-| `PYRUALEAN_PRIMITIVES` | default of `--primitives` |
-| `PYRUALEAN_CODEX_BIN`, `PYRUALEAN_CODEX_HOME` | defaults of `--codex-bin`, `--codex-home` |
-| `PYRUALEAN_CLAUDE_CLI` | default of `--claude-cli` |
-| `PYRUALEAN_OPENAI_EXTRA_BODY` | default of `--openai-extra-body` |
-| `PYRUALEAN_VALEN_URL` | default Valen `/predict` address; explicit `--valen-url` takes precedence |
-| `PYRUALEAN_CODEX_RETRIES` | retries of a request from Codex (`play`, `generate`) to a `--base-url` endpoint (`10`) |
+| `CODEASPOLICY_RUNTIME` | default of `--runtime` |
+| `CODEASPOLICY_PRIMITIVES` | default of `--primitives` |
+| `CODEASPOLICY_CODEX_BIN`, `CODEASPOLICY_CODEX_HOME` | defaults of `--codex-bin`, `--codex-home` |
+| `CODEASPOLICY_CLAUDE_CLI` | default of `--claude-cli` |
+| `CODEASPOLICY_OPENAI_EXTRA_BODY` | default of `--openai-extra-body` |
+| `CODEASPOLICY_VALEN_URL` | default Valen `/predict` address; explicit `--valen-url` takes precedence |
+| `CODEASPOLICY_CODEX_RETRIES` | retries of a request from Codex (`play`, `generate`) to a `--base-url` endpoint (`10`) |
 | `OPENAI_BASE_URL`, `OPENAI_API_KEY` | the endpoint and key of `--runtime openai` when `--base-url` / `--api-key-env` are not given |
-| `PYRUALEAN_OPENAI_RETRIES`, `PYRUALEAN_OPENAI_TIMEOUT_S` | retries (`10`) and request timeout in seconds (`900`) of `--runtime openai` |
+| `CODEASPOLICY_OPENAI_RETRIES`, `CODEASPOLICY_OPENAI_TIMEOUT_S` | retries (`10`) and request timeout in seconds (`900`) of `--runtime openai` |
 | `CODEX_AUTO_COMPACT_TOKEN_LIMIT` | Codex's compaction threshold for the episode ([Agent Configuration](agents.md#codex)) |
 
 Environment variables supply CLI defaults. Explicit `--runtime` and `--primitives`

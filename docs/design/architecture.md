@@ -25,9 +25,9 @@ play_episode → host.boot / dump_card → RobotAdapter / robo
              ← 代码结果、动作记录、状态、图像、监督与恢复反馈
 ```
 
-主要实现位于 `src/pyrualean/play.py::play_episode/build_prompt`、
-`src/pyrualean/arms.py::ArmToolkit`、`src/pyrualean/_robot.py::RobotBase`、
-`src/pyrualean/_backend.py::Backend` 及各 `hosts/` 实现。
+主要实现位于 `src/codeaspolicy/play.py::play_episode/build_prompt`、
+`src/codeaspolicy/arms.py::ArmToolkit`、`src/codeaspolicy/_robot.py::RobotBase`、
+`src/codeaspolicy/_backend.py::Backend` 及各 `hosts/` 实现。
 
 | 运行模式 | 当前会话与模型行为 | 设计约束 |
 | --- | --- | --- |

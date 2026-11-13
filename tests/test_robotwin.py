@@ -11,7 +11,7 @@ from typing import Any
 
 import pytest
 
-from pyrualean import (
+from codeaspolicy import (
     EpisodeFinished,
     TaskCard,
     ToolError,
@@ -20,11 +20,11 @@ from pyrualean import (
     knowledge_text,
     render_prompt,
 )
-from pyrualean.arms import ArmToolkit
-from pyrualean.hosts import rpent_robotwin as host
-from pyrualean.play import build_prompt
-from pyrualean.prompt import _public_members
-from pyrualean.robotwin import (
+from codeaspolicy.arms import ArmToolkit
+from codeaspolicy.hosts import rpent_robotwin as host
+from codeaspolicy.play import build_prompt
+from codeaspolicy.prompt import _public_members
+from codeaspolicy.robotwin import (
     ArmState,
     Gripper,
     Move,
@@ -732,7 +732,7 @@ def test_adapter_and_prompt_wording():
     adapter = get_adapter("robotwin")
     assert adapter.robot_cls is RobotwinRobot and adapter.knowledge == "robotwin"
     assert adapter.cameras == ("head", "left_wrist", "right_wrist")
-    assert adapter.host == "pyrualean.hosts.rpent_robotwin"
+    assert adapter.host == "codeaspolicy.hosts.rpent_robotwin"
     assert adapter.guides_subdir == "robots/robotwin/guides"
     assert adapter.guide_names == ("GUIDE_RPENT.md",)
     card = TaskCard(

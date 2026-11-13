@@ -24,7 +24,7 @@ checks them before motion in the named dependent phase. Two unproductive local r
 a progress review, not automatic task termination.
 
 Enabling either `shadow` or `pause` automatically includes the packaged
-[planning skill core](../src/pyrualean/knowledge/astra_valen_supervision.md) in the
+[planning skill core](../src/codeaspolicy/knowledge/astra_valen_supervision.md) in the
 actual Astra prompt, together with the task card and monitor API. The core asks
 Astra to derive task-specific phases and acceptance conditions. It is frozen as
 `supervision_skill.md`; `monitor.planning_skill` in `result.json` records its hash.
@@ -34,7 +34,7 @@ skill gives planning guidance; host checks enforce only the dependencies actuall
 registered through the API, without changing monitor thresholds.
 
 The `play` CLIs leave recovery off by default. For `cells`, enable the bundled
-[recovery core](../src/pyrualean/knowledge/astra_stuck_recovery.md) with
+[recovery core](../src/codeaspolicy/knowledge/astra_stuck_recovery.md) with
 `--stuck-recovery`, independently of the monitor switch. A custom skill file also
 enables recovery:
 
@@ -70,7 +70,7 @@ CUDA_VISIBLE_DEVICES=0 /path/to/valen-env/bin/python \
     --model /path/to/Valen-2B --port 18001
 ```
 
-`pyrualean play` and `python -m pyrualean.play` default to `cells`, with monitoring
+`codeaspolicy play` and `python -m codeaspolicy.play` default to `cells`, with monitoring
 and confirmed-stuck recovery both `off`. Normal execution does not require a Valen service
 or `watch` declarations. Executable [action contracts](guide/action-contracts.md)
 remain active independently: public task invariants require check bindings before
@@ -79,7 +79,7 @@ monitoring off. The planner must declare prerequisite/completion checks, geometr
 constraints and multi-stage previews; their availability does not ensure adoption.
 Opt in with `--monitor-mode pause` to request cell
 interruptions, or `--monitor-mode shadow` to collect reports. The service address is
-`http://127.0.0.1:18001/predict`; set `PYRUALEAN_VALEN_URL` or `--valen-url` to
+`http://127.0.0.1:18001/predict`; set `CODEASPOLICY_VALEN_URL` or `--valen-url` to
 override it (the flag wins). The CLI connects to an existing service rather than
 starting model weights. To collect observations without pausing, use:
 
@@ -91,7 +91,7 @@ When explicitly enabled, `pause` stops the remaining cell actions when review is
 Use `--monitor-mode off --no-stuck-recovery` to explicitly disable both features.
 The switches are independent: enabling the monitor does not enable recovery, and
 turning it off does not disable explicitly enabled recovery. Both the outer
-`pyrualean play` CLI and `python -m pyrualean.play` preserve explicit selections.
+`codeaspolicy play` CLI and `python -m codeaspolicy.play` preserve explicit selections.
 Codex, Claude, and OpenAI runtimes share the same supervised tools. The `program`
 arm defaults to both features off and rejects explicitly enabling either.
 

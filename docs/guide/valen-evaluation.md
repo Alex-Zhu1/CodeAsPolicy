@@ -1,13 +1,13 @@
 # Evaluate saved Valen observations
 
-`pyrualean valen-eval` evaluates the request/response pairs in an episode's
+`codeaspolicy valen-eval` evaluates the request/response pairs in an episode's
 `supervision/` audit. It never starts a robot or executes policy code. Cached
 evaluation needs only the package and the saved JSON; crop replay also needs Pillow.
 
 ## Compare thresholds and prepare labels
 
 ```bash
-pyrualean valen-eval --audit runs/my-episode/supervision \
+codeaspolicy valen-eval --audit runs/my-episode/supervision \
     --out runs/valen-baseline --thresholds 0.6 0.7 0.8 0.9
 ```
 
@@ -25,7 +25,7 @@ Use unknown when the images cannot establish the fact. Leave unreviewed entries
 null. These are human visual-fact labels, not model predictions or simulator truth.
 
 ```bash
-pyrualean valen-eval --audit runs/my-episode/supervision \
+codeaspolicy valen-eval --audit runs/my-episode/supervision \
     --labels runs/valen-baseline/labels.json --out runs/valen-labelled
 ```
 
@@ -42,7 +42,7 @@ Start a compatible local Valen service separately. The explicit `--replay-url`
 enables fresh predictions on saved images. Without it, only saved scores are read.
 
 ```bash
-pyrualean valen-eval --audit runs/my-episode/supervision \
+codeaspolicy valen-eval --audit runs/my-episode/supervision \
     --replay-url http://127.0.0.1:18001/predict \
     --variant variants.json --out runs/valen-crop-comparison
 ```

@@ -4,7 +4,7 @@ fileinfo={}; overrides={}; common={}; exact={}
 def info(path,summary,tags): fileinfo[path]=(summary,tags.split())
 def desc(path,entries):
  for k,v in entries.items(): overrides[(path,k)]=v
-P='integrations/xpolicylab/PyRUA_RSI/programs/'
+P='integrations/xpolicylab/CodeAsPolicy_RSI/programs/'
 def program(name,summary): info(P+name+'.py',summary,'离线策略 robodojo 视觉定位 运动控制')
 def descriptions(name,text):
  for line in text.strip().splitlines():
@@ -17,7 +17,7 @@ info('docs/getting-started/how-it-works.md','解释持久 Python 单元如何组
 info('docs/getting-started/quickstart.md','提供 LIBERO-PRO 环境安装、模型资产配置、首个交互回合及结果查看流程，并指向 RoboDojo 独立接入方式。','文档 快速开始 环境配置')
 info('docs/hooks/api_reference.py','在 MkDocs 构建时把页面中的 API 标记替换为机器人类生成的实时接口文档，保持文档与模型提示词一致。','文档 mkdocs 代码生成')
 info('docs/index.md','介绍 Python 机器人代理框架、RoboDojo 评测和 Coder 模型，并组织安装与架构文档入口。','文档 入口点 项目概览')
-info('docs/models/coder.md','介绍 GRPO 训练的 PyRUA-Lean Coder 模型、跨基准评测结果和兼容 OpenAI 服务的运行配置。','文档 模型 评测')
+info('docs/models/coder.md','介绍 GRPO 训练的 CodeAsPolicy Coder 模型、跨基准评测结果和兼容 OpenAI 服务的运行配置。','文档 模型 评测')
 info('docs/stylesheets/extra.css','为 MkDocs 页面提供项目配色、字体、卡片、按钮及导航等视觉样式。','文档 css 界面样式')
 info('docs/visual-supervision.md','说明 Valen 的阶段契约、跨单元证据账本、动作前置条件、暂停恢复和离线回放协议。','文档 视觉监督 证据管理')
 info('examples/replay_object_swap_t2_s0.py','重放固定 LIBERO-PRO 场景中沙拉酱入篮的成功原语序列，用于验证接口连通性。','示例 固定回放 libero')
@@ -27,16 +27,16 @@ info('examples/replay_supervision.py','把记录的控制步数和 RGB 图像按
 info('examples/robodojo_check_primitives.py','以脚本检查 RoboDojo 定位、抓取、抬升、堆叠和按压原语，记录原生步数、工具结果及阶段图像。','示例 原语验证 robodojo')
 info('examples/robodojo_joint_limits.py','逐关节发送正负目标并测量停止位置，结合正运动学最低点区分关节限位与桌面碰撞。','示例 运动学 关节限位')
 info('examples/run_supervised_batch.py','按冻结任务清单和 GPU 并发上限调度监督评测，管理共享 Valen 服务、断点状态、进程清理及结果汇总。','批量评测 进程管理 视觉监督')
-for policy in ['PyRUA_Lean','PyRUA_RSI']:
+for policy in ['CodeAsPolicy','CodeAsPolicy_RSI']:
  prefix='integrations/xpolicylab/'+policy+'/'
  info(prefix+'__init__.py','向 RoboDojo 客户端和 XPolicyLab 策略服务分别重导出部署循环与 Model 接口，并容忍可选依赖缺失。','入口点 导出 xpolicylab')
  info(prefix+'deploy.py','适配 RoboDojo 单回合评测循环：处理策略等待、附加观测步数和图像时延，并在程序结束后反馈基准最终判定。','部署 评测循环 xpolicylab')
- info(prefix+'model.py',('将 XPolicyLab 观测与关节动作通过 Bridge 接入在线 Python 机器人代理，按首个观测启动回合线程并保存结果。' if policy=='PyRUA_Lean' else '将 XPolicyLab 观测与关节动作通过 Bridge 接入离线任务程序，启动本地代码响应服务并为整回合单元保留执行预算。'),'策略适配 线程管理 xpolicylab')
- desc(prefix+'deploy.py',{'_pictures_behind':'检测 RoboDojo 同步渲染模块是否存在，返回客户端图像落后状态的观测次数。','_status':'兼容两类环境字段提取控制步数、步数上限、任务名、布局和评测种子。','_waiting':'识别策略响应中唯一的 pyrualean wait 哨兵动作。','_judge_as_it_stands':'在程序主动结束时触发 RoboDojo 对当前场景的最终判定。','eval_one_episode':'循环交换观测和动作，轮询等待响应，并在清理阶段上报本次 trial 的最终判定。','eval_one_episode_batch':'拒绝多环境批量执行，保证一个策略会话只驱动一个环境。'})
+ info(prefix+'model.py',('将 XPolicyLab 观测与关节动作通过 Bridge 接入在线 Python 机器人代理，按首个观测启动回合线程并保存结果。' if policy=='CodeAsPolicy' else '将 XPolicyLab 观测与关节动作通过 Bridge 接入离线任务程序，启动本地代码响应服务并为整回合单元保留执行预算。'),'策略适配 线程管理 xpolicylab')
+ desc(prefix+'deploy.py',{'_pictures_behind':'检测 RoboDojo 同步渲染模块是否存在，返回客户端图像落后状态的观测次数。','_status':'兼容两类环境字段提取控制步数、步数上限、任务名、布局和评测种子。','_waiting':'识别策略响应中唯一的 codeaspolicy wait 哨兵动作。','_judge_as_it_stands':'在程序主动结束时触发 RoboDojo 对当前场景的最终判定。','eval_one_episode':'循环交换观测和动作，轮询等待响应，并在清理阶段上报本次 trial 的最终判定。','eval_one_episode_batch':'拒绝多环境批量执行，保证一个策略会话只驱动一个环境。'})
  desc(prefix+'model.py',{'_hold':'把观测中的机械臂和夹爪关节状态转换为保持当前姿态的动作。','Model':'实现 XPolicyLab 策略接口，通过线程和 Bridge 将回合执行与客户端观测动作交换连接起来。','Model.__init__':'保存策略配置、轮询与收尾时限，建立 Bridge 和结果目录并检查机器人形态。','Model._check_embodiment':'验证动作类型为关节目标，且环境配置为两条六关节机械臂和各一个夹爪关节。','Model.reset':'终止旧回合的桥接关系，重建 Bridge 并清空回合线程；调试模式只清空观测。','Model.update_obs':'把新观测交给 Bridge，并在首次观测时启动执行该任务的守护线程。','Model.get_action':'在调试模式保持关节状态，否则返回 Bridge 排队的下一动作。','Model.on_trial_end':'接收客户端最终判定并等待回合结果落盘，等待时间受 wrap_up_s 限制。','Model.update_obs_batch':'显式拒绝批量观测接口，约束单会话单环境执行。','Model.get_action_batch':'显式拒绝批量动作接口，约束单会话单环境执行。','Model._robot':'从部署配置选择机器人适配器名称，默认使用 RGB RoboDojo 接口。','Model._play':'构造任务 Cell、运行 play_episode 并保存状态与成功判定，最终始终关闭 Bridge 避免客户端无限等待。'})
- desc(prefix+'model.py',{'Model._play':('构造 Cell 并调用 play_episode，配置视觉监督与执行限制；记录结果后始终结束 Bridge。' if policy=='PyRUA_Lean' else '选择任务离线代码并调用 play_episode，将单元时限扩展到整回合预算；记录结果后始终结束 Bridge。')})
-info('integrations/xpolicylab/PyRUA_RSI/eval/robodojo_summary.md','记录 RSI 固定程序在 RoboDojo seed 0 的能力维度和逐任务评测，并区分开发种子与另一个未用于开发的评测种子。','文档 离线策略 评测结果')
-info('integrations/xpolicylab/PyRUA_RSI/offline_programs.py','以本地 Chat Completions 兼容服务替代模型：每回合首次请求返回任务完整 Python 程序，之后返回 finish。','离线策略 http 代码分发')
+ desc(prefix+'model.py',{'Model._play':('构造 Cell 并调用 play_episode，配置视觉监督与执行限制；记录结果后始终结束 Bridge。' if policy=='CodeAsPolicy' else '选择任务离线代码并调用 play_episode，将单元时限扩展到整回合预算；记录结果后始终结束 Bridge。')})
+info('integrations/xpolicylab/CodeAsPolicy_RSI/eval/robodojo_summary.md','记录 RSI 固定程序在 RoboDojo seed 0 的能力维度和逐任务评测，并区分开发种子与另一个未用于开发的评测种子。','文档 离线策略 评测结果')
+info('integrations/xpolicylab/CodeAsPolicy_RSI/offline_programs.py','以本地 Chat Completions 兼容服务替代模型：每回合首次请求返回任务完整 Python 程序，之后返回 finish。','离线策略 http 代码分发')
 desc('docs/hooks/api_reference.py',{'_render':'根据页面标记选择机器人适配器与原语集合，生成保留缩进的接口代码块。','on_page_markdown':'在 MkDocs 页面 Markdown 中替换所有 API 引用标记。'})
 desc('examples/replay_object_swap_t2_s0.py',{'run':'依次移动、调用 Pi0 抓取沙拉酱、保持夹持搬运并释放到篮子中。'})
 desc('examples/replay_robocasa_open_drawer.py',{'run':'记录初始状态、反投影抽屉把手像素并调用 RL-DX 抽屉技能。'})
@@ -44,7 +44,7 @@ desc('examples/replay_robotwin_beat_block_hammer.py',{'run':'先执行两段 Lin
 desc('examples/replay_supervision.py',{'RecordedRobot':'把记录的图像与控制步数包装成 VisualSupervisor 可读取的最小机器人接口。','RecordedRobot.__init__':'验证记录非空、步数严格递增、相机集合一致和图像绝对路径有效。','main':'读取清单与阶段契约，依次回放端点到 shadow 监督器并输出回放报告和错误退出码。'})
 desc('examples/robodojo_check_primitives.py',{'call':'执行一个工具并记录参数、原生动作消耗、耗时和关键反馈字段。','snapshot':'读取头部相机 RGB 图像并保存带步骤序号的 JPEG 快照。'})
 desc('examples/run_supervised_batch.py',{'now':'返回 UTC 时间的 ISO 格式字符串，用于持久化任务时间戳。','write_json':'先写临时 JSON 文件再原子替换目标，避免状态文件半写入。','read_json':'读取 JSON 状态，文件缺失或内容损坏时返回空值。','last_event':'从日志尾部向前寻找最后一条有效 JSON 事件。','collect_result':'结合回合记录、基准原生判定和监督日志分类成功、失败或错误并汇总统计。','summary':'按作业状态计算完成数、成功率、任务失败数和原生平均分。','OwnedProcess':'跟踪子进程及其后代的 PID 与创建时间，确保清理只作用于本批次拥有的进程。','OwnedProcess.__init__':'在新会话中启动进程并保存根进程身份与启动时间。','OwnedProcess.capture':'核对根进程创建时间后登记仍属于该进程树的后代。','OwnedProcess.live_owned':'通过 PID 和创建时间验证存活的自有进程，排除僵尸和复用 PID。','OwnedProcess.stop':'先终止自有进程树，超时后对身份仍匹配的进程强制结束。','still_running':'核对持久化作业 PID、创建时间及非僵尸状态，判断旧任务是否仍运行。','Batch':'维护冻结任务队列、GPU 槽位、共享监督服务与可恢复状态，协调执行和结果发布。','Batch.__init__':'加载冻结配置并核对已有任务清单，收尾中断任务后初始化调度状态。','Batch.publish':'刷新活跃任务监督进度并原子发布状态、汇总 JSON 和 CSV。','Batch.start_valen':'选择本地端口启动共享 Valen 服务，等待就绪并使用探针图像验证响应协议。','Batch.launch':'准备任务工作目录和运行配置，在指定 GPU 上启动带监督与恢复参数的回合进程。','Batch.finalize':'清理结束任务的进程与日志，汇总最终判定并发布更新。','Batch.run':'按 GPU 槽位持续调度任务，处理超时和中断，并在退出时清理任务与监督服务。','main':'解析批次目录并取得非阻塞文件锁，防止同一批次被重复调度。'})
-desc('integrations/xpolicylab/PyRUA_RSI/offline_programs.py',{'program_for':'按任务名读取 programs 目录下的 Python 程序，缺失时报告明确路径错误。','select':'验证任务程序存在后，在锁保护下切换即将执行的任务。','_Handler':'处理兼容 Chat Completions 的请求，以整段离线代码和结束工具调用模拟模型响应。','_Handler.do_POST':'识别新会话并更新响应计数，首轮返回 python 工具调用，后续返回 finish 并写入 JSON HTTP 响应。','start':'在进程中只启动一次本地多线程 HTTP 服务并返回其兼容 API 基址。'})
+desc('integrations/xpolicylab/CodeAsPolicy_RSI/offline_programs.py',{'program_for':'按任务名读取 programs 目录下的 Python 程序，缺失时报告明确路径错误。','select':'验证任务程序存在后，在锁保护下切换即将执行的任务。','_Handler':'处理兼容 Chat Completions 的请求，以整段离线代码和结束工具调用模拟模型响应。','_Handler.do_POST':'识别新会话并更新响应计数，首轮返回 python 工具调用，后续返回 finish 并写入 JSON HTTP 响应。','start':'在进程中只启动一次本地多线程 HTTP 服务并返回其兼容 API 基址。'})
 program('align_blocks','通过视觉定位直角尺与方块，先侧推分离可能碰撞的方块，再用双臂交替前推直尺将方块对齐。')
 descriptions('align_blocks','''find|依次尝试视觉提示词，返回首个具有有效三维中心的定位结果。
 ray_plane|用相机内外参把像素射线与指定高度平面求交。
@@ -189,18 +189,18 @@ def emit(index):
    if cal.startswith('self.'):
     own=s.rsplit(':',1)[1].split('.')[0];target=syms.get(own+'.'+cal[5:])
    if target:edge(s,target,'calls')
-   if p.endswith('PyRUA_RSI/model.py') and cal in ['offline_programs.start','offline_programs.select']:
-    edge(s,'function:integrations/xpolicylab/PyRUA_RSI/offline_programs.py:'+cal.split('.')[1],'calls')
+   if p.endswith('CodeAsPolicy_RSI/model.py') and cal in ['offline_programs.start','offline_programs.select']:
+    edge(s,'function:integrations/xpolicylab/CodeAsPolicy_RSI/offline_programs.py:'+cal.split('.')[1],'calls')
  # Verified semantic relationships within the batch.
  if index==16:
   edge('document:docs/visual-supervision.md','file:examples/replay_supervision.py','documents')
-  edge('document:docs/visual-supervision.md','file:integrations/xpolicylab/PyRUA_Lean/model.py','documents')
-  for policy in ['PyRUA_Lean','PyRUA_RSI']:
+  edge('document:docs/visual-supervision.md','file:integrations/xpolicylab/CodeAsPolicy/model.py','documents')
+  for policy in ['CodeAsPolicy','CodeAsPolicy_RSI']:
    p='integrations/xpolicylab/'+policy+'/'
    edge('file:'+p+'__init__.py','file:'+p+'deploy.py','depends_on');edge('file:'+p+'__init__.py','file:'+p+'model.py','depends_on')
   for name in ['align_blocks','arrange_largest_number']:
-   edge('document:integrations/xpolicylab/PyRUA_RSI/eval/robodojo_summary.md','file:'+P+name+'.py','documents')
-   edge('function:integrations/xpolicylab/PyRUA_RSI/offline_programs.py:program_for','file:'+P+name+'.py','depends_on')
+   edge('document:integrations/xpolicylab/CodeAsPolicy_RSI/eval/robodojo_summary.md','file:'+P+name+'.py','documents')
+   edge('function:integrations/xpolicylab/CodeAsPolicy_RSI/offline_programs.py:program_for','file:'+P+name+'.py','depends_on')
  # Cross-part endpoints are validated against the entire batch before writing.
  allowed=set(ids)|{'file:'+t for targets in b['batchImportData'].values() for t in targets}
  assert len(ids)==len(nodes)

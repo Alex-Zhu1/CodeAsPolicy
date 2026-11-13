@@ -46,7 +46,7 @@
 
 **本轮边界：**`strategy / watch / evidence` 实际调用均为 0；鼠标直接检查夹爪后抬升并搬运。没有证据这段文字在本轮形成硬门控，也不能用它解释全部失分。
 
-证据：[当前 prompt 第78行](../../runs/organize-table-handoff-rerun-20261101-093121/episode/prompt.txt#L78)；源码位置 `src/pyrualean/strategies.py:255–273`。更详细的逐行对照见[提示审计](../../runs/astra-input-audit-20261101/prompt-findings.md)。
+证据：[当前 prompt 第78行](../../runs/organize-table-handoff-rerun-20261101-093121/episode/prompt.txt#L78)；源码位置 `src/codeaspolicy/strategies.py:255–273`。更详细的逐行对照见[提示审计](../../runs/astra-input-audit-20261101/prompt-findings.md)。
 
 ## 2. pure 反馈的重心偏向协议，且已有真实截断
 

@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from pyrualean.evaluation.latency import (
+from codeaspolicy.evaluation.latency import (
     TRACE_SCHEMA,
     main,
     summarize_codex_rollout,

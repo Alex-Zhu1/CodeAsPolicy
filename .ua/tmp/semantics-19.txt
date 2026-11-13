@@ -1,4 +1,4 @@
-@integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks.py|预先编写的扫块任务策略，通过纯 RGB 几何、颜色分割和公开 robo API 定位刷子、簸箕及残留物，按动作预算抓取、转移和复查。|离线策略,视觉几何,任务操作
+@integrations/xpolicylab/CodeAsPolicy_RSI/programs/sweep_blocks.py|预先编写的扫块任务策略，通过纯 RGB 几何、颜色分割和公开 robo API 定位刷子、簸箕及残留物，按动作预算抓取、转移和复查。|离线策略,视觉几何,任务操作
 P|打印策略诊断信息。
 fmt|把坐标向量格式化为三位小数文本。
 wrap|将角度规范为负一百八十度到一百八十度范围。
@@ -44,7 +44,7 @@ not_gripper|移除靠近已知停放夹爪区域的候选物体。
 opening_for|根据物体宽度计算带余量且限幅的夹爪张开目标。
 main|定位并调整刷子与簸箕，结合头部及腕部观测搬运物体，按剩余预算重查残留并有限次修正。
 Done|表示策略因原生预算或回合终止而停止。
-@integrations/xpolicylab/SUBMISSION.md|说明 PyRUA_Lean 向 XPolicyLab/RoboDojo 提交的安装、资产、模型服务和评估协议，强调默认纯彩色观测及统一任务系统。|文档,提交指南,官方评估
+@integrations/xpolicylab/SUBMISSION.md|说明 CodeAsPolicy 向 XPolicyLab/RoboDojo 提交的安装、资产、模型服务和评估协议，强调默认纯彩色观测及统一任务系统。|文档,提交指南,官方评估
 @runs/_empty-memory-robocasa/MEMORY.md|为空的 RoboCasa 记忆语料占位文件，供无先验记忆的运行配置使用。|文档,空记忆,实验配置
 @runs/_empty-memory-robotwin/MEMORY.md|为空的 RoboTwin 记忆语料占位文件，供无先验记忆的运行配置使用。|文档,空记忆,实验配置
 @runs/_empty-memory/MEMORY.md|声明零样本运行使用空记忆语料，不包含既有回合经验。|文档,空记忆,零样本
@@ -54,12 +54,12 @@ Done|表示策略因原生预算或回合终止而停止。
 @skills/astra-valen-supervision/SKILL.md|说明 Astra 负责策略分解、Valen 提供视觉事实、宿主执行和门控的职责，并指导声明动作前提、处理未知与核对完成证据。|技能文档,视觉监督,任务规划
 @skills/astra-valen-supervision/agents/openai.yaml|配置视觉监督技能的显示名称、简短说明和默认规划提示。|技能配置,入口说明,视觉监督
 @skills/astra-valen-supervision/references/contracts.md|提供任务简报和阶段契约模板，解释双臂与单臂组合、证据依赖、动作后检查以及恢复边界。|参考文档,阶段契约,双臂协调
-@src/pyrualean/codex-catalog-gpt-6-astra-fallback.json|保存运行 Codex 时可选的 gpt-6-astra 模型目录元数据，包括推理级别、上下文和指令模板，供生成器选择性注入。|模型配置,运行时,兼容目录
-@src/pyrualean/hosts/robodojo_client_root.py|构建官方 RoboDojo 评估客户端的独立运行目录，复制代码配置、链接资源，并可只在副本中开启深度和相机矩阵。|客户端准备,配置副本,资源管理
+@src/codeaspolicy/codex-catalog-gpt-6-astra-fallback.json|保存运行 Codex 时可选的 gpt-6-astra 模型目录元数据，包括推理级别、上下文和指令模板，供生成器选择性注入。|模型配置,运行时,兼容目录
+@src/codeaspolicy/hosts/robodojo_client_root.py|构建官方 RoboDojo 评估客户端的独立运行目录，复制代码配置、链接资源，并可只在副本中开启深度和相机矩阵。|客户端准备,配置副本,资源管理
 with_depth|在配置副本中开启深度及相机矩阵相关开关。
 _assets|定位仓库内或运行环境指定的 RoboDojo 资源目录。
 lay_out|复制 RoboDojo 与 XPolicyLab 必需代码，放置所选策略并布置资源和结果目录。
-@src/pyrualean/hosts/robodojo_env_server.py|包装 RPent RoboDojo 环境服务器，在进程内补齐基准第三臂轨迹与评估种子行为，使互动任务遵循官方客户端动作序列。|环境兼容,第三臂,服务器入口
+@src/codeaspolicy/hosts/robodojo_env_server.py|包装 RPent RoboDojo 环境服务器，在进程内补齐基准第三臂轨迹与评估种子行为，使互动任务遵循官方客户端动作序列。|环境兼容,第三臂,服务器入口
 _query|请求辅助臂下一轨迹并记录新增队列长度。
 _queue_first|在回合检查注册后排入辅助臂首段轨迹。
 _take_turn|每次动作后按官方轮次规则排队辅助臂动作并检查稳定性。
@@ -67,7 +67,7 @@ _give_eval_seed|为缺少该字段的环境补入布局集合编号，支持示�
 _replaying|在控制子步中插入已排队的辅助臂动作。
 install|幂等包装运行时桥接与延迟创建的环境类，补齐第三臂评估行为。
 main|安装进程内兼容逻辑后，以原参数执行 RPent 环境服务器脚本。
-@src/pyrualean/hosts/sam3_local.py|在策略进程内加载并缓存 SAM3，提供与 RPent 客户端一致的文本或像素分割接口及最高置信候选选择。|分割模型,模型缓存,感知适配
+@src/codeaspolicy/hosts/sam3_local.py|在策略进程内加载并缓存 SAM3，提供与 RPent 客户端一致的文本或像素分割接口及最高置信候选选择。|分割模型,模型缓存,感知适配
 _array|将张量转为 CPU 浮点数组，已有数组直接复用。
 select_top|选择达到阈值且掩膜非空的最高置信候选。
 shared|按检查点与设备复用进程中的 SAM3 实例，避免每回合重复加载。
@@ -184,7 +184,7 @@ JointEnvironment.get_status|返回测试环境已执行动作数和动作上限�
 JointEnvironment.get_obs|用实际运动学生成双臂位姿并构造模拟相机观测。
 JointEnvironment.step|记录并更新动作，支持冻结单臂或物理步后的通信异常注入。
 @tests/test_env.py|验证统一环境变量读取语义和 Codex 重试次数配置。|测试,环境变量,运行时配置
-test_setting_reads_the_pyrualean_variable_else_the_default|验证变量缺失用默认值，而显式空字符串仍视为已设置。
+test_setting_reads_the_codeaspolicy_variable_else_the_default|验证变量缺失用默认值，而显式空字符串仍视为已设置。
 test_codex_retries_come_from_the_environment|验证请求与流式重试次数均来自统一环境设置。
 @tests/test_evaluation.py|验证跨系统回合计量、原生成功、步数重建、严格配对以及 Claude 用量归一化。|测试,评估指标,结果解析
 _result|创建具有统一结果结构的测试运行目录，并允许覆盖字段。
@@ -206,7 +206,7 @@ test_invalid_deferral_cannot_change_requirements|验证非法延期请求保持�
 test_conflicting_gate_cannot_overwrite_existing_dependency|验证相互冲突的事实条件不能覆盖已登记依赖。
 test_episode_fact_capacity_fails_without_partial_registration|验证超出事实容量时不会部分登记新事实。
 
-@integrations/xpolicylab/PyRUA_RSI/programs/sweep_blocks_random.py|随机物体扫块策略；当前文件内容与 sweep_blocks.py 完全相同，按任务指令选择目标集合，通过纯 RGB 几何、颜色分割和公开 robo API 定位刷子、簸箕及残留物，按动作预算抓取、转移和复查。|离线策略,视觉几何,任务操作
+@integrations/xpolicylab/CodeAsPolicy_RSI/programs/sweep_blocks_random.py|随机物体扫块策略；当前文件内容与 sweep_blocks.py 完全相同，按任务指令选择目标集合，通过纯 RGB 几何、颜色分割和公开 robo API 定位刷子、簸箕及残留物，按动作预算抓取、转移和复查。|离线策略,视觉几何,任务操作
 P|打印策略诊断信息。
 fmt|把坐标向量格式化为三位小数文本。
 wrap|将角度规范为负一百八十度到一百八十度范围。

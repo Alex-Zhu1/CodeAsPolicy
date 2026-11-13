@@ -2,7 +2,7 @@
 
 from copy import deepcopy
 
-from pyrualean.operations import OperationAdapter, OperationRegistry, feedback
+from codeaspolicy.operations import OperationAdapter, OperationRegistry, feedback
 
 
 def registry():

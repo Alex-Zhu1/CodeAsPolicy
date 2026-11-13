@@ -65,6 +65,10 @@ def test_generated_motion_policy_declares_intents_without_controller_tuning(robo
     assert "Do not abandon a task" in text
     assert "unknown is not empty" in text
     assert "table-height geometry" in text
+    assert "rotated_end_pose" in text
+    assert "vertical-axis twist" in text
+    assert "sequential single-arm clearance" in text
+    assert "insert_key" not in text and "keyhole" not in text
     assert "robo.move_to(\n" in api_reference(get_adapter(robot).robot_cls, intent_only=False)
 
 
@@ -261,4 +265,8 @@ def test_no_sam_prompt_exposes_geometry_without_sam3_and_keeps_intent_invariants
     assert "Do not abandon a task" in prompt_text
     assert "unknown is not empty" in prompt_text
     assert "table-height geometry" in prompt_text
+    assert "rotated_end_pose" in prompt_text
+    assert "vertical-axis twist" in prompt_text
+    assert "sequential single-arm clearance" in prompt_text
+    assert "insert_key" not in prompt_text and "keyhole" not in prompt_text
     assert "crop_grid" in prompt_text and "observe_object" in prompt_text and "observe_hold" in prompt_text

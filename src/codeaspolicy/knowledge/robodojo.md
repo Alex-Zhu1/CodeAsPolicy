@@ -547,3 +547,16 @@
   variable; do not repeat the same target or the same recovery twice.
 - There is exactly one episode and no reset.  Recover in place: re-observe,
   re-localise, re-grasp.
+- Prevent 0-step kinematic and workspace traps before grasping or entering
+  shared central zones: (1) for constrained seating/insertion followed by an
+  in-place twist/turn, call `robo.ik()` across the **entire pose chain**
+  `(grasp_pose, pre_contact_pose, seated_pose, rotated_end_pose)` *before*
+  closing the gripper (0 native steps); (2) align the finger-pointing direction
+  with the required rotation axis (`pitch=90` pointing straight down for a
+  vertical-axis twist) so the turn runs purely on the terminal wrist joint
+  (`yaw`, `±178°` range) instead of sweeping a horizontal (`pitch≈0`) 6-DOF arc
+  into wrist singularities; (3) enforce **sequential single-arm clearance** in
+  shared central zones (for a supported set-down transfer, release, retreat, and
+  clear/home the donor arm before bringing the receiver arm in; for an in-air
+  handoff, park the donor arm stationary at a verified pose before advancing
+  only the receiver arm).

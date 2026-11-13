@@ -41,6 +41,7 @@ conventions: ``input_tokens`` includes cached tokens) goes into
 from __future__ import annotations
 
 import base64
+import copy
 import io
 import json
 import os
@@ -201,13 +202,108 @@ class _Transcript:
         self.recorded.append(recorded)
 
 
+def _int_or_zero(value: Any) -> int:
+    try:
+        return int(value or 0)
+    except (TypeError, ValueError):
+        return 0
+
+
+def _first_present(mapping: dict[str, Any], *keys: str) -> Any:
+    for key in keys:
+        if mapping.get(key) is not None:
+            return mapping[key]
+    return None
+
+
 def _usage_fields(usage: dict[str, Any] | None) -> dict[str, int]:
-    usage = usage or {}
-    prompt = int(usage.get("prompt_tokens") or 0)
-    completion = int(usage.get("completion_tokens") or 0)
-    cached = int(((usage.get("prompt_tokens_details") or {}).get("cached_tokens")) or 0)
-    reasoning = int(((usage.get("completion_tokens_details") or {}).get("reasoning_tokens")) or 0)
+    if not isinstance(usage, dict):
+        return {"prompt": 0, "completion": 0, "cached": 0, "reasoning": 0}
+    prompt = _int_or_zero(_first_present(usage, "prompt_tokens", "input_tokens"))
+    completion = _int_or_zero(_first_present(usage, "completion_tokens", "output_tokens"))
+    prompt_details = usage.get("prompt_tokens_details")
+    prompt_details = prompt_details if isinstance(prompt_details, dict) else {}
+    cached = _int_or_zero(
+        _first_present(prompt_details, "cached_tokens")
+        if _first_present(prompt_details, "cached_tokens") is not None
+        else _first_present(
+            usage,
+            "cached_tokens",
+            "cached_content_token_count",
+            "cache_read_input_tokens",
+        )
+    )
+    completion_details = usage.get("completion_tokens_details")
+    completion_details = completion_details if isinstance(completion_details, dict) else {}
+    reasoning = _int_or_zero(
+        _first_present(completion_details, "reasoning_tokens", "thinking_tokens")
+        if _first_present(completion_details, "reasoning_tokens", "thinking_tokens") is not None
+        else _first_present(
+            usage,
+            "reasoning_tokens",
+            "thinking_tokens",
+            "thoughts_token_count",
+        )
+    )
     return {"prompt": prompt, "completion": completion, "cached": cached, "reasoning": reasoning}
+
+
+def _is_gemini_or_argon_model(model: str | None) -> bool:
+    lowered = str(model or "").lower()
+    return "gemini" in lowered or "argon" in lowered
+
+
+def _normalize_reasoning_effort(model: str | None, effort: Any) -> Any:
+    """Normalize ``reasoning_effort`` for OpenAI and Gemini/Argon gateways."""
+
+    if not isinstance(effort, str):
+        return effort
+    cleaned = effort.strip()
+    lowered = cleaned.lower()
+    if not cleaned or lowered == "none":
+        return None
+    if _is_gemini_or_argon_model(model) and lowered == "xhigh":
+        return "high"
+    return cleaned
+
+
+def _extract_assistant_content(message: dict[str, Any]) -> tuple[str | None, str | None]:
+    """Extract plain assistant text and reasoning from string or block-list replies."""
+
+    raw_content = message.get("content")
+    text_parts: list[str] = []
+    thought_parts: list[str] = []
+    if isinstance(raw_content, str):
+        text_parts.append(raw_content)
+    elif isinstance(raw_content, list):
+        for item in raw_content:
+            if isinstance(item, str):
+                text_parts.append(item)
+            elif isinstance(item, dict):
+                kind = str(item.get("type") or "").lower()
+                if kind in ("thinking", "reasoning", "thought"):
+                    piece = (
+                        item.get("thinking")
+                        or item.get("reasoning")
+                        or item.get("text")
+                        or item.get("content")
+                    )
+                    if isinstance(piece, str) and piece:
+                        thought_parts.append(piece)
+                else:
+                    piece = item.get("text") or item.get("content")
+                    if isinstance(piece, str):
+                        text_parts.append(piece)
+    text: str | None = "".join(text_parts) if text_parts else None
+    explicit_reasoning = (
+        message.get("reasoning_content")
+        or message.get("reasoning")
+        or message.get("thought")
+    )
+    if isinstance(explicit_reasoning, str) and explicit_reasoning:
+        thought_parts.insert(0, explicit_reasoning)
+    reasoning: str | None = "\n".join(thought_parts) if thought_parts else None
+    return text, reasoning
 
 
 def _tool_result_text(result: ArmResult) -> str:
@@ -280,6 +376,7 @@ def run_openai_agent(
     budget_s: float,
     out_dir: str | Path,
     arm: str = "cells",
+    reasoning_effort: str | None = None,
     temperature: float | None = None,
     max_tokens: int | None = 4096,
     extra_body: dict[str, Any] | None = None,
@@ -434,8 +531,18 @@ def run_openai_agent(
             body["temperature"] = temperature
         if max_tokens:  # 0 / None: do not send the field at all (o-series reject max_tokens)
             body["max_tokens"] = max_tokens
+        if reasoning_effort is not None:
+            body["reasoning_effort"] = reasoning_effort
         if extra_body:
             body.update(extra_body)
+        if "reasoning_effort" in body:
+            normalized_effort = _normalize_reasoning_effort(
+                str(body.get("model") or model), body["reasoning_effort"]
+            )
+            if normalized_effort is None:
+                body.pop("reasoning_effort", None)
+            else:
+                body["reasoning_effort"] = normalized_effort
         attempt = 0
         limited = 0
         while True:
@@ -524,7 +631,10 @@ def run_openai_agent(
             choice = response["choices"][0]
             finish_reasons.append(choice.get("finish_reason"))
             message = choice.get("message") or {}
-            calls = message.get("tool_calls") or []
+            raw_calls = message.get("tool_calls") or []
+            if not raw_calls and isinstance(message.get("function_call"), dict):
+                raw_calls = [{"type": "function", "function": dict(message["function_call"])}]
+            calls = [copy.deepcopy(c) for c in raw_calls if isinstance(c, dict)]
             trace_contexts: list[dict[str, Any]] = []
             if trace is not None:
                 trace.emit("response_parsed", decision_id=decision_id, attempt_id=attempt_id,
@@ -534,14 +644,14 @@ def run_openai_agent(
                 # after earlier execution. Completion is not code validation.
                 for call in calls:
                     context = dict(local_call_id=trace.new_id("tool"), decision_id=decision_id,
-                                   attempt_id=attempt_id, provider_call_id=call.get("id"))
+                                   attempt_id=attempt_id, provider_call_id=call.get("id") or None)
                     trace_contexts.append(context)
                     function = call.get("function") or {}
                     _, problem = _parse_arguments(function.get("arguments"))
                     trace.emit("tool_arguments_complete", **context,
                                tool=function.get("name") or "", arguments_valid=problem is None,
                                completion_source="nonstreaming_response")
-            content = message.get("content")
+            content, reasoning = _extract_assistant_content(message)
             # A reply with no tool calls must replay with a string content: providers reject
             # {"role": "assistant", "content": null} without tool_calls (a thinking model that
             # spent its whole budget reasoning produces exactly that).
@@ -551,7 +661,6 @@ def run_openai_agent(
             }
             if calls:
                 assistant["tool_calls"] = calls
-            reasoning = message.get("reasoning_content") or message.get("reasoning")
             recorded_extra = {"reasoning_content": reasoning} if reasoning else {}
             transcript.messages.append(assistant)
             transcript.recorded.append({**assistant, **recorded_extra})
@@ -594,13 +703,24 @@ def run_openai_agent(
             ready_feedback: list[dict[str, Any]] = []
             for index, call in enumerate(calls):
                 function = call.get("function") or {}
+                call["function"] = function
+                call["type"] = call.get("type") or "function"
                 name = function.get("name") or ""
                 call_id = call.get("id") or f"call_{requests}_{index}"
                 call["id"] = call_id  # the replayed assistant message must carry the id we answer
                 tool_calls[name] = tool_calls.get(name, 0) + 1
-                arguments, problem = _parse_arguments(function.get("arguments"))
+                raw_args = function.get("arguments")
+                arguments, problem = _parse_arguments(raw_args)
+                if isinstance(raw_args, dict):
+                    function["arguments"] = json.dumps(raw_args, ensure_ascii=False)
+                elif raw_args is None:
+                    function["arguments"] = "{}"
                 if problem:
                     malformed += 1
+                elif name == "finish" and isinstance(arguments, dict):
+                    if not arguments.get("status"):
+                        arguments = {"status": "success", **arguments}
+                    arguments.setdefault("summary", "")
                 t0 = time.perf_counter()
                 if review_after is not None:
                     result = ArmResult({

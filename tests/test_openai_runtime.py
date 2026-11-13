@@ -756,3 +756,99 @@ def test_trace_write_failure_does_not_change_runtime_execution(robo, tmp_path, c
     assert result["status"] == "completed" and result["requests"] == 2
     assert toolkit._globals["answer"] == 42 and toolkit.finish["summary"] == "done"
     assert trace.summary()["write_errors"] > 0
+
+
+def test_argon_gemini_compatibility_usage_reasoning_and_tool_calls(robo, tmp_path, card_images):
+    toolkit = _toolkit(robo, tmp_path, images="on-demand", feedback="pure")
+    first_reply = {
+        "choices": [
+            {
+                "message": {
+                    "role": "assistant",
+                    "content": [
+                        {"type": "thinking", "thinking": "Inspect camera first"},
+                        {"type": "text", "text": "Running cell 1."},
+                    ],
+                    # Missing id, missing type, dict arguments (common on Gemini/Argon gateways)
+                    "tool_calls": [
+                        {
+                            "function": {
+                                "name": "python",
+                                "arguments": {"code": "robo.show('agentview')\nprint('argon_ok')"},
+                            }
+                        }
+                    ],
+                },
+                "finish_reason": "tool_calls",
+            }
+        ],
+        "usage": {
+            "prompt_tokens": 500,
+            "completion_tokens": 60,
+            "prompt_tokens_details": None,
+            "completion_tokens_details": None,
+            "cached_content_token_count": 200,
+            "thoughts_token_count": 25,
+        },
+    }
+    second_reply = {
+        "choices": [
+            {
+                "message": {
+                    "role": "assistant",
+                    "content": "Completed.",
+                    # finish without explicit status -> defaults to "success"
+                    "function_call": {
+                        "name": "finish",
+                        "arguments": '{"summary": "argon finished"}',
+                    },
+                },
+                "finish_reason": "tool_calls",
+            }
+        ],
+        "usage": None,
+    }
+    transport = ScriptedTransport([first_reply, second_reply])
+    generation = orun.run_openai_agent(
+        "PROMPT TEXT",
+        card_images,
+        toolkit,
+        model="gemini-4-argon-high",
+        base_url="http://argon.gateway.test/v1",
+        api_key="k",
+        max_turns=20,
+        budget_s=60.0,
+        out_dir=tmp_path / "out_argon",
+        extra_body={"reasoning_effort": "xhigh"},
+        transport=transport,
+        sleep=lambda s: None,
+    )
+
+    assert generation["status"] == "completed" and generation["returncode"] == 0
+    assert generation["model"] == "gemini-4-argon-high"
+    # xhigh is normalized to high for Gemini/Argon models
+    assert transport.requests[0]["body"]["reasoning_effort"] == "high"
+    # Usage with null details and Gemini-style cached/thoughts counters parsed cleanly
+    assert generation["input_tokens"] == 500
+    assert generation["cached_input_tokens"] == 200
+    assert generation["output_tokens"] == 60
+    assert generation["reasoning_output_tokens"] == 25
+
+    # Replayed assistant message has normalized string content, generated call id, type="function", and string arguments
+    second_messages = transport.requests[1]["body"]["messages"]
+    assert [m["role"] for m in second_messages] == ["user", "assistant", "tool", "user"]
+    replayed_assistant = second_messages[1]
+    assert replayed_assistant["content"] == "Running cell 1."
+    replayed_call = replayed_assistant["tool_calls"][0]
+    assert replayed_call["id"] == "call_1_0"
+    assert replayed_call["type"] == "function"
+    assert isinstance(replayed_call["function"]["arguments"], str)
+    assert second_messages[2]["tool_call_id"] == "call_1_0"
+    assert second_messages[3]["content"][1]["type"] == "image_url"
+
+    # Default status="success" applied when finish omitted status
+    assert toolkit.finish["status"] == "success"
+    assert toolkit.finish["summary"] == "argon finished"
+    recorded = json.loads((tmp_path / "out_argon" / "messages.json").read_text())
+    assert recorded[1]["reasoning_content"] == "Inspect camera first"
+

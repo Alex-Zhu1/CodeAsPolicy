@@ -576,8 +576,8 @@ class IntentController:
                 and result.get("planned_path") == "joint"
                 and record["policy"]["motion"] == {"mode": "native"}):
             fast_window = MotionWindow(
-                MotionProfile(velocity=3.75, acceleration=40.0, jerk=1500.0, phase="transit"),
-                MotionProfile(velocity=3.74, acceleration=40.0, jerk=1500.0, phase="approach"),
+                MotionProfile(velocity=3.45, acceleration=40.0, jerk=1500.0, phase="transit"),
+                MotionProfile(velocity=3.44, acceleration=40.0, jerk=1500.0, phase="approach"),
                 distance_m=.04, at="start",
             ).payload()
             result = planner.plan(**{**arguments, "motion": fast_window})
@@ -656,7 +656,7 @@ class IntentController:
                 for s in np.linspace(1. / 18., 1., 18)
             ]
             fast_motion = MotionProfile(
-                velocity=3.75, acceleration=120.0, jerk=15000.0, phase="transit",
+                velocity=3.45, acceleration=120.0, jerk=15000.0, phase="transit",
             ).payload()
             try:
                 fast_ways, fast_traj = trajectory.parameterize(

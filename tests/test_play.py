@@ -155,3 +155,83 @@ def test_make_backend_prefers_the_hosts_factory():
     toolkit = object()
     assert type(_make_backend(SimpleNamespace(make_backend=_Mine), toolkit)) is _Mine
     assert type(_make_backend(SimpleNamespace(), toolkit)) is RpentBackend
+
+
+def test_external_and_argon_runtime_configuration(monkeypatch, tmp_path, backend, robo):
+    import codeaspolicy.mcp_server as mcp
+    from codeaspolicy import play
+    from codeaspolicy.prompt import TaskCard
+
+    assert "external" in play.RUNTIMES
+    ext_cfg = play._interaction_config("external", "gemini-4-argon-high", "high")
+    assert ext_cfg["protocol"] == "external_http"
+    assert ext_cfg["submitted_reasoning_effort"] == "high"
+    assert ext_cfg["reasoning_source"] == "external_agent"
+
+    argon_openai = play._interaction_config(
+        "openai",
+        "gemini-4-argon-high",
+        "xhigh",
+        {"extra_body": {"reasoning_effort": "xhigh"}},
+    )
+    assert argon_openai["submitted_reasoning_effort"] == "high"
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.delenv("OPENAI_BASE_URL", raising=False)
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    monkeypatch.setenv("GEMINI_BASE_URL", "http://gemini-gateway.test/v1")
+    monkeypatch.setenv("GEMINI_API_KEY", "gemini-secret")
+
+    def dump_card(toolkit, cell, out_dir):
+        card = TaskCard(suite="fake", task="insert_key", seed=0, task_language="insert", object_names=[])
+        (out_dir / "card.json").write_text(card.to_json())
+        return card
+
+    host = SimpleNamespace(boot=lambda *args, **kwargs: (backend, []), dump_card=dump_card)
+    adapter = SimpleNamespace(name="libero", robot_cls=type(robo), host_module=lambda: host)
+    monkeypatch.setattr(play, "get_adapter", lambda name: adapter)
+    monkeypatch.setattr(play, "_make_backend", lambda *args: backend)
+    monkeypatch.setattr(play, "build_prompt", lambda *args, **kwargs: "prompt")
+    monkeypatch.setattr(play, "stop_all", lambda *args: None)
+    monkeypatch.setattr(
+        mcp,
+        "ArmMcpServer",
+        lambda *args, **kwargs: SimpleNamespace(start=lambda: "http://127.0.0.1:1/mcp", stop=lambda: None),
+    )
+
+    def transport(url, body, timeout):
+        assert url == "http://gemini-gateway.test/v1/chat/completions"
+        assert body["model"] == "gemini-4-argon-high"
+        return 200, {
+            "choices": [
+                {
+                    "message": {
+                        "role": "assistant",
+                        "content": "Done",
+                        "tool_calls": [
+                            {
+                                "id": "c1",
+                                "type": "function",
+                                "function": {"name": "finish", "arguments": '{"summary": "ok"}'},
+                            }
+                        ],
+                    }
+                }
+            ],
+            "usage": {"prompt_tokens": 100, "completion_tokens": 10, "prompt_tokens_details": None},
+        }
+
+    cell = SimpleNamespace(suite="fake", task="insert_key", seed=0, cuda_device=None, max_episode_steps=300)
+    res = play.play_episode(
+        cell,
+        tmp_path / "argon_openai",
+        runtime="openai",
+        model="gemini-4-argon-high",
+        images="none",
+        openai_options={"transport": transport},
+    )
+    assert res["status"] == "completed"
+    assert res["host"]["base_url"] == "http://gemini-gateway.test/v1"
+    assert res["finish"]["status"] == "success"
+    assert res["finish"]["summary"] == "ok"
+

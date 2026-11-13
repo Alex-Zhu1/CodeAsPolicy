@@ -46,10 +46,11 @@ from .arms import ARMS, ArmToolkit, arm_contract, robot_words
 from .claude_runtime import resolve_cli, run_claude_agent, sdk_max_turns
 from .execution import ExecutionLimits, add_execution_arguments, execution_limits
 from .execution_plan import PLAN_PROMPT
+from .external_runtime import run_external_agent
 from .generate import codex_catalog_flags, provider_overrides
 from .hosts.common import RESULT_SCHEMA, RpentBackend, resolve_rpent_root, stop_all
 from .interaction_trace import InteractionTrace
-from .openai_runtime import run_openai_agent
+from .openai_runtime import _normalize_reasoning_effort, run_openai_agent
 from .prompt import api_reference, knowledge_text
 from .robots import ROBOTS, RobotAdapter, get_adapter
 from .sandbox import DESCRIPTION as SANDBOX_DESCRIPTION
@@ -71,9 +72,10 @@ from .task_acceptance import acceptance_sha256, load_acceptance
 
 #: RPent's LIBERO guides (the default set for ``--guides`` on that robot).
 GUIDE_NAMES = ("strict_hybrid_guide.md", "pro_hybrid_guide.md", "env_calibration.md")
-#: Agent runtimes: the Codex CLI (``codex exec``), Claude Code (Claude Agent SDK) or
-#: the in-process OpenAI chat-completions loop (any OpenAI-compatible endpoint).
-RUNTIMES = ("codex", "claude", "openai")
+#: Agent runtimes: the Codex CLI (``codex exec``), Claude Code (Claude Agent SDK),
+#: the in-process OpenAI chat-completions loop (any OpenAI-compatible endpoint),
+#: or an external agent HTTP bridge (``--runtime external``).
+RUNTIMES = ("codex", "claude", "openai", "external")
 
 
 def _interaction_config(
@@ -90,13 +92,21 @@ def _interaction_config(
     extra = extra if isinstance(extra, dict) else {}
     submitted_model = extra.get("model", model) if runtime == "openai" else model
     if runtime == "openai":
-        effort = extra.get("reasoning_effort")
+        raw_effort = extra.get("reasoning_effort", options.get("reasoning_effort"))
+        effort = _normalize_reasoning_effort(
+            submitted_model if isinstance(submitted_model, str) else model, raw_effort
+        )
         source = (
             "openai_options.extra_body.reasoning_effort"
-            if effort is not None else "provider_default"
+            if "reasoning_effort" in extra and effort is not None
+            else "openai_options.reasoning_effort"
+            if "reasoning_effort" in options and effort is not None
+            else "provider_default"
         )
     elif runtime == "codex":
         effort, source = reasoning_effort, "codex.model_reasoning_effort"
+    elif runtime == "external":
+        effort, source = reasoning_effort, "external_agent"
     else:
         # The SDK's mapped options are recorded by claude_runtime after launch.
         effort, source = None, "generation.options.effort"
@@ -110,7 +120,13 @@ def _interaction_config(
         "submitted_reasoning_effort": effort if isinstance(effort, str) else None,
         "reasoning_source": source,
         "provider_confirmed": False,
-        "protocol": "chat_completions" if runtime == "openai" else "external_client_mcp",
+        "protocol": (
+            "chat_completions"
+            if runtime == "openai"
+            else "external_http"
+            if runtime == "external"
+            else "external_client_mcp"
+        ),
         "max_tokens": (
             max_tokens if runtime == "openai" and isinstance(max_tokens, (int, float)) else None
         ),
@@ -817,11 +833,13 @@ def play_episode(
         elif runtime == "claude":
             cli_path = resolve_cli(claude_cli)
             result["host"]["claude_cli"] = cli_path or "bundled"
-        else:
+        elif runtime == "openai":
             if not base_url:
                 base_url = (
                     os.environ.get("OPENAI_BASE_URL")
                     or os.environ.get("CODEASPOLICY_BASE_URL")
+                    or os.environ.get("GEMINI_BASE_URL")
+                    or os.environ.get("ARGON_BASE_URL")
                 )
             if not base_url:
                 raise ValueError("--runtime openai needs --base-url (or OPENAI_BASE_URL)")
@@ -848,7 +866,11 @@ def play_episode(
                     api_key=(
                         os.environ.get(api_key_env)
                         if api_key_env
-                        else os.environ.get("OPENAI_API_KEY")
+                        else (
+                            os.environ.get("OPENAI_API_KEY")
+                            or os.environ.get("GEMINI_API_KEY")
+                            or os.environ.get("GOOGLE_API_KEY")
+                        )
                     ),
                     max_turns=max_turns,
                     budget_s=remaining,
@@ -866,6 +888,24 @@ def play_episode(
                     # The provider failed after the retries: judged below like
                     # any other provider failure (planner_error when nothing
                     # was solved and finish was never called).
+                    status = "completed"
+                audit = generation
+            elif runtime == "external":
+                generation = run_external_agent(
+                    prompt,
+                    images,
+                    arm_toolkit,
+                    model=model,
+                    max_turns=max_turns,
+                    budget_s=remaining,
+                    out_dir=out_dir,
+                    arm=arm,
+                    on_timeout=lambda: robo._stop_episode("timeout"),
+                    should_stop=getattr(backend, "episode_over", None),
+                    trace=trace,
+                )
+                status, returncode = generation["status"], generation["returncode"]
+                if status == "error":
                     status = "completed"
                 audit = generation
             elif runtime == "claude":
@@ -1140,8 +1180,9 @@ def main(argv: list[str] | None = None) -> int:
         choices=RUNTIMES,
         default=setting("RUNTIME", play_defaults.RUNTIME),
         help=(
-            "agent runtime: codex (Codex CLI), claude (Claude Code via the Claude Agent SDK) "
-            "or openai (in-process loop against any OpenAI-compatible endpoint)"
+            "agent runtime: codex (Codex CLI), claude (Claude Code via the Claude Agent SDK), "
+            "openai (in-process loop against any OpenAI-compatible endpoint) "
+            "or external (localhost HTTP bridge for an external agent worker)"
         ),
     )
     parser.add_argument(

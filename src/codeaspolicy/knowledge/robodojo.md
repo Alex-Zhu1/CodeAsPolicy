@@ -559,4 +559,25 @@
   shared central zones (for a supported set-down transfer, release, retreat, and
   clear/home the donor arm before bringing the receiver arm in; for an in-air
   handoff, park the donor arm stationary at a verified pose before advancing
-  only the receiver arm).
+  only the receiver arm); (4) for **compact-object cross-arm transfer**, because
+  ARX-X5 finger pads span ~2.4 cm (`±1.2 cm` around `tcp_pos`) and each
+  wrist-camera housing projects rigidly above/behind the end-effector link
+  (`0.145 m` behind TCP), any object exposing `< ~4 cm` of unobstructed receiver
+  grasp length beyond the donor fingers (compact blocks, tiles, short tools,
+  caps, or flat parts `< ~6–7 cm`) crowds both finger assemblies and wrist
+  housings in mid-air (`tracking_error`, insecure edge pinches, IK blocks, or
+  obstructed donor withdrawal)—whenever a clear support patch exists in the
+  shared central reach zone and intermediate surface support is not forbidden,
+  prefer **`place-and-regrasp`** (set stably on the clear central surface, open,
+  retreat along a straight Cartesian line / `path="line"`, and clear/home the
+  donor arm before bringing the receiver arm in to re-observe via `crop_grid` +
+  `ray_at_z`/`triangulate` and grasp) over an in-air handoff, reserving in-air
+  handoffs for elongated parts exposing `>= 5 cm` free handle/shaft beyond the
+  donor fingers or scenes with no clear central support patch; (5) for
+  **held-object lower-extremity clearance (`object_bottom_z` vs `tcp_z`)**,
+  because `tcp_pos` is the pad centre rather than the object's lowest point,
+  `tcp_z > z_obs` alone is insufficient when part of the held object hangs or
+  protrudes `L_below` below `tcp_pos`—before lateral travel past any elevated
+  fixture, container, or stack of top height `z_obs`, lift straight up
+  (Cartesian line / `path="line"`) to `tcp_z >= z_obs + L_below + 0.03` m so
+  the lowest point of the held object and fingers clears `z_obs` with margin.

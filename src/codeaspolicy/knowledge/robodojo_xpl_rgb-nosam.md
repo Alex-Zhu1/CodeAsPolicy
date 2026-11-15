@@ -193,8 +193,15 @@
   cannot get that high.  Beyond that reach use the other arm, or push or hand
   the object closer first.
 - Carrying past things: lift first (straight up, `path="line"`), travel
-  above everything in the way, come down over the destination.  A container
-  or fixture an arm bumps moves, and most tasks check where it ended up.
+  above everything in the way, come down over the destination. Because
+  `tcp_pos` is the finger-pad centre rather than the lowest point of a held
+  object, `tcp_z > z_obs` alone is insufficient when part of the held object
+  (or fingertips) hangs or protrudes `L_below` below `tcp_pos`: before lateral
+  travel past any elevated fixture, container, or stack of top height `z_obs`,
+  lift along `path="line"` to `tcp_z >= z_obs + L_below + 0.03` m so the
+  **lowest point of the held object and fingers** (`object_bottom_z`) clears
+  `z_obs` with margin. A container or fixture an arm bumps moves, and most
+  tasks check where it ended up.
 - For a push or slide, start with a 2-3 cm contact stroke and inspect the
   resulting translation/rotation. Once contact is stable and the remaining
   route is clear, a 4-6 cm stroke can avoid unnecessary stop/start cycles; shorten
@@ -329,13 +336,27 @@
   carry; do not spend a long lift merely discovering a failed grasp. After
   release, clear the contact region before faster empty-hand travel.
 - Preview costly travel and allocate the whole remaining operation before
-  grasping, including handoff, placement/insertion and return. Preposition the
-  receiving arm when useful and choose a handoff region reachable by both arms.
-  Choose a stable donor grasp first, even if exposing the receiving grasp then
-  needs reorientation. Approach exposed material beyond the donor fingers, not
-  the donor TCP; account for finger width and opening. Narrow the receiving
-  opening when useful, check a wrist view, and use approach/precision for the
-  final 1–2 cm. A reachable TCP pair does not prove the grippers fit together.
+  grasping, including cross-arm transfer, placement/insertion and return. On
+  ARX-X5, finger pads span ~2.4 cm (`±1.2 cm` around `tcp_pos`) and each
+  wrist-camera housing projects rigidly above/behind the end-effector link
+  (`0.145 m` behind TCP): when a held object exposes less than ~4 cm of
+  unobstructed receiver grasping length beyond the donor fingers (compact
+  blocks, tiles, short tools, caps, or flat parts `< ~6–7 cm`), an in-air
+  gripper-to-gripper handoff crowds both finger assemblies and wrist housings
+  into the same envelope (`tracking_error`, insecure edge pinches, IK blocks,
+  or obstructed donor withdrawal). Whenever a clear support patch exists in the
+  shared central reach zone and intermediate surface support is allowed,
+  **prefer a supported central set-down transfer (`place-and-regrasp`) over an
+  in-air handoff** for compact objects: place stably on the clear central
+  surface, open, retreat along `path="line"`, and clear/home the donor arm
+  *before* bringing the receiver arm in to re-observe (`crop_grid` +
+  `ray_at_z`/`triangulate`) and grasp in unobstructed single-arm workspace.
+  Reserve in-air handoffs for elongated parts exposing `>= 5 cm` free
+  handle/shaft beyond the donor fingers or scenes with no clear central support
+  patch: then choose a stable donor grasp first, approach exposed material
+  beyond the donor fingers (never the donor TCP), narrow the receiving opening
+  when useful, check a wrist view, and use approach/precision for the final
+  1–2 cm. A reachable TCP pair does not prove the grippers fit together.
   Each preview starts from CURRENT state, so separate previews do not simulate
   a future sequence. Use via to join already-decided route sections, while
   preserving stops where a new observation or grasp/release decision is needed.
@@ -551,4 +572,25 @@
   shared central zones (for a supported set-down transfer, release, retreat, and
   clear/home the donor arm before bringing the receiver arm in; for an in-air
   handoff, park the donor arm stationary at a verified pose before advancing
-  only the receiver arm).
+  only the receiver arm); (4) for **compact-object cross-arm transfer**, because
+  ARX-X5 finger pads span ~2.4 cm (`±1.2 cm` around `tcp_pos`) and each
+  wrist-camera housing projects rigidly above/behind the end-effector link
+  (`0.145 m` behind TCP), any object exposing `< ~4 cm` of unobstructed receiver
+  grasp length beyond the donor fingers (compact blocks, tiles, short tools,
+  caps, or flat parts `< ~6–7 cm`) crowds both finger assemblies and wrist
+  housings in mid-air (`tracking_error`, insecure edge pinches, IK blocks, or
+  obstructed donor withdrawal)—whenever a clear support patch exists in the
+  shared central reach zone and intermediate surface support is not forbidden,
+  prefer **`place-and-regrasp`** (set stably on the clear central surface, open,
+  retreat along a straight Cartesian line / `path="line"`, and clear/home the
+  donor arm before bringing the receiver arm in to re-observe via `crop_grid` +
+  `ray_at_z`/`triangulate` and grasp) over an in-air handoff, reserving in-air
+  handoffs for elongated parts exposing `>= 5 cm` free handle/shaft beyond the
+  donor fingers or scenes with no clear central support patch; (5) for
+  **held-object lower-extremity clearance (`object_bottom_z` vs `tcp_z`)**,
+  because `tcp_pos` is the pad centre rather than the object's lowest point,
+  `tcp_z > z_obs` alone is insufficient when part of the held object hangs or
+  protrudes `L_below` below `tcp_pos`—before lateral travel past any elevated
+  fixture, container, or stack of top height `z_obs`, lift straight up
+  (Cartesian line / `path="line"`) to `tcp_z >= z_obs + L_below + 0.03` m so
+  the lowest point of the held object and fingers clears `z_obs` with margin.

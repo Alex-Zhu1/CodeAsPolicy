@@ -68,7 +68,10 @@ def test_generated_motion_policy_declares_intents_without_controller_tuning(robo
     assert "rotated_end_pose" in text
     assert "vertical-axis twist" in text
     assert "sequential single-arm clearance" in text
-    assert "insert_key" not in text and "keyhole" not in text
+    assert "place-and-regrasp" in text
+    assert "object_bottom_z" in text and "L_below + 0.03" in text
+    for forbidden in ("insert_key", "keyhole", "make_kong", "mahjong"):
+        assert forbidden not in text
     assert "robo.move_to(\n" in api_reference(get_adapter(robot).robot_cls, intent_only=False)
 
 
@@ -268,5 +271,32 @@ def test_no_sam_prompt_exposes_geometry_without_sam3_and_keeps_intent_invariants
     assert "rotated_end_pose" in prompt_text
     assert "vertical-axis twist" in prompt_text
     assert "sequential single-arm clearance" in prompt_text
-    assert "insert_key" not in prompt_text and "keyhole" not in prompt_text
+    assert "place-and-regrasp" in prompt_text
+    assert "object_bottom_z" in prompt_text and "L_below + 0.03" in prompt_text
+    for forbidden in ("insert_key", "keyhole", "make_kong", "mahjong"):
+        assert forbidden not in prompt_text
     assert "crop_grid" in prompt_text and "observe_object" in prompt_text and "observe_hold" in prompt_text
+
+
+@pytest.mark.parametrize(
+    "filename",
+    [
+        "robodojo-intent.md",
+        "robodojo.md",
+        "robodojo-nosam.md",
+        "robodojo_xpl_rgb.md",
+        "robodojo_xpl_rgb-nosam.md",
+    ],
+)
+def test_robodojo_knowledge_encodes_compact_transfer_and_bottom_clearance(filename):
+    from importlib import resources
+
+    path = resources.files("codeaspolicy").joinpath(f"knowledge/{filename}")
+    doc = path.read_text(encoding="utf-8")
+    assert "place-and-regrasp" in doc
+    assert "±1.2 cm" in doc and "0.145 m" in doc
+    assert ">= 5 cm" in doc
+    assert "object_bottom_z" in doc and "L_below + 0.03" in doc
+    assert "and **direct\n    in-air handoff**" not in doc
+    for forbidden in ("insert_key", "keyhole", "make_kong", "mahjong"):
+        assert forbidden not in doc.lower()

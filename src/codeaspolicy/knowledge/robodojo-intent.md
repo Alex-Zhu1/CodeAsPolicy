@@ -33,10 +33,12 @@
   The task card contains initial observations, source labels and capabilities;
   unknown or stale measurements cannot be used as current targets.
 - Targets refer to the middle of the finger pads, TCP, 0.145 m beyond the
-  wrist link along the pointing direction. state().arm(arm).tcp_pos reports it;
-  eef_pos is the wrist. Pads span about 1.2 cm either side; fingertips extend
-  1.3 cm beyond the TCP. Pointing down, keep the TCP at least about 1.5 cm
-  above the surface under it and account for the actual finger clearance.
+  wrist link along the pointing direction (`state().arm(arm).tcp_pos`;
+  `eef_pos` is the end-effector link 0.145 m behind it, where the wrist-camera
+  housing projects rigidly above/behind the link). Pads span ~2.4 cm (`±1.2 cm`
+  around `tcp_pos`); fingertips extend 1.3 cm beyond `tcp_pos`. Pointing down,
+  keep the TCP at least about 1.5 cm above the surface under it and account for
+  actual finger and housing clearance.
 - Custom angles are degrees, not XYZ Euler: pitch=0 is level, 90 down;
   yaw=0 points away, +90 toward the robot's left (-x); roll turns about the
   pointing direction. At pitch=90, yaw sets the closing line from +x seen
@@ -71,6 +73,14 @@
   purely on the terminal wrist joint (`yaw`, `±178°` range) in place; choose a
   grasp, reorientation, or handoff that puts the working axis along the pointing
   axis before insertion.
+- **Held-object lower-extremity clearance during lateral transport (`object_bottom_z` vs `tcp_z`)**:
+  because `tcp_pos` is the finger-pad centre rather than the lowest point of a
+  held object, `tcp_z > z_obs` alone is insufficient when part of the held
+  object (or fingertips) hangs or protrudes `L_below` below `tcp_pos`. Before
+  lateral travel past any elevated fixture, container, or stack of top height
+  `z_obs`, lift straight up along a Cartesian line (`+z`) to
+  `tcp_z >= z_obs + L_below + 0.03` m so the **lowest point of the held object
+  and fingers** (`object_bottom_z = tcp_z - L_below`) clears `z_obs` with margin.
 
 ## Motion intent and executor responsibilities
 - Use `execute_motion(intent_id, left=..., right=..., waypoints=...,
@@ -182,13 +192,28 @@
   region may be held temporarily if a planned transfer frees it before use.
   A successful pickup is only one prerequisite; it does not establish that the
   remaining task is feasible.
-- When a handoff is needed, choose donor and receiver grasp regions together.
-  Leave the receiver region exposed beyond the donor fingers, and preserve
-  access to the object's working region after transfer. Choose a mutually
-  reachable exchange pose with room for both fingers and the held object.
-  Consider staging the empty receiver first and presenting the exposed region
-  to it, instead of requiring the receiver to reach the original pickup pose.
-  Arm roles and exchange poses come from the current scene, not fixed sides.
+- **Cross-arm transfer (`place-and-regrasp` vs in-air handoff)**: on ARX-X5,
+  finger pads span ~2.4 cm (`±1.2 cm` around `tcp_pos`) and each arm's
+  wrist-camera housing projects rigidly above/behind `eef_pos` (`0.145 m` behind
+  TCP). When a held object exposes less than ~4 cm of unobstructed receiver
+  grasping length beyond the donor fingers (compact blocks, tiles, short tools,
+  caps, or flat parts `< ~6–7 cm`), an **in-air gripper-to-gripper handoff**
+  crowds both finger assemblies and wrist-camera housings into the same
+  envelope, causing housing collisions (`tracking_error`), insecure edge pinches,
+  IK blocks, or obstructed donor withdrawal. Whenever a clear support patch
+  exists in the shared central reach zone and the instruction does not forbid
+  intermediate surface support, **prefer a supported central set-down transfer
+  (`place-and-regrasp`) over an in-air handoff** for compact objects: place the
+  object stably on the clear central surface, open, retreat along a straight
+  Cartesian line, and clear/home the donor arm *before* bringing the receiver
+  arm in to re-observe (`crop_grid` + `ray_at_z`/`triangulate`) and grasp in
+  unobstructed single-arm workspace. Reserve **in-air handoffs** for elongated
+  parts exposing ample (`>= 5 cm`) free handle/shaft beyond the donor fingers
+  or scenes with no clear central support patch—then choose donor and receiver
+  grasp regions together with the receiver region exposed beyond the donor
+  fingers, verify a mutually reachable exchange pose, and preserve access to the
+  working region after transfer. Arm roles come from the current scene, not
+  fixed sides.
 - Record the intended use, grasp regions, exchange/working pose and remaining
   step split (primary execution budget vs contingency/cleanup reserve) briefly
   in plan()'s goal, next_action, done_when and evidence fields.
@@ -204,24 +229,30 @@
 - A large remaining step budget never justifies higher-order multi-stage detours
   (such as moving objects whose pose/location need not change or laying a
   replacement item flat in an interior arrangement gap): match pickup angle and
-  arm-to-arm transfer to the object's thickness and mass distribution:
+  arm-to-arm transfer to the object's thickness, exposed grasp length, and mass
+  distribution:
   - **Thin, flat or top-heavy/asymmetric objects** (under ~1 cm thick or
     `opening <= 0.04`, or narrow stems with an offset heavy end): closed ARX-X5
     pads retain a ~2.3 mm gap (`GRIP_ZERO_M`), so tilted (`pitch=45°–60°`)
     pinches or narrow off-centre stem grasps easily twist or pendulum-slip under
     gravity and carry acceleration. Pick up vertically (`pitch=90°`) centred
     across the widest flat pad-contact region (such as a wide circular bow or
-    handle), translate smoothly without unnecessary wrist rotation, and prefer a
-    **tabletop set-down regrasp** on a clear central tabletop zone near `x ≈ 0`
-    (donor sets flat, opens wide, retreats, and clears/homes before the
-    receiving arm enters to observe unoccluded and grasp at the working
+    handle), translate smoothly without unnecessary wrist rotation, and use a
+    supported central **`place-and-regrasp`** transfer (donor sets flat on a
+    clear central support patch, opens wide, retreats, and clears/homes before
+    the receiving arm enters to re-observe and grasp at the working
     region/orientation needed for final insertion or turning) over mid-air
     handoff.
   - **Thick, rigid parallel-sided blocks or tiles** (`opening > 0.05` across
-    high-friction faces): support firm tilted or side grasps and **direct
-    in-air handoff** verified with `preview=True` so the receiving arm can
-    present and stand the item upright directly at its destination rather than
-    setting it down in an interior gap.
+    high-friction faces): support firm tilted or side grasps so the placing arm
+    can present and stand the item upright directly at its destination rather
+    than laying it flat inside a crowded interior arrangement gap; if cross-arm
+    transfer is needed on a compact block or tile (`< ~6–7 cm`, exposing `< ~4 cm`
+    beyond the donor pads), use **`place-and-regrasp` on an unobstructed central
+    support patch** (away from standing group members) rather than crowding both
+    wrist-camera housings in mid-air, reserving direct in-air handoff (`preview=True`)
+    for elongated bars/shafts exposing `>= 5 cm` beyond the donor fingers or
+    scenes without a clear central support patch.
   Before descending to seat, insert or release an object with a required axis,
   slot or face/yaw orientation, verify its actual in-hand alignment (including
   gravity hang, yaw alignment and front/back or tooth direction) in the

@@ -636,4 +636,28 @@
   protrudes `L_below` below `tcp_pos`—before lateral travel past any elevated
   fixture, container, or stack of top height `z_obs`, lift straight up
   (Cartesian line / `path="line"`) to `tcp_z >= z_obs + L_below + 0.03` m so
-  the lowest point of the held object and fingers clears `z_obs` with margin.
+  the lowest point of the held object and fingers clears `z_obs` with margin;
+  (6) for **selective contact / tipping inside a tightly packed row or array**,
+  because ~5–7 cm behind `tcp_pos` the **fixed jaw-rail crossbar** spans
+  ~9–10 cm (`±4.5–5.0 cm` along `close_dir`) even when closed (`opening=0.0`),
+  tilted (`pitch=30°–60°`) deep strokes sweep that crossbar into adjacent
+  standing neighbours—use **`pitch=90`** (keeping the crossbar `>= 6 cm` above
+  `tcp_z`), align `close_dir` along the contact stroke so only the narrow
+  (~2.0 cm) closed-finger thickness faces neighbours, act on one centred item
+  at a time with a bounded `~3–4.5 cm` stroke past initial contact, and precheck
+  `robo.ik()` for the straight-up (`+z`) retreat before descending; (7) for
+  **curved-rim / gravity-pivoted holds and asymmetric insertion polarity**,
+  never pinch a narrow distal stem/tip near ARX-X5's `~2.3 mm` minimum
+  closed-jaw gap (`GRIP_ZERO_M`) to pitch-flip (`pitch=90° -> 0°–30°`) a
+  heavier head upward in mid-air; instead use flat-table `place-and-regrasp`
+  where closing at `pitch=90` across a **curved circular/cylindrical rim** at
+  `tcp_z ≈ z_support + 0.018` m with `close_dir` perpendicular to `shaft_dir`
+  lets gravity pivot an overhanging shaft `90°` downward along `pointing`, and
+  because that curved-rim hold relies on narrow **tangent-line contact** whose
+  closure collapses under large (`>= 120°–180°`) in-air wrist spins, localise
+  **two points** along any directional receptor feature *before* set-down and
+  receiver pickup so the jaw sign (`+close_dir` vs `-close_dir`, `roll_deg=0`
+  vs `180`) already aligns the asymmetric feature within `<= 45°–60°`, pass
+  `z = z_support + h` on top-face `ray_at_z` pixels, and never execute
+  `>= 120°–180°` mid-air wrist flips on a curved-rim hold (re-seat and regrasp
+  with `roll_deg=180` if reversed).

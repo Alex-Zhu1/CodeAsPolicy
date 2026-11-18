@@ -349,6 +349,33 @@
   closure nor tracking lag measures force. No target-force, force-limit stop or
   compliant-contact API is provided. The gripper remains position-controlled.
 
+## Last-mile contact: nudge and visual_align_and_insert
+
+Keep global planning in your program (which object, which arm, grasp, carry,
+pre-align). Delegate only the last 1–5 cm of contact or alignment (pressing,
+plugging, seating a part in a slot, hanging on a hook, tipping a spout over a rim)
+once the views show the held part or the fingers pre-aligned near the goal.
+
+- `robo.nudge(dxyz, arm, dpitch=, dyaw=, droll=, frame="world" | "tcp",
+  stop_on_stall=True)` is a guarded compact relative move from the measured pose
+  (metres / degrees, at most 6 cm / 20 degrees per call): one native action per
+  5 mm waypoint with no spline ramp (about 2–3 actions per cm), preflighted against
+  reach, joint limits and the table (a refusal costs 0 actions). `frame="tcp"` with
+  `dxyz=(d, 0, 0)` pushes along the fingers. A stall against contact returns
+  `status="stopped"`, `stalled=True`, `stop_reason="contact_or_stall"` and raises
+  nothing: read it as "contact reached or blocked", check the wrist view, then
+  release/withdraw if seated, or back off 3–5 mm with a reverse nudge and correct
+  sideways if misaligned. It measures progress, not force.
+- `robo.visual_align_and_insert(goal, arm=..., max_steps=40, reserve_steps=20)` runs a
+  bounded closed loop with a PEAR visual-delta model (head and wrist views plus a
+  zoomed wrist crop): each round one clamped relative delta, executed by `nudge`,
+  with the physical outcome (reached / stopped / out_of_reach) shown next round. It
+  ends on the model's done, a zero delta, a contact stall when
+  `stop_on_contact_complete=True`, or the round / step budget. Check `status`,
+  `stop_reason`, the last feedback and the images; it is not a success verdict.
+- On tight budgets prefer one loop or a few nudges over repeated full re-approach
+  motions for millimetre corrections, and keep `reserve_steps` for retreat and home.
+
 ## Composing dual-arm code
 - Astra chooses arm roles, target geometry, ordering, release timing and bounded
   corrections in Python. The API performs motions and reports their outcomes;

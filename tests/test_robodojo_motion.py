@@ -817,14 +817,17 @@ def test_register_adds_motion_and_coordination_tools_with_readonly_planning(sim)
     staged = {"grasp_prepare", "grasp_status", "grasp_step", "local_prepare",
               "operation_status", "operation_resume"}
     from codeaspolicy.hosts.robodojo_grasp import SPECS as grasp_specs
+    from codeaspolicy.hosts.robodojo_visual_delta import SPECS as delta_specs
 
     assert set(added) == (
         {"move_pose", "preview_move_pose", "grip", "locate", "home"}
-        | coordination | intents | staged | set(grasp_specs))
+        | coordination | intents | staged | set(grasp_specs) | set(delta_specs))
     assert added["preview_move_pose"][1].func._readonly is True
     for name, (spec, handler) in added.items():
         if name in grasp_specs:
             assert spec is grasp_specs[name]
+        elif name in delta_specs:
+            assert spec is delta_specs[name]
         elif name not in coordination | intents | staged:
             assert spec is tools.SPECS[name]
         assert spec["name"] == name and "input_schema" in spec

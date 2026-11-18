@@ -283,6 +283,98 @@ class Pick:
     truncated: bool
 
 
+@dataclass(frozen=True)
+class Nudge:
+    """Outcome of ``nudge``.
+
+    status: completed (within tol of the target), stopped (measured progress
+        stalled against contact or a hard stop before the target), partial
+        (step budget, episode end or tracking short of the target) or rejected
+        (zero native actions: the delta exceeds the per-nudge limit, the line
+        leaves the arm's reach or enters the table, or reserve_steps is
+        exhausted). This is motion status, not task success.
+    reached: within tol_m / tol_deg of the target.
+    stalled: stopped on a contact stall (stop_reason "contact_or_stall"). This
+        is a kinematic progress test, not a force reading: check the views.
+    stop_reason: None on completion; else contact_or_stall,
+        delta_exceeds_limit, ik_path_rejected, reserve_steps_exhausted,
+        step_budget, episode_native_step_budget or final_target_not_reached.
+    final_xyz / pitch / yaw / roll: measured grasp-point pose after the call
+        (single arm; ``arms`` holds both for arm="both").
+    achieved: measured motion in the requested frame: ``dxyz`` metres and
+        ``dpitch`` / ``dyaw`` / ``droll`` degrees.
+    holding / opening: the gripper after the call (closed and stopped apart).
+    planned_steps / steps_used: native actions planned and executed.
+    ik_error / note: why a delta was refused, extra detail.
+    truncated: the budget ran out or the environment ended the episode.
+    """
+
+    arm: str
+    frame: str
+    status: str
+    reached: bool
+    stalled: bool
+    stop_reason: str | None
+    steps_used: int
+    planned_steps: int
+    final_xyz: tuple[float, float, float]
+    pitch: float
+    yaw: float
+    roll: float
+    dist_to_target_m: float
+    orientation_error_deg: float
+    achieved: dict[str, Any]
+    holding: bool
+    opening: float
+    ik_error: str | None
+    note: str | None
+    truncated: bool
+    arms: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass(frozen=True)
+class VisualAlign:
+    """Outcome of ``visual_align_and_insert``.
+
+    status: completed (the delta policy said done, converged on a zero delta,
+        or a contact stall ended it with stop_on_contact_complete), partial
+        (actions executed, then rounds / steps ran out or the policy failed)
+        or rejected (no native action). Not a task success verdict.
+    reached: status is completed.
+    done / converged / contact_complete: which completion ended the loop.
+    stalled: some round stopped on a contact stall.
+    stop_reason: done, converged, contact_complete, max_rounds, step_budget,
+        episode_budget, no_progress, invalid_policy_response, policy_error,
+        reserve_steps_exhausted or episode_native_step_budget.
+    rounds_used / steps_used / step_allowance: policy turns, native actions
+        executed and the native actions the loop was allowed.
+    rounds: per round the state JSON, the parsed PEAR action, the executed
+        delta, its feedback (reached / stopped / out_of_reach) and steps.
+    final_xyz / holding: the arm after the loop (single arm).
+    policy / policy_error: which policy answered; the error that ended it.
+    """
+
+    goal: str
+    arm: str
+    status: str
+    reached: bool
+    done: bool
+    converged: bool
+    contact_complete: bool
+    stalled: bool
+    stop_reason: str | None
+    rounds_used: int
+    steps_used: int
+    step_allowance: int
+    final_xyz: tuple[float, float, float]
+    holding: bool
+    policy: str | None
+    rounds: list[dict[str, Any]]
+    last_feedback: dict[str, Any] | None
+    policy_error: str | None
+    truncated: bool
+
+
 @dataclass(frozen=True, repr=False)
 class Segment(PerceptionResult):
     """Outcome of ``segment``.
@@ -487,7 +579,8 @@ class ObjectPose(PerceptionResult):
 
 
 STATEFUL_TOOLS = frozenset({"move_pose", "grip", "home", "pi0_pick", "motion_execute", "try_grasp",
-                            "intent_execute", "grasp_step", "operation_resume"})
+                            "intent_execute", "grasp_step", "operation_resume", "nudge",
+                            "visual_align_and_insert"})
 
 
 def _floats(value: Any, n: int, name: str) -> tuple[float, ...]:
@@ -739,6 +832,8 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         Home,
         ObjectPose,
         Pick,
+        Nudge,
+        VisualAlign,
         Segment,
         WorldPoint,
         CameraRay,
@@ -879,6 +974,11 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         "needs_visual_confirmation",
         "planned_step_bound",
         "tracking",
+        "stalled",
+        "planned_steps",
+        "rounds_used",
+        "converged",
+        "done",
     )
 
     # -- observation --------------------------------------------------------
@@ -1900,6 +2000,131 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
             return self._readonly("preview_grasp", kwargs)
         return self._stateful("try_grasp", kwargs, lambda payload: payload)
 
+    def nudge(
+        self,
+        dxyz: Sequence[float] = (0.0, 0.0, 0.0),
+        arm: str = "right",
+        *,
+        dpitch: float = 0.0,
+        dyaw: float = 0.0,
+        droll: float = 0.0,
+        gripper: int = 0,
+        frame: str = "world",
+        left: dict | None = None,
+        right: dict | None = None,
+        stop_on_stall: bool = True,
+        stall_steps: int = 2,
+        max_steps: int | None = None,
+        reserve_steps: int = 0,
+        compact: bool = True,
+        max_linear_m: float = 0.06,
+        max_angular_deg: float = 20.0,
+    ) -> Nudge:
+        """Guarded short relative move of the grasp point, for last-mile contact.
+
+        Moves by ``dxyz`` metres and ``dpitch`` / ``dyaw`` / ``droll`` degrees
+        from the CURRENT measured pose. frame="world": dxyz in the table frame and
+        the angles added to the current pitch / yaw / roll. frame="tcp": dxyz
+        along the grasp frame (+x pointing direction, +y finger-closing axis,
+        +z normal), angles about those axes; e.g. ``dxyz=(0.01, 0, 0),
+        frame="tcp"`` pushes 1 cm along the fingers for a press or insertion.
+        At most max_linear_m (<= 0.12) and max_angular_deg (<= 45) per call;
+        a larger delta is rejected, not clamped.
+
+        compact=True (default) follows the straight line in 5 mm / 4 degree
+        waypoints, one native action each (no rest-to-rest spline, at most one
+        settle action): about 2-3 actions per cm. The whole line is solved and
+        checked against joint limits and the table before the first action; a
+        refused delta uses 0 actions. compact=False sends the same target
+        through ``move_to``'s timed path (single arm only).
+
+        stop_on_stall: after ``stall_steps`` consecutive actions whose
+        measured progress is under a quarter of the commanded progress
+        (contact, a seated part, a hard stop) the call ends with
+        status="stopped", stalled=True, stop_reason="contact_or_stall" and no
+        exception. The arm stays where it stopped. This is a kinematic progress
+        test, not a force reading: confirm contact in the wrist view.
+
+        Args:
+            dxyz: [dx, dy, dz] metres.
+            arm: "left", "right" or "both" (then pass left= / right= dicts with
+                keys dxyz, dpitch, dyaw, droll, gripper).
+            gripper: robo.CLOSE (1), robo.OPEN (-1) or robo.KEEP (0), commanded
+                from the first action; the stroke is finished after the motion.
+            max_steps: cap on native actions for this call (None: no cap).
+            reserve_steps: episode actions that must remain after this call.
+        Returns:
+            Nudge; test ``status`` / ``stalled`` / ``reached`` and ``achieved``.
+        Raises:
+            ValueError: a malformed argument (nothing is sent).
+        """
+        kwargs = self._nudge_kwargs(dxyz, arm, dpitch, dyaw, droll, gripper, frame, left,
+                                    right, stop_on_stall, stall_steps, max_steps,
+                                    reserve_steps, compact, max_linear_m, max_angular_deg)
+        return self._stateful("nudge", kwargs, lambda p: self._nudge_result(kwargs, p))
+
+    def visual_align_and_insert(
+        self,
+        goal: str,
+        arm: str = "right",
+        frame: str = "world",
+        max_rounds: int = 8,
+        max_steps: int = 40,
+        reserve_steps: int = 20,
+        stop_on_stall: bool = True,
+        crop_wrist: bool = True,
+        cameras: Sequence[str] | None = None,
+        model: str | None = None,
+        base_url: str | None = None,
+        policy: Any = None,
+        *,
+        stop_on_contact_complete: bool = False,
+        max_linear_m: float = 0.03,
+        max_angular_deg: float = 15.0,
+    ) -> VisualAlign:
+        """Closed-loop last-mile alignment / insertion with a visual delta policy.
+
+        Use it after the program has brought the held part or the fingers
+        within a few cm of the goal (pre-aligned above the slot, socket, hook
+        or rim). Each round: the current views (``cameras``, default the head
+        and that arm's wrist camera, plus a 2x centre crop of each wrist view
+        when crop_wrist) and the arm state go to a PEAR Visual-Delta model; its
+        JSON delta (cm / rad, gripper +1 open, -1 close, 0 keep) is clamped to
+        max_linear_m / max_angular_deg and executed with ``nudge``; the
+        physical outcome (reached / stopped / out_of_reach and the measured
+        motion) is shown to it next round. Stops on the policy's "done", an
+        all-zero delta, a contact stall when stop_on_contact_complete, invalid
+        answers, a policy error, or the round / step budget.
+
+        The model is an OpenAI-compatible server: ``model`` / ``base_url`` or
+        CODEASPOLICY_DELTA_MODEL / CODEASPOLICY_DELTA_BASE_URL (key from
+        CODEASPOLICY_DELTA_API_KEY_ENV, default OPENAI_API_KEY). ``policy``
+        may instead be a Python callable ``f(request) -> text or action dict``
+        (or an object with ``predict``): the loop then runs in this process,
+        each move a separate ``nudge`` call.
+
+        Args:
+            goal: what to achieve, in words ("insert the held plug into the
+                socket ahead"); the policy sees it every round.
+            max_steps: native actions the whole loop may use; also capped so
+                ``reserve_steps`` remain in the episode for retreat and home.
+        Returns:
+            VisualAlign; inspect status / stop_reason and the last round's
+            feedback, then confirm the result in the images.
+        Raises:
+            ValueError: a malformed argument (nothing is sent).
+        """
+        kwargs = self._align_kwargs(goal, arm, frame, max_rounds, max_steps, reserve_steps,
+                                    stop_on_stall, crop_wrist, cameras, model, base_url,
+                                    stop_on_contact_complete, max_linear_m, max_angular_deg)
+        if policy is not None:
+            if isinstance(policy, (str, bytes)):
+                raise ValueError("policy must be a callable or an object with predict()")
+            payload = self._local_visual_align(kwargs, policy)
+        else:
+            payload = self._stateful("visual_align_and_insert", kwargs, lambda p: p)
+        return self._align_result(payload)
+
     def set_gripper(self, arm: str, gripper: int, opening: float | None = None) -> Gripper:
         """Close or open one gripper, without moving the arms.
 
@@ -2263,6 +2488,225 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
             tracking=p.get("tracking"),
         )
 
+    # -- guarded nudges and the visual delta loop (internals) -------------------
+
+    @staticmethod
+    def _bounded(value: Any, name: str, high: float) -> float:
+        try:
+            out = float(value)
+        except (TypeError, ValueError) as exc:
+            raise ValueError(f"{name} must be a number, got {value!r}") from exc
+        if isinstance(value, bool) or not math.isfinite(out) or not 0 < out <= high:
+            raise ValueError(f"{name} must be in (0, {high}], got {value!r}")
+        return out
+
+    @staticmethod
+    def _count(value: Any, name: str, low: int, high: int | None = None) -> int:
+        if type(value) is not int or value < low or (high is not None and value > high):
+            span = f"[{low}, {high}]" if high is not None else f">= {low}"
+            raise ValueError(f"{name} must be an integer {span}, got {value!r}")
+        return value
+
+    def _delta_spec(self, spec: Any, name: str) -> dict[str, Any]:
+        if not isinstance(spec, dict):
+            raise ValueError(f"{name} must be a dict with dxyz / dpitch / dyaw / droll / gripper")
+        extra = sorted(set(spec) - {"dxyz", "dpitch", "dyaw", "droll", "gripper"})
+        if extra:
+            raise ValueError(f"{name} has unknown keys {extra}")
+        out: dict[str, Any] = {"dxyz": list(_floats(spec.get("dxyz", (0, 0, 0)), 3,
+                                                    f"{name}.dxyz"))}
+        for key in ("dpitch", "dyaw", "droll"):
+            out[key] = _angle(spec.get(key, 0.0), f"{name}.{key}") or 0.0
+        out["gripper"] = _command(spec.get("gripper", 0), allow_keep=True)
+        return out
+
+    def _nudge_kwargs(self, dxyz, arm, dpitch, dyaw, droll, gripper, frame, left, right,
+                      stop_on_stall, stall_steps, max_steps, reserve_steps, compact,
+                      max_linear_m, max_angular_deg) -> dict[str, Any]:
+        if arm not in (*self.ARMS, "both"):
+            raise ValueError(f"arm must be 'left', 'right' or 'both', got {arm!r}")
+        if frame not in ("world", "tcp"):
+            raise ValueError(f"frame must be 'world' or 'tcp', got {frame!r}")
+        if type(stop_on_stall) is not bool or type(compact) is not bool:
+            raise ValueError("stop_on_stall and compact must be bool")
+        kwargs: dict[str, Any] = dict(
+            arm=arm, frame=frame, stop_on_stall=stop_on_stall, compact=compact,
+            stall_steps=self._count(stall_steps, "stall_steps", 1, 5),
+            reserve_steps=self._count(reserve_steps, "reserve_steps", 0),
+            max_linear_m=self._bounded(max_linear_m, "max_linear_m", 0.12),
+            max_angular_deg=self._bounded(max_angular_deg, "max_angular_deg", 45.0))
+        if max_steps is not None:
+            kwargs["max_steps"] = self._count(max_steps, "max_steps", 1)
+        single = self._delta_spec(dict(dxyz=dxyz, dpitch=dpitch, dyaw=dyaw, droll=droll,
+                                       gripper=gripper), "delta")
+        if arm == "both":
+            if any(single["dxyz"]) or single["gripper"] or any(
+                    single[k] for k in ("dpitch", "dyaw", "droll")):
+                raise ValueError("arm='both' takes its deltas as left={...} / right={...}")
+            if left is None and right is None:
+                raise ValueError("arm='both' needs left={...} and/or right={...}")
+            for name, spec in (("left", left), ("right", right)):
+                if spec is not None:
+                    kwargs[name] = self._delta_spec(spec, name)
+        else:
+            if left is not None or right is not None:
+                raise ValueError("left= / right= deltas go with arm='both'")
+            kwargs.update(single)
+        return kwargs
+
+    def _nudge_result(self, kwargs: dict[str, Any], p: dict[str, Any]) -> Nudge:
+        arms = dict(p.get("arms") or {})
+        angles = p.get("final_angles") or {}
+        achieved = (p.get("achieved_delta") or {}).get(kwargs["frame"]) or {}
+        dists = [float(a.get("dist_to_target_m", math.nan)) for a in arms.values()]
+        turns = [float(a.get("orientation_error_deg", math.nan)) for a in arms.values()]
+        return Nudge(
+            arm=str(p.get("arm", kwargs["arm"])),
+            frame=str(p.get("frame", kwargs["frame"])),
+            status=str(p.get("status") or "rejected"),
+            reached=bool(p.get("reached")),
+            stalled=bool(p.get("stalled")),
+            stop_reason=p.get("stop_reason"),
+            steps_used=int(p.get("steps_used", 0)),
+            planned_steps=int(p.get("planned_steps", 0)),
+            final_xyz=_tuple3(p.get("final_xyz")),
+            pitch=float(angles.get("pitch", math.nan)),
+            yaw=float(angles.get("yaw", math.nan)),
+            roll=float(angles.get("roll", math.nan)),
+            dist_to_target_m=float(p.get("dist_to_target_m", max(dists, default=math.nan))),
+            orientation_error_deg=float(p.get("orientation_error_deg",
+                                              max(turns, default=math.nan))),
+            achieved=dict(achieved),
+            holding=bool(p.get("holding")),
+            opening=float(p.get("opening", math.nan)),
+            ik_error=str(p["ik_error"]) if p.get("ik_error") else None,
+            note=str(p["note"]) if p.get("note") else None,
+            truncated=self._latest_state().truncated,
+            arms=arms,
+        )
+
+    def _align_kwargs(self, goal, arm, frame, max_rounds, max_steps, reserve_steps,
+                      stop_on_stall, crop_wrist, cameras, model, base_url,
+                      stop_on_contact_complete, max_linear_m, max_angular_deg) -> dict[str, Any]:
+        if not isinstance(goal, str) or not goal.strip():
+            raise ValueError("goal must be a non-empty string")
+        if arm not in (*self.ARMS, "both"):
+            raise ValueError(f"arm must be 'left', 'right' or 'both', got {arm!r}")
+        if frame not in ("world", "tcp"):
+            raise ValueError(f"frame must be 'world' or 'tcp', got {frame!r}")
+        for name, flag in (("stop_on_stall", stop_on_stall), ("crop_wrist", crop_wrist),
+                           ("stop_on_contact_complete", stop_on_contact_complete)):
+            if type(flag) is not bool:
+                raise ValueError(f"{name} must be bool")
+        kwargs: dict[str, Any] = dict(
+            goal=goal, arm=arm, frame=frame,
+            max_rounds=self._count(max_rounds, "max_rounds", 1, 32),
+            max_steps=self._count(max_steps, "max_steps", 1, 400),
+            reserve_steps=self._count(reserve_steps, "reserve_steps", 0),
+            stop_on_stall=stop_on_stall, crop_wrist=crop_wrist,
+            stop_on_contact_complete=stop_on_contact_complete,
+            max_linear_m=self._bounded(max_linear_m, "max_linear_m", 0.12),
+            max_angular_deg=self._bounded(max_angular_deg, "max_angular_deg", 45.0))
+        if cameras is not None:
+            kwargs["cameras"] = [_camera(c, self.CAMERAS) for c in cameras]
+        for name, value in (("model", model), ("base_url", base_url)):
+            if value is not None:
+                if not isinstance(value, str) or not value:
+                    raise ValueError(f"{name} must be a non-empty string or None")
+                kwargs[name] = value
+        return kwargs
+
+    def _local_visual_align(self, kwargs: dict[str, Any], policy: Any) -> dict[str, Any]:
+        """The visual delta loop in this process: a Python policy, one nudge per move."""
+
+        from . import visual_delta as vd
+
+        arm = kwargs["arm"]
+        arms = self.ARMS if arm == "both" else (arm,)
+        views = kwargs.get("cameras") or (
+            list(self.CAMERAS) if arm == "both" else ["cam_head", f"cam_{arm}_wrist"])
+        chosen = vd.as_policy(policy)
+        last: dict[str, Any] = {}
+
+        def poses(state: State) -> dict[str, dict[str, Any]]:
+            return {name: {"xyz": list(state.arm(name).tcp_pos), "pitch": state.arm(name).pitch,
+                           "yaw": state.arm(name).yaw, "roll": state.arm(name).roll,
+                           "opening": state.arm(name).gripper} for name in arms}
+
+        def observe(images: bool = True) -> dict[str, Any]:
+            shots = []
+            for camera in views if images else ():
+                try:
+                    picture = self.image(camera)
+                except Exception:  # noqa: BLE001 - a missing view is left out
+                    continue
+                shots.append({"label": camera, "png": vd.encode_png(picture)})
+                if kwargs["crop_wrist"] and camera.endswith("_wrist"):
+                    from .hosts.robodojo_visual_delta import crop_center
+
+                    shots.append({"label": f"{camera}_crop",
+                                  "png": vd.encode_png(crop_center(picture))})
+            return {"poses": poses(self.state()), "images": shots,
+                    "remaining_steps": last.get("remaining_episode_steps")}
+
+        def execute(specs: dict[str, dict[str, Any]], steps_left: int) -> dict[str, Any]:
+            call: dict[str, Any] = dict(
+                arm=arm, frame=kwargs["frame"], stop_on_stall=kwargs["stop_on_stall"],
+                stall_steps=2, compact=True, max_steps=steps_left,
+                reserve_steps=kwargs["reserve_steps"], max_linear_m=kwargs["max_linear_m"],
+                max_angular_deg=kwargs["max_angular_deg"])
+            if arm == "both":
+                call.update({name: dict(spec) for name, spec in specs.items()})
+            else:
+                call.update(specs[arm])
+            try:
+                payload = self._stateful("nudge", call, lambda p: p)
+            except ToolError as exc:
+                return {"status": "rejected", "stop_reason": "invalid_delta", "steps_used": 0,
+                        "ik_error": str(exc)}
+            last.clear()
+            last.update(payload)
+            return payload
+
+        out = vd.run_visual_delta_loop(
+            goal=kwargs["goal"], arm=arm, frame=kwargs["frame"], policy=chosen,
+            observe=observe, execute=execute, step_allowance=kwargs["max_steps"],
+            max_rounds=kwargs["max_rounds"], max_linear_m=kwargs["max_linear_m"],
+            max_angular_deg=kwargs["max_angular_deg"],
+            stop_on_contact_complete=kwargs["stop_on_contact_complete"],
+            model=kwargs.get("model"))
+        state = self.state()
+        out.update(local=True, reserve_steps=kwargs["reserve_steps"], cameras=list(views),
+                   stalled=any((r.get("feedback") or {}).get("stalled") for r in out["rounds"]))
+        if arm != "both":
+            out.update(final_xyz=list(state.arm(arm).tcp_pos),
+                       holding=bool(last.get("holding")) if last else False,
+                       opening=state.arm(arm).gripper)
+        return out
+
+    def _align_result(self, p: dict[str, Any]) -> VisualAlign:
+        return VisualAlign(
+            goal=str(p.get("goal", "")),
+            arm=str(p.get("arm", "")),
+            status=str(p.get("status") or "rejected"),
+            reached=bool(p.get("reached")),
+            done=bool(p.get("done")),
+            converged=bool(p.get("converged")),
+            contact_complete=bool(p.get("contact_complete")),
+            stalled=bool(p.get("stalled")),
+            stop_reason=p.get("stop_reason"),
+            rounds_used=int(p.get("rounds_used", 0)),
+            steps_used=int(p.get("steps_used", 0)),
+            step_allowance=int(p.get("step_allowance", 0)),
+            final_xyz=_tuple3(p.get("final_xyz")),
+            holding=bool(p.get("holding")),
+            policy=str(p["policy"]) if p.get("policy") else None,
+            rounds=list(p.get("rounds") or []),
+            last_feedback=p.get("last_feedback"),
+            policy_error=str(p["policy_error"]) if p.get("policy_error") else None,
+            truncated=self._latest_state().truncated,
+        )
+
     def _state_from_envelope(self, envelope: dict[str, Any]) -> State:
         summary = envelope.get("state") or {}
         raw = summary.get("state") or {}
@@ -2334,6 +2778,7 @@ __all__ = [
     "MOVE_TOL_DEG",
     "MOVE_TOL_M",
     "Move",
+    "Nudge",
     "ObjectPose",
     "Pick",
     "PixelPoint",
@@ -2345,6 +2790,7 @@ __all__ = [
     "TCP_OFFSET",
     "TriangulatedPoint",
     "VLA_CHUNK_ACTIONS",
+    "VisualAlign",
     "WorldPoint",
     "gripper_angles",
 ]

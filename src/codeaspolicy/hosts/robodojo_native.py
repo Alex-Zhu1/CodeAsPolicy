@@ -43,7 +43,7 @@ from . import robodojo_tools as tools
 
 CAMERAS = ("cam_head", "cam_left_wrist", "cam_right_wrist")
 STATEFUL = frozenset({"move_pose", "grip", "home", "motion_execute", "try_grasp", "intent_execute",
-                      "grasp_step", "operation_resume"})
+                      "grasp_step", "operation_resume", "nudge", "visual_align_and_insert"})
 PERCEPTION = frozenset({"locate", "back_project", "segment", "object_observe"})
 
 
@@ -396,6 +396,9 @@ class NativeToolkit:
         from .robodojo_grasp import handlers as grasp_handlers
 
         self._tools.update(grasp_handlers(self._primitives, start))
+        from .robodojo_visual_delta import handlers as delta_handlers
+
+        self._tools.update(delta_handlers(self._primitives, start))
         self._record(obs, self._status())
 
     def _record(self, obs, status, action_id=None):

@@ -313,7 +313,7 @@ def arm_pose(state: Mapping[str, Any], arm: str) -> ArmPose | None:
 def arm_state_json(pose: ArmPose) -> dict[str, float]:
     """PEAR measured state of one arm: cm (1 decimal), rad (2 decimals)."""
 
-    pitch, yaw, roll = pose.angles_deg
+    pitch, yaw, roll = canonical_angles(*pose.angles_deg)
     return {
         "x": round(pose.tcp[0] * 100.0, 1),
         "y": round(pose.tcp[1] * 100.0, 1),
@@ -338,6 +338,57 @@ def state_json(poses: Mapping[str, ArmPose], arm: str) -> dict[str, Any]:
     return {"arm": arm_state_json(pose), "gripper": {"width": width_cm(pose.opening)}}
 
 
+#: Beyond this pitch (degrees, either sign) the gripper counts as near vertical: yaw and roll
+#: then turn about nearly the same axis and ``angles()`` may trade one for the other between
+#: two close poses.  Shared with :mod:`codeaspolicy.visual_delta`.
+NEAR_VERTICAL_DEG = 85.0
+
+
+def _sign(value: float) -> float:
+    return 1.0 if value >= 0 else -1.0
+
+
+def canonical_angles(pitch: float, yaw: float, roll: float) -> tuple[float, float, float]:
+    """(pitch, yaw, roll) degrees with near-vertical roll folded into yaw.
+
+    At pitch +90 ``orientation`` is ``Rz(90 + yaw - roll) Ry(90)``, at -90
+    ``Rz(90 + yaw + roll) Ry(-90)``: only ``yaw - sign(pitch) * roll`` is well defined.  Beyond
+    :data:`NEAR_VERTICAL_DEG` that is reported as the yaw, with roll 0.
+    """
+
+    if abs(pitch) > NEAR_VERTICAL_DEG:
+        return pitch, wrap_deg(yaw - _sign(pitch) * roll), 0.0
+    return pitch, yaw, roll
+
+
+def rotation_error(a: Matrix, b: Matrix) -> float:
+    """Geodesic angle between two rotations, degrees (``kin.rotation_error``)."""
+
+    c = (sum(a[i][j] * b[i][j] for i in range(3) for j in range(3)) - 1.0) / 2.0
+    return math.degrees(math.acos(max(-1.0, min(1.0, c))))
+
+
+def _rot(pose: ArmPose) -> Matrix:
+    return [list(r) for r in pose.rot]
+
+
+def angle_delta(current: ArmPose, target: ArmPose) -> tuple[float, float, float]:
+    """(pitch, yaw, roll) degrees to add to ``current``'s :func:`angles` to reach ``target``.
+
+    The wrapped difference of :func:`angles`; when both poses are beyond
+    :data:`NEAR_VERTICAL_DEG`, the difference of :func:`canonical_angles` instead (roll 0,
+    the well-defined ``yaw - sign(pitch) * roll`` in yaw), the rule shared with
+    :mod:`codeaspolicy.visual_delta`.  Applied as ``orientation(current angles + delta)``.
+    """
+
+    p0, y0, r0 = current.angles_deg
+    p1, y1, r1 = target.angles_deg
+    if abs(p0) > NEAR_VERTICAL_DEG and abs(p1) > NEAR_VERTICAL_DEG:
+        dyaw = wrap_deg((y1 - _sign(p1) * r1) - (y0 - _sign(p0) * r0))
+        return p1 - p0, dyaw, 0.0
+    return wrap_deg(p1 - p0), wrap_deg(y1 - y0), wrap_deg(r1 - r0)
+
+
 def pose_delta(
     current: ArmPose,
     target: ArmPose,
@@ -351,13 +402,12 @@ def pose_delta(
         raise ValueError(f"frame must be 'world' or 'tcp', got {frame!r}")
     d = [target.tcp[i] - current.tcp[i] for i in range(3)]
     if frame == "tcp":
-        d = _matvec(_transpose([list(r) for r in current.rot]), d)
-    p0, y0, r0 = current.angles_deg
-    p1, y1, r1 = target.angles_deg
+        d = _matvec(_transpose(_rot(current)), d)
+    dp, dy, dr = angle_delta(current, target)
     out = {axis: round(v * 100.0, linear_decimals) + 0.0 for axis, v in zip("xyz", d)}
-    out["roll"] = round(math.radians(wrap_deg(r1 - r0)), angular_decimals) + 0.0
-    out["pitch"] = round(math.radians(wrap_deg(p1 - p0)), angular_decimals) + 0.0
-    out["yaw"] = round(math.radians(wrap_deg(y1 - y0)), angular_decimals) + 0.0
+    out["roll"] = round(math.radians(dr), angular_decimals) + 0.0
+    out["pitch"] = round(math.radians(dp), angular_decimals) + 0.0
+    out["yaw"] = round(math.radians(dy), angular_decimals) + 0.0
     return out
 
 
@@ -416,11 +466,22 @@ class CoalesceConfig:
     split_on_phase: bool = True
     opening_switch: float = 0.05
     frame: str = "world"
+    #: Macro steps above the caps (one recorded transition already larger than a nudge can
+    #: execute): "drop" (flag them; extraction ends the conversation there), "split" (N equal
+    #: sub-deltas within the caps) or "keep" (flag only).
+    oversize: str = "drop"
+
+
+OVERSIZE_MODES = ("drop", "split", "keep")
 
 
 @dataclass
 class MacroStep:
-    """A PEAR macro delta: from ``frames[start]`` to ``frames[end]``."""
+    """A PEAR macro delta: from ``frames[start]`` to ``frames[end]``.
+
+    Parts of a split oversize step share ``start`` / ``end`` and carry ``part = (k, n)``;
+    ``state_poses`` then holds the interpolated poses the part starts from.
+    """
 
     start: int
     end: int
@@ -432,9 +493,12 @@ class MacroStep:
     stop_reason: str | None
     linear_m: float
     angular_deg: float
+    oversize: bool = False
+    part: tuple[int, int] | None = None
+    state_poses: dict[str, ArmPose] | None = None
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        out = {
             "start": self.start,
             "end": self.end,
             "arm": self.arm,
@@ -445,15 +509,17 @@ class MacroStep:
             "stop_reason": self.stop_reason,
             "linear_m": round(self.linear_m, 5),
             "angular_deg": round(self.angular_deg, 3),
+            "oversize": self.oversize,
         }
+        if self.part is not None:
+            out["part"] = list(self.part)
+        return out
 
 
 def _motion(a: ArmPose, b: ArmPose) -> tuple[float, float]:
-    linear = math.dist(a.tcp, b.tcp)
-    pa, ya, ra = a.angles_deg
-    pb, yb, rb = b.angles_deg
-    angular = max(abs(wrap_deg(pb - pa)), abs(wrap_deg(yb - ya)), abs(wrap_deg(rb - ra)))
-    return linear, angular
+    """Linear (m) and geodesic angular (deg) motion between two poses."""
+
+    return math.dist(a.tcp, b.tcp), rotation_error(_rot(a), _rot(b))
 
 
 def _arms_of(arm: str) -> tuple[str, ...]:
@@ -536,8 +602,13 @@ def coalesce(
     A macro step closes at a contact/stall stop, at a gripper switch, before a phase change,
     before its displacement would exceed ``max_linear_m`` / ``max_angular_deg``, and at the
     last frame.  Macro steps with no motion, no gripper switch and no stop are dropped.
+    Motion is measured as TCP distance and geodesic rotation angle.  A step still above the
+    caps (one recorded transition too large for a nudge) is flagged ``oversize``, and split
+    into parts within the caps when ``config.oversize == "split"``.
     """
 
+    if config.oversize not in OVERSIZE_MODES:
+        raise ValueError(f"oversize must be one of {OVERSIZE_MODES}, got {config.oversize!r}")
     if len(frames) < 2:
         return []
     if arm == "auto":
@@ -575,22 +646,113 @@ def coalesce(
         action, linear, angular, switched = _action(frames[start], cur, arm, config)
         still = linear < config.min_linear_m and angular < config.min_angular_deg
         if not (still and not switched and not cur.stalled):
-            steps.append(
-                MacroStep(
-                    start=start,
-                    end=t,
-                    arm=arm,
-                    action=action,
-                    phase=cur.phase,
-                    native_steps=native,
-                    status="stopped" if cur.stalled else "reached",
-                    stop_reason=cur.stop_reason if cur.stalled else None,
-                    linear_m=linear,
-                    angular_deg=angular,
-                )
+            step = MacroStep(
+                start=start,
+                end=t,
+                arm=arm,
+                action=action,
+                phase=cur.phase,
+                native_steps=native,
+                status="stopped" if cur.stalled else "reached",
+                stop_reason=cur.stop_reason if cur.stalled else None,
+                linear_m=linear,
+                angular_deg=angular,
+                oversize=_over_caps(linear, angular, config),
             )
+            if step.oversize and config.oversize == "split":
+                steps.extend(split_oversize(step, frames, config))
+            else:
+                steps.append(step)
         start, native = t, 0
     return steps
+
+
+def _over_caps(linear: float, angular: float, config: CoalesceConfig) -> bool:
+    return linear > config.max_linear_m + 1e-6 or angular > config.max_angular_deg + 1e-6
+
+
+def _interpolate(a: ArmPose, b: ArmPose, fraction: float) -> ArmPose:
+    """The pose ``fraction`` of the way from ``a`` to ``b`` (linear TCP, linear angles)."""
+
+    if fraction <= 0.0:
+        return a
+    if fraction >= 1.0:
+        return b
+    full = pose_delta(a, b, "world", linear_decimals=9, angular_decimals=12)
+    return apply_delta(a, {k: v * fraction for k, v in full.items()}, "world")
+
+
+def split_oversize(
+    step: MacroStep, frames: Sequence[Frame], config: CoalesceConfig = CoalesceConfig()
+) -> list[MacroStep]:
+    """Split a macro step above the caps into ``n`` equal sub-deltas within them.
+
+    Every part is shown with the start frame's images (no camera saw the intermediate poses)
+    and its interpolated state; the gripper switch and the stop belong to the last part.
+    """
+
+    n = max(
+        1,
+        math.ceil(step.linear_m / config.max_linear_m - 1e-9),
+        math.ceil(step.angular_deg / config.max_angular_deg - 1e-9),
+    )
+    first, last = frames[step.start], frames[step.end]
+    sides = [s for s in _arms_of(step.arm) if s in first.poses and s in last.poses]
+    knots = []
+    for k in range(n + 1):
+        poses = dict(first.poses if k < n else last.poses)
+        for side in sides:
+            poses[side] = _interpolate(first.poses[side], last.poses[side], k / n)
+        knots.append(poses)
+    parts = []
+    for k in range(n):
+        final = k == n - 1
+        action: dict[str, Any] = {}
+        linear = angular = 0.0
+        for side in _arms_of(step.arm):
+            if step.arm == "both":
+                arm_key, grip_key = f"{side}_arm", f"{side}_gripper"
+            else:
+                arm_key, grip_key = "arm", "gripper"
+            if side in sides:
+                a, b = knots[k][side], knots[k + 1][side]
+                action[arm_key] = pose_delta(a, b, config.frame)
+                lin, ang = _motion(a, b)
+                linear, angular = max(linear, lin), max(angular, ang)
+            else:
+                action[arm_key] = dict(step.action[arm_key])
+            switch = step.action.get(grip_key, {}).get("width", 0) if final else 0
+            action[grip_key] = {"width": switch}
+        parts.append(
+            MacroStep(
+                start=step.start,
+                end=step.end,
+                arm=step.arm,
+                action=action,
+                phase=step.phase,
+                native_steps=step.native_steps // n + (step.native_steps % n if final else 0),
+                status=step.status if final else "reached",
+                stop_reason=step.stop_reason if final else None,
+                linear_m=linear,
+                angular_deg=angular,
+                oversize=_over_caps(linear, angular, config),
+                part=(k, n),
+                state_poses=knots[k],
+            )
+        )
+    return parts
+
+
+def split_runs(steps: Sequence[MacroStep]) -> list[list[MacroStep]]:
+    """Runs of consecutive steps without an oversize step (dropped ones end a run)."""
+
+    runs: list[list[MacroStep]] = [[]]
+    for step in steps:
+        if step.oversize:
+            runs.append([])
+        else:
+            runs[-1].append(step)
+    return [run for run in runs if run]
 
 
 # ---------------------------------------------------------------------------
@@ -769,14 +931,14 @@ def build_conversation(
     status: str | None = None
     reason: str | None = None
 
-    def user_turn(frame: Frame) -> None:
+    def user_turn(frame: Frame, poses: Mapping[str, ArmPose] | None = None) -> None:
         shown = frame_images(frame, arm, cameras, crop) if options.images else []
         images.extend(path for _, path in shown)
-        state = state_json(frame.poses, arm)
+        state = state_json(poses or frame.poses, arm)
         messages.append({"role": "user", "content": user_prompt(state, shown, status, reason)})
 
     for step in steps:
-        user_turn(frames[step.start])
+        user_turn(frames[step.start], step.state_poses)
         messages.append(
             {
                 "role": "assistant",
@@ -1268,41 +1430,71 @@ def episode_records(
         return []
     arm = select_arm(frames, options.coalesce) if options.arm == "auto" else options.arm
     crop = _cropper(out_dir, episode.path.name, options.crop_box) if options.crop else None
-    records = []
-    for number, (first, last) in enumerate(segments(frames, options, arm)):
+    records: list[dict[str, Any]] = []
+    for first, last in segments(frames, options, arm):
         window = frames[first : last + 1]
         steps = coalesce(window, arm, options.coalesce)
-        if len(steps) < options.min_turns:
-            continue
-        phases = sorted({s.phase for s in steps if s.phase})
-        task = episode.task
-        if options.last_mile or options.radius_m is not None:
-            where = ", ".join(phases) or "near target"
-            task += f"\nSub-goal: precise last-mile alignment / contact ({where})."
-        ends_episode = last == len(frames) - 1
-        messages, images = build_conversation(
-            window, steps, task, options.dataset, bool(episode.success) and ends_episode, crop
-        )
-        base = {
-            "id": f"{episode.path.name}#{number}",
-            "protocol": PROTOCOL,
-            "task": episode.task,
-            "arm": arm,
-            "frame": options.dataset.frame,
-            "success": episode.success,
-            "source": {"episode": str(episode.path), "frames": [first, last]},
-            "phases": phases,
-            "macro_steps": len(steps),
-            "native_steps": sum(s.native_steps for s in steps),
-            "stopped_steps": sum(1 for s in steps if s.status == "stopped"),
-            "steps": [s.to_dict() for s in steps],
-        }
-        if options.format == "rl":
-            for turn, sample in enumerate(rl_samples(messages, images)):
-                records.append(dict(base, id=f"{base['id']}:{turn}", turn=turn, **sample))
-        else:
-            records.append(dict(base, messages=messages, images=images))
+        dropped = sum(1 for s in steps if s.oversize) if options.coalesce.oversize == "drop" else 0
+        runs = split_runs(steps) if options.coalesce.oversize == "drop" else [steps]
+        for run in runs:
+            if len(run) < options.min_turns:
+                continue
+            # the segment's dropped oversize steps are counted once, on its first record
+            records.extend(
+                _run_records(episode, options, window, first, run, arm, crop, len(records), dropped)
+            )
+            dropped = 0
     return records
+
+
+def _run_records(
+    episode: Episode,
+    options: ExtractOptions,
+    window: Sequence[Frame],
+    offset: int,
+    steps: Sequence[MacroStep],
+    arm: str,
+    crop: Callable[[str, str], str | None] | None,
+    number: int,
+    dropped: int,
+) -> list[dict[str, Any]]:
+    phases = sorted({s.phase for s in steps if s.phase})
+    task = episode.task
+    if options.last_mile or options.radius_m is not None:
+        where = ", ".join(phases) or "near target"
+        task += f"\nSub-goal: precise last-mile alignment / contact ({where})."
+    first, last = offset + steps[0].start, offset + steps[-1].end
+    ends_episode = last == len(episode.frames) - 1
+    messages, images = build_conversation(
+        window, steps, task, options.dataset, bool(episode.success) and ends_episode, crop
+    )
+    rendered = []
+    for step in steps:
+        entry = step.to_dict()
+        entry["start"], entry["end"] = step.start + offset, step.end + offset
+        rendered.append(entry)
+    base = {
+        "id": f"{episode.path.name}#{number}",
+        "protocol": PROTOCOL,
+        "task": episode.task,
+        "arm": arm,
+        "frame": options.dataset.frame,
+        "success": episode.success,
+        "source": {"episode": str(episode.path), "frames": [first, last]},
+        "phases": phases,
+        "macro_steps": len(steps),
+        "native_steps": sum(s.native_steps for s in steps),
+        "stopped_steps": sum(1 for s in steps if s.status == "stopped"),
+        "oversize_steps": sum(1 for s in steps if s.oversize),
+        "oversize_dropped": dropped,
+        "steps": rendered,
+    }
+    if options.format == "rl":
+        return [
+            dict(base, id=f"{base['id']}:{turn}", turn=turn, **sample)
+            for turn, sample in enumerate(rl_samples(messages, images))
+        ]
+    return [dict(base, messages=messages, images=images)]
 
 
 def extract(
@@ -1345,7 +1537,7 @@ def stats(records: Iterable[Mapping[str, Any]]) -> dict[str, Any]:
     """Macro chunks vs native steps, delta distributions and contact-stop ratio."""
 
     seen: set[str] = set()
-    macro = native = stopped = conversations = 0
+    macro = native = stopped = conversations = oversize = dropped = 0
     linear: list[float] = []
     angular: list[float] = []
     per_axis: dict[str, list[float]] = {axis: [] for axis in AXES}
@@ -1357,10 +1549,12 @@ def stats(records: Iterable[Mapping[str, Any]]) -> dict[str, Any]:
             continue  # RL samples repeat their conversation's steps
         seen.add(key)
         conversations += 1
+        dropped += int(record.get("oversize_dropped") or 0)
         for step in record.get("steps") or []:
             macro += 1
             native += int(step.get("native_steps") or 0)
             stopped += step.get("status") == "stopped"
+            oversize += bool(step.get("oversize"))
             linear.append(float(step.get("linear_m") or 0.0) * 100.0)
             angular.append(float(step.get("angular_deg") or 0.0))
             phases[step.get("phase") or "none"] = phases.get(step.get("phase") or "none", 0) + 1
@@ -1381,6 +1575,8 @@ def stats(records: Iterable[Mapping[str, Any]]) -> dict[str, Any]:
         "native_steps": native,
         "native_per_macro": round(native / macro, 3) if macro else None,
         "contact_stop_ratio": round(stopped / macro, 4) if macro else None,
+        "oversize_steps": oversize,
+        "oversize_dropped": dropped,
         "linear_cm": _summary(linear),
         "angular_deg": _summary(angular),
         "abs_delta": {axis: _summary(v) for axis, v in per_axis.items()},
@@ -1660,6 +1856,10 @@ def _parser() -> argparse.ArgumentParser:
     ex.add_argument("--max-linear-m", type=float, default=CoalesceConfig.max_linear_m)
     ex.add_argument("--max-angular-deg", type=float, default=CoalesceConfig.max_angular_deg)
     ex.add_argument("--min-linear-m", type=float, default=CoalesceConfig.min_linear_m)
+    ex.add_argument(
+        "--oversize", choices=OVERSIZE_MODES, default=CoalesceConfig.oversize,
+        help="macro steps above the caps: drop (default), split, keep",
+    )
     st = sub.add_parser("stats", help="summarise a JSONL dataset or episode directories")
     st.add_argument("paths", nargs="+", type=Path, help=".jsonl files or episode dirs")
     st.add_argument("--frame", choices=("world", "tcp"), default="world")
@@ -1686,6 +1886,7 @@ def _options(args: argparse.Namespace) -> ExtractOptions:
             max_angular_deg=args.max_angular_deg,
             min_linear_m=args.min_linear_m,
             frame=args.frame,
+            oversize=args.oversize,
         ),
         dataset=DatasetOptions(
             frame=args.frame, think=not args.no_think, images=not args.no_images
@@ -1738,7 +1939,9 @@ __all__ = [
     "angles",
     "apply_delta",
     "arm_pose",
+    "angle_delta",
     "build_conversation",
+    "canonical_angles",
     "coalesce",
     "crop_png",
     "decode_png",
@@ -1754,7 +1957,10 @@ __all__ = [
     "pear_to_ee_command",
     "pose_delta",
     "robodojo_gripper_to_pear",
+    "rotation_error",
     "rot_from_quat",
+    "split_oversize",
+    "split_runs",
     "state_json",
     "stats",
     "system_prompt",

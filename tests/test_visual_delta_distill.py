@@ -665,3 +665,144 @@ def test_recorder_uses_step_return_obs(tmp_path):
         recorder.step({"dz": -0.01})
     assert len(recorder.frames) == 4
     assert recorder.frames[1].images == {} and recorder.frames[2].images
+
+
+# ---------------------------------------------------------------------------
+# near-vertical Euler artefacts and oversize transitions (verifier #9)
+# ---------------------------------------------------------------------------
+
+
+def test_near_vertical_roll_yaw_swap_is_folded():
+    # 89.5 deg is inside angles()' vertical band (reported roll 0), 88.8 deg is outside it:
+    # two poses less than 2 degrees apart whose Euler angles differ by ~50 deg in yaw and roll
+    a = pose((0.1, 0.0, 0.9), pitch=89.5, yaw=40, roll=50)
+    b = pose((0.1, 0.0, 0.89), pitch=88.8, yaw=40, roll=50.5)
+    assert a.angles_deg[2] == 0.0 and abs(b.angles_deg[2]) > 45  # the artefact
+    geodesic = vd.rotation_error(vd._rot(a), vd._rot(b))
+    assert geodesic < 2.0
+    delta = vd.pose_delta(a, b)
+    assert delta["roll"] == 0.0
+    assert abs(delta["yaw"]) < math.radians(2) and abs(delta["pitch"]) < math.radians(2)
+    reached = vd.apply_delta(a, delta)
+    assert vd.rotation_error(vd._rot(reached), vd._rot(b)) <= 2.0
+    linear, angular = vd._motion(a, b)
+    assert angular == pytest.approx(geodesic) and angular < 2.0
+    steps = vd.coalesce([frame(0, a.tcp, pitch=89.5, yaw=40, roll=50),
+                         frame(1, b.tcp, pitch=88.8, yaw=40, roll=50.5)], arm="right")
+    assert steps[0].angular_deg < 2.0 and not steps[0].oversize
+    assert steps[0].action["arm"]["roll"] == 0.0
+
+
+def test_near_vertical_fold_pointing_up_uses_yaw_plus_roll():
+    a = pose((0.1, 0.0, 0.9), pitch=-89.5, yaw=40, roll=50)
+    b = pose((0.1, 0.0, 0.9), pitch=-88.8, yaw=40, roll=50.5)
+    delta = vd.pose_delta(a, b)
+    assert delta["roll"] == 0.0 and abs(delta["yaw"]) < math.radians(2)
+    reached = vd.apply_delta(a, delta)
+    assert vd.rotation_error(vd._rot(reached), vd._rot(b)) <= 2.0
+
+
+def test_roll_is_only_folded_beyond_near_vertical_threshold():
+    a = pose((0.1, 0.0, 0.9), pitch=80, yaw=0, roll=0)
+    b = pose((0.1, 0.0, 0.9), pitch=80, yaw=10, roll=60)
+    delta = vd.pose_delta(a, b, angular_decimals=6)
+    assert delta["roll"] == pytest.approx(math.radians(60), abs=1e-5)
+    assert delta["yaw"] == pytest.approx(math.radians(10), abs=1e-5)
+    # both beyond 85 deg: the shared rule (#10) folds deterministically, yaw - sign(p) * roll
+    a = pose((0.1, 0.0, 0.9), pitch=87, yaw=0, roll=0)
+    b = pose((0.1, 0.0, 0.9), pitch=87, yaw=10, roll=60)
+    delta = vd.pose_delta(a, b, angular_decimals=6)
+    assert delta["roll"] == 0.0
+    assert delta["yaw"] == pytest.approx(math.radians(10 - 60), abs=1e-5)
+
+
+def test_canonical_angles_and_state_json_near_vertical():
+    assert vd.canonical_angles(30, 20, -15) == (30, 20, -15)
+    assert vd.canonical_angles(88, 40, 50) == (88, -10, 0.0)
+    assert vd.canonical_angles(-88, 40, 50) == (-88, 90, 0.0)
+    assert vd.canonical_angles(89, 170, -20) == (89, -170, 0.0)
+    near = pose((0.1, 0.0, 0.9), pitch=88.8, yaw=40, roll=50.5)
+    arm = vd.state_json({"right": near}, "right")["arm"]
+    assert arm["roll"] == 0.0
+    assert arm["yaw"] == round(math.radians(40 - 50.5), 2)
+
+
+def jump_frames():
+    """0.5 cm steps, one 8 cm recorded jump (frames 3 -> 4), then 0.5 cm steps."""
+
+    xs = [0.10, 0.105, 0.11, 0.115, 0.195, 0.20, 0.205]
+    return [frame(i, (x, 0.0, 0.9), phase="insert") for i, x in enumerate(xs)]
+
+
+def test_oversize_transition_is_flagged_and_dropped_by_default():
+    frames = jump_frames()
+    steps = vd.coalesce(frames)
+    assert [(s.start, s.end, s.oversize) for s in steps] == [
+        (0, 3, False), (3, 4, True), (4, 6, False)
+    ]
+    assert steps[1].to_dict()["oversize"] is True
+    runs = vd.split_runs(steps)
+    assert [[(s.start, s.end) for s in run] for run in runs] == [[(0, 3)], [(4, 6)]]
+    episode = vd.Episode(path=Path("ep"), task="t", success=True, frames=frames, calls=[],
+                         result={})
+    records = vd.episode_records(episode)
+    assert [r["source"]["frames"] for r in records] == [[0, 3], [4, 6]]
+    assert all(r["oversize_steps"] == 0 for r in records)
+    assert [r["oversize_dropped"] for r in records] == [1, 0]
+    assert all(abs(s["action"]["arm"]["x"]) <= 6.0 for r in records for s in r["steps"])
+    # only the run that reaches the end of a successful episode gets the done turn
+    assert "done" not in parse_reply(records[0]["messages"][-1]["content"])
+    assert parse_reply(records[1]["messages"][-1]["content"])["done"] is True
+    summary = vd.stats(records)
+    assert summary["oversize_steps"] == 0 and summary["oversize_dropped"] == 1
+
+
+def test_oversize_keep_mode_flags_only():
+    steps = vd.coalesce(jump_frames(), config=vd.CoalesceConfig(oversize="keep"))
+    assert [s.oversize for s in steps] == [False, True, False]
+    with pytest.raises(ValueError):
+        vd.coalesce(jump_frames(), config=vd.CoalesceConfig(oversize="bogus"))
+
+
+def test_oversize_split_mode_makes_executable_parts(tmp_path):
+    frames = with_images(jump_frames(), tmp_path)
+    frames[4].gripper = {"right": 0.0}
+    frames[4].stalled, frames[4].stop_reason = True, "contact_or_stall"
+    for f in frames[:4]:
+        f.gripper = {"right": 1.0}
+    for f in frames[5:]:
+        f.gripper = {"right": 0.0}
+    steps = vd.coalesce(frames, config=vd.CoalesceConfig(oversize="split"))
+    parts = [s for s in steps if s.part is not None]
+    assert [s.part for s in parts] == [(0, 2), (1, 2)]
+    assert all(not s.oversize and s.linear_m <= 0.06 for s in steps)
+    assert [s.action["arm"]["x"] for s in parts] == pytest.approx([4.0, 4.0])
+    assert [s.action["gripper"]["width"] for s in parts] == [0, -1]
+    assert [s.status for s in parts] == ["reached", "stopped"]
+    assert parts[1].state_poses["right"].tcp[0] == pytest.approx(0.155)
+    messages, images = vd.build_conversation(frames, steps, "t")
+    second = messages[1 + 2 * steps.index(parts[1])]["content"]
+    state_text = second.split("```json", 1)[1].split("```", 1)[0]
+    assert json.loads(state_text)["arm"]["x"] == 15.5
+    assert sum(m["content"].count(vd.IMAGE_TOKEN) for m in messages) == len(images)
+
+
+def test_oversize_wrist_spin_split_by_geodesic_angle():
+    frames = [frame(0, (0.1, 0.0, 0.9), pitch=30, roll=0.0),
+              frame(1, (0.1, 0.0, 0.9), pitch=30, roll=92.6)]
+    steps = vd.coalesce(frames, arm="right", config=vd.CoalesceConfig(oversize="split"))
+    assert len(steps) == 5
+    assert all(s.angular_deg <= 20.0 + 1e-6 and not s.oversize for s in steps)
+    total_roll = sum(s.action["arm"]["roll"] for s in steps)
+    assert total_roll == pytest.approx(math.radians(92.6), abs=3e-3)
+
+
+def test_cli_oversize_option(tmp_path, capsys):
+    write_episode(tmp_path / "ep")
+    out = tmp_path / "o.jsonl"
+    assert vd.main(["extract", str(tmp_path / "ep"), "-o", str(out), "--oversize", "split",
+                    "--max-linear-m", "0.01"]) == 0
+    capsys.readouterr()
+    record = json.loads(out.read_text().splitlines()[0])
+    assert any("part" in s for s in record["steps"])
+    assert all(s["linear_m"] <= 0.01 + 1e-6 for s in record["steps"])

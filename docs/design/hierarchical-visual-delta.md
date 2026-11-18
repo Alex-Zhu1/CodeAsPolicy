@@ -90,7 +90,29 @@ into PEAR "move until at rest" deltas. A macro step closes:
   `nudge`, so every label can be executed by one `nudge`.
 
 Steps with no motion (under 1 mm and 0.5 degrees), no switch and no stop are dropped as hold
-noise.
+noise. Linear motion is measured as TCP distance and rotation as the geodesic angle between
+the two rotations.
+
+A recorded transition can already be larger than one `nudge` (for example 8 cm, or a 90 degree
+wrist spin, between two snapshots). Such a step is flagged `oversize`, and
+`--oversize drop|split|keep` controls what happens to it:
+
+- `drop` (the default): the conversation ends before the step and a new one starts after it.
+  The counts appear as `oversize_dropped` in records and in `stats`.
+- `split`: the step becomes N equal sub-deltas within the caps. Each part shows the start
+  frame's images with its interpolated state, and the gripper switch and stop go on the last
+  part.
+- `keep`: the step is flagged and left in the conversation.
+
+### Near-vertical angles
+
+When the gripper points nearly straight down (or up), yaw and roll turn about almost the same
+axis, and `angles()` can trade about 90 degrees between them for a tilt of under 1 degree. Above
+`NEAR_VERTICAL_DEG` = 85 degrees, both modules use the same convention: only
+`yaw - sign(pitch) * roll` is well defined. State JSON reports `canonical_angles()` (that value
+as yaw, roll 0). When both poses are beyond the threshold, a delta is
+`dyaw = wrap((y1 - s1*r1) - (y0 - s0*r0))` with `droll = 0`, which an executor applies as a turn
+about world z.
 
 ### Episode directories
 

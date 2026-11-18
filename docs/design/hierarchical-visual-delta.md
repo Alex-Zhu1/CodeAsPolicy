@@ -37,8 +37,9 @@ top-level `"done": true` ends the sub-skill.
 | Field | Unit | Convention |
 | --- | --- | --- |
 | `x, y, z` | cm | TCP grasp point (link6 + `TCP_OFFSET` = 0.145 m along link6 +x), `next - current`. `frame="world"`: +x robot's right, +y away from the robot, +z up. `frame="tcp"`: the world delta in current link6 axes (+x pointing, +y finger closing, +z normal). |
-| `roll, pitch, yaw` | rad | Wrapped difference of `robodojo_kinematics.angles()` (pitch, yaw, roll in degrees). Executor: `target = current + delta` through `kin.orientation(pitch, yaw, roll)`. |
-| action `gripper.width` | switch | `+1` open, `-1` close, `0` keep. RoboDojo: `OPEN=-1`, `CLOSE=1`; `ee_joint_state` command `1.0` open, `0.0` closed. |
+| `roll, pitch, yaw` (world) | rad | Wrapped difference of `robodojo_kinematics.angles()` (pitch, yaw, roll in degrees), folded near vertical (below). Executor: `target = current + delta` through `kin.orientation(pitch, yaw, roll)`. |
+| `roll, pitch, yaw` (tcp) | rad | The relative rotation `R0^T R1 = Rz(yaw) Ry(pitch) Rx(roll)` about the current gripper axes. Executor: `R0 Rz(dyaw) Ry(dpitch) Rx(droll)`. |
+| action `gripper.width` | switch | `+1` open, `-1` close, `0` keep. RoboDojo: `OPEN=-1`, `CLOSE=1`; `ee_joint_state` command `1.0` open, `0.0` closed. A command `<= 0.05` counts as closed (the host's threshold). |
 | state `gripper.width` | cm | Jaw span `round((0.0023 + 0.1091 * opening) * 100, 1)`. |
 | state `x, y, z` / angles | cm / rad | Rounded to 1 / 2 decimals. |
 
@@ -67,16 +68,27 @@ then `robo.visual_align_and_insert("insert the key into the lock slot", arm="rig
 
 ## Offline layer: distilling training data
 
-`visual_delta_distill` turns recorded episodes into the exact turn structure the online loop
-uses:
+`visual_delta_distill` turns recorded episodes into **one sample per turn**, rendered exactly
+like the requests `visual_align_and_insert` sends. Training and serving see the same text:
 
-- **system**: the JSON delta rules, `## ENVIRONMENT` (axes and cameras for the frame), and
-  `## TASK`. Last-mile segments add a sub-goal line.
-- **user**: `## LAST ACTION` (`none`, `reached`, or `stopped (reason)`), `## STATE` JSON, and
-  `## IMAGES` as `[cam_head] <image>`, `[cam_right_wrist] <image>`, and optionally
-  `[cam_right_wrist_crop] <image>`. The record's `images` list holds the paths in token order.
-- **assistant**: a templated `<think>` rationale and the reference action JSON. Successful
-  segments that reach the end of the episode get a final zero-delta `"done": true` turn.
+- **system**: `visual_delta.SYSTEM_PROMPT`. It is imported when that module is present, and
+  otherwise a verbatim copy is used; a test checks that the two are identical.
+- **user**: the views first, as `[label]<image>` each, then `visual_delta.build_user_prompt(...)`
+  (goal, arm mode, frame, round, steps left, the per-move limits actually used for
+  coalescing, image labels, state JSON, and the last execution). The last execution follows the
+  `format_feedback` shape: `{"status", "reason", "steps_used", "achieved", ["stalled"], "holding"}`.
+- **views**: `cam_head` plus the active wrist for one arm, all three cameras for both arms. Each
+  wrist is followed by `<wrist>_crop`, the centre 50% upsampled to full size (bicubic, as
+  `crop_center` does). Use `--no-crop` to leave the crops out. The record's `images` list holds
+  the paths in placeholder order.
+- **assistant**: a templated `<think>` rationale and the reference action JSON. Segments that end
+  a successful episode get a final zero-delta `"done": true` turn.
+- **history**: none by default (`history_turns=0` online). `--history-turns N` (or `-1` for all)
+  adds the previous text-only user/assistant pairs, as `OpenAIVisualDeltaClient(history_turns=N)`
+  does.
+
+`--format rl` emits `prompt` (all messages except the reply), `images`, `solution` (the action)
+and `reference` instead of `messages`.
 
 ### Macro-step coalescing
 
@@ -86,23 +98,25 @@ into PEAR "move until at rest" deltas. A macro step closes:
 - at a contact or stall stop (the next turn then reports `stopped`);
 - at a gripper command change, so each turn has at most one switch;
 - before a phase change (`call.kwargs.phase`, else the tool name);
-- before it would exceed `max_linear_m` (0.06) or `max_angular_deg` (20), the same caps as
-  `nudge`, so every label can be executed by one `nudge`.
+- before it would exceed `max_linear_m` / `max_angular_deg`. The defaults are 3 cm and 15
+  degrees, `visual_align_and_insert`'s per-round limits; a free `nudge` allows 6 cm and 20
+  degrees. The caps are written into each prompt's limits line, so every label is one
+  executable move.
 
 Steps with no motion (under 1 mm and 0.5 degrees), no switch and no stop are dropped as hold
-noise. Linear motion is measured as TCP distance and rotation as the geodesic angle between
-the two rotations.
+noise. Linear motion is measured as TCP distance. Rotation is the larger of the geodesic angle
+and the largest single angle of the delta, because `nudge` checks its limit per angle.
 
 A recorded transition can already be larger than one `nudge` (for example 8 cm, or a 90 degree
 wrist spin, between two snapshots). Such a step is flagged `oversize`, and
 `--oversize drop|split|keep` controls what happens to it:
 
-- `drop` (the default): the conversation ends before the step and a new one starts after it.
+- `drop` (the default): the run of turns ends before the step and a new run starts after it.
   The counts appear as `oversize_dropped` in records and in `stats`.
 - `split`: the step becomes N equal sub-deltas within the caps. Each part shows the start
   frame's images with its interpolated state, and the gripper switch and stop go on the last
   part.
-- `keep`: the step is flagged and left in the conversation.
+- `keep`: the step is flagged and left in its run.
 
 ### Near-vertical angles
 
@@ -125,12 +139,12 @@ command. Poses come from `<arm>_ee_pose`, or from forward kinematics of the join
 is available.
 
 ```bash
-# full episodes, SFT conversations
+# full episodes, one SFT sample per turn
 python -m codeaspolicy.visual_delta_distill extract runs/ -o data/sft.jsonl --success-only
 
-# last-mile contact segments only, wrist ROI crops, one RL sample per turn
+# last-mile contact segments only, RL prompt / solution samples, tcp-frame labels
 python -m codeaspolicy.visual_delta_distill extract runs/ -o data/rl.jsonl \
-    --last-mile --crop --format rl --frame tcp
+    --last-mile --format rl --frame tcp
 
 # macro chunks vs native steps, delta distributions, contact-stop ratio
 python -m codeaspolicy.visual_delta_distill stats data/sft.jsonl
@@ -148,7 +162,7 @@ R of the target, which is the episode's final TCP position unless one is given.
 from codeaspolicy.visual_delta_distill import ExtractOptions, VisualDeltaEnvRecorder
 
 env = VisualDeltaEnvRecorder(env, "runs/visual_delta", task=instruction,
-                             options=ExtractOptions(last_mile=True, crop=True))
+                             options=ExtractOptions(last_mile=True))
 with env.phase("insert"):
     ...                       # env.step / env.get_obs as usual
 env.mark_stop()               # when an executor detects contact or a stall
@@ -164,8 +178,8 @@ trials later with other options.
 
 1. Collect successful `CodeAsPolicy_RSI` rollouts with the recorder, together with the offline
    `runs/`.
-2. SFT a small Qwen-VL model on `--last-mile --crop` conversations. The `<image>` tokens and
-   the `images` list match LLaMA-Factory and ms-swift multimodal formats.
+2. SFT a small Qwen-VL model on `--last-mile` samples. The `<image>` placeholders and the
+   `images` list match the LLaMA-Factory and ms-swift multimodal formats.
 3. RL with `--format rl` samples. Reward from JSON validity, sign agreement and distance to
    `solution`, then from in-simulator success through `visual_align_and_insert`.
 4. Serve it behind an OpenAI-compatible endpoint and point `CODEASPOLICY_DELTA_BASE_URL` at it.

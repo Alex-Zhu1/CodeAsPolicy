@@ -14,9 +14,11 @@ relative end-effector deltas.  This module produces the data to fine-tune such a
 * :func:`coalesce` groups recorded native steps into PEAR "move until at rest" macro deltas,
   splitting at gripper switches, contact/stall stops, phase boundaries and displacement caps,
   and dropping zero-motion hold noise.
-* :func:`extract_episode` reads a finished episode directory (``result.json``, ``card.json``,
-  ``calls.jsonl``, ``steps/NNNN/observation.json`` + camera PNGs) and builds SFT conversations
-  or RL prompt/solution samples, optionally restricted to last-mile contact phases.
+* :func:`episode_records` reads a finished episode directory (``result.json``, ``card.json``,
+  ``calls.jsonl``, ``steps/NNNN/observation.json`` + camera PNGs) and builds one SFT sample
+  (or RL prompt / solution) per turn, rendered exactly like the requests of the online loop
+  (``visual_delta.SYSTEM_PROMPT`` / ``build_user_prompt``, the same views and wrist crops,
+  ``format_feedback``-shaped feedback), optionally restricted to last-mile contact phases.
 * :class:`VisualDeltaEnvRecorder` wraps a live env (``step`` / ``get_obs`` / ``get_status``)
   and flushes the same JSONL when a trial ends.
 * ``python -m codeaspolicy.visual_delta_distill extract|stats`` is the command line.
@@ -25,13 +27,16 @@ Protocol v1 conventions (shared with :mod:`codeaspolicy.visual_delta`):
 
 * ``x, y, z`` deltas are centimetres of the TCP grasp point (link6 origin plus
   ``TCP_OFFSET`` = 0.145 m along link6 +x), ``next - current``.  ``frame="tcp"`` expresses
-  the world delta in the current link6 axes (+x pointing, +y finger closing, +z normal).
+  the world delta in the current link6 axes (+x pointing, +y finger closing, +z normal), and
+  its angles are the relative rotation ``R0^T R1 = Rz(yaw) Ry(pitch) Rx(roll)``.
 * ``roll, pitch, yaw`` deltas are radians: the wrapped difference of
   ``robodojo_kinematics.angles()`` (pitch, yaw, roll in degrees); an executor applies
-  ``target = current + delta`` through ``kin.orientation(pitch, yaw, roll)``.
+  ``target = current + delta`` through ``kin.orientation(pitch, yaw, roll)``; beyond 85
+  degrees of pitch, roll folds into ``yaw - sign(pitch) * roll`` (:func:`canonical_angles`).
 * Gripper action ``width`` is a switch: ``+1`` open, ``-1`` close, ``0`` keep.  RoboDojo's
   internal codes are ``OPEN = -1`` / ``CLOSE = 1`` and its ``ee_joint_state`` command is
-  ``1.0`` open / ``0.0`` closed.  Observed width is the jaw span in cm,
+  ``1.0`` open / ``0.0`` closed (the host reads ``<= 0.05`` as closed).  Observed width
+  is the jaw span in cm,
   ``round((0.0023 + 0.1091 * opening) * 100, 1)``.
 
 Everything here is pure Python (numpy and Pillow are used only when present), so the
@@ -66,6 +71,10 @@ ROBODOJO_CLOSE = 1
 ROBODOJO_KEEP = 0
 EE_OPEN_CMD = 1.0
 EE_CLOSE_CMD = 0.0
+#: The host reads an ee command at or below this as closed (``robodojo_tools``).
+EE_CLOSED_MAX = 0.05
+#: Opening above which a closed gripper is holding something (``HOLD_MIN_OPENING``).
+HOLD_MIN_OPENING = 0.01
 
 #: PEAR gripper action switch values.
 PEAR_OPEN = 1
@@ -118,9 +127,11 @@ def pear_gripper_to_robodojo(value: float) -> int:
     return ROBODOJO_KEEP
 
 
-def robodojo_gripper_to_pear(code: float) -> int:
-    """RoboDojo ``OPEN=-1`` / ``CLOSE=1`` / ``KEEP=0`` to the PEAR switch."""
+def robodojo_gripper_to_pear(code: float | None) -> int:
+    """RoboDojo ``OPEN=-1`` / ``CLOSE=1`` / ``KEEP=0`` (or ``None``) to the PEAR switch."""
 
+    if code is None:
+        return PEAR_KEEP
     code = float(code)
     if code < 0:
         return PEAR_OPEN
@@ -132,16 +143,23 @@ def robodojo_gripper_to_pear(code: float) -> int:
 def ee_command_to_pear(command: float | None, previous: float | None = None) -> int:
     """An ``ee_joint_state`` command level (1.0 open, 0.0 closed) as a PEAR switch.
 
-    With ``previous`` given, an unchanged level is ``0`` (keep): PEAR actions are switches,
-    the level itself is state.
+    A command at or below :data:`EE_CLOSED_MAX` is a close (the host's own threshold),
+    anything above it an open.  With ``previous`` given, an unchanged open/closed state is
+    ``0`` (keep): PEAR actions are switches, the level itself is state.
     """
 
     if command is None:
         return PEAR_KEEP
-    command = float(command)
-    if previous is not None and abs(command - float(previous)) < 0.5:
+    closed = ee_closed(command)
+    if previous is not None and ee_closed(previous) == closed:
         return PEAR_KEEP
-    return PEAR_OPEN if command >= 0.5 else PEAR_CLOSE
+    return PEAR_CLOSE if closed else PEAR_OPEN
+
+
+def ee_closed(command: float) -> bool:
+    """Whether an ``ee_joint_state`` command closes the gripper (``<= 0.05``, as the host)."""
+
+    return float(command) <= EE_CLOSED_MAX
 
 
 def pear_to_ee_command(value: float, current: float | None = None) -> float | None:
@@ -389,6 +407,26 @@ def angle_delta(current: ArmPose, target: ArmPose) -> tuple[float, float, float]
     return wrap_deg(p1 - p0), wrap_deg(y1 - y0), wrap_deg(r1 - r0)
 
 
+def zyx_deg(rot: Matrix) -> tuple[float, float, float]:
+    """(yaw, pitch, roll) degrees of ``rot = Rz(yaw) Ry(pitch) Rx(roll)`` (host ``_zyx_deg``)."""
+
+    pitch = math.degrees(math.asin(max(-1.0, min(1.0, -rot[2][0]))))
+    yaw = math.degrees(math.atan2(rot[1][0], rot[0][0]))
+    roll = math.degrees(math.atan2(rot[2][1], rot[2][2]))
+    return yaw, pitch, roll
+
+
+def rotation_delta(
+    current: ArmPose, target: ArmPose, frame: str = "world"
+) -> tuple[float, float, float]:
+    """(pitch, yaw, roll) degrees of the delta in ``frame`` (see :func:`pose_delta`)."""
+
+    if frame == "tcp":
+        yaw, pitch, roll = zyx_deg(_matmul(_transpose(_rot(current)), _rot(target)))
+        return pitch, yaw, roll
+    return angle_delta(current, target)
+
+
 def pose_delta(
     current: ArmPose,
     target: ArmPose,
@@ -396,14 +434,19 @@ def pose_delta(
     linear_decimals: int = 2,
     angular_decimals: int = 3,
 ) -> dict[str, float]:
-    """PEAR arm delta ``target - current``: cm for xyz, wrapped rad for roll/pitch/yaw."""
+    """PEAR arm delta ``target - current``: cm for xyz, rad for roll/pitch/yaw.
+
+    ``world``: TCP displacement in the table frame, angles by :func:`angle_delta`.  ``tcp``:
+    displacement in the current gripper axes and the relative rotation ``R0^T R1`` as
+    ``Rz(yaw) Ry(pitch) Rx(roll)`` about those axes (the executor's ``target_pose``).
+    """
 
     if frame not in ("world", "tcp"):
         raise ValueError(f"frame must be 'world' or 'tcp', got {frame!r}")
     d = [target.tcp[i] - current.tcp[i] for i in range(3)]
     if frame == "tcp":
         d = _matvec(_transpose(_rot(current)), d)
-    dp, dy, dr = angle_delta(current, target)
+    dp, dy, dr = rotation_delta(current, target, frame)
     out = {axis: round(v * 100.0, linear_decimals) + 0.0 for axis, v in zip("xyz", d)}
     out["roll"] = round(math.radians(dr), angular_decimals) + 0.0
     out["pitch"] = round(math.radians(dp), angular_decimals) + 0.0
@@ -415,14 +458,16 @@ def apply_delta(current: ArmPose, delta: Mapping[str, float], frame: str = "worl
     """Inverse of :func:`pose_delta` (what an executor targets), for round-trip checks."""
 
     d = [float(delta.get(axis, 0.0)) / 100.0 for axis in "xyz"]
+    dp, dy, dr = (math.degrees(float(delta.get(k, 0.0))) for k in ("pitch", "yaw", "roll"))
     if frame == "tcp":
-        d = _matvec([list(r) for r in current.rot], d)
-    p, y, r = current.angles_deg
-    rot = orientation(
-        p + math.degrees(float(delta.get("pitch", 0.0))),
-        y + math.degrees(float(delta.get("yaw", 0.0))),
-        r + math.degrees(float(delta.get("roll", 0.0))),
-    )
+        d = _matvec(_rot(current), d)
+        rot = _matmul(
+            _matmul(_matmul(_rot(current), _rz(math.radians(dy))), _ry(math.radians(dp))),
+            _rx(math.radians(dr)),
+        )
+    else:
+        p, y, r = current.angles_deg
+        rot = orientation(p + dp, y + dy, r + dr)
     return ArmPose(
         tcp=tuple(current.tcp[i] + d[i] for i in range(3)),  # type: ignore[arg-type]
         rot=tuple(tuple(row) for row in rot),
@@ -457,10 +502,14 @@ class Frame:
 
 @dataclass(frozen=True)
 class CoalesceConfig:
-    """Thresholds of :func:`coalesce` (the caps match ``robo.nudge``'s per-call bounds)."""
+    """Thresholds of :func:`coalesce`.
 
-    max_linear_m: float = 0.06
-    max_angular_deg: float = 20.0
+    The caps default to ``visual_align_and_insert``'s per-round limits (3 cm, 15 degrees;
+    a free ``nudge`` allows 6 cm, 20 degrees) and are the limits rendered in every prompt.
+    """
+
+    max_linear_m: float = 0.03
+    max_angular_deg: float = 15.0
     min_linear_m: float = 0.001
     min_angular_deg: float = 0.5
     split_on_phase: bool = True
@@ -516,10 +565,16 @@ class MacroStep:
         return out
 
 
-def _motion(a: ArmPose, b: ArmPose) -> tuple[float, float]:
-    """Linear (m) and geodesic angular (deg) motion between two poses."""
+def _motion(a: ArmPose, b: ArmPose, frame: str = "world") -> tuple[float, float]:
+    """Linear (m) and angular (deg) motion between two poses.
 
-    return math.dist(a.tcp, b.tcp), rotation_error(_rot(a), _rot(b))
+    The angle is the larger of the geodesic rotation and the largest angle of the delta in
+    ``frame`` (``nudge`` checks its limit per angle), so a step within the caps is a step one
+    nudge executes.
+    """
+
+    turn = max(abs(v) for v in rotation_delta(a, b, frame))
+    return math.dist(a.tcp, b.tcp), max(rotation_error(_rot(a), _rot(b)), turn)
 
 
 def _arms_of(arm: str) -> tuple[str, ...]:
@@ -532,7 +587,7 @@ def gripper_switch(a: Frame, b: Frame, side: str, opening_switch: float = 0.05) 
     ca, cb = a.gripper.get(side), b.gripper.get(side)
     if ca is not None and cb is not None:
         return ee_command_to_pear(cb, ca)
-    if cb is not None and ca is None and cb < 0.5:
+    if cb is not None and ca is None and ee_closed(cb):
         return PEAR_CLOSE  # first command after the (open) start: a close is a switch
     pa, pb = a.poses.get(side), b.poses.get(side)
     if pa is None or pb is None or pa.opening is None or pb.opening is None:
@@ -553,7 +608,7 @@ def select_arm(frames: Sequence[Frame], config: CoalesceConfig = CoalesceConfig(
         poses = [f.poses[side] for f in frames if side in f.poses]
         moved = False
         for a, b in zip(poses, poses[1:]):
-            lin, ang = _motion(a, b)
+            lin, ang = _motion(a, b, config.frame)
             if lin >= config.min_linear_m or ang >= config.min_angular_deg:
                 moved = True
                 break
@@ -579,7 +634,7 @@ def _action(
         pa, pb = a.poses.get(side), b.poses.get(side)
         if pa is not None and pb is not None:
             delta = pose_delta(pa, pb, config.frame)
-            lin, ang = _motion(pa, pb)
+            lin, ang = _motion(pa, pb, config.frame)
             linear, angular = max(linear, lin), max(angular, ang)
         else:
             delta = {axis: 0.0 for axis in AXES}
@@ -620,7 +675,7 @@ def coalesce(
         for side in sides:
             a, b = frames[i].poses.get(side), frames[j].poses.get(side)
             if a is not None and b is not None:
-                lv, av = _motion(a, b)
+                lv, av = _motion(a, b, config.frame)
                 lin, ang = max(lin, lv), max(ang, av)
         return lin, ang
 
@@ -640,7 +695,7 @@ def coalesce(
             close = True
         if not close:
             lin, ang = motion(start, t + 1)
-            close = lin > config.max_linear_m or ang > config.max_angular_deg
+            close = _over_caps(lin, ang, config)
         if not close:
             continue
         action, linear, angular, switched = _action(frames[start], cur, arm, config)
@@ -717,7 +772,7 @@ def split_oversize(
             if side in sides:
                 a, b = knots[k][side], knots[k + 1][side]
                 action[arm_key] = pose_delta(a, b, config.frame)
-                lin, ang = _motion(a, b)
+                lin, ang = _motion(a, b, config.frame)
                 linear, angular = max(linear, lin), max(angular, ang)
             else:
                 action[arm_key] = dict(step.action[arm_key])
@@ -761,66 +816,105 @@ def split_runs(steps: Sequence[MacroStep]) -> list[list[MacroStep]]:
 
 IMAGE_TOKEN = "<image>"
 
-SYSTEM_RULES = """You control a robot arm by relative end-effector deltas, one JSON action per turn.
-Each turn you see the measured state and labelled camera images. Reply with optional
-<think>...</think> reasoning and then one fenced ```json block.
+# Training samples must read exactly like the requests ``visual_align_and_insert`` sends, so
+# the prompts are taken from :mod:`codeaspolicy.visual_delta` when it is importable; these are
+# verbatim copies for environments without it (a test asserts they are identical).
+_SYSTEM_PROMPT = """You control the last few centimetres of a robot manipulation step.
+Each turn you see labelled camera views and the current proprioceptive state, and you
+answer with ONE small relative motion of the grasp point (PEAR Visual-Delta v1).
 
-Action JSON (all fields required, 0 for unchanged):
-- single arm: {"arm": {"x": cm, "y": cm, "z": cm, "roll": rad, "pitch": rad, "yaw": rad},
+Action JSON (relative deltas; write 0 for every unchanged field):
+- single arm: {"arm": {"x": dx, "y": dy, "z": dz, "roll": dr, "pitch": dp, "yaw": dw},
   "gripper": {"width": g}}
 - both arms: {"left_arm": {...}, "right_arm": {...}, "left_gripper": {"width": g},
   "right_gripper": {"width": g}}
-- x, y, z are centimetres; roll, pitch, yaw are radians; gripper width is a switch:
-  +1 open, -1 close, 0 keep.
-- Add "done": true when the sub-goal is complete.
-The arm moves until it reaches the target or stops against contact; the next turn reports
-"reached" or "stopped"."""
+- optional "done": true when the alignment / insertion is complete.
+Units: x, y, z in centimetres; roll, pitch, yaw in radians. Gripper width in the
+action is a switch: +1 opens, -1 closes, 0 keeps. In the state, gripper width is the
+measured jaw span in centimetres.
+Frames: "world" = table frame (x across the table to the robot's right, y away from
+the robot, z up; angle deltas add to the gripper's pitch / yaw / roll). "tcp" = grasp
+frame (+x pointing direction, +y finger-closing axis, +z normal).
+Feedback after each move: "reached" (the move completed), "stopped" (contact or stall
+before the target; the arm is in contact or blocked), "out_of_reach" (nothing moved).
+Prefer small moves (0.2 - 2 cm, <= 0.15 rad) near contact.
 
-ENVIRONMENT = {
-    "world": (
-        "Coordinates are the table frame in centimetres: +x to the robot's right, +y away "
-        "from the robot, +z up. The state reports the grasp point between the fingertips."
-    ),
-    "tcp": (
-        "Deltas are in the gripper frame in centimetres: +x along the pointing direction, "
-        "+y along the finger-closing axis, +z the gripper normal. The state reports the grasp "
-        "point in the table frame (+x right, +y away from the robot, +z up)."
-    ),
-}
+Answer format: optionally <think>brief reasoning</think>, then exactly one fenced
+json code block containing the action object and nothing else."""
 
-ANGLES_NOTE = (
-    "Angles: pitch is how far the pointing direction is below horizontal, yaw its heading on "
-    "the table (0 away from the robot, + to the robot's left), roll the turn of the fingers "
-    "about the pointing direction."
-)
+_ENV_PROMPT_TEMPLATE = """Goal: {goal}
+Arm mode: {arm}   Frame: {frame}   Round: {round}/{max_rounds}   Steps left: {steps_left}
+Limits per move: {max_linear_cm} cm, {max_angular_rad} rad
+Images: {images}
+State: {state}
+Last execution: {feedback}
+Reply with the next delta action."""
 
 
-def system_prompt(task: str, frame: str = "world", cameras: Sequence[str] = CAMERAS) -> str:
-    cams = ", ".join(f"[{c}]" for c in cameras)
-    return (
-        f"{SYSTEM_RULES}\n\n## ENVIRONMENT\n{ENVIRONMENT[frame]}\n{ANGLES_NOTE}\n"
-        f"Cameras: {cams} (wrist crops are labelled with a _crop suffix).\n\n## TASK\n{task}"
+def _online_module() -> Any:
+    try:
+        from . import visual_delta as online
+    except Exception:  # noqa: BLE001 - absent, or its optional dependencies are missing
+        return None
+    if hasattr(online, "SYSTEM_PROMPT") and hasattr(online, "build_user_prompt"):
+        return online
+    return None
+
+
+def system_prompt() -> str:
+    """The system prompt of the online loop (``visual_delta.SYSTEM_PROMPT``)."""
+
+    online = _online_module()
+    return online.SYSTEM_PROMPT if online is not None else _SYSTEM_PROMPT
+
+
+def _fallback_user_prompt(
+    *,
+    goal: str,
+    arm: str,
+    frame: str,
+    state: Mapping[str, Any],
+    feedback: Mapping[str, Any] | None,
+    round_index: int,
+    max_rounds: int,
+    steps_left: int,
+    image_labels: Sequence[str] = (),
+    max_linear_m: float = 0.03,
+    max_angular_deg: float = 15.0,
+) -> str:
+    return _ENV_PROMPT_TEMPLATE.format(
+        goal=goal.strip() or "(none)",
+        arm=arm,
+        frame=frame,
+        round=round_index + 1,
+        max_rounds=max_rounds,
+        steps_left=steps_left,
+        max_linear_cm=round(max_linear_m * 100.0, 1),
+        max_angular_rad=round(math.radians(max_angular_deg), 2),
+        images=" ".join(f"[{label}]" for label in image_labels) or "(none)",
+        state=json.dumps(state, separators=(", ", ": ")),
+        feedback=json.dumps(feedback, separators=(", ", ": ")) if feedback else "none (first turn)",
     )
 
 
-def user_prompt(
-    state: Mapping[str, Any],
-    images: Sequence[tuple[str, str]],
-    status: str | None = None,
-    stop_reason: str | None = None,
-) -> str:
-    """User turn: execution status of the previous action, state JSON, labelled images."""
+def build_user_prompt(**kwargs: Any) -> str:
+    """The per-turn text of the online loop (``visual_delta.build_user_prompt``)."""
 
-    lines = []
-    if status is None:
-        lines.append("## LAST ACTION\nnone (first turn)")
-    else:
-        detail = f" ({stop_reason})" if stop_reason else ""
-        lines.append(f"## LAST ACTION\n{status}{detail}")
-    lines.append("## STATE\n```json\n" + json.dumps(state, separators=(", ", ": ")) + "\n```")
-    if images:
-        lines.append("## IMAGES\n" + "\n".join(f"[{label}] {IMAGE_TOKEN}" for label, _ in images))
-    return "\n".join(lines)
+    online = _online_module()
+    if online is not None:
+        return online.build_user_prompt(**kwargs)
+    return _fallback_user_prompt(**kwargs)
+
+
+def user_content(images: Sequence[tuple[str, str]], text: str) -> str:
+    """A user turn as one string: ``[label]<image>`` per view, then the text.
+
+    Online the content is the list ``[label]``, image, ..., text; chat templates join list
+    items without separators, and ``<image>`` is the multimodal placeholder of LLaMA-Factory
+    and ms-swift.
+    """
+
+    return "".join(f"[{label}]{IMAGE_TOKEN}" for label, _ in images) + text
 
 
 _WORDS = {
@@ -879,22 +973,26 @@ def zero_action(arm: str) -> dict[str, Any]:
     return {"arm": dict(zero), "gripper": {"width": 0}}
 
 
+def default_cameras(arm: str) -> tuple[str, ...]:
+    """The views the online loop sends: head + the active wrist, all three for both arms."""
+
+    return CAMERAS if arm == "both" else ("cam_head", WRIST_CAMERA[arm])
+
+
 def frame_images(
     frame: Frame,
-    arm: str,
-    cameras: Sequence[str] | None = None,
+    cameras: Sequence[str],
     crop: Callable[[str, str], str | None] | None = None,
 ) -> list[tuple[str, str]]:
-    """Ordered ``(label, path)`` images of a frame, wrist crops after their camera."""
+    """Ordered ``(label, path)`` images of a frame, each wrist crop right after its camera."""
 
     out = []
-    for cam in cameras or CAMERAS:
+    for cam in cameras:
         path = frame.images.get(cam)
         if not path:
             continue
         out.append((cam, path))
-        is_active_wrist = cam in {WRIST_CAMERA[s] for s in _arms_of(arm)}
-        if crop is not None and is_active_wrist:
+        if crop is not None and cam.endswith("_wrist"):
             cropped = crop(cam, path)
             if cropped:
                 out.append((f"{cam}_crop", cropped))
@@ -903,83 +1001,130 @@ def frame_images(
 
 @dataclass(frozen=True)
 class DatasetOptions:
-    """How conversations are rendered."""
+    """How samples are rendered (defaults mirror ``visual_align_and_insert``)."""
 
     frame: str = "world"
     think: bool = True
     images: bool = True
-    cameras: tuple[str, ...] | None = None
-    done_turn: bool = True  # append a terminal {"done": true} turn for successful segments
+    cameras: tuple[str, ...] | None = None  # None: default_cameras(arm), as online
+    done_turn: bool = True  # a final {"done": true} turn for segments ending a success
+    #: Previous (user text, assistant) pairs in each sample, like
+    #: ``OpenAIVisualDeltaClient(history_turns=...)``: 0 (online default) or -1 for all.
+    history_turns: int = 0
+    max_rounds: int = 8
+    max_steps: int = 40
+    goal: str | None = None  # default: the episode's task
 
 
-def build_conversation(
+def _holding(frame: Frame, side: str) -> bool:
+    command = frame.gripper.get(side)
+    pose = frame.poses.get(side)
+    opening = pose.opening if pose is not None else None
+    return bool(
+        command is not None
+        and ee_closed(command)
+        and opening is not None
+        and opening > HOLD_MIN_OPENING
+    )
+
+
+def feedback_json(step: MacroStep, frames: Sequence[Frame]) -> dict[str, Any]:
+    """``visual_delta.format_feedback`` of a macro step, as the next turn reports it."""
+
+    achieved = {
+        key: {axis: round(float(v[axis]), 1 if axis in "xyz" else 2) for axis in AXES}
+        for key, v in step.action.items()
+        if key.endswith("arm")
+    }
+    out: dict[str, Any] = {
+        "status": step.status,
+        "reason": step.stop_reason,
+        "steps_used": int(step.native_steps),
+        "achieved": achieved,
+    }
+    if step.status == "stopped":
+        out["stalled"] = True
+    # a split step switches its gripper on its last part
+    finished = step.part is None or step.part[0] == step.part[1] - 1
+    after = frames[step.end] if finished else frames[step.start]
+    holding = {side: _holding(after, side) for side in _arms_of(step.arm)}
+    out["holding"] = holding if step.arm == "both" else holding[step.arm]
+    return out
+
+
+def build_samples(
     frames: Sequence[Frame],
     steps: Sequence[MacroStep],
-    task: str,
+    goal: str,
     options: DatasetOptions = DatasetOptions(),
     success: bool = False,
     crop: Callable[[str, str], str | None] | None = None,
-) -> tuple[list[dict[str, str]], list[str]]:
-    """PEAR multi-turn messages and the ordered image paths their ``<image>`` tokens refer to."""
+    max_linear_m: float = CoalesceConfig.max_linear_m,
+    max_angular_deg: float = CoalesceConfig.max_angular_deg,
+) -> list[dict[str, Any]]:
+    """One training sample per turn, rendered as the online loop renders its requests.
+
+    Each sample has ``messages`` (system, optional text-only history, the user turn with
+    ``<image>`` placeholders, the reference assistant reply), ``images`` (paths in
+    placeholder order), ``action`` and the macro ``step`` (``None`` for the done turn).
+    The feedback of a turn is the previous step's outcome; ``Steps left`` counts down the
+    native steps the steps used.
+    """
 
     if not steps:
-        return [], []
+        return []
     arm = steps[0].arm
-    cameras = options.cameras or CAMERAS
-    messages = [{"role": "system", "content": system_prompt(task, options.frame, cameras)}]
-    images: list[str] = []
-    status: str | None = None
-    reason: str | None = None
-
-    def user_turn(frame: Frame, poses: Mapping[str, ArmPose] | None = None) -> None:
-        shown = frame_images(frame, arm, cameras, crop) if options.images else []
-        images.extend(path for _, path in shown)
-        state = state_json(poses or frame.poses, arm)
-        messages.append({"role": "user", "content": user_prompt(state, shown, status, reason)})
-
-    for step in steps:
-        user_turn(frames[step.start], step.state_poses)
-        messages.append(
-            {
-                "role": "assistant",
-                "content": assistant_reply(step.action, options.frame, step.phase, options.think),
-            }
-        )
-        status, reason = step.status, step.stop_reason
+    cameras = options.cameras or default_cameras(arm)
+    system = system_prompt()
+    turns: list[tuple[Frame, Mapping[str, ArmPose] | None, MacroStep | None]] = [
+        (frames[s.start], s.state_poses, s) for s in steps
+    ]
     if success and options.done_turn:
-        user_turn(frames[steps[-1].end])
-        final = dict(zero_action(arm), done=True)
-        messages.append(
-            {
-                "role": "assistant",
-                "content": assistant_reply(final, options.frame, None, options.think),
-            }
-        )
-    return messages, images
-
-
-def rl_samples(
-    messages: Sequence[Mapping[str, str]], images: Sequence[str]
-) -> list[dict[str, Any]]:
-    """Split a conversation into per-turn RL samples: prompt so far and the reference action."""
-
-    out = []
+        turns.append((frames[steps[-1].end], None, None))
+    max_rounds = max(options.max_rounds, len(turns))
+    budget = max(options.max_steps, sum(s.native_steps for s in steps) + 1)
+    history: list[tuple[str, str]] = []
+    feedback: dict[str, Any] | None = None
     used = 0
-    for i, msg in enumerate(messages):
-        if msg["role"] == "user":
-            used += msg["content"].count(IMAGE_TOKEN)
-        if msg["role"] != "assistant":
-            continue
-        text = msg["content"]
-        block = text.split("```json", 1)[1].rsplit("```", 1)[0]
+    out = []
+    for index, (frame, poses, step) in enumerate(turns):
+        shown = frame_images(frame, cameras, crop) if options.images else []
+        text = build_user_prompt(
+            goal=goal,
+            arm=arm,
+            frame=options.frame,
+            state=state_json(poses or frame.poses, arm),
+            feedback=feedback,
+            round_index=index,
+            max_rounds=max_rounds,
+            steps_left=budget - used,
+            image_labels=[label for label, _ in shown],
+            max_linear_m=max_linear_m,
+            max_angular_deg=max_angular_deg,
+        )
+        action = step.action if step is not None else dict(zero_action(arm), done=True)
+        reply = assistant_reply(action, options.frame, step.phase if step else None, options.think)
+        messages = [{"role": "system", "content": system}]
+        if options.history_turns:
+            keep = history if options.history_turns < 0 else history[-options.history_turns :]
+            for user_text, assistant_text in keep:
+                messages.append({"role": "user", "content": user_text})
+                messages.append({"role": "assistant", "content": assistant_text})
+        messages.append({"role": "user", "content": user_content(shown, text)})
+        messages.append({"role": "assistant", "content": reply})
         out.append(
             {
-                "prompt": [dict(m) for m in messages[:i]],
-                "images": list(images[:used]),
-                "solution": json.loads(block),
-                "reference": text,
+                "turn": index,
+                "messages": messages,
+                "images": [path for _, path in shown],
+                "action": action,
+                "step": step,
             }
         )
+        history.append((text, reply))
+        if step is not None:
+            feedback = feedback_json(step, frames)
+            used += step.native_steps
     return out
 
 
@@ -1124,6 +1269,47 @@ def crop_png(src: Path, dst: Path, box: Sequence[float] = DEFAULT_CROP) -> Path:
         rows = decode_png(Path(src).read_bytes())
         left, top, right, bottom = crop_box(len(rows[0]), len(rows), box)
         dst.write_bytes(encode_png([row[left:right] for row in rows[top:bottom]]))
+    return dst
+
+
+#: Fraction of a wrist view the online crop keeps (``robodojo_visual_delta.CROP_FRACTION``).
+CROP_FRACTION = 0.5
+
+
+def _center_box(width: int, height: int, fraction: float) -> tuple[int, int, int, int]:
+    ch, cw = max(1, round(height * fraction)), max(1, round(width * fraction))
+    top, left = (height - ch) // 2, (width - cw) // 2
+    return left, top, left + cw, top + ch
+
+
+def crop_center_png(src: Path, dst: Path, fraction: float = CROP_FRACTION) -> Path:
+    """The online wrist crop: the central ``fraction`` resized back to full size (2x zoom).
+
+    Same box and bicubic resampling as ``robodojo_visual_delta.crop_center`` (Pillow);
+    without Pillow, nearest-neighbour upsampling.
+    """
+
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        from PIL import Image
+
+        with Image.open(src) as img:
+            rgb = img.convert("RGB")
+            box = _center_box(rgb.width, rgb.height, fraction)
+            rgb.crop(box).resize((rgb.width, rgb.height), Image.BICUBIC).save(dst, format="PNG")
+    except ImportError:
+        rows = decode_png(Path(src).read_bytes())
+        height, width = len(rows), len(rows[0])
+        left, top, right, bottom = _center_box(width, height, fraction)
+        cw, ch = right - left, bottom - top
+        dst.write_bytes(
+            encode_png(
+                [
+                    [rows[top + y * ch // height][left + x * cw // width] for x in range(width)]
+                    for y in range(height)
+                ]
+            )
+        )
     return dst
 
 
@@ -1355,8 +1541,8 @@ class ExtractOptions:
     arm: str = "auto"
     min_turns: int = 1
     format: str = "sft"  # or "rl"
-    crop: bool = False
-    crop_box: tuple[float, float, float, float] = DEFAULT_CROP
+    crop: bool = True  # zoomed wrist crops, as visual_align_and_insert(crop_wrist=True)
+    crop_fraction: float = CROP_FRACTION
     coalesce: CoalesceConfig = CoalesceConfig()
     dataset: DatasetOptions = DatasetOptions()
 
@@ -1404,14 +1590,20 @@ def segments(
 
 
 def _cropper(
-    out_dir: Path | None, episode_name: str, box: Sequence[float]
+    out_dir: Path | None, episode: Path, fraction: float
 ) -> Callable[[str, str], str | None]:
+    """Writes crops to ``<out_dir>/crops/<episode>/``, else ``<episode>/visual_delta_crops/``."""
+
+    if out_dir is not None:
+        base = out_dir / "crops" / episode.name
+    else:
+        base = episode / "visual_delta_crops"
+
     def crop(cam: str, path: str) -> str | None:
         src = Path(path)
-        base = out_dir if out_dir is not None else src.parent
-        dst = base / "crops" / episode_name / f"{src.parent.name}_{cam}_crop.png"
+        dst = base / f"{src.parent.name}_{cam}_crop.png"
         try:
-            return str(crop_png(src, dst, box).resolve())
+            return str(crop_center_png(src, dst, fraction).resolve())
         except (OSError, ValueError, zlib.error):
             return None
 
@@ -1421,7 +1613,7 @@ def _cropper(
 def episode_records(
     episode: Episode, options: ExtractOptions = ExtractOptions(), out_dir: Path | None = None
 ) -> list[dict[str, Any]]:
-    """PEAR SFT conversations (or RL samples) of one episode."""
+    """Per-turn PEAR SFT samples (or RL prompt / solution samples) of one episode."""
 
     if options.success_only and not episode.success:
         return []
@@ -1429,7 +1621,7 @@ def episode_records(
     if len(frames) < 2:
         return []
     arm = select_arm(frames, options.coalesce) if options.arm == "auto" else options.arm
-    crop = _cropper(out_dir, episode.path.name, options.crop_box) if options.crop else None
+    crop = _cropper(out_dir, episode.path, options.crop_fraction) if options.crop else None
     records: list[dict[str, Any]] = []
     for first, last in segments(frames, options, arm):
         window = frames[first : last + 1]
@@ -1440,8 +1632,9 @@ def episode_records(
             if len(run) < options.min_turns:
                 continue
             # the segment's dropped oversize steps are counted once, on its first record
+            number = len({r["run"] for r in records})
             records.extend(
-                _run_records(episode, options, window, first, run, arm, crop, len(records), dropped)
+                _run_records(episode, options, window, first, run, arm, crop, number, dropped)
             )
             dropped = 0
     return records
@@ -1459,42 +1652,63 @@ def _run_records(
     dropped: int,
 ) -> list[dict[str, Any]]:
     phases = sorted({s.phase for s in steps if s.phase})
-    task = episode.task
-    if options.last_mile or options.radius_m is not None:
-        where = ", ".join(phases) or "near target"
-        task += f"\nSub-goal: precise last-mile alignment / contact ({where})."
+    goal = options.dataset.goal or episode.task
     first, last = offset + steps[0].start, offset + steps[-1].end
     ends_episode = last == len(episode.frames) - 1
-    messages, images = build_conversation(
-        window, steps, task, options.dataset, bool(episode.success) and ends_episode, crop
+    samples = build_samples(
+        window,
+        steps,
+        goal,
+        options.dataset,
+        bool(episode.success) and ends_episode,
+        crop,
+        options.coalesce.max_linear_m,
+        options.coalesce.max_angular_deg,
     )
-    rendered = []
-    for step in steps:
-        entry = step.to_dict()
-        entry["start"], entry["end"] = step.start + offset, step.end + offset
-        rendered.append(entry)
-    base = {
-        "id": f"{episode.path.name}#{number}",
-        "protocol": PROTOCOL,
-        "task": episode.task,
-        "arm": arm,
-        "frame": options.dataset.frame,
-        "success": episode.success,
-        "source": {"episode": str(episode.path), "frames": [first, last]},
-        "phases": phases,
-        "macro_steps": len(steps),
-        "native_steps": sum(s.native_steps for s in steps),
-        "stopped_steps": sum(1 for s in steps if s.status == "stopped"),
-        "oversize_steps": sum(1 for s in steps if s.oversize),
-        "oversize_dropped": dropped,
-        "steps": rendered,
-    }
-    if options.format == "rl":
-        return [
-            dict(base, id=f"{base['id']}:{turn}", turn=turn, **sample)
-            for turn, sample in enumerate(rl_samples(messages, images))
-        ]
-    return [dict(base, messages=messages, images=images)]
+    run_id = f"{episode.path.name}#{number}"
+    out = []
+    for sample in samples:
+        step = sample["step"]
+        entry = None
+        if step is not None:
+            entry = step.to_dict()
+            entry["start"], entry["end"] = step.start + offset, step.end + offset
+        record = {
+            "id": f"{run_id}:{sample['turn']}",
+            "run": run_id,
+            "turn": sample["turn"],
+            "turns": len(samples),
+            "protocol": PROTOCOL,
+            "task": episode.task,
+            "goal": goal,
+            "arm": arm,
+            "frame": options.dataset.frame,
+            "success": episode.success,
+            "source": {
+                "episode": str(episode.path),
+                "frames": [first, last],
+                "frame": offset + (step.start if step is not None else steps[-1].end),
+            },
+            "phases": phases,
+            "limits": {
+                "max_linear_m": options.coalesce.max_linear_m,
+                "max_angular_deg": options.coalesce.max_angular_deg,
+            },
+            "step": entry,
+            "oversize_dropped": dropped if sample["turn"] == 0 else 0,
+        }
+        if options.format == "rl":
+            messages = sample["messages"]
+            record.update(
+                prompt=messages[:-1],
+                images=sample["images"],
+                solution=sample["action"],
+                reference=messages[-1]["content"],
+            )
+        else:
+            record.update(messages=sample["messages"], images=sample["images"])
+        out.append(record)
+    return out
 
 
 def extract(
@@ -1514,9 +1728,9 @@ def extract(
             for record in records:
                 handle.write(json.dumps(record, ensure_ascii=False) + "\n")
                 counts["records"] += 1
-                if options.format != "rl" or record.get("turn") == 0:
-                    counts["macro_steps"] += record["macro_steps"]
-                    counts["native_steps"] += record["native_steps"]
+                if record.get("step"):
+                    counts["macro_steps"] += 1
+                    counts["native_steps"] += int(record["step"]["native_steps"])
     return counts
 
 
@@ -1536,21 +1750,19 @@ def _summary(values: Sequence[float]) -> dict[str, float]:
 def stats(records: Iterable[Mapping[str, Any]]) -> dict[str, Any]:
     """Macro chunks vs native steps, delta distributions and contact-stop ratio."""
 
-    seen: set[str] = set()
-    macro = native = stopped = conversations = oversize = dropped = 0
+    runs: set[str] = set()
+    macro = native = stopped = oversize = dropped = samples = 0
     linear: list[float] = []
     angular: list[float] = []
     per_axis: dict[str, list[float]] = {axis: [] for axis in AXES}
     switches = {"open": 0, "close": 0}
     phases: dict[str, int] = {}
     for record in records:
-        key = str(record.get("id", "")).split(":")[0]
-        if key in seen:
-            continue  # RL samples repeat their conversation's steps
-        seen.add(key)
-        conversations += 1
+        samples += 1
+        runs.add(str(record.get("run") or str(record.get("id", "")).split(":")[0]))
         dropped += int(record.get("oversize_dropped") or 0)
-        for step in record.get("steps") or []:
+        step = record.get("step")
+        if step:
             macro += 1
             native += int(step.get("native_steps") or 0)
             stopped += step.get("status") == "stopped"
@@ -1570,7 +1782,8 @@ def stats(records: Iterable[Mapping[str, Any]]) -> dict[str, Any]:
                     elif g < 0:
                         switches["close"] += 1
     return {
-        "conversations": conversations,
+        "samples": samples,
+        "conversations": len(runs),
         "macro_steps": macro,
         "native_steps": native,
         "native_per_macro": round(native / macro, 3) if macro else None,
@@ -1850,7 +2063,12 @@ def _parser() -> argparse.ArgumentParser:
     ex.add_argument("--phases", default=None, help="comma-separated contact phases")
     ex.add_argument("--radius-m", type=float, default=None)
     ex.add_argument("--min-turns", type=int, default=1)
-    ex.add_argument("--crop", action="store_true", help="add wrist ROI crops")
+    ex.add_argument("--no-crop", action="store_true", help="no zoomed wrist crops")
+    ex.add_argument("--history-turns", type=int, default=0,
+                    help="previous text turns per sample (-1 all), like history_turns online")
+    ex.add_argument("--goal", default=None, help="goal text (default: the episode's task)")
+    ex.add_argument("--max-rounds", type=int, default=DatasetOptions.max_rounds)
+    ex.add_argument("--max-steps", type=int, default=DatasetOptions.max_steps)
     ex.add_argument("--no-images", action="store_true")
     ex.add_argument("--no-think", action="store_true")
     ex.add_argument("--max-linear-m", type=float, default=CoalesceConfig.max_linear_m)
@@ -1880,7 +2098,7 @@ def _options(args: argparse.Namespace) -> ExtractOptions:
         arm=args.arm,
         min_turns=args.min_turns,
         format=args.format,
-        crop=args.crop,
+        crop=not args.no_crop,
         coalesce=CoalesceConfig(
             max_linear_m=args.max_linear_m,
             max_angular_deg=args.max_angular_deg,
@@ -1889,7 +2107,13 @@ def _options(args: argparse.Namespace) -> ExtractOptions:
             oversize=args.oversize,
         ),
         dataset=DatasetOptions(
-            frame=args.frame, think=not args.no_think, images=not args.no_images
+            frame=args.frame,
+            think=not args.no_think,
+            images=not args.no_images,
+            history_turns=args.history_turns,
+            max_rounds=args.max_rounds,
+            max_steps=args.max_steps,
+            goal=args.goal,
         ),
     )
 
@@ -1940,12 +2164,17 @@ __all__ = [
     "apply_delta",
     "arm_pose",
     "angle_delta",
-    "build_conversation",
+    "build_samples",
+    "build_user_prompt",
     "canonical_angles",
     "coalesce",
+    "crop_center_png",
     "crop_png",
+    "default_cameras",
     "decode_png",
+    "ee_closed",
     "ee_command_to_pear",
+    "feedback_json",
     "encode_png",
     "episode_records",
     "extract",
@@ -1964,8 +2193,9 @@ __all__ = [
     "state_json",
     "stats",
     "system_prompt",
-    "user_prompt",
+    "user_content",
     "width_cm",
+    "zyx_deg",
 ]
 
 

@@ -193,9 +193,53 @@ def test_yaw_delta_wraps():
     assert vd.pose_delta(a, b)["yaw"] == pytest.approx(math.radians(10), abs=1e-3)
 
 
+def test_ee_command_threshold_matches_host():
+    # the host reads <= 0.05 as closed: robo.OPEN with opening 0.3 is an open
+    assert vd.ee_command_to_pear(0.3) == vd.PEAR_OPEN
+    assert vd.ee_command_to_pear(0.05) == vd.PEAR_CLOSE
+    assert vd.ee_command_to_pear(0.06) == vd.PEAR_OPEN
+    assert vd.ee_command_to_pear(None) == vd.PEAR_KEEP
+    assert vd.ee_command_to_pear(0.3, previous=1.0) == vd.PEAR_KEEP  # still open
+    assert vd.ee_command_to_pear(0.0, previous=0.3) == vd.PEAR_CLOSE
+    assert vd.robodojo_gripper_to_pear(None) == vd.PEAR_KEEP
+    frames = [frame(0, (0.1, 0, 0.9), grip=1.0), frame(1, (0.1, 0, 0.9), grip=0.3)]
+    assert vd.gripper_switch(frames[0], frames[1], "right") == vd.PEAR_KEEP
+
+
+def test_tcp_angles_are_relative_zyx_rotation():
+    a = pose((0.1, 0.0, 0.9), pitch=30, yaw=20, roll=10)
+    b = pose((0.11, 0.0, 0.88), pitch=40, yaw=5, roll=-20)
+    delta = vd.pose_delta(a, b, "tcp", linear_decimals=9, angular_decimals=12)
+    rel = vd._matmul(vd._transpose(vd._rot(a)), vd._rot(b))
+    yaw, pitch, roll = vd.zyx_deg(rel)
+    assert delta["yaw"] == pytest.approx(math.radians(yaw), abs=1e-9)
+    assert delta["pitch"] == pytest.approx(math.radians(pitch), abs=1e-9)
+    assert delta["roll"] == pytest.approx(math.radians(roll), abs=1e-9)
+    # the executor's target_pose: R0 Rz(dyaw) Ry(dpitch) Rx(droll)
+    target = vd._matmul(vd._matmul(vd._matmul(vd._rot(a), vd._rz(math.radians(yaw))),
+                                   vd._ry(math.radians(pitch))), vd._rx(math.radians(roll)))
+    assert vd.rotation_error(target, vd._rot(b)) < 1e-6
+    # a pure roll about the pointing axis is a tcp roll only
+    c = pose((0.1, 0.0, 0.9), pitch=30, yaw=20, roll=25)
+    only_roll = vd.pose_delta(a, c, "tcp", angular_decimals=9)
+    assert only_roll["roll"] == pytest.approx(math.radians(15), abs=1e-7)
+    assert abs(only_roll["pitch"]) < 1e-7 and abs(only_roll["yaw"]) < 1e-7
+
+
+def test_zyx_matches_host_decomposition():
+    np = pytest.importorskip("numpy")
+    rvd = pytest.importorskip("codeaspolicy.hosts.robodojo_visual_delta")
+    rot = vd.orientation(30, 20, -15)
+    assert vd.zyx_deg(rot) == pytest.approx(rvd._zyx_deg(np.array(rot)), abs=1e-9)
+
+
 # ---------------------------------------------------------------------------
 # macro-step coalescer
 # ---------------------------------------------------------------------------
+
+
+#: A free nudge's limits (the coalescer defaults to visual_align's 3 cm / 15 degrees).
+NUDGE = vd.CoalesceConfig(max_linear_m=0.06, max_angular_deg=20.0)
 
 
 def line(n, step_m=0.005, start=(0.1, 0.0, 0.9), axis=0, **kw):
@@ -209,7 +253,7 @@ def line(n, step_m=0.005, start=(0.1, 0.0, 0.9), axis=0, **kw):
 
 def test_straight_motion_is_one_macro_step():
     frames = line(9, phase="align")  # 8 transitions of 0.5 cm along x
-    steps = vd.coalesce(frames)
+    steps = vd.coalesce(frames, config=NUDGE)
     assert len(steps) == 1
     step = steps[0]
     assert step.arm == "right"
@@ -288,7 +332,7 @@ def test_bimanual_selection_and_keys():
     for i, f in enumerate(frames):
         f.poses["left"] = pose((-0.2, 0.01 * i, 0.95))
     assert vd.select_arm(frames) == "both"
-    steps = vd.coalesce(frames)
+    steps = vd.coalesce(frames, config=NUDGE)
     action = steps[0].action
     assert set(action) == {"left_arm", "right_arm", "left_gripper", "right_gripper"}
     assert action["left_arm"]["y"] == pytest.approx(4.0)
@@ -301,7 +345,7 @@ def test_coalesce_short_inputs():
 
 
 # ---------------------------------------------------------------------------
-# conversations
+# samples rendered like the online loop
 # ---------------------------------------------------------------------------
 
 
@@ -315,58 +359,134 @@ def with_images(frames, tmp_path):
     return frames
 
 
-def test_conversation_structure(tmp_path):
+def user_text(sample):
+    content = sample["messages"][-2]["content"]
+    if vd.IMAGE_TOKEN not in content:
+        return content
+    return content[content.rindex(vd.IMAGE_TOKEN) + len(vd.IMAGE_TOKEN):]
+
+
+def prompt_json(text, label):
+    line = next(x for x in text.splitlines() if x.startswith(label))
+    return json.loads(line[len(label):])
+
+
+def contact_frames(tmp_path):
     frames = with_images(line(4, phase="approach") + [
         frame(4 + i, (0.117 + 0.002 * i, 0.0, 0.9), phase="insert", grip=0.0) for i in range(3)
     ], tmp_path)
+    for f in frames[4:]:
+        f.poses["right"] = pose(f.poses["right"].tcp, opening=0.3)
     frames[5].stalled, frames[5].stop_reason = True, "contact_or_stall"
+    return frames
+
+
+def test_samples_are_rendered_like_online_requests(tmp_path):
+    frames = contact_frames(tmp_path)
     steps = vd.coalesce(frames)
-    messages, images = vd.build_conversation(frames, steps, "insert the key", success=True)
-    roles = [m["role"] for m in messages]
-    assert roles[0] == "system" and roles[1::2] == ["user"] * (len(steps) + 1)
-    assert roles[2::2] == ["assistant"] * (len(steps) + 1)
-    assert "## ENVIRONMENT" in messages[0]["content"]
-    assert "## TASK\ninsert the key" in messages[0]["content"]
-    tokens = sum(m["content"].count(vd.IMAGE_TOKEN) for m in messages)
-    assert tokens == len(images) == 3 * (len(steps) + 1)
-    assert "[cam_head] <image>" in messages[1]["content"]
-    assert "none (first turn)" in messages[1]["content"]
-    # the stop is reported in the turn after the stopped action
+    samples = vd.build_samples(frames, steps, "insert the key", success=True)
+    assert len(samples) == len(steps) + 1  # one per turn, plus the done turn
+    first = samples[0]
+    roles = [m["role"] for m in first["messages"]]
+    assert roles == ["system", "user", "assistant"]  # history_turns=0, as online
+    assert first["messages"][0]["content"] == vd.system_prompt() == vd._SYSTEM_PROMPT
+    content = first["messages"][1]["content"]
+    # images first, labelled, then the text; single arm: head + active wrist + its crop
+    assert content.startswith("[cam_head]<image>[cam_right_wrist]<image>Goal: insert the key")
+    assert first["images"] == [frames[0].images["cam_head"], frames[0].images["cam_right_wrist"]]
+    text = user_text(first)
+    assert "Arm mode: right   Frame: world   Round: 1/8   Steps left: 40" in text
+    assert "Limits per move: 3.0 cm, 0.26 rad" in text
+    assert "Images: [cam_head] [cam_right_wrist]" in text
+    assert text.endswith("Last execution: none (first turn)\nReply with the next delta action.")
+    assert prompt_json(text, "State: ")["arm"]["x"] == 10.0
+    assert parse_reply(first["messages"][2]["content"]) == steps[0].action
+    assert first["action"] == steps[0].action and first["step"] is steps[0]
+    # the turn after the stopped step reports format_feedback-shaped feedback
     stopped = [i for i, s in enumerate(steps) if s.status == "stopped"][0]
-    assert "stopped (contact_or_stall)" in messages[1 + 2 * (stopped + 1)]["content"]
-    first = messages[2]["content"]
-    assert first.startswith("<think>") and "</think>" in first
-    assert parse_reply(first) == steps[0].action
-    final = parse_reply(messages[-1]["content"])
-    assert final["done"] is True and final["arm"]["x"] == 0.0
-    state_text = messages[1]["content"].split("```json", 1)[1].split("```", 1)[0]
-    assert json.loads(state_text)["arm"]["x"] == 10.0
+    feedback = prompt_json(user_text(samples[stopped + 1]), "Last execution: ")
+    assert list(feedback) == ["status", "reason", "steps_used", "achieved", "stalled", "holding"]
+    assert feedback["status"] == "stopped" and feedback["reason"] == "contact_or_stall"
+    assert feedback["steps_used"] == steps[stopped].native_steps and feedback["holding"] is True
+    assert feedback["achieved"]["arm"]["x"] == round(steps[stopped].action["arm"]["x"], 1)
+    reached = prompt_json(user_text(samples[1]), "Last execution: ")
+    assert reached["status"] == "reached" and reached["reason"] is None
+    assert "stalled" not in reached and reached["holding"] is False
+    lefts = [int(user_text(s).split("Steps left: ")[1].split()[0]) for s in samples]
+    assert lefts == sorted(lefts, reverse=True)
+    final = parse_reply(samples[-1]["messages"][-1]["content"])
+    assert final["done"] is True and final["arm"]["x"] == 0.0 and samples[-1]["step"] is None
 
 
-def test_conversation_options_and_crops(tmp_path):
+def test_samples_options(tmp_path):
     frames = with_images(line(5), tmp_path)
+    for f in frames:
+        f.poses["left"] = pose((-0.2, 0.002 * f.index, 0.95))
     steps = vd.coalesce(frames)
-    options = vd.DatasetOptions(think=False, cameras=("cam_right_wrist",), done_turn=False)
+    assert steps[0].arm == "both"
+
     def crop(cam, path):
-        return str(vd.crop_png(Path(path), tmp_path / "c" / f"{cam}.png"))
+        return str(vd.crop_center_png(Path(path), tmp_path / "c" / f"{cam}.png"))
 
-    messages, images = vd.build_conversation(frames, steps, "t", options, success=True, crop=crop)
-    assert len(messages) == 3
-    assert not messages[2]["content"].startswith("<think>")
-    assert "[cam_right_wrist_crop] <image>" in messages[1]["content"]
-    assert len(images) == 2 and images[1].endswith("cam_right_wrist.png")
+    options = vd.DatasetOptions(think=False, done_turn=False, max_rounds=3, max_steps=5)
+    samples = vd.build_samples(frames, steps, "t", options, success=True, crop=crop,
+                               max_linear_m=0.06, max_angular_deg=20.0)
+    assert len(samples) == len(steps)
+    content = samples[0]["messages"][1]["content"]
+    assert content.startswith(
+        "[cam_head]<image>[cam_left_wrist]<image>[cam_left_wrist_crop]<image>"
+        "[cam_right_wrist]<image>[cam_right_wrist_crop]<image>Goal: t"
+    )
+    assert len(samples[0]["images"]) == 5
+    assert not samples[0]["messages"][2]["content"].startswith("<think>")
+    text = user_text(samples[0])
+    assert "Arm mode: both" in text and "Limits per move: 6.0 cm, 0.35 rad" in text
+    assert "Steps left: 13" in text  # max(max_steps, native steps used + 1)
+    state = prompt_json(text, "State: ")
+    assert set(state) == {"left_arm", "left_gripper", "right_arm", "right_gripper"}
 
 
-def test_rl_samples_split_turns(tmp_path):
+def test_history_turns_are_text_only(tmp_path):
     frames = with_images(line(31), tmp_path)
     steps = vd.coalesce(frames)
-    messages, images = vd.build_conversation(frames, steps, "t", success=True)
-    samples = vd.rl_samples(messages, images)
-    assert len(samples) == len(steps) + 1
-    assert samples[0]["prompt"][-1]["role"] == "user"
-    assert samples[0]["solution"] == steps[0].action
-    assert len(samples[1]["images"]) == 6
-    assert samples[-1]["solution"]["done"] is True
+    assert len(steps) >= 4
+    samples = vd.build_samples(frames, steps, "t", vd.DatasetOptions(history_turns=2))
+    roles = [m["role"] for m in samples[3]["messages"]]
+    assert roles == ["system", "user", "assistant", "user", "assistant", "user", "assistant"]
+    history_user = samples[3]["messages"][1]["content"]
+    assert vd.IMAGE_TOKEN not in history_user and history_user.startswith("Goal: t")
+    assert samples[3]["messages"][2]["content"] == samples[1]["messages"][-1]["content"]
+    every = vd.build_samples(frames, steps, "t", vd.DatasetOptions(history_turns=-1))
+    assert len(every[3]["messages"]) == 1 + 2 * 4
+    assert all(len(s["images"]) == 2 for s in every)
+
+
+def test_fallback_prompts_match_online_module():
+    online = pytest.importorskip("codeaspolicy.visual_delta")
+    assert vd._SYSTEM_PROMPT == online.SYSTEM_PROMPT
+    assert vd._ENV_PROMPT_TEMPLATE == online.ENV_PROMPT_TEMPLATE
+    kwargs = dict(goal="insert", arm="right", frame="tcp", state={"arm": {"x": 1.0}},
+                  feedback={"status": "stopped", "reason": "contact_or_stall"}, round_index=2,
+                  max_rounds=8, steps_left=17, image_labels=["cam_head", "cam_right_wrist"],
+                  max_linear_m=0.03, max_angular_deg=15.0)
+    assert vd._fallback_user_prompt(**kwargs) == online.build_user_prompt(**kwargs)
+    first = dict(kwargs, feedback=None, image_labels=[])
+    assert vd._fallback_user_prompt(**first) == online.build_user_prompt(**first)
+    for value in (None, 0.0, 0.05, 0.06, 0.3, 1.0):
+        assert vd.ee_command_to_pear(value) == online.ee_command_to_pear(value)
+    assert vd.canonical_angles(88, 40, 50) == online.canonical_angles(88, 40, 50)
+
+
+def test_fallback_user_prompt_format():
+    text = vd._fallback_user_prompt(
+        goal=" ", arm="left", frame="world", state={"arm": {"x": 1.0}}, feedback=None,
+        round_index=0, max_rounds=8, steps_left=40)
+    assert text.splitlines()[:3] == [
+        "Goal: (none)",
+        "Arm mode: left   Frame: world   Round: 1/8   Steps left: 40",
+        "Limits per move: 3.0 cm, 0.26 rad",
+    ]
+    assert "Images: (none)" in text and 'State: {"arm": {"x": 1.0}}' in text
 
 
 def test_think_text_words():
@@ -481,44 +601,58 @@ def test_load_episode_maps_calls(tmp_path, with_action_ids):
     assert set(episode.frames[0].images) == set(vd.CAMERAS)
 
 
-def test_episode_records_full_episode(tmp_path):
+def test_episode_records_are_per_turn_samples(tmp_path):
     episode = vd.load_episode(write_episode(tmp_path / "ep"))
-    records = vd.episode_records(episode)
-    assert len(records) == 1
+    records = vd.episode_records(episode, out_dir=tmp_path / "out")
+    steps = [r["step"] for r in records if r["step"]]
+    assert len(records) == len(steps) + 1 and records[-1]["step"] is None
+    assert [r["turn"] for r in records] == list(range(len(records)))
+    assert {r["run"] for r in records} == {"ep#0"} and records[0]["id"] == "ep#0:0"
+    assert all(r["turns"] == len(records) for r in records)
     record = records[0]
     assert record["protocol"] == vd.PROTOCOL and record["arm"] == "right"
-    statuses = [s["status"] for s in record["steps"]]
-    assert "stopped" in statuses
-    closes = [s for s in record["steps"] if s["action"]["gripper"]["width"] == -1]
+    assert record["limits"] == {"max_linear_m": 0.03, "max_angular_deg": 15.0}
+    assert record["goal"] == "insert the key into the lock"
+    assert all(abs(s["action"]["arm"][k]) <= 3.0 + 1e-9 for s in steps for k in "xyz")
+    assert "stopped" in [s["status"] for s in steps]
+    closes = [s for s in steps if s["action"]["gripper"]["width"] == -1]
     assert len(closes) == 1 and closes[0]["phase"] == "close_gripper"
-    tokens = sum(m["content"].count(vd.IMAGE_TOKEN) for m in record["messages"])
-    assert tokens == len(record["images"])
-    assert parse_reply(record["messages"][-1]["content"])["done"] is True
+    for r in records:
+        tokens = sum(m["content"].count(vd.IMAGE_TOKEN) for m in r["messages"])
+        assert tokens == len(r["images"]) == 3  # head, right wrist, right wrist crop
+        assert r["images"][2].endswith("_cam_right_wrist_crop.png")
+        assert Path(r["images"][2]).is_file()
+        assert r["source"]["frame"] in range(7)
+    assert parse_reply(records[-1]["messages"][-1]["content"])["done"] is True
+    # without an output directory, crops go next to the episode, not into steps/
+    default = vd.episode_records(episode)
+    assert "/ep/visual_delta_crops/" in default[0]["images"][2]
 
 
 def test_last_mile_and_success_filters(tmp_path):
     episode = vd.load_episode(write_episode(tmp_path / "ep"))
-    options = vd.ExtractOptions(last_mile=True, crop=True)
-    records = vd.episode_records(episode, options, tmp_path / "out")
-    assert len(records) == 1
-    record = records[0]
-    assert record["source"]["frames"] == [2, 6]
-    assert set(record["phases"]) <= {"close_gripper", "insert"}
-    assert "Sub-goal" in record["messages"][0]["content"]
-    crops = [p for p in record["images"] if p.endswith("_crop.png")]
-    assert crops and all(Path(p).is_file() for p in crops)
+    records = vd.episode_records(episode, vd.ExtractOptions(last_mile=True), tmp_path / "out")
+    assert {r["run"] for r in records} == {"ep#0"}
+    assert records[0]["source"]["frames"] == [2, 6]
+    assert set(records[0]["phases"]) <= {"close_gripper", "insert"}
+    assert "Goal: insert the key into the lock\n" in records[0]["messages"][1]["content"]
     failed = vd.load_episode(write_episode(tmp_path / "bad", success=False))
     assert vd.episode_records(failed, vd.ExtractOptions(success_only=True)) == []
-    near = vd.episode_records(episode, vd.ExtractOptions(radius_m=0.012))
+    near = vd.episode_records(episode, vd.ExtractOptions(radius_m=0.012, crop=False))
     assert near and near[0]["source"]["frames"][0] >= 3
+    assert all(len(r["images"]) == 2 for r in near)
 
 
 def test_rl_format_records(tmp_path):
     episode = vd.load_episode(write_episode(tmp_path / "ep"))
-    records = vd.episode_records(episode, vd.ExtractOptions(format="rl"))
-    assert len(records) == records[0]["macro_steps"] + 1
+    options = vd.ExtractOptions(format="rl", crop=False)
+    records = vd.episode_records(episode, options)
     assert [r["turn"] for r in records] == list(range(len(records)))
-    assert all("solution" in r and r["prompt"][-1]["role"] == "user" for r in records)
+    for r in records:
+        assert [m["role"] for m in r["prompt"]] == ["system", "user"]
+        assert parse_reply(r["reference"]) == r["solution"]
+        assert "messages" not in r
+    assert records[-1]["solution"]["done"] is True
 
 
 def test_cli_extract_and_stats(tmp_path, capsys):
@@ -527,22 +661,30 @@ def test_cli_extract_and_stats(tmp_path, capsys):
     out = tmp_path / "data" / "train.jsonl"
     assert vd.main(["extract", str(tmp_path / "runs"), "-o", str(out), "--success-only"]) == 0
     counts = json.loads(capsys.readouterr().out)
-    assert counts["episodes"] == 2 and counts["used"] == 1 and counts["records"] == 1
-    lines = out.read_text().splitlines()
-    assert len(lines) == 1 and json.loads(lines[0])["success"] is True
+    assert counts["episodes"] == 2 and counts["used"] == 1
+    assert counts["records"] == counts["macro_steps"] + 1
+    lines = [json.loads(x) for x in out.read_text().splitlines()]
+    assert len(lines) == counts["records"] and all(r["success"] is True for r in lines)
+    assert (tmp_path / "data" / "crops" / "ep1").is_dir()
     assert vd.main(["stats", str(out)]) == 0
     summary = json.loads(capsys.readouterr().out)
     assert summary["macro_steps"] == counts["macro_steps"]
-    assert 0 < summary["contact_stop_ratio"] < 1
+    assert summary["samples"] == counts["records"] and summary["conversations"] == 1
+    assert summary["contact_stop_ratio"] == round(1 / counts["macro_steps"], 4)
     assert summary["gripper_switches"]["close"] == 1
     assert vd.main(["stats", str(tmp_path / "runs")]) == 0
     summary = json.loads(capsys.readouterr().out)
     assert summary["episodes"] == 2 and summary["episode_native_steps"] == 80
     rl = tmp_path / "data" / "rl.jsonl"
     assert vd.main(["extract", str(tmp_path / "runs" / "ep1"), "-o", str(rl), "--format", "rl",
-                    "--frame", "tcp", "--last-mile", "--no-images"]) == 0
-    sample = json.loads(rl.read_text().splitlines()[0])
-    assert sample["frame"] == "tcp" and sample["images"] == []
+                    "--frame", "tcp", "--last-mile", "--no-images", "--history-turns", "1",
+                    "--goal", "seat the key"]) == 0
+    capsys.readouterr()
+    samples = [json.loads(x) for x in rl.read_text().splitlines()]
+    assert samples[0]["frame"] == "tcp" and samples[0]["images"] == []
+    assert "Frame: tcp" in samples[0]["prompt"][-1]["content"]
+    assert samples[0]["prompt"][-1]["content"].startswith("Goal: seat the key")
+    assert len(samples[1]["prompt"]) == 4  # system, one history pair, user
 
 
 def test_module_entry_point(tmp_path):
@@ -620,21 +762,23 @@ def test_recorder_records_and_flushes(tmp_path):
     assert recorder.frames[7].stalled and not recorder.frames[8].stalled
     assert recorder.frames[2].native_step == 4  # from get_status
     records = recorder.on_trial_end({"environment_success": True})
-    assert len(records) == 1
-    record = records[0]
-    assert record["task"] == "hang the mug" and record["success"] is True
-    phases = [s["phase"] for s in record["steps"]]
+    steps = [r["step"] for r in records if r["step"]]
+    assert len(records) == len(steps) + 1
+    assert records[0]["task"] == "hang the mug" and records[0]["success"] is True
+    phases = [s["phase"] for s in steps]
     assert phases[0] == "approach" and "insert" in phases
-    grips = [s["action"]["gripper"]["width"] for s in record["steps"]]
+    grips = [s["action"]["gripper"]["width"] for s in steps]
     assert grips.count(-1) == 1 and 1 not in grips
-    assert record["steps"][0]["action"]["arm"]["z"] == pytest.approx(-4.0)
-    assert any(s["status"] == "stopped" for s in record["steps"])
-    assert all(Path(p).is_file() for p in record["images"])
+    assert steps[0]["action"]["arm"]["z"] == pytest.approx(-3.0)  # 3 cm cap
+    assert any(s["status"] == "stopped" for s in steps)
+    assert all(Path(p).is_file() for r in records for p in r["images"])
+    assert any(p.endswith("_crop.png") for p in records[0]["images"])
     lines = (tmp_path / "rec" / "visual_delta.jsonl").read_text().splitlines()
-    assert len(lines) == 1
+    assert len(lines) == len(records)
     # the trial directory re-extracts to the same macro steps
-    again = vd.episode_records(vd.load_episode(tmp_path / "rec" / "trial_0000"))
-    assert [s["action"] for s in again[0]["steps"]] == [s["action"] for s in record["steps"]]
+    again = vd.episode_records(vd.load_episode(tmp_path / "rec" / "trial_0000"),
+                               vd.ExtractOptions(crop=False))
+    assert [r["step"]["action"] for r in again if r["step"]] == [s["action"] for s in steps]
     assert recorder.trial == 1 and recorder.frames == []
 
 
@@ -645,12 +789,13 @@ def test_recorder_flush_captures_last_obs_and_appends(tmp_path):
     recorder.step({"dz": -0.02})
     first = recorder.flush(False)  # no get_obs after the step: flush reads it
     assert first and first[0]["success"] is False and first[0]["images"] == []
+    assert len(first) == 1  # a failed trial gets no done turn
     recorder.get_obs()
     recorder.step({"dz": -0.02})
     recorder.on_trial_end()
     lines = (tmp_path / "rec" / "visual_delta.jsonl").read_text().splitlines()
     assert len(lines) == 2
-    assert json.loads(lines[1])["source"]["episode"].endswith("trial_0001")
+    assert json.loads(lines[-1])["source"]["episode"].endswith("trial_0001")
 
 
 def test_recorder_uses_step_return_obs(tmp_path):
@@ -746,14 +891,17 @@ def test_oversize_transition_is_flagged_and_dropped_by_default():
     episode = vd.Episode(path=Path("ep"), task="t", success=True, frames=frames, calls=[],
                          result={})
     records = vd.episode_records(episode)
-    assert [r["source"]["frames"] for r in records] == [[0, 3], [4, 6]]
-    assert all(r["oversize_steps"] == 0 for r in records)
-    assert [r["oversize_dropped"] for r in records] == [1, 0]
-    assert all(abs(s["action"]["arm"]["x"]) <= 6.0 for r in records for s in r["steps"])
+    assert [(r["run"], r["source"]["frames"]) for r in records] == [
+        ("ep#0", [0, 3]), ("ep#1", [4, 6]), ("ep#1", [4, 6])
+    ]
+    assert [r["oversize_dropped"] for r in records] == [1, 0, 0]
+    assert all(not r["step"]["oversize"] for r in records if r["step"])
+    assert all(abs(r["step"]["action"]["arm"]["x"]) <= 3.0 for r in records if r["step"])
     # only the run that reaches the end of a successful episode gets the done turn
     assert "done" not in parse_reply(records[0]["messages"][-1]["content"])
-    assert parse_reply(records[1]["messages"][-1]["content"])["done"] is True
+    assert parse_reply(records[-1]["messages"][-1]["content"])["done"] is True
     summary = vd.stats(records)
+    assert summary["conversations"] == 2 and summary["macro_steps"] == 2
     assert summary["oversize_steps"] == 0 and summary["oversize_dropped"] == 1
 
 
@@ -772,7 +920,8 @@ def test_oversize_split_mode_makes_executable_parts(tmp_path):
         f.gripper = {"right": 1.0}
     for f in frames[5:]:
         f.gripper = {"right": 0.0}
-    steps = vd.coalesce(frames, config=vd.CoalesceConfig(oversize="split"))
+    split = vd.CoalesceConfig(max_linear_m=0.06, max_angular_deg=20.0, oversize="split")
+    steps = vd.coalesce(frames, config=split)
     parts = [s for s in steps if s.part is not None]
     assert [s.part for s in parts] == [(0, 2), (1, 2)]
     assert all(not s.oversize and s.linear_m <= 0.06 for s in steps)
@@ -780,17 +929,20 @@ def test_oversize_split_mode_makes_executable_parts(tmp_path):
     assert [s.action["gripper"]["width"] for s in parts] == [0, -1]
     assert [s.status for s in parts] == ["reached", "stopped"]
     assert parts[1].state_poses["right"].tcp[0] == pytest.approx(0.155)
-    messages, images = vd.build_conversation(frames, steps, "t")
-    second = messages[1 + 2 * steps.index(parts[1])]["content"]
-    state_text = second.split("```json", 1)[1].split("```", 1)[0]
-    assert json.loads(state_text)["arm"]["x"] == 15.5
-    assert sum(m["content"].count(vd.IMAGE_TOKEN) for m in messages) == len(images)
+    samples = vd.build_samples(frames, steps, "t")
+    second = samples[steps.index(parts[1])]
+    assert prompt_json(user_text(second), "State: ")["arm"]["x"] == 15.5
+    assert second["images"] == samples[steps.index(parts[0])]["images"]  # start images
+    feedback = prompt_json(user_text(second), "Last execution: ")
+    assert feedback["status"] == "reached" and feedback["holding"] is False
+    assert vd.coalesce(frames, config=vd.CoalesceConfig(oversize="split"))[1].part == (0, 3)
 
 
 def test_oversize_wrist_spin_split_by_geodesic_angle():
     frames = [frame(0, (0.1, 0.0, 0.9), pitch=30, roll=0.0),
               frame(1, (0.1, 0.0, 0.9), pitch=30, roll=92.6)]
-    steps = vd.coalesce(frames, arm="right", config=vd.CoalesceConfig(oversize="split"))
+    split = vd.CoalesceConfig(max_angular_deg=20.0, oversize="split")
+    steps = vd.coalesce(frames, arm="right", config=split)
     assert len(steps) == 5
     assert all(s.angular_deg <= 20.0 + 1e-6 and not s.oversize for s in steps)
     total_roll = sum(s.action["arm"]["roll"] for s in steps)
@@ -803,6 +955,7 @@ def test_cli_oversize_option(tmp_path, capsys):
     assert vd.main(["extract", str(tmp_path / "ep"), "-o", str(out), "--oversize", "split",
                     "--max-linear-m", "0.01"]) == 0
     capsys.readouterr()
-    record = json.loads(out.read_text().splitlines()[0])
-    assert any("part" in s for s in record["steps"])
-    assert all(s["linear_m"] <= 0.01 + 1e-6 for s in record["steps"])
+    steps = [json.loads(x)["step"] for x in out.read_text().splitlines()]
+    steps = [s for s in steps if s]
+    assert any("part" in s for s in steps)
+    assert all(s["linear_m"] <= 0.01 + 1e-6 for s in steps)

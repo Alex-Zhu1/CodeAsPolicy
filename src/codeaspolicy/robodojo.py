@@ -269,6 +269,8 @@ class FeatureAlignment:
     ik_error: str | None
     note: str | None
     truncated: bool
+    rim_contact_suspected: bool = False
+    suggested_backoff_dxyz: tuple[float, float, float] | None = None
 
 
 @dataclass(frozen=True)
@@ -457,7 +459,8 @@ class ObjectPose(PerceptionResult):
 
 STATEFUL_TOOLS = frozenset({"move_pose", "grip", "home", "pi0_pick", "motion_execute", "try_grasp",
                             "intent_execute", "grasp_step", "operation_resume", "nudge",
-                            "visual_align_and_insert", "align_feature", "delta_grasp"})
+                            "visual_align_and_insert", "visual_servo", "align_feature",
+                            "delta_grasp"})
 
 
 def _has_provenance(value: Any) -> bool:
@@ -2359,8 +2362,13 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
             weighted = float(np.sum(weights * np.abs(q_arr - cur_arr)))
             twist_insufficient = twist_f != 0.0 and t_margin < 0.0
             twist_tight = twist_f != 0.0 and t_margin < 0.25
+            geom_ok = ok
+            if ok and twist_insufficient:
+                ok = False
+                reason = "insufficient_twist_margin"
             score = (
                 not ok,
+                not geom_ok,
                 collides,
                 twist_insufficient,
                 twist_tight,
@@ -2371,7 +2379,7 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
                     - 0.5 * min(min_margin, 1.0)
                     - (0.3 * min(max(t_margin, 0.0), 1.0) if twist_f != 0.0 else 0.0)
                 )
-                if ok
+                if geom_ok
                 else (pos_err + 0.1 * math.radians(rot_err)),
                 is_flipped,
             )
@@ -2698,6 +2706,7 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         req_stroke = p.get("requested_stroke_m")
         ach_stroke = p.get("achieved_stroke_m")
         standoff = p.get("standoff_m")
+        sb = p.get("suggested_backoff_dxyz")
         return FeatureAlignment(
             arm=str(p.get("arm", kwargs["arm"])),
             status=str(p.get("status") or "rejected"),
@@ -2732,6 +2741,8 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
             ik_error=str(p["ik_error"]) if p.get("ik_error") else None,
             note=str(p["note"]) if p.get("note") else None,
             truncated=self._latest_state().truncated,
+            rim_contact_suspected=bool(p.get("rim_contact_suspected")),
+            suggested_backoff_dxyz=_tuple3(sb) if sb is not None else None,
         )
 
     def _align_kwargs(self, goal, arm, frame, max_rounds, max_steps, reserve_steps,

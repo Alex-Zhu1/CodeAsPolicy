@@ -395,3 +395,88 @@ def test_min_clearance_sensitivity_and_input_validation():
     with pytest.raises(ValueError, match="6 joints"):
         kin.inter_arm_violations([0.0] * 5, [0.0] * 6)
 
+
+def test_inter_arm_min_distance_public_export_and_alias():
+    assert "inter_arm_min_distance" in kin.__all__
+    assert kin._inter_arm_min_distance is kin.inter_arm_min_distance
+    q_l = _solve_pose("left", (-0.015, -0.20, 0.95), 0.0, -90.0, 0.0)
+    q_r = _solve_pose("right", (0.015, -0.20, 0.95), 0.0, 90.0, 0.0)
+    d_tight = kin.inter_arm_min_distance(q_l, q_r, left_opening=0.2, right_opening=0.2)
+    assert 0.0 < d_tight < 0.010
+    q_r_far = _solve_pose("right", (0.055, -0.20, 0.95), 0.0, 90.0, 0.0)
+    d_clear = kin.inter_arm_min_distance(q_l, q_r_far, left_opening=0.2, right_opening=0.2)
+    assert d_clear > d_tight + 0.03
+
+
+def test_robodojo_ik_rejects_insufficient_twist_margin_and_flips_with_jaw_symmetry(tmp_path):
+    from codeaspolicy.coordination import Pose
+
+    env = TimedEnvironment()
+    q_base = list(_solve_pose("right", (0.20, -0.20, 0.95), 90.0, 0.0, 0.0))
+    q_base[5] = 2.3  # q6 + 1.57 = 3.87 > 3.1
+    env.joints["right"] = list(q_base)
+    _, robo, _ = station(tmp_path, env)
+
+    fk_pos = kin.fk("right", q_base)
+    tcp_pos = kin.tcp(fk_pos)
+    pose = Pose(
+        (float(tcp_pos[0]), float(tcp_pos[1]), float(tcp_pos[2])),
+        kin.quat_wxyz(fk_pos[:3, :3]),
+    )
+
+    # Without jaw_symmetry, q6 + 1.57 > 3.1 must fail with reason="insufficient_twist_margin"
+    sol_no_sym = robo.ik(
+        "right",
+        pose,
+        seed=q_base,
+        jaw_symmetry=False,
+        twist_rad=1.57,
+        check_other_arm=False,
+    )
+    assert sol_no_sym.ok is False
+    assert sol_no_sym.collides is False
+    assert sol_no_sym.reason == "insufficient_twist_margin"
+
+    # Also enforced when continuous=True
+    sol_cont = robo.ik(
+        "right",
+        pose,
+        seed=q_base,
+        jaw_symmetry=False,
+        continuous=True,
+        twist_rad=1.57,
+        check_other_arm=False,
+    )
+    assert sol_cont.ok is False
+    assert sol_cont.collides is False
+    assert sol_cont.reason == "insufficient_twist_margin"
+
+    # With jaw_symmetry=True, IK flips 180 deg into negative q6 and succeeds!
+    sol_sym = robo.ik(
+        "right",
+        pose,
+        seed=q_base,
+        jaw_symmetry=True,
+        twist_rad=1.57,
+        check_other_arm=False,
+    )
+    assert sol_sym.ok is True
+    assert sol_sym.reason is None
+    assert sol_sym.flipped_jaw is True
+    assert sol_sym.joints[5] + 1.57 <= kin.JOINT_LIMITS[5][1]
+
+    # When neither jaw branch has sufficient twist headroom (e.g. twist_rad=6.5 > joint6 span),
+    # ik returns ok=False with reason="insufficient_twist_margin".
+    sol_impossible = robo.ik(
+        "right",
+        pose,
+        seed=q_base,
+        jaw_symmetry=True,
+        twist_rad=6.5,
+        check_other_arm=False,
+    )
+    assert sol_impossible.ok is False
+    assert sol_impossible.collides is False
+    assert sol_impossible.reason == "insufficient_twist_margin"
+
+

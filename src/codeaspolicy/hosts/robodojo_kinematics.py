@@ -691,7 +691,7 @@ def inter_arm_violations(
     return [label for label in _VIOLATION_ORDER if label in found]
 
 
-def _inter_arm_min_distance(
+def inter_arm_min_distance(
     left_q: Sequence[float],
     right_q: Sequence[float],
     *,
@@ -718,6 +718,9 @@ def _inter_arm_min_distance(
             if dist < best:
                 best = dist
     return best
+
+
+_inter_arm_min_distance = inter_arm_min_distance
 
 
 def housing_exposure_penalty(
@@ -1004,6 +1007,7 @@ __all__ = [
     "fk",
     "frames",
     "housing_exposure_penalty",
+    "inter_arm_min_distance",
     "inter_arm_violations",
     "jacobian",
     "line_path",

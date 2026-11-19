@@ -264,3 +264,71 @@ def test_stratified_cli_exit_codes(tmp_path, capsys):
     assert st.main([str(bad), "--baseline", str(base), "--max-prompt-chars", "55000"]) == 1
     out_bad = json.loads(capsys.readouterr().out)
     assert out_bad["passed"] is False and out_bad["prompt_budget_exceeded"] is True
+
+
+def test_load_run_metrics_reads_native_bench_result_score_and_prompt_dict_chars(tmp_path):
+    # 1. Real RoboDojo layout: result.json omits score, stores prompt as dict with chars,
+    #    and RoboDojo writes partial stage score into bench/eval_result/**/_result.json.
+    ep = tmp_path / "ep_real"
+    bench_dir = ep / "bench" / "eval_result" / "2026-11-19" / "insert_key"
+    bench_dir.mkdir(parents=True)
+    (ep / "result.json").write_text(
+        json.dumps(
+            {
+                "task": "robodojo:insert_key",
+                "seed": 3,
+                "status": "completed",
+                "environment_success": False,
+                "env_steps": 145,
+                "elapsed_s": 42.0,
+                "prompt": {"chars": 47712, "system_chars": 45000},
+            }
+        ),
+        encoding="utf-8",
+    )
+    (bench_dir / "_result.json").write_text(
+        json.dumps({"score": 15.0, "details": {"0": {"score": 0.15}}}),
+        encoding="utf-8",
+    )
+    m = st.load_run_metrics(ep)
+    assert m.task == "insert_key" and m.stratum == "last_mile_contact"
+    assert m.success is False
+    assert m.score == pytest.approx(0.15)
+    assert m.prompt_chars == 47712
+
+    # 2. _result.json with top-level percentage score only (no details block) normalizes to [0, 1].
+    ep_top = tmp_path / "ep_bench_top"
+    bench_top = ep_top / "bench" / "eval_result" / "hang_mugs"
+    bench_top.mkdir(parents=True)
+    (ep_top / "result.json").write_text(
+        json.dumps({"task": "hang_mugs", "environment_success": False}),
+        encoding="utf-8",
+    )
+    (bench_top / "_result.json").write_text(json.dumps({"score": 35.0}), encoding="utf-8")
+    m_top = st.load_run_metrics(ep_top)
+    assert m_top.score == pytest.approx(0.35)
+
+    # 3. native_score on 0..100 scale in result.json normalizes to [0, 1].
+    ep_native = tmp_path / "ep_native_score"
+    ep_native.mkdir()
+    (ep_native / "result.json").write_text(
+        json.dumps(
+            {
+                "task": "plug_in_charger",
+                "environment_success": False,
+                "native_score": 75.0,
+                "prompt": {"chars": 60000},
+            }
+        ),
+        encoding="utf-8",
+    )
+    m_native = st.load_run_metrics(ep_native)
+    assert m_native.score == pytest.approx(0.75)
+    assert m_native.prompt_chars == 60000
+
+    # Verify evaluate_stratified_suite enforces prompt budget on dict prompt.chars
+    report = st.evaluate_stratified_suite([ep, ep_native], max_prompt_chars=55000)
+    assert report["prompt_budget_exceeded"] is True
+    assert [o["task"] for o in report["prompt_budget_offenders"]] == ["plug_in_charger"]
+    assert report["strata"]["last_mile_contact"]["mean_score"] == pytest.approx(0.45)
+

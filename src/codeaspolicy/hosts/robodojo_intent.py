@@ -471,6 +471,107 @@ class IntentController:
         record.setdefault("result", {})["stop_reason"] = reason
         return self._result(record, dispatch_steps=dispatch_steps)
 
+    def _check_inter_arm_plan(self, record, snap, plan):
+        ways = plan.get("ways") or []
+        if not ways:
+            return None
+        openings = snap.get("opening") or {}
+
+        def _safe_opening(arm):
+            val = openings.get(arm, 0.5)
+            return float(val) if isinstance(val, (int, float)) and math.isfinite(val) else 0.5
+
+        left_op = _safe_opening("left")
+        right_op = _safe_opening("right")
+        start_left = np.asarray(snap["joints"]["left"], float)
+        start_right = np.asarray(snap["joints"]["right"], float)
+
+        def _reject(violations):
+            names = ", ".join(violations)
+            record.setdefault("result", {}).update(
+                inter_arm_violations=list(violations),
+                note=f"Rejected planned motion before dispatch: inter-arm clearance violation ({names}).",
+            )
+            return f"inter_arm_collision: {names}"
+
+        start_violations = kin.inter_arm_violations(
+            start_left, start_right, left_opening=left_op, right_opening=right_op
+        )
+        start_dist = None
+        if start_violations:
+            start_dist = kin._inter_arm_min_distance(
+                start_left, start_right, left_opening=left_op, right_opening=right_op
+            )
+            final_joints = ways[-1]["joints"]
+            final_left = np.asarray(final_joints.get("left", start_left), float)
+            final_right = np.asarray(final_joints.get("right", start_right), float)
+            final_violations = kin.inter_arm_violations(
+                final_left, final_right, left_opening=left_op, right_opening=right_op
+            )
+            if final_violations:
+                final_dist = kin._inter_arm_min_distance(
+                    final_left, final_right, left_opening=left_op, right_opening=right_op
+                )
+                if final_dist <= start_dist + 0.002:
+                    return _reject(final_violations)
+
+        prev_left, prev_right = start_left, start_right
+        last_left, last_right = start_left, start_right
+
+        def _check_pair(lq, rq):
+            violations = kin.inter_arm_violations(
+                lq, rq, left_opening=left_op, right_opening=right_op
+            )
+            if not violations:
+                return None
+            if not start_violations:
+                return _reject(violations)
+            dist = kin._inter_arm_min_distance(
+                lq, rq, left_opening=left_op, right_opening=right_op
+            )
+            if dist < start_dist - 0.001:
+                return _reject(violations)
+            return None
+
+        for way in ways:
+            samples = []
+            block = way.get("trajectory")
+            if block:
+                for row in block["positions"]:
+                    samples.append((np.asarray(row[:6], float), np.asarray(row[6:12], float)))
+            joints = way["joints"]
+            samples.append((
+                np.asarray(joints.get("left", start_left), float),
+                np.asarray(joints.get("right", start_right), float),
+            ))
+            last_idx = len(samples) - 1
+            for idx, (lq, rq) in enumerate(samples):
+                jump = max(
+                    float(np.max(np.abs(lq - prev_left))),
+                    float(np.max(np.abs(rq - prev_right))),
+                )
+                if jump > 0.15:
+                    n_sub = min(16, math.ceil(jump / 0.15))
+                    for k in range(1, n_sub):
+                        alpha = k / n_sub
+                        ilq = prev_left + alpha * (lq - prev_left)
+                        irq = prev_right + alpha * (rq - prev_right)
+                        reason = _check_pair(ilq, irq)
+                        if reason:
+                            return reason
+                        last_left, last_right = ilq, irq
+                since_checked = max(
+                    float(np.max(np.abs(lq - last_left))),
+                    float(np.max(np.abs(rq - last_right))),
+                )
+                if idx == last_idx or since_checked >= 0.02:
+                    reason = _check_pair(lq, rq)
+                    if reason:
+                        return reason
+                    last_left, last_right = lq, rq
+                prev_left, prev_right = lq, rq
+        return None
+
     def _advance_waypoint_progress(self, record, plan, snap, *, completed_segment=False):
         waypoints = record.get("waypoints")
         if not waypoints or plan is None:
@@ -738,6 +839,10 @@ class IntentController:
                     planner.discard(plan["id"])
                     return self._stop(record, reason)
                 previous_poses = poses
+        inter_arm_reason = self._check_inter_arm_plan(record, snap, plan)
+        if inter_arm_reason:
+            planner.discard(plan["id"])
+            return self._stop(record, inter_arm_reason)
         record.update(plan_id=plan["id"], accounted=0, expected=snap, status="checkpoint")
         if preview:
             planner.discard(plan["id"])

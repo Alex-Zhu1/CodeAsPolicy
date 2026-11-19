@@ -603,30 +603,37 @@ once the views show the held part or the fingers pre-aligned near the goal.
 - Prevent 0-step kinematic and workspace traps before grasping or entering
   shared central zones: (1) for constrained seating/insertion followed by an
   in-place twist/turn, call `robo.ik()` across the **entire pose chain**
-  `(grasp_pose, pre_contact_pose, seated_pose, rotated_end_pose)` *before*
-  closing the gripper (0 native steps); (2) align the finger-pointing direction
-  with the required rotation axis (`pitch=90` pointing straight down for a
-  vertical-axis twist) so the turn runs purely on the terminal wrist joint
-  (`yaw`, `±178°` range) instead of sweeping a horizontal (`pitch≈0`) 6-DOF arc
-  into wrist singularities; (3) enforce **sequential single-arm clearance** in
-  shared central zones (for a supported set-down transfer, release, retreat, and
+  `(grasp_pose, pre_contact_pose, seated_pose, rotated_end_pose)` (and for an
+  orthogonal handoff, `handoff -> hover -> seat -> twist`) *before* closing the
+  gripper (0 native steps); (2) align the finger-pointing direction with the
+  required rotation axis (`pitch=90` pointing straight down for a vertical-axis
+  twist) so the turn runs purely on the terminal wrist joint (`yaw`, `±178°`
+  range) instead of sweeping a horizontal (`pitch≈0`) 6-DOF arc into wrist
+  singularities; (3) enforce **sequential single-arm clearance** in shared
+  central zones (for a supported set-down transfer, release, retreat, and
   clear/home the donor arm before bringing the receiver arm in; for an in-air
   handoff, park the donor arm stationary at a verified pose before advancing
-  only the receiver arm); (4) for **compact-object cross-arm transfer**, because
-  ARX-X5 finger pads span ~2.4 cm (`±1.2 cm` around `tcp_pos`) and each
+  only the receiver arm); (4) for **compact-object cross-arm transfer**,
+  because ARX-X5 finger pads span ~2.4 cm (`±1.2 cm` around `tcp_pos`) and each
   wrist-camera housing projects rigidly above/behind the end-effector link
-  (`0.145 m` behind TCP), any object exposing `< ~4 cm` of unobstructed receiver
-  grasp length beyond the donor fingers (compact blocks, tiles, short tools,
-  caps, or flat parts `< ~6–7 cm`) crowds both finger assemblies and wrist
-  housings in mid-air (`tracking_error`, insecure edge pinches, IK blocks, or
-  obstructed donor withdrawal)—whenever a clear support patch exists in the
-  shared central reach zone and intermediate surface support is not forbidden,
-  prefer **`place-and-regrasp`** (set stably on the clear central surface, open,
-  retreat along a straight Cartesian line / `path="line"`, and clear/home the
-  donor arm before bringing the receiver arm in to re-observe via `crop_grid` +
-  `ray_at_z`/`triangulate` and grasp) over an in-air handoff, reserving in-air
-  handoffs for elongated parts exposing `>= 5 cm` free handle/shaft beyond the
-  donor fingers or scenes with no clear central support patch; (5) for
+  (`0.145 m` behind TCP), any uniform compact block, tile, cap, or slab
+  (`< ~6–7 cm`, lacking a distinct head-and-stem geometry and exposing `< ~4 cm`
+  of unobstructed receiver grasp length beyond the donor fingers) crowds both
+  finger assemblies and wrist housings in mid-air (`tracking_error`, insecure
+  edge pinches, IK blocks, or obstructed donor withdrawal)—whenever a clear
+  support patch exists in the shared central reach zone and intermediate surface
+  support is not forbidden, prefer **`place-and-regrasp`** (set stably on the
+  clear central surface, open, retreat along a straight Cartesian line /
+  `path="line"`, and clear/home the donor arm before bringing the receiver arm
+  in to re-observe via `crop_grid` + `ray_at_z`/`triangulate` and grasp) over an
+  in-air handoff, reserving in-air handoffs for elongated parts exposing
+  `>= 5 cm` free handle/shaft beyond the donor fingers, scenes with no clear
+  central support patch, or **orthogonal 90° in-air handoffs** where a donor
+  `pitch=90` grasp on a narrower straight stem/blade exposes a flat-faced
+  proximal head horizontally for an orthogonal `pitch=0, roll=±90°` receiver
+  side clamp (90°-orthogonal donor-above / receiver-horizontal wrist axes
+  separate wrist housings by `~22 cm` and crossbars by `~9.7 cm`, with the
+  donor crossbar `>= 7 cm` above TCP, avoiding housing collisions); (5) for
   **held-object lower-extremity clearance (`object_bottom_z` vs `tcp_z`)**,
   because `tcp_pos` is the pad centre rather than the object's lowest point,
   `tcp_z > z_obs` alone is insufficient when part of the held object hangs or
@@ -643,18 +650,38 @@ once the views show the held part or the fingers pre-aligned near the goal.
   (~2.0 cm) closed-finger thickness faces neighbours, act on one centred item
   at a time with a bounded `~3–4.5 cm` stroke past initial contact, and precheck
   `robo.ik()` for the straight-up (`+z`) retreat before descending; (7) for
-  **curved-rim / gravity-pivoted holds and asymmetric insertion polarity**,
-  never pinch a narrow distal stem/tip near ARX-X5's `~2.3 mm` minimum
-  closed-jaw gap (`GRIP_ZERO_M`) to pitch-flip (`pitch=90° -> 0°–30°`) a
-  heavier head upward in mid-air; instead use flat-table `place-and-regrasp`
-  where closing at `pitch=90` across a **curved circular/cylindrical rim** at
-  `tcp_z ≈ z_support + 0.018` m with `close_dir` perpendicular to `shaft_dir`
-  lets gravity pivot an overhanging shaft `90°` downward along `pointing`, and
-  because that curved-rim hold relies on narrow **tangent-line contact** whose
-  closure collapses under large (`>= 120°–180°`) in-air wrist spins, localise
-  **two points** along any directional receptor feature *before* set-down and
-  receiver pickup so the jaw sign (`+close_dir` vs `-close_dir`, `roll_deg=0`
-  vs `180`) already aligns the asymmetric feature within `<= 45°–60°`, pass
-  `z = z_support + h` on top-face `ray_at_z` pixels, and never execute
-  `>= 120°–180°` mid-air wrist flips on a curved-rim hold (re-seat and regrasp
-  with `roll_deg=180` if reversed).
+  **headed-stem / flat-head + shaft parts requiring coaxial vertical insertion
+  and torque**, never grasp a flat-lying round or cylindrical head from above
+  (`pitch=90`) across its smooth curved perimeter wall—that produces unstable
+  **tangent-line contact** that drops in mid-air or rolls/pops out under axial
+  load or twist (and never pinch a narrow distal tip near ARX-X5's `~2.3 mm`
+  minimum closed-jaw gap `GRIP_ZERO_M` to pitch-flip a heavier head upward).
+  Instead use **orthogonal 90° in-air flat-face head handoff**: first localise
+  the receptor and **two points** along any asymmetric directional feature
+  (`crop_grid` + `triangulate`/`ray_at_z`, passing `z = z_support + h` on
+  top-face pixels) and preflight the full IK chain
+  `handoff -> hover -> seat -> twist` via `robo.ik()`; (a) donor grasps the
+  narrower straight **stem/neck ~1.5–2.5 cm below the flat-faced proximal head**
+  at `pitch=90` (not the round head itself), lifts to clear central mid-air
+  (`z ≈ 0.89–0.91 m`, `y ≈ -0.28..-0.22 m`), and orients `yaw` while keeping
+  `pitch=90` (donor crossbar `>= 7 cm` above `+z`) so the entire flat-faced
+  proximal head projects unobstructed horizontally along the **receiver arm's
+  horizontal radial approach heading** from its base (`(±0.30, -0.45) ->
+  P_head`, keeping receiver `joint5 ≈ 0` with full `±1.52 rad` margin); (b)
+  with the donor parked stationary, receiver approaches horizontally (`pitch=0`,
+  `yaw` coaxial from exposed head through shaft toward distal tip, `roll=+90°`
+  or `-90°` so `close_dir` is vertical `±z`) and clamps its flat finger pads
+  firmly onto the head's **top and bottom parallel flat faces** (`area contact`,
+  zero slip), choosing `roll=+90°` vs `-90°` from the pre-localised receptor
+  asymmetry so the lateral shaft feature (`+z_link6` vs `-z_link6`) maps to the
+  receptor with seated `joint6` within `±1.57 rad` (`>= 1.52 rad` / `~87.6°`
+  bidirectional headroom, guaranteeing `±85°` both ways inside `[-3.1, 3.1]`; or
+  `>= 3.05 rad` / `~175°` in a known CW/CCW twist direction by biasing `joint6`
+  opposite the turn, covering full `90°` twists); (c) donor opens
+  (`set_gripper(donor, OPEN)`), withdraws straight up (`+z`, bounded `~4–5 cm`
+  below the `pitch=90` ceiling `z ≈ 0.95–0.97 m`, prechecked via `robo.ik()`),
+  and clears/homes; and (d) receiver tilts smoothly from `pitch=0` to `pitch=90`
+  over the receptor (pointing the shaft rigidly straight down `-z` coaxial with
+  `+x_link6`), stages a `1–2 cm` hover, runs `robo.align_feature`, seats via
+  guarded `robo.nudge(..., stop_on_stall=True)`, and executes the axial `yaw`
+  twist.

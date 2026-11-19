@@ -49,8 +49,10 @@ import argparse
 import contextlib
 import json
 import math
+import random
 import struct
 import sys
+import tempfile
 import zlib
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
@@ -90,9 +92,12 @@ AXES = ("x", "y", "z", "roll", "pitch", "yaw")
 CONTACT_PHASES = frozenset(
     {
         "align",
+        "align_feature",
         "contact",
+        "delta_grasp",
         "nudge",
         "visual_align_and_insert",
+        "visual_servo",
         "grasp_step",
         "probe",
         "insert",
@@ -828,7 +833,9 @@ Action JSON (relative deltas; write 0 for every unchanged field):
   "gripper": {"width": g}}
 - both arms: {"left_arm": {...}, "right_arm": {...}, "left_gripper": {"width": g},
   "right_gripper": {"width": g}}
-- optional "done": true when the alignment / insertion is complete.
+- optional "done": true when the last-mile sub-goal is complete (tabletop/in-air fine
+  grasp, hook hanging, connector plugging, pouring tilt, button press, or slot/aperture
+  insertion).
 Units: x, y, z in centimetres; roll, pitch, yaw in radians. Gripper width in the
 action is a switch: +1 opens, -1 closes, 0 keeps. In the state, gripper width is the
 measured jaw span in centimetres.
@@ -841,6 +848,8 @@ Prefer small moves (0.2 - 2 cm, <= 0.15 rad) near contact.
 
 Answer format: optionally <think>brief reasoning</think>, then exactly one fenced
 json code block containing the action object and nothing else."""
+
+SYSTEM_PROMPT = _SYSTEM_PROMPT
 
 _ENV_PROMPT_TEMPLATE = """Goal: {goal}
 Arm mode: {arm}   Frame: {frame}   Round: {round}/{max_rounds}   Steps left: {steps_left}
@@ -2042,6 +2051,671 @@ def _write_json(path: Path, value: Any) -> None:
 
 
 # ---------------------------------------------------------------------------
+# reverse-perturbation synthetic sample generator (PEAR cold-start)
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class PerturbConfig:
+    """Sampling ranges and rendering options for reverse-perturbation synthesis."""
+
+    axial_min_m: float = 0.015
+    axial_max_m: float = 0.040
+    transverse_min_m: float = 0.003
+    transverse_max_m: float = 0.018
+    angular_min_deg: float = 0.0
+    angular_max_deg: float = 10.0
+    max_linear_m: float = CoalesceConfig.max_linear_m
+    max_angular_deg: float = CoalesceConfig.max_angular_deg
+    frame: str = "world"
+    format: str = "sft"
+    think: bool = True
+    images: bool = True
+    done_turn: bool = True
+    history_turns: int = 0
+    max_rounds: int = DatasetOptions.max_rounds
+    max_steps: int = DatasetOptions.max_steps
+    crop: bool = True
+    crop_fraction: float = CROP_FRACTION
+    native_step_m: float = 0.005
+    native_step_deg: float = 4.0
+    contact_stop_on_seat: bool = True
+
+    def __post_init__(self) -> None:
+        if self.frame not in ("world", "tcp"):
+            raise ValueError(f"frame must be 'world' or 'tcp', got {self.frame!r}")
+        if self.format not in ("sft", "rl"):
+            raise ValueError(f"format must be 'sft' or 'rl', got {self.format!r}")
+        for lo_name, hi_name in (
+            ("axial_min_m", "axial_max_m"),
+            ("transverse_min_m", "transverse_max_m"),
+            ("angular_min_deg", "angular_max_deg"),
+        ):
+            lo, hi = float(getattr(self, lo_name)), float(getattr(self, hi_name))
+            if lo < 0.0 or hi < lo:
+                raise ValueError(f"{lo_name}={lo} and {hi_name}={hi} must satisfy 0 <= min <= max")
+        if self.max_linear_m <= 0.0 or self.max_angular_deg <= 0.0:
+            raise ValueError("max_linear_m and max_angular_deg must be positive")
+
+
+def _unit_vec3(raw: Sequence[float], where: str) -> tuple[float, float, float]:
+    vals = _flat(raw)
+    if vals is None or len(vals) != 3:
+        raise ValueError(f"{where} must be three numbers")
+    norm = math.sqrt(vals[0] * vals[0] + vals[1] * vals[1] + vals[2] * vals[2])
+    if norm <= 1e-9:
+        raise ValueError(f"{where} must be non-zero")
+    return (vals[0] / norm, vals[1] / norm, vals[2] / norm)
+
+
+def _cross3(a: Sequence[float], b: Sequence[float]) -> tuple[float, float, float]:
+    return (
+        a[1] * b[2] - a[2] * b[1],
+        a[2] * b[0] - a[0] * b[2],
+        a[0] * b[1] - a[1] * b[0],
+    )
+
+
+def _orthonormal_basis(
+    u: tuple[float, float, float],
+) -> tuple[tuple[float, float, float], tuple[float, float, float]]:
+    ref = (1.0, 0.0, 0.0) if abs(u[0]) < 0.9 else (0.0, 1.0, 0.0)
+    e1 = _unit_vec3(_cross3(u, ref), "basis")
+    e2 = _unit_vec3(_cross3(u, e1), "basis")
+    return e1, e2
+
+
+def _parse_gripper_spec(
+    goal_spec: Mapping[str, Any],
+) -> tuple[float, float, float, float, int]:
+    """Return ``(initial_opening, final_opening, initial_cmd, final_cmd, pear_switch)``."""
+
+    raw = goal_spec.get("gripper")
+    explicit_switch = goal_spec.get("gripper_switch")
+    init_open: float | None = None
+    final_open: float | None = None
+    init_cmd: float | None = None
+    final_cmd: float | None = None
+    switch: int = PEAR_KEEP
+
+    if isinstance(raw, Mapping):
+        if "initial_opening" in raw:
+            init_open = float(raw["initial_opening"])
+        elif "opening" in raw:
+            init_open = float(raw["opening"])
+        if "final_opening" in raw:
+            final_open = float(raw["final_opening"])
+        state_init = str(raw.get("initial") or "").strip().lower()
+        state_final = str(raw.get("final") or "").strip().lower()
+        action_word = str(raw.get("action") or raw.get("mode") or "").strip().lower()
+        if "switch" in raw and raw["switch"] is not None:
+            sval = float(raw["switch"])
+            switch = PEAR_OPEN if sval > 0 else (PEAR_CLOSE if sval < 0 else PEAR_KEEP)
+        elif action_word in ("close", "grasp"):
+            switch = PEAR_CLOSE
+        elif action_word in ("open", "release", "place"):
+            switch = PEAR_OPEN
+        elif state_init == "open" and state_final in ("closed", "close", "holding"):
+            switch = PEAR_CLOSE
+        elif state_init in ("closed", "close", "holding") and state_final == "open":
+            switch = PEAR_OPEN
+        if init_open is None:
+            if state_init == "open" or switch == PEAR_CLOSE:
+                init_open = 0.9
+            elif state_init in ("closed", "close", "holding") or switch == PEAR_OPEN:
+                init_open = 0.25
+            else:
+                init_open = 0.3
+        if final_open is None:
+            if switch == PEAR_CLOSE:
+                final_open = 0.25
+            elif switch == PEAR_OPEN:
+                final_open = 0.9
+            else:
+                final_open = init_open
+        if state_init == "open" or switch == PEAR_CLOSE:
+            init_cmd = EE_OPEN_CMD
+        elif state_init in ("closed", "close", "holding") or switch == PEAR_OPEN:
+            init_cmd = EE_CLOSE_CMD
+    elif isinstance(raw, str):
+        word = raw.strip().lower()
+        if word in ("close", "grasp"):
+            init_open, final_open, init_cmd, final_cmd, switch = (
+                0.9, 0.25, EE_OPEN_CMD, EE_CLOSE_CMD, PEAR_CLOSE
+            )
+        elif word in ("open_after", "release", "place"):
+            init_open, final_open, init_cmd, final_cmd, switch = (
+                0.25, 0.9, EE_CLOSE_CMD, EE_OPEN_CMD, PEAR_OPEN
+            )
+        elif word == "open":
+            init_open, final_open, init_cmd, final_cmd, switch = (
+                0.9, 0.9, EE_OPEN_CMD, EE_OPEN_CMD, PEAR_KEEP
+            )
+        else:  # "hold" / "closed" / "keep"
+            init_open, final_open, init_cmd, final_cmd, switch = (
+                0.3, 0.3, EE_CLOSE_CMD, EE_CLOSE_CMD, PEAR_KEEP
+            )
+    elif isinstance(raw, (int, float)) and not isinstance(raw, bool):
+        init_open = final_open = float(raw)
+    else:
+        opening_val = goal_spec.get("opening")
+        init_open = final_open = float(opening_val) if opening_val is not None else 0.3
+
+    if explicit_switch is not None:
+        if isinstance(explicit_switch, str):
+            sw = explicit_switch.strip().lower()
+            switch = PEAR_OPEN if sw in ("open", "release") else (
+                PEAR_CLOSE if sw in ("close", "grasp") else PEAR_KEEP
+            )
+        else:
+            sval = float(explicit_switch)
+            switch = PEAR_OPEN if sval > 0 else (PEAR_CLOSE if sval < 0 else PEAR_KEEP)
+        if switch == PEAR_CLOSE and final_open >= init_open:
+            final_open = min(init_open, 0.25)
+        elif switch == PEAR_OPEN and final_open <= init_open:
+            final_open = max(init_open, 0.9)
+
+    assert init_open is not None and final_open is not None
+    if init_cmd is None:
+        if switch == PEAR_CLOSE:
+            init_cmd = EE_OPEN_CMD
+        elif switch == PEAR_OPEN:
+            init_cmd = EE_CLOSE_CMD
+        else:
+            init_cmd = EE_CLOSE_CMD if init_open <= 0.5 else EE_OPEN_CMD
+    if final_cmd is None:
+        if switch == PEAR_CLOSE:
+            final_cmd = EE_CLOSE_CMD
+        elif switch == PEAR_OPEN:
+            final_cmd = EE_OPEN_CMD
+        else:
+            final_cmd = init_cmd
+    return init_open, final_open, init_cmd, final_cmd, switch
+
+
+def _sample_initial_angles(
+    rng: random.Random,
+    goal_angles: tuple[float, float, float],
+    ang_min_deg: float,
+    ang_max_deg: float,
+) -> tuple[float, float, float]:
+    """Sample perturbed (pitch, yaw, roll) respecting near-vertical canonical folding."""
+
+    gp, gy, gr = canonical_angles(*goal_angles)
+    ang_mag = rng.uniform(ang_min_deg, ang_max_deg)
+    if ang_mag <= 1e-6:
+        return gp, gy, gr
+    if abs(gp) > NEAR_VERTICAL_DEG:
+        # Keep perturbed pitch on the same near-vertical side so roll stays cleanly folded to 0.
+        max_dp = min(ang_mag, max(0.0, abs(gp) - (NEAR_VERTICAL_DEG + 0.5)))
+        dp_abs = rng.uniform(0.0, max_dp) if max_dp > 0.0 else 0.0
+        dp = -math.copysign(dp_abs, gp)
+        dy_abs = math.sqrt(max(0.0, ang_mag * ang_mag - dp_abs * dp_abs))
+        dy = dy_abs if rng.random() < 0.5 else -dy_abs
+        return gp + dp, wrap_deg(gy + dy), 0.0
+    vx, vy, vz = rng.gauss(0.0, 1.0), rng.gauss(0.0, 1.0), rng.gauss(0.0, 1.0)
+    vnorm = math.sqrt(vx * vx + vy * vy + vz * vz) or 1.0
+    dp, dy, dr = ang_mag * vx / vnorm, ang_mag * vy / vnorm, ang_mag * vz / vnorm
+    limit_p = NEAR_VERTICAL_DEG - 0.5
+    init_p = max(-limit_p, min(limit_p, gp + dp))
+    return init_p, wrap_deg(gy + dy), wrap_deg(gr + dr)
+
+
+def _materialize_render_images(
+    rendered: Mapping[str, Any],
+    base_dir: Path,
+    run_id: str,
+    frame_index: int,
+) -> dict[str, str]:
+    images: dict[str, str] = {}
+    safe_run = run_id.replace("/", "_").replace("#", "_")
+    for cam, value in rendered.items():
+        if value is None:
+            continue
+        if isinstance(value, (str, Path)):
+            images[str(cam)] = str(Path(value).resolve())
+            continue
+        dst = base_dir / "synth_images" / safe_run / f"{frame_index:04d}_{cam}.png"
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        if isinstance(value, (bytes, bytearray)):
+            dst.write_bytes(bytes(value))
+        else:
+            write_png(dst, value)
+        images[str(cam)] = str(dst.resolve())
+    return images
+
+
+def _subdivide_segment(
+    start_pose: ArmPose,
+    end_pose: ArmPose,
+    frame: str,
+    max_linear_m: float,
+    max_angular_deg: float,
+) -> list[ArmPose]:
+    """Return intermediate + terminal poses from ``start_pose`` to ``end_pose`` within caps."""
+
+    lin, ang = _motion(start_pose, end_pose, frame)
+    if lin < 1e-5 and ang < 0.05:
+        return []
+    n = max(
+        1,
+        math.ceil(lin / (max_linear_m * 0.95)),
+        math.ceil(ang / (max_angular_deg * 0.95)),
+    )
+    for _ in range(16):
+        knots = [_interpolate(start_pose, end_pose, k / n) for k in range(n + 1)]
+        if all(
+            _motion(a, b, frame)[0] <= max_linear_m + 1e-6
+            and _motion(a, b, frame)[1] <= max_angular_deg + 1e-6
+            for a, b in zip(knots, knots[1:])
+        ):
+            return knots[1:]
+        n += 1
+    return [_interpolate(start_pose, end_pose, k / n) for k in range(1, n + 1)]
+
+
+def _pose_from_spec(spec: Mapping[str, Any], default_opening: float = 0.3) -> ArmPose:
+    xyz_raw = spec.get("xyz")
+    if xyz_raw is None and isinstance(spec.get("pose"), Mapping):
+        pose_map = spec["pose"]
+        xyz_raw = pose_map.get("xyz") or pose_map.get("tcp")
+    if xyz_raw is None:
+        xyz_raw = spec.get("tcp")
+    xyz = _flat(xyz_raw)
+    if xyz is None or len(xyz) != 3:
+        raise ValueError("goal_spec requires a 3-element 'xyz' TCP position (metres)")
+    angle_src = spec.get("pose") if isinstance(spec.get("pose"), Mapping) else spec
+    pitch = float(angle_src.get("pitch", spec.get("pitch", 90.0)))
+    yaw = float(angle_src.get("yaw", spec.get("yaw", 0.0)))
+    roll = float(angle_src.get("roll", spec.get("roll", 0.0)))
+    rot = orientation(*canonical_angles(pitch, yaw, roll))
+    return ArmPose(
+        tcp=(xyz[0], xyz[1], xyz[2]),
+        rot=tuple(tuple(row) for row in rot),
+        opening=default_opening,
+    )
+
+
+def synthesize_perturbation_episode(
+    goal_spec: Mapping[str, Any],
+    *,
+    config: PerturbConfig = PerturbConfig(),
+    seed: int | None = None,
+    rollout_index: int = 0,
+    render: Callable[[Mapping[str, ArmPose]], Mapping[str, Any]] | None = None,
+    out_dir: Path | None = None,
+) -> list[dict[str, Any]]:
+    """Synthesize one clean multi-turn PEAR v1 trajectory by reverse-perturbing a seated goal.
+
+    Starting from the terminal seated TCP pose in ``goal_spec``, samples an upstream axial
+    standoff (``1.5-4.0 cm`` along ``-axis``), a transverse offset perpendicular to ``axis``
+    (``3-18 mm``), and an angular offset (``0-10 deg``), then generates three phases:
+
+    1. Transverse + angular alignment (chunked within ``max_linear_m`` / ``max_angular_deg``).
+    2. Axial engagement stroke along ``+axis`` ending in seated contact.
+    3. Optional gripper switch + final zero-delta ``"done": true`` turn.
+
+    The returned records share the exact prompt, feedback, near-vertical folding, and SFT/RL
+    JSONL schema of :func:`episode_records`.
+    """
+
+    goal = str(goal_spec.get("goal") or "").strip()
+    if not goal:
+        raise ValueError("goal_spec requires a non-empty 'goal' string")
+    arm = str(goal_spec.get("arm") or "right")
+    if arm not in ARMS:
+        raise ValueError(f"goal_spec.arm must be one of {ARMS}, got {arm!r}")
+    u_axis = _unit_vec3(goal_spec.get("axis", (0.0, 0.0, -1.0)), "axis")
+    init_open, final_open, init_cmd, final_cmd, switch = _parse_gripper_spec(goal_spec)
+    seated_pose = _pose_from_spec(goal_spec, default_opening=init_open)
+    other_arm = "left" if arm == "right" else "right"
+    other_pose: ArmPose | None = None
+    if isinstance(goal_spec.get("other_pose"), Mapping):
+        other_pose = _pose_from_spec(goal_spec["other_pose"], default_opening=0.8)
+
+    rollout_seed = (
+        int(seed)
+        if seed is not None
+        else int(goal_spec.get("seed", 0)) + int(rollout_index)
+    )
+    rng = random.Random(rollout_seed)
+
+    d_ax = rng.uniform(config.axial_min_m, config.axial_max_m)
+    r_trans = rng.uniform(config.transverse_min_m, config.transverse_max_m)
+    theta = rng.uniform(0.0, 2.0 * math.pi)
+    e1, e2 = _orthonormal_basis(u_axis)
+    v_trans = tuple(
+        r_trans * (math.cos(theta) * e1[i] + math.sin(theta) * e2[i]) for i in range(3)
+    )
+    init_angles = _sample_initial_angles(
+        rng, seated_pose.angles_deg, config.angular_min_deg, config.angular_max_deg
+    )
+    init_rot = tuple(tuple(row) for row in orientation(*init_angles))
+    aligned_tcp = tuple(seated_pose.tcp[i] - d_ax * u_axis[i] for i in range(3))
+    init_tcp = tuple(aligned_tcp[i] + v_trans[i] for i in range(3))
+
+    p_init = ArmPose(tcp=init_tcp, rot=init_rot, opening=init_open)  # type: ignore[arg-type]
+    p_aligned = ArmPose(
+        tcp=aligned_tcp, rot=seated_pose.rot, opening=init_open  # type: ignore[arg-type]
+    )
+    p_seated = ArmPose(tcp=seated_pose.tcp, rot=seated_pose.rot, opening=init_open)
+    p_final = ArmPose(tcp=seated_pose.tcp, rot=seated_pose.rot, opening=final_open)
+
+    actual_ang_deg = rotation_error(_rot(p_init), _rot(seated_pose))
+    align_targets = _subdivide_segment(
+        p_init, p_aligned, config.frame, config.max_linear_m, config.max_angular_deg
+    )
+    stroke_targets = _subdivide_segment(
+        p_aligned, p_seated, config.frame, config.max_linear_m, config.max_angular_deg
+    )
+
+    # Build frames and macro steps cleanly
+    goal_id = str(goal_spec.get("id") or goal_spec.get("name") or f"synth_{rollout_seed}")
+    run_id = f"{goal_id}#r{rollout_index}"
+    static_images = (
+        {str(k): str(v) for k, v in goal_spec["images"].items() if v}
+        if isinstance(goal_spec.get("images"), Mapping)
+        else {}
+    )
+    img_base_dir: Path | None = Path(out_dir) if out_dir is not None else None
+
+    def make_poses(active: ArmPose) -> dict[str, ArmPose]:
+        out_poses = {arm: active}
+        if other_pose is not None:
+            out_poses[other_arm] = other_pose
+        return out_poses
+
+    def resolve_images(poses_map: Mapping[str, ArmPose], frame_idx: int) -> dict[str, str]:
+        nonlocal img_base_dir
+        if not config.images:
+            return {}
+        if render is not None:
+            rendered = render(poses_map) or {}
+            needs_dir = any(
+                v is not None and not isinstance(v, (str, Path)) for v in rendered.values()
+            )
+            if needs_dir and img_base_dir is None:
+                img_base_dir = Path(tempfile.mkdtemp(prefix="pear_synth_"))
+            return _materialize_render_images(
+                rendered, img_base_dir or Path("."), run_id, frame_idx
+            )
+        return dict(static_images)
+
+    frames: list[Frame] = []
+    steps: list[MacroStep] = []
+    native_cursor = 0
+
+    def append_frame(
+        active_pose: ArmPose,
+        *,
+        phase: str | None,
+        grip_cmd: float,
+        stalled: bool = False,
+        stop_reason: str | None = None,
+    ) -> Frame:
+        idx = len(frames)
+        poses_map = make_poses(active_pose)
+        fr = Frame(
+            index=idx,
+            poses=poses_map,
+            native_step=native_cursor,
+            phase=phase,
+            tool=phase,
+            gripper={arm: grip_cmd},
+            stalled=stalled,
+            stop_reason=stop_reason,
+            images=resolve_images(poses_map, idx),
+            ok=True,
+        )
+        frames.append(fr)
+        return fr
+
+    append_frame(p_init, phase=None, grip_cmd=init_cmd)
+    align_phase = str(goal_spec.get("align_phase") or "align_feature")
+    stroke_phase = str(goal_spec.get("stroke_phase") or goal_spec.get("phase") or "insert")
+
+    # Phase 1: transverse + angular alignment
+    for target_pose in align_targets:
+        start_idx = len(frames) - 1
+        prev_pose = frames[start_idx].poses[arm]
+        lin, ang = _motion(prev_pose, target_pose, config.frame)
+        n_native = max(
+            1,
+            math.ceil(lin / config.native_step_m),
+            math.ceil(ang / config.native_step_deg),
+        )
+        native_cursor += n_native
+        append_frame(target_pose, phase=align_phase, grip_cmd=init_cmd)
+        delta = pose_delta(prev_pose, target_pose, config.frame)
+        steps.append(
+            MacroStep(
+                start=start_idx,
+                end=len(frames) - 1,
+                arm=arm,
+                action={"arm": delta, "gripper": {"width": PEAR_KEEP}},
+                phase=align_phase,
+                native_steps=n_native,
+                status="reached",
+                stop_reason=None,
+                linear_m=lin,
+                angular_deg=ang,
+                oversize=False,
+            )
+        )
+
+    # Phase 2: axial contact stroke along +axis
+    for k, target_pose in enumerate(stroke_targets):
+        is_seat = k == len(stroke_targets) - 1
+        start_idx = len(frames) - 1
+        prev_pose = frames[start_idx].poses[arm]
+        lin, ang = _motion(prev_pose, target_pose, config.frame)
+        n_native = max(
+            1,
+            math.ceil(lin / config.native_step_m),
+            math.ceil(ang / config.native_step_deg),
+        )
+        native_cursor += n_native
+        stalled = bool(is_seat and config.contact_stop_on_seat)
+        stop_reason = "contact_or_stall" if stalled else None
+        append_frame(
+            target_pose,
+            phase=stroke_phase,
+            grip_cmd=init_cmd,
+            stalled=stalled,
+            stop_reason=stop_reason,
+        )
+        delta = pose_delta(prev_pose, target_pose, config.frame)
+        steps.append(
+            MacroStep(
+                start=start_idx,
+                end=len(frames) - 1,
+                arm=arm,
+                action={"arm": delta, "gripper": {"width": PEAR_KEEP}},
+                phase=stroke_phase,
+                native_steps=n_native,
+                status="stopped" if stalled else "reached",
+                stop_reason=stop_reason,
+                linear_m=lin,
+                angular_deg=ang,
+                oversize=False,
+            )
+        )
+
+    # Phase 3: optional gripper switch
+    if switch != PEAR_KEEP:
+        start_idx = len(frames) - 1
+        grip_phase = "close_gripper" if switch == PEAR_CLOSE else "open_gripper"
+        native_cursor += 2
+        append_frame(p_final, phase=grip_phase, grip_cmd=final_cmd)
+        steps.append(
+            MacroStep(
+                start=start_idx,
+                end=len(frames) - 1,
+                arm=arm,
+                action={"arm": {axis: 0.0 for axis in AXES}, "gripper": {"width": switch}},
+                phase=grip_phase,
+                native_steps=2,
+                status="reached",
+                stop_reason=None,
+                linear_m=0.0,
+                angular_deg=0.0,
+                oversize=False,
+            )
+        )
+
+    has_images = any(bool(fr.images) for fr in frames)
+    crop_fn = (
+        _cropper(img_base_dir, Path(run_id.replace("#", "_")), config.crop_fraction)
+        if (config.crop and config.images and has_images)
+        else None
+    )
+    ds_opts = DatasetOptions(
+        frame=config.frame,
+        think=config.think,
+        images=config.images and has_images,
+        done_turn=config.done_turn,
+        history_turns=config.history_turns,
+        max_rounds=config.max_rounds,
+        max_steps=config.max_steps,
+        goal=goal,
+    )
+    samples = build_samples(
+        frames,
+        steps,
+        goal,
+        ds_opts,
+        success=True,
+        crop=crop_fn,
+        max_linear_m=config.max_linear_m,
+        max_angular_deg=config.max_angular_deg,
+    )
+    phases = sorted({s.phase for s in steps if s.phase})
+    task = str(goal_spec.get("task") or goal)
+    records: list[dict[str, Any]] = []
+    for sample in samples:
+        step = sample["step"]
+        entry = step.to_dict() if step is not None else None
+        record: dict[str, Any] = {
+            "id": f"{run_id}:{sample['turn']}",
+            "run": run_id,
+            "turn": sample["turn"],
+            "turns": len(samples),
+            "protocol": PROTOCOL,
+            "task": task,
+            "goal": goal,
+            "arm": arm,
+            "frame": config.frame,
+            "success": True,
+            "source": {
+                "synthetic": True,
+                "goal_id": goal_id,
+                "seed": rollout_seed,
+                "perturbation": {
+                    "axial_m": round(d_ax, 5),
+                    "transverse_m": round(r_trans, 5),
+                    "angular_deg": round(actual_ang_deg, 3),
+                },
+                "frames": [0, len(frames) - 1],
+                "frame": step.start if step is not None else steps[-1].end,
+            },
+            "phases": phases,
+            "limits": {
+                "max_linear_m": config.max_linear_m,
+                "max_angular_deg": config.max_angular_deg,
+            },
+            "step": entry,
+            "oversize_dropped": 0,
+        }
+        if config.format == "rl":
+            messages = sample["messages"]
+            record.update(
+                prompt=messages[:-1],
+                images=sample["images"],
+                solution=sample["action"],
+                reference=messages[-1]["content"],
+            )
+        else:
+            record.update(messages=sample["messages"], images=sample["images"])
+        records.append(record)
+    return records
+
+
+def _load_goal_specs(
+    goals: str | Path | Mapping[str, Any] | Sequence[Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    if isinstance(goals, (str, Path)):
+        raw = json.loads(Path(goals).read_text(encoding="utf-8"))
+    else:
+        raw = goals
+    if isinstance(raw, Mapping):
+        if "goals" in raw and isinstance(raw["goals"], Sequence):
+            items = list(raw["goals"])
+        else:
+            items = [raw]
+    elif isinstance(raw, Sequence):
+        items = list(raw)
+    else:
+        raise ValueError("goals must be a path, a goal dict, or a list of goal dicts")
+    out: list[dict[str, Any]] = []
+    for idx, item in enumerate(items):
+        if not isinstance(item, Mapping):
+            raise ValueError(f"goal entry {idx} must be a mapping")
+        spec = dict(item)
+        spec.setdefault("id", f"goal_{idx}")
+        out.append(spec)
+    return out
+
+
+def synthesize_from_goals(
+    goals: str | Path | Mapping[str, Any] | Sequence[Mapping[str, Any]],
+    out: str | Path | None = None,
+    *,
+    config: PerturbConfig = PerturbConfig(),
+    n_rollouts: int | None = None,
+    seed: int = 0,
+    render: Callable[[Mapping[str, ArmPose]], Mapping[str, Any]] | None = None,
+    out_dir: Path | None = None,
+) -> list[dict[str, Any]]:
+    """Synthesize reverse-perturbation PEAR samples from one or more seated goal specs.
+
+    ``goals`` may be a JSON file path (list of goal objects, single object, or
+    ``{"goals": [...]}``), a goal mapping, or a sequence of goal mappings.  When ``out``
+    is provided, writes one JSONL line per turn and returns all generated records.
+    """
+
+    goal_specs = _load_goal_specs(goals)
+    out_path = Path(out) if out is not None else None
+    asset_dir = out_dir if out_dir is not None else (out_path.parent if out_path else None)
+    all_records: list[dict[str, Any]] = []
+    for g_idx, spec in enumerate(goal_specs):
+        count = int(n_rollouts if n_rollouts is not None else spec.get("n_rollouts", 1))
+        if count < 1:
+            raise ValueError(f"n_rollouts must be >= 1, got {count}")
+        base_seed = (
+            int(spec["seed"])
+            if "seed" in spec and spec["seed"] is not None
+            else int(seed) + g_idx * 1000
+        )
+        for r_idx in range(count):
+            all_records.extend(
+                synthesize_perturbation_episode(
+                    spec,
+                    config=config,
+                    seed=base_seed + r_idx,
+                    rollout_index=r_idx,
+                    render=render,
+                    out_dir=asset_dir,
+                )
+            )
+    if out_path is not None:
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        with out_path.open("w", encoding="utf-8") as handle:
+            for record in all_records:
+                handle.write(json.dumps(record, ensure_ascii=False) + "\n")
+    return all_records
+
+
+# ---------------------------------------------------------------------------
 # command line
 # ---------------------------------------------------------------------------
 
@@ -2078,6 +2752,22 @@ def _parser() -> argparse.ArgumentParser:
         "--oversize", choices=OVERSIZE_MODES, default=CoalesceConfig.oversize,
         help="macro steps above the caps: drop (default), split, keep",
     )
+    syn = sub.add_parser(
+        "synthesize",
+        help="generate synthetic PEAR v1 trajectories via reverse-perturbation from goal specs",
+    )
+    syn.add_argument("-i", "--input", type=Path, required=True, help="goals JSON file")
+    syn.add_argument("-o", "--out", type=Path, required=True, help="output .jsonl")
+    syn.add_argument("--format", choices=("sft", "rl"), default="sft")
+    syn.add_argument("--frame", choices=("world", "tcp"), default="world")
+    syn.add_argument("--n-rollouts", type=int, default=None, help="rollouts per goal")
+    syn.add_argument("--seed", type=int, default=0)
+    syn.add_argument("--max-linear-m", type=float, default=PerturbConfig.max_linear_m)
+    syn.add_argument("--max-angular-deg", type=float, default=PerturbConfig.max_angular_deg)
+    syn.add_argument("--history-turns", type=int, default=0)
+    syn.add_argument("--no-think", action="store_true")
+    syn.add_argument("--no-images", action="store_true")
+    syn.add_argument("--no-crop", action="store_true")
     st = sub.add_parser("stats", help="summarise a JSONL dataset or episode directories")
     st.add_argument("paths", nargs="+", type=Path, help=".jsonl files or episode dirs")
     st.add_argument("--frame", choices=("world", "tcp"), default="world")
@@ -2124,7 +2814,40 @@ def main(argv: Sequence[str] | None = None) -> int:
         counts = extract(args.paths, args.out, _options(args))
         print(json.dumps(dict(counts, out=str(args.out))))
         return 0
-    records: list[dict[str, Any]] = []
+    if args.command == "synthesize":
+        cfg = PerturbConfig(
+            frame=args.frame,
+            format=args.format,
+            max_linear_m=args.max_linear_m,
+            max_angular_deg=args.max_angular_deg,
+            history_turns=args.history_turns,
+            think=not args.no_think,
+            images=not args.no_images,
+            crop=not args.no_crop,
+        )
+        goal_specs = _load_goal_specs(args.input)
+        records = synthesize_from_goals(
+            goal_specs,
+            args.out,
+            config=cfg,
+            n_rollouts=args.n_rollouts,
+            seed=args.seed,
+        )
+        episodes = len({r["run"] for r in records})
+        macro_steps = sum(1 for r in records if r.get("step"))
+        print(
+            json.dumps(
+                {
+                    "goals": len(goal_specs),
+                    "episodes": episodes,
+                    "records": len(records),
+                    "macro_steps": macro_steps,
+                    "out": str(args.out),
+                }
+            )
+        )
+        return 0
+    records = []
     episodes = 0
     native_total = 0
     for path in args.paths:
@@ -2159,6 +2882,8 @@ __all__ = [
     "Frame",
     "MacroStep",
     "PROTOCOL",
+    "PerturbConfig",
+    "SYSTEM_PROMPT",
     "VisualDeltaEnvRecorder",
     "angles",
     "apply_delta",
@@ -2192,6 +2917,8 @@ __all__ = [
     "split_runs",
     "state_json",
     "stats",
+    "synthesize_from_goals",
+    "synthesize_perturbation_episode",
     "system_prompt",
     "user_content",
     "width_cm",

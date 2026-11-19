@@ -537,7 +537,9 @@ Action JSON (relative deltas; write 0 for every unchanged field):
   "gripper": {"width": g}}
 - both arms: {"left_arm": {...}, "right_arm": {...}, "left_gripper": {"width": g},
   "right_gripper": {"width": g}}
-- optional "done": true when the alignment / insertion is complete.
+- optional "done": true when the last-mile sub-goal is complete (tabletop/in-air fine
+  grasp, hook hanging, connector plugging, pouring tilt, button press, or slot/aperture
+  insertion).
 Units: x, y, z in centimetres; roll, pitch, yaw in radians. Gripper width in the
 action is a switch: +1 opens, -1 closes, 0 keeps. In the state, gripper width is the
 measured jaw span in centimetres.
@@ -649,6 +651,23 @@ def as_policy(policy: Any) -> VisualDeltaPolicy:
 def policy_name(policy: Any) -> str:
     name = getattr(policy, "name", None) or getattr(policy, "model", None)
     return str(name or type(policy).__name__)
+
+
+def has_configured_policy(
+    primitives: Any = None,
+    *,
+    env: Mapping[str, str] | None = None,
+) -> bool:
+    """Whether a visual-delta VLM policy is configured on ``primitives`` or in ``env``."""
+
+    if primitives is not None and getattr(primitives, "_visual_delta_policy", None) is not None:
+        return True
+    environ = os.environ if env is None else env
+    for key in ("CODEASPOLICY_DELTA_BASE_URL", "CODEASPOLICY_DELTA_MODEL"):
+        value = environ.get(key)
+        if isinstance(value, str) and value.strip():
+            return True
+    return False
 
 
 def encode_png(image: Any) -> bytes:
@@ -978,6 +997,7 @@ __all__ = [
     "format_action",
     "format_feedback",
     "format_state",
+    "has_configured_policy",
     "is_zero_action",
     "is_zero_delta",
     "m_to_cm",

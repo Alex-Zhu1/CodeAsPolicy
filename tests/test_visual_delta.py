@@ -1041,7 +1041,8 @@ def test_execution_budget_counts_each_stateful_nudge(tmp_path):
             robo.nudge((0, 0, 0.005))
 
 
-def test_registration_and_reference():
+def test_registration_and_reference(monkeypatch):
+    monkeypatch.setenv("CODEASPOLICY_DELTA_MODEL", "pear-test")
     assert {"nudge", "visual_align_and_insert", "align_feature", "delta_grasp"} <= STATEFUL_TOOLS
     assert {"nudge", "visual_align_and_insert", "align_feature", "delta_grasp"} <= STATEFUL
     assert "preview_align_feature" not in STATEFUL_TOOLS
@@ -1051,6 +1052,7 @@ def test_registration_and_reference():
     assert set(rvd.SPECS) == {
         "nudge",
         "visual_align_and_insert",
+        "visual_servo",
         "align_feature",
         "preview_align_feature",
         "delta_grasp",
@@ -1090,9 +1092,220 @@ def test_rpent_toolkit_registration_adds_both_tools():
     motion.register(Toolkit(_place(JointEnvironment())))
     assert added["nudge"][0]["name"] == "nudge"
     assert added["visual_align_and_insert"][0]["input_schema"]["required"] == ["goal"]
+    assert added["visual_servo"][0]["name"] == "visual_servo"
+    assert added["visual_servo"][0]["input_schema"]["required"] == ["goal"]
     assert added["align_feature"][0]["input_schema"]["required"] == ["feature_xyz", "target_xyz"]
     assert added["preview_align_feature"][0]["name"] == "preview_align_feature"
     assert added["preview_align_feature"][1].func._readonly is True
     assert added["delta_grasp"][0]["input_schema"]["required"] == ["target_xyz"]
     assert added["preview_delta_grasp"][0]["name"] == "preview_delta_grasp"
     assert added["preview_delta_grasp"][1].func._readonly is True
+
+
+# -- pillar 3 enhancements: policy discovery, visual_servo, inter-arm, rim stall --
+
+
+def test_has_configured_policy_and_metadata(monkeypatch, tmp_path):
+    monkeypatch.delenv("CODEASPOLICY_DELTA_BASE_URL", raising=False)
+    monkeypatch.delenv("CODEASPOLICY_DELTA_MODEL", raising=False)
+    _, _, host = station(tmp_path)
+    primitives = host._primitives
+
+    assert vd.has_configured_policy is rvd.has_configured_policy
+    assert vd.has_configured_policy(primitives) is False
+    assert vd.has_configured_policy(primitives, env={"CODEASPOLICY_DELTA_MODEL": "   "}) is False
+    assert rvd.policy_status(primitives)["visual_delta_policy_configured"] is False
+
+    assert vd.has_configured_policy(
+        primitives, env={"CODEASPOLICY_DELTA_BASE_URL": "http://127.0.0.1:8000/v1"}
+    ) is True
+    assert vd.has_configured_policy(
+        primitives, env={"CODEASPOLICY_DELTA_MODEL": "qwen-pear"}
+    ) is True
+
+    monkeypatch.setenv("CODEASPOLICY_DELTA_MODEL", "qwen-pear")
+    assert vd.has_configured_policy(primitives) is True
+    assert rvd.policy_status(primitives)["visual_delta_policy_configured"] is True
+    monkeypatch.delenv("CODEASPOLICY_DELTA_MODEL", raising=False)
+
+    rvd.set_policy(primitives, vd.ScriptedPolicy([answer(0.0, done=True)]))
+    assert vd.has_configured_policy(primitives) is True
+    assert rvd.policy_status(primitives)["visual_delta_policy_configured"] is True
+    rvd.set_policy(primitives, None)
+    assert vd.has_configured_policy(primitives) is False
+
+
+def test_visual_servo_handler_and_general_system_prompt(tmp_path):
+    for phrase in (
+        "grasp",
+        "hook hanging",
+        "connector plugging",
+        "pouring tilt",
+        "button press",
+        "slot/aperture",
+    ):
+        assert phrase in vd.SYSTEM_PROMPT
+
+    env, _, host = station(tmp_path)
+    start_joints = {a: list(env.joints[a]) for a in kin.ARMS}
+    policy = vd.ScriptedPolicy([answer(-1.0), answer(0.0, done=True)])
+    rvd.set_policy(host._primitives, policy)
+    handler = rvd.handlers(host._primitives, start_joints)["visual_servo"]
+    start = tcp(env)
+    out = handler(goal="hang the mug handle onto the hook")
+    assert out["status"] == "completed" and out["done"] is True
+    assert out["visual_delta_policy_configured"] is True
+    assert out["rounds_used"] == 2 and out["steps_used"] > 0
+    assert np.allclose(tcp(env) - start, [0.0, 0.0, -0.01], atol=0.0025)
+
+
+def test_inter_arm_clearance_preflight_nudge_align_and_delta_grasp(monkeypatch, tmp_path):
+    env, robo, host = station(tmp_path)
+    start_joints = {a: list(env.joints[a]) for a in kin.ARMS}
+    seen_calls: list[dict[str, float]] = []
+
+    def fake_inter_arm(left_q, right_q, *, left_opening=0.5, right_opening=0.5, min_clearance_m=0.01):
+        seen_calls.append({"left_opening": left_opening, "right_opening": right_opening})
+        left_tcp = kin.tcp(kin.fk("left", left_q))
+        right_tcp = kin.tcp(kin.fk("right", right_q))
+        if float(np.linalg.norm(right_tcp - left_tcp)) < 0.495:
+            return ["camera_housing_collision"]
+        if right_opening > 0.7 and right_tcp[0] < 0.245:
+            return ["finger_collision"]
+        return []
+
+    monkeypatch.setattr(kin, "inter_arm_violations", fake_inter_arm, raising=False)
+
+    # 1. Single-arm nudge moving left (-x, closer to left arm at x=-0.25) rejects in 0 steps.
+    blocked = robo.nudge((-0.02, 0.0, 0.0), arm="right")
+    assert blocked.status == "rejected" and blocked.stop_reason == "ik_path_rejected"
+    assert blocked.ik_error and "camera_housing_collision" in blocked.ik_error
+    assert not env.actions
+
+    # Single-arm nudge moving away (+x) succeeds.
+    clear = robo.nudge((0.01, 0.0, 0.0), arm="right")
+    assert clear.reached is True and clear.steps_used > 0
+
+    # 2. Bimanual nudge checks synchronized pairs:
+    # Moving right left (-0.025) while left stays or moves right (+0.02) collides in 0 steps.
+    steps_before = len(env.actions)
+    both_bad = robo.nudge(
+        arm="both",
+        left={"dxyz": [0.02, 0.0, 0.0]},
+        right={"dxyz": [-0.025, 0.0, 0.0]},
+    )
+    assert both_bad.status == "rejected" and both_bad.stop_reason == "ik_path_rejected"
+    assert both_bad.ik_error and "camera_housing_collision" in both_bad.ik_error
+    assert len(env.actions) == steps_before
+
+    # Moving both arms right (+0.015) keeps separation >= 0.50 m at every synchronized waypoint!
+    both_ok = robo.nudge(
+        arm="both",
+        left={"dxyz": [0.015, 0.0, 0.0]},
+        right={"dxyz": [0.015, 0.0, 0.0]},
+    )
+    assert both_ok.reached is True
+
+    # 3. align_feature rejects in 0 steps when alignment or stroke causes inter-arm collision.
+    env2, _, host2 = station(tmp_path / "af")
+    sj2 = {a: list(env2.joints[a]) for a in kin.ARMS}
+    cur_tcp = tcp(env2)
+    af_bad = rvd.align_feature(
+        host2._primitives,
+        sj2,
+        cur_tcp.tolist(),
+        (cur_tcp + np.array([-0.02, 0.0, -0.01])).tolist(),
+        arm="right",
+    )
+    assert af_bad["status"] == "rejected" and af_bad["stop_reason"] == "ik_path_rejected"
+    assert "camera_housing_collision" in af_bad["ik_error"]
+    assert not env2.actions
+
+    # 4. delta_grasp passes narrowed pre-open width into inter_arm_violations preflight:
+    # At opening=1.0 moving to x=0.242 triggers finger_collision, while opening=0.38 passes!
+    env3 = _place(FlexibleGripEnvironment(initial_opening=1.0, close_stop=0.1), z=0.86)
+    host3 = NativeToolkit(env3, None, tmp_path / "dg")
+    sj3 = {a: list(env3.joints[a]) for a in kin.ARMS}
+
+    def finger_only_inter_arm(left_q, right_q, *, left_opening=0.5, right_opening=0.5, min_clearance_m=0.01):
+        right_tcp = kin.tcp(kin.fk("right", right_q))
+        if right_opening > 0.7 and right_tcp[0] < 0.245:
+            return ["finger_collision"]
+        return []
+
+    monkeypatch.setattr(kin, "inter_arm_violations", finger_only_inter_arm, raising=False)
+    dg_wide = rvd.delta_grasp(
+        host3._primitives,
+        sj3,
+        [0.242, -0.15, 0.85],
+        arm="right",
+    )
+    assert dg_wide["status"] == "rejected" and dg_wide["stop_reason"] == "ik_path_rejected"
+    assert "finger_collision" in dg_wide["ik_error"]
+    assert not env3.actions
+
+    dg_narrow = rvd.delta_grasp(
+        host3._primitives,
+        sj3,
+        [0.242, -0.15, 0.85],
+        arm="right",
+        opening=0.38,
+    )
+    assert dg_narrow["status"] == "completed" and dg_narrow["reached"] is True
+
+
+def test_align_feature_premature_stall_sets_rim_contact_and_backoff(tmp_path):
+    # Requested 35 mm vertical stroke, blocked at floor 0.845 from z=0.86 -> ~15 mm (< 70%).
+    env, _, host = station(tmp_path / "rim", StallEnvironment(floor=0.845))
+    sj = {a: list(env.joints[a]) for a in kin.ARMS}
+    start = tcp(env)
+    feature = start + np.array([0.005, 0.0, -0.02])
+    target = feature + np.array([-0.005, 0.0, -0.02])
+    premature = rvd.align_feature(
+        host._primitives,
+        sj,
+        feature.tolist(),
+        target.tolist(),
+        arm="right",
+        stroke_m=0.035,
+        max_steps=25,
+    )
+    assert premature["status"] == "stopped" and premature["stop_reason"] == "contact_or_stall"
+    assert premature["achieved_stroke_m"] < 0.7 * premature["requested_stroke_m"]
+    assert premature["rim_contact_suspected"] is True
+    assert premature["suggested_backoff_dxyz"] == pytest.approx([0.0, 0.0, 0.004], abs=1e-5)
+
+    # Deep seated stall: requested 20 mm, stalled at ~16.6 mm (~83% >= 70% = 14 mm) -> False / None.
+    env2, _, host2 = station(tmp_path / "deep", StallEnvironment(floor=0.841))
+    sj2 = {a: list(env2.joints[a]) for a in kin.ARMS}
+    start2 = tcp(env2)
+    deep = rvd.align_feature(
+        host2._primitives,
+        sj2,
+        start2.tolist(),
+        (start2 + np.array([0.0, 0.0, -0.020])).tolist(),
+        arm="right",
+        stroke_m=0.020,
+        max_steps=25,
+    )
+    assert deep["status"] == "stopped" and deep["stop_reason"] == "contact_or_stall"
+    assert deep["achieved_stroke_m"] >= 0.7 * deep["requested_stroke_m"]
+    assert deep["rim_contact_suspected"] is False
+    assert deep["suggested_backoff_dxyz"] is None
+
+    # Completed stroke (no stall) -> False / None.
+    env3, _, host3 = station(tmp_path / "ok")
+    sj3 = {a: list(env3.joints[a]) for a in kin.ARMS}
+    start3 = tcp(env3)
+    ok = rvd.align_feature(
+        host3._primitives,
+        sj3,
+        start3.tolist(),
+        (start3 + np.array([0.0, 0.0, -0.015])).tolist(),
+        arm="right",
+        stroke_m=0.015,
+        max_steps=25,
+    )
+    assert ok["status"] == "completed" and ok["reached"] is True
+    assert ok["rim_contact_suspected"] is False
+    assert ok["suggested_backoff_dxyz"] is None

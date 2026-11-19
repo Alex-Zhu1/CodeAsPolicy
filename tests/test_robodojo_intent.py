@@ -237,14 +237,16 @@ def test_retention_permits_thin_object_full_closure_and_sub_millimetre_settle(tm
                                  holding={"right": "retain"}, max_steps=100)
     assert second["reached"], second
     assert second["policy"]["motion"]["phase"] == "carry"
-    assert second["policy"]["motion"]["velocity"] == pytest.approx(1.1)
-    assert second["policy"]["motion"]["acceleration"] == pytest.approx(6.0)
+    assert second["policy"]["motion"]["velocity"] == pytest.approx(2.0)
+    assert second["policy"]["motion"]["acceleration"] == pytest.approx(16.0)
+    assert second["policy"]["motion"]["jerk"] == pytest.approx(900.0)
     windowed = robo.execute_motion(
         "approach_thin_blade", right=robo.observe().right.shifted(dz=.04),
         interaction="approach", holding={"right": "retain"}, preview=True,
     )
     assert windowed["accepted"]
-    assert windowed["policy"]["motion"]["window"]["far"]["velocity"] == pytest.approx(1.1)
+    assert windowed["policy"]["motion"]["window"]["far"]["velocity"] == pytest.approx(2.0)
+    assert windowed["policy"]["motion"]["window"]["near"]["velocity"] == pytest.approx(1.6)
 
 
 def test_known_cancel_resumes_remaining_path_and_never_resets_step_allowance(tmp_path):
@@ -358,7 +360,7 @@ def test_visual_completion_is_returned_for_observation_not_claimed_as_verified(t
     assert not result.get("task_success")
 
 
-@pytest.mark.parametrize("distance,expected", [(.10, "paused"), (.04, "completed")])
+@pytest.mark.parametrize("distance,expected", [(.18, "paused"), (.04, "completed")])
 def test_python_deadline_after_checkpoint_preserves_remaining_or_completed_intent(
         tmp_path, monkeypatch, distance, expected):
     from codeaspolicy.execution import ExecutionLimit
@@ -372,12 +374,14 @@ def test_python_deadline_after_checkpoint_preserves_remaining_or_completed_inten
 
     monkeypatch.setattr(robo, "_stateful", interrupted)
     with pytest.raises(ExecutionLimit):
-        empty_move(robo, right=robo.observe().right.shifted(dz=distance), max_steps=8)
+        empty_move(robo, right=robo.observe().right.shifted(dz=distance), max_steps=16)
     assert robo.motion_status("travel")["status"] == expected
     before = len(env.actions)
+    if expected == "paused":
+        assert before == 8
     monkeypatch.setattr(robo, "_stateful", original)
     result = robo.resume_motion("travel")
-    assert result["reached"] and result["intent_steps_used"] == len(env.actions) <= 8
+    assert result["reached"] and result["intent_steps_used"] == len(env.actions) <= 16
     if expected == "completed":
         assert len(env.actions) == before
 
@@ -712,3 +716,58 @@ def test_precision_approach_window_and_joint_fallback_keep_step_budget_compact(t
     assert swing["accepted"] and swing["planned_path"] == "joint"
     assert swing["planned_steps"] <= 23
     assert not env.actions
+
+
+def test_thin_retain_carry_timing_and_checkpoint_steps_8_cut_steps_and_chunks(tmp_path):
+    import math
+
+    # 1. Thin-retain carry (opening=0.02): fast smooth C2 carry + checkpoint_steps=8
+    env, robo, host = station(tmp_path / "thin")
+    host._primitives._grip_commands = {"right": 0.0}
+    env.grips["right"] = 0.02
+    chunks = []
+    original = robo._stateful
+
+    def count_chunks(name, *args, **kwargs):
+        if name in ("intent_execute", "operation_resume"):
+            chunks.append(name)
+        return original(name, *args, **kwargs)
+
+    robo._stateful = count_chunks
+    start = robo.observe().right
+    goal = start.shifted(dx=-0.10, dy=-0.05, dz=0.12).rotated([0, 0, 1], 45)
+    thin_res = robo.execute_motion(
+        "thin_carry_fast", right=goal, holding={"right": "retain"}, max_steps=200,
+    )
+    assert thin_res["reached"], thin_res
+    assert thin_res["policy"]["motion"] == {
+        "velocity": 2.0, "acceleration": 16.0, "jerk": 900.0, "phase": "carry",
+    }
+    # Cut nearly in half from ~49 steps under legacy 1.1/6.0 thin_retain profile
+    assert thin_res["intent_steps_used"] <= 28
+    # checkpoint_steps=8 halves resume chunks compared to checkpoint_steps=4
+    assert len(chunks) == math.ceil(thin_res["intent_steps_used"] / 8)
+
+    # 2. Normal held carry (opening=0.08) + non-precise vs precise approach near_profile
+    env2, robo2, host2 = station(tmp_path / "normal")
+    host2._primitives._grip_commands = {"right": 0.0}
+    env2.grips["right"] = 0.08
+    start2 = robo2.observe().right
+    norm_preview = robo2.execute_motion(
+        "norm_carry", right=start2.shifted(dz=0.10),
+        holding={"right": "retain"}, preview=True,
+    )
+    assert norm_preview["accepted"]
+    assert norm_preview["policy"]["motion"] == {
+        "velocity": 2.2, "acceleration": 20.0, "jerk": 950.0, "phase": "carry",
+    }
+    app_normal = empty_move(
+        robo2, "app_normal", right=start2.shifted(dz=0.06),
+        interaction="approach", preview=True,
+    )
+    app_precise = empty_move(
+        robo2, "app_precise", right=start2.shifted(dz=0.06),
+        interaction="approach", completion={"position_m": 0.002}, preview=True,
+    )
+    assert app_normal["policy"]["motion"]["window"]["near"]["velocity"] == pytest.approx(1.6)
+    assert app_precise["policy"]["motion"]["window"]["near"]["velocity"] == pytest.approx(0.9)

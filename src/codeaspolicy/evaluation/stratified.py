@@ -138,9 +138,51 @@ def _extract_input_tokens(data: Mapping[str, Any]) -> int | None:
     return None
 
 
-def _extract_score(data: Mapping[str, Any], success: bool | None) -> float | None:
+def _normalize_score(val: float) -> float:
+    if 1.0 < val <= 100.0:
+        return round(val / 100.0, 6)
+    return val
+
+
+def _extract_bench_score(root: Path) -> float | None:
+    eval_dir = root / "bench" / "eval_result"
+    if not eval_dir.is_dir():
+        return None
+    detail_scores: list[float] = []
+    top_scores: list[float] = []
+    for path in sorted(eval_dir.rglob("_result.json")):
+        payload = _read_json(path)
+        if not payload:
+            continue
+        details = payload.get("details")
+        file_details: list[float] = []
+        if isinstance(details, Mapping):
+            for entry in details.values():
+                if isinstance(entry, Mapping):
+                    s = _float(entry.get("score"))
+                    if s is not None:
+                        file_details.append(_normalize_score(s))
+        if file_details:
+            detail_scores.extend(file_details)
+        else:
+            top = _float(payload.get("score"))
+            if top is not None:
+                top_scores.append(_normalize_score(top))
+    if detail_scores:
+        return round(sum(detail_scores) / len(detail_scores), 6)
+    if top_scores:
+        return round(sum(top_scores) / len(top_scores), 6)
+    return None
+
+
+def _extract_score(
+    data: Mapping[str, Any],
+    success: bool | None,
+    root: Path | None = None,
+) -> float | None:
     for candidate in (
         data.get("score"),
+        data.get("native_score"),
         data.get("environment_score"),
         (data.get("evaluation") or {}).get("score")
         if isinstance(data.get("evaluation"), Mapping)
@@ -151,7 +193,11 @@ def _extract_score(data: Mapping[str, Any], success: bool | None) -> float | Non
     ):
         val = _float(candidate)
         if val is not None:
-            return val
+            return _normalize_score(val)
+    if root is not None:
+        bench_score = _extract_bench_score(root)
+        if bench_score is not None:
+            return bench_score
     if success is not None:
         return 1.0 if success else 0.0
     return None
@@ -217,7 +263,7 @@ def load_run_metrics(
     else:
         success = None
 
-    score = _extract_score(data, success)
+    score = _extract_score(data, success, root=root)
     env_steps = next(
         (
             v
@@ -241,6 +287,8 @@ def load_run_metrics(
         prompt_chars = len(prompt_path.read_text(encoding="utf-8"))
     elif _int(data.get("prompt_chars")) is not None:
         prompt_chars = _int(data.get("prompt_chars"))
+    elif isinstance(data.get("prompt"), Mapping):
+        prompt_chars = _int(data["prompt"].get("chars"))
     elif isinstance(data.get("prompt"), str):
         prompt_chars = len(data["prompt"])
 

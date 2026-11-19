@@ -1309,3 +1309,150 @@ def test_align_feature_premature_stall_sets_rim_contact_and_backoff(tmp_path):
     assert ok["status"] == "completed" and ok["reached"] is True
     assert ok["rim_contact_suspected"] is False
     assert ok["suggested_backoff_dxyz"] is None
+
+
+def test_nudge_separating_retreat_from_tight_inter_arm_start_and_open_gripper(tmp_path):
+    # Start arms slightly within min_clearance_m = 0.010 m (~4 mm fingertip clearance).
+    def _solve(arm, xyz, pitch, yaw, roll):
+        pose = np.eye(4)
+        pose[:3, :3] = kin.orientation(pitch, yaw, roll)
+        pose[:3, 3] = xyz
+        sol = kin.best_solution(arm, pose, [0.0] * 6, pos_tol=1e-3, rot_tol_deg=0.5)
+        assert sol.ok and not sol.collides
+        return list(sol.q)
+
+    env = FlexibleGripEnvironment(initial_opening=0.2, close_stop=0.1)
+    env.joints["left"] = _solve("left", (-0.015, -0.20, 0.95), 0.0, -90.0, 0.0)
+    env.joints["right"] = _solve("right", (0.015, -0.20, 0.95), 0.0, 90.0, 0.0)
+    assert kin.inter_arm_violations(
+        env.joints["left"], env.joints["right"], left_opening=0.2, right_opening=0.2
+    ) == ["finger_collision"]
+    assert kin.inter_arm_min_distance(
+        env.joints["left"], env.joints["right"], left_opening=0.2, right_opening=0.2
+    ) < 0.010
+
+    host = NativeToolkit(env, None, tmp_path / "tight_single")
+    robo = RobodojoOfficialColourRobot(NativeBackend(host))
+
+    # 1. Inward / worsening nudge is rejected in 0 steps.
+    inward = robo.nudge((-0.01, 0.0, 0.0), arm="right")
+    assert inward.status == "rejected" and inward.stop_reason == "ik_path_rejected"
+    assert inward.ik_error and "finger_collision" in inward.ik_error
+    assert not env.actions
+
+    # 2. Separating -axis (+x for right arm) retreat is accepted and executes.
+    retreat_x = robo.nudge((0.025, 0.0, 0.0), arm="right")
+    assert retreat_x.reached is True and retreat_x.steps_used > 0
+    assert kin.inter_arm_violations(
+        env.joints["left"], env.joints["right"], left_opening=0.2, right_opening=0.2
+    ) == []
+
+    # 3. Separating +z retreat from the same tight start is also accepted and executes.
+    env_z = FlexibleGripEnvironment(initial_opening=0.2, close_stop=0.1)
+    env_z.joints["left"] = _solve("left", (-0.015, -0.20, 0.95), 0.0, -90.0, 0.0)
+    env_z.joints["right"] = _solve("right", (0.015, -0.20, 0.95), 0.0, 90.0, 0.0)
+    host_z = NativeToolkit(env_z, None, tmp_path / "tight_z")
+    robo_z = RobodojoOfficialColourRobot(NativeBackend(host_z))
+    retreat_z = robo_z.nudge((0.0, 0.0, 0.04), arm="right")
+    assert retreat_z.reached is True and retreat_z.steps_used > 0
+    assert kin.inter_arm_violations(
+        env_z.joints["left"], env_z.joints["right"], left_opening=0.2, right_opening=0.2
+    ) == []
+
+    # 4. Bimanual nudge from tight start: converging rejected in 0 steps, separating accepted.
+    env_both = FlexibleGripEnvironment(initial_opening=0.2, close_stop=0.1)
+    env_both.joints["left"] = _solve("left", (-0.015, -0.20, 0.95), 0.0, -90.0, 0.0)
+    env_both.joints["right"] = _solve("right", (0.015, -0.20, 0.95), 0.0, 90.0, 0.0)
+    host_both = NativeToolkit(env_both, None, tmp_path / "tight_both")
+    robo_both = RobodojoOfficialColourRobot(NativeBackend(host_both))
+
+    both_inward = robo_both.nudge(
+        arm="both", left={"dxyz": [0.005, 0.0, 0.0]}, right={"dxyz": [-0.005, 0.0, 0.0]}
+    )
+    assert both_inward.status == "rejected" and both_inward.stop_reason == "ik_path_rejected"
+    assert not env_both.actions
+
+    both_retreat = robo_both.nudge(
+        arm="both", left={"dxyz": [-0.015, 0.0, 0.0]}, right={"dxyz": [0.015, 0.0, 0.0]}
+    )
+    assert both_retreat.reached is True and both_retreat.steps_used > 0
+
+    # 5. Commanding gripper=OPEN (-1) during an approaching move checks effective_opening=1.0:
+    #    In orthogonal handoff, approaching to x=0.010 is clear at opening=0.38, but collides at 1.0.
+    env_open = FlexibleGripEnvironment(initial_opening=0.38, close_stop=0.1)
+    env_open.grips["left"] = 0.1
+    env_open.grips["right"] = 0.38
+    env_open.joints["left"] = _solve("left", (-0.03, -0.25, 0.90), 90.0, 90.0, 0.0)
+    env_open.joints["right"] = _solve("right", (0.05, -0.25, 0.90), 0.0, 90.0, 90.0)
+    host_open = NativeToolkit(env_open, None, tmp_path / "open_move")
+    robo_open = RobodojoOfficialColourRobot(NativeBackend(host_open))
+
+    # Approaching with gripper=OPEN must reject in 0 steps (wide fingers hit donor crossbar).
+    approach_open = robo_open.nudge((-0.04, 0.0, 0.0), arm="right", gripper=robo_open.OPEN)
+    assert approach_open.status == "rejected" and approach_open.stop_reason == "ik_path_rejected"
+    assert not env_open.actions
+
+    # Same approach with gripper=KEEP (0.38 opening) succeeds!
+    approach_keep = robo_open.nudge((-0.04, 0.0, 0.0), arm="right", gripper=robo_open.KEEP)
+    assert approach_keep.reached is True and approach_keep.steps_used > 0
+
+    # Retreating back away (+x) with gripper=OPEN from the tight handoff pose succeeds!
+    retreat_open = robo_open.nudge((0.04, 0.0, 0.0), arm="right", gripper=robo_open.OPEN)
+    assert retreat_open.reached is True and retreat_open.steps_used > 0
+
+
+def test_robodojo_align_feature_exposes_rim_contact_and_backoff(tmp_path):
+    env, robo, _ = station(tmp_path / "robo_rim", StallEnvironment(floor=0.845))
+    start = tcp(env)
+    feature = start + np.array([0.005, 0.0, -0.02])
+    target = feature + np.array([-0.005, 0.0, -0.02])
+    res = robo.align_feature(
+        feature.tolist(),
+        target.tolist(),
+        arm="right",
+        stroke_m=0.035,
+        max_steps=25,
+    )
+    assert isinstance(res, FeatureAlignment)
+    assert res.status == "stopped" and res.stalled is True
+    assert res.rim_contact_suspected is True
+    assert res.suggested_backoff_dxyz == (0.0, 0.0, 0.004)
+
+    # Clean stroke leaves rim_contact_suspected=False and suggested_backoff_dxyz=None
+    env_ok, robo_ok, _ = station(tmp_path / "robo_ok")
+    start_ok = tcp(env_ok)
+    res_ok = robo_ok.align_feature(
+        start_ok.tolist(),
+        (start_ok + np.array([0.0, 0.0, -0.015])).tolist(),
+        arm="right",
+        stroke_m=0.015,
+        max_steps=25,
+    )
+    assert res_ok.status == "completed" and res_ok.reached is True
+    assert res_ok.rim_contact_suspected is False
+    assert res_ok.suggested_backoff_dxyz is None
+
+
+def test_visual_servo_registered_stateful_and_dispatches_on_native_toolkit(tmp_path):
+    assert "visual_servo" in STATEFUL
+    assert "visual_servo" in STATEFUL_TOOLS
+
+    env, robo, host = station(tmp_path / "servo_stateful")
+    policy = vd.ScriptedPolicy([answer(-1.0), answer(0.0, done=True)])
+    rvd.set_policy(host._primitives, policy)
+    steps_recorded_before = len(host.state.records)
+    start = tcp(env)
+
+    res = robo.visual_servo("hang the mug handle onto the hook")
+    assert isinstance(res, VisualAlign)
+    assert res.status == "completed" and res.done is True and res.reached is True
+    assert res.steps_used > 0
+    assert np.allclose(tcp(env) - start, [0.0, 0.0, -0.01], atol=0.003)
+
+    record = robo._ledger.records[-1]
+    assert record.tool == "visual_servo"
+    assert record.stateful is True
+    assert record.receipt["status"] == "completed"
+    assert len(host.state.records) == steps_recorded_before + 1
+    assert host.state.records[-1]["observation"]["action_id"] == record.receipt["action_id"]
+

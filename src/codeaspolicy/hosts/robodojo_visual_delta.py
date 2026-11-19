@@ -250,6 +250,75 @@ def _check_inter_arm_pair(
     return None
 
 
+def _check_inter_arm_trajectory(
+    start_left: Sequence[float] | None,
+    start_right: Sequence[float] | None,
+    pairs: Sequence[tuple[Sequence[float] | None, Sequence[float] | None]],
+    *,
+    left_opening: float = 0.5,
+    right_opening: float = 0.5,
+) -> str | None:
+    """Inter-arm clearance check over a planned trajectory, allowing separating retreats.
+
+    Matches :meth:`robodojo_intent.IntentController._check_inter_arm_plan`: when the
+    starting pose is clear, any waypoint violation rejects the trajectory. When the
+    starting pose already violates ``min_clearance_m``, the trajectory is allowed iff
+    no waypoint worsens clearance (``dist >= start_dist - 0.001``) and the final
+    waypoint either clears all violations or strictly increases clearance
+    (``final_dist > start_dist + 0.002``).
+    """
+
+    inter_fn = getattr(kin, "inter_arm_violations", None)
+    if not callable(inter_fn) or not pairs:
+        return None
+    lo, ro = float(left_opening), float(right_opening)
+    start_violations: list[str] = []
+    if start_left is not None and start_right is not None:
+        start_violations = list(
+            inter_fn(start_left, start_right, left_opening=lo, right_opening=ro)
+        )
+    min_dist_fn = getattr(
+        kin, "inter_arm_min_distance", getattr(kin, "_inter_arm_min_distance", None)
+    )
+    start_dist: float | None = None
+    if (
+        start_violations
+        and callable(min_dist_fn)
+        and start_left is not None
+        and start_right is not None
+    ):
+        start_dist = float(
+            min_dist_fn(start_left, start_right, left_opening=lo, right_opening=ro)
+        )
+        final_left, final_right = pairs[-1]
+        if final_left is not None and final_right is not None:
+            final_violations = list(
+                inter_fn(final_left, final_right, left_opening=lo, right_opening=ro)
+            )
+            if final_violations:
+                final_dist = float(
+                    min_dist_fn(final_left, final_right, left_opening=lo, right_opening=ro)
+                )
+                if final_dist <= start_dist + 0.002:
+                    labels = ", ".join(str(v) for v in final_violations)
+                    return f"the line causes an inter-arm collision ({labels})"
+
+    for lq, rq in pairs:
+        if lq is None or rq is None:
+            continue
+        bad = list(inter_fn(lq, rq, left_opening=lo, right_opening=ro))
+        if not bad:
+            continue
+        if start_dist is None:
+            labels = ", ".join(str(v) for v in bad)
+            return f"the line causes an inter-arm collision ({labels})"
+        dist = float(min_dist_fn(lq, rq, left_opening=lo, right_opening=ro))
+        if dist < start_dist - 0.001:
+            labels = ", ".join(str(v) for v in bad)
+            return f"the line causes an inter-arm collision ({labels})"
+    return None
+
+
 def _plan_arm(
     arm: str,
     q: Sequence[float],
@@ -292,12 +361,15 @@ def _plan_arm(
         bad = kin.clearance_violations(arm, way, allow_table_touch=allow_table_contact)
         if bad:
             return target, [], f"the line takes the arm into the table ({', '.join(bad)})"
-        if other_q is not None:
-            lq, rq = (way, other_q) if arm == "left" else (other_q, way)
-            lo, ro = (opening, other_opening) if arm == "left" else (other_opening, opening)
-            inter_why = _check_inter_arm_pair(lq, rq, left_opening=lo, right_opening=ro)
-            if inter_why is not None:
-                return target, [], inter_why
+    if other_q is not None and steps:
+        start_left, start_right = (q, other_q) if arm == "left" else (other_q, q)
+        lo, ro = (opening, other_opening) if arm == "left" else (other_opening, opening)
+        pairs = [(way, other_q) if arm == "left" else (other_q, way) for way in steps]
+        inter_why = _check_inter_arm_trajectory(
+            start_left, start_right, pairs, left_opening=lo, right_opening=ro
+        )
+        if inter_why is not None:
+            return target, [], inter_why
     return target, steps, None
 
 
@@ -503,6 +575,10 @@ def nudge(
     step_deg = LINE_STEP_DEG * effective_step_m / LINE_STEP_M
     q_all = {a: _safe_joints(state, a) for a in ARMS}
     open_all = {a: _safe_opening(state, a) for a in ARMS}
+    effective_open = {
+        a: max(open_all[a], 1.0) if (a in specs and specs[a]["gripper"] < 0) else open_all[a]
+        for a in ARMS
+    }
     plans = {
         a: _plan_arm(
             a,
@@ -513,8 +589,8 @@ def nudge(
             step_deg,
             allow_table_contact=allow_table_contact,
             other_q=None if arm == "both" else q_all[_other_arm(a)],
-            opening=open_all[a],
-            other_opening=open_all[_other_arm(a)],
+            opening=effective_open[a],
+            other_opening=effective_open[_other_arm(a)],
         )
         for a in specs
     }
@@ -528,15 +604,23 @@ def nudge(
     if arm == "both" and planned > 0:
         left_ways = ways.get("left") or []
         right_ways = ways.get("right") or []
-        for idx in range(planned):
-            lq = left_ways[min(idx, len(left_ways) - 1)] if left_ways else q_all["left"]
-            rq = right_ways[min(idx, len(right_ways) - 1)] if right_ways else q_all["right"]
-            inter_why = _check_inter_arm_pair(
-                lq, rq, left_opening=open_all["left"], right_opening=open_all["right"]
+        pairs = [
+            (
+                left_ways[min(idx, len(left_ways) - 1)] if left_ways else q_all["left"],
+                right_ways[min(idx, len(right_ways) - 1)] if right_ways else q_all["right"],
             )
-            if inter_why is not None:
-                result.update(stop_reason="ik_path_rejected", ik_error=f"both: {inter_why}")
-                return finish(state, targets)
+            for idx in range(planned)
+        ]
+        inter_why = _check_inter_arm_trajectory(
+            q_all["left"],
+            q_all["right"],
+            pairs,
+            left_opening=effective_open["left"],
+            right_opening=effective_open["right"],
+        )
+        if inter_why is not None:
+            result.update(stop_reason="ik_path_rejected", ik_error=f"both: {inter_why}")
+            return finish(state, targets)
     grips = {a: motion._command(specs[a]["gripper"]) for a in specs}
     result["planned_steps"] = planned
     status, remaining = _budget(primitives)

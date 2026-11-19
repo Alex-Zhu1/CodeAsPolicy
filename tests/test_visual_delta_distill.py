@@ -463,7 +463,7 @@ def test_history_turns_are_text_only(tmp_path):
 
 def test_fallback_prompts_match_online_module():
     online = pytest.importorskip("codeaspolicy.visual_delta")
-    assert vd._SYSTEM_PROMPT == online.SYSTEM_PROMPT
+    assert vd.SYSTEM_PROMPT == vd._SYSTEM_PROMPT == online.SYSTEM_PROMPT
     assert vd._ENV_PROMPT_TEMPLATE == online.ENV_PROMPT_TEMPLATE
     kwargs = dict(goal="insert", arm="right", frame="tcp", state={"arm": {"x": 1.0}},
                   feedback={"status": "stopped", "reason": "contact_or_stall"}, round_index=2,
@@ -959,3 +959,217 @@ def test_cli_oversize_option(tmp_path, capsys):
     steps = [s for s in steps if s]
     assert any("part" in s for s in steps)
     assert all(s["linear_m"] <= 0.01 + 1e-6 for s in steps)
+
+
+# ---------------------------------------------------------------------------
+# contact phases & reverse-perturbation synthetic data generator
+# ---------------------------------------------------------------------------
+
+
+def test_contact_phases_include_unified_delta_primitives():
+    assert {"delta_grasp", "align_feature", "visual_servo"} <= vd.CONTACT_PHASES
+    frames = [
+        frame(0, (0.10, 0.0, 0.90), phase="move_to"),
+        frame(1, (0.10, 0.0, 0.89), phase="delta_grasp"),
+        frame(2, (0.105, 0.0, 0.89), phase="align_feature"),
+        frame(3, (0.105, 0.0, 0.88), phase="visual_servo"),
+    ]
+    segs = vd.segments(frames, vd.ExtractOptions(last_mile=True), "right")
+    assert segs == [(0, 3)]
+
+
+def test_perturb_config_validation():
+    with pytest.raises(ValueError, match="frame"):
+        vd.PerturbConfig(frame="base")
+    with pytest.raises(ValueError, match="format"):
+        vd.PerturbConfig(format="parquet")
+    with pytest.raises(ValueError, match="axial"):
+        vd.PerturbConfig(axial_min_m=0.05, axial_max_m=0.01)
+    with pytest.raises(ValueError, match="positive"):
+        vd.PerturbConfig(max_linear_m=0.0)
+
+
+@pytest.mark.parametrize("frame_name", ["world", "tcp"])
+@pytest.mark.parametrize("fmt", ["sft", "rl"])
+def test_synthesize_perturbation_episode_phases_and_protocol_validity(frame_name, fmt):
+    online = pytest.importorskip("codeaspolicy.visual_delta")
+    goal_spec = {
+        "id": "plug_usb",
+        "goal": "plug the charger connector into the socket",
+        "arm": "right",
+        "xyz": [0.22, -0.14, 0.82],
+        "pitch": 35.0,
+        "yaw": 15.0,
+        "roll": -10.0,
+        "axis": [0.0, 1.0, 0.0],
+        "gripper": "hold",
+    }
+    cfg = vd.PerturbConfig(frame=frame_name, format=fmt)
+    records = vd.synthesize_perturbation_episode(goal_spec, config=cfg, seed=42)
+    assert len(records) >= 3  # align + stroke + done
+    assert records == vd.synthesize_perturbation_episode(goal_spec, config=cfg, seed=42)
+    diff_seed = vd.synthesize_perturbation_episode(goal_spec, config=cfg, seed=43)
+    assert diff_seed[0]["source"]["perturbation"] != records[0]["source"]["perturbation"]
+
+    pert = records[0]["source"]["perturbation"]
+    assert 0.015 <= pert["axial_m"] <= 0.040
+    assert 0.003 <= pert["transverse_m"] <= 0.018
+    assert 0.0 <= pert["angular_deg"] <= 10.5
+
+    # Every assistant reply parses strictly under visual_delta.parse_visual_delta_response!
+    for idx, rec in enumerate(records):
+        assert rec["protocol"] == vd.PROTOCOL
+        assert rec["frame"] == frame_name and rec["arm"] == "right" and rec["success"] is True
+        assert rec["turn"] == idx and rec["turns"] == len(records)
+        if fmt == "sft":
+            assert rec["messages"][0]["content"] == online.SYSTEM_PROMPT
+            reply = rec["messages"][-1]["content"]
+        else:
+            assert rec["prompt"][0]["content"] == online.SYSTEM_PROMPT
+            reply = rec["reference"]
+        parsed = online.parse_visual_delta_response(reply, arm="right", strict=True)
+        if rec["step"] is not None:
+            assert rec["step"]["oversize"] is False
+            assert rec["step"]["linear_m"] <= cfg.max_linear_m + 1e-6
+            assert rec["step"]["angular_deg"] <= cfg.max_angular_deg + 1e-6
+            assert parsed["done"] is False
+        else:
+            assert parsed["done"] is True
+            assert online.is_zero_action(parsed["action"])
+
+    # Last motion step ends on seated contact stall, reported in final done turn feedback.
+    steps = [r["step"] for r in records if r["step"] is not None]
+    assert steps[-1]["status"] == "stopped" and steps[-1]["stop_reason"] == "contact_or_stall"
+    done_user = records[-1]["messages"][-2]["content"] if fmt == "sft" else records[-1]["prompt"][-1]["content"]
+    fb = prompt_json(done_user, "Last execution: ")
+    assert fb["status"] == "stopped" and fb["stalled"] is True and fb["reason"] == "contact_or_stall"
+    # Final state matches the seated goal TCP pose!
+    final_state = prompt_json(done_user, "State: ")
+    assert final_state["arm"]["x"] == pytest.approx(22.0, abs=0.15)
+    assert final_state["arm"]["y"] == pytest.approx(-14.0, abs=0.15)
+    assert final_state["arm"]["z"] == pytest.approx(82.0, abs=0.15)
+
+
+def test_synthesize_near_vertical_folding_and_gripper_switch():
+    online = pytest.importorskip("codeaspolicy.visual_delta")
+    goal_spec = {
+        "id": "pick_flat_part",
+        "goal": "grasp the flat washer on the tabletop",
+        "arm": "left",
+        "xyz": [-0.20, -0.10, 0.78],
+        "pitch": 89.0,
+        "yaw": 40.0,
+        "roll": 50.0,  # near vertical: canonical_angles folds into yaw=-10, roll=0
+        "axis": [0.0, 0.0, -1.0],
+        "gripper": "close",
+    }
+    records = vd.synthesize_perturbation_episode(goal_spec, seed=7)
+    steps = [r["step"] for r in records if r["step"] is not None]
+    # Phase 3 gripper close switch precedes the done turn.
+    assert steps[-1]["action"]["gripper"]["width"] == vd.PEAR_CLOSE
+    assert steps[-1]["phase"] == "close_gripper"
+    assert records[-1]["step"] is None
+    # Near-vertical roll is folded to 0.0 in every state and every action delta!
+    for rec in records:
+        state_block = prompt_json(user_text(rec), "State: ")
+        assert state_block["arm"]["roll"] == 0.0
+        reply = rec["messages"][-1]["content"]
+        parsed = online.parse_visual_delta_response(reply, arm="left", strict=True)
+        assert parsed["action"]["arm"]["roll"] == 0.0
+    # Final state reflects closed opening (0.25 -> 3.0 cm), initial reflects open (0.9 -> 10.0 cm).
+    init_state = prompt_json(user_text(records[0]), "State: ")
+    final_state = prompt_json(user_text(records[-1]), "State: ")
+    assert init_state["gripper"]["width"] > final_state["gripper"]["width"]
+
+
+def test_synthesize_render_callback_and_cli(tmp_path, capsys):
+    online = pytest.importorskip("codeaspolicy.visual_delta")
+    render_calls = []
+
+    def render_cb(arm_poses):
+        render_calls.append(dict(arm_poses))
+        idx = len(render_calls)
+        return {
+            "cam_head": vd.encode_png(tiny_image(8, 6, seed=idx)),
+            "cam_right_wrist": tiny_image(8, 6, seed=idx + 10),
+        }
+
+    goal = {
+        "id": "insert_key_0",
+        "goal": "insert the key into the keyhole",
+        "arm": "right",
+        "xyz": [0.24, -0.16, 0.81],
+        "pitch": 90.0,
+        "yaw": 0.0,
+        "roll": 0.0,
+        "axis": [0.0, 0.0, -1.0],
+        "gripper": {"initial": "closed", "final": "open", "initial_opening": 0.25, "final_opening": 0.9},
+        "n_rollouts": 2,
+    }
+    out_cb = tmp_path / "cb.jsonl"
+    recs = vd.synthesize_from_goals(
+        [goal],
+        out_cb,
+        config=vd.PerturbConfig(crop=True),
+        render=render_cb,
+        seed=100,
+    )
+    assert len({r["run"] for r in recs}) == 2
+    assert len(render_calls) >= 6
+    assert all(len(r["images"]) == 3 for r in recs)  # head, right_wrist, right_wrist_crop
+    assert all(Path(p).is_file() for r in recs for p in r["images"])
+    assert any(p.endswith("_cam_right_wrist_crop.png") for p in recs[0]["images"])
+    assert vd.stats(recs)["gripper_switches"]["open"] == 2
+
+    # CLI synthesize subcommand (both SFT world and RL tcp)
+    goals_file = tmp_path / "goals.json"
+    goals_file.write_text(json.dumps({"goals": [goal]}), encoding="utf-8")
+    synth_sft = tmp_path / "synth_sft.jsonl"
+    assert (
+        vd.main(
+            [
+                "synthesize",
+                "-i",
+                str(goals_file),
+                "-o",
+                str(synth_sft),
+                "--format",
+                "sft",
+                "--frame",
+                "world",
+            ]
+        )
+        == 0
+    )
+    summary = json.loads(capsys.readouterr().out)
+    assert summary["goals"] == 1 and summary["episodes"] == 2 and summary["records"] > 0
+    loaded = vd.read_jsonl(synth_sft)
+    assert len(loaded) == summary["records"]
+    for row in loaded:
+        online.parse_visual_delta_response(row["messages"][-1]["content"], arm="right", strict=True)
+
+    synth_rl = tmp_path / "synth_rl.jsonl"
+    assert (
+        vd.main(
+            [
+                "synthesize",
+                "-i",
+                str(goals_file),
+                "-o",
+                str(synth_rl),
+                "--format",
+                "rl",
+                "--frame",
+                "tcp",
+                "--n-rollouts",
+                "1",
+            ]
+        )
+        == 0
+    )
+    capsys.readouterr()
+    rl_rows = vd.read_jsonl(synth_rl)
+    assert len({r["run"] for r in rl_rows}) == 1
+    assert all(r["frame"] == "tcp" and "prompt" in r and "solution" in r for r in rl_rows)
+    for row in rl_rows:
+        online.parse_visual_delta_response(row["reference"], arm="right", strict=True)

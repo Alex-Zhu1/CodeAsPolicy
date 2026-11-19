@@ -29,7 +29,7 @@ with views and proprioception from the live observation and ``nudge`` as executo
 from __future__ import annotations
 
 import math
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from functools import partial
 from typing import Any
 
@@ -203,6 +203,53 @@ def _is_thin_held(primitives: Any, state: dict[str, Any], arm: str) -> bool:
     return bool(closed and 0.0 < opening <= THIN_HELD_OPENING)
 
 
+def _other_arm(arm: str) -> str:
+    return "left" if arm == "right" else "right"
+
+
+def _safe_joints(state: Mapping[str, Any] | None, arm: str) -> list[float] | None:
+    if not isinstance(state, Mapping):
+        return None
+    try:
+        q = motion._joints(state, arm)
+        return q if len(q) >= 6 else None
+    except Exception:  # noqa: BLE001 - optional other-arm state
+        return None
+
+
+def _safe_opening(state: Mapping[str, Any] | None, arm: str, default: float = 0.5) -> float:
+    if not isinstance(state, Mapping):
+        return default
+    try:
+        return float(motion._opening(state, arm))
+    except Exception:  # noqa: BLE001 - optional opening reading
+        return default
+
+
+def _check_inter_arm_pair(
+    left_q: Sequence[float] | None,
+    right_q: Sequence[float] | None,
+    *,
+    left_opening: float = 0.5,
+    right_opening: float = 0.5,
+) -> str | None:
+    """Loose-coupled inter-arm collision check via ``kin.inter_arm_violations`` when available."""
+
+    inter_fn = getattr(kin, "inter_arm_violations", None)
+    if not callable(inter_fn) or left_q is None or right_q is None:
+        return None
+    bad = inter_fn(
+        left_q,
+        right_q,
+        left_opening=float(left_opening),
+        right_opening=float(right_opening),
+    )
+    if bad:
+        labels = ", ".join(str(v) for v in bad)
+        return f"the line causes an inter-arm collision ({labels})"
+    return None
+
+
 def _plan_arm(
     arm: str,
     q: Sequence[float],
@@ -212,6 +259,9 @@ def _plan_arm(
     step_deg: float,
     *,
     allow_table_contact: bool = False,
+    other_q: Sequence[float] | None = None,
+    opening: float = 0.5,
+    other_opening: float = 0.5,
 ) -> tuple[np.ndarray, list, str | None]:
     """(target pose, one joint target per native action, why it cannot be done)."""
 
@@ -242,6 +292,12 @@ def _plan_arm(
         bad = kin.clearance_violations(arm, way, allow_table_touch=allow_table_contact)
         if bad:
             return target, [], f"the line takes the arm into the table ({', '.join(bad)})"
+        if other_q is not None:
+            lq, rq = (way, other_q) if arm == "left" else (other_q, way)
+            lo, ro = (opening, other_opening) if arm == "left" else (other_opening, opening)
+            inter_why = _check_inter_arm_pair(lq, rq, left_opening=lo, right_opening=ro)
+            if inter_why is not None:
+                return target, [], inter_why
     return target, steps, None
 
 
@@ -445,6 +501,8 @@ def nudge(
     thin_held = any(_is_thin_held(primitives, state, a) and _moves(specs[a]) for a in specs)
     effective_step_m = min(step_m, FINE_STEP_M) if (allow_table_contact or thin_held) else step_m
     step_deg = LINE_STEP_DEG * effective_step_m / LINE_STEP_M
+    q_all = {a: _safe_joints(state, a) for a in ARMS}
+    open_all = {a: _safe_opening(state, a) for a in ARMS}
     plans = {
         a: _plan_arm(
             a,
@@ -454,6 +512,9 @@ def nudge(
             effective_step_m,
             step_deg,
             allow_table_contact=allow_table_contact,
+            other_q=None if arm == "both" else q_all[_other_arm(a)],
+            opening=open_all[a],
+            other_opening=open_all[_other_arm(a)],
         )
         for a in specs
     }
@@ -464,6 +525,18 @@ def nudge(
         return finish(state, targets)
     ways = {a: plan[1] for a, plan in plans.items()}
     planned = max(len(w) for w in ways.values())
+    if arm == "both" and planned > 0:
+        left_ways = ways.get("left") or []
+        right_ways = ways.get("right") or []
+        for idx in range(planned):
+            lq = left_ways[min(idx, len(left_ways) - 1)] if left_ways else q_all["left"]
+            rq = right_ways[min(idx, len(right_ways) - 1)] if right_ways else q_all["right"]
+            inter_why = _check_inter_arm_pair(
+                lq, rq, left_opening=open_all["left"], right_opening=open_all["right"]
+            )
+            if inter_why is not None:
+                result.update(stop_reason="ik_path_rejected", ik_error=f"both: {inter_why}")
+                return finish(state, targets)
     grips = {a: motion._command(specs[a]["gripper"]) for a in specs}
     result["planned_steps"] = planned
     status, remaining = _budget(primitives)
@@ -667,6 +740,22 @@ def arm_poses(state: dict[str, Any], arms: Sequence[str]) -> dict[str, dict[str,
     return out
 
 
+has_configured_policy = vd.has_configured_policy
+
+
+def policy_status(
+    primitives: Any = None,
+    *,
+    env: Mapping[str, str] | None = None,
+) -> dict[str, Any]:
+    """Metadata describing whether a visual-delta VLM policy is configured."""
+
+    return {
+        "protocol": vd.PROTOCOL,
+        "visual_delta_policy_configured": has_configured_policy(primitives, env=env),
+    }
+
+
 def resolve_policy(primitives: Any, policy: Any = None, model: str | None = None,
                    base_url: str | None = None) -> Any:
     """An explicit policy, else the host's configured one, else the OpenAI client."""
@@ -746,9 +835,17 @@ def visual_align_and_insert(
     _, remaining = _budget(primitives)
     allowance = min(max_steps, remaining - reserve_steps)
     state = motion._obs(primitives)["state"]
-    base: dict[str, Any] = {"protocol": vd.PROTOCOL, "goal": goal, "arm": arm, "frame": frame,
-                            "max_rounds": max_rounds, "reserve_steps": reserve_steps,
-                            "step_allowance": max(0, allowance), "cameras": list(views)}
+    base: dict[str, Any] = {
+        "protocol": vd.PROTOCOL,
+        "goal": goal,
+        "arm": arm,
+        "frame": frame,
+        "max_rounds": max_rounds,
+        "reserve_steps": reserve_steps,
+        "step_allowance": max(0, allowance),
+        "cameras": list(views),
+        "visual_delta_policy_configured": has_configured_policy(primitives),
+    }
     if allowance <= 0:
         base.update(status="rejected", reached=False, done=False, steps_used=0,
                     rounds_used=0, rounds=[], recoverable=True,
@@ -799,6 +896,9 @@ def visual_align_and_insert(
     base["recoverable"] = base["steps_used"] == 0
     base["remaining_episode_steps"] = _budget(primitives)[1]
     return base
+
+
+visual_servo = visual_align_and_insert
 
 
 # ---------------------------------------------------------------------------
@@ -937,6 +1037,8 @@ def align_feature(
         "requested_stroke_m": round(requested_stroke_m, 5)
         if requested_stroke_m is not None else None,
         "achieved_stroke_m": None,
+        "rim_contact_suspected": False,
+        "suggested_backoff_dxyz": None,
         "align_steps_used": 0,
         "stroke_steps_used": 0,
         "steps_used": 0,
@@ -978,6 +1080,10 @@ def align_feature(
         else LINE_STEP_M
     )
     plan_step_deg = LINE_STEP_DEG * plan_step_m / LINE_STEP_M
+    other_arm = _other_arm(arm)
+    other_q0 = _safe_joints(state0, other_arm)
+    opening_arm0 = _safe_opening(state0, arm)
+    opening_other0 = _safe_opening(state0, other_arm)
 
     if skip_align:
         align_ways: list[list[float]] = []
@@ -987,6 +1093,9 @@ def align_feature(
         _, align_ways, align_why = _plan_arm(
             arm, q0, align_spec, "world", plan_step_m, plan_step_deg,
             allow_table_contact=allow_table_contact,
+            other_q=other_q0,
+            opening=opening_arm0,
+            other_opening=opening_other0,
         )
         if align_why is not None:
             result.update(
@@ -1002,6 +1111,9 @@ def align_feature(
         _, stroke_ways, stroke_why = _plan_arm(
             arm, q_after_align_plan, stroke_spec, "world", plan_step_m, plan_step_deg,
             allow_table_contact=allow_table_contact,
+            other_q=other_q0,
+            opening=opening_arm0,
+            other_opening=opening_other0,
         )
         if stroke_why is not None:
             result.update(
@@ -1180,10 +1292,22 @@ def align_feature(
     if stroke_reached:
         result.update(status="completed", reached=True, stop_reason=None)
     elif stroke_stalled:
+        rim_suspected = bool(
+            requested_stroke_m is not None
+            and requested_stroke_m > 0.0
+            and achieved_stroke < 0.7 * requested_stroke_m
+        )
+        suggested_backoff = (
+            [round(float(-v), 5) for v in stroke_unit * 0.004]
+            if rim_suspected
+            else None
+        )
         result.update(
             status="stopped",
             reached=False,
             stop_reason="contact_or_stall",
+            rim_contact_suspected=rim_suspected,
+            suggested_backoff_dxyz=suggested_backoff,
             note=stroke_res.get("note") or "engagement stroke stopped on contact or stall",
         )
     else:
@@ -1431,6 +1555,12 @@ def delta_grasp(
         )
         return finish(state0)
 
+    other_arm = _other_arm(arm)
+    other_q0 = _safe_joints(state0, other_arm)
+    opening_other0 = _safe_opening(state0, other_arm)
+    move_opening = opening_f if opening_f is not None else opening_before
+    lift_opening = min(move_opening, 0.1)
+
     align_step_m = FINE_STEP_M if contact_table else LINE_STEP_M
     align_step_deg = LINE_STEP_DEG * align_step_m / LINE_STEP_M
     if skip_align:
@@ -1441,6 +1571,9 @@ def delta_grasp(
         _, align_ways, align_why = _plan_arm(
             arm, q0, align_spec, "world", align_step_m, align_step_deg,
             allow_table_contact=contact_table,
+            other_q=other_q0,
+            opening=move_opening,
+            other_opening=opening_other0,
         )
         if align_why is not None:
             result.update(
@@ -1461,6 +1594,9 @@ def delta_grasp(
         _, approach_ways, approach_why = _plan_arm(
             arm, q_after_align_plan, approach_spec, "world", approach_step_m, approach_step_deg,
             allow_table_contact=contact_table,
+            other_q=other_q0,
+            opening=move_opening,
+            other_opening=opening_other0,
         )
         if approach_why is not None:
             result.update(
@@ -1478,6 +1614,9 @@ def delta_grasp(
         _, lift_ways, lift_why = _plan_arm(
             arm, q_after_approach_plan, lift_spec, "world", lift_plan_step_m, lift_plan_step_deg,
             allow_table_contact=contact_table,
+            other_q=other_q0,
+            opening=lift_opening,
+            other_opening=opening_other0,
         )
         if lift_why is not None:
             result.update(
@@ -1854,6 +1993,27 @@ _DELTA_GRASP_SCHEMA = {
     },
     "required": ["target_xyz"],
 }
+_VISUAL_SERVO_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "goal": {"type": "string"},
+        "arm": {"type": "string", "enum": [*ARMS, "both"]},
+        "frame": {"type": "string", "enum": list(FRAMES)},
+        "max_rounds": {"type": "integer"},
+        "max_steps": {"type": "integer"},
+        "reserve_steps": {"type": "integer"},
+        "stop_on_stall": {"type": "boolean"},
+        "stop_on_contact_complete": {"type": "boolean"},
+        "crop_wrist": {"type": "boolean"},
+        "cameras": {"type": "array", "items": {"type": "string"}},
+        "model": {"type": "string"},
+        "base_url": {"type": "string"},
+        "max_linear_m": {"type": "number"},
+        "max_angular_deg": {"type": "number"},
+        "stall_steps": {"type": "integer"},
+    },
+    "required": ["goal"],
+}
 SPECS: dict[str, dict[str, Any]] = {
     "nudge": {
         "name": "nudge",
@@ -1878,18 +2038,13 @@ SPECS: dict[str, dict[str, Any]] = {
         "name": "visual_align_and_insert",
         "description": "Bounded closed loop: camera views + state -> PEAR visual delta "
         "policy -> guarded nudge, with physical feedback each round.",
-        "input_schema": {"type": "object", "properties": {
-            "goal": {"type": "string"},
-            "arm": {"type": "string", "enum": [*ARMS, "both"]},
-            "frame": {"type": "string", "enum": list(FRAMES)},
-            "max_rounds": {"type": "integer"}, "max_steps": {"type": "integer"},
-            "reserve_steps": {"type": "integer"}, "stop_on_stall": {"type": "boolean"},
-            "stop_on_contact_complete": {"type": "boolean"},
-            "crop_wrist": {"type": "boolean"},
-            "cameras": {"type": "array", "items": {"type": "string"}},
-            "model": {"type": "string"}, "base_url": {"type": "string"},
-            "max_linear_m": {"type": "number"}, "max_angular_deg": {"type": "number"},
-            "stall_steps": {"type": "integer"}}, "required": ["goal"]},
+        "input_schema": _VISUAL_SERVO_SCHEMA,
+    },
+    "visual_servo": {
+        "name": "visual_servo",
+        "description": "General closed-loop last-mile visual servoing: camera views + state "
+        "-> PEAR visual delta policy -> guarded nudge, with physical feedback each round.",
+        "input_schema": _VISUAL_SERVO_SCHEMA,
     },
     "align_feature": {
         "name": "align_feature",
@@ -1923,6 +2078,7 @@ def handlers(primitives: Any, start: dict[str, list[float]]) -> dict[str, Any]:
     return {
         "nudge": partial(nudge, primitives, start),
         "visual_align_and_insert": partial(visual_align_and_insert, primitives, start),
+        "visual_servo": partial(visual_align_and_insert, primitives, start),
         "align_feature": partial(align_feature, primitives, start),
         "preview_align_feature": partial(preview_align_feature, primitives, start),
         "delta_grasp": partial(delta_grasp, primitives, start),
@@ -1946,11 +2102,14 @@ __all__ = [
     "crop_center",
     "delta_grasp",
     "handlers",
+    "has_configured_policy",
     "nudge",
+    "policy_status",
     "preview_align_feature",
     "preview_delta_grasp",
     "resolve_policy",
     "set_policy",
     "target_pose",
     "visual_align_and_insert",
+    "visual_servo",
 ]

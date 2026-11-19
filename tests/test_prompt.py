@@ -72,6 +72,8 @@ def test_generated_motion_policy_declares_intents_without_controller_tuning(robo
     assert "object_bottom_z" in text and "L_below + 0.03" in text
     assert "fixed jaw-rail crossbar" in text and "±4.5–5.0 cm" in text
     assert "tangent-line contact" in text and "z = z_support + h" in text
+    assert "orthogonal 90° in-air flat-face head handoff" in text.lower()
+    assert "z_support + 0.018" not in text
     for forbidden in ("insert_key", "keyhole", "make_kong", "mahjong"):
         assert forbidden not in text
     assert "robo.move_to(\n" in api_reference(get_adapter(robot).robot_cls, intent_only=False)
@@ -277,6 +279,8 @@ def test_no_sam_prompt_exposes_geometry_without_sam3_and_keeps_intent_invariants
     assert "object_bottom_z" in prompt_text and "L_below + 0.03" in prompt_text
     assert "fixed jaw-rail crossbar" in prompt_text and "±4.5–5.0 cm" in prompt_text
     assert "tangent-line contact" in prompt_text and "z = z_support + h" in prompt_text
+    assert "orthogonal 90° in-air flat-face head handoff" in prompt_text.lower()
+    assert "z_support + 0.018" not in prompt_text
     for forbidden in ("insert_key", "keyhole", "make_kong", "mahjong"):
         assert forbidden not in prompt_text
     assert "crop_grid" in prompt_text and "observe_object" in prompt_text and "observe_hold" in prompt_text
@@ -287,8 +291,10 @@ def test_no_sam_prompt_exposes_geometry_without_sam3_and_keeps_intent_invariants
     [
         "robodojo-intent.md",
         "robodojo.md",
+        "robodojo-novla.md",
         "robodojo-nosam.md",
         "robodojo_xpl_rgb.md",
+        "robodojo_xpl_rgb-novla.md",
         "robodojo_xpl_rgb-nosam.md",
     ],
 )
@@ -300,6 +306,8 @@ def test_robodojo_knowledge_encodes_compact_transfer_and_bottom_clearance(filena
     assert "place-and-regrasp" in doc
     assert "±1.2 cm" in doc and "0.145 m" in doc
     assert ">= 5 cm" in doc
+    assert "orthogonal 90° in-air" in doc.lower()
+    assert "~22 cm" in doc and "~9.7 cm" in doc and ">= 7 cm" in doc
     assert "object_bottom_z" in doc and "L_below + 0.03" in doc
     assert "and **direct\n    in-air handoff**" not in doc
     for forbidden in ("insert_key", "keyhole", "make_kong", "mahjong"):
@@ -311,8 +319,10 @@ def test_robodojo_knowledge_encodes_compact_transfer_and_bottom_clearance(filena
     [
         "robodojo-intent.md",
         "robodojo.md",
+        "robodojo-novla.md",
         "robodojo-nosam.md",
         "robodojo_xpl_rgb.md",
+        "robodojo_xpl_rgb-novla.md",
         "robodojo_xpl_rgb-nosam.md",
     ],
 )
@@ -327,24 +337,69 @@ def test_robodojo_knowledge_encodes_crowded_contact_and_regrasp_polarity(filenam
     assert "±4.5–5.0 cm" in doc and "opening=0.0" in doc
     assert "align `close_dir` along the contact stroke" in doc
     assert "3–4.5 cm" in doc
-    # Minimum closed-jaw gap, gravity-hinge reorientation, and curved-rim polarity invariants
+    # Minimum closed-jaw gap, curved-rim failure mode, and orthogonal 90° flat-face head handoff invariants
     assert "GRIP_ZERO_M" in doc and "~2.3 mm" in doc
-    assert "z_support + 0.018" in doc
     assert "tangent-line contact" in doc
-    assert "<= 45°–60°" in doc and ">= 120°–180°" in doc
-    assert "roll_deg=180" in doc
+    assert "z_support + 0.018" not in doc
+    assert "lets gravity pivot" not in doc.lower()
+    assert "orthogonal 90° in-air flat-face head handoff" in doc.lower()
+    assert "stem/neck ~1.5–2.5 cm below the flat-faced proximal head" in doc
+    assert "horizontal radial approach heading" in doc and "joint5 ≈ 0" in doc and "±1.52 rad" in doc
+    assert "top and bottom parallel flat faces" in doc and "`roll=+90°`" in doc
+    assert "+z_link6" in doc and "-z_link6" in doc
+    assert "±1.57 rad" in doc and ">= 1.54 rad" in doc and "±60°–90°" in doc and "[-3.1, 3.1]" in doc
+    assert "handoff -> hover -> seat -> twist" in doc
+    assert "robo.align_feature" in doc and "stop_on_stall=True" in doc
     assert "z = z_support + h" in doc
     for forbidden in ("insert_key", "keyhole", "make_kong", "mahjong"):
         assert forbidden not in doc.lower()
-    # Verify newly added crowded-contact and curved-rim clauses stay free of task nouns
+    # Verify crowded-contact and orthogonal flat-face handoff clauses stay free of task nouns & SAM3/VLA words
     for marker in (
         "selective contact / tipping inside a tightly packed row or array",
-        "curved-rim",
+        "headed-stem / flat-head + shaft parts requiring coaxial vertical insertion",
     ):
         idx = doc.lower().index(marker)
         end = doc.find("\n- ", idx + 1)
         snippet = doc[idx : None if end == -1 else end]
-        assert not re.search(r"\b(key|keys|lock|locks|kong|mahjong)\b", snippet, re.IGNORECASE)
+        assert not re.search(
+            r"\b(insert_key|key|keys|keyhole|lock|locks|make_kong|kong|mahjong)\b",
+            snippet,
+            re.IGNORECASE,
+        )
+        assert not re.search(r"pi0|lingbot|rldx|vla|sam3", snippet, re.IGNORECASE)
+        assert not re.search(r"\brobo\.(locate|segment|back_project)\b", snippet)
+
+
+def test_robodojo_knowledge_prevent_kinematic_traps_bullet_parity():
+    import re
+    from importlib import resources
+
+    filenames = (
+        "robodojo.md",
+        "robodojo-novla.md",
+        "robodojo-nosam.md",
+        "robodojo_xpl_rgb.md",
+        "robodojo_xpl_rgb-novla.md",
+        "robodojo_xpl_rgb-nosam.md",
+    )
+    marker = "- Prevent 0-step kinematic and workspace traps before grasping or entering"
+    snippets: list[str] = []
+    for filename in filenames:
+        doc = resources.files("codeaspolicy").joinpath(f"knowledge/{filename}").read_text(
+            encoding="utf-8"
+        )
+        idx = doc.index(marker)
+        end = doc.find("\n- ", idx + 1)
+        snippet = doc[idx : None if end == -1 else end]
+        snippets.append(snippet)
+        assert not re.search(
+            r"\b(insert_key|key|keys|keyhole|lock|locks|make_kong|kong|mahjong)\b",
+            snippet,
+            re.IGNORECASE,
+        )
+        assert not re.search(r"pi0|lingbot|rldx|vla|sam3", snippet, re.IGNORECASE)
+        assert not re.search(r"\brobo\.(locate|segment|back_project)\b", snippet)
+    assert all(s == snippets[0] for s in snippets), "kinematic traps bullet must match across all 6 variants"
 
 
 def test_robodojo_knowledge_encodes_pre_contact_feature_alignment_with_parity():

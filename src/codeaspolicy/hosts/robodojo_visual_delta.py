@@ -1258,7 +1258,7 @@ def delta_grasp(
     lift_dxyz: Sequence[float] | None = None,
     align_tol_m: float = ALIGN_TOL_M,
     max_linear_m: float = MAX_LINEAR_M,
-    max_steps: int = 24,
+    max_steps: int = 36,
     reserve_steps: int = 20,
     stall_steps: int = 2,
     preview: bool = False,
@@ -1472,8 +1472,8 @@ def delta_grasp(
         q_after_approach_plan = approach_ways[-1] if approach_ways else q_after_align_plan
 
     if lift_vec is not None:
-        lift_plan_step_m = LINE_STEP_M
-        lift_plan_step_deg = LINE_STEP_DEG
+        lift_plan_step_m = FINE_STEP_M if contact_table else LINE_STEP_M
+        lift_plan_step_deg = LINE_STEP_DEG * lift_plan_step_m / LINE_STEP_M
         lift_spec = _spec({"dxyz": lift_vec.tolist()}, arm)
         _, lift_ways, lift_why = _plan_arm(
             arm, q_after_approach_plan, lift_spec, "world", lift_plan_step_m, lift_plan_step_deg,
@@ -1739,7 +1739,9 @@ def delta_grasp(
         )
         return finish(state_cur)
 
-    lift_step_m = FINE_STEP_M if closed_opening <= THIN_HELD_OPENING else LINE_STEP_M
+    lift_step_m = (
+        FINE_STEP_M if (contact_table or closed_opening <= THIN_HELD_OPENING) else LINE_STEP_M
+    )
     result["lift_step_m"] = lift_step_m
     lift_res = nudge(
         primitives, start_joints, arm, dxyz=lift_vec.tolist(), frame="world",

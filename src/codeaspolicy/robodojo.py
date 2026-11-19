@@ -2300,7 +2300,7 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         lift_dxyz: Sequence[float] | None = None,
         align_tol_m: float = 0.0025,
         max_linear_m: float = 0.06,
-        max_steps: int = 24,
+        max_steps: int = 36,
         reserve_steps: int = 20,
         require_current_target: bool = False,
         preview: bool = False,

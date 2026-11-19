@@ -801,13 +801,22 @@ def test_delta_grasp_tabletop_pickup_seats_closes_and_lifts_gently(tmp_path):
     robo = RobodojoOfficialColourRobot(NativeBackend(host))
 
     part_surface_pt = [0.256, -0.146, 0.770]  # 5 mm flat part on tabletop
+    # Verify default max_steps (=36) completes canonical tabletop pickup + lift without override!
+    plan = robo.delta_grasp(
+        part_surface_pt,
+        arm="right",
+        contact_table=True,
+        overdrive_m=0.005,
+        lift_dxyz=(0.0, 0.0, 0.025),
+        preview=True,
+    )
+    assert plan.accepted is True and plan.planned_steps >= 22  # 3 mm align/approach/lift + close
     res = robo.delta_grasp(
         part_surface_pt,
         arm="right",
         contact_table=True,
         overdrive_m=0.005,
         lift_dxyz=(0.0, 0.0, 0.025),
-        max_steps=30,
     )
     assert isinstance(res, DeltaGrasp)
     assert res.status == "completed" and res.reached is True and res.aligned is True
@@ -824,6 +833,23 @@ def test_delta_grasp_tabletop_pickup_seats_closes_and_lifts_gently(tmp_path):
     assert res.steps_used == len(env.actions)
     assert robo._ledger.records[-1].receipt["status"] == "completed"
 
+    # Also verify contact_table=True on a thicker part (opening=0.25 > 0.045) reports lift_step_m=0.003
+    # matching the 3 mm lift executed by nudge(..., allow_table_contact=True).
+    env_thick = _place(FlexibleGripEnvironment(initial_opening=1.0, close_stop=0.25, floor=0.778), z=0.805)
+    host_thick = NativeToolkit(env_thick, None, tmp_path / "thick_table")
+    raw = rvd.delta_grasp(
+        host_thick._primitives,
+        {a: list(env_thick.joints[a]) for a in kin.ARMS},
+        part_surface_pt,
+        arm="right",
+        contact_table=True,
+        overdrive_m=0.005,
+        lift_dxyz=(0.0, 0.0, 0.025),
+    )
+    assert raw["status"] == "completed" and raw["reached"] is True
+    assert raw["lift_step_m"] == pytest.approx(rvd.FINE_STEP_M)
+    assert raw["lift_steps_used"] >= 8
+
 
 def test_delta_grasp_thin_sub3mm_part_still_lifts_and_slip_sets_retained_false(tmp_path):
     # Ultra-thin part (< 3.5 mm) settles at closed_opening=0.004 (<= HOLD_MIN_OPENING=0.01):
@@ -839,7 +865,6 @@ def test_delta_grasp_thin_sub3mm_part_still_lifts_and_slip_sets_retained_false(t
         contact_table=True,
         overdrive_m=0.004,
         lift_dxyz=(0.0, 0.0, 0.021),
-        max_steps=30,
     )
     assert res_thin.status == "completed" and res_thin.reached is True
     assert res_thin.closed_opening == pytest.approx(0.004, abs=0.001)
@@ -866,7 +891,6 @@ def test_delta_grasp_thin_sub3mm_part_still_lifts_and_slip_sets_retained_false(t
         contact_table=True,
         overdrive_m=0.004,
         lift_dxyz=(0.0, 0.0, 0.021),
-        max_steps=30,
     )
     assert res_slip.status == "completed" and res_slip.closed_opening == pytest.approx(0.040, abs=0.002)
     assert res_slip.opening_after_lift == pytest.approx(0.004, abs=0.002)

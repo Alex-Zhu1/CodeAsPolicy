@@ -10,12 +10,19 @@ import numpy as np
 import pytest
 
 from codeaspolicy import visual_delta as vd
+from codeaspolicy._backend import ToolError
 from codeaspolicy.hosts import robodojo_kinematics as kin
 from codeaspolicy.hosts import robodojo_tools as motion
 from codeaspolicy.hosts import robodojo_visual_delta as rvd
 from codeaspolicy.hosts.robodojo_native import STATEFUL, NativeBackend, NativeToolkit
 from codeaspolicy.prompt import api_reference
-from codeaspolicy.robodojo import STATEFUL_TOOLS, Nudge, RobodojoRobot, VisualAlign
+from codeaspolicy.robodojo import (
+    STATEFUL_TOOLS,
+    FeatureAlignment,
+    Nudge,
+    RobodojoRobot,
+    VisualAlign,
+)
 from codeaspolicy.robodojo_xpl_rgb import RobodojoOfficialColourRobot
 from tests.test_coordination import JointEnvironment
 
@@ -407,6 +414,242 @@ def test_out_of_reach_feedback_and_no_progress(tmp_path):
     assert result.status == "rejected" and not env.actions
 
 
+# -- align_feature ---------------------------------------------------------------
+
+
+def test_align_feature_vertical_transverse_only_keeps_axial_clearance(tmp_path):
+    env, robo, _ = station(tmp_path)
+    start = tcp(env)
+    feature = start + np.array([0.008, -0.006, -0.04])  # held distal tip 4 cm below TCP
+    target = feature + np.array([-0.012, 0.009, -0.015])  # 15 mm transverse, 15 mm below tip
+    res = robo.align_feature(feature.tolist(), target.tolist(), arm="right")
+    assert isinstance(res, FeatureAlignment)
+    assert res.status == "completed" and res.aligned and res.reached and not res.stalled
+    assert res.preview is False and res.accepted is True
+    assert res.axial_gap_m == pytest.approx(0.015, abs=1e-4)
+    assert res.transverse_delta == pytest.approx((-0.012, 0.009, 0.0), abs=1e-4)
+    assert res.planned_dxyz == pytest.approx((-0.012, 0.009, 0.0), abs=1e-4)
+    assert res.transverse_error_before_m == pytest.approx(0.015, abs=1e-4)
+    assert res.transverse_error_after_m <= 0.0025
+    assert res.stroke_status is None and res.stroke_steps_used == 0
+    assert res.align_steps_used == res.steps_used == len(env.actions) > 0
+    shift = tcp(env) - start
+    assert shift == pytest.approx([-0.012, 0.009, 0.0], abs=0.0025)
+    assert abs(shift[2]) < 0.002  # vertical standoff preserved
+
+
+def test_align_feature_horizontal_axis_standoff_and_guarded_stroke(tmp_path):
+    env, robo, _ = station(tmp_path)
+    start = tcp(env)
+    # Horizontal engagement along +y (e.g., side plugging / hook hanging);
+    # transverse plane is world xz.
+    feature = start + np.array([0.004, 0.05, -0.005])
+    target = feature + np.array([-0.010, 0.025, 0.008])
+    res = robo.align_feature(
+        feature.tolist(),
+        target.tolist(),
+        arm="right",
+        axis=(0.0, 2.0, 0.0),  # non-unit vector normalized automatically
+        standoff_m=0.010,
+        stroke_m=0.020,
+        max_steps=25,
+    )
+    assert res.status == "completed" and res.aligned and res.reached and not res.stalled
+    assert res.axis == pytest.approx((0.0, 1.0, 0.0), abs=1e-5)
+    assert res.axial_gap_m == pytest.approx(0.025, abs=1e-4)
+    assert res.transverse_delta == pytest.approx((-0.010, 0.0, 0.008), abs=1e-4)
+    # standoff_m=0.010 from 0.025 gap => +0.015 m axial approach during alignment
+    assert res.planned_dxyz == pytest.approx((-0.010, 0.015, 0.008), abs=1e-4)
+    assert res.standoff_m == pytest.approx(0.010)
+    assert res.transverse_error_after_m <= 0.0025
+    assert res.stroke_status == "completed"
+    assert res.requested_stroke_m == pytest.approx(0.020)
+    assert res.achieved_stroke_m == pytest.approx(0.020, abs=0.0025)
+    assert res.align_steps_used > 0 and res.stroke_steps_used > 0
+    assert res.steps_used == res.align_steps_used + res.stroke_steps_used == len(env.actions)
+    # Net shift = planned_dxyz + stroke along +y = (-0.010, +0.035, +0.008)
+    assert tcp(env) - start == pytest.approx([-0.010, 0.035, 0.008], abs=0.003)
+
+
+def test_align_feature_guarded_stroke_stalls_cleanly_at_contact(tmp_path):
+    env, robo, _ = station(tmp_path, StallEnvironment(floor=.845))
+    start = tcp(env)
+    feature = start + np.array([0.006, 0.0, -0.02])
+    target = feature + np.array([-0.008, 0.004, -0.02])
+    res = robo.align_feature(
+        feature.tolist(), target.tolist(), arm="right", stroke_m=0.035, max_steps=25
+    )
+    assert res.aligned is True and res.transverse_error_after_m <= 0.0025
+    assert res.status == "stopped" and res.stalled is True and res.reached is False
+    assert res.stop_reason == "contact_or_stall"
+    assert res.stroke_status == "stopped"
+    assert res.stroke_steps_used > 0
+    assert res.achieved_stroke_m is not None and 0.005 <= res.achieved_stroke_m < 0.025
+    assert res.final_xyz[2] == pytest.approx(.845, abs=0.006)
+    assert res.steps_used == res.align_steps_used + res.stroke_steps_used == len(env.actions)
+
+
+def test_align_feature_skips_stroke_when_alignment_stalls(tmp_path):
+    class SideWallEnv(JointEnvironment):
+        def __init__(self, x_wall):
+            super().__init__()
+            self.x_wall = x_wall
+
+        def step(self, action):
+            before = copy.deepcopy(self.joints)
+            out = super().step(action)
+            if kin.tcp(kin.fk("right", self.joints["right"]))[0] < self.x_wall:
+                self.joints["right"] = before["right"]
+                return self.get_obs(), 0.0, False, {"status": self.get_status()}
+            return out
+
+    start_x = START["right"][0]
+    env, robo, _ = station(tmp_path, SideWallEnv(x_wall=start_x - 0.003))
+    start = tcp(env)
+    feature = start.copy()
+    target = start + np.array([-0.020, 0.0, -0.015])
+    res = robo.align_feature(
+        feature.tolist(), target.tolist(), arm="right", stroke_m=0.020, max_steps=20
+    )
+    assert res.aligned is False
+    assert res.transverse_error_after_m > 0.010
+    assert res.status == "stopped" and res.stalled is True
+    assert res.stroke_status == "skipped" and res.stroke_steps_used == 0
+    assert res.achieved_stroke_m == 0.0
+    assert abs(tcp(env)[2] - start[2]) < 0.002  # never descended
+
+
+def test_align_feature_zero_delta_skips_alignment_in_zero_steps(tmp_path):
+    env, robo, _ = station(tmp_path)
+    start = tcp(env)
+    feature = [0.25, -0.15, 0.82]
+    target = [0.2502, -0.1502, 0.80]  # 0.28 mm transverse <= 0.5 mm threshold
+    res = robo.align_feature(feature, target, arm="right")
+    assert res.status == "completed" and res.aligned and res.reached
+    assert res.align_steps_used == 0 and res.steps_used == 0 and not env.actions
+    assert res.transverse_error_after_m == pytest.approx(res.transverse_error_before_m)
+
+    # With stroke_dxyz: skips alignment (0 steps) and immediately runs stroke
+    with_stroke = robo.align_feature(
+        feature, target, arm="right", stroke_dxyz=(0.0, 0.0, -0.015)
+    )
+    assert with_stroke.status == "completed" and with_stroke.aligned and with_stroke.reached
+    assert with_stroke.align_steps_used == 0 and with_stroke.stroke_steps_used > 0
+    assert with_stroke.achieved_stroke_m == pytest.approx(0.015, abs=0.0025)
+    assert tcp(env)[2] == pytest.approx(start[2] - 0.015, abs=0.0025)
+
+
+def test_align_feature_preview_is_readonly_and_zero_steps(tmp_path):
+    env, robo, _ = station(tmp_path)
+    start = tcp(env)
+    feature = start.copy()
+    target = start + np.array([0.010, -0.005, -0.015])
+    plan = robo.align_feature(
+        feature.tolist(), target.tolist(), arm="right", stroke_m=0.020, preview=True
+    )
+    assert isinstance(plan, FeatureAlignment)
+    assert plan.preview is True and plan.accepted is True and plan.status == "planned"
+    assert plan.steps_used == 0 and plan.planned_steps > 0 and not env.actions
+    assert plan.planned_dxyz == pytest.approx((0.010, -0.005, 0.0), abs=1e-4)
+    assert not robo._ledger.stateful_calls()
+
+    # Refusal in preview: stroke below table costs 0 steps and reports ik_error
+    bad_table = robo.align_feature(
+        feature.tolist(),
+        target.tolist(),
+        arm="right",
+        stroke_m=0.11,
+        max_linear_m=0.12,
+        preview=True,
+    )
+    assert bad_table.preview is True and bad_table.accepted is False
+    assert bad_table.status == "rejected" and bad_table.stop_reason == "ik_path_rejected"
+    assert bad_table.ik_error and "table" in bad_table.ik_error
+    assert not env.actions
+
+    # Refusal in preview: alignment delta exceeds max_linear_m
+    too_far = robo.align_feature(
+        feature.tolist(),
+        (start + np.array([0.08, 0.0, -0.01])).tolist(),
+        arm="right",
+        preview=True,
+    )
+    assert too_far.accepted is False and too_far.stop_reason == "delta_exceeds_limit"
+    assert not env.actions
+
+    # Refusal in preview: planned steps exceed max_steps
+    tight = robo.align_feature(
+        feature.tolist(),
+        (start + np.array([0.025, 0.0, -0.01])).tolist(),
+        arm="right",
+        stroke_m=0.025,
+        max_steps=2,
+        preview=True,
+    )
+    assert tight.accepted is False and tight.stop_reason == "step_budget"
+    assert not env.actions
+
+
+def test_align_feature_provenance_rejects_stale_feature_but_allows_static_target(tmp_path):
+    env, robo, _ = station(tmp_path)
+    # Record a static receptor measurement at step 0 (unoccluded observation).
+    receptor_world = (0.242, -0.145, 0.810)
+    px_h = robo.project_point(receptor_world, "cam_head")
+    px_r = robo.project_point(receptor_world, "cam_right_wrist")
+    assert px_h is not None and px_r is not None
+    static_target = robo.triangulate(
+        "cam_head", (px_h.row, px_h.col), "cam_right_wrist", (px_r.row, px_r.col)
+    )
+    old_feature = robo.ray_at_z(px_h.row, px_h.col, z=0.830, camera="cam_head")
+
+    # Move arm so step 0 measurements become stale.
+    robo.nudge((0.0, 0.0, 0.005))
+    steps_before = len(env.actions)
+
+    # Stale held feature is rejected in 0 steps by default (require_current_feature=True).
+    with pytest.raises(ToolError, match="stale"):
+        robo.align_feature(old_feature, static_target, arm="right")
+    assert len(env.actions) == steps_before
+
+    # Fresh held feature paired with earlier static target succeeds by default!
+    held_world = (0.250, -0.150, 0.830)
+    fh = robo.project_point(held_world, "cam_head")
+    fr = robo.project_point(held_world, "cam_right_wrist")
+    assert fh is not None and fr is not None
+    fresh_feature = robo.triangulate(
+        "cam_head", (fh.row, fh.col), "cam_right_wrist", (fr.row, fr.col)
+    )
+    ok = robo.align_feature(fresh_feature, static_target, arm="right")
+    assert ok.status == "completed" and ok.aligned and ok.reached
+    assert ok.transverse_delta == pytest.approx((-0.008, 0.005, 0.0), abs=5e-4)
+
+    # require_current_target=True rejects stale static target in 0 steps.
+    steps_after = len(env.actions)
+    fresh_feature2 = robo.ray_at_z(fh.row, fh.col, z=0.830, camera="cam_head")
+    with pytest.raises(ToolError, match="stale"):
+        robo.align_feature(
+            fresh_feature2, static_target, arm="right", require_current_target=True
+        )
+    assert len(env.actions) == steps_after
+
+    # require_current_feature=False allows explicit override with mapping input too.
+    mapping_target = {"xyz": list(receptor_world)}
+    override = robo.align_feature(
+        old_feature, mapping_target, arm="right", require_current_feature=False, preview=True
+    )
+    assert override.preview is True and override.accepted is True
+
+    # Invalid arguments raise ValueError without stepping.
+    with pytest.raises(ValueError, match="axis"):
+        robo.align_feature([0, 0, 0.85], [0, 0, 0.83], axis=(0, 0, 0))
+    with pytest.raises(ValueError, match="at most one"):
+        robo.align_feature([0, 0, 0.85], [0, 0, 0.83], stroke_m=0.01, stroke_dxyz=(0, 0, -0.01))
+    with pytest.raises(ValueError, match="standoff_m"):
+        robo.align_feature([0, 0, 0.85], [0, 0, 0.83], standoff_m=-0.01)
+    with pytest.raises(ValueError, match="xyz"):
+        robo.align_feature({"bad": 1}, [0, 0, 0.83])
+
+
 # -- registration ----------------------------------------------------------------
 
 
@@ -423,16 +666,30 @@ def test_execution_budget_counts_each_stateful_nudge(tmp_path):
 
 
 def test_registration_and_reference():
-    assert {"nudge", "visual_align_and_insert"} <= STATEFUL_TOOLS
-    assert {"nudge", "visual_align_and_insert"} <= STATEFUL
-    assert set(rvd.SPECS) == {"nudge", "visual_align_and_insert"}
+    assert {"nudge", "visual_align_and_insert", "align_feature"} <= STATEFUL_TOOLS
+    assert {"nudge", "visual_align_and_insert", "align_feature"} <= STATEFUL
+    assert "preview_align_feature" not in STATEFUL_TOOLS
+    assert "preview_align_feature" not in STATEFUL
+    assert set(rvd.SPECS) == {
+        "nudge",
+        "visual_align_and_insert",
+        "align_feature",
+        "preview_align_feature",
+    }
+    assert rvd.preview_align_feature._readonly is True
     for cls in (RobodojoRobot, RobodojoOfficialColourRobot):
-        assert Nudge in cls.RESULT_TYPES and VisualAlign in cls.RESULT_TYPES
+        assert Nudge in cls.RESULT_TYPES
+        assert VisualAlign in cls.RESULT_TYPES
+        assert FeatureAlignment in cls.RESULT_TYPES
         text = api_reference(cls)
         assert "robo.nudge(" in text and "robo.visual_align_and_insert(" in text
+        assert "robo.align_feature(" in text
         assert "class Nudge(" in text and "class VisualAlign(" in text
-        novla = api_reference(cls, primitives="no-vla")
-        assert "robo.nudge(" in novla
+        assert "class FeatureAlignment(" in text
+        for prims in ("no-vla", "no-sam"):
+            filtered = api_reference(cls, primitives=prims)
+            assert "robo.nudge(" in filtered and "robo.align_feature(" in filtered
+            assert "class FeatureAlignment(" in filtered
         for word in ("insert_key", "keyhole", "make_kong", "mahjong"):
             assert word not in text
 
@@ -450,3 +707,6 @@ def test_rpent_toolkit_registration_adds_both_tools():
     motion.register(Toolkit(_place(JointEnvironment())))
     assert added["nudge"][0]["name"] == "nudge"
     assert added["visual_align_and_insert"][0]["input_schema"]["required"] == ["goal"]
+    assert added["align_feature"][0]["input_schema"]["required"] == ["feature_xyz", "target_xyz"]
+    assert added["preview_align_feature"][0]["name"] == "preview_align_feature"
+    assert added["preview_align_feature"][1].func._readonly is True

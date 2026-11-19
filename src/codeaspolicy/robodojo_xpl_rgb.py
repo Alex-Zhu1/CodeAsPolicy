@@ -34,6 +34,7 @@ from ._backend import ToolError
 from .robodojo import (
     ArmState,
     CameraRay,
+    FeatureAlignment,
     Gripper,
     Home,
     IKSolution,
@@ -181,6 +182,7 @@ class RobodojoOfficialColourRobot(RobodojoRobot):
         ObjectSight,
         Pick,
         Nudge,
+        FeatureAlignment,
         VisualAlign,
         Segment,
         SeenPoint,
@@ -455,6 +457,7 @@ ADAPTER = RobotAdapter(
 __all__ = [
     "ADAPTER",
     "CameraRay",
+    "FeatureAlignment",
     "IKSolution",
     "ObjectSight",
     "PixelPoint",

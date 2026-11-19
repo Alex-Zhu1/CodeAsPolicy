@@ -480,6 +480,32 @@ once the views show the held part or the fingers pre-aligned near the goal.
   nothing: read it as "contact reached or blocked", check the wrist view, then
   release/withdraw if seated, or back off 3–5 mm with a reverse nudge and correct
   sideways if misaligned. It measures progress, not force.
+- **Pre-contact feature-to-target visual alignment (`robo.align_feature`)**:
+  never align `tcp_pos` directly to a narrow receptor (`<= 5 mm` clearance:
+  aperture/slot insertion, hook/post hanging, connector plugging, precision
+  spout alignment): grasp offset, curved-rim tangent pinches, and
+  gravity-pivoted suspension displace the held distal working feature (tip,
+  pin, shaft, loop, or spout `feature_xyz`) by `3–15 mm` from `tcp_pos`.
+  Stage the distal feature to a `1.0–2.0 cm` pre-contact hover upstream of
+  `target_xyz` along the engagement `axis` (default `(0, 0, -1)` downward, or a
+  horizontal unit vector for side plugging/hanging). In that post-hover
+  observation, inspect `crop_grid` on `cam_head` and `cam_<arm>_wrist` to pick
+  the 2D pixels of BOTH the **held distal working feature** and the **receptor
+  opening/target**; resolve 3D coordinates with two-view `triangulate`
+  (preferred: solves true 3D `feature_xyz` without plane-height parallax error;
+  if using single-view `ray_at_z`, pass the feature's actual height `z_feature`
+  rather than projecting an elevated hovering feature onto `z_target`, which
+  introduces oblique ray parallax). Call
+  `robo.align_feature(feature_pt, target_pt, arm=..., axis=..., stroke_m=...)`
+  (or transverse `robo.align_feature` / `robo.nudge` followed by a tight
+  `crop_grid` check when initial offset `> 6 mm`, then axial
+  `robo.nudge(..., stop_on_stall=True)`). `align_feature` requires current
+  provenance for a measured held `feature_pt` (rejecting stale pre-transport
+  measurements in `0` steps) while accepting an earlier unoccluded static
+  `target_pt`, and supports `preview=True` for zero-step preflight. If an axial
+  contact stroke stalls well short of the expected engagement depth
+  (`achieved_stroke_m << stroke_m`), back off `3–5 mm` along `-axis` before
+  releasing or re-nudging so rim contact does not strip a lightly held part.
 - `robo.visual_align_and_insert(goal, arm=..., max_steps=40, reserve_steps=20)` runs a
   bounded closed loop with a PEAR visual-delta model (head and wrist views plus a
   zoomed wrist crop): each round one clamped relative delta, executed by `nudge`,

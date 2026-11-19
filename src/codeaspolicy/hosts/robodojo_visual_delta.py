@@ -49,6 +49,14 @@ HARD_ANGULAR_DEG = 45.0
 #: Cartesian waypoint spacing of a compact nudge.
 LINE_STEP_M = 0.005
 LINE_STEP_DEG = 4.0
+#: Finer waypoint spacing for tabletop-contact descent and gentle thin-part liftoff.
+FINE_STEP_M = 0.003
+#: Measured opening threshold below which held-part motion uses gentle 3 mm steps.
+THIN_HELD_OPENING = 0.045
+#: Maximum controlled fingertip overdrive below TABLE_Z when allow_table_contact=True.
+TABLE_TOUCH_OVERDRIVE_M = 0.004
+#: Pre-open tolerance in ``delta_grasp`` (skip pre-open in 0 steps when already within this).
+PREOPEN_TOL = 0.05
 #: A nudge has arrived within these of its target.
 TOL_M = 0.002
 TOL_DEG = 2.0
@@ -186,23 +194,52 @@ def _within_limits(q: Sequence[float]) -> bool:
                for v, (lo, hi) in zip(q, kin.JOINT_LIMITS, strict=True))
 
 
-def _plan_arm(arm: str, q: Sequence[float], spec: dict[str, Any], frame: str,
-              step_m: float, step_deg: float) -> tuple[np.ndarray, list, str | None]:
+def _is_thin_held(primitives: Any, state: dict[str, Any], arm: str) -> bool:
+    """Whether ``arm`` is holding a thin part (0 < opening <= THIN_HELD_OPENING)."""
+
+    opening = motion._opening(state, arm)
+    last = (getattr(primitives, "_grip_commands", None) or {}).get(arm)
+    closed = last is None or last <= 0.05
+    return bool(closed and 0.0 < opening <= THIN_HELD_OPENING)
+
+
+def _plan_arm(
+    arm: str,
+    q: Sequence[float],
+    spec: dict[str, Any],
+    frame: str,
+    step_m: float,
+    step_deg: float,
+    *,
+    allow_table_contact: bool = False,
+) -> tuple[np.ndarray, list, str | None]:
     """(target pose, one joint target per native action, why it cannot be done)."""
 
     target = target_pose(arm, q, spec, frame)
     if not _moves(spec):
         return target, [], None
-    if target[2, 3] < kin.TABLE_Z + 0.002:
+    min_tcp_z = (
+        kin.TABLE_Z + (kin.TCP_OFFSET - kin.TIP_OFFSET) - TABLE_TOUCH_OVERDRIVE_M
+        if allow_table_contact
+        else kin.TABLE_Z + 0.002
+    )
+    if target[2, 3] < min_tcp_z:
         return target, [], "the target grasp point is below the table top"
-    ways, why = kin.line_path(arm, q, target, step_m=step_m, step_deg=step_deg)
+    ways, why = kin.line_path(
+        arm,
+        q,
+        target,
+        step_m=step_m,
+        step_deg=step_deg,
+        allow_table_touch=allow_table_contact,
+    )
     if why is not None:
         return target, [], why
     steps = motion._followable(q, ways)
     for way in steps:
         if not _within_limits(way):
             return target, [], "the line needs a joint beyond its limits"
-        bad = kin.clearance_violations(arm, way)
+        bad = kin.clearance_violations(arm, way, allow_table_touch=allow_table_contact)
         if bad:
             return target, [], f"the line takes the arm into the table ({', '.join(bad)})"
     return target, steps, None
@@ -357,12 +394,16 @@ def nudge(
     settle_steps: int = SETTLE_STEPS,
     tol_m: float = TOL_M,
     tol_deg: float = TOL_DEG,
+    allow_table_contact: bool = False,
 ) -> dict[str, Any]:
     """Move one arm (or both) by a bounded relative delta of the grasp point.
 
     ``dxyz`` metres, ``dpitch`` / ``dyaw`` / ``droll`` degrees, ``gripper`` in
     RoboDojo's command convention (1 close, -1 open, 0 keep).  ``arm="both"`` takes
-    ``left`` / ``right`` dicts with the same keys.  See the module docstring.
+    ``left`` / ``right`` dicts with the same fields.  With ``allow_table_contact=True``
+    only the fingertip floor is relaxed down to ``TABLE_Z - 0.004`` (arm joints stay
+    strictly clear of the table) and waypoint spacing tightens to 3 mm so guarded
+    downward contact stalls cleanly on the tabletop.  See the module docstring.
     """
 
     try:
@@ -371,8 +412,11 @@ def nudge(
                            reserve_steps, step_m, settle_steps, tol_m, tol_deg)
     except ValueError as exc:
         return {"error": f"nudge: {exc}"}
-    if not isinstance(compact, bool) or not isinstance(stop_on_stall, bool):
-        return {"error": "nudge: compact and stop_on_stall must be booleans"}
+    if (not isinstance(compact, bool) or not isinstance(stop_on_stall, bool)
+            or not isinstance(allow_table_contact, bool)):
+        return {"error": "nudge: compact, stop_on_stall and allow_table_contact must be booleans"}
+    if allow_table_contact and not compact:
+        return {"error": "nudge: allow_table_contact=True requires compact=True"}
     state = motion._obs(primitives)["state"]
     q0 = {a: motion._joints(state, a) for a in specs}
     start = {a: motion._pose_of(a, q0[a]) for a in specs}
@@ -398,8 +442,21 @@ def nudge(
             return finish(state, {a: start[a] for a in specs})
     if not compact:
         return _legacy(primitives, start_joints, arm, specs, frame, result, finish, state)
-    step_deg = LINE_STEP_DEG * step_m / LINE_STEP_M
-    plans = {a: _plan_arm(a, q0[a], specs[a], frame, step_m, step_deg) for a in specs}
+    thin_held = any(_is_thin_held(primitives, state, a) and _moves(specs[a]) for a in specs)
+    effective_step_m = min(step_m, FINE_STEP_M) if (allow_table_contact or thin_held) else step_m
+    step_deg = LINE_STEP_DEG * effective_step_m / LINE_STEP_M
+    plans = {
+        a: _plan_arm(
+            a,
+            q0[a],
+            specs[a],
+            frame,
+            effective_step_m,
+            step_deg,
+            allow_table_contact=allow_table_contact,
+        )
+        for a in specs
+    }
     targets = {a: plan[0] for a, plan in plans.items()}
     refused = [f"{a}: {plan[2]}" for a, plan in plans.items() if plan[2]]
     if refused:
@@ -422,7 +479,7 @@ def nudge(
                       else "reserve_steps_exhausted")
         return finish(state, targets)
     return _execute(primitives, state, status, specs, start, targets, ways, grips, planned,
-                    allowed, stop_on_stall, stall_steps, step_m, settle_steps, tol_m,
+                    allowed, stop_on_stall, stall_steps, effective_step_m, settle_steps, tol_m,
                     tol_deg, result, finish)
 
 
@@ -778,6 +835,7 @@ def align_feature(
     reserve_steps: int = 20,
     stop_on_stall: bool = True,
     stall_steps: int = 2,
+    allow_table_contact: bool = False,
     preview: bool = False,
 ) -> dict[str, Any]:
     """Zero transverse offset from a held distal feature to a target, with optional stroke.
@@ -835,8 +893,9 @@ def align_feature(
             raise ValueError("reserve_steps must be a non-negative integer")
         if type(stall_steps) is not int or not 1 <= stall_steps <= 5:
             raise ValueError("stall_steps must be an integer between 1 and 5")
-        if not isinstance(stop_on_stall, bool) or not isinstance(preview, bool):
-            raise ValueError("stop_on_stall and preview must be booleans")
+        if (not isinstance(stop_on_stall, bool) or not isinstance(preview, bool)
+                or not isinstance(allow_table_contact, bool)):
+            raise ValueError("stop_on_stall, allow_table_contact and preview must be booleans")
     except ValueError as exc:
         return {"error": f"align_feature: {exc}"}
 
@@ -914,13 +973,21 @@ def align_feature(
         )
         return finish(state0)
 
+    plan_step_m = (
+        FINE_STEP_M if (allow_table_contact or _is_thin_held(primitives, state0, arm))
+        else LINE_STEP_M
+    )
+    plan_step_deg = LINE_STEP_DEG * plan_step_m / LINE_STEP_M
+
     if skip_align:
         align_ways: list[list[float]] = []
         q_after_align_plan = q0
     else:
         align_spec = _spec({"dxyz": planned_dxyz.tolist()}, arm)
-        _, align_ways, align_why = _plan_arm(arm, q0, align_spec, "world",
-                                             LINE_STEP_M, LINE_STEP_DEG)
+        _, align_ways, align_why = _plan_arm(
+            arm, q0, align_spec, "world", plan_step_m, plan_step_deg,
+            allow_table_contact=allow_table_contact,
+        )
         if align_why is not None:
             result.update(
                 stop_reason="ik_path_rejected",
@@ -932,8 +999,10 @@ def align_feature(
 
     if stroke_vec is not None:
         stroke_spec = _spec({"dxyz": stroke_vec.tolist()}, arm)
-        _, stroke_ways, stroke_why = _plan_arm(arm, q_after_align_plan, stroke_spec, "world",
-                                               LINE_STEP_M, LINE_STEP_DEG)
+        _, stroke_ways, stroke_why = _plan_arm(
+            arm, q_after_align_plan, stroke_spec, "world", plan_step_m, plan_step_deg,
+            allow_table_contact=allow_table_contact,
+        )
         if stroke_why is not None:
             result.update(
                 stop_reason="ik_path_rejected",
@@ -988,7 +1057,7 @@ def align_feature(
             primitives, start_joints, arm, dxyz=planned_dxyz.tolist(), frame="world",
             compact=True, stop_on_stall=stop_on_stall, stall_steps=stall_steps,
             max_linear_m=max_lin_f, max_steps=max_steps, reserve_steps=reserve_steps,
-            tol_m=min(TOL_M, tol_f),
+            tol_m=min(TOL_M, tol_f), allow_table_contact=allow_table_contact,
         )
         if "error" in align_res:
             return {"error": f"align_feature: {align_res['error']}"}
@@ -1085,6 +1154,7 @@ def align_feature(
         primitives, start_joints, arm, dxyz=stroke_vec.tolist(), frame="world",
         compact=True, stop_on_stall=stop_on_stall, stall_steps=stall_steps,
         max_linear_m=max_lin_f, max_steps=stroke_budget, reserve_steps=reserve_steps,
+        allow_table_contact=allow_table_contact,
     )
     if "error" in stroke_res:
         return {"error": f"align_feature: {stroke_res['error']}"}
@@ -1142,6 +1212,601 @@ preview_align_feature._readonly = True  # type: ignore[attr-defined]
 
 
 # ---------------------------------------------------------------------------
+# fine delta grasp & in-air handoff primitive
+# ---------------------------------------------------------------------------
+
+
+def _grip_to(
+    primitives: Any,
+    arm: str,
+    command: float,
+    max_steps: int,
+) -> tuple[dict[str, Any], dict[str, Any], int, float]:
+    """Drive one gripper to ``command`` (0.0 close, (0..1] open) within ``max_steps``."""
+
+    state = motion._obs(primitives)["state"]
+    hold = {a: motion._joints(state, a) for a in ARMS}
+    before = motion._opening(state, arm)
+    steps = 0
+    status: dict[str, Any] = {}
+    last = before
+    limit = min(motion.GRIP_MAX_ACTIONS, max(0, max_steps))
+    for _ in range(limit):
+        primitives._check_cancelled()
+        state, status = motion._act(primitives, state, hold, {arm: float(command)})
+        steps += 1
+        now = motion._opening(state, arm)
+        if steps >= 2 and abs(now - last) < motion.GRIP_STILL:
+            break
+        last = now
+        if motion._spent(status):
+            break
+    return state, status, steps, motion._opening(state, arm)
+
+
+def delta_grasp(
+    primitives: Any,
+    start_joints: dict[str, list[float]],
+    target_xyz: Sequence[float],
+    arm: str = "right",
+    *,
+    axis: Sequence[float] = (0.0, 0.0, -1.0),
+    standoff_m: float = 0.0,
+    overdrive_m: float = 0.0,
+    opening: float | None = None,
+    contact_table: bool = False,
+    lift_dxyz: Sequence[float] | None = None,
+    align_tol_m: float = ALIGN_TOL_M,
+    max_linear_m: float = MAX_LINEAR_M,
+    max_steps: int = 36,
+    reserve_steps: int = 20,
+    stall_steps: int = 2,
+    preview: bool = False,
+) -> dict[str, Any]:
+    """Compact last-3cm grasp / handoff: pre-open -> align -> approach/table-touch -> close -> lift.
+
+    Stages executed sequentially once preflight passes (0 steps on refusal):
+    1. Optional pre-open to ``opening`` in ``(0, 1]`` (skipped in 0 steps if already within 0.05).
+    2. Transverse alignment perpendicular to ``axis`` via guarded compact ``nudge`` (skipped in
+       0 steps if <= 0.5 mm; aborts before closing if residual transverse error > ``align_tol_m``).
+    3. Axial approach along ``+axis`` to ``target_xyz - axis * standoff_m + axis * overdrive_m``
+       (clamped to the safe fingertip table-touch floor when ``contact_table=True`` and
+       ``target_xyz`` is at/above the tabletop). On ``contact_table=True``, a stall against the
+       tabletop is expected seating, not an abort.
+    4. Gripper close (``command=0.0``), recording ``closed_opening``, ``holding``, ``width_m``.
+    5. Optional guarded ``lift_dxyz`` liftoff, automatically using 3 mm micro-steps when
+       ``closed_opening <= 0.045`` to avoid breaking thin-part static friction.
+    """
+
+    try:
+        if arm not in ARMS:
+            raise ValueError("arm must be 'left' or 'right'")
+        t_xyz = _vec3(target_xyz, "target_xyz")
+        axis_raw = _vec3(axis, "axis")
+        axis_norm = float(np.linalg.norm(axis_raw))
+        if axis_norm <= 1e-9:
+            raise ValueError("axis must be non-zero")
+        u_axis = axis_raw / axis_norm
+        standoff_f = _finite(standoff_m, "standoff_m")
+        if standoff_f < 0.0:
+            raise ValueError("standoff_m must be >= 0")
+        overdrive_f = _finite(overdrive_m, "overdrive_m")
+        if overdrive_f < 0.0:
+            raise ValueError("overdrive_m must be >= 0")
+        opening_f: float | None = None
+        if opening is not None:
+            opening_f = _finite(opening, "opening")
+            if not 0.0 < opening_f <= 1.0:
+                raise ValueError("opening must be in (0, 1]")
+        if not isinstance(contact_table, bool):
+            raise ValueError("contact_table must be a boolean")
+        lift_vec: np.ndarray | None = None
+        lift_norm = 0.0
+        if lift_dxyz is not None:
+            lift_vec = _vec3(lift_dxyz, "lift_dxyz")
+            lift_norm = float(np.linalg.norm(lift_vec))
+            if lift_norm <= 1e-6:
+                raise ValueError("lift_dxyz must be non-zero")
+        tol_f = _finite(align_tol_m, "align_tol_m")
+        if not 0.0005 <= tol_f <= 0.02:
+            raise ValueError("align_tol_m must be between 0.0005 and 0.02 m")
+        max_lin_f = _finite(max_linear_m, "max_linear_m")
+        if not 0.0 < max_lin_f <= HARD_LINEAR_M:
+            raise ValueError(f"max_linear_m must be in (0, {HARD_LINEAR_M}]")
+        if type(max_steps) is not int or max_steps < 1:
+            raise ValueError("max_steps must be a positive integer")
+        if type(reserve_steps) is not int or reserve_steps < 0:
+            raise ValueError("reserve_steps must be a non-negative integer")
+        if type(stall_steps) is not int or not 1 <= stall_steps <= 5:
+            raise ValueError("stall_steps must be an integer between 1 and 5")
+        if not isinstance(preview, bool):
+            raise ValueError("preview must be a boolean")
+    except ValueError as exc:
+        return {"error": f"delta_grasp: {exc}"}
+
+    state0 = motion._obs(primitives)["state"]
+    q0 = motion._joints(state0, arm)
+    pose0 = motion._pose_of(arm, q0)
+    tcp_before = pose0[:3, 3]
+    opening_before = motion._opening(state0, arm)
+    last_grip_cmd = (getattr(primitives, "_grip_commands", None) or {}).get(arm)
+    needs_preopen = bool(
+        opening_f is not None
+        and (
+            abs(opening_before - opening_f) > PREOPEN_TOL
+            or (last_grip_cmd is not None and last_grip_cmd <= 0.05)
+        )
+    )
+
+    raw_diff = t_xyz - tcp_before
+    axial_gap_m = float(np.dot(raw_diff, u_axis))
+    transverse_delta = raw_diff - axial_gap_m * u_axis
+    transverse_error_before_m = float(np.linalg.norm(transverse_delta))
+    skip_align = transverse_error_before_m <= ZERO_DELTA_M
+
+    desired_tcp = t_xyz - u_axis * standoff_f + u_axis * overdrive_f
+    if contact_table and u_axis[2] < -1e-6 and t_xyz[2] >= kin.TABLE_Z - 0.005:
+        tip_delta_z = float(pose0[2, 0]) * (kin.TIP_OFFSET - kin.TCP_OFFSET)
+        min_safe_tcp_z = kin.TABLE_Z - TABLE_TOUCH_OVERDRIVE_M + 0.0005 - tip_delta_z
+        if desired_tcp[2] < min_safe_tcp_z:
+            pullback = (min_safe_tcp_z - float(desired_tcp[2])) / (-float(u_axis[2]))
+            desired_tcp = desired_tcp - pullback * u_axis
+
+    tcp_after_align_plan = tcp_before + (np.zeros(3) if skip_align else transverse_delta)
+    axial_plan_dist = float(np.dot(desired_tcp - tcp_after_align_plan, u_axis))
+    axial_plan_vec = axial_plan_dist * u_axis
+    axial_plan_norm = abs(axial_plan_dist)
+    skip_approach = axial_plan_norm <= ZERO_DELTA_M
+
+    result: dict[str, Any] = {
+        "arm": arm,
+        "status": "rejected",
+        "aligned": False,
+        "reached": False,
+        "accepted": False,
+        "preview": preview,
+        "stalled": False,
+        "table_contact_stalled": False,
+        "stop_reason": None,
+        "target_xyz": [round(float(v), 5) for v in t_xyz],
+        "desired_tcp_xyz": [round(float(v), 5) for v in desired_tcp],
+        "axis": [round(float(v), 6) for v in u_axis],
+        "standoff_m": round(standoff_f, 5),
+        "overdrive_m": round(overdrive_f, 5),
+        "contact_table": contact_table,
+        "transverse_error_before_m": round(transverse_error_before_m, 5),
+        "transverse_error_after_m": round(transverse_error_before_m, 5),
+        "opening_before": round(opening_before, 4),
+        "opening_after_preopen": None,
+        "closed": False,
+        "closed_opening": None,
+        "opening_after_lift": None,
+        "retained_closure": False,
+        "lift_status": None,
+        "lift_step_m": None,
+        "preopen_steps_used": 0,
+        "align_steps_used": 0,
+        "approach_steps_used": 0,
+        "close_steps_used": 0,
+        "lift_steps_used": 0,
+        "steps_used": 0,
+        "planned_steps": 0,
+        "ik_error": None,
+        "note": None,
+        "recoverable": True,
+    }
+
+    def finish(state_now: dict[str, Any]) -> dict[str, Any]:
+        q_now = motion._joints(state_now, arm)
+        summary = motion._pose_summary(arm, q_now)
+        result["final_xyz"] = summary["xyz"]
+        result["final_angles"] = {k: summary[k] for k in ("pitch", "yaw", "roll")}
+        result.update(_gripper_state(primitives, state_now, arm))
+        result["remaining_episode_steps"] = _budget(primitives)[1]
+        return result
+
+    if not skip_align and transverse_error_before_m > max_lin_f + 1e-9:
+        result.update(
+            stop_reason="delta_exceeds_limit",
+            lift_status="rejected" if lift_vec is not None else None,
+            note=f"{arm}: transverse delta {transverse_error_before_m:.4f} m exceeds "
+                 f"max_linear_m {max_lin_f:.4f} m; re-stage closer before delta_grasp",
+        )
+        return finish(state0)
+
+    if not skip_approach and axial_plan_norm > max_lin_f + 1e-9:
+        result.update(
+            stop_reason="delta_exceeds_limit",
+            lift_status="rejected" if lift_vec is not None else None,
+            note=f"{arm}: axial approach {axial_plan_norm:.4f} m exceeds "
+                 f"max_linear_m {max_lin_f:.4f} m; re-stage closer before delta_grasp",
+        )
+        return finish(state0)
+
+    if lift_vec is not None and lift_norm > max_lin_f + 1e-9:
+        result.update(
+            stop_reason="delta_exceeds_limit",
+            lift_status="rejected",
+            note=f"{arm}: lift_dxyz {lift_norm:.4f} m exceeds max_linear_m {max_lin_f:.4f} m",
+        )
+        return finish(state0)
+
+    align_step_m = FINE_STEP_M if contact_table else LINE_STEP_M
+    align_step_deg = LINE_STEP_DEG * align_step_m / LINE_STEP_M
+    if skip_align:
+        align_ways: list[list[float]] = []
+        q_after_align_plan = q0
+    else:
+        align_spec = _spec({"dxyz": transverse_delta.tolist()}, arm)
+        _, align_ways, align_why = _plan_arm(
+            arm, q0, align_spec, "world", align_step_m, align_step_deg,
+            allow_table_contact=contact_table,
+        )
+        if align_why is not None:
+            result.update(
+                stop_reason="ik_path_rejected",
+                ik_error=f"{arm} align: {align_why}",
+                lift_status="rejected" if lift_vec is not None else None,
+            )
+            return finish(state0)
+        q_after_align_plan = align_ways[-1] if align_ways else q0
+
+    approach_step_m = FINE_STEP_M if contact_table else LINE_STEP_M
+    approach_step_deg = LINE_STEP_DEG * approach_step_m / LINE_STEP_M
+    if skip_approach:
+        approach_ways: list[list[float]] = []
+        q_after_approach_plan = q_after_align_plan
+    else:
+        approach_spec = _spec({"dxyz": axial_plan_vec.tolist()}, arm)
+        _, approach_ways, approach_why = _plan_arm(
+            arm, q_after_align_plan, approach_spec, "world", approach_step_m, approach_step_deg,
+            allow_table_contact=contact_table,
+        )
+        if approach_why is not None:
+            result.update(
+                stop_reason="ik_path_rejected",
+                ik_error=f"{arm} approach: {approach_why}",
+                lift_status="rejected" if lift_vec is not None else None,
+            )
+            return finish(state0)
+        q_after_approach_plan = approach_ways[-1] if approach_ways else q_after_align_plan
+
+    if lift_vec is not None:
+        lift_plan_step_m = FINE_STEP_M if contact_table else LINE_STEP_M
+        lift_plan_step_deg = LINE_STEP_DEG * lift_plan_step_m / LINE_STEP_M
+        lift_spec = _spec({"dxyz": lift_vec.tolist()}, arm)
+        _, lift_ways, lift_why = _plan_arm(
+            arm, q_after_approach_plan, lift_spec, "world", lift_plan_step_m, lift_plan_step_deg,
+            allow_table_contact=contact_table,
+        )
+        if lift_why is not None:
+            result.update(
+                stop_reason="ik_path_rejected",
+                ik_error=f"{arm} lift: {lift_why}",
+                lift_status="rejected",
+            )
+            return finish(state0)
+    else:
+        lift_ways = []
+
+    est_preopen_steps = 2 if needs_preopen else 0
+    est_close_steps = 2
+    planned_steps = (
+        est_preopen_steps + len(align_ways) + len(approach_ways) + est_close_steps + len(lift_ways)
+    )
+    result["planned_steps"] = planned_steps
+    _, remaining = _budget(primitives)
+    allowed = min(max_steps, remaining - reserve_steps)
+
+    if allowed <= 0:
+        result.update(
+            stop_reason="episode_native_step_budget" if remaining <= 0
+            else "reserve_steps_exhausted",
+            lift_status="rejected" if lift_vec is not None else None,
+        )
+        return finish(state0)
+
+    if preview:
+        if planned_steps > allowed:
+            result.update(
+                status="rejected",
+                accepted=False,
+                stop_reason="step_budget",
+                lift_status="rejected" if lift_vec is not None else None,
+                note=f"planned {planned_steps} steps exceeds allowance {allowed}",
+            )
+            return finish(state0)
+        result.update(
+            status="planned",
+            accepted=True,
+            aligned=bool(skip_align and transverse_error_before_m <= tol_f),
+            reached=False,
+            lift_status="planned" if lift_vec is not None else None,
+        )
+        return finish(state0)
+
+    result["accepted"] = True
+    steps_used = 0
+    state_cur = state0
+    status_cur: dict[str, Any] = {}
+
+    def budget_left() -> int:
+        _, ep_rem = _budget(primitives)
+        return min(max_steps - steps_used, ep_rem - reserve_steps)
+
+    # Stage 1: optional pre-open
+    if needs_preopen and opening_f is not None:
+        left = budget_left()
+        if left <= 0:
+            result.update(
+                steps_used=steps_used,
+                recoverable=True,
+                status="rejected",
+                stop_reason="step_budget",
+                lift_status="skipped" if lift_vec is not None else None,
+            )
+            return finish(state_cur)
+        state_cur, status_cur, pre_steps, open_after = _grip_to(primitives, arm, opening_f, left)
+        steps_used += pre_steps
+        result["preopen_steps_used"] = pre_steps
+        result["opening_after_preopen"] = round(open_after, 4)
+        if motion._spent(status_cur) or budget_left() <= 0:
+            result.update(
+                steps_used=steps_used,
+                recoverable=(steps_used == 0),
+                status="partial" if steps_used > 0 else "rejected",
+                stop_reason=motion._episode_stop_reason(status_cur) if motion._spent(status_cur)
+                else "step_budget",
+                lift_status="skipped" if lift_vec is not None else None,
+            )
+            return finish(state_cur)
+    else:
+        result["opening_after_preopen"] = round(opening_before, 4)
+
+    # Stage 2: transverse alignment
+    tcp_cur = motion._pose_of(arm, motion._joints(state_cur, arm))[:3, 3]
+    diff_cur = t_xyz - tcp_cur
+    perp_cur = diff_cur - float(np.dot(diff_cur, u_axis)) * u_axis
+    perp_norm = float(np.linalg.norm(perp_cur))
+    if perp_norm <= ZERO_DELTA_M:
+        align_steps = 0
+        align_stalled = False
+        align_stop_reason: str | None = None
+        tcp_after_align = tcp_cur
+    else:
+        left = budget_left()
+        if left <= 0:
+            result.update(
+                steps_used=steps_used,
+                recoverable=(steps_used == 0),
+                status="partial" if steps_used > 0 else "rejected",
+                stop_reason="step_budget",
+                lift_status="skipped" if lift_vec is not None else None,
+            )
+            return finish(state_cur)
+        align_res = nudge(
+            primitives, start_joints, arm, dxyz=perp_cur.tolist(), frame="world",
+            compact=True, stop_on_stall=True, stall_steps=stall_steps,
+            max_linear_m=max_lin_f, max_steps=left, reserve_steps=reserve_steps,
+            step_m=align_step_m, tol_m=min(TOL_M, tol_f),
+            allow_table_contact=contact_table,
+        )
+        if "error" in align_res:
+            return {"error": f"delta_grasp: {align_res['error']}"}
+        align_steps = int(align_res.get("steps_used", 0))
+        steps_used += align_steps
+        align_stalled = bool(align_res.get("stalled"))
+        align_stop_reason = align_res.get("stop_reason")
+        if align_res.get("ik_error"):
+            result["ik_error"] = align_res["ik_error"]
+        state_cur = motion._obs(primitives)["state"]
+        tcp_after_align = motion._pose_of(arm, motion._joints(state_cur, arm))[:3, 3]
+
+    rem_diff = t_xyz - tcp_after_align
+    rem_perp = rem_diff - float(np.dot(rem_diff, u_axis)) * u_axis
+    transverse_error_after = float(np.linalg.norm(rem_perp))
+    aligned = bool(transverse_error_after <= tol_f)
+    result.update(
+        aligned=aligned,
+        transverse_error_after_m=round(transverse_error_after, 5),
+        align_steps_used=align_steps,
+    )
+    if not aligned:
+        result.update(
+            steps_used=steps_used,
+            stalled=align_stalled,
+            recoverable=(steps_used == 0),
+            reached=False,
+            lift_status="skipped" if lift_vec is not None else None,
+            status="stopped" if align_stalled else ("partial" if steps_used > 0 else "rejected"),
+            stop_reason="contact_or_stall" if align_stalled
+            else (align_stop_reason or "alignment_tolerance_not_met"),
+            note="transverse alignment did not meet align_tol_m; aborted before closing",
+        )
+        return finish(state_cur)
+
+    # Stage 3: guarded axial approach / table-touch
+    axial_rem_dist = float(np.dot(desired_tcp - tcp_after_align, u_axis))
+    axial_rem_vec = axial_rem_dist * u_axis
+    if abs(axial_rem_dist) <= ZERO_DELTA_M:
+        approach_steps = 0
+        approach_stalled = False
+        approach_reached = True
+        approach_stop_reason: str | None = None
+    else:
+        left = budget_left()
+        if left <= 0:
+            result.update(
+                steps_used=steps_used,
+                recoverable=(steps_used == 0),
+                status="partial" if steps_used > 0 else "rejected",
+                stop_reason="step_budget",
+                lift_status="skipped" if lift_vec is not None else None,
+            )
+            return finish(state_cur)
+        app_res = nudge(
+            primitives, start_joints, arm, dxyz=axial_rem_vec.tolist(), frame="world",
+            compact=True, stop_on_stall=True, stall_steps=stall_steps,
+            max_linear_m=max_lin_f, max_steps=left, reserve_steps=reserve_steps,
+            step_m=approach_step_m, allow_table_contact=contact_table,
+        )
+        if "error" in app_res:
+            return {"error": f"delta_grasp: {app_res['error']}"}
+        approach_steps = int(app_res.get("steps_used", 0))
+        steps_used += approach_steps
+        approach_stalled = bool(app_res.get("stalled"))
+        approach_reached = bool(app_res.get("reached"))
+        approach_stop_reason = app_res.get("stop_reason")
+        if app_res.get("ik_error"):
+            result["ik_error"] = app_res["ik_error"]
+        state_cur = motion._obs(primitives)["state"]
+
+    result["approach_steps_used"] = approach_steps
+    table_contact_stalled = bool(contact_table and approach_stalled)
+    result["table_contact_stalled"] = table_contact_stalled
+
+    if not approach_reached and not table_contact_stalled:
+        result.update(
+            steps_used=steps_used,
+            stalled=approach_stalled,
+            recoverable=(steps_used == 0),
+            reached=False,
+            lift_status="skipped" if lift_vec is not None else None,
+            status="stopped" if approach_stalled else ("partial" if steps_used > 0 else "rejected"),
+            stop_reason="contact_or_stall" if approach_stalled
+            else (approach_stop_reason or "approach_not_reached"),
+            note="axial approach did not reach target; aborted before closing",
+        )
+        return finish(state_cur)
+
+    # Stage 4: close gripper
+    left = budget_left()
+    ep_status, _ = _budget(primitives)
+    if left <= 0 or motion._spent(ep_status):
+        result.update(
+            steps_used=steps_used,
+            recoverable=(steps_used == 0),
+            reached=False,
+            lift_status="skipped" if lift_vec is not None else None,
+            status="partial" if steps_used > 0 else "rejected",
+            stop_reason=motion._episode_stop_reason(ep_status) if motion._spent(ep_status)
+            else "step_budget",
+            note="step budget exhausted before closing gripper",
+        )
+        return finish(state_cur)
+
+    state_cur, status_cur, close_steps, closed_opening = _grip_to(primitives, arm, 0.0, left)
+    steps_used += close_steps
+    result.update(
+        close_steps_used=close_steps,
+        closed=close_steps > 0,
+        closed_opening=round(closed_opening, 4),
+    )
+
+    if lift_vec is None:
+        retained = bool(motion.retained_closure(0.0, closed_opening))
+        result.update(
+            steps_used=steps_used,
+            retained_closure=retained,
+            recoverable=(steps_used == 0),
+            stalled=False,
+        )
+        if close_steps > 0:
+            result.update(status="completed", reached=True, stop_reason=None)
+            if table_contact_stalled:
+                result["note"] = "tabletop contact seated fingertips before closing"
+        else:
+            result.update(
+                status="partial" if steps_used > 0 else "rejected",
+                reached=False,
+                stop_reason=motion._episode_stop_reason(status_cur) or "step_budget",
+            )
+        return finish(state_cur)
+
+    # Stage 5: optional post-close guarded liftoff (3 mm micro-steps for thin grips)
+    left = budget_left()
+    if left <= 0 or motion._spent(status_cur):
+        result.update(
+            steps_used=steps_used,
+            retained_closure=bool(motion.retained_closure(0.0, closed_opening)),
+            recoverable=(steps_used == 0),
+            reached=False,
+            lift_status="rejected",
+            status="partial",
+            stop_reason=motion._episode_stop_reason(status_cur) if motion._spent(status_cur)
+            else "step_budget",
+            note="step budget exhausted before post-close liftoff",
+        )
+        return finish(state_cur)
+
+    lift_step_m = (
+        FINE_STEP_M if (contact_table or closed_opening <= THIN_HELD_OPENING) else LINE_STEP_M
+    )
+    result["lift_step_m"] = lift_step_m
+    lift_res = nudge(
+        primitives, start_joints, arm, dxyz=lift_vec.tolist(), frame="world",
+        compact=True, stop_on_stall=True, stall_steps=stall_steps,
+        max_linear_m=max_lin_f, max_steps=left, reserve_steps=reserve_steps,
+        step_m=lift_step_m, allow_table_contact=contact_table,
+    )
+    if "error" in lift_res:
+        return {"error": f"delta_grasp: {lift_res['error']}"}
+    lift_steps = int(lift_res.get("steps_used", 0))
+    steps_used += lift_steps
+    state_end = motion._obs(primitives)["state"]
+    opening_after_lift = motion._opening(state_end, arm)
+    retained = bool(motion.retained_closure(0.0, opening_after_lift, closed_opening))
+    lift_reached = bool(lift_res.get("reached"))
+    lift_stalled = bool(lift_res.get("stalled"))
+    lift_status = str(lift_res.get("status") or "rejected")
+    result.update(
+        steps_used=steps_used,
+        lift_steps_used=lift_steps,
+        lift_status=lift_status,
+        opening_after_lift=round(opening_after_lift, 4),
+        retained_closure=retained,
+        stalled=lift_stalled,
+        recoverable=(steps_used == 0),
+    )
+    if lift_res.get("ik_error"):
+        result["ik_error"] = lift_res["ik_error"]
+    if lift_reached:
+        result.update(status="completed", reached=True, stop_reason=None)
+        if table_contact_stalled:
+            result["note"] = "tabletop contact seated fingertips; closed and lifted cleanly"
+    elif lift_stalled:
+        result.update(
+            status="stopped",
+            reached=False,
+            stop_reason="contact_or_stall",
+            note=lift_res.get("note") or "post-close liftoff stopped on contact or stall",
+        )
+    else:
+        result.update(
+            status="partial" if steps_used > 0 else "rejected",
+            reached=False,
+            stop_reason=lift_res.get("stop_reason") or "lift_not_reached",
+        )
+        if lift_res.get("note"):
+            result["note"] = lift_res["note"]
+    return finish(state_end)
+
+
+def preview_delta_grasp(
+    primitives: Any, start_joints: dict[str, list[float]], **kwargs: Any
+) -> dict[str, Any]:
+    """Read-only preflight for ``delta_grasp`` without moving any arm or gripper."""
+
+    result = delta_grasp(primitives, start_joints, **kwargs, preview=True)
+    if "error" not in result:
+        result["preview"] = True
+    return result
+
+
+preview_delta_grasp._readonly = True  # type: ignore[attr-defined]
+
+
+# ---------------------------------------------------------------------------
 # registration
 # ---------------------------------------------------------------------------
 
@@ -1166,8 +1831,28 @@ _ALIGN_FEATURE_SCHEMA = {
         "reserve_steps": {"type": "integer"},
         "stop_on_stall": {"type": "boolean"},
         "stall_steps": {"type": "integer"},
+        "allow_table_contact": {"type": "boolean"},
     },
     "required": ["feature_xyz", "target_xyz"],
+}
+_DELTA_GRASP_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "target_xyz": _VEC3,
+        "arm": {"type": "string", "enum": list(ARMS)},
+        "axis": _VEC3,
+        "standoff_m": {"type": "number"},
+        "overdrive_m": {"type": "number"},
+        "opening": {"type": ["number", "null"]},
+        "contact_table": {"type": "boolean"},
+        "lift_dxyz": {"type": ["array", "null"], "items": {"type": "number"}},
+        "align_tol_m": {"type": "number"},
+        "max_linear_m": {"type": "number"},
+        "max_steps": {"type": "integer"},
+        "reserve_steps": {"type": "integer"},
+        "stall_steps": {"type": "integer"},
+    },
+    "required": ["target_xyz"],
 }
 SPECS: dict[str, dict[str, Any]] = {
     "nudge": {
@@ -1186,7 +1871,8 @@ SPECS: dict[str, dict[str, Any]] = {
             "max_angular_deg": {"type": "number"}, "max_steps": {"type": "integer"},
             "reserve_steps": {"type": "integer"}, "step_m": {"type": "number"},
             "settle_steps": {"type": "integer"}, "tol_m": {"type": "number"},
-            "tol_deg": {"type": "number"}}, "required": []},
+            "tol_deg": {"type": "number"},
+            "allow_table_contact": {"type": "boolean"}}, "required": []},
     },
     "visual_align_and_insert": {
         "name": "visual_align_and_insert",
@@ -1218,6 +1904,18 @@ SPECS: dict[str, dict[str, Any]] = {
         "clearance and native step estimate); never moves.",
         "input_schema": _ALIGN_FEATURE_SCHEMA,
     },
+    "delta_grasp": {
+        "name": "delta_grasp",
+        "description": "Compact close-range grasp / handoff: optional pre-open, transverse "
+        "align, guarded axial approach or tabletop seating, close, and optional micro-step lift.",
+        "input_schema": _DELTA_GRASP_SCHEMA,
+    },
+    "preview_delta_grasp": {
+        "name": "preview_delta_grasp",
+        "description": "Read-only preflight for delta_grasp (reach, table clearance and native "
+        "step estimate); never moves.",
+        "input_schema": _DELTA_GRASP_SCHEMA,
+    },
 }
 
 
@@ -1227,22 +1925,30 @@ def handlers(primitives: Any, start: dict[str, list[float]]) -> dict[str, Any]:
         "visual_align_and_insert": partial(visual_align_and_insert, primitives, start),
         "align_feature": partial(align_feature, primitives, start),
         "preview_align_feature": partial(preview_align_feature, primitives, start),
+        "delta_grasp": partial(delta_grasp, primitives, start),
+        "preview_delta_grasp": partial(preview_delta_grasp, primitives, start),
     }
 
 
 __all__ = [
     "ALIGN_TOL_M",
+    "FINE_STEP_M",
     "MAX_ANGULAR_DEG",
     "MAX_LINEAR_M",
+    "PREOPEN_TOL",
     "SPECS",
+    "TABLE_TOUCH_OVERDRIVE_M",
+    "THIN_HELD_OPENING",
     "ZERO_DELTA_M",
     "achieved_delta",
     "align_feature",
     "camera_images",
     "crop_center",
+    "delta_grasp",
     "handlers",
     "nudge",
     "preview_align_feature",
+    "preview_delta_grasp",
     "resolve_policy",
     "set_policy",
     "target_pose",

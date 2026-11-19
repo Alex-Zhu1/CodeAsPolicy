@@ -278,8 +278,20 @@ class IKResult:
     collides: bool
 
 
-def clearance_violations(arm: str, q: Sequence[float], offset: float = TCP_OFFSET) -> list[str]:
-    """Parts of the arm in the table: below its top, over its extent."""
+def clearance_violations(
+    arm: str,
+    q: Sequence[float],
+    offset: float = TCP_OFFSET,
+    *,
+    allow_table_touch: bool = False,
+) -> list[str]:
+    """Parts of the arm in the table: below its top, over its extent.
+
+    With ``allow_table_touch=True``, only the fingertip floor is relaxed from
+    ``TABLE_Z + 0.002`` down to ``TABLE_Z - 0.004`` so a guarded stall-stopped
+    descent can seat the flat finger pads past the bevel onto the tabletop;
+    ``joint2``..``joint6`` remain strictly above ``TABLE_Z + 0.015``.
+    """
 
     def over(p: np.ndarray) -> bool:
         return (
@@ -293,7 +305,8 @@ def clearance_violations(arm: str, q: Sequence[float], offset: float = TCP_OFFSE
         if t[2, 3] < TABLE_Z + 0.015 and over(t[:3, 3]):
             bad.append(f"joint{i}")
     tip = fr[-1][:3, 3] + fr[-1][:3, 0] * max(offset, TIP_OFFSET)
-    if tip[2] < TABLE_Z + 0.002 and over(tip):
+    tip_floor = TABLE_Z - 0.004 if allow_table_touch else TABLE_Z + 0.002
+    if tip[2] < tip_floor and over(tip):
         bad.append("fingertips")
     return bad
 
@@ -308,6 +321,7 @@ def solve(
     pos_tol: float = 0.002,
     rot_tol_deg: float = 1.0,
     iterations: int = 150,
+    allow_table_touch: bool = False,
 ) -> IKResult:
     """Damped least squares from ``seed`` for a 4x4 target of the point ``offset`` along link6's x.
 
@@ -342,7 +356,11 @@ def solve(
     rot_err = rotation_error(target[:3, :3], end[:3, :3])
     ok = pos_err <= pos_tol and rot_err <= rot_tol_deg
     return IKResult(
-        tuple(float(v) for v in q), pos_err, rot_err, ok, bool(clearance_violations(arm, q, offset))
+        tuple(float(v) for v in q),
+        pos_err,
+        rot_err,
+        ok,
+        bool(clearance_violations(arm, q, offset, allow_table_touch=allow_table_touch)),
     )
 
 
@@ -353,6 +371,7 @@ def best_solution(
     *,
     offset: float = TCP_OFFSET,
     extra_seeds: Sequence[Sequence[float]] = (),
+    allow_table_touch: bool = False,
     **kwargs,
 ) -> IKResult:
     """The solution nearest ``current`` that reaches the target and clears the table.
@@ -374,7 +393,7 @@ def best_solution(
     seeds.extend(cur + rng.normal(0.0, 0.6, size=6) for _ in range(6))
     good, misses = [], []
     for s in seeds:
-        res = solve(arm, target, s, offset=offset, **kwargs)
+        res = solve(arm, target, s, offset=offset, allow_table_touch=allow_table_touch, **kwargs)
         (good if res.ok and not res.collides else misses).append(res)
     if good:
         weights = np.array([2.0, 2.0, 1.5, 1.0, 1.0, 0.5])
@@ -402,6 +421,7 @@ def line_path(
     step_deg: float = 8.0,
     pos_tol: float = 0.002,
     rot_tol_deg: float = 1.0,
+    allow_table_touch: bool = False,
 ) -> tuple[list[tuple[float, ...]], str | None]:
     """Joint waypoints that move the grasp point along a straight line to ``target``.
 
@@ -421,7 +441,15 @@ def line_path(
         way = np.eye(4)
         way[:3, :3] = slerp(start[:3, :3], target[:3, :3], t)
         way[:3, 3] = p0 + (target[:3, 3] - p0) * t
-        res = solve(arm, way, q, offset=offset, pos_tol=pos_tol, rot_tol_deg=rot_tol_deg)
+        res = solve(
+            arm,
+            way,
+            q,
+            offset=offset,
+            pos_tol=pos_tol,
+            rot_tol_deg=rot_tol_deg,
+            allow_table_touch=allow_table_touch,
+        )
         if not res.ok:
             return out, f"the line leaves the arm's reach {t * dist:.3f} m along it"
         if res.collides:

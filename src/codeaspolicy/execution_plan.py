@@ -75,93 +75,13 @@ PLAN_PROMPT = """\
 
 Keep a short current-goal note with the predefined Python helper:
 `plan(goal="...", next_action="...", done_when="...", evidence="", status="in_progress")`.
-Use it in the same code call as useful work, and update when the goal, evidence
-or approach changes; no separate planning-only turn is required. Record the
-remaining step reserve split (primary execution budget ~60%–70% vs contingency/cleanup
-reserve ~30%–40% for local alignment fixes, release verification and homing) so
-you track reserve health across phases and avoid multi-stage detours. Each update
-replaces the current note. `plan()` reads it across cells/programs. Status is
-pending/in_progress/done/blocked; done refers only to your stated goal.
-The read-only `action_history(limit=10, stateful_only=True, since_plan=False)`
-helper returns recent executed actions with their tool, arguments, outcome,
-action/step/time distance and observation identity. Use `since_plan=True` to
-inspect only actions taken since the current plan note. Feedback also carries a
-bounded `action_memory` timeline when there is prior motion.
-The text fields are planning claims, not benchmark facts or motion permission.
-They never replace the task instruction, watch prerequisites or finish.
-Before declaring the whole task complete, review the task card's acceptance
-requirements and original instruction, including ordering, preservation and final
-state. When acceptance coverage is unknown or partial, account for all task-relevant
-object groups visible in step 0 (such as primary targets, actor/opponent items,
-separate supply/replacement stacks and destination slots) and every physical phase
-implied by the domain action. Record unmet/unknown items and assumptions in your
-note; a narrower done_when or recorded assumption never discharges an unperformed
-phase or justifies finishing while task-relevant scene objects remain unused and
-budget remains. Cite observation/action evidence, and distinguish your completion
-claim from the environment's verdict. Missing public criteria alone do not require
-stopping useful work or an extra planning-only turn.
-Keep text brief (at most 1000 characters per field). The host saves the latest
-note and revision history with observation/action context; earlier notes survive
-code failures. An unchanged note is not refreshed by later motion.
+Call it alongside useful work when the goal, evidence, or approach changes (no planning-only turn needed). Track primary execution budget (~60–70%) vs contingency/cleanup reserve (~30–40% for alignment fixes, release verification, and homing). Each update replaces the note; `plan()` reads it across turns. Status is `pending`/`in_progress`/`done`/`blocked` (`done` covers your stated goal only). Use `action_history(limit=10, stateful_only=True, since_plan=False)` to inspect recent actions and outcomes. Plan text is a planner note, never benchmark fact or motion permission. Before finishing, review the task instruction and acceptance criteria, account for all task-relevant objects visible at step 0, and cite fresh observation evidence. Keep fields brief (<= 1000 chars); notes survive code errors.
 
 ## Executable action contracts
 
-plan(..., contract={...}) works without Valen. requires maps names to checks before
-actions; preserves checks before/after; ensures checks at status="done"/success finish.
-Bind all public invariant IDs in preserves. Checks: zero-argument read-only callbacks
-returning bool or monitor.ConstraintCheck from current evidence; unknown/errors block.
-Static checks expire on attempted motion; rebind after restart.
-New contracts replace requires/ensures/constraints, merge preserves; omission retains.
-constraints inherits execute_motion bounds into motion/local/grasp; conflicts or old IDs
-missing bounds reject. Observations/failure/stuck remain available; repair assumptions
-or choose independent work. Preserve protections. Compare approach/contact/exit for
-preservation, evidence, both arms' clearance, held extent, future reachability and cost.
-Preview coupled poses; re-observe after interaction. Arrival does not prove task completion.
+`plan(..., contract={...})` enforces zero-argument read-only callbacks returning `bool` or `monitor.ConstraintCheck` (`requires` before actions, `preserves` before/after, `ensures` at `status="done"`/finish; unknown/errors block; static checks expire on motion). Bind all public invariant IDs in `preserves`. New contracts replace `requires`/`ensures`/`constraints` and merge `preserves`. `constraints` inherits `execute_motion` bounds.
 
-## Plan local work groups
+## Local work groups
 
-When nearby objects or controls share a useful setup, consider a local work
-group. Choose its members, required effect per member, dependencies, surroundings
-to preserve, and an exit condition from current observations. Compare the cost
-of candidate manipulation schemes by the required final object state: distinguish
-objects that only need an in-place state or orientation change (such as tipping
-face up, flipping, sliding or pressing) from objects that must be relocated to a
-different zone. When an object or group can achieve its required final state in
-place, act on it in place with local contact strokes rather than picking up,
-carrying, placing and then tipping/acting on each member. Do not vacate or
-relocate existing group members merely to open an interior gap for a later
-supply/replacement item; place an incoming or replacement item at the designated
-open end or target slot in its required standing/resting orientation. Compare the
-cost of a shared approach and local transitions with repeatedly leaving and
-returning. Prefer one approach, a compact sequence of local actions with feedback,
-and one departure when geometry and task ordering permit. Keep useful positioning
-between members; reposition only as far as the next action and clearance require,
-and keep default free/approach arrival tolerances on intermediate shifts/retreats
-so local repositioning is not slowed by unnecessary precision windows. After a
-low contact stroke, always lift clear vertically or reverse back along the
-contact axis before sweeping laterally across neighboring objects, and check/repair
-any disturbed neighbors before leaving the group.
-
-A group may use several strokes, grasps or directions. Simultaneous contact and
-a single straight trajectory are optional, not the definition of grouping.
-Choose contacts that can produce the intended effect on each affected member;
-proximity alone does not establish common contact geometry. Split the group or
-change approach when access, ordering, support, occlusion or interference demand
-it. Parallel work is useful only for independent actions with compatible routes.
-
-Record concise member identities, pending/observed-complete/uncertain states,
-evidence references, and the active action/operation ID in the existing plan
-fields. A completed motion is not a completed member. Inspect effects after
-contact or a dependency-changing action, then continue only the unfinished work
-whose prerequisites are known. Related actions may share a code call when their
-feedback suffices; return for visual judgment when it is needed. Grouping never
-licenses a blind loop over stale targets or continuing after a failed prerequisite.
-
-After interruption, reconcile the active action/operation before retrying it;
-where supported, continue the same ID's known remaining work. Reobserve uncertain
-or displaced members. Preserve completed members only while their evidence is
-still valid; do not replay the whole group or treat the plan note as execution
-permission. Leave the local area when the group is verified, the next task needs
-a new setup, or a concrete obstruction requires replanning. Budget estimates
-alone do not justify abandoning useful remaining work.
+When nearby objects share a setup, reuse one approach, compact local actions with feedback, and one departure. Prefer in-place actions (tip, flip, slide, press) over pick-carry-place when relocation is unnecessary, and do not vacate existing group members to open an interior gap. After a low contact stroke, lift straight up or reverse along the contact axis before any lateral sweep, and verify neighbours remain undisturbed. Record member states and active intent IDs in `plan()`; inspect effects after contact, reconcile interrupted actions before resuming, and do not abandon useful remaining work solely from cost estimates.
 """

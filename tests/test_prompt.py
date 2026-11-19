@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 import inspect
+import re
+from collections import Counter
 
 import pytest
 
-from codeaspolicy import LiberoRobot, TaskCard, api_reference, render_prompt
+from codeaspolicy import LiberoRobot, TaskCard, api_reference, knowledge_text, render_prompt
 from codeaspolicy.libero import RESULT_TYPES
 
 
@@ -18,6 +20,29 @@ def _public_methods():
         and (inspect.isfunction(member) or isinstance(member, property))
         and name not in ("ledger", "backend")
     ]
+
+
+def _duplicate_paragraphs(text: str, min_chars: int = 80) -> list[str]:
+    paras = [
+        re.sub(r"\s+", " ", p).strip()
+        for p in re.split(r"\n\s*\n", text)
+        if len(p.strip()) >= min_chars
+    ]
+    return [p for p, count in Counter(paras).items() if count > 1]
+
+
+SINGLE_CASE_FORBIDDEN = (
+    "opening=0.38",
+    "opening=0.35–0.42",
+    "standoff_m=0.008",
+    "z ≈ 0.85–0.87",
+    "y ≈ -0.28",
+    "101 * opening",
+    "insert_key",
+    "keyhole",
+    "make_kong",
+    "mahjong",
+)
 
 
 def test_api_reference_lists_every_public_method_and_result_type():
@@ -40,64 +65,360 @@ def test_signatures_render_defaults_and_keyword_markers():
 
 
 @pytest.mark.parametrize("robot", ["robodojo", "robodojo_xpl_rgb"])
-@pytest.mark.parametrize("primitives", ["full", "no-vla"])
-def test_generated_motion_policy_declares_intents_without_controller_tuning(robot, primitives):
+@pytest.mark.parametrize("primitives", ["full", "no-vla", "no-sam"])
+def test_robodojo_prompts_stay_within_52kb_budget_and_have_no_duplicates_or_recipes(
+    monkeypatch, robot, primitives
+):
     from codeaspolicy.play import build_prompt
     from codeaspolicy.robots import get_adapter
 
-    card = TaskCard(suite="arx_x5", task="test", seed=0, task_language="Move the object",
-                    object_names=[], robot=robot)
-    text = build_prompt("cells", card, budget_s=900, max_programs=None, primitives=primitives)
-    for name in ("execute_motion", "resume_motion", "motion_status", "set_gripper",
-                 "operation_status", "resume_operation",
-                 "begin_grasp", "grasp_step", "grasp_status", "align_local",
-                 "object_ref", "observe_object", "observe_hold"):
-        assert f"robo.{name}(" in text
-    for name in ("move_to", "move_both", "motion_profile", "motion_window", "try_grasp"):
-        assert f"robo.{name}(\n" not in text
-    assert 'motion="native"' not in text and 'motion="transit"' not in text
-    assert "Low-level movement and speed selection are disabled" in text
-    assert "## Perception" in text and "## Judging progress" in text
-    assert "reserve steps for required cleanup" not in text
-    assert "Contingency & Cleanup Reserve" in text
-    assert "never justifies higher-order multi-stage detours" in text
-    assert "wider than the object's full diagonal footprint" in text
-    assert "Do not abandon a task" in text
-    assert "unknown is not empty" in text
-    assert "table-height geometry" in text
-    assert "rotated_end_pose" in text
-    assert "vertical-axis twist" in text
-    assert "sequential single-arm clearance" in text
-    assert "place-and-regrasp" in text
-    assert "object_bottom_z" in text and "L_below + 0.03" in text
-    assert "fixed jaw-rail crossbar" in text and "±4.5–5.0 cm" in text
-    assert "tangent-line contact" in text and "z = z_support + h" in text
-    assert "orthogonal 90° in-air flat-face head handoff" in text.lower()
-    assert "pre-staged receiver & minimal-hang ordering" in text.lower()
-    assert "dot(+z_link6_donor, receiver_side) < 0" in text
-    assert "opening=0.35–0.42" in text and "7–10 mm" in text and "4–6 cm" in text
-    assert "robo.delta_grasp(" in text and "contact_table=True" in text
-    assert "z ≈ 0.85–0.87 m" in text
-    assert "z_support + 0.018" not in text
-    for forbidden in ("insert_key", "keyhole", "make_kong", "mahjong"):
-        assert forbidden not in text
-    assert "robo.move_to(\n" in api_reference(get_adapter(robot).robot_cls, intent_only=False)
+    monkeypatch.delenv("CODEASPOLICY_DELTA_MODEL", raising=False)
+    monkeypatch.delenv("CODEASPOLICY_DELTA_BASE_URL", raising=False)
+
+    card = TaskCard(
+        suite="arx_x5",
+        task="test",
+        seed=0,
+        task_language="Move the object",
+        object_names=[],
+        robot=robot,
+    )
+    cls = get_adapter(robot).robot_cls
+    cells_prompt = build_prompt(
+        "cells", card, budget_s=900, max_programs=None, primitives=primitives
+    )
+    sys_prompt = render_prompt(card, primitives=primitives).system
+    ref = api_reference(cls, primitives=primitives)
+    know = knowledge_text(robot, primitives=primitives)
+
+    assert len(cells_prompt) <= 52_000, f"{robot}/{primitives} cells={len(cells_prompt)}"
+    assert len(sys_prompt) <= 52_000, f"{robot}/{primitives} sys={len(sys_prompt)}"
+    assert len(know) <= 20_000, f"{robot}/{primitives} knowledge={len(know)}"
+    if primitives == "no-sam":
+        assert len(ref) <= 28_000, f"{robot}/no-sam api={len(ref)}"
+
+    assert _duplicate_paragraphs(cells_prompt) == []
+    assert _duplicate_paragraphs(sys_prompt) == []
+    assert _duplicate_paragraphs(know) == []
+
+    for doc in (cells_prompt, sys_prompt, ref, know):
+        for forbidden in SINGLE_CASE_FORBIDDEN:
+            assert forbidden not in doc.lower(), f"{forbidden!r} leaked into {robot}/{primitives}"
 
 
 @pytest.mark.parametrize("robot", ["robodojo", "robodojo_xpl", "robodojo_xpl_rgb"])
-def test_offline_generation_defaults_to_shared_operations(robot):
+@pytest.mark.parametrize("primitives", ["full", "no-vla", "no-sam"])
+def test_orthogonal_coarse_delta_api_prunes_ceremony_while_preserving_runtime(
+    monkeypatch, robot, primitives
+):
+    from codeaspolicy.play import build_prompt
     from codeaspolicy.robots import get_adapter
 
-    card = TaskCard(suite="arx_x5", task="test", seed=0, task_language="Move the object",
-                    object_names=[], robot=robot)
+    monkeypatch.delenv("CODEASPOLICY_DELTA_MODEL", raising=False)
+    monkeypatch.delenv("CODEASPOLICY_DELTA_BASE_URL", raising=False)
+
+    card = TaskCard(
+        suite="arx_x5",
+        task="test",
+        seed=0,
+        task_language="Move the object",
+        object_names=[],
+        robot=robot,
+    )
     cls = get_adapter(robot).robot_cls
-    for text in (api_reference(cls), render_prompt(card).system):
-        for name in ("execute_motion", "begin_grasp", "align_local", "operation_status",
-                     "resume_operation"):
-            assert f"robo.{name}(" in text
-        for name in ("move_to", "move_both", "motion_profile", "motion_window", "try_grasp"):
-            assert f"robo.{name}(\n" not in text
-    assert "codeaspolicy.operation.v1" in render_prompt(card).system
+    cells_text = build_prompt("cells", card, budget_s=900, max_programs=None, primitives=primitives)
+    sys_text = render_prompt(card, primitives=primitives).system
+    ref = api_reference(cls, primitives=primitives)
+
+    exposed_core = (
+        "execute_motion",
+        "resume_motion",
+        "motion_status",
+        "set_gripper",
+        "home",
+        "delta_grasp",
+        "align_feature",
+        "nudge",
+        "ik",
+        "fk",
+        "pose_from_axes",
+        "crop_grid",
+        "triangulate",
+        "ray_at_z",
+        "object_ref",
+        "observe_object",
+        "observe_hold",
+    )
+    hidden_ceremony = (
+        "begin_grasp",
+        "grasp_step",
+        "grasp_status",
+        "align_local",
+        "preview_align_feature",
+        "preview_delta_grasp",
+        "operation_status",
+        "resume_operation",
+        "move_to",
+        "move_both",
+        "motion_profile",
+        "motion_window",
+        "try_grasp",
+    )
+
+    for doc in (ref, sys_text, cells_text):
+        for name in exposed_core:
+            assert f"robo.{name}(" in doc, f"missing robo.{name}("
+        for name in hidden_ceremony:
+            assert f"robo.{name}(" not in doc, f"should hide robo.{name}("
+        assert "class Move(" not in doc
+
+    # Runtime backward compatibility: every hidden robot method remains callable on the class
+    # and appears when intent_only=False.
+    full_ref = api_reference(cls, primitives=primitives, intent_only=False)
+    for name in (
+        "begin_grasp",
+        "grasp_step",
+        "grasp_status",
+        "align_local",
+        "operation_status",
+        "resume_operation",
+        "move_to",
+        "move_both",
+        "try_grasp",
+        "visual_align_and_insert",
+        "visual_servo",
+    ):
+        assert callable(getattr(cls, name)), f"{cls.__name__}.{name} must remain callable"
+        assert f"robo.{name}(" in full_ref, f"intent_only=False missing robo.{name}("
+
+
+@pytest.mark.parametrize("robot", ["robodojo", "robodojo_xpl_rgb"])
+def test_visual_servo_and_visual_align_are_capability_gated(monkeypatch, robot):
+    from codeaspolicy.play import build_prompt
+    from codeaspolicy.robots import get_adapter
+
+    card = TaskCard(
+        suite="arx_x5",
+        task="test",
+        seed=0,
+        task_language="Insert the part",
+        object_names=[],
+        robot=robot,
+    )
+    cls = get_adapter(robot).robot_cls
+
+    # Unset env vars -> hidden in default intent_only=True prompt.
+    monkeypatch.delenv("CODEASPOLICY_DELTA_MODEL", raising=False)
+    monkeypatch.delenv("CODEASPOLICY_DELTA_BASE_URL", raising=False)
+    for doc in (
+        api_reference(cls, primitives="no-sam"),
+        render_prompt(card, primitives="no-sam").system,
+        build_prompt("cells", card, budget_s=900, max_programs=None, primitives="no-sam"),
+    ):
+        assert "robo.visual_align_and_insert(" not in doc
+        assert "robo.visual_servo(" not in doc
+        assert "class VisualAlign(" not in doc
+
+    # Explicit delta_vla=True exposes them even without env vars.
+    explicit = api_reference(cls, primitives="no-sam", delta_vla=True)
+    assert "robo.visual_align_and_insert(" in explicit
+    assert "robo.visual_servo(" in explicit
+    assert "class VisualAlign(" in explicit
+
+    # Setting CODEASPOLICY_DELTA_MODEL or CODEASPOLICY_DELTA_BASE_URL exposes them automatically.
+    for env_var, val in (
+        ("CODEASPOLICY_DELTA_MODEL", "pear-delta-v1"),
+        ("CODEASPOLICY_DELTA_BASE_URL", "http://127.0.0.1:8000/v1"),
+    ):
+        monkeypatch.delenv("CODEASPOLICY_DELTA_MODEL", raising=False)
+        monkeypatch.delenv("CODEASPOLICY_DELTA_BASE_URL", raising=False)
+        monkeypatch.setenv(env_var, val)
+        for doc in (
+            api_reference(cls, primitives="no-sam"),
+            render_prompt(card, primitives="no-sam").system,
+            build_prompt("cells", card, budget_s=900, max_programs=None, primitives="no-sam"),
+        ):
+            assert "robo.visual_align_and_insert(" in doc
+            assert "robo.visual_servo(" in doc
+            assert "class VisualAlign(" in doc
+
+
+def test_visual_servo_runtime_dispatch_and_fallback():
+    from codeaspolicy.robodojo import RobodojoRobot, VisualAlign
+
+    class _FakeBackend:
+        def __init__(self, tools):
+            self._tools = set(tools)
+            self.calls = []
+            self.steps = 0
+
+        def execute_tool(self, name, kwargs):
+            self.calls.append((name, kwargs))
+            if name == "view_env_state":
+                return {
+                    "step": 0,
+                    "task_language": "test",
+                    "truncated": False,
+                    "state": {
+                        "state": {
+                            "left_ee_pose": [-0.3, -0.3, 0.9, 1, 0, 0, 0],
+                            "right_ee_pose": [0.3, -0.3, 0.9, 1, 0, 0, 0],
+                            "left_ee_joint_state": [1.0],
+                            "right_ee_joint_state": [1.0],
+                            "left_arm_joint_state": [0.0] * 6,
+                            "right_arm_joint_state": [0.0] * 6,
+                        }
+                    },
+                }
+            if name not in self._tools:
+                return {"error": f"unknown tool {name!r}"}
+            self.steps += 2
+            return {
+                "goal": kwargs["goal"],
+                "arm": kwargs["arm"],
+                "status": "completed",
+                "reached": True,
+                "done": True,
+                "converged": False,
+                "contact_complete": False,
+                "stalled": False,
+                "stop_reason": "done",
+                "rounds_used": 1,
+                "steps_used": 2,
+                "step_allowance": kwargs["max_steps"],
+                "final_xyz": [0.3, -0.15, 0.9],
+                "holding": False,
+                "policy": "fake",
+                "rounds": [],
+                "last_feedback": None,
+                "policy_error": None,
+            }
+
+        def solved(self):
+            return False
+
+        def artifact(self, name, step=-1):
+            return b""
+
+        def env_steps(self):
+            return self.steps
+
+        def cancel(self):
+            pass
+
+    # Backend supporting visual_servo dispatches visual_servo directly.
+    b_servo = _FakeBackend({"visual_servo", "visual_align_and_insert"})
+    robo_servo = RobodojoRobot(b_servo)
+    res_servo = robo_servo.visual_servo("hang mug on hook")
+    assert isinstance(res_servo, VisualAlign) and res_servo.reached
+    assert any(name == "visual_servo" for name, _ in b_servo.calls)
+
+    # Backend supporting only visual_align_and_insert falls back cleanly.
+    b_legacy = _FakeBackend({"visual_align_and_insert"})
+    robo_legacy = RobodojoRobot(b_legacy)
+    res_legacy = robo_legacy.visual_servo("insert plug")
+    assert isinstance(res_legacy, VisualAlign) and res_legacy.reached
+    assert any(name == "visual_align_and_insert" for name, _ in b_legacy.calls)
+    assert all(name != "visual_servo" for name, _ in b_legacy.calls)
+
+
+def test_robodojo_ik_binds_loosely_to_kinematics_envelopes_and_twist(monkeypatch):
+    from codeaspolicy.hosts import robodojo_kinematics as kin
+    from codeaspolicy.robodojo import RobodojoRobot
+
+    class _MinBackend:
+        def execute_tool(self, name, kwargs):
+            return {
+                "step": 0,
+                "task_language": "test",
+                "truncated": False,
+                "state": {
+                    "state": {
+                        "left_ee_pose": [-0.3, -0.3, 0.9, 1, 0, 0, 0],
+                        "right_ee_pose": [0.3, -0.3, 0.9, 1, 0, 0, 0],
+                        "left_ee_joint_state": [0.5],
+                        "right_ee_joint_state": [0.5],
+                        "left_arm_joint_state": [0.0] * 6,
+                        "right_arm_joint_state": [0.0] * 6,
+                    }
+                },
+            }
+
+        def solved(self):
+            return False
+
+        def artifact(self, name, step=-1):
+            return b""
+
+        def env_steps(self):
+            return 0
+
+        def cancel(self):
+            pass
+
+    robo = RobodojoRobot(_MinBackend())
+    target = robo.pose_from_axes((0.20, -0.15, 0.85), (0.0, 0.0, -1.0), (1.0, 0.0, 0.0))
+
+    # 1. Twist headroom selection: with seed joint6 near +2.4 rad, twist_rad=+1.4 exceeds +3.1
+    #    unless jaw_symmetry flips 180 deg into negative joint6.
+    seed_high_j6 = (0.0, 0.6, 0.8, -0.3, 0.0, 2.4)
+    sol_twist = robo.ik(
+        "right",
+        target,
+        seed=seed_high_j6,
+        jaw_symmetry=True,
+        twist_rad=1.4,
+        check_other_arm=False,
+    )
+    assert sol_twist.ok
+    assert sol_twist.joints[5] + 1.4 <= kin.JOINT_LIMITS[5][1]
+
+    # 2. Loose binding to inter_arm_violations: rejects when colliding, passes with check_other_arm=False.
+    monkeypatch.setattr(
+        kin,
+        "inter_arm_violations",
+        lambda lq, rq, **kw: ["camera_housing_collision"],
+        raising=False,
+    )
+    blocked = robo.ik(
+        "right",
+        target,
+        seed=(0.0,) * 6,
+        other_joints=(0.0,) * 6,
+        check_other_arm=True,
+        opening=0.4,
+    )
+    assert not blocked.ok and blocked.collides
+    assert blocked.reason is not None and "camera_housing_collision" in blocked.reason
+
+    unchecked = robo.ik(
+        "right",
+        target,
+        seed=(0.0,) * 6,
+        other_joints=(0.0,) * 6,
+        check_other_arm=False,
+    )
+    assert unchecked.ok and not unchecked.collides
+
+    # 3. Loose binding to housing_exposure_penalty: jaw_symmetry picks the branch with lower penalty.
+    monkeypatch.setattr(kin, "inter_arm_violations", lambda lq, rq, **kw: [], raising=False)
+    base_sol = robo.ik("right", target, seed=(0.0,) * 6, jaw_symmetry=False, check_other_arm=False)
+    base_z = kin.fk("right", base_sol.joints)[:3, 2]
+    monkeypatch.setattr(
+        kin,
+        "housing_exposure_penalty",
+        lambda arm, q, other_q=None: 1.0 if float(kin.fk(arm, q)[:3, 2] @ base_z) > 0.0 else 0.0,
+        raising=False,
+    )
+    away = robo.ik(
+        "right",
+        target,
+        seed=(0.0,) * 6,
+        other_joints=(0.0,) * 6,
+        jaw_symmetry=True,
+        check_other_arm=True,
+    )
+    assert away.ok and away.flipped_jaw
 
 
 def test_render_prompt_contains_contract_reference_knowledge_and_card(tmp_path):
@@ -130,8 +451,13 @@ def test_render_prompt_contains_contract_reference_knowledge_and_card(tmp_path):
 def test_default_libero_cells_prompt_keeps_contract_within_budget():
     from codeaspolicy.play import build_prompt
 
-    card = TaskCard(suite="libero_object_swap", task=2, seed=0,
-                    task_language="Move the object", object_names=[])
+    card = TaskCard(
+        suite="libero_object_swap",
+        task=2,
+        seed=0,
+        task_language="Move the object",
+        object_names=[],
+    )
     text = build_prompt("cells", card, budget_s=900, max_programs=None)
     assert "contract={...}" in text and "public invariant IDs" in text
     assert len(text) < 40_000
@@ -175,8 +501,6 @@ def test_transfer_card_forbids_hard_coded_pixels(tmp_path):
 
 
 def _dump(tmp_path, card):
-    # from_json ignores the transfer flag only if it is absent; here it is
-    # present and False after the round trip below.
     card.transfer = False
     path = tmp_path / "card.json"
     path.write_text(card.to_json())
@@ -189,18 +513,29 @@ def test_code_prompt_only_describes_visual_apis_when_enabled(mode):
     from codeaspolicy.supervision import MonitorConfig
 
     card = TaskCard(
-        suite="arx_x5", task="organize_table", seed=0,
-        task_language="Organize the table", object_names=[], robot="robodojo_xpl_rgb",
+        suite="arx_x5",
+        task="organize_table",
+        seed=0,
+        task_language="Organize the table",
+        object_names=[],
+        robot="robodojo_xpl_rgb",
     )
     text = build_prompt(
-        "cells", card, budget_s=5400, max_programs=None, primitives="no-vla",
-        images="on-demand", feedback="pure", budget_mode="calls",
-        monitor=None if mode is None else MonitorConfig(
-            mode=mode, url="http://localhost:1" if mode == "pause" else None,
+        "cells",
+        card,
+        budget_s=5400,
+        max_programs=None,
+        primitives="no-vla",
+        images="on-demand",
+        feedback="pure",
+        budget_mode="calls",
+        monitor=None
+        if mode is None
+        else MonitorConfig(
+            mode=mode,
+            url="http://localhost:1" if mode == "pause" else None,
         ),
     )
-    # The optional helper used to reference an unbound evidence() and require
-    # watch even in the default-off prompt. Keep monitored APIs scoped to opt-in.
     assert ("evidence()" in text) is (mode == "pause")
     assert ("watch(phase, facts" in text) is (mode == "pause")
     assert "All callbacks still need watch contracts" not in text
@@ -212,11 +547,12 @@ def test_code_prompt_only_describes_visual_apis_when_enabled(mode):
 
 
 @pytest.mark.parametrize("robot", ["robodojo", "robodojo_xpl", "robodojo_xpl_rgb"])
-def test_no_sam_prompt_exposes_geometry_without_sam3_and_keeps_intent_invariants(robot):
-    import re
-
+def test_no_sam_prompt_exposes_geometry_without_sam3_and_keeps_core_knowledge(monkeypatch, robot):
     from codeaspolicy.play import build_prompt
     from codeaspolicy.robots import get_adapter
+
+    monkeypatch.delenv("CODEASPOLICY_DELTA_MODEL", raising=False)
+    monkeypatch.delenv("CODEASPOLICY_DELTA_BASE_URL", raising=False)
 
     card = TaskCard(
         suite="arx_x5",
@@ -268,172 +604,33 @@ def test_no_sam_prompt_exposes_geometry_without_sam3_and_keeps_intent_invariants
         assert not re.search(r"pi0|lingbot|rldx|vla|sam3", doc, re.IGNORECASE)
         assert not re.search(r"\brobo\.(locate|segment|back_project)\b", doc)
 
-    # All robodojo-intent.md and coordination invariants remain intact under no-sam.
-    assert "Low-level movement and speed selection are disabled" in prompt_text
-    assert "## Perception" in prompt_text and "## Judging progress" in prompt_text
-    assert "Contingency & Cleanup Reserve" in prompt_text
-    assert "never justifies higher-order multi-stage detours" in prompt_text
-    assert "wider than the object's full diagonal footprint" in prompt_text
-    assert "Do not abandon a task" in prompt_text
-    assert "unknown is not empty" in prompt_text
-    assert "table-height geometry" in prompt_text
-    assert "rotated_end_pose" in prompt_text
-    assert "vertical-axis twist" in prompt_text
-    assert "sequential single-arm clearance" in prompt_text
-    assert "place-and-regrasp" in prompt_text
-    assert "object_bottom_z" in prompt_text and "L_below + 0.03" in prompt_text
-    assert "fixed jaw-rail crossbar" in prompt_text and "±4.5–5.0 cm" in prompt_text
-    assert "tangent-line contact" in prompt_text and "z = z_support + h" in prompt_text
-    assert "orthogonal 90° in-air flat-face head handoff" in prompt_text.lower()
-    assert "pre-staged receiver & minimal-hang ordering" in prompt_text.lower()
-    assert "dot(+z_link6_donor, receiver_side) < 0" in prompt_text
-    assert "opening=0.35–0.42" in prompt_text and "7–10 mm" in prompt_text and "4–6 cm" in prompt_text
-    assert "robo.delta_grasp(" in prompt_text and "contact_table=True" in prompt_text
-    assert "z ≈ 0.85–0.87 m" in prompt_text
-    assert "z_support + 0.018" not in prompt_text
-    for forbidden in ("insert_key", "keyhole", "make_kong", "mahjong"):
-        assert forbidden not in prompt_text
-    assert "crop_grid" in prompt_text and "observe_object" in prompt_text and "observe_hold" in prompt_text
-
-
-@pytest.mark.parametrize(
-    "filename",
-    [
-        "robodojo-intent.md",
-        "robodojo.md",
-        "robodojo-novla.md",
-        "robodojo-nosam.md",
-        "robodojo_xpl_rgb.md",
-        "robodojo_xpl_rgb-novla.md",
-        "robodojo_xpl_rgb-nosam.md",
-    ],
-)
-def test_robodojo_knowledge_encodes_compact_transfer_and_bottom_clearance(filename):
-    from importlib import resources
-
-    path = resources.files("codeaspolicy").joinpath(f"knowledge/{filename}")
-    doc = path.read_text(encoding="utf-8")
-    assert "place-and-regrasp" in doc
-    assert "±1.2 cm" in doc and "0.145 m" in doc
-    assert ">= 5 cm" in doc
-    assert "orthogonal 90° in-air" in doc.lower()
-    assert "~22 cm" in doc and "~9.7 cm" in doc and ">= 7 cm" in doc
-    assert "object_bottom_z" in doc and "L_below + 0.03" in doc
-    assert "and **direct\n    in-air handoff**" not in doc
-    for forbidden in ("insert_key", "keyhole", "make_kong", "mahjong"):
-        assert forbidden not in doc.lower()
-
-
-@pytest.mark.parametrize(
-    "filename",
-    [
-        "robodojo-intent.md",
-        "robodojo.md",
-        "robodojo-novla.md",
-        "robodojo-nosam.md",
-        "robodojo_xpl_rgb.md",
-        "robodojo_xpl_rgb-novla.md",
-        "robodojo_xpl_rgb-nosam.md",
-    ],
-)
-def test_robodojo_knowledge_encodes_crowded_contact_and_regrasp_polarity(filename):
-    import re
-    from importlib import resources
-
-    path = resources.files("codeaspolicy").joinpath(f"knowledge/{filename}")
-    doc = path.read_text(encoding="utf-8")
-    # ARX-X5 fixed jaw-rail crossbar & crowded-row selective contact invariants
-    assert "fixed jaw-rail crossbar" in doc
-    assert "±4.5–5.0 cm" in doc and "opening=0.0" in doc
-    assert "align `close_dir` along the contact stroke" in doc
-    assert "3–4.5 cm" in doc
-    # Minimum closed-jaw gap, curved-rim failure mode, and orthogonal 90° flat-face head handoff invariants
-    assert "GRIP_ZERO_M" in doc and "~2.3 mm" in doc
-    assert "tangent-line contact" in doc
-    assert "z_support + 0.018" not in doc
-    assert "lets gravity pivot" not in doc.lower()
-    assert "orthogonal 90° in-air flat-face head handoff" in doc.lower()
-    assert "pre-staged receiver & minimal-hang ordering" in doc.lower()
-    doc_flat = " ".join(doc.split())
-    assert "opening <= 0.03" in doc and "4–6 cm" in doc and "-u_pointing_R" in doc
-    assert "1.5–2.5 cm" not in doc
-    assert "~8–10" in doc and "~25–30" in doc and "< 1.2 s" in doc
-    assert "one direct c2 move" in doc_flat.lower()
-    assert "widest parallel span" in doc_flat and "~101 * opening" in doc_flat
-    assert ">= 2.5–3.0 cm" in doc_flat and "contact_table=True" in doc_flat
-    assert "overdrive_m=0.005" in doc_flat and "standoff_m=0.008" in doc_flat
-    assert "opening=0.38" in doc_flat and "robo.delta_grasp(" in doc_flat
-    assert "dot(+z_link6_donor, receiver_side) < 0" in doc_flat
-    assert "dot(+z_link6_donor, u_pointing_R) > 0" in doc_flat
-    assert "+5.1–7.2 cm" in doc_flat and "pose.axes()[2]" in doc_flat
-    assert "opening=0.35–0.42" in doc_flat and "±2.0–2.4 cm" in doc_flat and "±4.4 cm" in doc_flat
-    assert "R_tcp = P_head - (0.007..0.010) * u_pointing_R" in doc_flat
-    assert "7–10 mm" in doc_flat and "TIP_OFFSET - TCP_OFFSET = +1.3 cm" in doc_flat
-    assert "3–6 mm" in doc_flat and ">= 2.0 cm" in doc_flat and "L_axis" in doc_flat
-    assert "horizontal radial approach heading" in doc_flat and "joint5 ≈ 0" in doc_flat and "±1.52 rad" in doc_flat
-    assert "top and bottom parallel flat faces" in doc_flat and "`roll=+90°`" in doc_flat
-    assert "+z_link6" in doc and "-z_link6" in doc
-    assert "z ≈ 0.85–0.87 m" in doc and "+7–9 cm" in doc
-    assert "±1.57 rad" in doc and ">= 1.52 rad" in doc and "±85°" in doc and ">= 3.05 rad" in doc and "[-3.1, 3.1]" in doc
-    assert "handoff -> hover -> seat -> twist" in doc
-    assert "robo.align_feature" in doc and "stop_on_stall=True" in doc
-    assert "z = z_support + h" in doc
-    for forbidden in ("insert_key", "keyhole", "make_kong", "mahjong"):
-        assert forbidden not in doc.lower()
-    # Verify crowded-contact and orthogonal flat-face handoff clauses stay free of task nouns & SAM3/VLA words
+    # Core task-agnostic Coarse + Delta knowledge remains intact under no-sam.
     for marker in (
-        "selective contact / tipping inside a tightly packed row or array",
-        "headed-stem / flat-head + shaft parts requiring coaxial vertical insertion",
+        "## Perception",
+        "## Judging progress",
+        "GRIP_ZERO_M",
+        "place-and-regrasp",
+        "object_bottom_z",
+        "robo.delta_grasp(",
+        "contact_table=True",
+        "robo.align_feature(",
+        "robo.nudge(",
+        "stop_on_stall=True",
+        "crop_grid",
+        "triangulate",
+        "ray_at_z",
+        "z_support + h",
+        "observe_object",
+        "observe_hold",
     ):
-        idx = doc.lower().index(marker)
-        end = doc.find("\n- ", idx + 1)
-        snippet = doc[idx : None if end == -1 else end]
-        assert not re.search(
-            r"\b(insert_key|key|keys|keyhole|lock|locks|make_kong|kong|mahjong)\b",
-            snippet,
-            re.IGNORECASE,
-        )
-        assert not re.search(r"pi0|lingbot|rldx|vla|sam3", snippet, re.IGNORECASE)
-        assert not re.search(r"\brobo\.(locate|segment|back_project)\b", snippet)
+        assert marker in prompt_text, f"missing {marker!r} in no-sam prompt"
+    for forbidden in SINGLE_CASE_FORBIDDEN:
+        assert forbidden not in prompt_text.lower()
 
 
-def test_robodojo_knowledge_prevent_kinematic_traps_bullet_parity():
-    import re
-    from importlib import resources
-
-    filenames = (
-        "robodojo.md",
-        "robodojo-novla.md",
-        "robodojo-nosam.md",
-        "robodojo_xpl_rgb.md",
-        "robodojo_xpl_rgb-novla.md",
-        "robodojo_xpl_rgb-nosam.md",
-    )
-    marker = "- Prevent 0-step kinematic and workspace traps before grasping or entering"
-    snippets: list[str] = []
-    for filename in filenames:
-        doc = resources.files("codeaspolicy").joinpath(f"knowledge/{filename}").read_text(
-            encoding="utf-8"
-        )
-        idx = doc.index(marker)
-        end = doc.find("\n- ", idx + 1)
-        snippet = doc[idx : None if end == -1 else end]
-        snippets.append(snippet)
-        assert not re.search(
-            r"\b(insert_key|key|keys|keyhole|lock|locks|make_kong|kong|mahjong)\b",
-            snippet,
-            re.IGNORECASE,
-        )
-        assert not re.search(r"pi0|lingbot|rldx|vla|sam3", snippet, re.IGNORECASE)
-        assert not re.search(r"\brobo\.(locate|segment|back_project)\b", snippet)
-    assert all(s == snippets[0] for s in snippets), "kinematic traps bullet must match across all 6 variants"
-
-
-def test_robodojo_knowledge_encodes_pre_contact_feature_alignment_with_parity():
-    import re
-    from importlib import resources
-
-    filenames = (
+@pytest.mark.parametrize(
+    "filename",
+    [
         "robodojo-intent.md",
         "robodojo.md",
         "robodojo-novla.md",
@@ -441,74 +638,20 @@ def test_robodojo_knowledge_encodes_pre_contact_feature_alignment_with_parity():
         "robodojo_xpl_rgb.md",
         "robodojo_xpl_rgb-novla.md",
         "robodojo_xpl_rgb-nosam.md",
-    )
-    marker = "- **Pre-contact feature-to-target visual alignment (`robo.align_feature`)**:"
-    snippets: list[str] = []
-    for filename in filenames:
-        doc = resources.files("codeaspolicy").joinpath(f"knowledge/{filename}").read_text(
-            encoding="utf-8"
-        )
-        idx = doc.index(marker)
-        end = doc.find("\n- ", idx + 1)
-        snippet = doc[idx : None if end == -1 else end]
-        snippets.append(snippet)
-        assert "distal working feature" in snippet
-        assert "crop_grid" in snippet and "triangulate" in snippet and "ray_at_z" in snippet
-        assert "z_feature" in snippet and "oblique ray parallax" in snippet
-        assert "achieved_stroke_m << stroke_m" in snippet
-        assert "preview=True" in snippet
-        assert not re.search(
-            r"\b(insert_key|key|keys|keyhole|lock|locks|make_kong|kong|mahjong)\b",
-            snippet,
-            re.IGNORECASE,
-        )
-        assert not re.search(r"pi0|lingbot|rldx|vla|sam3", snippet, re.IGNORECASE)
-        assert not re.search(r"\brobo\.(locate|segment|back_project)\b", snippet)
-    assert all(s == snippets[0] for s in snippets), "feature alignment bullet must match across all variants"
-
-
-def test_robodojo_knowledge_unified_coarse_code_fine_delta_7way_parity():
-    import re
+    ],
+)
+def test_all_robodojo_knowledge_files_are_lean_deduplicated_and_task_agnostic(filename):
     from importlib import resources
 
-    filenames = (
-        "robodojo-intent.md",
-        "robodojo.md",
-        "robodojo-novla.md",
-        "robodojo-nosam.md",
-        "robodojo_xpl_rgb.md",
-        "robodojo_xpl_rgb-novla.md",
-        "robodojo_xpl_rgb-nosam.md",
+    doc = resources.files("codeaspolicy").joinpath(f"knowledge/{filename}").read_text(
+        encoding="utf-8"
     )
-    marker = "## Last-mile contact: Unified Coarse-Code + Fine-Delta Architecture"
-    sections: list[str] = []
-    for filename in filenames:
-        doc = resources.files("codeaspolicy").joinpath(f"knowledge/{filename}").read_text(
-            encoding="utf-8"
-        )
-        idx = doc.index(marker)
-        end = doc.find("\n## ", idx + 1)
-        sec = doc[idx : None if end == -1 else end].rstrip("\n")
-        sections.append(sec)
-        sec_flat = " ".join(sec.split())
-        assert "Unified Coarse-Code + Fine-Delta Architecture" in sec_flat
-        assert "2.5–4 cm" in sec_flat
-        assert "robo.delta_grasp(" in sec_flat
-        assert "contact_table=True" in sec_flat and "overdrive_m=0.005" in sec_flat
-        assert "lift_dxyz=(0, 0, 0.025)" in sec_flat
-        assert "widest parallel span" in sec_flat and "~101 * opening" in sec_flat
-        assert "2.6 mm" in sec_flat and "3 mm" in sec_flat
-        assert "z ≈ 0.85–0.87 m" in sec_flat and "+7–9 cm" in sec_flat
-        assert "standoff_m=0.008" in sec_flat and "opening=0.38" in sec_flat
-        assert "allow_table_contact=False" in sec_flat and "TABLE_Z - 0.004" in sec_flat
-        assert "robo.align_feature(" in sec_flat
-        assert not re.search(
-            r"\b(insert_key|key|keys|keyhole|lock|locks|make_kong|kong|mahjong)\b",
-            sec,
-            re.IGNORECASE,
-        )
-        assert not re.search(r"pi0|lingbot|rldx|vla|sam3", sec, re.IGNORECASE)
-        assert not re.search(r"\brobo\.(locate|segment|back_project)\b", sec)
-    assert all(s == sections[0] for s in sections), (
-        "Unified Coarse-Code + Fine-Delta section must match byte-for-byte across all 7 files"
-    )
+    assert len(doc) <= 10_000, f"{filename} unexpectedly large: {len(doc)}"
+    assert _duplicate_paragraphs(doc) == []
+    for marker in ("tcp_pos", "GRIP_ZERO_M", "place-and-regrasp", "object_bottom_z"):
+        assert marker in doc, f"{filename} missing {marker!r}"
+    for forbidden in SINGLE_CASE_FORBIDDEN:
+        assert forbidden not in doc.lower(), f"{filename} contains single-case token {forbidden!r}"
+    if filename.endswith("-nosam.md") or filename == "robodojo-intent.md":
+        assert not re.search(r"pi0|lingbot|rldx|vla|sam3", doc, re.IGNORECASE)
+        assert not re.search(r"\brobo\.(locate|segment|back_project)\b", doc)

@@ -80,23 +80,12 @@ HOME_TOL_RAD = 0.01
 class ArmState:
     """One arm at a recorded step.
 
-    tcp_pos: the grasp point [x, y, z] in the world frame, metres: the middle of
-        the finger pads, 0.145 m out along the pointing direction from the
-        end-effector link.  ``move_to`` drives this point.
-    pitch / yaw / roll: the gripper's orientation, degrees (see the class
-        docstring): ``pitch`` 0 points level and 90 straight down, ``yaw`` is
-        the heading of the pointing direction on the table (0 away from the
-        robot, +90 towards the robot's left), ``roll`` the turn of the fingers
-        about the pointing direction (0 as at the start).  Pointing straight
-        down, ``yaw`` alone says how the fingers lie and ``roll`` reads 0.
-    eef_pos: position of the end-effector link (the wrist flange), metres.
-    eef_quat: end-effector orientation as a unit quaternion [w, x, y, z].
-    gripper: measured gripper opening, normalised: 1.0 = open, 0.0 = closed on
-        nothing; closed on an object 0.002 + 0.109 x this reading is the
-        object's width in metres.
-        (Gripper COMMANDS use the opposite sign convention: see ``set_gripper``.)
-    joints: the six arm joint angles, radians (the last turns the fingers about
-        the pointing direction).
+    tcp_pos: world grasp-point [x, y, z] (m), middle of finger pads, 0.145 m ahead of eef_pos.
+    pitch / yaw / roll: gripper orientation (deg); pitch 0 level / 90 down, yaw heading (+90 left),
+        roll about pointing axis (at pitch=90, yaw sets jaw-closing line, roll=0).
+    eef_pos / eef_quat: wrist-flange position (m) and unit quaternion [w, x, y, z].
+    gripper: measured opening (1.0 open, 0.0 closed; held width ~= 0.002 + 0.109 * gripper m).
+    joints: six joint angles (rad); joints[5] rotates fingers about pointing axis.
     """
 
     tcp_pos: tuple[float, float, float]
@@ -111,16 +100,7 @@ class ArmState:
 
 @dataclass(frozen=True)
 class State:
-    """Snapshot of both arms at one recorded step.
-
-    step: index of the recorded step (0 = initial scene).  A new step is
-        recorded after every motion call.
-    task: the task instruction given by the benchmark (authoritative).
-    left / right: the two arms (``state.arm("left")`` picks one by name).
-    truncated: the native-action budget is exhausted or the environment has
-        ended the episode; no further motion is possible. This is not a task
-        success verdict.
-    """
+    """Snapshot of both arms at one recorded step (0 = initial, ``state.arm(name)`` selects one)."""
 
     step: int
     task: str
@@ -138,42 +118,12 @@ class State:
 
 @dataclass(frozen=True)
 class Move:
-    """Outcome of ``move_to``.
+    """Outcome of ``move_to`` (motion status, not task success).
 
-    target_xyz: the requested grasp-point position.
-    start_xyz / final_xyz: where the grasp point was before and after.
-    dist_to_target_m: distance from ``final_xyz`` to ``target_xyz``.
-    orientation_error_deg: error against the selected orientation; this may be
-        an equivalent half-turn or nearby solution described in note.
-    pitch / yaw / roll: the orientation the gripper ended with, degrees.
-    reached: within 0.01 m of target_xyz and 5 degrees of the selected target
-        orientation, without a timed tracking interruption.
-    status: completed, rejected (zero native actions), or partial (actions
-        executed but not reached). This is motion status, not task success.
-    planned_path: selected geometry, "line" or "joint", even if timing rejects
-        it; None if no path was selected.
-    path: executed geometry, "line" or "joint"; None when steps_used is zero.
-        A non-None path does not mean that the whole path completed.
-    stop_reason: None on completion; otherwise ik_path_rejected,
-        unsupported_timed_trajectory, timed_path_exceeds_native_step_budget,
-        trajectory_validation_failed, tracking_error, episode_native_step_budget
-        or final_target_not_reached. Inspect this before choosing a correction.
-    ik_error: geometric preflight detail (unreachable pose/path or table
-        collision), otherwise None. It is not used for timing/budget refusals.
-        An unreachable target may name nearby reachable alternatives.
-    note: extra planning/execution detail, including timing refusal or selection
-        of a nearby pose (within 2 cm / 8 degrees) or equivalent empty-gripper
-        orientation. It is not evidence that a selected pose was reached.
-    blocked: the measured TCP is over 5 mm from the planned endpoint after
-        execution, with budget remaining. This is a tracking-lag heuristic,
-        not a contact sensor or proof of an obstacle; inspect the actual scene.
-    steps_used: native actions consumed.
-    tracking: measured progress and correction_steps; at most two corrective
-        holds per call, only while every missed dimension improves and budget
-        remains for the planned path. Moving timed splines stop on tracking
-        failure; corrections may hold their final resting target. No contact
-        force or object-support inference is made from tracking error.
-    truncated: the budget ran out or the environment ended the episode.
+    reached: within 0.01 m / 5 deg without tracking interruption.
+    status: completed | rejected (0 steps) | partial.
+    planned_path / path: "line" or "joint" (path is None if 0 steps).
+    stop_reason / ik_error / note: refusal or stop detail; blocked flags >5 mm lag (not force).
     """
 
     arm: str
@@ -201,15 +151,7 @@ class Move:
 
 @dataclass(frozen=True)
 class Home:
-    """Outcome of ``home``.
-
-    arm: ``"left"``, ``"right"`` or ``"both"``, as requested.
-    reached: every joint of the returned arm(s) ended within 0.01 rad of the
-        angle it had when the episode started.
-    max_joint_error_rad: the largest difference that remains.
-    steps_used: native actions consumed.
-    truncated: the budget ran out or the environment ended the episode.
-    """
+    """Outcome of ``home``: ``reached`` when every joint is within 0.01 rad of start."""
 
     arm: str
     reached: bool
@@ -225,18 +167,8 @@ class Home:
 class Gripper:
     """Outcome of ``set_gripper``.
 
-    commanded: ``"closed"`` or ``"open"``.
-    opening: the opening once the fingers stopped (1.0 = open, 0.0 = closed on
-        nothing).
-    holding: after a close, the fingers stopped apart (an opening above 0.01,
-        about 3 mm): something is between them.  It does not say what: check
-        that the intended object moves with the arm.
-    width_m: after a close, the width of what is held, across the fingers
-        (0.0 when nothing is), else None.
-    steps_used: native actions consumed.
-    step / step_limit: native actions executed so far and the episode budget
-        (None if the runtime did not report them).
-    truncated: the budget ran out or the environment ended the episode.
+    opening: 1.0 open, 0.0 closed. holding: opening > 0.01 after close (verify visually).
+    width_m: estimated held width (m) after close, else None.
     """
 
     arm: str
@@ -252,26 +184,7 @@ class Gripper:
 
 @dataclass(frozen=True)
 class Pick:
-    """Outcome of ``pi0_pick``.
-
-    success: the grasp HEURISTIC fired for some arm: it descended at least
-        0.06 m, then rose at least 0.04 m with its gripper below 0.55.  It is
-        provisional and errs both ways: it says nothing about which object is
-        held, and it stays False for an arm that grasped without first going
-        down 0.06 m.  Read ``left`` / ``right`` and confirm from the wrist camera.
-    instruction: the text the policy received.
-    chunks_used: policy chunks executed (each up to 50 native actions; a chunk
-        is cut short the moment the heuristic fires).
-    left / right: what each arm did, as a dict of end-effector heights (metres)
-        and measured gripper openings (1.0 = open, 0.0 = closed):
-        ``start_eef_z``, ``min_eef_z`` (the lowest point reached),
-        ``peak_eef_z`` (the highest point after that), ``peak_lift_m`` (peak -
-        min), ``start_gripper``, ``final_gripper``.  The policy drives BOTH
-        arms and picks the arm itself; inspect both.
-    monitored_arm: the ``arm`` argument, echoed.
-    budget_exhausted: the native-action budget ran out during the pick.
-    truncated: same condition, as recorded in the state after the call.
-    """
+    """Outcome of ``pi0_pick``. ``success`` is a provisional lift heuristic; verify in wrist view."""
 
     success: bool
     instruction: str
@@ -287,26 +200,9 @@ class Pick:
 class Nudge:
     """Outcome of ``nudge``.
 
-    status: completed (within tol of the target), stopped (measured progress
-        stalled against contact or a hard stop before the target), partial
-        (step budget, episode end or tracking short of the target) or rejected
-        (zero native actions: the delta exceeds the per-nudge limit, the line
-        leaves the arm's reach or enters the table, or reserve_steps is
-        exhausted). This is motion status, not task success.
-    reached: within tol_m / tol_deg of the target.
-    stalled: stopped on a contact stall (stop_reason "contact_or_stall"). This
-        is a kinematic progress test, not a force reading: check the views.
-    stop_reason: None on completion; else contact_or_stall,
-        delta_exceeds_limit, ik_path_rejected, reserve_steps_exhausted,
-        step_budget, episode_native_step_budget or final_target_not_reached.
-    final_xyz / pitch / yaw / roll: measured grasp-point pose after the call
-        (single arm; ``arms`` holds both for arm="both").
-    achieved: measured motion in the requested frame: ``dxyz`` metres and
-        ``dpitch`` / ``dyaw`` / ``droll`` degrees.
-    holding / opening: the gripper after the call (closed and stopped apart).
-    planned_steps / steps_used: native actions planned and executed.
-    ik_error / note: why a delta was refused, extra detail.
-    truncated: the budget ran out or the environment ended the episode.
+    status: completed | stopped (contact_or_stall) | partial | rejected (0 steps).
+    achieved: measured ``dxyz`` (m) and ``dpitch``/``dyaw``/``droll`` (deg) in requested frame.
+    stalled: kinematic progress stall (not force); inspect wrist view. ``arms`` holds both if arm="both".
     """
 
     arm: str
@@ -336,44 +232,8 @@ class Nudge:
 class FeatureAlignment:
     """Outcome of ``align_feature``.
 
-    status: completed (aligned within align_tol_m and optional engagement
-        stroke reached), stopped (contact stall ended alignment or engagement
-        stroke), partial (step budget or tolerance not met after moving),
-        planned (preview=True and preflight accepted) or rejected (zero native
-        actions: limit, reach/table clearance or budget refused). Not a task
-        success verdict.
-    aligned: residual transverse error is within ``align_tol_m`` (and axial
-        standoff error when ``standoff_m`` is specified).
-    reached: full requested operation completed (alignment plus optional stroke).
-    accepted: preflight accepted the planned move(s).
-    preview: True for a read-only zero-step preflight.
-    stalled: stopped on a kinematic contact stall (``stop_reason="contact_or_stall"``).
-    stop_reason: None on completion or accepted preview; else ``contact_or_stall``,
-        ``delta_exceeds_limit``, ``ik_path_rejected``, ``reserve_steps_exhausted``,
-        ``step_budget``, ``episode_native_step_budget``,
-        ``alignment_tolerance_not_met`` or ``stroke_not_reached``.
-    feature_xyz / target_xyz: measured distal working feature and target world
-        coordinates, metres.
-    axis: unit engagement/insertion direction in world coordinates.
-    axial_gap_m: signed distance from ``feature_xyz`` to ``target_xyz`` along
-        ``axis`` before alignment (positive when upstream of the target).
-    transverse_delta: world offset perpendicular to ``axis`` needed to zero
-        transverse feature-to-target error, metres.
-    planned_dxyz: world TCP displacement commanded for the alignment phase, metres.
-    transverse_error_before_m / transverse_error_after_m: transverse error
-        before and estimated residual transverse error after alignment, metres.
-    standoff_m: requested axial standoff upstream of ``target_xyz``, or None.
-    stroke_status: None when no engagement stroke was requested; else
-        ``"planned"``, ``"completed"``, ``"stopped"``, ``"partial"``,
-        ``"skipped"`` or ``"rejected"``.
-    requested_stroke_m / achieved_stroke_m: requested and measured displacement
-        along the stroke direction, metres (None when no stroke was requested).
-    align_steps_used / stroke_steps_used / steps_used / planned_steps: native
-        actions executed per phase, total executed, and planned.
-    final_xyz / pitch / yaw / roll: measured grasp-point pose after the call.
-    holding / opening: gripper state after the call.
-    ik_error / note: refusal or execution detail.
-    truncated: the budget ran out or the environment ended the episode.
+    status: completed | stopped (contact_or_stall) | partial | planned (preview) | rejected (0 steps).
+    aligned: transverse error <= align_tol_m. stroke_status / achieved_stroke_m report optional stroke.
     """
 
     arm: str
@@ -415,42 +275,9 @@ class FeatureAlignment:
 class DeltaGrasp:
     """Outcome of ``delta_grasp``.
 
-    status: completed (aligned, approached/table-seated, closed, and optional
-        liftoff completed), stopped (unexpected contact stall aborted alignment,
-        non-table approach, or liftoff), partial (step budget or tolerance not
-        met after moving), planned (preview=True and preflight accepted) or
-        rejected (zero native actions: limit, reach/table clearance or budget
-        refused). Not a task success verdict.
-    aligned: transverse error perpendicular to ``axis`` ended within
-        ``align_tol_m`` before closing.
-    reached: full requested grasp sequence completed.
-    accepted: preflight accepted the planned move(s).
-    preview: True for a read-only zero-step preflight.
-    stalled: stopped on an unexpected kinematic stall (``contact_or_stall``).
-    table_contact_stalled: True when ``contact_table=True`` and the guarded
-        downward approach stalled cleanly on the tabletop before closing.
-    stop_reason: None on completion or accepted preview; else refusal or stop
-        code.
-    target_xyz / axis / standoff_m / overdrive_m / contact_table: normalized
-        target geometry and tabletop-contact flag.
-    transverse_error_before_m / transverse_error_after_m: transverse error
-        before and after alignment, metres.
-    opening_before / opening_after_preopen: gripper opening before call and
-        after optional pre-open.
-    closed / closed_opening: whether close executed and measured opening right
-        after close (1.0 open, 0.0 closed on nothing or thin <3.5 mm part).
-    opening_after_lift / retained_closure: measured opening after optional
-        ``lift_dxyz`` and whether closure was retained without slipping.
-    holding / opening / width_m: final gripper state after the call.
-    lift_status: None when ``lift_dxyz`` is omitted; else ``"planned"``,
-        ``"completed"``, ``"stopped"``, ``"partial"``, ``"skipped"`` or
-        ``"rejected"``.
-    preopen_steps_used / align_steps_used / approach_steps_used /
-        close_steps_used / lift_steps_used / steps_used / planned_steps: native
-        actions per stage, total executed, and planned.
-    final_xyz / pitch / yaw / roll: measured grasp-point pose after the call.
-    ik_error / note: refusal or execution detail.
-    truncated: the budget ran out or the environment ended the episode.
+    status: completed | stopped | partial | planned (preview) | rejected (0 steps).
+    table_contact_stalled: guarded tabletop seating occurred before close.
+    closed_opening / opening_after_lift / retained_closure / holding / width_m: grasp telemetry.
     """
 
     arm: str
@@ -497,25 +324,7 @@ class DeltaGrasp:
 
 @dataclass(frozen=True)
 class VisualAlign:
-    """Outcome of ``visual_align_and_insert``.
-
-    status: completed (the delta policy said done, converged on a zero delta,
-        or a contact stall ended it with stop_on_contact_complete), partial
-        (actions executed, then rounds / steps ran out or the policy failed)
-        or rejected (no native action). Not a task success verdict.
-    reached: status is completed.
-    done / converged / contact_complete: which completion ended the loop.
-    stalled: some round stopped on a contact stall.
-    stop_reason: done, converged, contact_complete, max_rounds, step_budget,
-        episode_budget, no_progress, invalid_policy_response, policy_error,
-        reserve_steps_exhausted or episode_native_step_budget.
-    rounds_used / steps_used / step_allowance: policy turns, native actions
-        executed and the native actions the loop was allowed.
-    rounds: per round the state JSON, the parsed PEAR action, the executed
-        delta, its feedback (reached / stopped / out_of_reach) and steps.
-    final_xyz / holding: the arm after the loop (single arm).
-    policy / policy_error: which policy answered; the error that ended it.
-    """
+    """Outcome of ``visual_servo`` / ``visual_align_and_insert`` (status: completed | partial | rejected)."""
 
     goal: str
     arm: str
@@ -540,21 +349,7 @@ class VisualAlign:
 
 @dataclass(frozen=True, repr=False)
 class Segment(PerceptionResult):
-    """Outcome of ``segment``.
-
-    found: SAM3 produced a mask scoring at least ``min_score``.
-    centroid: (row, col) of the mask centroid (mean of the mask pixels, floored),
-        or None.  Pass exactly this pixel, with the same camera, to
-        ``back_project``.
-    area_px: number of mask pixels (0 when not found).
-    score: SAM3 confidence in [0, 1], None when not found.
-    box: mask bounding box as reported by SAM3, or None.
-    provenance: observation, image and calibration sources; backends without
-        snapshot support report unverified provenance.  Reuse its
-        ``observation_id`` when back-projecting
-        ``centroid``; check ``robo.perception_is_current(result)`` before
-        using the result for a new action.
-    """
+    """Outcome of ``segment``: mask ``centroid`` (row, col), ``area_px``, ``score``, ``box``, ``provenance``."""
 
     found: bool
     centroid: tuple[int, int] | None
@@ -567,15 +362,7 @@ class Segment(PerceptionResult):
 
 @dataclass(frozen=True, repr=False)
 class WorldPoint(PerceptionResult):
-    """Outcome of ``back_project``: the surface point seen at one pixel.
-
-    xyz: world [x, y, z], metres.  It is a visible SURFACE point (the top of
-        an object as the camera sees it), not the object's centre.
-    depth_m: distance of that point along the camera's optical axis.
-    provenance: observation, image and calibration sources.  A historical
-        result keeps its original coordinates; ``robo.require_current(result)``
-        rejects it after the scene or observation changes.
-    """
+    """Outcome of ``back_project``: visible surface point ``xyz`` (m), ``depth_m``, ``provenance``."""
 
     pixel: tuple[int, int]
     xyz: tuple[float, float, float]
@@ -586,15 +373,7 @@ class WorldPoint(PerceptionResult):
 
 @dataclass(frozen=True, repr=False)
 class CameraRay(PerceptionResult):
-    """Outcome of ``camera_ray``: calibrated 3D ray through one image pixel.
-
-    camera: camera name (``"cam_head"``, ``"cam_left_wrist"`` or ``"cam_right_wrist"``).
-    pixel: ``(row, col)`` in original image coordinates, row 0 at top, col 0 at left.
-    origin: camera optical centre ``(x, y, z)`` in world metres.
-    direction: unit ray vector ``(dx, dy, dz)`` pointing into the scene in world coordinates.
-    provenance: snapshot and calibration provenance; check ``robo.require_current(result)``
-        before depending on the ray for a new action.
-    """
+    """Outcome of ``camera_ray``: camera ``origin`` (m) and unit world ``direction`` at ``pixel``."""
 
     camera: str
     pixel: tuple[float, float]
@@ -605,16 +384,7 @@ class CameraRay(PerceptionResult):
 
 @dataclass(frozen=True, repr=False)
 class PlanePoint(WorldPoint):
-    """Outcome of ``ray_at_z``: intersection of a calibrated pixel ray with a horizontal plane.
-
-    pixel: ``(row, col)`` in original image coordinates, row 0 at top, col 0 at left.
-    xyz: world ``(x, y, z)`` on ``z = z_plane``, metres.
-    depth_m: positive distance along the camera's optical axis, metres.
-    camera: the camera the pixel was read from.
-    z_plane: horizontal world height ``z`` intersected (table top is ``0.765`` m).
-    provenance: snapshot, calibration and height-prior geometry provenance; use
-        ``robo.require_current(result)`` before depending on ``xyz`` for a new action.
-    """
+    """Outcome of ``ray_at_z``: ray intersection ``xyz`` (m) on horizontal plane ``z_plane``."""
 
     pixel: tuple[float, float]
     z_plane: float = 0.765
@@ -622,17 +392,7 @@ class PlanePoint(WorldPoint):
 
 @dataclass(frozen=True, repr=False)
 class TriangulatedPoint(PerceptionResult):
-    """Outcome of ``triangulate``: 3D point from two calibrated camera rays on one snapshot.
-
-    xyz: midpoint ``(x, y, z)`` of closest approach between the two rays, world metres.
-    miss_m: skew distance ``||q1 - q2||`` between the two rays at closest approach, metres
-        (tight pixel correspondences typically achieve ``< 0.005`` m).
-    cameras: ``(cam1, cam2)`` pair used for triangulation.
-    pixels: ``((row1, col1), (row2, col2))`` in original image coordinates.
-    depths_m: ``(depth1_m, depth2_m)`` positive optical-axis depths in ``cam1`` and ``cam2``.
-    provenance: snapshot and stereo-ray geometry provenance; use
-        ``robo.require_current(result)`` before depending on ``xyz`` for a new action.
-    """
+    """Outcome of ``triangulate``: 3D midpoint ``xyz`` (m), ray skew ``miss_m`` (<0.005 m typical), ``depths_m``."""
 
     xyz: tuple[float, float, float]
     miss_m: float
@@ -644,13 +404,7 @@ class TriangulatedPoint(PerceptionResult):
 
 @dataclass(frozen=True)
 class PixelPoint:
-    """Outcome of ``project_point``: projection of a 3D world point into one camera.
-
-    camera: camera name projected into.
-    row / col: subpixel image coordinates, row 0 at top, col 0 at left.
-    depth_m: positive distance along the camera's optical axis, metres.
-    in_bounds: True when ``0 <= row < H`` and ``0 <= col < W``.
-    """
+    """Outcome of ``project_point``: subpixel ``(row, col)``, ``depth_m``, and ``in_bounds``."""
 
     camera: str
     row: float
@@ -661,19 +415,11 @@ class PixelPoint:
 
 @dataclass(frozen=True)
 class IKSolution:
-    """Outcome of ``ik``: local URDF inverse kinematics without dispatching actions.
+    """Outcome of ``ik``: local URDF kinematics check (0 steps).
 
-    ok: True when target TCP pose (and straight-line SLERP path when
-        ``continuous=True``) is reachable within tolerance and table-clear.
-    collides: True when the solved configuration or continuous path violates table clearance.
-    joints: six solved joint angles ``(q1..q6)``, radians.
-    pose: world TCP ``Pose`` produced by ``joints``.
-    pos_err_m / rot_err_deg: residual TCP position (metres) and rotation (degrees) error.
-    min_margin_rad: smallest distance ``min(q_i - lo_i, hi_i - q_i)`` to any simulator joint limit.
-    joint_margins_rad: per-joint margin ``(m1..m6)`` to the nearest joint limit, radians.
-    max_delta_rad: largest ``|q_i - seed_i|`` change from ``seed``, radians.
-    flipped_jaw: True when ``jaw_symmetry=True`` selected the 180-deg symmetric jaw roll.
-    reason: None when ``ok``, else short kinematic refusal detail.
+    ok: reachable within tolerance and clear of table & inter-arm envelopes.
+    min_margin_rad / joint_margins_rad: distance to nearest simulator joint limit (rad).
+    flipped_jaw: True when ``jaw_symmetry=True`` picked the 180-deg rolled jaw branch.
     """
 
     ok: bool
@@ -691,39 +437,7 @@ class IKSolution:
 
 @dataclass(frozen=True, repr=False)
 class ObjectPose(PerceptionResult):
-    """Outcome of ``locate``: an object measured from its mask and the depth image.
-
-    found: SAM3 produced a mask scoring at least ``min_score``.
-    center_xyz: [x, y, z] of the middle of the smallest rectangle around the
-        object's footprint, at half its height above the table, metres.  A
-        handle, a spout or a tail is part of the footprint and moves the
-        middle away from the body's.  None when no 3D measurement was
-        possible (see ``note``).
-    top_z: height of the object's top surface (the highest points seen).
-    height_m: ``top_z`` above the table surface (0.765 m).
-    length_m / width_m: the long and the short side of the smallest rectangle
-        around the footprint.
-    long_axis_deg: direction of the long side on the table, degrees from +x
-        (-90 .. 90); of a square, one of its sides.
-    grasp_yaw: the ``yaw`` for ``move_to(..., pitch=90, yaw=grasp_yaw)``:
-        pointing straight down, the fingers then close across the short side
-        (a cube's: across two faces).
-    score: SAM3 confidence.
-    centroid: (row, col) of the mask in the image, as ``Segment.centroid``.
-    area_px: mask pixels.
-    camera: the camera measured from.
-    note: why there is no 3D measurement (a flat object, no depth), else None.
-    provenance: observation, image and calibration sources.  Inspect historical
-        measurements freely; use ``robo.require_current(result)`` before
-        depending on their coordinates for a new action.
-
-    The camera sees the top and the near side.  The far side of an object that
-    is round about an upright axis (a bottle, a cup) is filled in from the arc
-    that is seen; the far side of anything else, and what other things or the
-    robot's own gripper hide, is not measured, so such a footprint can be
-    shorter than the object.  A held object is usually not found from the head
-    camera.
-    """
+    """Outcome of ``locate``: 3D footprint ``center_xyz``, ``top_z``, ``height_m``, ``length_m``/``width_m``, ``grasp_yaw``."""
 
     found: bool
     center_xyz: tuple[float, float, float] | None
@@ -1056,6 +770,56 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
     STATEFUL_TOOLS: ClassVar[frozenset[str]] = STATEFUL_TOOLS
     #: The frozen Pi0.5 pick (hidden and refused under the no-VLA primitive set).
     VLA_PRIMITIVES: ClassVar[tuple[str, ...]] = ("pi0_pick",)
+    #: External visual-delta VLM primitives (hidden in prompt unless configured).
+    DELTA_VLA_PRIMITIVES: ClassVar[tuple[str, ...]] = ("visual_align_and_insert", "visual_servo")
+    #: Redundant multi-turn grasp ceremony / preview helpers hidden in default prompt.
+    INTENT_HIDDEN_METHODS: ClassVar[frozenset[str]] = frozenset({
+        "begin_grasp",
+        "grasp_step",
+        "grasp_status",
+        "align_local",
+        "preview_align_feature",
+        "preview_delta_grasp",
+        "operation_status",
+        "resume_operation",
+    })
+    #: Concise docstring overrides for inherited mixin methods under ``intent_only=True``.
+    INTENT_DOC_OVERRIDES: ClassVar[dict[str, str]] = {
+        "execute_motion": (
+            "Execute an immutable coarse C2 motion intent for one or both arms (do not wrap in once(); "
+            "completed IDs never move again).\n\n"
+            "left/right: world TCP xyz (keep orientation), Pose, or {'xyz': ..., 'angles': [p, y, r]}; "
+            "omitted arms hold. interaction: 'free' (clear route; falls back to smooth joint swing if "
+            "SLERP hits singularity), 'approach' or 'contact' (strict line). waypoints=[{'left': ..., "
+            "'right': ...}] (1..64) runs one continuous C2 curve. directions={'right': [dx, dy, dz]} "
+            "constrains positive axis travel. holding: 'keep'/'empty'/'retain' (never opens/closes). "
+            "completion: position_m/orientation_deg/verify; constraints: max_tilt_deg/z_bounds/keep_out/"
+            "corridor_m/geometry. max_steps caps cumulative actions; reserve_steps protects cleanup. "
+            "preview=True plans without moving (with optional following=[...]). Resume paused intents "
+            "with resume_motion(intent_id)."
+        ),
+        "motion_status": "Read retained motion intent state without moving or refreshing sensors.",
+        "resume_motion": (
+            "Continue remaining motion of intent_id from measured state after receipt reconciliation; "
+            "max_steps optionally raises the cumulative cap."
+        ),
+        "motion_capabilities": (
+            "Report live controller capabilities (speed_control, continuous_trajectory, force_*, collision checks)."
+        ),
+        "object_ref": (
+            "Register a stable session-local logical object reference (short visible-property phrase; "
+            "0 steps; not physical identity proof)."
+        ),
+        "observe_hold": (
+            "Compare held-object features against the fixed post-closure baseline (0 steps).\n\n"
+            "Returns state ('following'/'relative_motion' in 3D, 'image_consistent'/'image_relative_motion' "
+            "in 2D wrist view, 'conflicting_evidence', or 'unknown'). Pass landmarks on capture_observation_id "
+            "to repair an empty baseline; set reset=True only after a new close command."
+        ),
+        "snapshot": "Read latest observation metadata (step, observation_id, aligned); refresh=True requests a new capture.",
+        "action_receipt": "Return recorded execution receipt(s) for action_id (or all actions if None).",
+        "reconcile": "Inspect pending/unknown action receipts against the latest captured observation before resuming.",
+    }
     #: VLA sentences of the remaining docstrings, removed from the no-VLA reference.
     VLA_REFERENCE_EDITS: ClassVar[tuple[tuple[str, str], ...]] = (
         (
@@ -1106,16 +870,12 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
             "    never substituted with old pixels or a predicted rigid-grasp pose.\n",
         ),
         (
-            "            use its ``step`` here and its ``observation_id`` with\n"
-            "            ``segment`` / ``back_project`` so both read the same capture.",
-            "            use its ``step`` here and its ``observation_id`` with\n"
-            "            ``crop_grid``, ``ray_at_z`` or ``triangulate`` so all read the same capture.",
+            "    Pair ``step`` with ``observation_id`` in ``segment`` / ``back_project``.",
+            "    Pair ``step`` with ``observation_id`` in ``crop_grid`` / ``ray_at_z`` / ``triangulate``.",
         ),
         (
-            "        held: confirm it moves with the arm (wrist camera, or ``locate``\n"
-            "        it again after a lift).",
-            "        held: confirm it moves with the arm (wrist camera and\n"
-            "        ``observe_hold`` after a lift).",
+            "    ``holding`` is not proof of identity: confirm lift in wrist view or ``locate``.",
+            "    ``holding`` is not proof of identity: confirm lift in wrist view or ``observe_hold``.",
         ),
     )
     SUMMARY_KEYS: ClassVar[tuple[str, ...]] = (
@@ -1222,31 +982,14 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         return False
 
     def state(self, step: int = -1) -> State:
-        """Read the recorded state of both arms.
-
-        Args:
-            step: recorded step to read; ``-1`` is the latest, ``0`` the
-                initial scene.  A new step is recorded after every motion call.
-        Returns:
-            State with ``left`` / ``right`` end-effector poses, measured
-            gripper openings and joint angles, and the ``truncated`` flag.
-        """
+        """Read recorded state of both arms (``-1`` = latest, ``0`` = initial)."""
         return super().state(step)
 
     def image(self, camera: str = "cam_head", *, resolution: str = "high", step: int = -1) -> Any:
-        """Load a recorded camera image as a ``numpy`` uint8 array (480, 640, 3), RGB.
+        """Load recorded RGB ``uint8`` array ``(480, 640, 3)`` for ``cam_head`` / ``cam_left_wrist`` / ``cam_right_wrist``.
 
-        Args:
-            camera: ``"cam_head"`` (fixed view of the whole table: identify
-                objects, destinations and the global layout),
-                ``"cam_left_wrist"`` or ``"cam_right_wrist"`` (on the gripper:
-                what that arm is about to grasp or is holding).
-            resolution: there is one resolution per camera, ``"high"``.  Pixel
-                coordinates are (row, col) with row 0 at the top and col 0 at
-                the left.
-            step: recorded step, ``-1`` = latest.  For pixels from a snapshot,
-                use its ``step`` here and its ``observation_id`` with
-                ``segment`` / ``back_project`` so both read the same capture.
+        Pixels are ``(row, col)`` (row 0 top, col 0 left).
+        Pair ``step`` with ``observation_id`` in ``segment`` / ``back_project``.
         """
         return super().image(camera, resolution=resolution, step=step)
 
@@ -1292,17 +1035,7 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         self, camera: str = "cam_head", *, step: int = -1,
         observation_id: str | None = None,
     ) -> dict[str, Any]:
-        """Return the calibration of one camera at a recorded step as a dict.
-
-        Keys: ``shape`` (image shape), ``intrinsic_matrix`` (3x3),
-        ``extrinsic_matrix`` (4x4 camera-to-world; the camera looks down its
-        own -z axis with +y up) and ``has_depth``.  The wrist cameras move
-        with their arm.  ``observation_id`` pins the same calibration as a
-        snapshot's image and perception result; it can name a historical
-        capture.  With both ``step`` and ``observation_id``, they must agree.
-        ``provenance`` records the capture and calibration source when the
-        backend supports snapshots; it does not assert that a capture is current.
-        """
+        """Return camera calibration dict (``shape``, ``intrinsic_matrix``, ``extrinsic_matrix``, ``has_depth``, ``provenance``)."""
         camera = _camera(camera, self.CAMERAS)
         snapshot, step = self._camera_snapshot(step, observation_id)
         payload = self._readonly(self.STATE_TOOL, {"step": step})
@@ -1313,21 +1046,11 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         return result
 
     def show(self, camera: str = "cam_head") -> None:
-        """Attach the current image of ``camera`` to the feedback of this turn.
-
-        For normal on-demand feedback, call ``show("cam_head")``,
-        ``show("cam_left_wrist")`` or ``show("cam_right_wrist")`` when *you*
-        (the author) need to look at the scene before writing the next turn.
-        Costs tokens: look only when a decision depends on it.
-        """
+        """Attach current image of ``camera`` to this turn's feedback (use only when a decision depends on it)."""
         super().show(camera)
 
     def artifact(self, name: str, *, step: int = -1) -> bytes:
-        """Return the raw bytes of a recorded artifact (advanced).
-
-        Names are ``cam_head.png``, ``cam_left_wrist.png`` and
-        ``cam_right_wrist.png``.
-        """
+        """Return raw bytes of a recorded artifact (``cam_head.png``, ``cam_left_wrist.png``, ``cam_right_wrist.png``)."""
         return super().artifact(name, step=step)
 
     # -- perception ---------------------------------------------------------
@@ -1373,17 +1096,7 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         *,
         observation_id: str | None = None,
     ) -> CameraRay:
-        """Return the calibrated 3D camera origin and unit world ray through ``(row, col)``.
-
-        Args:
-            row / col: pixel coordinates in ``camera`` (row 0 at top, col 0 at left).
-            camera: ``"cam_head"`` (default), ``"cam_left_wrist"`` or ``"cam_right_wrist"``.
-            observation_id: snapshot to bind calibration to; None pins the latest capture.
-        Returns:
-            CameraRay with ``origin`` and unit ``direction`` in world metres.
-        Raises:
-            ToolError: camera calibration is missing or invalid.
-        """
+        """Return calibrated 3D camera ``origin`` and unit world ``direction`` through ``(row, col)``."""
         import numpy as np
 
         cam = _camera(camera, self.CAMERAS)
@@ -1435,20 +1148,7 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         *,
         observation_id: str | None = None,
     ) -> PlanePoint:
-        """Intersect the calibrated camera ray at ``(row, col)`` with horizontal plane ``world_z = z``.
-
-        Args:
-            row / col: pixel coordinates in ``camera`` (row 0 at top, col 0 at left).
-            z: world height of the horizontal support plane in metres (default ``0.765`` = table top).
-            camera: ``"cam_head"`` (default), ``"cam_left_wrist"`` or ``"cam_right_wrist"``.
-            observation_id: snapshot to bind calibration to; None pins the latest capture.
-        Returns:
-            PlanePoint (a ``WorldPoint`` subclass) with ``xyz`` on ``z`` and ``depth_m``.
-            Use ``robo.require_current(result)`` before depending on ``xyz`` for an action.
-        Raises:
-            ToolError: ray is parallel to the plane, the plane lies behind the camera,
-                or camera calibration is invalid.
-        """
+        """Intersect calibrated pixel ray ``(row, col)`` with horizontal plane ``world_z = z`` (default ``0.765`` m = table)."""
         import numpy as np
 
         cam = _camera(camera, self.CAMERAS)
@@ -1520,20 +1220,7 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         observation_id: str | None = None,
         max_miss_m: float = 0.025,
     ) -> TriangulatedPoint:
-        """Triangulate a 3D feature seen at ``rc1`` in ``cam1`` and ``rc2`` in ``cam2`` on one snapshot.
-
-        Args:
-            cam1 / cam2: two distinct cameras observing the same physical 3D point.
-            rc1 / rc2: ``(row, col)`` pixel coordinates in ``cam1`` and ``cam2``.
-            observation_id: snapshot to resolve both cameras against; None pins the latest capture.
-            max_miss_m: maximum allowed ray-to-ray skew distance in metres (default ``0.025``).
-        Returns:
-            TriangulatedPoint with midpoint ``xyz``, skew ``miss_m`` and optical ``depths_m``.
-            Use ``robo.require_current(result)`` before depending on ``xyz`` for an action.
-        Raises:
-            ToolError: cameras are identical, rays are nearly parallel, the intersection lies
-                behind either camera, or ``miss_m > max_miss_m``.
-        """
+        """Triangulate one 3D feature from ``rc1`` in ``cam1`` and ``rc2`` in ``cam2`` on the same snapshot (raises ToolError if ``miss_m > max_miss_m``)."""
         import numpy as np
 
         c1_name = _camera(cam1, self.CAMERAS)
@@ -1645,16 +1332,7 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         *,
         observation_id: str | None = None,
     ) -> PixelPoint | None:
-        """Project world ``xyz`` into ``camera`` ``(row, col)`` pixels; return ``None`` if behind camera.
-
-        Args:
-            xyz: world coordinates ``[x, y, z]`` in metres.
-            camera: ``"cam_head"`` (default), ``"cam_left_wrist"`` or ``"cam_right_wrist"``.
-            observation_id: snapshot to bind calibration to; None uses the latest capture.
-        Returns:
-            PixelPoint with ``row``, ``col``, ``depth_m`` and ``in_bounds``, or ``None``
-            when ``depth_m <= 0``.
-        """
+        """Project world ``xyz`` (m) into ``camera`` ``(row, col)`` pixels; return ``None`` if behind camera."""
         import numpy as np
 
         pt = _floats(xyz, 3, "xyz")
@@ -1684,23 +1362,7 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         scale: int = 2,
         observation_id: str | None = None,
     ) -> Any:
-        """Return an annotated RGB ``uint8`` crop with original-image ``(row, col)`` grid ticks and markers.
-
-        Pass the returned array directly to ``display(robo.crop_grid(...))`` to visually
-        verify candidate ``(row, col)`` points before calling ``ray_at_z``, ``triangulate``
-        or ``observe_object``.
-
-        Args:
-            camera: ``"cam_head"`` (default), ``"cam_left_wrist"`` or ``"cam_right_wrist"``.
-            box: ``(row0, col0, row1, col1)`` in original image pixels; None uses ``(0, 0, H, W)``.
-            step_px: gridline spacing in original image pixels (``>= 5``, default ``25``).
-            points: optional ``[(row, col), ...]`` markers in original image pixels, drawn as
-                numbered crosshairs ``0, 1, ...``.
-            scale: nearest-neighbour integer upscale factor (``>= 1``, default ``2``).
-            observation_id: snapshot whose recorded image to read; None reads the latest step.
-        Returns:
-            RGB ``numpy.ndarray`` of dtype ``uint8`` with top and left coordinate rulers.
-        """
+        """Return upscaled RGB ``uint8`` crop of ``box=(r0, c0, r1, c1)`` with original ``(row, col)`` rulers and optional numbered ``points`` crosshairs for ``display()``."""
         import numpy as np
         from PIL import Image, ImageDraw
 
@@ -1842,27 +1504,7 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         *,
         observation_id: str | None = None,
     ) -> Segment:
-        """Segment an object in one observation of ``camera`` by a text prompt (SAM3).
-
-        Args:
-            text_prompt: what to find, e.g. ``"the green bottle"``.  Name one
-                object by its visible properties.
-            camera: ``"cam_head"`` (default), ``"cam_left_wrist"`` or
-                ``"cam_right_wrist"``.
-            min_score: masks scoring below this are reported as not found.
-            observation_id: snapshot to measure; None pins the latest recorded
-                observation.  An explicit historical snapshot uses its saved
-                image and returns a historical result; it never reads a newer
-                image instead.
-        Returns:
-            Segment; when ``found``, pass ``centroid`` (row, col) to
-            ``back_project`` with the same camera and the result's
-            ``provenance["observation_id"]`` to get a world point.  The
-            mask is the best match for the text, not a guarantee of identity:
-            check where it is against the image.
-        Raises:
-            ToolError: the camera image or the SAM3 service is unavailable.
-        """
+        """Segment one object in ``camera`` by ``text_prompt`` (SAM3); pass ``centroid`` + ``observation_id`` to ``back_project``."""
         camera = _camera(camera, self.CAMERAS)
         prompt = str(text_prompt)
         if not prompt.strip():
@@ -1895,25 +1537,7 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         self, row: int, col: int, camera: str = "cam_head", *,
         observation_id: str | None = None,
     ) -> WorldPoint:
-        """Return the world point at one pixel, using one snapshot's image and calibration.
-
-        Args:
-            row / col: pixel, row 0 at the top, col 0 at the left (images are
-                480 rows x 640 cols).
-            camera: the camera the pixel was read from (default ``"cam_head"``).
-            observation_id: the snapshot from which the pixel was read.  None
-                pins the latest recorded observation.  Pass the source ID
-                explicitly for an older image or ``Segment.centroid``.
-        Returns:
-            WorldPoint; ``xyz`` is where the camera ray meets the first
-            surface.  A pixel on an object's edge or a thin part can land on
-            the table or the background behind it: prefer ``Segment.centroid``.
-            ``provenance`` records the source; use ``robo.require_current(result)``
-            before depending on its coordinates for a new action.
-        Raises:
-            ToolError: pixel out of range, no valid depth there, or the
-            camera calibration is missing.
-        """
+        """Return world surface point ``xyz`` at pixel ``(row, col)`` in ``camera`` (480x640) for ``observation_id``."""
         camera = _camera(camera, self.CAMERAS)
         kwargs: dict[str, Any] = {"row": int(row), "col": int(col), "camera": camera}
         p = self._perception_call("back_project", kwargs, observation_id=observation_id)
@@ -1934,34 +1558,7 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         *,
         observation_id: str | None = None,
     ) -> ObjectPose:
-        """Find an object by a text prompt and measure it in 3D.
-
-        SAM3 segments one snapshot's image of ``camera`` (as ``segment``); every
-        pixel of the mask is then projected into the world through the depth
-        image, and the points above the table give the object's centre, top,
-        footprint and heading.  Nothing moves.
-
-        Args:
-            text_prompt: one object by its visible properties, e.g. ``"the
-                small red cube on the left"``.
-            camera: ``"cam_head"`` (default; the whole table),
-                ``"cam_left_wrist"`` or ``"cam_right_wrist"`` (close up, from
-                the gripper: re-measure before a precise grasp).
-            min_score: masks scoring below this are reported as not found.
-            observation_id: snapshot to measure; None pins the latest recorded
-                observation.  Historical IDs use the recorded images, depth
-                and calibration from that capture.
-        Returns:
-            ObjectPose.  For a top grasp: ``move_to([x, y, top_z + 0.08],
-            pitch=90, yaw=grasp_yaw)`` above it, then down to the height to
-            hold it at.  The mask is the best match for the text, not proof of
-            identity: check it against the image.
-            ``provenance`` links the measurement to its capture.  Use
-            ``robo.require_current(result)`` before depending on coordinates;
-            an old result does not become current when read again.
-        Raises:
-            ToolError: the camera image or the SAM3 service is unavailable.
-        """
+        """Segment ``text_prompt`` (SAM3) and measure 3D ``center_xyz``, ``top_z``, footprint, and ``grasp_yaw`` through the depth image (0 steps; verify mask against image)."""
         camera = _camera(camera, self.CAMERAS)
         prompt = str(text_prompt)
         if not prompt.strip():
@@ -1998,37 +1595,9 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
     # -- the VLA ------------------------------------------------------------
 
     def pi0_pick(self, prompt: str | None = None, arm: str = "right", max_chunks: int = 8) -> Pick:
-        """Run the frozen Pi0.5 policy closed loop until an arm has lifted something.
+        """Run frozen Pi0.5 whole-task dual-arm policy for up to ``max_chunks`` chunks (<=50 actions each) until lift heuristic fires.
 
-        The policy was trained on complete demonstrations of this benchmark's
-        tasks, each under its task instruction: it is a whole-task policy, not
-        a grasp skill (the name is RPent's).  It receives the three current
-        camera images, both arms' joint state and an instruction, and drives
-        BOTH arms for up to ``max_chunks`` chunks of up to 50 native actions
-        each.  The call returns as soon as its grasp heuristic fires (an arm
-        went down, came back up at least 0.04 m and has its gripper closed) or
-        the budget runs out; called again, the policy carries on from the
-        scene as it then is.
-
-        Args:
-            prompt: the instruction for the policy.  None (default) uses the
-                benchmark's own task instruction (``robo.task``).  An override
-                must name the intended object by what distinguishes it (not
-                just "pick the bottle") and must not contain template markers
-                such as ``<target>``.
-            arm: recorded as ``monitored_arm`` only; the policy chooses the arm
-                itself and the heuristic watches both.
-            max_chunks: upper bound on policy chunks (>= 1).  Each chunk can
-                spend 50 native actions of the episode's budget, so the
-                default can spend 400.
-        Returns:
-            Pick; ``success`` is a provisional heuristic.  Look at the wrist
-            camera of the arm that lifted (``Pick.left`` / ``Pick.right``) to
-            confirm that the intended object is held.  A broad task
-            instruction may fit several objects and promises no grasp order.
-        Raises:
-            ToolError: the policy service is unavailable or the prompt was
-            rejected.
+        ``prompt=None`` uses ``robo.task``; overrides must not contain ``<...>``. Confirm held object in wrist view.
         """
         arm = _arm(arm)
         if int(max_chunks) < 1:
@@ -2235,51 +1804,15 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         max_angular_deg: float = 20.0,
         allow_table_contact: bool = False,
     ) -> Nudge:
-        """Guarded short relative move of the grasp point, for last-mile contact.
+        """Guarded short relative TCP move for last-mile contact (<= ``max_linear_m`` <= 0.12 m, <= ``max_angular_deg`` <= 45 deg).
 
-        Moves by ``dxyz`` metres and ``dpitch`` / ``dyaw`` / ``droll`` degrees
-        from the CURRENT measured pose. frame="world": dxyz in the table frame and
-        the angles added to the current pitch / yaw / roll. frame="tcp": dxyz
-        along the grasp frame (+x pointing direction, +y finger-closing axis,
-        +z normal), angles about those axes; e.g. ``dxyz=(0.01, 0, 0),
-        frame="tcp"`` pushes 1 cm along the fingers for a press or insertion.
-        At most max_linear_m (<= 0.12) and max_angular_deg (<= 45) per call;
-        a larger delta is rejected, not clamped.
-
-        compact=True (default) follows the straight line in 5 mm / 4 degree
-        waypoints, one native action each (no rest-to-rest spline, at most one
-        settle action): about 2-3 actions per cm. When ``allow_table_contact=True``
-        or moving while holding a thin part (``0 < opening <= 0.045``), waypoint
-        spacing tightens to 3 mm per action for smooth tabletop contact and gentle
-        thin-part liftoff. With ``allow_table_contact=True``, only the fingertip
-        floor is relaxed down to ``TABLE_Z - 0.004`` (arm joints stay strictly
-        above ``TABLE_Z + 0.015``) so a guarded downward nudge can seat the flat
-        finger pads onto the tabletop and stop cleanly on stall. The whole line is
-        solved and checked against joint limits and the table before the first
-        action; a refused delta uses 0 actions. compact=False sends the same
-        target through ``move_to``'s timed path (single arm only).
-
-        stop_on_stall: after ``stall_steps`` consecutive actions whose
-        measured progress is under a quarter of the commanded progress
-        (contact, a seated part, a hard stop) the call ends with
-        status="stopped", stalled=True, stop_reason="contact_or_stall" and no
-        exception. The arm stays where it stopped. This is a kinematic progress
-        test, not a force reading: confirm contact in the wrist view.
-
-        Args:
-            dxyz: [dx, dy, dz] metres.
-            arm: "left", "right" or "both" (then pass left= / right= dicts with
-                keys dxyz, dpitch, dyaw, droll, gripper).
-            gripper: robo.CLOSE (1), robo.OPEN (-1) or robo.KEEP (0), commanded
-                from the first action; the stroke is finished after the motion.
-            max_steps: cap on native actions for this call (None: no cap).
-            reserve_steps: episode actions that must remain after this call.
-            allow_table_contact: allow up to 4 mm fingertip overdrive below
-                TABLE_Z with 3 mm waypoints (arm links stay strictly clear).
-        Returns:
-            Nudge; test ``status`` / ``stalled`` / ``reached`` and ``achieved``.
-        Raises:
-            ValueError: a malformed argument (nothing is sent).
+        ``frame="world"`` adds to world xyz and pitch/yaw/roll; ``frame="tcp"`` moves along TCP
+        (+x pointing, +y jaw-closing, +z normal). ``arm="both"`` takes ``left={...}``/``right={...}``.
+        ``compact=True`` steps 5 mm/action (3 mm with ``allow_table_contact=True`` or thin hold
+        ``opening <= 0.045``); preflighted (refusal costs 0 steps). ``allow_table_contact=True``
+        relaxes only the fingertip floor to ``TABLE_Z - 0.004`` while arm links stay strictly clear.
+        ``stop_on_stall=True`` returns ``status="stopped", stalled=True, stop_reason="contact_or_stall"``
+        without raising (kinematic progress test, not force; check views).
         """
         kwargs = self._nudge_kwargs(dxyz, arm, dpitch, dyaw, droll, gripper, frame, left,
                                     right, stop_on_stall, stall_steps, max_steps,
@@ -2305,55 +1838,15 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         require_current_target: bool = False,
         preview: bool = False,
     ) -> DeltaGrasp:
-        """Compact close-range grasp or in-air handoff clamp in one Delta primitive.
+        """Compact close-range grasp or in-air handoff clamp from a staged ~2-5 cm hover.
 
-        Once coarse code has staged the gripper within ~2-5 cm of ``target``,
-        executes sequentially: (1) optional pre-open to ``opening`` (skipped in
-        0 steps if already within 0.05), (2) transverse alignment perpendicular
-        to ``axis`` (skipped if <= 0.5 mm; aborts before closing if residual
-        error exceeds ``align_tol_m``), (3) guarded axial approach along
-        ``+axis`` to ``target - standoff_m * axis + overdrive_m * axis`` (when
-        ``contact_table=True``, uses 3 mm steps and treats tabletop stall as
-        expected seating past the fingertip bevel), (4) gripper close, and
-        (5) optional guarded ``lift_dxyz`` liftoff (automatically using 3 mm
-        micro-steps when measured ``closed_opening <= 0.045`` so thin grips do
-        not break static friction).
-
-        Args:
-            target: grasp or handoff target position as ``[x, y, z]``,
-                ``TriangulatedPoint``, ``PlanePoint``, ``WorldPoint``, ``Pose``,
-                or any perception result / mapping with ``xyz``.
-            arm: ``"left"`` or ``"right"``.
-            axis: approach direction in world coordinates (default
-                ``(0, 0, -1)`` top-down; pass receiver pointing unit vector for
-                horizontal in-air handoff).
-            standoff_m: stop TCP this far upstream of ``target`` along
-                ``-axis`` (e.g. ``0.008`` m for outer-chord flat-head handoff).
-            overdrive_m: extra axial travel along ``+axis`` past
-                ``target - standoff_m * axis`` (e.g. ``0.005`` m with
-                ``contact_table=True`` to seat fingertips onto the tabletop).
-            opening: optional partial pre-open in ``(0, 1]`` (e.g. ``0.38``);
-                skipped in 0 steps when already within 0.05.
-            contact_table: enable controlled tabletop contact (3 mm steps,
-                ``allow_table_contact=True``, stall on tabletop accepted as
-                seating before closing).
-            lift_dxyz: optional post-close guarded liftoff displacement
-                ``[dx, dy, dz]`` metres (e.g. ``(0, 0, 0.025)``).
-            align_tol_m: residual transverse tolerance gating approach/close.
-            max_linear_m: per-stage linear limit (default ``0.06`` m, <= ``0.12``).
-            max_steps: total native-action cap across all stages.
-            reserve_steps: episode native actions preserved for retreat/home.
-            require_current_target: require current provenance on ``target``
-                (default False).
-            preview: True runs a read-only zero-step preflight returning planned
-                steps and reach/table feasibility.
-        Returns:
-            DeltaGrasp; inspect ``closed_opening``, ``holding``, ``width_m``,
-            ``opening_after_lift``, ``retained_closure``, ``table_contact_stalled``
-            and camera views.
-        Raises:
-            ValueError: malformed arguments (nothing is sent).
-            ToolError: stale provenance when ``require_current_target=True``.
+        Runs: (1) optional pre-open to ``opening`` (0 steps if within 0.05), (2) transverse
+        alignment perpendicular to ``axis`` (gated by ``align_tol_m``), (3) guarded axial approach
+        to ``target - standoff_m * axis + overdrive_m * axis``, (4) close, and (5) optional guarded
+        ``lift_dxyz`` (3 mm micro-steps when ``closed_opening <= 0.045``).
+        ``target`` accepts ``[x, y, z]``, ``Pose``, or any perception result with ``xyz``.
+        ``contact_table=True`` uses 3 mm steps with ``allow_table_contact=True`` and treats tabletop
+        stall as expected seating before close. ``preview=True`` runs 0-step preflight.
         """
         if type(preview) is not bool:
             raise ValueError("preview must be bool")
@@ -2393,62 +1886,12 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         require_current_feature: bool = True,
         require_current_target: bool = False,
     ) -> FeatureAlignment:
-        """Align a held distal working feature to a receptor target, with optional stroke.
+        """Align a held distal working ``feature`` to ``target`` perpendicular to ``axis``, with optional guarded stroke.
 
-        Measures the world offset ``target - feature`` perpendicular to the
-        engagement ``axis`` (default ``(0, 0, -1)`` for vertical downward
-        insertion; pass a horizontal unit vector such as ``(0, 1, 0)`` or
-        ``(1, 0, 0)`` for horizontal plugging or hanging), zeroes that
-        transverse offset via a guarded compact ``nudge``, and optionally
-        executes a second-phase guarded contact stroke (``stroke_m`` along
-        ``+axis`` or explicit ``stroke_dxyz``) ONLY if alignment succeeds within
-        ``align_tol_m``.
-
-        If ``norm(planned_dxyz) <= 0.0005`` m, alignment completes in 0 native
-        steps. If ``standoff_m`` is provided (>= 0), axial clearance is also
-        adjusted so the feature sits ``standoff_m`` upstream of ``target`` along
-        ``-axis`` before any engagement stroke.
-
-        Args:
-            feature: held distal working feature position (tip, pin, shaft,
-                loop or spout) as ``[x, y, z]``, ``TriangulatedPoint``,
-                ``PlanePoint``, ``Pose``, or any perception result / mapping
-                with ``xyz``. If it carries ``provenance`` and
-                ``require_current_feature=True`` (default), it must come from
-                the current observation (stale pre-transport measurements are
-                rejected in 0 steps).
-            target: receptor opening/target position in the same formats.
-                Earlier unoccluded static measurements are allowed by default;
-                set ``require_current_target=True`` to enforce currency.
-            arm: ``"left"`` or ``"right"``.
-            axis: engagement / insertion direction in world coordinates
-                (normalized automatically).
-            standoff_m: optional desired axial standoff upstream of ``target``
-                along ``-axis`` (metres >= 0). None moves purely transversely.
-            stroke_m: optional guarded contact stroke distance along ``+axis``
-                (metres > 0), executed only after ``aligned=True``.
-            stroke_dxyz: alternative explicit world displacement ``[dx, dy, dz]``
-                for the guarded engagement stroke (mutually exclusive with
-                ``stroke_m``).
-            align_tol_m: residual transverse tolerance gating the stroke
-                (default ``0.0025`` m).
-            max_linear_m: per-phase linear limit (default ``0.06`` m, <= ``0.12``).
-            max_steps: total native-action cap across alignment and stroke.
-            reserve_steps: episode native actions preserved for retreat and home.
-            stop_on_stall: stop cleanly on kinematic contact stall (default True).
-            stall_steps: consecutive non-progressing actions defining a stall (1..5).
-            preview: True runs a read-only zero-step preflight returning computed
-                deltas, planned steps and reach/table feasibility.
-            require_current_feature: require current provenance when ``feature``
-                carries provenance (default True).
-            require_current_target: require current provenance on ``target``
-                (default False).
-        Returns:
-            FeatureAlignment; inspect ``aligned``, ``transverse_error_after_m``,
-            ``stroke_status``, ``stalled``, ``achieved_stroke_m`` and images.
-        Raises:
-            ValueError: malformed arguments (nothing is sent).
-            ToolError: stale provenance when currency is required.
+        Accepts ``[x, y, z]``, ``Pose``, or perception results with ``xyz`` (requires current
+        provenance on ``feature`` by default). Optional ``standoff_m`` positions upstream along
+        ``-axis``; optional ``stroke_m`` (along ``+axis``) or ``stroke_dxyz`` runs only if aligned
+        within ``align_tol_m``. ``preview=True`` runs 0-step preflight.
         """
         if type(preview) is not bool:
             raise ValueError("preview must be bool")
@@ -2489,37 +1932,11 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         max_linear_m: float = 0.03,
         max_angular_deg: float = 15.0,
     ) -> VisualAlign:
-        """Closed-loop last-mile alignment / insertion with a visual delta policy.
+        """Closed-loop last-mile alignment/insertion via a configured visual-delta (PEAR) policy.
 
-        Use it after the program has brought the held part or the fingers
-        within a few cm of the goal (pre-aligned above the slot, socket, hook
-        or rim). Each round: the current views (``cameras``, default the head
-        and that arm's wrist camera, plus a 2x centre crop of each wrist view
-        when crop_wrist) and the arm state go to a PEAR Visual-Delta model; its
-        JSON delta (cm / rad, gripper +1 open, -1 close, 0 keep) is clamped to
-        max_linear_m / max_angular_deg and executed with ``nudge``; the
-        physical outcome (reached / stopped / out_of_reach and the measured
-        motion) is shown to it next round. Stops on the policy's "done", an
-        all-zero delta, a contact stall when stop_on_contact_complete, invalid
-        answers, a policy error, or the round / step budget.
-
-        The model is an OpenAI-compatible server: ``model`` / ``base_url`` or
-        CODEASPOLICY_DELTA_MODEL / CODEASPOLICY_DELTA_BASE_URL (key from
-        CODEASPOLICY_DELTA_API_KEY_ENV, default OPENAI_API_KEY). ``policy``
-        may instead be a Python callable ``f(request) -> text or action dict``
-        (or an object with ``predict``): the loop then runs in this process,
-        each move a separate ``nudge`` call.
-
-        Args:
-            goal: what to achieve, in words ("insert the held plug into the
-                socket ahead"); the policy sees it every round.
-            max_steps: native actions the whole loop may use; also capped so
-                ``reserve_steps`` remain in the episode for retreat and home.
-        Returns:
-            VisualAlign; inspect status / stop_reason and the last round's
-            feedback, then confirm the result in the images.
-        Raises:
-            ValueError: a malformed argument (nothing is sent).
+        Each round sends current camera views (plus 2x wrist crop when ``crop_wrist``) and arm
+        state to the policy and executes its clamped delta via ``nudge`` until ``done``, zero
+        delta, contact completion, or round/step cap. ``policy`` may be a local callable.
         """
         kwargs = self._align_kwargs(goal, arm, frame, max_rounds, max_steps, reserve_steps,
                                     stop_on_stall, crop_wrist, cameras, model, base_url,
@@ -2532,26 +1949,70 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
             payload = self._stateful("visual_align_and_insert", kwargs, lambda p: p)
         return self._align_result(payload)
 
+    def _visual_servo_tool(self) -> str:
+        """Pick ``visual_servo`` when supported as a stateful backend tool, else ``visual_align_and_insert``."""
+        toolkit = getattr(self._backend, "_toolkit", None)
+        if toolkit is not None:
+            tools = getattr(toolkit, "_tools", None)
+            if isinstance(tools, Mapping) and "visual_servo" in tools:
+                from .hosts import robodojo_native as native
+
+                if "visual_servo" in getattr(native, "STATEFUL", ()):
+                    return "visual_servo"
+            return "visual_align_and_insert"
+        tools = getattr(self._backend, "_tools", None)
+        if tools is None:
+            tools = getattr(self._backend, "tools", None)
+        if isinstance(tools, (Mapping, set, frozenset, list, tuple)):
+            return "visual_servo" if "visual_servo" in tools else "visual_align_and_insert"
+        return "visual_servo"
+
+    def visual_servo(
+        self,
+        goal: str,
+        arm: str = "right",
+        frame: str = "world",
+        max_rounds: int = 8,
+        max_steps: int = 40,
+        reserve_steps: int = 20,
+        stop_on_stall: bool = True,
+        crop_wrist: bool = True,
+        cameras: Sequence[str] | None = None,
+        model: str | None = None,
+        base_url: str | None = None,
+        policy: Any = None,
+        *,
+        stop_on_contact_complete: bool = False,
+        max_linear_m: float = 0.03,
+        max_angular_deg: float = 15.0,
+    ) -> VisualAlign:
+        """General closed-loop visual-delta servoing alias for ``visual_align_and_insert`` (grasp, hang, plug, insert, press)."""
+        kwargs = self._align_kwargs(goal, arm, frame, max_rounds, max_steps, reserve_steps,
+                                    stop_on_stall, crop_wrist, cameras, model, base_url,
+                                    stop_on_contact_complete, max_linear_m, max_angular_deg)
+        if policy is not None:
+            if isinstance(policy, (str, bytes)):
+                raise ValueError("policy must be a callable or an object with predict()")
+            payload = self._local_visual_align(kwargs, policy)
+        else:
+            tool = self._visual_servo_tool()
+            try:
+                payload = self._stateful(tool, kwargs, lambda p: p)
+            except ToolError as exc:
+                msg = str(exc).lower()
+                if tool == "visual_servo" and not self._pending_actions and (
+                    "no tool" in msg or "unknown tool" in msg
+                ):
+                    payload = self._stateful("visual_align_and_insert", kwargs, lambda p: p)
+                else:
+                    raise
+        return self._align_result(payload)
+
     def set_gripper(self, arm: str, gripper: int, opening: float | None = None) -> Gripper:
-        """Close or open one gripper, without moving the arms.
+        """Close (``robo.CLOSE=1``) or open (``robo.OPEN=-1``) one gripper without moving arms (2-10 actions).
 
-        The command is repeated until the fingers stop (2 to 10 native
-        actions).  After a close, ``holding`` tells whether something stopped
-        the fingers apart and ``width_m`` how wide it is.  Later motions with
-        ``robo.KEEP`` keep commanding what was commanded last, so a held
-        object stays squeezed and a partial opening stays as it is.
-
-        Args:
-            arm: ``"left"`` or ``"right"``.
-            gripper: ``robo.CLOSE`` (1) or ``robo.OPEN`` (-1).
-            opening: with ``robo.OPEN`` only: open to this reading
-                (0 < opening <= 1) instead of all the way, e.g. to reach
-                between close neighbours.  Something 0.002 + 0.109 x opening
-                metres wide then just fits between the fingers.
-        Returns:
-            Gripper.  ``holding`` is not proof that the INTENDED object is
-            held: confirm it moves with the arm (wrist camera, or ``locate``
-            it again after a lift).
+        Optional ``opening`` in ``(0, 1]`` goes with ``robo.OPEN`` (jaw gap ~= ``0.002 + 0.109 * opening`` m).
+        ``holding`` is not proof of identity: confirm lift in wrist view or ``locate``.
         """
         arm = _arm(arm)
         command = _command(gripper, allow_keep=False)
@@ -2586,32 +2047,10 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         return self._stateful("grip", kwargs, build)
 
     def home(self, arm: str = "both") -> Home:
-        """Return an arm to the joint angles it had when the episode started.
+        """Return ``"left"``, ``"right"``, or ``"both"`` to start joints (<=25 swing actions; retains gripper command).
 
-        Near a recorded release, first withdraw along the gripper's negative
-        pointing axis until 6 cm behind the release plane, keeping orientation.
-        A partial withdrawal resumes from the measured pose. If this line is
-        blocked or unreachable, return incomplete without swinging. This local
-        guard does not detect objects along the rest of the home path.
-        A grasp point lower than 1.0 m then goes straight up by up to 6 cm;
-        after releasing a held object, it then follows a Cartesian line above
-        the starting TCP at that cleared height before the joint return. This
-        protection persists after finger retreat until homed or a new close command.
-        Ordinary home keeps the original lift/joint route. An unreachable or
-        incomplete staging line stops the call.
-        Clear tall things yourself: there is no scene collision checking.
-        The call returns when every joint is
-        within 0.01 rad or after 25 actions of the swing. The gripper retains
-        its last command; an arm that is not named holds its joints. Most
-        tasks count as done only with both arms back where they started.
-
-        Args:
-            arm: ``"left"``, ``"right"`` or ``"both"`` (default).
-        Returns:
-            Home; test ``reached`` and inspect an incomplete return before
-            deciding how to clear the path or retry. Between nearby operations,
-            continue from a clear local pose; use home when clearance or the
-            task's final reset requires it.
+        Near a recorded release, withdraws 6 cm along ``-x_tcp`` and lifts clear before swinging
+        (no scene collision checking; clear tall obstacles first). Check ``reached``.
         """
         if arm not in (*self.ARMS, "both"):
             raise ValueError(f"arm must be 'left', 'right' or 'both', got {arm!r}")
@@ -2639,20 +2078,7 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         *,
         roll_deg: float = 0.0,
     ) -> Pose:
-        """Build a world TCP ``Pose`` directly from gripper pointing and jaw-closing vectors.
-
-        Args:
-            xyz: world TCP position ``(x, y, z)`` between the finger pads, metres.
-            point_dir: world vector along ``+x_tcp`` (wrist to fingertips; e.g. ``[0, 0, -1]``
-                points straight down, ``[0, 1, 0]`` points away level).
-            close_dir: optional world vector along ``+y_tcp`` (line the two jaws close along);
-                orthogonalized against ``point_dir``. When omitted, jaws lie horizontal
-                (``[-1, 0, 0]`` when pointing vertically).
-            roll_deg: extra right-hand turn in degrees about ``point_dir`` (``180`` swaps the
-                two symmetric jaws without changing approach or closing line).
-        Returns:
-            World TCP ``Pose`` (zero RPCs, zero environment steps).
-        """
+        """Build world TCP ``Pose`` from ``point_dir`` (``+x_tcp``) and optional ``close_dir`` (``+y_tcp``), plus ``roll_deg`` about ``point_dir`` (0 steps)."""
         import numpy as np
 
         from .hosts import robodojo_kinematics as kin
@@ -2694,12 +2120,7 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         arm: str = "right",
         joints: Sequence[float] | None = None,
     ) -> Pose:
-        """Exact local URDF forward kinematics to world TCP ``Pose`` (zero RPCs, zero steps).
-
-        Args:
-            arm: ``"left"`` or ``"right"``.
-            joints: six joint angles ``(q1..q6)`` in radians; None reads the latest ``State``.
-        """
+        """Local URDF forward kinematics to world TCP ``Pose`` (0 steps; ``joints=None`` uses latest state)."""
         from .hosts import robodojo_kinematics as kin
 
         which = _arm(arm)
@@ -2718,36 +2139,77 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         continuous: bool = False,
         pos_tol_m: float = 0.002,
         rot_tol_deg: float = 1.0,
+        other_joints: Sequence[float] | None = None,
+        check_other_arm: bool = True,
+        opening: float | None = None,
+        twist_rad: float = 0.0,
     ) -> IKSolution:
-        """Solve local URDF inverse kinematics without dispatching actions (zero steps).
+        """Solve local URDF IK (0 steps) with table, inter-arm envelope, camera-housing, and twist checks.
 
-        Args:
-            arm: ``"left"`` or ``"right"``.
-            target: world TCP ``Pose``, ``{"xyz": ..., "angles": [pitch, yaw, roll]}``,
-                ``{"xyz": ..., "quat": [w, x, y, z]}``, or ``xyz`` (retaining ``seed`` orientation).
-            seed: six starting joint angles in radians; None uses the arm's latest recorded joints.
-            jaw_symmetry: when True (for an empty symmetric parallel gripper), also evaluate the
-                pose rolled 180 deg about ``+x_tcp`` and prefer the collision-free branch with
-                better joint-limit margin and smaller travel.
-            continuous: when True, check straight-line Cartesian SLERP from ``seed`` to ``target``
-                without >0.6 rad wrist/branch jumps (matching ``approach`` / ``contact`` lines).
-            pos_tol_m / rot_tol_deg: position (metres) and orientation (degrees) tolerances.
+        ``target`` takes ``Pose``, ``{"xyz": ..., "angles": [p, y, r]}``, ``{"xyz": ..., "quat": ...}``,
+        or ``xyz``. ``jaw_symmetry=True`` evaluates 0/180 deg empty-jaw roll, preferring camera-housing
+        away from the other arm and ``twist_rad`` headroom on ``joint6``. ``continuous=True`` checks
+        straight-line SLERP from ``seed``. ``check_other_arm=True`` rejects inter-arm collisions against
+        ``other_joints`` (or the other arm's recorded state).
         """
+        import inspect
+
         import numpy as np
 
         from .hosts import robodojo_kinematics as kin
 
         which = _arm(arm)
-        if type(jaw_symmetry) is not bool or type(continuous) is not bool:
-            raise ValueError("jaw_symmetry and continuous must be bool")
+        other_arm = "right" if which == "left" else "left"
+        if (
+            type(jaw_symmetry) is not bool
+            or type(continuous) is not bool
+            or type(check_other_arm) is not bool
+        ):
+            raise ValueError("jaw_symmetry, continuous, and check_other_arm must be bool")
         tol_m, tol_deg = float(pos_tol_m), float(rot_tol_deg)
         if not (math.isfinite(tol_m) and tol_m > 0.0 and math.isfinite(tol_deg) and tol_deg > 0.0):
             raise ValueError("pos_tol_m and rot_tol_deg must be positive finite numbers")
+        if isinstance(twist_rad, bool):
+            raise ValueError(f"twist_rad must be a finite number, got {twist_rad!r}")
+        twist_f = _floats((twist_rad,), 1, "twist_rad")[0]
+        op_val: float | None = None
+        if opening is not None:
+            if isinstance(opening, bool):
+                raise ValueError(f"opening must be in [0, 1], got {opening!r}")
+            op_val = _floats((opening,), 1, "opening")[0]
+            if not 0.0 <= op_val <= 1.0:
+                raise ValueError(f"opening must be in [0, 1], got {opening!r}")
 
+        state_obj: State | None = None
         if seed is not None:
             cur = _floats(seed, 6, "seed")
+            state_obj = self._last_state
+            if state_obj is None and check_other_arm and other_joints is None:
+                try:
+                    state_obj = self._latest_state()
+                except Exception:  # noqa: BLE001 - optional when offline seed is explicit
+                    state_obj = None
         else:
-            cur = _floats(self._latest_state().arm(which).joints, 6, "seed")
+            state_obj = self._latest_state()
+            cur = _floats(state_obj.arm(which).joints, 6, "seed")
+
+        other_q: tuple[float, ...] | None = None
+        if check_other_arm:
+            if other_joints is not None:
+                other_q = _floats(other_joints, 6, "other_joints")
+            elif state_obj is not None and len(state_obj.arm(other_arm).joints) == 6:
+                other_q = _floats(state_obj.arm(other_arm).joints, 6, "other_joints")
+
+        if op_val is not None:
+            arm_opening = op_val
+        elif state_obj is not None and math.isfinite(state_obj.arm(which).gripper):
+            arm_opening = max(0.0, min(1.0, float(state_obj.arm(which).gripper)))
+        else:
+            arm_opening = 0.5
+        if state_obj is not None and math.isfinite(state_obj.arm(other_arm).gripper):
+            other_opening = max(0.0, min(1.0, float(state_obj.arm(other_arm).gripper)))
+        else:
+            other_opening = 0.5
 
         start_t = kin.fk(which, cur)
         goal = np.eye(4, dtype=float)
@@ -2776,10 +2238,37 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
             flipped_goal[:3, :3] = goal[:3, :3] @ kin._rot_x(math.pi)
             candidates.append((flipped_goal, True))
 
+        inter_fn = getattr(kin, "inter_arm_violations", None)
+        housing_fn = getattr(kin, "housing_exposure_penalty", None)
+        twist_fn = getattr(kin, "twist_margin_rad", None)
+        best_params = inspect.signature(kin.best_solution).parameters
+
+        def _check_inter(q_arm: Sequence[float]) -> list[str]:
+            if not (check_other_arm and other_q is not None and callable(inter_fn)):
+                return []
+            if which == "left":
+                return list(
+                    inter_fn(
+                        q_arm,
+                        other_q,
+                        left_opening=arm_opening,
+                        right_opening=other_opening,
+                    )
+                )
+            return list(
+                inter_fn(
+                    other_q,
+                    q_arm,
+                    left_opening=other_opening,
+                    right_opening=arm_opening,
+                )
+            )
+
         weights = np.array([2.0, 2.0, 1.5, 1.0, 1.0, 0.5], dtype=float)
         cur_arr = np.asarray(cur, dtype=float)
         evaluated: list[tuple[tuple[Any, ...], IKSolution]] = []
         for cand_goal, is_flipped in candidates:
+            inter_violations: list[str] = []
             if continuous:
                 ways, why = kin.line_path(
                     which, cur, cand_goal, pos_tol=tol_m, rot_tol_deg=tol_deg
@@ -2789,27 +2278,59 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
                     end = kin.fk(which, q_sol)
                     pos_err = float(np.linalg.norm(cand_goal[:3, 3] - kin.tcp(end)))
                     rot_err = kin.rotation_error(cand_goal[:3, :3], end[:3, :3])
-                    collides = bool(kin.clearance_violations(which, q_sol))
+                    table_collides = bool(kin.clearance_violations(which, q_sol))
+                    for wq in (ways or [q_sol]):
+                        v_list = _check_inter(wq)
+                        if v_list:
+                            inter_violations = v_list
+                            break
+                    collides = table_collides or bool(inter_violations)
                     ok = pos_err <= tol_m and rot_err <= tol_deg and not collides
-                    reason = None if ok else ("collides_with_table" if collides else "ik_tolerance")
+                    if ok:
+                        reason = None
+                    elif inter_violations:
+                        reason = f"inter_arm_collision:{','.join(inter_violations)}"
+                    elif table_collides:
+                        reason = "collides_with_table"
+                    else:
+                        reason = "ik_tolerance"
                 else:
                     last_q = ways[-1] if ways else cur
                     res = kin.solve(which, cand_goal, last_q, pos_tol=tol_m, rot_tol_deg=tol_deg)
                     q_sol = res.q
                     pos_err, rot_err = res.pos_err_m, res.rot_err_deg
-                    collides = bool(res.collides or "into the table" in why)
+                    inter_violations = _check_inter(q_sol)
+                    collides = bool(res.collides or "into the table" in why or inter_violations)
                     ok = False
                     reason = why
             else:
-                res = kin.best_solution(
-                    which, cand_goal, cur, pos_tol=tol_m, rot_tol_deg=tol_deg,
-                    extra_seeds=[(0.0,) * 6],
-                )
+                best_kwargs: dict[str, Any] = {
+                    "pos_tol": tol_m,
+                    "rot_tol_deg": tol_deg,
+                    "extra_seeds": [(0.0,) * 6],
+                }
+                if "other_arm_q" in best_params and other_q is not None:
+                    best_kwargs["other_arm_q"] = other_q
+                if "opening" in best_params:
+                    best_kwargs["opening"] = arm_opening
+                if "other_opening" in best_params:
+                    best_kwargs["other_opening"] = other_opening
+                if "twist_rad" in best_params:
+                    best_kwargs["twist_rad"] = twist_f
+                res = kin.best_solution(which, cand_goal, cur, **best_kwargs)
                 q_sol = res.q
                 pos_err, rot_err = res.pos_err_m, res.rot_err_deg
-                collides = res.collides
-                ok = bool(res.ok and not res.collides)
-                reason = None if ok else ("collides_with_table" if collides else "unreachable")
+                inter_violations = _check_inter(q_sol)
+                collides = bool(res.collides or inter_violations)
+                ok = bool(res.ok and not collides)
+                if ok:
+                    reason = None
+                elif inter_violations:
+                    reason = f"inter_arm_collision:{','.join(inter_violations)}"
+                elif collides:
+                    reason = "collides_with_table"
+                else:
+                    reason = "unreachable"
 
             end_fk = kin.fk(which, q_sol)
             end_tcp = kin.tcp(end_fk)
@@ -2822,14 +2343,34 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
                 for qv, (lo, hi) in zip(q_sol, kin.JOINT_LIMITS, strict=True)
             )
             min_margin = min(margins)
+            if callable(twist_fn):
+                t_margin = float(twist_fn(q_sol, twist_rad=twist_f))
+            else:
+                lo5, hi5 = kin.JOINT_LIMITS[5]
+                q5 = float(q_sol[5])
+                t_margin = min(q5 - lo5, hi5 - q5, (q5 + twist_f) - lo5, hi5 - (q5 + twist_f))
+            housing_pen = (
+                float(housing_fn(which, q_sol, other_q))
+                if (callable(housing_fn) and other_q is not None)
+                else 0.0
+            )
             q_arr = np.asarray(q_sol, dtype=float)
             max_delta = float(np.max(np.abs(q_arr - cur_arr)))
             weighted = float(np.sum(weights * np.abs(q_arr - cur_arr)))
+            twist_insufficient = twist_f != 0.0 and t_margin < 0.0
+            twist_tight = twist_f != 0.0 and t_margin < 0.25
             score = (
                 not ok,
                 collides,
+                twist_insufficient,
+                twist_tight,
                 min_margin < 0.35,
-                (weighted - 0.5 * min(min_margin, 1.0))
+                (
+                    weighted
+                    + 4.0 * housing_pen
+                    - 0.5 * min(min_margin, 1.0)
+                    - (0.3 * min(max(t_margin, 0.0), 1.0) if twist_f != 0.0 else 0.0)
+                )
                 if ok
                 else (pos_err + 0.1 * math.radians(rot_err)),
                 is_flipped,

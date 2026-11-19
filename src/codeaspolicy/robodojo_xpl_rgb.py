@@ -62,59 +62,14 @@ from .robots import RobotAdapter
 
 @dataclass(frozen=True, repr=False)
 class ObjectSight(ObjectPose):
-    """Outcome of ``locate``: an object measured from its masks in the colour cameras.
-
-    found: SAM3 produced a mask scoring at least ``min_score``.
-    center_xyz: [x, y, z] of the middle of the smallest rectangle around the
-        object's footprint, at half its height above the table, metres.  A
-        handle, a spout or a tail is part of the footprint and moves the
-        middle away from the body's.  None when no 3D measurement was
-        possible (see ``note``).
-    top_z: height of the object's top surface.
-    height_m: ``top_z`` above the table surface (0.765 m).
-    length_m / width_m: the long and the short side of the smallest rectangle
-        around the footprint.
-    long_axis_deg: direction of the long side on the table, degrees from +x
-        (-90 .. 90); of a square, one of its sides.
-    grasp_yaw: the ``yaw`` for ``move_to(..., pitch=90, yaw=grasp_yaw)``:
-        pointing straight down, the fingers then close across the short side
-        (a cube's: across two faces).
-    views: how many cameras agreed on the measurement.  1: nothing but the
-        camera asked saw the object, and its height is a guess (see
-        ``locate``); ``note`` says which guess.
-    score: SAM3 confidence.
-    centroid: (row, col) of the mask in the image, as ``Segment.centroid``.
-    area_px: mask pixels.
-    camera: the camera measured from.
-    note: what limits the measurement (one camera only; two that agree only
-        roughly; the mask is the robot's own arm, or not on the table; too
-        flat or too far to measure), else None.
-    provenance: observation, images and calibration used for this measurement.
-        Use ``robo.require_current(result)`` before depending on coordinates
-        for a new action; reading a historical result does not refresh it.
-
-    The object is taken to stand on the table.  What other things or the
-    robot's own arm hide of it is not measured, so a partly hidden object
-    comes out smaller and off-centre.  A held object is usually not found from
-    the head camera.
-    """
+    """Outcome of ``locate`` (RGB-only): ``ObjectPose`` fields plus ``views`` (cameras agreeing on 3D height)."""
 
     views: int = 1
 
 
 @dataclass(frozen=True, repr=False)
 class SeenPoint(WorldPoint):
-    """Outcome of ``back_project``: the point seen at one pixel.
-
-    xyz: world [x, y, z], metres: where the pixel's ray meets the object under
-        the pixel, or the table.
-    depth_m: distance of that point along the camera's optical axis.
-    surface: ``"object"`` when the pixel lies on something that could be
-        measured, ``"table"`` when the point is on the table top (z = 0.765):
-        the pixel shows the table, or something too flat or too far to measure.
-    provenance: observation, image and calibration sources.  Use
-        ``robo.require_current(result)`` before depending on coordinates.
-    """
+    """Outcome of ``back_project`` (RGB-only): ``WorldPoint`` plus ``surface`` (``"object"`` or ``"table"``)."""
 
     surface: str = "table"
 
@@ -221,18 +176,7 @@ class RobodojoOfficialColourRobot(RobodojoRobot):
         self, camera: str = "cam_head", *, step: int = -1,
         observation_id: str | None = None,
     ) -> dict[str, Any]:
-        """Return the calibration of one camera at a recorded step as a dict.
-
-        Keys: ``shape`` (image shape), ``intrinsic_matrix`` (3x3) and
-        ``extrinsic_matrix`` (4x4 camera-to-world; the camera looks down its
-        own -z axis with +y up).  Recorded camera matrices are used when supplied.
-        Otherwise, the head camera is fixed and a wrist camera's pose is
-        derived from the state captured with the image.
-        ``observation_id`` pins that capture, including a
-        historical one.  If ``step`` is also specified it must agree.
-        ``provenance`` identifies the image and calibration source when the
-        backend supports snapshots; it does not assert the capture is current.
-        """
+        """Return camera calibration dict (``shape``, ``intrinsic_matrix``, ``extrinsic_matrix``, ``provenance``), derived from image-time state when unrecorded."""
         import numpy as np
 
         from .hosts import robodojo_sight as sight
@@ -305,35 +249,7 @@ class RobodojoOfficialColourRobot(RobodojoRobot):
         self, row: int, col: int, camera: str = "cam_head", *,
         observation_id: str | None = None,
     ) -> SeenPoint:
-        """Return the world point at a pixel using one snapshot's images and calibration.
-
-        There is no depth image, so a pixel alone is only a ray.  The object
-        under the pixel is segmented from that pixel (SAM3) and measured as
-        ``locate`` measures one, and the answer is where the pixel's ray
-        meets it.  A pixel on the table top itself gives the point of the
-        table it shows, exactly.
-
-        Args:
-            row / col: pixel, row 0 at the top, col 0 at the left (images are
-                480 rows x 640 cols).
-            camera: the camera the pixel was read from (default ``"cam_head"``).
-            observation_id: snapshot from which the pixel was read; None pins
-                the latest recorded observation.  Pass the source ID explicitly
-                for historical pixels or ``Segment.centroid``.
-        Returns:
-            SeenPoint; check ``surface``.  ``"object"``: ``xyz`` is on the
-            object under the pixel, as well as ``locate`` would measure that
-            object from this camera and the others that see it.
-            ``"table"``: ``xyz`` is on the table top; a pixel that shows
-            something too flat or too far to measure also answers so.  A thin
-            part in mid-air (a peg, a handle, a cable) is not measured
-            reliably: reason from the image and from ``locate`` of the whole
-            object instead.
-            ``provenance`` identifies the capture; use
-            ``robo.require_current(result)`` before depending on coordinates.
-        Raises:
-            ToolError: pixel out of range, or it looks past the table.
-        """
+        """Return world ``xyz`` at pixel ``(row, col)`` (RGB-only; SAM3 segments the object under the pixel or intersects table ``z=0.765``)."""
         camera = _camera(camera, self.CAMERAS)
         kwargs: dict[str, Any] = {"row": int(row), "col": int(col), "camera": camera}
         p = self._perception_call("back_project", kwargs, observation_id=observation_id)
@@ -355,54 +271,7 @@ class RobodojoOfficialColourRobot(RobodojoRobot):
         *,
         observation_id: str | None = None,
     ) -> ObjectSight:
-        """Find an object by a text prompt and measure it in 3D from the colour cameras.
-
-        This backend uses RGB only: there is no depth image. Check views and
-        provenance before relying on the estimated geometry.
-
-        SAM3 segments one snapshot's image of ``camera`` (as ``segment``); the
-        same object is then looked for in the other two cameras, and its
-        height and footprint are those that fit every camera that shows it.
-        One camera cannot measure a height: a low deep thing and a tall
-        shallow one look alike from it.  ``views`` says how many cameras
-        agreed.  Nothing moves.
-
-        Args:
-            text_prompt: one object by its visible properties, e.g. ``"the
-                small red cube on the left"``.
-            camera: ``"cam_head"`` (default; the whole table),
-                ``"cam_left_wrist"`` or ``"cam_right_wrist"`` (close up, from
-                the gripper).
-            min_score: masks scoring below this are reported as not found.
-            observation_id: snapshot to measure; None pins the latest recorded
-                observation.  Historical IDs use the images and camera poses
-                from that capture, including the other cameras.
-        Returns:
-            ObjectSight. For a top grasp, choose a reachable target above it
-            with pitch=90 and enough finger clearance; ``locate`` again (the wrist
-            camera then looks down on it and the reading is good to 1-2 mm),
-            turn to ``yaw=grasp_yaw`` and go down to the height to hold it
-            at.  With ``views >= 2`` and no ``note`` a block, a can, a bowl
-            or the body of a bottle is measured to 1-3 mm; a ``note`` that
-            the cameras agree only roughly leaves the height uncertain.  With
-            ``views == 1`` the height is a guess, the tallest upright shape
-            that fits the one image: close for a box or a can, wrong for a
-            bowl, a cup or anything wider above than below, and for a tall
-            thing that tapers; ``center_xyz`` is then off, along the line
-            away from the robot, by about half of what the height is wrong
-            by.  Snapshot-bound calls use evidence from that capture only;
-            a height measured in an earlier capture is not silently reused.
-            No position comes back
-            (``center_xyz`` None, ``note`` says why) for a mask on the robot's
-            own arm or on something that is not on the table.  The mask is
-            the best match for the text, not proof of identity: check it
-            against the image.
-            ``provenance`` links the measurement to its capture.  Use
-            ``robo.require_current(result)`` before depending on coordinates;
-            reading an old result does not make it current.
-        Raises:
-            ToolError: the camera image or the SAM3 service is unavailable.
-        """
+        """Segment ``text_prompt`` (SAM3) and measure 3D geometry from colour views (there is no depth image; check ``views`` and ``note``; ``views >= 2`` measures height accurately)."""
         camera = _camera(camera, self.CAMERAS)
         prompt = str(text_prompt)
         if not prompt.strip():

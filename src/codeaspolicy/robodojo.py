@@ -42,7 +42,7 @@ is generated from them (see :mod:`codeaspolicy.prompt`), so keep them accurate.
 from __future__ import annotations
 
 import math
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from copy import deepcopy
 from dataclasses import dataclass, field
 from typing import Any, ClassVar
@@ -333,6 +333,85 @@ class Nudge:
 
 
 @dataclass(frozen=True)
+class FeatureAlignment:
+    """Outcome of ``align_feature``.
+
+    status: completed (aligned within align_tol_m and optional engagement
+        stroke reached), stopped (contact stall ended alignment or engagement
+        stroke), partial (step budget or tolerance not met after moving),
+        planned (preview=True and preflight accepted) or rejected (zero native
+        actions: limit, reach/table clearance or budget refused). Not a task
+        success verdict.
+    aligned: residual transverse error is within ``align_tol_m`` (and axial
+        standoff error when ``standoff_m`` is specified).
+    reached: full requested operation completed (alignment plus optional stroke).
+    accepted: preflight accepted the planned move(s).
+    preview: True for a read-only zero-step preflight.
+    stalled: stopped on a kinematic contact stall (``stop_reason="contact_or_stall"``).
+    stop_reason: None on completion or accepted preview; else ``contact_or_stall``,
+        ``delta_exceeds_limit``, ``ik_path_rejected``, ``reserve_steps_exhausted``,
+        ``step_budget``, ``episode_native_step_budget``,
+        ``alignment_tolerance_not_met`` or ``stroke_not_reached``.
+    feature_xyz / target_xyz: measured distal working feature and target world
+        coordinates, metres.
+    axis: unit engagement/insertion direction in world coordinates.
+    axial_gap_m: signed distance from ``feature_xyz`` to ``target_xyz`` along
+        ``axis`` before alignment (positive when upstream of the target).
+    transverse_delta: world offset perpendicular to ``axis`` needed to zero
+        transverse feature-to-target error, metres.
+    planned_dxyz: world TCP displacement commanded for the alignment phase, metres.
+    transverse_error_before_m / transverse_error_after_m: transverse error
+        before and estimated residual transverse error after alignment, metres.
+    standoff_m: requested axial standoff upstream of ``target_xyz``, or None.
+    stroke_status: None when no engagement stroke was requested; else
+        ``"planned"``, ``"completed"``, ``"stopped"``, ``"partial"``,
+        ``"skipped"`` or ``"rejected"``.
+    requested_stroke_m / achieved_stroke_m: requested and measured displacement
+        along the stroke direction, metres (None when no stroke was requested).
+    align_steps_used / stroke_steps_used / steps_used / planned_steps: native
+        actions executed per phase, total executed, and planned.
+    final_xyz / pitch / yaw / roll: measured grasp-point pose after the call.
+    holding / opening: gripper state after the call.
+    ik_error / note: refusal or execution detail.
+    truncated: the budget ran out or the environment ended the episode.
+    """
+
+    arm: str
+    status: str
+    aligned: bool
+    reached: bool
+    accepted: bool
+    preview: bool
+    stalled: bool
+    stop_reason: str | None
+    feature_xyz: tuple[float, float, float]
+    target_xyz: tuple[float, float, float]
+    axis: tuple[float, float, float]
+    axial_gap_m: float
+    transverse_delta: tuple[float, float, float]
+    planned_dxyz: tuple[float, float, float]
+    transverse_error_before_m: float
+    transverse_error_after_m: float
+    standoff_m: float | None
+    stroke_status: str | None
+    requested_stroke_m: float | None
+    achieved_stroke_m: float | None
+    align_steps_used: int
+    stroke_steps_used: int
+    steps_used: int
+    planned_steps: int
+    final_xyz: tuple[float, float, float]
+    pitch: float
+    yaw: float
+    roll: float
+    holding: bool
+    opening: float
+    ik_error: str | None
+    note: str | None
+    truncated: bool
+
+
+@dataclass(frozen=True)
 class VisualAlign:
     """Outcome of ``visual_align_and_insert``.
 
@@ -580,7 +659,34 @@ class ObjectPose(PerceptionResult):
 
 STATEFUL_TOOLS = frozenset({"move_pose", "grip", "home", "pi0_pick", "motion_execute", "try_grasp",
                             "intent_execute", "grasp_step", "operation_resume", "nudge",
-                            "visual_align_and_insert"})
+                            "visual_align_and_insert", "align_feature"})
+
+
+def _has_provenance(value: Any) -> bool:
+    if isinstance(value, PerceptionResult):
+        return True
+    if isinstance(value, Mapping):
+        return value.get("provenance") is not None
+    return getattr(value, "provenance", None) is not None
+
+
+def _extract_xyz(value: Any, name: str) -> tuple[float, float, float]:
+    raw: Any
+    if isinstance(value, Mapping):
+        for field_name in ("xyz", "world_xyz", "center_xyz"):
+            if value.get(field_name) is not None:
+                raw = value[field_name]
+                break
+        else:
+            raise ValueError(f"{name} mapping must contain 'xyz'")
+    elif getattr(value, "xyz", None) is not None:
+        raw = value.xyz
+    elif getattr(value, "center_xyz", None) is not None:
+        raw = value.center_xyz
+    else:
+        raw = value
+    vals = _floats(raw, 3, name)
+    return (vals[0], vals[1], vals[2])
 
 
 def _floats(value: Any, n: int, name: str) -> tuple[float, ...]:
@@ -833,6 +939,7 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         ObjectPose,
         Pick,
         Nudge,
+        FeatureAlignment,
         VisualAlign,
         Segment,
         WorldPoint,
@@ -979,6 +1086,18 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         "rounds_used",
         "converged",
         "done",
+        "aligned",
+        "accepted",
+        "preview",
+        "axial_gap_m",
+        "transverse_delta",
+        "planned_dxyz",
+        "transverse_error_before_m",
+        "transverse_error_after_m",
+        "stroke_status",
+        "achieved_stroke_m",
+        "align_steps_used",
+        "stroke_steps_used",
     )
 
     # -- observation --------------------------------------------------------
@@ -2063,6 +2182,103 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
                                     reserve_steps, compact, max_linear_m, max_angular_deg)
         return self._stateful("nudge", kwargs, lambda p: self._nudge_result(kwargs, p))
 
+    def align_feature(
+        self,
+        feature: Any,
+        target: Any,
+        arm: str = "right",
+        *,
+        axis: Sequence[float] = (0.0, 0.0, -1.0),
+        standoff_m: float | None = None,
+        stroke_m: float | None = None,
+        stroke_dxyz: Sequence[float] | None = None,
+        align_tol_m: float = 0.0025,
+        max_linear_m: float = 0.06,
+        max_steps: int = 15,
+        reserve_steps: int = 20,
+        stop_on_stall: bool = True,
+        stall_steps: int = 2,
+        preview: bool = False,
+        require_current_feature: bool = True,
+        require_current_target: bool = False,
+    ) -> FeatureAlignment:
+        """Align a held distal working feature to a receptor target, with optional stroke.
+
+        Measures the world offset ``target - feature`` perpendicular to the
+        engagement ``axis`` (default ``(0, 0, -1)`` for vertical downward
+        insertion; pass a horizontal unit vector such as ``(0, 1, 0)`` or
+        ``(1, 0, 0)`` for horizontal plugging or hanging), zeroes that
+        transverse offset via a guarded compact ``nudge``, and optionally
+        executes a second-phase guarded contact stroke (``stroke_m`` along
+        ``+axis`` or explicit ``stroke_dxyz``) ONLY if alignment succeeds within
+        ``align_tol_m``.
+
+        If ``norm(planned_dxyz) <= 0.0005`` m, alignment completes in 0 native
+        steps. If ``standoff_m`` is provided (>= 0), axial clearance is also
+        adjusted so the feature sits ``standoff_m`` upstream of ``target`` along
+        ``-axis`` before any engagement stroke.
+
+        Args:
+            feature: held distal working feature position (tip, pin, shaft,
+                loop or spout) as ``[x, y, z]``, ``TriangulatedPoint``,
+                ``PlanePoint``, ``Pose``, or any perception result / mapping
+                with ``xyz``. If it carries ``provenance`` and
+                ``require_current_feature=True`` (default), it must come from
+                the current observation (stale pre-transport measurements are
+                rejected in 0 steps).
+            target: receptor opening/target position in the same formats.
+                Earlier unoccluded static measurements are allowed by default;
+                set ``require_current_target=True`` to enforce currency.
+            arm: ``"left"`` or ``"right"``.
+            axis: engagement / insertion direction in world coordinates
+                (normalized automatically).
+            standoff_m: optional desired axial standoff upstream of ``target``
+                along ``-axis`` (metres >= 0). None moves purely transversely.
+            stroke_m: optional guarded contact stroke distance along ``+axis``
+                (metres > 0), executed only after ``aligned=True``.
+            stroke_dxyz: alternative explicit world displacement ``[dx, dy, dz]``
+                for the guarded engagement stroke (mutually exclusive with
+                ``stroke_m``).
+            align_tol_m: residual transverse tolerance gating the stroke
+                (default ``0.0025`` m).
+            max_linear_m: per-phase linear limit (default ``0.06`` m, <= ``0.12``).
+            max_steps: total native-action cap across alignment and stroke.
+            reserve_steps: episode native actions preserved for retreat and home.
+            stop_on_stall: stop cleanly on kinematic contact stall (default True).
+            stall_steps: consecutive non-progressing actions defining a stall (1..5).
+            preview: True runs a read-only zero-step preflight returning computed
+                deltas, planned steps and reach/table feasibility.
+            require_current_feature: require current provenance when ``feature``
+                carries provenance (default True).
+            require_current_target: require current provenance on ``target``
+                (default False).
+        Returns:
+            FeatureAlignment; inspect ``aligned``, ``transverse_error_after_m``,
+            ``stroke_status``, ``stalled``, ``achieved_stroke_m`` and images.
+        Raises:
+            ValueError: malformed arguments (nothing is sent).
+            ToolError: stale provenance when currency is required.
+        """
+        if type(preview) is not bool:
+            raise ValueError("preview must be bool")
+        if type(require_current_feature) is not bool or type(require_current_target) is not bool:
+            raise ValueError("require_current_feature and require_current_target must be bool")
+        kwargs = self._align_feature_kwargs(
+            feature, target, arm, axis, standoff_m, stroke_m, stroke_dxyz,
+            align_tol_m, max_linear_m, max_steps, reserve_steps,
+            stop_on_stall, stall_steps,
+        )
+        if require_current_feature and _has_provenance(feature):
+            self.require_current(feature)
+        if require_current_target:
+            self.require_current(target)
+        if preview:
+            payload = self._readonly("preview_align_feature", kwargs)
+            return self._align_feature_result(kwargs, payload, preview=True)
+        return self._stateful(
+            "align_feature", kwargs, lambda p: self._align_feature_result(kwargs, p, preview=False)
+        )
+
     def visual_align_and_insert(
         self,
         goal: str,
@@ -2585,6 +2801,100 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
             arms=arms,
         )
 
+    def _align_feature_kwargs(
+        self, feature, target, arm, axis, standoff_m, stroke_m, stroke_dxyz,
+        align_tol_m, max_linear_m, max_steps, reserve_steps,
+        stop_on_stall, stall_steps,
+    ) -> dict[str, Any]:
+        which = _arm(arm)
+        f_xyz = _extract_xyz(feature, "feature")
+        t_xyz = _extract_xyz(target, "target")
+        ax = _floats(axis, 3, "axis")
+        if math.sqrt(ax[0] * ax[0] + ax[1] * ax[1] + ax[2] * ax[2]) <= 1e-9:
+            raise ValueError("axis must be non-zero")
+        if type(stop_on_stall) is not bool:
+            raise ValueError("stop_on_stall must be bool")
+        tol = self._bounded(align_tol_m, "align_tol_m", 0.02)
+        if tol < 0.0005:
+            raise ValueError(f"align_tol_m must be in [0.0005, 0.02], got {align_tol_m!r}")
+        kwargs: dict[str, Any] = {
+            "feature_xyz": list(f_xyz),
+            "target_xyz": list(t_xyz),
+            "arm": which,
+            "axis": list(ax),
+            "align_tol_m": tol,
+            "max_linear_m": self._bounded(max_linear_m, "max_linear_m", 0.12),
+            "max_steps": self._count(max_steps, "max_steps", 1),
+            "reserve_steps": self._count(reserve_steps, "reserve_steps", 0),
+            "stop_on_stall": stop_on_stall,
+            "stall_steps": self._count(stall_steps, "stall_steps", 1, 5),
+        }
+        if standoff_m is not None:
+            if isinstance(standoff_m, bool):
+                raise ValueError(f"standoff_m must be a number >= 0, got {standoff_m!r}")
+            s_val = _floats((standoff_m,), 1, "standoff_m")[0]
+            if s_val < 0.0:
+                raise ValueError(f"standoff_m must be >= 0, got {standoff_m!r}")
+            kwargs["standoff_m"] = s_val
+        if stroke_m is not None and stroke_dxyz is not None:
+            raise ValueError("pass at most one of stroke_m or stroke_dxyz")
+        if stroke_m is not None:
+            if isinstance(stroke_m, bool):
+                raise ValueError(f"stroke_m must be > 0, got {stroke_m!r}")
+            st_val = _floats((stroke_m,), 1, "stroke_m")[0]
+            if st_val <= 0.0:
+                raise ValueError(f"stroke_m must be > 0, got {stroke_m!r}")
+            kwargs["stroke_m"] = st_val
+        elif stroke_dxyz is not None:
+            sv = _floats(stroke_dxyz, 3, "stroke_dxyz")
+            if math.sqrt(sv[0] * sv[0] + sv[1] * sv[1] + sv[2] * sv[2]) <= 1e-6:
+                raise ValueError("stroke_dxyz must be non-zero")
+            kwargs["stroke_dxyz"] = list(sv)
+        return kwargs
+
+    def _align_feature_result(
+        self, kwargs: dict[str, Any], p: dict[str, Any], *, preview: bool
+    ) -> FeatureAlignment:
+        angles = p.get("final_angles") or {}
+        req_stroke = p.get("requested_stroke_m")
+        ach_stroke = p.get("achieved_stroke_m")
+        standoff = p.get("standoff_m")
+        return FeatureAlignment(
+            arm=str(p.get("arm", kwargs["arm"])),
+            status=str(p.get("status") or "rejected"),
+            aligned=bool(p.get("aligned")),
+            reached=bool(p.get("reached")),
+            accepted=bool(p.get("accepted")),
+            preview=bool(p.get("preview", preview)),
+            stalled=bool(p.get("stalled")),
+            stop_reason=p.get("stop_reason"),
+            feature_xyz=_tuple3(p.get("feature_xyz", kwargs["feature_xyz"])),
+            target_xyz=_tuple3(p.get("target_xyz", kwargs["target_xyz"])),
+            axis=_tuple3(p.get("axis", kwargs["axis"])),
+            axial_gap_m=float(p.get("axial_gap_m", math.nan)),
+            transverse_delta=_tuple3(p.get("transverse_delta")),
+            planned_dxyz=_tuple3(p.get("planned_dxyz")),
+            transverse_error_before_m=float(p.get("transverse_error_before_m", math.nan)),
+            transverse_error_after_m=float(p.get("transverse_error_after_m", math.nan)),
+            standoff_m=float(standoff) if standoff is not None else None,
+            stroke_status=str(p["stroke_status"]) if p.get("stroke_status") is not None else None,
+            requested_stroke_m=float(req_stroke) if req_stroke is not None else None,
+            achieved_stroke_m=float(ach_stroke) if ach_stroke is not None else None,
+            align_steps_used=int(p.get("align_steps_used", 0)),
+            stroke_steps_used=int(p.get("stroke_steps_used", 0)),
+            steps_used=int(p.get("steps_used", 0)),
+            planned_steps=int(p.get("planned_steps", 0)),
+            final_xyz=_tuple3(p.get("final_xyz")),
+            pitch=float(angles.get("pitch", math.nan)),
+            yaw=float(angles.get("yaw", math.nan)),
+            roll=float(angles.get("roll", math.nan)),
+            holding=bool(p.get("holding")),
+            opening=float(p.get("opening", math.nan)),
+            ik_error=str(p["ik_error"]) if p.get("ik_error") else None,
+            note=str(p["note"]) if p.get("note") else None,
+            truncated=self._latest_state().truncated,
+        )
+
     def _align_kwargs(self, goal, arm, frame, max_rounds, max_steps, reserve_steps,
                       stop_on_stall, crop_wrist, cameras, model, base_url,
                       stop_on_contact_complete, max_linear_m, max_angular_deg) -> dict[str, Any]:
@@ -2770,6 +3080,7 @@ __all__ = [
     "ADAPTER",
     "ArmState",
     "CameraRay",
+    "FeatureAlignment",
     "Gripper",
     "HOME_MAX_ACTIONS",
     "HOME_TOL_RAD",

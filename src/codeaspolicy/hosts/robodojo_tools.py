@@ -20,7 +20,7 @@ same observations and commanded through the same action path:
 ``home``         the joints the episode started with (:func:`home`, kept from before).
 
 ``register`` also adds the staged grasp tools and the guarded ``nudge`` /
-``visual_align_and_insert`` tools of :mod:`.robodojo_visual_delta`.
+``align_feature`` / ``visual_align_and_insert`` tools of :mod:`.robodojo_visual_delta`.
 
 Every tool is registered as a stateful (not read-only) tool, so RPent's toolkit records a step
 after it like after its own motions.  Each native action is one ``env.step`` and counts against
@@ -1879,7 +1879,7 @@ def register(toolkit: Any) -> None:
     from .robodojo_visual_delta import SPECS as delta_specs
     from .robodojo_visual_delta import handlers as delta_handlers
 
-    # Guarded compact nudges and the closed visual-delta loop (both stateful).
+    # Guarded compact nudges, feature alignment (with read-only preview) and closed visual-delta loop.
     for name, handler in delta_handlers(primitives, start).items():
         toolkit.add_tool(name, delta_specs[name], handler)
 

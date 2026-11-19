@@ -62,6 +62,9 @@ SETTLE_STEPS = 1
 ALIGN_MAX_LINEAR_M = 0.03
 ALIGN_MAX_ANGULAR_DEG = 15.0
 CROP_FRACTION = 0.5
+#: Default transverse tolerance and sub-millimetre skip threshold for ``align_feature``.
+ALIGN_TOL_M = 0.0025
+ZERO_DELTA_M = 0.0005
 
 
 def _rx(deg: float) -> np.ndarray:
@@ -742,6 +745,403 @@ def visual_align_and_insert(
 
 
 # ---------------------------------------------------------------------------
+# pre-contact feature-to-target alignment
+# ---------------------------------------------------------------------------
+
+
+def _vec3(raw: Any, where: str) -> np.ndarray:
+    if isinstance(raw, (str, bytes)):
+        raise ValueError(f"{where} must be three numbers")
+    try:
+        vals = [_finite(v, where) for v in raw]
+    except TypeError as exc:
+        raise ValueError(f"{where} must be three numbers") from exc
+    if len(vals) != 3:
+        raise ValueError(f"{where} must be three numbers")
+    return np.asarray(vals, dtype=float)
+
+
+def align_feature(
+    primitives: Any,
+    start_joints: dict[str, list[float]],
+    feature_xyz: Sequence[float],
+    target_xyz: Sequence[float],
+    arm: str = "right",
+    *,
+    axis: Sequence[float] = (0.0, 0.0, -1.0),
+    standoff_m: float | None = None,
+    stroke_m: float | None = None,
+    stroke_dxyz: Sequence[float] | None = None,
+    align_tol_m: float = ALIGN_TOL_M,
+    max_linear_m: float = MAX_LINEAR_M,
+    max_steps: int = 15,
+    reserve_steps: int = 20,
+    stop_on_stall: bool = True,
+    stall_steps: int = 2,
+    preview: bool = False,
+) -> dict[str, Any]:
+    """Zero transverse offset from a held distal feature to a target, with optional stroke.
+
+    Projects ``target_xyz - feature_xyz`` perpendicular to the unit engagement ``axis``
+    (plus an optional axial ``standoff_m`` upstream along ``-axis``), preflights reach,
+    table clearance and budget, executes a compact guarded ``nudge`` for alignment,
+    measures residual ``transverse_error_after_m`` from the actual TCP shift, and when
+    ``aligned`` (within ``align_tol_m``) optionally executes a guarded engagement stroke
+    (``stroke_m`` along ``+axis`` or explicit ``stroke_dxyz``).
+    """
+
+    try:
+        if arm not in ARMS:
+            raise ValueError("arm must be 'left' or 'right'")
+        f_xyz = _vec3(feature_xyz, "feature_xyz")
+        t_xyz = _vec3(target_xyz, "target_xyz")
+        axis_raw = _vec3(axis, "axis")
+        axis_norm = float(np.linalg.norm(axis_raw))
+        if axis_norm <= 1e-9:
+            raise ValueError("axis must be non-zero")
+        u_axis = axis_raw / axis_norm
+        standoff_f: float | None = None
+        if standoff_m is not None:
+            standoff_f = _finite(standoff_m, "standoff_m")
+            if standoff_f < 0.0:
+                raise ValueError("standoff_m must be >= 0")
+        if stroke_m is not None and stroke_dxyz is not None:
+            raise ValueError("pass at most one of stroke_m or stroke_dxyz")
+        stroke_vec: np.ndarray | None = None
+        stroke_unit: np.ndarray | None = None
+        requested_stroke_m: float | None = None
+        if stroke_m is not None:
+            stroke_f = _finite(stroke_m, "stroke_m")
+            if stroke_f <= 0.0:
+                raise ValueError("stroke_m must be > 0")
+            stroke_vec = u_axis * stroke_f
+            stroke_unit = u_axis
+            requested_stroke_m = stroke_f
+        elif stroke_dxyz is not None:
+            stroke_vec = _vec3(stroke_dxyz, "stroke_dxyz")
+            requested_stroke_m = float(np.linalg.norm(stroke_vec))
+            if requested_stroke_m <= 1e-6:
+                raise ValueError("stroke_dxyz must be non-zero")
+            stroke_unit = stroke_vec / requested_stroke_m
+        tol_f = _finite(align_tol_m, "align_tol_m")
+        if not 0.0005 <= tol_f <= 0.02:
+            raise ValueError("align_tol_m must be between 0.0005 and 0.02 m")
+        max_lin_f = _finite(max_linear_m, "max_linear_m")
+        if not 0.0 < max_lin_f <= HARD_LINEAR_M:
+            raise ValueError(f"max_linear_m must be in (0, {HARD_LINEAR_M}]")
+        if type(max_steps) is not int or max_steps < 1:
+            raise ValueError("max_steps must be a positive integer")
+        if type(reserve_steps) is not int or reserve_steps < 0:
+            raise ValueError("reserve_steps must be a non-negative integer")
+        if type(stall_steps) is not int or not 1 <= stall_steps <= 5:
+            raise ValueError("stall_steps must be an integer between 1 and 5")
+        if not isinstance(stop_on_stall, bool) or not isinstance(preview, bool):
+            raise ValueError("stop_on_stall and preview must be booleans")
+    except ValueError as exc:
+        return {"error": f"align_feature: {exc}"}
+
+    raw_diff = t_xyz - f_xyz
+    axial_gap_m = float(np.dot(raw_diff, u_axis))
+    transverse_delta = raw_diff - axial_gap_m * u_axis
+    transverse_error_before_m = float(np.linalg.norm(transverse_delta))
+    if standoff_f is None:
+        planned_dxyz = transverse_delta.copy()
+    else:
+        desired_feature = t_xyz - u_axis * standoff_f
+        planned_dxyz = desired_feature - f_xyz
+    align_norm = float(np.linalg.norm(planned_dxyz))
+    skip_align = align_norm <= ZERO_DELTA_M
+
+    state0 = motion._obs(primitives)["state"]
+    q0 = motion._joints(state0, arm)
+    tcp_before = motion._pose_of(arm, q0)[:3, 3]
+
+    result: dict[str, Any] = {
+        "arm": arm,
+        "status": "rejected",
+        "aligned": False,
+        "reached": False,
+        "accepted": False,
+        "preview": preview,
+        "stalled": False,
+        "stop_reason": None,
+        "feature_xyz": [round(float(v), 5) for v in f_xyz],
+        "target_xyz": [round(float(v), 5) for v in t_xyz],
+        "axis": [round(float(v), 6) for v in u_axis],
+        "axial_gap_m": round(axial_gap_m, 5),
+        "transverse_delta": [round(float(v), 5) for v in transverse_delta],
+        "planned_dxyz": [round(float(v), 5) for v in planned_dxyz],
+        "transverse_error_before_m": round(transverse_error_before_m, 5),
+        "transverse_error_after_m": round(transverse_error_before_m, 5),
+        "standoff_m": round(standoff_f, 5) if standoff_f is not None else None,
+        "stroke_status": None,
+        "requested_stroke_m": round(requested_stroke_m, 5)
+        if requested_stroke_m is not None else None,
+        "achieved_stroke_m": None,
+        "align_steps_used": 0,
+        "stroke_steps_used": 0,
+        "steps_used": 0,
+        "planned_steps": 0,
+        "ik_error": None,
+        "note": None,
+        "recoverable": True,
+    }
+
+    def finish(state_now: dict[str, Any]) -> dict[str, Any]:
+        q_now = motion._joints(state_now, arm)
+        summary = motion._pose_summary(arm, q_now)
+        result["final_xyz"] = summary["xyz"]
+        result["final_angles"] = {k: summary[k] for k in ("pitch", "yaw", "roll")}
+        result.update(_gripper_state(primitives, state_now, arm))
+        result["remaining_episode_steps"] = _budget(primitives)[1]
+        return result
+
+    if not skip_align and align_norm > max_lin_f + 1e-9:
+        result.update(
+            stop_reason="delta_exceeds_limit",
+            stroke_status="rejected" if stroke_vec is not None else None,
+            note=f"{arm}: alignment delta {align_norm:.4f} m exceeds max_linear_m "
+                 f"{max_lin_f:.4f} m; re-stage closer before align_feature",
+        )
+        return finish(state0)
+
+    if stroke_vec is not None and requested_stroke_m is not None and requested_stroke_m > max_lin_f + 1e-9:
+        result.update(
+            stop_reason="delta_exceeds_limit",
+            stroke_status="rejected",
+            note=f"{arm}: stroke {requested_stroke_m:.4f} m exceeds max_linear_m "
+                 f"{max_lin_f:.4f} m",
+        )
+        return finish(state0)
+
+    if skip_align:
+        align_ways: list[list[float]] = []
+        q_after_align_plan = q0
+    else:
+        align_spec = _spec({"dxyz": planned_dxyz.tolist()}, arm)
+        _, align_ways, align_why = _plan_arm(arm, q0, align_spec, "world",
+                                             LINE_STEP_M, LINE_STEP_DEG)
+        if align_why is not None:
+            result.update(
+                stop_reason="ik_path_rejected",
+                ik_error=f"{arm}: {align_why}",
+                stroke_status="rejected" if stroke_vec is not None else None,
+            )
+            return finish(state0)
+        q_after_align_plan = align_ways[-1] if align_ways else q0
+
+    if stroke_vec is not None:
+        stroke_spec = _spec({"dxyz": stroke_vec.tolist()}, arm)
+        _, stroke_ways, stroke_why = _plan_arm(arm, q_after_align_plan, stroke_spec, "world",
+                                               LINE_STEP_M, LINE_STEP_DEG)
+        if stroke_why is not None:
+            result.update(
+                stop_reason="ik_path_rejected",
+                ik_error=f"{arm} stroke: {stroke_why}",
+                stroke_status="rejected",
+            )
+            return finish(state0)
+    else:
+        stroke_ways = []
+
+    planned_steps = len(align_ways) + len(stroke_ways)
+    result["planned_steps"] = planned_steps
+    _, remaining = _budget(primitives)
+    allowed = min(max_steps, remaining - reserve_steps)
+
+    if planned_steps > 0 and allowed <= 0:
+        result.update(
+            stop_reason="episode_native_step_budget" if remaining <= 0
+            else "reserve_steps_exhausted",
+            stroke_status="rejected" if stroke_vec is not None else None,
+        )
+        return finish(state0)
+
+    if preview:
+        if planned_steps > 0 and planned_steps > allowed:
+            result.update(
+                status="rejected",
+                accepted=False,
+                stop_reason="step_budget",
+                stroke_status="rejected" if stroke_vec is not None else None,
+                note=f"planned {planned_steps} steps exceeds allowance {allowed}",
+            )
+            return finish(state0)
+        result.update(
+            status="planned",
+            accepted=True,
+            aligned=bool(skip_align and transverse_error_before_m <= tol_f),
+            reached=False,
+            stroke_status="planned" if stroke_vec is not None else None,
+        )
+        return finish(state0)
+
+    result["accepted"] = True
+    if skip_align:
+        align_steps = 0
+        align_stalled = False
+        align_stop_reason: str | None = None
+        state_mid = state0
+        tcp_after_align = tcp_before
+    else:
+        align_res = nudge(
+            primitives, start_joints, arm, dxyz=planned_dxyz.tolist(), frame="world",
+            compact=True, stop_on_stall=stop_on_stall, stall_steps=stall_steps,
+            max_linear_m=max_lin_f, max_steps=max_steps, reserve_steps=reserve_steps,
+            tol_m=min(TOL_M, tol_f),
+        )
+        if "error" in align_res:
+            return {"error": f"align_feature: {align_res['error']}"}
+        align_steps = int(align_res.get("steps_used", 0))
+        align_stalled = bool(align_res.get("stalled"))
+        align_stop_reason = align_res.get("stop_reason")
+        if align_res.get("ik_error"):
+            result["ik_error"] = align_res["ik_error"]
+        state_mid = motion._obs(primitives)["state"]
+        tcp_after_align = motion._pose_of(arm, motion._joints(state_mid, arm))[:3, 3]
+
+    actual_align_shift = tcp_after_align - tcp_before
+    feature_after = f_xyz + actual_align_shift
+    rem_diff = t_xyz - feature_after
+    axial_gap_after = float(np.dot(rem_diff, u_axis))
+    rem_transverse = rem_diff - axial_gap_after * u_axis
+    transverse_error_after = float(np.linalg.norm(rem_transverse))
+    standoff_ok = (True if standoff_f is None
+                   else abs(axial_gap_after - standoff_f) <= max(tol_f, TOL_M))
+    aligned = bool(transverse_error_after <= tol_f and standoff_ok)
+    result.update(
+        aligned=aligned,
+        transverse_error_after_m=round(transverse_error_after, 5),
+        align_steps_used=align_steps,
+    )
+
+    if stroke_vec is None:
+        result.update(
+            steps_used=align_steps,
+            stroke_steps_used=0,
+            stalled=align_stalled,
+            recoverable=(align_steps == 0),
+        )
+        if aligned:
+            result.update(status="completed", reached=True, stop_reason=None)
+            if skip_align:
+                result["note"] = "already aligned within 0.5 mm: 0 alignment steps"
+        elif align_stalled:
+            result.update(
+                status="stopped",
+                reached=False,
+                stop_reason="contact_or_stall",
+                note="alignment stalled before reaching transverse tolerance",
+            )
+        else:
+            result.update(
+                status="partial" if align_steps > 0 else "rejected",
+                reached=False,
+                stop_reason=align_stop_reason or "alignment_tolerance_not_met",
+            )
+        return finish(state_mid)
+
+    if not aligned:
+        result.update(
+            steps_used=align_steps,
+            stroke_steps_used=0,
+            stroke_status="skipped",
+            achieved_stroke_m=0.0,
+            stalled=align_stalled,
+            recoverable=(align_steps == 0),
+            reached=False,
+        )
+        if align_stalled:
+            result.update(
+                status="stopped",
+                stop_reason="contact_or_stall",
+                note="alignment stalled; engagement stroke skipped",
+            )
+        else:
+            result.update(
+                status="partial" if align_steps > 0 else "rejected",
+                stop_reason=align_stop_reason or "alignment_tolerance_not_met",
+                note="alignment residual exceeded align_tol_m; engagement stroke skipped",
+            )
+        return finish(state_mid)
+
+    stroke_budget = max_steps - align_steps
+    if stroke_budget <= 0:
+        result.update(
+            steps_used=align_steps,
+            stroke_steps_used=0,
+            stroke_status="rejected",
+            achieved_stroke_m=0.0,
+            stalled=False,
+            recoverable=(align_steps == 0),
+            reached=False,
+            status="partial" if align_steps > 0 else "rejected",
+            stop_reason="step_budget",
+            note="step budget exhausted before engagement stroke",
+        )
+        return finish(state_mid)
+
+    stroke_res = nudge(
+        primitives, start_joints, arm, dxyz=stroke_vec.tolist(), frame="world",
+        compact=True, stop_on_stall=stop_on_stall, stall_steps=stall_steps,
+        max_linear_m=max_lin_f, max_steps=stroke_budget, reserve_steps=reserve_steps,
+    )
+    if "error" in stroke_res:
+        return {"error": f"align_feature: {stroke_res['error']}"}
+    stroke_steps = int(stroke_res.get("steps_used", 0))
+    total_steps = align_steps + stroke_steps
+    state_end = motion._obs(primitives)["state"]
+    tcp_after_stroke = motion._pose_of(arm, motion._joints(state_end, arm))[:3, 3]
+    assert stroke_unit is not None
+    achieved_stroke = float(np.dot(tcp_after_stroke - tcp_after_align, stroke_unit))
+    stroke_stalled = bool(stroke_res.get("stalled"))
+    stroke_reached = bool(stroke_res.get("reached"))
+    stroke_status = str(stroke_res.get("status") or "rejected")
+    result.update(
+        steps_used=total_steps,
+        stroke_steps_used=stroke_steps,
+        stroke_status=stroke_status,
+        achieved_stroke_m=round(achieved_stroke, 5),
+        stalled=stroke_stalled,
+        recoverable=(total_steps == 0),
+    )
+    if stroke_res.get("ik_error"):
+        result["ik_error"] = stroke_res["ik_error"]
+    if stroke_reached:
+        result.update(status="completed", reached=True, stop_reason=None)
+    elif stroke_stalled:
+        result.update(
+            status="stopped",
+            reached=False,
+            stop_reason="contact_or_stall",
+            note=stroke_res.get("note") or "engagement stroke stopped on contact or stall",
+        )
+    else:
+        result.update(
+            status="partial" if total_steps > 0 else "rejected",
+            reached=False,
+            stop_reason=stroke_res.get("stop_reason") or "stroke_not_reached",
+        )
+        if stroke_res.get("note"):
+            result["note"] = stroke_res["note"]
+    return finish(state_end)
+
+
+def preview_align_feature(
+    primitives: Any, start_joints: dict[str, list[float]], **kwargs: Any
+) -> dict[str, Any]:
+    """Read-only preflight for ``align_feature`` without moving any arm or gripper."""
+
+    result = align_feature(primitives, start_joints, **kwargs, preview=True)
+    if "error" not in result:
+        result["preview"] = True
+    return result
+
+
+preview_align_feature._readonly = True  # type: ignore[attr-defined]
+
+
+# ---------------------------------------------------------------------------
 # registration
 # ---------------------------------------------------------------------------
 
@@ -749,6 +1149,26 @@ _DELTA = {"type": "object", "properties": {
     "dxyz": {"type": "array", "items": {"type": "number"}},
     "dpitch": {"type": "number"}, "dyaw": {"type": "number"}, "droll": {"type": "number"},
     "gripper": {"type": "number"}}}
+_VEC3 = {"type": "array", "items": {"type": "number"}, "minItems": 3, "maxItems": 3}
+_ALIGN_FEATURE_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "feature_xyz": _VEC3,
+        "target_xyz": _VEC3,
+        "arm": {"type": "string", "enum": list(ARMS)},
+        "axis": _VEC3,
+        "standoff_m": {"type": ["number", "null"]},
+        "stroke_m": {"type": ["number", "null"]},
+        "stroke_dxyz": {"type": ["array", "null"], "items": {"type": "number"}},
+        "align_tol_m": {"type": "number"},
+        "max_linear_m": {"type": "number"},
+        "max_steps": {"type": "integer"},
+        "reserve_steps": {"type": "integer"},
+        "stop_on_stall": {"type": "boolean"},
+        "stall_steps": {"type": "integer"},
+    },
+    "required": ["feature_xyz", "target_xyz"],
+}
 SPECS: dict[str, dict[str, Any]] = {
     "nudge": {
         "name": "nudge",
@@ -785,23 +1205,44 @@ SPECS: dict[str, dict[str, Any]] = {
             "max_linear_m": {"type": "number"}, "max_angular_deg": {"type": "number"},
             "stall_steps": {"type": "integer"}}, "required": ["goal"]},
     },
+    "align_feature": {
+        "name": "align_feature",
+        "description": "Zero transverse feature-to-target offset perpendicular to an "
+        "engagement axis via guarded compact nudge, with optional axial standoff and "
+        "guarded contact stroke.",
+        "input_schema": _ALIGN_FEATURE_SCHEMA,
+    },
+    "preview_align_feature": {
+        "name": "preview_align_feature",
+        "description": "Read-only preflight for align_feature (deltas, reach/table "
+        "clearance and native step estimate); never moves.",
+        "input_schema": _ALIGN_FEATURE_SCHEMA,
+    },
 }
 
 
 def handlers(primitives: Any, start: dict[str, list[float]]) -> dict[str, Any]:
-    return {"nudge": partial(nudge, primitives, start),
-            "visual_align_and_insert": partial(visual_align_and_insert, primitives, start)}
+    return {
+        "nudge": partial(nudge, primitives, start),
+        "visual_align_and_insert": partial(visual_align_and_insert, primitives, start),
+        "align_feature": partial(align_feature, primitives, start),
+        "preview_align_feature": partial(preview_align_feature, primitives, start),
+    }
 
 
 __all__ = [
+    "ALIGN_TOL_M",
     "MAX_ANGULAR_DEG",
     "MAX_LINEAR_M",
     "SPECS",
+    "ZERO_DELTA_M",
     "achieved_delta",
+    "align_feature",
     "camera_images",
     "crop_center",
     "handlers",
     "nudge",
+    "preview_align_feature",
     "resolve_policy",
     "set_policy",
     "target_pose",

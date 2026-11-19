@@ -345,3 +345,41 @@ def test_robodojo_knowledge_encodes_crowded_contact_and_regrasp_polarity(filenam
         end = doc.find("\n- ", idx + 1)
         snippet = doc[idx : None if end == -1 else end]
         assert not re.search(r"\b(key|keys|lock|locks|kong|mahjong)\b", snippet, re.IGNORECASE)
+
+
+def test_robodojo_knowledge_encodes_pre_contact_feature_alignment_with_parity():
+    import re
+    from importlib import resources
+
+    filenames = (
+        "robodojo-intent.md",
+        "robodojo.md",
+        "robodojo-novla.md",
+        "robodojo-nosam.md",
+        "robodojo_xpl_rgb.md",
+        "robodojo_xpl_rgb-novla.md",
+        "robodojo_xpl_rgb-nosam.md",
+    )
+    marker = "- **Pre-contact feature-to-target visual alignment (`robo.align_feature`)**:"
+    snippets: list[str] = []
+    for filename in filenames:
+        doc = resources.files("codeaspolicy").joinpath(f"knowledge/{filename}").read_text(
+            encoding="utf-8"
+        )
+        idx = doc.index(marker)
+        end = doc.find("\n- ", idx + 1)
+        snippet = doc[idx : None if end == -1 else end]
+        snippets.append(snippet)
+        assert "distal working feature" in snippet
+        assert "crop_grid" in snippet and "triangulate" in snippet and "ray_at_z" in snippet
+        assert "z_feature" in snippet and "oblique ray parallax" in snippet
+        assert "achieved_stroke_m << stroke_m" in snippet
+        assert "preview=True" in snippet
+        assert not re.search(
+            r"\b(insert_key|key|keys|keyhole|lock|locks|make_kong|kong|mahjong)\b",
+            snippet,
+            re.IGNORECASE,
+        )
+        assert not re.search(r"pi0|lingbot|rldx|vla|sam3", snippet, re.IGNORECASE)
+        assert not re.search(r"\brobo\.(locate|segment|back_project)\b", snippet)
+    assert all(s == snippets[0] for s in snippets), "feature alignment bullet must match across all variants"

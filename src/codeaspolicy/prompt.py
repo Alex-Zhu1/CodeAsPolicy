@@ -26,7 +26,7 @@ from importlib import resources
 from pathlib import Path
 from typing import Any
 
-from ._robot import PRIMITIVE_SETS, RobotBase, effective_primitives
+from ._robot import PRIMITIVE_SETS, RobotBase, delta_vla_configured, effective_primitives
 from .libero import RESULT_TYPES, LiberoRobot
 from .task_acceptance import (
     acceptance_sha256,
@@ -68,7 +68,7 @@ def _format_parameters(sig: inspect.Signature) -> list[str]:
     return parts
 
 
-def _render_callable(owner: str, name: str, fn: Any) -> str:
+def _render_callable(owner: str, name: str, fn: Any, *, doc_override: str | None = None) -> str:
     sig = inspect.signature(fn)
     params = _format_parameters(sig)
     ret = _annotation(sig.return_annotation)
@@ -77,7 +77,7 @@ def _render_callable(owner: str, name: str, fn: Any) -> str:
     if len(head) > _LINE:
         joined = ",\n    ".join(params)
         head = f"{owner}.{name}(\n    {joined},\n){suffix}"
-    doc = inspect.getdoc(fn) or ""
+    doc = doc_override if doc_override is not None else (inspect.getdoc(fn) or "")
     return head + "\n" + textwrap.indent(doc, "    ") if doc else head
 
 
@@ -171,25 +171,57 @@ def _apply_edits(text: str, edits: tuple[tuple[str, str], ...], what: str) -> st
 
 
 def api_reference(
-    robot_cls: type = LiberoRobot, *, var: str = "robo", primitives: str = "full",
+    robot_cls: type = LiberoRobot,
+    *,
+    var: str = "robo",
+    primitives: str = "full",
     intent_only: bool | None = None,
+    delta_vla: bool | None = None,
 ) -> str:
     """Render the policy-facing API of ``robot_cls`` from its live definition.
 
     ``primitives="no-vla"`` leaves out the robot's ``VLA_PRIMITIVES``, the
     result types only they return, and (through ``VLA_REFERENCE_EDITS``) the
     sentences of the other docstrings that describe the VLA.
-    Intent-capable robots default to the shared operation interface, omitting
-    legacy controller tuning. ``intent_only=False`` explicitly renders the full
-    library reference for existing scripts and controller development.
+    Intent-capable robots default to the orthogonal Coarse + Delta interface,
+    omitting legacy controller tuning, redundant multi-turn grasp ceremony, and
+    unconfigured visual-delta VLM primitives. ``intent_only=False`` explicitly
+    renders the full library reference for existing scripts and controller work.
     """
 
     primitives = effective_primitives(robot_cls, primitives)
     vla_members, vla_types = vla_hidden(robot_cls, primitives)
     sections: list[str] = []
     intent_only = intent_only is not False and getattr(robot_cls, "INTENT_API", False)
-    legacy_members = (set(getattr(robot_cls, "LEGACY_MOTION_METHODS", ())) | {"try_grasp"}
-                      if intent_only else ())
+    if intent_only:
+        legacy_members = (
+            set(getattr(robot_cls, "LEGACY_MOTION_METHODS", ()))
+            | {"try_grasp"}
+            | set(getattr(robot_cls, "INTENT_HIDDEN_METHODS", ()))
+        )
+        show_delta_vla = delta_vla if delta_vla is not None else delta_vla_configured()
+        if not show_delta_vla:
+            legacy_members |= set(getattr(robot_cls, "DELTA_VLA_PRIMITIVES", ()))
+    else:
+        legacy_members = (
+            set(getattr(robot_cls, "DELTA_VLA_PRIMITIVES", ()))
+            if delta_vla is False
+            else set()
+        )
+    all_members = _public_members(robot_cls)
+    all_hidden = set(vla_members) | legacy_members
+    returned_by_hidden = {
+        _return_type_name(all_members[n]) for n in all_hidden if n in all_members
+    }
+    returned_by_visible = {
+        _return_type_name(m) for n, m in all_members.items() if n not in all_hidden
+    }
+    hidden_types = set(vla_types) | {t for t in returned_by_hidden - returned_by_visible if t}
+    if intent_only:
+        hidden_types.add("Move")
+    doc_overrides: dict[str, str] = (
+        dict(getattr(robot_cls, "INTENT_DOC_OVERRIDES", {})) if intent_only else {}
+    )
     class_doc = inspect.getdoc(robot_cls) or ""
     sections.append(f"class {robot_cls.__name__}\n{textwrap.indent(class_doc, '    ')}")
     # Base-class configuration, ``RESULT_TYPES`` (rendered as the result-type
@@ -215,20 +247,21 @@ def api_reference(
     if constants:
         sections.append("Constants:\n" + "\n".join(f"    {c}" for c in constants))
     members: list[str] = []
-    for name, member in _public_members(robot_cls).items():
-        if name in vla_members or name in legacy_members:
+    for name, member in all_members.items():
+        if name in all_hidden:
             continue
         if isinstance(member, property):
             members.append(_render_property(var, name, member))
         else:
-            members.append(_render_callable(var, name, member))
+            members.append(
+                _render_callable(var, name, member, doc_override=doc_overrides.get(name))
+            )
     sections.append("Methods and attributes of `robo`:\n\n" + "\n\n".join(members))
     result_types = tuple(getattr(robot_cls, "RESULT_TYPES", ()) or RESULT_TYPES)
     results = [
         _render_result_type(cls)
         for cls in result_types
-        if is_dataclass(cls) and cls.__name__ not in vla_types
-        and not (intent_only and cls.__name__ == "Move")
+        if is_dataclass(cls) and cls.__name__ not in hidden_types
     ]
     sections.append(
         "Result types (frozen dataclasses; access fields as attributes):\n\n" + "\n\n".join(results)
@@ -251,77 +284,18 @@ def api_reference(
             )
         )
         sections.append(
-            "Write cooperation strategy in Python: choose arm roles, targets, direction, "
-            "holding requirements, completion evidence and budgets from current observations. "
-            "Use execute_motion(id, left=..., right=..., interaction=..., directions=..., "
-            "holding=..., completion=...) for routine motion. "
-            "The executor selects spacing and speed, checks constraints, and retains progress. "
-            "Motion, alignment and grasp results share result['operation']: a session-scoped "
-            "ref, state, phase, cumulative budget, effect certainty, receipt and continuation. "
-            "Use operation_status(ref) to inspect and resume_operation(ref) to continue only "
-            "the already-started phase. ready/advance requires choosing the next grasp_step; "
-            "completed means execution finished, never verified object/task success. "
-            "unknown/reconcile forbids blind retry; needs_replan requires a revised decision. "
-            "Completed IDs never move again. After reconciling an interruption, resume_motion(id) "
-            "continues only known remaining work, retaining step and correction budgets. "
-            "Use begin_grasp plus grasp_step for open/approach/align/close/probe, and align_local "
-            "for explicit observed adjustments inside a fixed envelope. Do not wrap these or "
-            "intent calls in once(); retain once() for set_gripper and home. Default action "
-            "allowance is the remaining native episode budget, with no future-task reserve. "
-            "A costly route can return paused/segment_complete after useful resting progress; "
-            "resume the same ID. An explicit cap can be increased cumulatively with max_steps. "
-            "Do not abandon a task or begin cleanup solely because a cost estimate suggests "
-            "the whole remaining sequence may not fit. Continue useful constrained progress "
-            "until completion, actual episode termination or a physical/execution blocker. "
-            "A preview is not a simulation of later stages. A grasp, direction or route change "
-            "needs a new intent based on "
-            "the actual scene. Check reached, needs_model and needs_observation before dependent "
-            "actions. Semantic completion is never inferred from pose or obstructed closure. "
-            "Choose grasps backwards from the object's remaining use: its working region "
-            "must be free when used and the receiver grasp region accessible during transfer. "
-            "Distinguish in-place state/orientation changes (tipping, flipping, sliding, "
-            "pressing) from objects that must be relocated; do not pick up and move group "
-            "members whose required state change can be performed in place, or vacate row "
-            "members to create an interior gap for a replacement item. "
-            "A donor may temporarily hold a future working region if transfer frees it. "
-            "For a handoff, choose both "
-            "grasp regions and a mutually reachable exchange pose before pickup, and preview "
-            "the receiver's final placement/reorientation pose before committing to transfer. "
-            "After receiver close and donor release/withdrawal, call grasp_step(id, 'handoff') "
-            "to reacquire stationary receiver state and hold evidence before probe. A changed "
-            "grasp or slip requires rechecking transfer and subsequent use, even if the "
-            "new hold is stable. Account for finger clearance, not just TCP separation; "
-            "verify support before release. After a low contact stroke, retreat straight up "
-            "or reverse along the contact axis before any lateral free/approach sweep, and "
-            "verify neighboring objects remain undisturbed. "
-            "On snapshot backends, object_ref(name, description) preserves a logical object "
-            "identity across grasps. Pass object_ref=ref to begin_grasp while the target is "
-            "visible: preparation/open/approach/align return object_tracking. The executor "
-            "tracks material features through native RGB frames and closure, without extra "
-            "actions. If preclosure features are missing, observe the visible object or "
-            "supply named current landmarks via observe_object; do not wait until occlusion. "
-            "Only actual post-closure positions form the fixed hold baseline. close/probe "
-            "return object_evidence. Preclosure tracking is not hold evidence. Inspect "
-            "baseline_ready, baseline_quality.space and recovery before dependent actions. "
-            "An empty capture is not a baseline; repair its exact capture_observation_id "
-            "using visible matching landmarks, or revise visibility/grasp. Do not repeatedly "
-            "probe to manufacture evidence. observe_hold compares against the fixed capture "
-            "and reassociates original features after lost tracks without rebasing. "
-            "Repeated reset=True cannot erase drift within one grasp. following/relative_motion "
-            "are 3D evidence; image_consistent/image_relative_motion are explicitly limited "
-            "wrist-image 2D evidence and cannot verify depth or a stable 3D hold. "
-            "Inspect state/reason/features; unknown is not empty. Evidence changes require "
-            "fresh observation and strategy review. Do not infer a held object's pose from "
-            "table-height geometry. "
-            "Read motion_capabilities: object/inter-arm collision checking and force control "
-            "are not provided by current adapters, unless declared constraints (corridor_m, "
-            "keep_out, z_bounds, geometry envelopes) are checked by proactive monitors. Split at "
-            "required observation, contact or release decisions. Timed trajectories are "
-            "continuous within uninterrupted execution, not across interruptions or model waits. "
-            "CoordinationPause(BaseException), SupervisionPause and ActionContractPause stop code for review; do not "
-            "catch these interruptions. Already executed actions remain done. Use watch when "
-            "monitoring is enabled; only declared prerequisites and constraints are enforced. Skills provide "
-            "guidance, not a prescribed task sequence or object-support verdict."
+            "Coarse + Delta execution protocol: use `execute_motion(id, ...)` for coarse "
+            "C2 transport and `delta_grasp`, `align_feature`, `nudge` for close-range "
+            "(<= 4 cm) contact. Completed intent IDs never move again; after reconciling an "
+            "interruption, `resume_motion(id)` continues only known remaining work (raise a "
+            "cap cumulatively with `max_steps`). Do not wrap `execute_motion` in `once()`; "
+            "keep `once()` for `set_gripper` and `home`. `reached` means motion finished, "
+            "never verified grasp or task success—inspect fresh views before dependent "
+            "actions. Never abandon useful work solely from a cost forecast. For hold "
+            "tracking, use `object_ref`/`observe_object`/`observe_hold`: `unknown` is not "
+            "empty, `image_consistent` is 2D wrist evidence (not 3D retention), and never "
+            "infer a held object's pose from table-height geometry. Do not catch "
+            "`CoordinationPause`, `SupervisionPause`, or `ActionContractPause`."
         )
     # A robot without ``done`` never ends an episode as "terminated".
     absent = frozenset(getattr(robot_cls, "ABSENT_MEMBERS", ()))
@@ -351,8 +325,9 @@ def api_reference(
             class_section = class_section.replace(old, new)
     if intent_only:
         text = text.replace(class_section, f"class {robot_cls.__name__}\n"
-                            "    Two-arm robot. Declare motion through execute_motion; the "
-                            "executor owns spacing, timing, corrections and continuation. "
+                            "    Two-arm robot. Declare coarse motion through execute_motion "
+                            "and close-range contact through delta_grasp / align_feature / nudge; "
+                            "the executor owns spacing, timing, corrections and continuation. "
                             "Positions are world TCP metres; angles follow robot conventions "
                             "below. Low-level motion methods are disabled in this session.", 1)
     return text
@@ -738,6 +713,7 @@ def render_prompt(
     knowledge: str | None = None,
     robot_cls: type | None = None,
     primitives: str = "full",
+    delta_vla: bool | None = None,
 ) -> PromptBundle:
     """Assemble the generation prompt for one cell (or a cell-less preview).
 
@@ -768,7 +744,9 @@ def render_prompt(
         scoring_limits=scoring_limits.format(budget_s=budget_s, max_env_steps=max_env_steps),
         scoring_tail=scoring_tail,
     )
-    reference = api_reference(robot_cls or adapter.robot_cls, primitives=primitives)
+    reference = api_reference(
+        robot_cls or adapter.robot_cls, primitives=primitives, delta_vla=delta_vla
+    )
     know = (
         knowledge
         if knowledge is not None

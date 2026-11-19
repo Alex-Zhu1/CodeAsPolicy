@@ -29,8 +29,9 @@ from __future__ import annotations
 import functools
 import io
 import math
+import os
 import time
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from typing import Any, ClassVar
 
 from ._backend import Backend, EpisodeFinished, Ledger, ToolError, raise_for_error, unwrap
@@ -60,6 +61,23 @@ def effective_primitives(robot_cls: type, requested: str) -> str:
     return requested
 
 
+def delta_vla_configured(*, env: Mapping[str, str] | None = None) -> bool:
+    """Return True when a closed-loop visual-delta (PEAR) policy is configured."""
+    try:
+        from . import visual_delta as vd
+
+        checker = getattr(vd, "has_configured_policy", None)
+        if callable(checker):
+            return bool(checker(None, env=env))
+    except Exception:  # noqa: BLE001 - optional module/env lookup
+        pass
+    source = os.environ if env is None else env
+    return bool(
+        (source.get("CODEASPOLICY_DELTA_MODEL") or "").strip()
+        or (source.get("CODEASPOLICY_DELTA_BASE_URL") or "").strip()
+    )
+
+
 class RobotBase(InteractionMixin, PerceptionMixin):
     """Shared machinery of every robot class (see the module docstring)."""
 
@@ -69,6 +87,14 @@ class RobotBase(InteractionMixin, PerceptionMixin):
     #: primitive set they are left out of the API reference (with the result
     #: types only they return) and every call raises :data:`NO_VLA_MESSAGE`.
     VLA_PRIMITIVES: ClassVar[tuple[str, ...]] = ()
+    #: Public methods backed by an external visual-delta VLM policy (PEAR).
+    #: Hidden from the default policy prompt unless configured or explicitly enabled.
+    DELTA_VLA_PRIMITIVES: ClassVar[tuple[str, ...]] = ()
+    #: Redundant ceremony / preview helpers hidden from the default ``intent_only=True``
+    #: prompt while remaining callable at runtime.
+    INTENT_HIDDEN_METHODS: ClassVar[frozenset[str]] = frozenset()
+    #: Optional concise docstring overrides used when rendering ``intent_only=True``.
+    INTENT_DOC_OVERRIDES: ClassVar[dict[str, str]] = {}
     #: Some hosts share an API class but have no learned-policy service.
     SUPPORTS_VLA: ClassVar[bool] = True
     #: ``(old, new)`` edits applied to the rendered API reference under
@@ -483,4 +509,11 @@ class RobotBase(InteractionMixin, PerceptionMixin):
         return result
 
 
-__all__ = ["NO_SAM_MESSAGE", "NO_VLA_MESSAGE", "PRIMITIVE_SETS", "RobotBase", "ToolError"]
+__all__ = [
+    "NO_SAM_MESSAGE",
+    "NO_VLA_MESSAGE",
+    "PRIMITIVE_SETS",
+    "RobotBase",
+    "ToolError",
+    "delta_vla_configured",
+]

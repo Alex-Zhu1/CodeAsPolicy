@@ -958,7 +958,7 @@ def align_feature(
         return finish(state0)
 
     if preview:
-        if planned_steps > allowed:
+        if planned_steps > 0 and planned_steps > allowed:
             result.update(
                 status="rejected",
                 accepted=False,

@@ -589,6 +589,20 @@ def test_align_feature_preview_is_readonly_and_zero_steps(tmp_path):
     assert tight.accepted is False and tight.stop_reason == "step_budget"
     assert not env.actions
 
+    # Zero-step no-op preview succeeds even when remaining < reserve_steps (consistent with live)
+    env.step_limit = 5
+    noop_preview = robo.align_feature(
+        [0.25, -0.15, 0.82],
+        [0.2502, -0.1502, 0.80],
+        arm="right",
+        reserve_steps=20,
+        preview=True,
+    )
+    assert noop_preview.preview is True and noop_preview.accepted is True
+    assert noop_preview.status == "planned" and noop_preview.aligned is True
+    assert noop_preview.planned_steps == 0 and noop_preview.steps_used == 0
+    assert not env.actions
+
 
 def test_align_feature_provenance_rejects_stale_feature_but_allows_static_target(tmp_path):
     env, robo, _ = station(tmp_path)
@@ -657,10 +671,15 @@ def test_execution_budget_counts_each_stateful_nudge(tmp_path):
     from codeaspolicy.execution import ExecutionBudget, ExecutionLimit, ExecutionLimits
 
     env, robo, _ = station(tmp_path)
-    with ExecutionBudget(ExecutionLimits(max_actions=2), tmp_path / "ws", robo) as budget:
+    with ExecutionBudget(ExecutionLimits(max_actions=3), tmp_path / "ws", robo) as budget:
         robo.nudge((0, 0, 0.005))
         robo.visual_align_and_insert("align", policy=[answer(0.5)])  # one nudge inside
         assert budget.actions == 2
+        # Read-only preview uses 0 actions; stateful align_feature counts as 1 action.
+        preview = robo.align_feature([0.25, -0.15, 0.82], [0.255, -0.15, 0.80], preview=True)
+        assert preview.preview is True and budget.actions == 2
+        aligned = robo.align_feature([0.25, -0.15, 0.82], [0.255, -0.15, 0.80])
+        assert aligned.aligned is True and budget.actions == 3
         with pytest.raises(ExecutionLimit):
             robo.nudge((0, 0, 0.005))
 

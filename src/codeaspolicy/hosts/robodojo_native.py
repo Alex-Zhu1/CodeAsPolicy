@@ -44,7 +44,7 @@ from . import robodojo_tools as tools
 CAMERAS = ("cam_head", "cam_left_wrist", "cam_right_wrist")
 STATEFUL = frozenset({"move_pose", "grip", "home", "motion_execute", "try_grasp", "intent_execute",
                       "grasp_step", "operation_resume", "nudge", "visual_align_and_insert",
-                      "align_feature"})
+                      "align_feature", "delta_grasp"})
 PERCEPTION = frozenset({"locate", "back_project", "segment", "object_observe"})
 
 

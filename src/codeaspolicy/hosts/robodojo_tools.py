@@ -1879,7 +1879,7 @@ def register(toolkit: Any) -> None:
     from .robodojo_visual_delta import SPECS as delta_specs
     from .robodojo_visual_delta import handlers as delta_handlers
 
-    # Guarded compact nudges, feature alignment (with read-only preview) and closed visual-delta loop.
+    # Guarded compact nudges, delta_grasp, feature alignment (with previews) and visual-delta loop.
     for name, handler in delta_handlers(primitives, start).items():
         toolkit.add_tool(name, delta_specs[name], handler)
 

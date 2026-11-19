@@ -18,6 +18,7 @@ from codeaspolicy.hosts.robodojo_native import STATEFUL, NativeBackend, NativeTo
 from codeaspolicy.prompt import api_reference
 from codeaspolicy.robodojo import (
     STATEFUL_TOOLS,
+    DeltaGrasp,
     FeatureAlignment,
     Nudge,
     RobodojoRobot,
@@ -664,6 +665,338 @@ def test_align_feature_provenance_rejects_stale_feature_but_allows_static_target
         robo.align_feature({"bad": 1}, [0, 0, 0.83])
 
 
+# -- table-touch kinematics, nudge & delta_grasp ---------------------------------
+
+
+class FlexibleGripEnvironment(JointEnvironment):
+    """Joint environment with configurable tabletop stop, close width, and optional slip."""
+
+    def __init__(
+        self,
+        *,
+        initial_opening: float = 1.0,
+        close_stop: float = 0.025,
+        floor: float | None = None,
+        x_wall: float | None = None,
+        slip_after_lift_z: float | None = None,
+        slip_to: float = 0.004,
+    ):
+        super().__init__()
+        self.grips = {a: float(initial_opening) for a in kin.ARMS}
+        self.close_stop = float(close_stop)
+        self.floor = floor
+        self.x_wall = x_wall
+        self.slip_after_lift_z = slip_after_lift_z
+        self.slip_to = float(slip_to)
+
+    def step(self, action):
+        before = copy.deepcopy(self.joints)
+        self.actions.append(copy.deepcopy(action))
+        self.captures += 1
+        for a in kin.ARMS:
+            if a != self.frozen:
+                self.joints[a] = list(action[f"{a}_arm_joint_state"])
+            goal = float(action[f"{a}_ee_joint_state"][0])
+            target_open = self.close_stop if goal <= 0.05 else goal
+            self.grips[a] = self.grips[a] + float(np.clip(target_open - self.grips[a], -0.35, 0.35))
+        tcp_r = kin.tcp(kin.fk("right", self.joints["right"]))
+        if self.floor is not None and tcp_r[2] < self.floor:
+            self.joints["right"] = before["right"]
+        if self.x_wall is not None and tcp_r[0] < self.x_wall:
+            self.joints["right"] = before["right"]
+        if self.slip_after_lift_z is not None:
+            tcp_now = kin.tcp(kin.fk("right", self.joints["right"]))
+            if tcp_now[2] >= self.slip_after_lift_z and action["right_ee_joint_state"][0] <= 0.05:
+                self.grips["right"] = self.slip_to
+        return self.get_obs(), 0.0, False, {"status": self.get_status()}
+
+
+def test_kinematics_allow_table_touch_relaxes_only_fingertips_not_links():
+    # Vertical pitch=90 at tcp_z = 0.776 => tip_z = 0.763 (2 mm below TABLE_Z=0.765).
+    seed = [0.0] * 6
+    pose_low = np.eye(4)
+    pose_low[:3, :3] = kin.orientation(90, 0, 0)
+    pose_low[:3, 3] = [0.25, -0.15, 0.776]
+    # Default allow_table_touch=False rejects fingertips below TABLE_Z + 0.002 = 0.767.
+    sol_strict = kin.best_solution("right", pose_low, seed)
+    assert sol_strict.collides is True
+    assert kin.clearance_violations("right", sol_strict.q) == ["fingertips"]
+
+    # allow_table_touch=True permits fingertips down to TABLE_Z - 0.004 = 0.761.
+    sol_touch = kin.best_solution("right", pose_low, seed, allow_table_touch=True)
+    assert sol_touch.ok and not sol_touch.collides
+    assert kin.clearance_violations("right", sol_touch.q, allow_table_touch=True) == []
+
+    # Overdrive past 4 mm (tcp_z = 0.772 => tip_z = 0.759 < 0.761) is STILL rejected.
+    pose_too_deep = pose_low.copy()
+    pose_too_deep[2, 3] = 0.772
+    sol_deep = kin.best_solution("right", pose_too_deep, sol_touch.q, allow_table_touch=True)
+    assert sol_deep.collides is True
+    assert "fingertips" in kin.clearance_violations("right", sol_deep.q, allow_table_touch=True)
+
+    # line_path respects allow_table_touch=False vs True.
+    pose_hover = pose_low.copy()
+    pose_hover[2, 3] = 0.805
+    q_hover = kin.best_solution("right", pose_hover, seed).q
+    _, why_strict = kin.line_path("right", q_hover, pose_low, step_m=0.003)
+    assert why_strict is not None and "table" in why_strict
+    ways_touch, why_touch = kin.line_path(
+        "right", q_hover, pose_low, step_m=0.003, allow_table_touch=True
+    )
+    assert why_touch is None and len(ways_touch) >= 9
+
+    # Links (joint2..joint6) are NEVER relaxed even with allow_table_touch=True!
+    # Horizontal pitch=0 at z = 0.772 puts joint6 at z = 0.772 < TABLE_Z + 0.015 = 0.780.
+    pose_horiz_low = np.eye(4)
+    pose_horiz_low[:3, :3] = kin.orientation(0, 0, 0)
+    pose_horiz_low[:3, 3] = [0.25, -0.15, 0.772]
+    sol_horiz = kin.solve("right", pose_horiz_low, seed, allow_table_touch=True)
+    assert sol_horiz.collides is True
+    assert "joint6" in kin.clearance_violations("right", sol_horiz.q, allow_table_touch=True)
+
+
+def test_nudge_allow_table_contact_and_thin_held_microsteps(tmp_path):
+    # Physical tabletop halts fingertips at tip_z = 0.765 => tcp_z = 0.778.
+    env = _place(FlexibleGripEnvironment(initial_opening=1.0, close_stop=0.025, floor=0.778), z=0.798)
+    host = NativeToolkit(env, None, tmp_path / "native")
+    robo = RobodojoOfficialColourRobot(NativeBackend(host))
+
+    # Without allow_table_contact, descending to tcp_z = 0.775 is rejected in 0 steps.
+    rejected = robo.nudge((0.0, 0.0, -0.023), arm="right")
+    assert rejected.status == "rejected" and rejected.stop_reason == "ik_path_rejected"
+    assert not env.actions
+
+    # allow_table_contact=True with compact=False raises ValueError.
+    with pytest.raises(ValueError, match="compact=True"):
+        robo.nudge((0.0, 0.0, -0.023), arm="right", compact=False, allow_table_contact=True)
+
+    # With allow_table_contact=True, uses 3 mm steps (ceil(0.023/0.003)=8) and stalls at tabletop!
+    seated = robo.nudge((0.0, 0.0, -0.023), arm="right", allow_table_contact=True)
+    assert seated.status == "stopped" and seated.stalled is True
+    assert seated.stop_reason == "contact_or_stall"
+    assert seated.planned_steps >= 8
+    assert tcp(env)[2] == pytest.approx(0.778, abs=0.003)
+
+    # Close on a thin part (opening=0.025 <= 0.045), then lift 2.4 cm: automatically uses 3 mm steps!
+    robo.set_gripper("right", robo.CLOSE)
+    lift_thin = robo.nudge((0.0, 0.0, 0.024), arm="right", allow_table_contact=True)
+    assert lift_thin.reached is True
+    assert lift_thin.planned_steps >= 8  # 24 mm / 3 mm = 8
+
+    # Contrast with thick held object (opening=0.30 > 0.045): uses normal 5 mm steps.
+    env2 = _place(FlexibleGripEnvironment(initial_opening=0.30, close_stop=0.30), z=0.84)
+    host2 = NativeToolkit(env2, None, tmp_path / "native2")
+    robo2 = RobodojoOfficialColourRobot(NativeBackend(host2))
+    robo2.set_gripper("right", robo2.CLOSE)
+    lift_thick = robo2.nudge((0.0, 0.0, 0.024), arm="right")
+    assert lift_thick.reached is True and lift_thick.planned_steps <= 5  # 24 mm / 5 mm = 5
+    assert lift_thin.planned_steps > lift_thick.planned_steps
+
+
+def test_delta_grasp_tabletop_pickup_seats_closes_and_lifts_gently(tmp_path):
+    # Stage right arm 3 cm above a 5 mm flat part (surface z = 0.770) with 6 mm transverse offset.
+    # Physical tabletop stops fingertips at tip_z = 0.765 => tcp_z = 0.778.
+    env = _place(FlexibleGripEnvironment(initial_opening=1.0, close_stop=0.025, floor=0.778), z=0.805)
+    host = NativeToolkit(env, None, tmp_path / "native")
+    robo = RobodojoOfficialColourRobot(NativeBackend(host))
+
+    part_surface_pt = [0.256, -0.146, 0.770]  # 5 mm flat part on tabletop
+    res = robo.delta_grasp(
+        part_surface_pt,
+        arm="right",
+        contact_table=True,
+        overdrive_m=0.005,
+        lift_dxyz=(0.0, 0.0, 0.025),
+        max_steps=30,
+    )
+    assert isinstance(res, DeltaGrasp)
+    assert res.status == "completed" and res.reached is True and res.aligned is True
+    assert res.stalled is False and res.table_contact_stalled is True
+    assert res.transverse_error_after_m <= 0.0025
+    assert res.closed is True and res.closed_opening == pytest.approx(0.025, abs=0.002)
+    assert res.holding is True and res.width_m is not None and res.width_m > 0.004
+    assert res.lift_status == "completed" and res.lift_steps_used >= 8  # 25 mm at 3 mm gentle steps!
+    assert res.opening_after_lift == pytest.approx(0.025, abs=0.002)
+    assert res.retained_closure is True
+    assert res.final_xyz[0] == pytest.approx(0.256, abs=0.003)
+    assert res.final_xyz[1] == pytest.approx(-0.146, abs=0.003)
+    assert res.final_xyz[2] == pytest.approx(0.778 + 0.025, abs=0.004)
+    assert res.steps_used == len(env.actions)
+    assert robo._ledger.records[-1].receipt["status"] == "completed"
+
+
+def test_delta_grasp_thin_sub3mm_part_still_lifts_and_slip_sets_retained_false(tmp_path):
+    # Ultra-thin part (< 3.5 mm) settles at closed_opening=0.004 (<= HOLD_MIN_OPENING=0.01):
+    # delta_grasp MUST still execute lift_dxyz in 3 mm steps and report retained_closure=True.
+    env_thin = _place(
+        FlexibleGripEnvironment(initial_opening=1.0, close_stop=0.004, floor=0.778), z=0.800
+    )
+    host_thin = NativeToolkit(env_thin, None, tmp_path / "thin")
+    robo_thin = RobodojoOfficialColourRobot(NativeBackend(host_thin))
+    res_thin = robo_thin.delta_grasp(
+        [0.25, -0.15, 0.778],
+        arm="right",
+        contact_table=True,
+        overdrive_m=0.004,
+        lift_dxyz=(0.0, 0.0, 0.021),
+        max_steps=30,
+    )
+    assert res_thin.status == "completed" and res_thin.reached is True
+    assert res_thin.closed_opening == pytest.approx(0.004, abs=0.001)
+    assert res_thin.lift_status == "completed" and res_thin.lift_steps_used >= 7  # 3 mm steps
+    assert res_thin.opening_after_lift == pytest.approx(0.004, abs=0.001)
+    assert res_thin.retained_closure is True
+
+    # Slip during liftoff: wider initial grip (0.040 > 0.025) collapses to 0.004 on lift -> False.
+    env_slip = _place(
+        FlexibleGripEnvironment(
+            initial_opening=1.0,
+            close_stop=0.040,
+            floor=0.778,
+            slip_after_lift_z=0.790,
+            slip_to=0.004,
+        ),
+        z=0.800,
+    )
+    host_slip = NativeToolkit(env_slip, None, tmp_path / "slip")
+    robo_slip = RobodojoOfficialColourRobot(NativeBackend(host_slip))
+    res_slip = robo_slip.delta_grasp(
+        [0.25, -0.15, 0.778],
+        arm="right",
+        contact_table=True,
+        overdrive_m=0.004,
+        lift_dxyz=(0.0, 0.0, 0.021),
+        max_steps=30,
+    )
+    assert res_slip.status == "completed" and res_slip.closed_opening == pytest.approx(0.040, abs=0.002)
+    assert res_slip.opening_after_lift == pytest.approx(0.004, abs=0.002)
+    assert res_slip.retained_closure is False
+
+
+def test_delta_grasp_horizontal_handoff_narrows_preopen_and_respects_standoff(tmp_path):
+    # Horizontal receiver along its radial approach heading from base (0.30, -0.45):
+    # pitch=0, yaw=45 (pointing toward (-0.707, +0.707, 0)), roll=90, opening=1.0.
+    env = FlexibleGripEnvironment(initial_opening=1.0, close_stop=0.12)
+    pose_r = np.eye(4)
+    pose_r[:3, :3] = kin.orientation(0, 45, 90)
+    pose_r[:3, 3] = [0.017, -0.167, 0.86]
+    sol_r = kin.best_solution("right", pose_r, env.joints["right"])
+    assert sol_r.ok and not sol_r.collides
+    env.joints["right"] = list(sol_r.q)
+    host = NativeToolkit(env, None, tmp_path / "handoff")
+    robo = RobodojoOfficialColourRobot(NativeBackend(host))
+
+    u_pointing = pose_r[:3, 0]
+    u_perp = np.array([-u_pointing[1], u_pointing[0], 0.0])
+    head_pt = pose_r[:3, 3] + u_pointing * 0.045 + u_perp * 0.006 + np.array([0.0, 0.0, -0.005])
+    res = robo.delta_grasp(
+        head_pt.tolist(),
+        arm="right",
+        axis=u_pointing.tolist(),
+        standoff_m=0.008,
+        opening=0.38,
+        max_steps=24,
+    )
+    assert res.status == "completed" and res.reached is True and res.aligned is True
+    # Narrowed from 1.0 -> 0.38 before advancing!
+    assert res.preopen_steps_used > 0
+    assert res.opening_after_preopen == pytest.approx(0.38, abs=0.02)
+    assert res.align_steps_used > 0 and res.approach_steps_used > 0 and res.close_steps_used > 0
+    expected_tcp = head_pt - u_pointing * 0.008
+    assert np.allclose(tcp(env), expected_tcp, atol=0.003)
+    assert res.closed is True and res.holding is True and res.closed_opening == pytest.approx(0.12, abs=0.01)
+    assert res.steps_used == len(env.actions)
+
+    # Second call when already at opening=0.38 skips pre-open in 0 steps!
+    env2 = FlexibleGripEnvironment(initial_opening=0.38, close_stop=0.12)
+    env2.joints["right"] = list(sol_r.q)
+    host2 = NativeToolkit(env2, None, tmp_path / "handoff2")
+    robo2 = RobodojoOfficialColourRobot(NativeBackend(host2))
+    res2 = robo2.delta_grasp(
+        head_pt.tolist(),
+        arm="right",
+        axis=u_pointing.tolist(),
+        standoff_m=0.008,
+        opening=0.38,
+        max_steps=24,
+    )
+    assert res2.status == "completed" and res2.preopen_steps_used == 0
+    assert res2.steps_used < res.steps_used
+
+
+def test_delta_grasp_aborts_before_closing_on_unexpected_stall(tmp_path):
+    # Unexpected wall blocks transverse alignment: must abort before approaching or closing.
+    start_x = START["right"][0]
+    env = _place(FlexibleGripEnvironment(initial_opening=1.0, x_wall=start_x - 0.003), z=0.86)
+    host = NativeToolkit(env, None, tmp_path / "wall")
+    robo = RobodojoOfficialColourRobot(NativeBackend(host))
+    res = robo.delta_grasp(
+        [start_x - 0.020, -0.15, 0.84], arm="right", contact_table=False, max_steps=20
+    )
+    assert res.aligned is False and res.closed is False
+    assert res.status == "stopped" and res.stalled is True
+    assert res.stop_reason == "contact_or_stall"
+    assert res.approach_steps_used == 0 and res.close_steps_used == 0
+
+    # Non-table approach stalls unexpectedly: must abort before closing.
+    env2 = _place(FlexibleGripEnvironment(initial_opening=1.0, floor=0.845), z=0.86)
+    host2 = NativeToolkit(env2, None, tmp_path / "stall_app")
+    robo2 = RobodojoOfficialColourRobot(NativeBackend(host2))
+    res2 = robo2.delta_grasp(
+        [start_x, -0.15, 0.825], arm="right", contact_table=False, max_steps=20
+    )
+    assert res2.aligned is True and res2.closed is False
+    assert res2.status == "stopped" and res2.stalled is True
+    assert res2.table_contact_stalled is False and res2.close_steps_used == 0
+
+
+def test_delta_grasp_preview_provenance_and_budget(tmp_path):
+    from codeaspolicy.execution import ExecutionBudget, ExecutionLimit, ExecutionLimits
+
+    env = _place(FlexibleGripEnvironment(initial_opening=1.0, close_stop=0.03), z=0.82)
+    host = NativeToolkit(env, None, tmp_path / "prev")
+    robo = RobodojoOfficialColourRobot(NativeBackend(host))
+
+    # Read-only preview costs 0 actions and returns DeltaGrasp with status="planned".
+    plan = robo.delta_grasp(
+        [0.255, -0.15, 0.79],
+        arm="right",
+        contact_table=True,
+        overdrive_m=0.005,
+        lift_dxyz=(0.0, 0.0, 0.02),
+        preview=True,
+    )
+    assert isinstance(plan, DeltaGrasp)
+    assert plan.preview is True and plan.accepted is True and plan.status == "planned"
+    assert plan.steps_used == 0 and plan.planned_steps > 0 and not env.actions
+    assert not robo._ledger.stateful_calls()
+
+    # Over-limit preview rejects in 0 steps.
+    too_far = robo.delta_grasp([0.35, -0.15, 0.79], arm="right", preview=True)
+    assert too_far.accepted is False and too_far.stop_reason == "delta_exceeds_limit"
+
+    # Tight budget preview rejects in 0 steps.
+    tight = robo.delta_grasp([0.255, -0.15, 0.79], arm="right", max_steps=2, preview=True)
+    assert tight.accepted is False and tight.stop_reason == "step_budget"
+
+    # Provenance check when require_current_target=True.
+    pt = robo.ray_at_z(240, 320, z=0.79, camera="cam_head")
+    robo.nudge((0.0, 0.0, 0.005))
+    steps_before = len(env.actions)
+    with pytest.raises(ToolError, match="stale"):
+        robo.delta_grasp(pt, arm="right", require_current_target=True)
+    assert len(env.actions) == steps_before
+
+    # ExecutionBudget: preview=True counts 0 actions, stateful delta_grasp counts 1 action.
+    with ExecutionBudget(ExecutionLimits(max_actions=1), tmp_path / "ws", robo) as budget:
+        p = robo.delta_grasp([0.25, -0.15, 0.80], arm="right", preview=True)
+        assert p.accepted is True and budget.actions == 0
+        g = robo.delta_grasp([0.25, -0.15, 0.80], arm="right")
+        assert g.reached is True and budget.actions == 1
+        with pytest.raises(ExecutionLimit):
+            robo.delta_grasp([0.25, -0.15, 0.80], arm="right")
+
+
 # -- registration ----------------------------------------------------------------
 
 
@@ -685,30 +1018,37 @@ def test_execution_budget_counts_each_stateful_nudge(tmp_path):
 
 
 def test_registration_and_reference():
-    assert {"nudge", "visual_align_and_insert", "align_feature"} <= STATEFUL_TOOLS
-    assert {"nudge", "visual_align_and_insert", "align_feature"} <= STATEFUL
+    assert {"nudge", "visual_align_and_insert", "align_feature", "delta_grasp"} <= STATEFUL_TOOLS
+    assert {"nudge", "visual_align_and_insert", "align_feature", "delta_grasp"} <= STATEFUL
     assert "preview_align_feature" not in STATEFUL_TOOLS
     assert "preview_align_feature" not in STATEFUL
+    assert "preview_delta_grasp" not in STATEFUL_TOOLS
+    assert "preview_delta_grasp" not in STATEFUL
     assert set(rvd.SPECS) == {
         "nudge",
         "visual_align_and_insert",
         "align_feature",
         "preview_align_feature",
+        "delta_grasp",
+        "preview_delta_grasp",
     }
     assert rvd.preview_align_feature._readonly is True
+    assert rvd.preview_delta_grasp._readonly is True
     for cls in (RobodojoRobot, RobodojoOfficialColourRobot):
         assert Nudge in cls.RESULT_TYPES
+        assert DeltaGrasp in cls.RESULT_TYPES
         assert VisualAlign in cls.RESULT_TYPES
         assert FeatureAlignment in cls.RESULT_TYPES
         text = api_reference(cls)
         assert "robo.nudge(" in text and "robo.visual_align_and_insert(" in text
-        assert "robo.align_feature(" in text
+        assert "robo.align_feature(" in text and "robo.delta_grasp(" in text
         assert "class Nudge(" in text and "class VisualAlign(" in text
-        assert "class FeatureAlignment(" in text
+        assert "class FeatureAlignment(" in text and "class DeltaGrasp(" in text
         for prims in ("no-vla", "no-sam"):
             filtered = api_reference(cls, primitives=prims)
             assert "robo.nudge(" in filtered and "robo.align_feature(" in filtered
-            assert "class FeatureAlignment(" in filtered
+            assert "robo.delta_grasp(" in filtered
+            assert "class FeatureAlignment(" in filtered and "class DeltaGrasp(" in filtered
         for word in ("insert_key", "keyhole", "make_kong", "mahjong"):
             assert word not in text
 
@@ -729,3 +1069,6 @@ def test_rpent_toolkit_registration_adds_both_tools():
     assert added["align_feature"][0]["input_schema"]["required"] == ["feature_xyz", "target_xyz"]
     assert added["preview_align_feature"][0]["name"] == "preview_align_feature"
     assert added["preview_align_feature"][1].func._readonly is True
+    assert added["delta_grasp"][0]["input_schema"]["required"] == ["target_xyz"]
+    assert added["preview_delta_grasp"][0]["name"] == "preview_delta_grasp"
+    assert added["preview_delta_grasp"][1].func._readonly is True

@@ -890,6 +890,7 @@ def test_ledger_marks_stateful_calls_and_counts_native_actions(rd, rd_backend):
         "nudge",
         "visual_align_and_insert",
         "align_feature",
+        "delta_grasp",
     }
 
 

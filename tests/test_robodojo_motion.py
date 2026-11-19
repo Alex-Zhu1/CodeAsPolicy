@@ -824,6 +824,7 @@ def test_register_adds_motion_and_coordination_tools_with_readonly_planning(sim)
         | coordination | intents | staged | set(grasp_specs) | set(delta_specs))
     assert added["preview_move_pose"][1].func._readonly is True
     assert added["preview_align_feature"][1].func._readonly is True
+    assert added["preview_delta_grasp"][1].func._readonly is True
     for name, (spec, handler) in added.items():
         if name in grasp_specs:
             assert spec is grasp_specs[name]
@@ -834,7 +835,7 @@ def test_register_adds_motion_and_coordination_tools_with_readonly_planning(sim)
         assert spec["name"] == name and "input_schema" in spec
         # RPent's own test of read-only handlers: unwrap partials, read ``_readonly``
         readonly = name in {"locate", "preview_move_pose", "preview_grasp",
-                            "preview_align_feature"} or (
+                            "preview_align_feature", "preview_delta_grasp"} or (
             name in coordination | intents | staged
             and name not in ("motion_execute", "intent_execute", "grasp_step",
                              "operation_resume"))

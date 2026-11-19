@@ -412,6 +412,90 @@ class FeatureAlignment:
 
 
 @dataclass(frozen=True)
+class DeltaGrasp:
+    """Outcome of ``delta_grasp``.
+
+    status: completed (aligned, approached/table-seated, closed, and optional
+        liftoff completed), stopped (unexpected contact stall aborted alignment,
+        non-table approach, or liftoff), partial (step budget or tolerance not
+        met after moving), planned (preview=True and preflight accepted) or
+        rejected (zero native actions: limit, reach/table clearance or budget
+        refused). Not a task success verdict.
+    aligned: transverse error perpendicular to ``axis`` ended within
+        ``align_tol_m`` before closing.
+    reached: full requested grasp sequence completed.
+    accepted: preflight accepted the planned move(s).
+    preview: True for a read-only zero-step preflight.
+    stalled: stopped on an unexpected kinematic stall (``contact_or_stall``).
+    table_contact_stalled: True when ``contact_table=True`` and the guarded
+        downward approach stalled cleanly on the tabletop before closing.
+    stop_reason: None on completion or accepted preview; else refusal or stop
+        code.
+    target_xyz / axis / standoff_m / overdrive_m / contact_table: normalized
+        target geometry and tabletop-contact flag.
+    transverse_error_before_m / transverse_error_after_m: transverse error
+        before and after alignment, metres.
+    opening_before / opening_after_preopen: gripper opening before call and
+        after optional pre-open.
+    closed / closed_opening: whether close executed and measured opening right
+        after close (1.0 open, 0.0 closed on nothing or thin <3.5 mm part).
+    opening_after_lift / retained_closure: measured opening after optional
+        ``lift_dxyz`` and whether closure was retained without slipping.
+    holding / opening / width_m: final gripper state after the call.
+    lift_status: None when ``lift_dxyz`` is omitted; else ``"planned"``,
+        ``"completed"``, ``"stopped"``, ``"partial"``, ``"skipped"`` or
+        ``"rejected"``.
+    preopen_steps_used / align_steps_used / approach_steps_used /
+        close_steps_used / lift_steps_used / steps_used / planned_steps: native
+        actions per stage, total executed, and planned.
+    final_xyz / pitch / yaw / roll: measured grasp-point pose after the call.
+    ik_error / note: refusal or execution detail.
+    truncated: the budget ran out or the environment ended the episode.
+    """
+
+    arm: str
+    status: str
+    aligned: bool
+    reached: bool
+    accepted: bool
+    preview: bool
+    stalled: bool
+    table_contact_stalled: bool
+    stop_reason: str | None
+    target_xyz: tuple[float, float, float]
+    axis: tuple[float, float, float]
+    standoff_m: float
+    overdrive_m: float
+    contact_table: bool
+    transverse_error_before_m: float
+    transverse_error_after_m: float
+    opening_before: float
+    opening_after_preopen: float | None
+    closed: bool
+    closed_opening: float | None
+    opening_after_lift: float | None
+    retained_closure: bool
+    holding: bool
+    opening: float
+    width_m: float | None
+    lift_status: str | None
+    preopen_steps_used: int
+    align_steps_used: int
+    approach_steps_used: int
+    close_steps_used: int
+    lift_steps_used: int
+    steps_used: int
+    planned_steps: int
+    final_xyz: tuple[float, float, float]
+    pitch: float
+    yaw: float
+    roll: float
+    ik_error: str | None
+    note: str | None
+    truncated: bool
+
+
+@dataclass(frozen=True)
 class VisualAlign:
     """Outcome of ``visual_align_and_insert``.
 
@@ -659,7 +743,7 @@ class ObjectPose(PerceptionResult):
 
 STATEFUL_TOOLS = frozenset({"move_pose", "grip", "home", "pi0_pick", "motion_execute", "try_grasp",
                             "intent_execute", "grasp_step", "operation_resume", "nudge",
-                            "visual_align_and_insert", "align_feature"})
+                            "visual_align_and_insert", "align_feature", "delta_grasp"})
 
 
 def _has_provenance(value: Any) -> bool:
@@ -939,6 +1023,7 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         ObjectPose,
         Pick,
         Nudge,
+        DeltaGrasp,
         FeatureAlignment,
         VisualAlign,
         Segment,
@@ -1098,6 +1183,16 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         "achieved_stroke_m",
         "align_steps_used",
         "stroke_steps_used",
+        "table_contact_stalled",
+        "closed",
+        "closed_opening",
+        "opening_after_lift",
+        "retained_closure",
+        "lift_status",
+        "preopen_steps_used",
+        "approach_steps_used",
+        "close_steps_used",
+        "lift_steps_used",
     )
 
     # -- observation --------------------------------------------------------
@@ -2138,6 +2233,7 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         compact: bool = True,
         max_linear_m: float = 0.06,
         max_angular_deg: float = 20.0,
+        allow_table_contact: bool = False,
     ) -> Nudge:
         """Guarded short relative move of the grasp point, for last-mile contact.
 
@@ -2152,10 +2248,16 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
 
         compact=True (default) follows the straight line in 5 mm / 4 degree
         waypoints, one native action each (no rest-to-rest spline, at most one
-        settle action): about 2-3 actions per cm. The whole line is solved and
-        checked against joint limits and the table before the first action; a
-        refused delta uses 0 actions. compact=False sends the same target
-        through ``move_to``'s timed path (single arm only).
+        settle action): about 2-3 actions per cm. When ``allow_table_contact=True``
+        or moving while holding a thin part (``0 < opening <= 0.045``), waypoint
+        spacing tightens to 3 mm per action for smooth tabletop contact and gentle
+        thin-part liftoff. With ``allow_table_contact=True``, only the fingertip
+        floor is relaxed down to ``TABLE_Z - 0.004`` (arm joints stay strictly
+        above ``TABLE_Z + 0.015``) so a guarded downward nudge can seat the flat
+        finger pads onto the tabletop and stop cleanly on stall. The whole line is
+        solved and checked against joint limits and the table before the first
+        action; a refused delta uses 0 actions. compact=False sends the same
+        target through ``move_to``'s timed path (single arm only).
 
         stop_on_stall: after ``stall_steps`` consecutive actions whose
         measured progress is under a quarter of the commanded progress
@@ -2172,6 +2274,8 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
                 from the first action; the stroke is finished after the motion.
             max_steps: cap on native actions for this call (None: no cap).
             reserve_steps: episode actions that must remain after this call.
+            allow_table_contact: allow up to 4 mm fingertip overdrive below
+                TABLE_Z with 3 mm waypoints (arm links stay strictly clear).
         Returns:
             Nudge; test ``status`` / ``stalled`` / ``reached`` and ``achieved``.
         Raises:
@@ -2179,8 +2283,94 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         """
         kwargs = self._nudge_kwargs(dxyz, arm, dpitch, dyaw, droll, gripper, frame, left,
                                     right, stop_on_stall, stall_steps, max_steps,
-                                    reserve_steps, compact, max_linear_m, max_angular_deg)
+                                    reserve_steps, compact, max_linear_m, max_angular_deg,
+                                    allow_table_contact)
         return self._stateful("nudge", kwargs, lambda p: self._nudge_result(kwargs, p))
+
+    def delta_grasp(
+        self,
+        target: Any,
+        arm: str = "right",
+        *,
+        axis: Sequence[float] = (0.0, 0.0, -1.0),
+        standoff_m: float = 0.0,
+        overdrive_m: float = 0.0,
+        opening: float | None = None,
+        contact_table: bool = False,
+        lift_dxyz: Sequence[float] | None = None,
+        align_tol_m: float = 0.0025,
+        max_linear_m: float = 0.06,
+        max_steps: int = 24,
+        reserve_steps: int = 20,
+        require_current_target: bool = False,
+        preview: bool = False,
+    ) -> DeltaGrasp:
+        """Compact close-range grasp or in-air handoff clamp in one Delta primitive.
+
+        Once coarse code has staged the gripper within ~2-5 cm of ``target``,
+        executes sequentially: (1) optional pre-open to ``opening`` (skipped in
+        0 steps if already within 0.05), (2) transverse alignment perpendicular
+        to ``axis`` (skipped if <= 0.5 mm; aborts before closing if residual
+        error exceeds ``align_tol_m``), (3) guarded axial approach along
+        ``+axis`` to ``target - standoff_m * axis + overdrive_m * axis`` (when
+        ``contact_table=True``, uses 3 mm steps and treats tabletop stall as
+        expected seating past the fingertip bevel), (4) gripper close, and
+        (5) optional guarded ``lift_dxyz`` liftoff (automatically using 3 mm
+        micro-steps when measured ``closed_opening <= 0.045`` so thin grips do
+        not break static friction).
+
+        Args:
+            target: grasp or handoff target position as ``[x, y, z]``,
+                ``TriangulatedPoint``, ``PlanePoint``, ``WorldPoint``, ``Pose``,
+                or any perception result / mapping with ``xyz``.
+            arm: ``"left"`` or ``"right"``.
+            axis: approach direction in world coordinates (default
+                ``(0, 0, -1)`` top-down; pass receiver pointing unit vector for
+                horizontal in-air handoff).
+            standoff_m: stop TCP this far upstream of ``target`` along
+                ``-axis`` (e.g. ``0.008`` m for outer-chord flat-head handoff).
+            overdrive_m: extra axial travel along ``+axis`` past
+                ``target - standoff_m * axis`` (e.g. ``0.005`` m with
+                ``contact_table=True`` to seat fingertips onto the tabletop).
+            opening: optional partial pre-open in ``(0, 1]`` (e.g. ``0.38``);
+                skipped in 0 steps when already within 0.05.
+            contact_table: enable controlled tabletop contact (3 mm steps,
+                ``allow_table_contact=True``, stall on tabletop accepted as
+                seating before closing).
+            lift_dxyz: optional post-close guarded liftoff displacement
+                ``[dx, dy, dz]`` metres (e.g. ``(0, 0, 0.025)``).
+            align_tol_m: residual transverse tolerance gating approach/close.
+            max_linear_m: per-stage linear limit (default ``0.06`` m, <= ``0.12``).
+            max_steps: total native-action cap across all stages.
+            reserve_steps: episode native actions preserved for retreat/home.
+            require_current_target: require current provenance on ``target``
+                (default False).
+            preview: True runs a read-only zero-step preflight returning planned
+                steps and reach/table feasibility.
+        Returns:
+            DeltaGrasp; inspect ``closed_opening``, ``holding``, ``width_m``,
+            ``opening_after_lift``, ``retained_closure``, ``table_contact_stalled``
+            and camera views.
+        Raises:
+            ValueError: malformed arguments (nothing is sent).
+            ToolError: stale provenance when ``require_current_target=True``.
+        """
+        if type(preview) is not bool:
+            raise ValueError("preview must be bool")
+        if type(require_current_target) is not bool:
+            raise ValueError("require_current_target must be bool")
+        kwargs = self._delta_grasp_kwargs(
+            target, arm, axis, standoff_m, overdrive_m, opening, contact_table,
+            lift_dxyz, align_tol_m, max_linear_m, max_steps, reserve_steps,
+        )
+        if require_current_target:
+            self.require_current(target)
+        if preview:
+            payload = self._readonly("preview_delta_grasp", kwargs)
+            return self._delta_grasp_result(kwargs, payload, preview=True)
+        return self._stateful(
+            "delta_grasp", kwargs, lambda p: self._delta_grasp_result(kwargs, p, preview=False)
+        )
 
     def align_feature(
         self,
@@ -2198,6 +2388,7 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         reserve_steps: int = 20,
         stop_on_stall: bool = True,
         stall_steps: int = 2,
+        allow_table_contact: bool = False,
         preview: bool = False,
         require_current_feature: bool = True,
         require_current_target: bool = False,
@@ -2266,7 +2457,7 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         kwargs = self._align_feature_kwargs(
             feature, target, arm, axis, standoff_m, stroke_m, stroke_dxyz,
             align_tol_m, max_linear_m, max_steps, reserve_steps,
-            stop_on_stall, stall_steps,
+            stop_on_stall, stall_steps, allow_table_contact,
         )
         if require_current_feature and _has_provenance(feature):
             self.require_current(feature)
@@ -2738,15 +2929,20 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
 
     def _nudge_kwargs(self, dxyz, arm, dpitch, dyaw, droll, gripper, frame, left, right,
                       stop_on_stall, stall_steps, max_steps, reserve_steps, compact,
-                      max_linear_m, max_angular_deg) -> dict[str, Any]:
+                      max_linear_m, max_angular_deg,
+                      allow_table_contact: bool = False) -> dict[str, Any]:
         if arm not in (*self.ARMS, "both"):
             raise ValueError(f"arm must be 'left', 'right' or 'both', got {arm!r}")
         if frame not in ("world", "tcp"):
             raise ValueError(f"frame must be 'world' or 'tcp', got {frame!r}")
-        if type(stop_on_stall) is not bool or type(compact) is not bool:
-            raise ValueError("stop_on_stall and compact must be bool")
+        if (type(stop_on_stall) is not bool or type(compact) is not bool
+                or type(allow_table_contact) is not bool):
+            raise ValueError("stop_on_stall, compact and allow_table_contact must be bool")
+        if allow_table_contact and not compact:
+            raise ValueError("allow_table_contact=True requires compact=True")
         kwargs: dict[str, Any] = dict(
             arm=arm, frame=frame, stop_on_stall=stop_on_stall, compact=compact,
+            allow_table_contact=allow_table_contact,
             stall_steps=self._count(stall_steps, "stall_steps", 1, 5),
             reserve_steps=self._count(reserve_steps, "reserve_steps", 0),
             max_linear_m=self._bounded(max_linear_m, "max_linear_m", 0.12),
@@ -2801,10 +2997,111 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
             arms=arms,
         )
 
+    def _delta_grasp_kwargs(
+        self, target, arm, axis, standoff_m, overdrive_m, opening, contact_table,
+        lift_dxyz, align_tol_m, max_linear_m, max_steps, reserve_steps,
+    ) -> dict[str, Any]:
+        which = _arm(arm)
+        t_xyz = _extract_xyz(target, "target")
+        ax = _floats(axis, 3, "axis")
+        if math.sqrt(ax[0] * ax[0] + ax[1] * ax[1] + ax[2] * ax[2]) <= 1e-9:
+            raise ValueError("axis must be non-zero")
+        if type(contact_table) is not bool:
+            raise ValueError("contact_table must be bool")
+        if isinstance(standoff_m, bool):
+            raise ValueError(f"standoff_m must be >= 0, got {standoff_m!r}")
+        s_val = _floats((standoff_m,), 1, "standoff_m")[0]
+        if s_val < 0.0:
+            raise ValueError(f"standoff_m must be >= 0, got {standoff_m!r}")
+        if isinstance(overdrive_m, bool):
+            raise ValueError(f"overdrive_m must be >= 0, got {overdrive_m!r}")
+        o_val = _floats((overdrive_m,), 1, "overdrive_m")[0]
+        if o_val < 0.0:
+            raise ValueError(f"overdrive_m must be >= 0, got {overdrive_m!r}")
+        tol = self._bounded(align_tol_m, "align_tol_m", 0.02)
+        if tol < 0.0005:
+            raise ValueError(f"align_tol_m must be in [0.0005, 0.02], got {align_tol_m!r}")
+        kwargs: dict[str, Any] = {
+            "target_xyz": list(t_xyz),
+            "arm": which,
+            "axis": list(ax),
+            "standoff_m": s_val,
+            "overdrive_m": o_val,
+            "contact_table": contact_table,
+            "align_tol_m": tol,
+            "max_linear_m": self._bounded(max_linear_m, "max_linear_m", 0.12),
+            "max_steps": self._count(max_steps, "max_steps", 1),
+            "reserve_steps": self._count(reserve_steps, "reserve_steps", 0),
+        }
+        if opening is not None:
+            if isinstance(opening, bool):
+                raise ValueError(f"opening must be in (0, 1], got {opening!r}")
+            op_val = _floats((opening,), 1, "opening")[0]
+            if not 0.0 < op_val <= 1.0:
+                raise ValueError(f"opening must be in (0, 1], got {opening!r}")
+            kwargs["opening"] = op_val
+        if lift_dxyz is not None:
+            lv = _floats(lift_dxyz, 3, "lift_dxyz")
+            if math.sqrt(lv[0] * lv[0] + lv[1] * lv[1] + lv[2] * lv[2]) <= 1e-6:
+                raise ValueError("lift_dxyz must be non-zero")
+            kwargs["lift_dxyz"] = list(lv)
+        return kwargs
+
+    def _delta_grasp_result(
+        self, kwargs: dict[str, Any], p: dict[str, Any], *, preview: bool
+    ) -> DeltaGrasp:
+        angles = p.get("final_angles") or {}
+        open_pre = p.get("opening_after_preopen")
+        closed_op = p.get("closed_opening")
+        open_lift = p.get("opening_after_lift")
+        width = p.get("width_m")
+        return DeltaGrasp(
+            arm=str(p.get("arm", kwargs["arm"])),
+            status=str(p.get("status") or "rejected"),
+            aligned=bool(p.get("aligned")),
+            reached=bool(p.get("reached")),
+            accepted=bool(p.get("accepted")),
+            preview=bool(p.get("preview", preview)),
+            stalled=bool(p.get("stalled")),
+            table_contact_stalled=bool(p.get("table_contact_stalled")),
+            stop_reason=p.get("stop_reason"),
+            target_xyz=_tuple3(p.get("target_xyz", kwargs["target_xyz"])),
+            axis=_tuple3(p.get("axis", kwargs["axis"])),
+            standoff_m=float(p.get("standoff_m", kwargs["standoff_m"])),
+            overdrive_m=float(p.get("overdrive_m", kwargs["overdrive_m"])),
+            contact_table=bool(p.get("contact_table", kwargs["contact_table"])),
+            transverse_error_before_m=float(p.get("transverse_error_before_m", math.nan)),
+            transverse_error_after_m=float(p.get("transverse_error_after_m", math.nan)),
+            opening_before=float(p.get("opening_before", math.nan)),
+            opening_after_preopen=float(open_pre) if open_pre is not None else None,
+            closed=bool(p.get("closed")),
+            closed_opening=float(closed_op) if closed_op is not None else None,
+            opening_after_lift=float(open_lift) if open_lift is not None else None,
+            retained_closure=bool(p.get("retained_closure")),
+            holding=bool(p.get("holding")),
+            opening=float(p.get("opening", math.nan)),
+            width_m=float(width) if width is not None else None,
+            lift_status=str(p["lift_status"]) if p.get("lift_status") is not None else None,
+            preopen_steps_used=int(p.get("preopen_steps_used", 0)),
+            align_steps_used=int(p.get("align_steps_used", 0)),
+            approach_steps_used=int(p.get("approach_steps_used", 0)),
+            close_steps_used=int(p.get("close_steps_used", 0)),
+            lift_steps_used=int(p.get("lift_steps_used", 0)),
+            steps_used=int(p.get("steps_used", 0)),
+            planned_steps=int(p.get("planned_steps", 0)),
+            final_xyz=_tuple3(p.get("final_xyz")),
+            pitch=float(angles.get("pitch", math.nan)),
+            yaw=float(angles.get("yaw", math.nan)),
+            roll=float(angles.get("roll", math.nan)),
+            ik_error=str(p["ik_error"]) if p.get("ik_error") else None,
+            note=str(p["note"]) if p.get("note") else None,
+            truncated=self._latest_state().truncated,
+        )
+
     def _align_feature_kwargs(
         self, feature, target, arm, axis, standoff_m, stroke_m, stroke_dxyz,
         align_tol_m, max_linear_m, max_steps, reserve_steps,
-        stop_on_stall, stall_steps,
+        stop_on_stall, stall_steps, allow_table_contact: bool = False,
     ) -> dict[str, Any]:
         which = _arm(arm)
         f_xyz = _extract_xyz(feature, "feature")
@@ -2812,8 +3109,8 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         ax = _floats(axis, 3, "axis")
         if math.sqrt(ax[0] * ax[0] + ax[1] * ax[1] + ax[2] * ax[2]) <= 1e-9:
             raise ValueError("axis must be non-zero")
-        if type(stop_on_stall) is not bool:
-            raise ValueError("stop_on_stall must be bool")
+        if type(stop_on_stall) is not bool or type(allow_table_contact) is not bool:
+            raise ValueError("stop_on_stall and allow_table_contact must be bool")
         tol = self._bounded(align_tol_m, "align_tol_m", 0.02)
         if tol < 0.0005:
             raise ValueError(f"align_tol_m must be in [0.0005, 0.02], got {align_tol_m!r}")
@@ -2828,6 +3125,7 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
             "reserve_steps": self._count(reserve_steps, "reserve_steps", 0),
             "stop_on_stall": stop_on_stall,
             "stall_steps": self._count(stall_steps, "stall_steps", 1, 5),
+            "allow_table_contact": allow_table_contact,
         }
         if standoff_m is not None:
             if isinstance(standoff_m, bool):
@@ -3080,6 +3378,7 @@ __all__ = [
     "ADAPTER",
     "ArmState",
     "CameraRay",
+    "DeltaGrasp",
     "FeatureAlignment",
     "Gripper",
     "HOME_MAX_ACTIONS",

@@ -243,13 +243,16 @@
   receiver-horizontal wrist axes separate wrist housings by `~22 cm` and
   crossbars by `~9.7 cm` (donor crossbar `>= 7 cm` above TCP), eliminating
   housing collisions while preserving direct access to the working stem;
-  pre-stage the empty receiver arm with partial opening (`opening=0.35–0.42`)
-  at its horizontal pre-handoff pose (`7–8 cm` back along `-u_pointing_R` from
-  `P_head`, clear of the donor lift+yaw sweep), orient the donor `pitch=90`
-  wrist-camera housing (`+z_link6`) away from the receiver (`180°` empty-jaw
-  symmetry), and target the receiver outer-chord TCP (`7–10 mm` upstream of
-  `P_head`) *before* donor grasp/lift so airborne hang stays under `~25–30`
-  steps (`< 1.2 s`) with zero finger or camera-housing collision. Choose
+  pre-stage the empty receiver arm with partial opening (`opening=0.35–0.42`,
+  e.g. `opening=0.38`) at its horizontal pre-handoff pose (`4–6 cm` back along
+  `-u_pointing_R` from `P_head`, clear of donor's straight-up `+7–9 cm` climb
+  to `z ≈ 0.85–0.87 m` and within `delta_grasp`'s `0.06 m` default stroke),
+  orient the donor `pitch=90` wrist-camera housing (`+z_link6`) away from the
+  receiver (`180°` empty-jaw symmetry), and clamp via
+  `robo.delta_grasp(head_pt, arm=receiver, axis=u_pointing_R, standoff_m=0.008,
+  opening=0.38)` (`R_tcp` `7–10 mm` upstream of `P_head`, `~8–10` compact
+  actions) so airborne hang stays minimal (`< 1.2 s`) with zero finger or
+  camera-housing collision. Choose
   donor and receiver grasp regions together, verify a mutually reachable
   exchange pose via `robo.ik()`, and assign arm roles from the current scene,
   not fixed sides.
@@ -305,76 +308,90 @@
     `h` on `z_support` rather than bare `z_support`, which projects obliquely
     behind the true XY centre), and verify `robo.ik()` across the entire chain
     `handoff -> hover -> seat -> twist` plus the camera-away donor `yaw` branch
-    and the receiver pre-handoff pose (`7–8 cm` back along `-u_pointing_R` from
-    `P_head`, clearing the donor's entire lift+yaw sweep) and outer-chord clamp
-    target `R_tcp = P_head - (0.007..0.010) * u_pointing_R` (0 native steps);
+    and the receiver pre-handoff pose (`4–6 cm` back along `-u_pointing_R` from
+    `P_head`, clear of donor's camera-away `+7–9 cm` climb and inside
+    `delta_grasp`'s `0.06 m` default stroke) and outer-chord clamp target
+    `R_tcp = P_head - (0.007..0.010) * u_pointing_R` (0 native steps);
     (2) **Pre-stage the empty receiver arm FIRST (before grasping the stem)**:
     move the empty receiver arm to its horizontal `pitch=0°, roll=±90°`
-    pre-handoff pose (`7–8 cm` back along `-u_pointing_R` from `P_head`, clear
-    of the donor's entire lift+yaw sweep) with **partial opening
-    `opening=0.35–0.42`** (`~4.0–4.8 cm` total jaw gap = `±2.0–2.4 cm` vertical
-    half-gap, rather than default `opening=1.0` `±4.4 cm` spread) and park it
-    stationary BEFORE the donor grasps or lifts the stem—if a close-up wrist
-    view of the target receptor is needed, capture it with the receiver arm
-    first and move directly to pre-handoff rather than homing in between;
-    (3) **Direct single-intent donor stem grasp & lift (`pitch=90°`) with
-    wrist-camera housing turned AWAY**: donor grasps the narrower straight
-    **stem/neck `2.5–3.0 cm` from `P_head` centre along the stem toward the
-    distal tip** (keeping Donor's vertical axis `L_axis` `2.5–3.0 cm` from
-    `P_head`, NOT on the round head itself and NOT on an ultra-thin `<= 2.5 mm`
-    distal tip near `GRIP_ZERO_M`). Because the protruding wrist-camera housing
-    and bracket extend `+5.1–7.2 cm` along **`+z_link6`** (`pose.axes()[2]`) vs
-    only `3.0 cm` on `-z_link6`, and at `pitch=90°` `yaw` and `yaw + 180°` share
-    the exact same jaw-closing line across the stem (symmetric empty jaws),
-    always select the `180°` `yaw` branch (for both pickup and handoff) whose
-    `+z_link6` faces **AWAY** from the receiver arm
-    (`dot(+z_link6_donor, receiver_side) < 0`, equivalently
+    pre-handoff pose (`4–6 cm` back along `-u_pointing_R` from `P_head`, clear
+    of the donor's camera-away lift) with **partial opening
+    `opening=0.35–0.42`** (e.g. `opening=0.38`, `~4.0–4.8 cm` total jaw gap =
+    `±2.0–2.4 cm` vertical half-gap, rather than default `opening=1.0`
+    `±4.4 cm` spread) and park it stationary BEFORE the donor grasps or lifts
+    the stem—if a close-up wrist view of the target receptor is needed, capture
+    it with the receiver arm first and move directly to pre-handoff rather than
+    homing in between;
+    (3) **Table-touch Delta donor pickup on widest non-head span & low-altitude
+    lift (`z ≈ 0.85–0.87 m`) with wrist-camera housing turned AWAY**: stage
+    donor `2.5–3.5 cm` above the part at `pitch=90°`, localise the **widest
+    parallel span** of the non-head region (`>= 2.5–3.0 cm` from `P_head`
+    centre along the stem toward the distal tip—because squeeze force scales as
+    `~101 * opening` N, grasping a `1.0–1.5 cm` wide lateral bit/flange/tab or
+    collared span yields `~5x` the holding force of a `4 mm` bare shaft while
+    leaving even wider clearance to `P_head`, NOT on the round head itself and
+    NOT on an ultra-thin `<= 2.5 mm` distal tip near `GRIP_ZERO_M`). Because
+    the protruding wrist-camera housing and bracket extend `+5.1–7.2 cm` along
+    **`+z_link6`** (`pose.axes()[2]`) vs only `3.0 cm` on `-z_link6`, and at
+    `pitch=90°` `yaw` and `yaw + 180°` share the exact same jaw-closing line
+    across the stem (symmetric empty jaws), always select the `180°` `yaw`
+    branch (for both pickup and handoff) whose `+z_link6` faces **AWAY** from
+    the receiver arm (`dot(+z_link6_donor, receiver_side) < 0`, equivalently
     `dot(+z_link6_donor, u_pointing_R) > 0` where `u_pointing_R` points from
-    receiver toward donor)—never point `+z_link6` toward the receiver, where the
-    protruding camera housing clips the waiting receiver's upper finger during
-    lift/yaw. Lift in **one direct C2 move** to `P_head` (`z ≈ 0.89–0.91 m`,
-    `y ≈ -0.28..-0.22 m`—preferring minimal horizontal/yaw travel, or a pure
-    straight-up `+z` lift above the pickup XY whenever receiver horizontal
-    radial IK and `7–8 cm` pre-handoff clearance already hold there, verified
-    via `robo.ik()`), keeping `pitch=90°` (donor wrist & crossbar safely
-    `>= 7 cm` above `+z`) so the **entire flat-faced proximal head projects
-    unobstructed horizontally** along the **receiver arm's horizontal radial
-    approach heading** from its base (`(±0.30, -0.45) -> P_head`), keeping
-    receiver `joint5 ≈ 0` (`~1.52 rad` margin vs `±1.52 rad` limit);
-    (4) **Immediate short-stroke anti-wedge orthogonal 90° horizontal flat-face
-    head clamp (`pitch=0°, roll=±90°`)**: with the donor parked stationary
-    (camera housing `+z_link6` away from receiver) and the exposed head sitting
-    directly `7–8 cm` in front of the partially open (`opening=0.35–0.42`)
-    pre-staged receiver jaws, the receiver executes only the short final `align`
-    + `close` (`~8–12` steps, keeping total donor stem hang time under `~25–30`
-    steps / `< 1.2 s`) horizontally (`pitch=0°`, `yaw` pointing coaxially along
-    `u_pointing_R` from the exposed head through the shaft toward the distal
-    tip, `roll=+90°` or `-90°` so `close_dir` is vertical `±z`) using
-    **anti-wedge partial opening + outer-chord TCP targeting**: pass
-    **`opening=0.35–0.42`** (`~4.0–4.8 cm` total gap = `±2.0–2.4 cm` vertical
-    half-gap, ample for a `1.0–1.6 cm`-thick flat head while halving vertical
-    finger spread vs default `opening=1.0`'s `±4.4 cm`) and target
-    **`R_tcp = P_head - (0.007..0.010) * u_pointing_R`** (`7–10 mm` upstream of
-    `P_head` centre on the outer half of the head, NEVER `P_head` itself).
-    Driving default `opening=1.0` (`±4.4 cm`) to `R_tcp = P_head` advances
-    `R_tip` (`TIP_OFFSET - TCP_OFFSET = +1.3 cm` past `R_tcp`) to `~1.0–1.2 cm`
-    from `L_axis` at `z ≈ P_head_z + 4.3 cm`, wedging the receiver's open upper
-    finger directly into Donor's flared vertical finger body and prying Donor
-    open; with Donor grasping `2.5–3.0 cm` from `P_head`, `opening=0.35–0.42`,
-    and `R_tcp` `7–10 mm` upstream of `P_head`, `R_tip` still reaches `3–6 mm`
-    *past* `P_head` (clamping `~1.4–1.7 cm` of the head's **top and bottom
-    parallel flat faces** solidly with rigid area contact, `~22 cm` wrist
-    separation, `~9.7 cm` crossbar separation, zero housing collision) while
-    keeping `R_tip` **`>= 2.0 cm`** horizontally clear of `L_axis` (completely
-    outside Donor's vertical finger body at all heights). Choose **`roll=+90°`
-    vs `-90°`** from the pre-localised receptor asymmetry: flipping `roll`
-    between `+90°` and `-90°` flips the held shaft's lateral feature between
-    `+z_link6` and `-z_link6`, shifting the required `pitch=90°` insertion `yaw`
-    and seated `joint6` by `180°` so one sign ALWAYS lands seated `joint6`
-    within `±1.57 rad` (`>= 1.52 rad` / `~87.6°` bidirectional headroom,
-    guaranteeing `±85°` both ways inside `[-3.1, 3.1]`; or `>= 3.05 rad` /
-    `~175°` in a known CW/CCW twist direction by biasing `joint6` opposite the
-    turn, covering full `90°` twists);
+    receiver toward donor)—never point `+z_link6` toward the receiver, where
+    the protruding camera housing clips the waiting receiver's upper finger
+    during lift/yaw. Execute **`robo.delta_grasp(span_pt, arm=donor,
+    contact_table=True, overdrive_m=0.005, lift_dxyz=(0, 0, 0.025))`** so
+    fingertips align transversely, seat gently onto the tabletop past the
+    `2.6 mm` bevel (`3 mm` steps, stall on tabletop = expected seating), close,
+    and lift gently in automatic `3 mm` micro-steps without breaking static
+    friction. Then lift in **one direct C2 move** only **`+7–9 cm`** to
+    low-altitude `P_head` (`z ≈ 0.85–0.87 m`, `y ≈ -0.28..-0.22 m`—minimizing
+    climb distance & hang time, preferring a pure straight-up `+z` lift above
+    the pickup XY whenever receiver horizontal radial IK and `4–6 cm`
+    pre-handoff clearance already hold there, verified via `robo.ik()`), keeping
+    `pitch=90°` (donor wrist & crossbar safely `>= 7 cm` above `+z`) so the
+    **entire flat-faced proximal head projects unobstructed horizontally** along
+    the **receiver arm's horizontal radial approach heading** from its base
+    (`(±0.30, -0.45) -> P_head`), keeping receiver `joint5 ≈ 0` (`~1.52 rad`
+    margin vs `±1.52 rad` limit);
+    (4) **Immediate short-stroke anti-wedge Delta flat-face head clamp
+    (`pitch=0°, roll=±90°`)**: with the donor parked stationary (camera housing
+    `+z_link6` away from receiver) and the exposed head sitting directly
+    `4–6 cm` in front of the partially open (`opening=0.35–0.42`, e.g. `0.38`)
+    pre-staged receiver jaws, localise the presented flat head (`head_pt`) via
+    `crop_grid` + `triangulate` and call
+    **`robo.delta_grasp(head_pt, arm=receiver, axis=u_pointing_R,
+    standoff_m=0.008, opening=0.38)`** (`~8–10` compact actions total, keeping
+    total donor stem hang time under `~25–30` steps / `< 1.2 s`) horizontally
+    (`pitch=0°`, `yaw` pointing coaxially along `u_pointing_R` from the exposed
+    head through the shaft toward the distal tip, `roll=+90°` or `-90°` so
+    `close_dir` is vertical `±z`) using **anti-wedge partial opening +
+    outer-chord TCP targeting**: `opening=0.35–0.42` (`~4.0–4.8 cm` total gap =
+    `±2.0–2.4 cm` vertical half-gap, ample for a `1.0–1.6 cm`-thick flat head
+    while halving vertical finger spread vs default `opening=1.0`'s `±4.4 cm`)
+    and **`R_tcp = P_head - (0.007..0.010) * u_pointing_R`** (`standoff_m=0.008`,
+    `7–10 mm` upstream of `P_head` centre on the outer half of the head, NEVER
+    `P_head` itself). Driving default `opening=1.0` (`±4.4 cm`) to
+    `R_tcp = P_head` advances `R_tip` (`TIP_OFFSET - TCP_OFFSET = +1.3 cm` past
+    `R_tcp`) to `~1.0–1.2 cm` from `L_axis` at `z ≈ P_head_z + 4.3 cm`, wedging
+    the receiver's open upper finger directly into Donor's flared vertical
+    finger body and prying Donor open; with Donor grasping `>= 2.5–3.0 cm` from
+    `P_head`, `opening=0.35–0.42`, and `R_tcp` `7–10 mm` upstream of `P_head`,
+    `R_tip` still reaches `3–6 mm` *past* `P_head` (clamping `~1.4–1.7 cm` of
+    the head's **top and bottom parallel flat faces** solidly with `~12 N`
+    rigid area contact, `~22 cm` wrist separation, `~9.7 cm` crossbar
+    separation, zero housing collision) while keeping `R_tip` **`>= 2.0 cm`**
+    horizontally clear of `L_axis` (completely outside Donor's vertical finger
+    body at all heights). Choose **`roll=+90°` vs `-90°`** from the
+    pre-localised receptor asymmetry: flipping `roll` between `+90°` and `-90°`
+    flips the held shaft's lateral feature between `+z_link6` and `-z_link6`,
+    shifting the required `pitch=90°` insertion `yaw` and seated `joint6` by
+    `180°` so one sign ALWAYS lands seated `joint6` within `±1.57 rad`
+    (`>= 1.52 rad` / `~87.6°` bidirectional headroom, guaranteeing `±85°` both
+    ways inside `[-3.1, 3.1]`; or `>= 3.05 rad` / `~175°` in a known CW/CCW
+    twist direction by biasing `joint6` opposite the turn, covering full `90°`
+    twists);
     (5) **Donor `+z` release/retreat, coaxial `pitch=90°` tilt,
     `robo.align_feature`, guarded `nudge` & twist**: donor opens
     (`set_gripper(donor, OPEN)`), withdraws straight up (`+z`, bounded `~4–5 cm`
@@ -382,9 +399,10 @@
     `robo.ik()`), and clears/homes; receiver tilts smoothly from `pitch=0°` to
     `pitch=90°` over the receptor—pointing the shaft **rigidly straight down
     (`-z`)** coaxial with `+x_link6` with zero slip and saving ~50
-    table-transfer steps—stages a `1–2 cm` hover, runs `robo.align_feature`,
-    seats via guarded `robo.nudge(..., stop_on_stall=True)`, and executes the
-    pure-`joint6` axial `yaw` twist.
+    table-transfer steps—stages a `1.0–2.0 cm` hover, runs
+    `robo.align_feature(..., stroke_m=...)`, seats via guarded
+    `robo.nudge(..., stop_on_stall=True)`, and executes the pure-`joint6` axial
+    `yaw` twist.
   - **Thick, rigid parallel-sided blocks or tiles** (`opening > 0.05` across
     high-friction faces): support firm tilted or side grasps so the placing arm
     can present and stand the item upright directly at its destination rather
@@ -544,23 +562,69 @@
   are continuous within uninterrupted simulation execution; model waits and
   interruptions do not provide wall-clock continuity.
 
-## Last-mile contact: nudge and visual_align_and_insert
+## Last-mile contact: Unified Coarse-Code + Fine-Delta Architecture
 
-Keep global planning in your program (which object, which arm, grasp, carry,
-pre-align). Delegate only the last 1–5 cm of contact or alignment (pressing,
-plugging, seating a part in a slot, hanging on a hook, tipping a spout over a rim)
-once the views show the held part or the fingers pre-aligned near the goal.
+Split every manipulation episode cleanly into two complementary layers:
+- **Coarse Code (`move_to` / `execute_motion`)** owns global task logic, arm role
+  selection, full IK chain preflight (`robo.ik()`), and collision-free coarse
+  travel to **`2.5–4 cm` pre-action hover poses** (pre-grasp, pre-handoff,
+  pre-insertion).
+- **Fine Delta (`delta_grasp`, `align_feature`, `nudge`, `visual_align_and_insert`)**
+  owns **ALL three close-range (`<= 4 cm`) physical interactions**:
+  1. **Fine / low-profile tabletop pickup (`robo.delta_grasp(..., contact_table=True,
+     overdrive_m=0.005, lift_dxyz=(0, 0, 0.025))`)**: stage the open gripper
+     `2.5–3.5 cm` above the part, localise the **widest parallel span** of the
+     non-head region via `crop_grid` + `triangulate`/`ray_at_z` (because squeeze
+     force scales as `~101 * opening` N, grasping a `1.0–1.5 cm` wide lateral
+     bit/flange/tab or collared span yields `~5x` the holding force of a `4 mm`
+     bare shaft while leaving even wider clearance to the opposite head), then
+     call `robo.delta_grasp` to align transversely, seat the fingertips lightly
+     onto the tabletop past the `2.6 mm` bevel (`contact_table=True`), close,
+     and lift gently in automatic `3 mm` micro-steps whenever
+     `closed_opening <= 0.045` (`~1–2 N` thin grips) so static friction is not
+     broken on liftoff.
+  2. **Low-altitude orthogonal in-air handoff (`z ≈ 0.85–0.87 m`)**: lift the
+     donor only `+7–9 cm` (`z ≈ 0.85–0.87 m`, minimizing climb distance and hang
+     time) with donor wrist camera turned away (`dot(+z_link6_donor,
+     u_pointing_R) > 0`); from the pre-staged horizontal receiver
+     (`opening=0.38`, `4–6 cm` upstream along `-u_pointing_R`), localise the
+     presented flat head via `crop_grid` + `triangulate` and call
+     `robo.delta_grasp(head_pt, arm=receiver, axis=u_pointing_R,
+     standoff_m=0.008, opening=0.38)` (`~8–10` compact actions total) to clamp
+     its flat parallel faces (`~12 N`) before donor opens and withdraws.
+  3. **Pre-contact aperture/hook/spout engagement (`robo.align_feature(...,
+     stroke_m=...)`)**: hover `1.0–2.0 cm` clear, localise both the held distal
+     working feature and the receptor in the post-hover frame, zero transverse
+     eccentricity, and advance with `stop_on_stall=True`.
 
+- `robo.delta_grasp(target, arm, axis=(0, 0, -1), standoff_m=0.0,
+  overdrive_m=0.0, opening=None, contact_table=False, lift_dxyz=None,
+  preview=False)` executes the full close-range **optional pre-open (skipped in
+  0 steps if within `0.05`) -> transverse align -> guarded axial approach /
+  table-touch -> close -> optional gentle micro-step liftoff** in one compact
+  Delta call (`~8–14` native actions). With `contact_table=True`, only the
+  fingertip floor relaxes to `TABLE_Z - 0.004` (arm links stay strictly above
+  `TABLE_Z + 0.015`), descent steps at `3 mm`/action, and stalling on the
+  tabletop is treated as normal expected seating before closing; post-close
+  `lift_dxyz` automatically uses `3 mm` micro-steps when `closed_opening <=
+  0.045` and reports `closed_opening`, `holding`, `width_m`,
+  `opening_after_lift`, `retained_closure`, and `table_contact_stalled`.
+  Supports `preview=True` for zero-step preflight.
 - `robo.nudge(dxyz, arm, dpitch=, dyaw=, droll=, frame="world" | "tcp",
-  stop_on_stall=True)` is a guarded compact relative move from the measured pose
-  (metres / degrees, at most 6 cm / 20 degrees per call): one native action per
-  5 mm waypoint with no spline ramp (about 2–3 actions per cm), preflighted against
-  reach, joint limits and the table (a refusal costs 0 actions). `frame="tcp"` with
-  `dxyz=(d, 0, 0)` pushes along the fingers. A stall against contact returns
-  `status="stopped"`, `stalled=True`, `stop_reason="contact_or_stall"` and raises
-  nothing: read it as "contact reached or blocked", check the wrist view, then
-  release/withdraw if seated, or back off 3–5 mm with a reverse nudge and correct
-  sideways if misaligned. It measures progress, not force.
+  stop_on_stall=True, allow_table_contact=False)` is a guarded compact relative
+  move from the measured pose (metres / degrees, at most 6 cm / 20 degrees per
+  call): one native action per 5 mm waypoint with no spline ramp (about 2–3
+  actions per cm; automatically tightens to `3 mm`/action when
+  `allow_table_contact=True` or moving while holding a thin part
+  `0 < opening <= 0.045`), preflighted against reach, joint limits and the table
+  (a refusal costs 0 actions). With `allow_table_contact=True`, only the
+  fingertip floor relaxes to `TABLE_Z - 0.004` while arm joints stay strictly
+  above `TABLE_Z + 0.015`. `frame="tcp"` with `dxyz=(d, 0, 0)` pushes along the
+  fingers. A stall against contact returns `status="stopped"`, `stalled=True`,
+  `stop_reason="contact_or_stall"` and raises nothing: read it as "contact
+  reached or blocked", check the wrist view, then release/withdraw if seated, or
+  back off 3–5 mm with a reverse nudge and correct sideways if misaligned. It
+  measures progress, not force.
 - **Pre-contact feature-to-target visual alignment (`robo.align_feature`)**:
   never align `tcp_pos` directly to a narrow receptor (`<= 5 mm` clearance:
   aperture/slot insertion, hook/post hanging, connector plugging, precision
@@ -594,5 +658,6 @@ once the views show the held part or the fingers pre-aligned near the goal.
   ends on the model's done, a zero delta, a contact stall when
   `stop_on_contact_complete=True`, or the round / step budget. Check `status`,
   `stop_reason`, the last feedback and the images; it is not a success verdict.
-- On tight budgets prefer one loop or a few nudges over repeated full re-approach
-  motions for millimetre corrections, and keep `reserve_steps` for retreat and home.
+- On tight budgets prefer one loop or a few Delta calls (`delta_grasp`,
+  `align_feature`, `nudge`) over repeated full re-approach motions for
+  millimetre corrections, and keep `reserve_steps` for retreat and home.

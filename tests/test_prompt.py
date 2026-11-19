@@ -75,7 +75,9 @@ def test_generated_motion_policy_declares_intents_without_controller_tuning(robo
     assert "orthogonal 90° in-air flat-face head handoff" in text.lower()
     assert "pre-staged receiver & minimal-hang ordering" in text.lower()
     assert "dot(+z_link6_donor, receiver_side) < 0" in text
-    assert "opening=0.35–0.42" in text and "7–10 mm" in text and "7–8 cm" in text
+    assert "opening=0.35–0.42" in text and "7–10 mm" in text and "4–6 cm" in text
+    assert "robo.delta_grasp(" in text and "contact_table=True" in text
+    assert "z ≈ 0.85–0.87 m" in text
     assert "z_support + 0.018" not in text
     for forbidden in ("insert_key", "keyhole", "make_kong", "mahjong"):
         assert forbidden not in text
@@ -285,7 +287,9 @@ def test_no_sam_prompt_exposes_geometry_without_sam3_and_keeps_intent_invariants
     assert "orthogonal 90° in-air flat-face head handoff" in prompt_text.lower()
     assert "pre-staged receiver & minimal-hang ordering" in prompt_text.lower()
     assert "dot(+z_link6_donor, receiver_side) < 0" in prompt_text
-    assert "opening=0.35–0.42" in prompt_text and "7–10 mm" in prompt_text and "7–8 cm" in prompt_text
+    assert "opening=0.35–0.42" in prompt_text and "7–10 mm" in prompt_text and "4–6 cm" in prompt_text
+    assert "robo.delta_grasp(" in prompt_text and "contact_table=True" in prompt_text
+    assert "z ≈ 0.85–0.87 m" in prompt_text
     assert "z_support + 0.018" not in prompt_text
     for forbidden in ("insert_key", "keyhole", "make_kong", "mahjong"):
         assert forbidden not in prompt_text
@@ -351,11 +355,14 @@ def test_robodojo_knowledge_encodes_crowded_contact_and_regrasp_polarity(filenam
     assert "orthogonal 90° in-air flat-face head handoff" in doc.lower()
     assert "pre-staged receiver & minimal-hang ordering" in doc.lower()
     doc_flat = " ".join(doc.split())
-    assert "opening <= 0.03" in doc and "7–8 cm" in doc and "-u_pointing_R" in doc
-    assert "4–6 cm" not in doc and "1.5–2.5 cm" not in doc
-    assert "~8–12" in doc and "~25–30" in doc and "< 1.2 s" in doc
+    assert "opening <= 0.03" in doc and "4–6 cm" in doc and "-u_pointing_R" in doc
+    assert "1.5–2.5 cm" not in doc
+    assert "~8–10" in doc and "~25–30" in doc and "< 1.2 s" in doc
     assert "one direct c2 move" in doc_flat.lower()
-    assert "stem/neck `2.5–3.0 cm` from `P_head` centre along the stem toward the distal tip" in doc_flat
+    assert "widest parallel span" in doc_flat and "~101 * opening" in doc_flat
+    assert ">= 2.5–3.0 cm" in doc_flat and "contact_table=True" in doc_flat
+    assert "overdrive_m=0.005" in doc_flat and "standoff_m=0.008" in doc_flat
+    assert "opening=0.38" in doc_flat and "robo.delta_grasp(" in doc_flat
     assert "dot(+z_link6_donor, receiver_side) < 0" in doc_flat
     assert "dot(+z_link6_donor, u_pointing_R) > 0" in doc_flat
     assert "+5.1–7.2 cm" in doc_flat and "pose.axes()[2]" in doc_flat
@@ -366,7 +373,7 @@ def test_robodojo_knowledge_encodes_crowded_contact_and_regrasp_polarity(filenam
     assert "horizontal radial approach heading" in doc_flat and "joint5 ≈ 0" in doc_flat and "±1.52 rad" in doc_flat
     assert "top and bottom parallel flat faces" in doc_flat and "`roll=+90°`" in doc_flat
     assert "+z_link6" in doc and "-z_link6" in doc
-    assert "z ≈ 0.89–0.91 m" in doc
+    assert "z ≈ 0.85–0.87 m" in doc and "+7–9 cm" in doc
     assert "±1.57 rad" in doc and ">= 1.52 rad" in doc and "±85°" in doc and ">= 3.05 rad" in doc and "[-3.1, 3.1]" in doc
     assert "handoff -> hover -> seat -> twist" in doc
     assert "robo.align_feature" in doc and "stop_on_stall=True" in doc
@@ -458,3 +465,50 @@ def test_robodojo_knowledge_encodes_pre_contact_feature_alignment_with_parity():
         assert not re.search(r"pi0|lingbot|rldx|vla|sam3", snippet, re.IGNORECASE)
         assert not re.search(r"\brobo\.(locate|segment|back_project)\b", snippet)
     assert all(s == snippets[0] for s in snippets), "feature alignment bullet must match across all variants"
+
+
+def test_robodojo_knowledge_unified_coarse_code_fine_delta_7way_parity():
+    import re
+    from importlib import resources
+
+    filenames = (
+        "robodojo-intent.md",
+        "robodojo.md",
+        "robodojo-novla.md",
+        "robodojo-nosam.md",
+        "robodojo_xpl_rgb.md",
+        "robodojo_xpl_rgb-novla.md",
+        "robodojo_xpl_rgb-nosam.md",
+    )
+    marker = "## Last-mile contact: Unified Coarse-Code + Fine-Delta Architecture"
+    sections: list[str] = []
+    for filename in filenames:
+        doc = resources.files("codeaspolicy").joinpath(f"knowledge/{filename}").read_text(
+            encoding="utf-8"
+        )
+        idx = doc.index(marker)
+        end = doc.find("\n## ", idx + 1)
+        sec = doc[idx : None if end == -1 else end].rstrip("\n")
+        sections.append(sec)
+        sec_flat = " ".join(sec.split())
+        assert "Unified Coarse-Code + Fine-Delta Architecture" in sec_flat
+        assert "2.5–4 cm" in sec_flat
+        assert "robo.delta_grasp(" in sec_flat
+        assert "contact_table=True" in sec_flat and "overdrive_m=0.005" in sec_flat
+        assert "lift_dxyz=(0, 0, 0.025)" in sec_flat
+        assert "widest parallel span" in sec_flat and "~101 * opening" in sec_flat
+        assert "2.6 mm" in sec_flat and "3 mm" in sec_flat
+        assert "z ≈ 0.85–0.87 m" in sec_flat and "+7–9 cm" in sec_flat
+        assert "standoff_m=0.008" in sec_flat and "opening=0.38" in sec_flat
+        assert "allow_table_contact=False" in sec_flat and "TABLE_Z - 0.004" in sec_flat
+        assert "robo.align_feature(" in sec_flat
+        assert not re.search(
+            r"\b(insert_key|key|keys|keyhole|lock|locks|make_kong|kong|mahjong)\b",
+            sec,
+            re.IGNORECASE,
+        )
+        assert not re.search(r"pi0|lingbot|rldx|vla|sam3", sec, re.IGNORECASE)
+        assert not re.search(r"\brobo\.(locate|segment|back_project)\b", sec)
+    assert all(s == sections[0] for s in sections), (
+        "Unified Coarse-Code + Fine-Delta section must match byte-for-byte across all 7 files"
+    )

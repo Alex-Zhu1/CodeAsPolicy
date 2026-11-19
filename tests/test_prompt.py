@@ -347,7 +347,8 @@ def test_robodojo_knowledge_encodes_crowded_contact_and_regrasp_polarity(filenam
     assert "horizontal radial approach heading" in doc and "joint5 ≈ 0" in doc and "±1.52 rad" in doc
     assert "top and bottom parallel flat faces" in doc and "`roll=+90°`" in doc
     assert "+z_link6" in doc and "-z_link6" in doc
-    assert "±1.57 rad" in doc and ">= 1.54 rad" in doc and "±60°–90°" in doc and "[-3.1, 3.1]" in doc
+    assert "z ≈ 0.89–0.91 m" in doc
+    assert "±1.57 rad" in doc and ">= 1.52 rad" in doc and "±85°" in doc and ">= 3.05 rad" in doc and "[-3.1, 3.1]" in doc
     assert "handoff -> hover -> seat -> twist" in doc
     assert "robo.align_feature" in doc and "stop_on_stall=True" in doc
     assert "z = z_support + h" in doc

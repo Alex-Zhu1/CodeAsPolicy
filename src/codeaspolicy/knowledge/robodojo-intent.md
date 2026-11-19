@@ -298,7 +298,7 @@
     (2) **Donor stem grasp on table (`pitch=90°`)**: donor grasps the narrower
     straight **stem/neck ~1.5–2.5 cm below the flat-faced proximal head** (NOT
     on the round head itself, and NOT on an ultra-thin `<= 2.5 mm` distal tip
-    near `GRIP_ZERO_M`), lifts to clear central mid-air (`z ≈ 0.90–0.92 m`,
+    near `GRIP_ZERO_M`), lifts to clear central mid-air (`z ≈ 0.89–0.91 m`,
     `y ≈ -0.28..-0.22 m`), and orients `yaw` while keeping `pitch=90°` (donor
     wrist & crossbar safely `>= 7 cm` above `+z`) so the **entire flat-faced
     proximal head projects unobstructed horizontally** along the **receiver
@@ -316,8 +316,10 @@
     between `+90°` and `-90°` flips the held shaft's lateral feature between
     `+z_link6` and `-z_link6`, shifting the required `pitch=90°` insertion `yaw`
     and seated `joint6` by `180°` so one sign ALWAYS lands seated `joint6`
-    within `±1.57 rad` with `>= 1.54 rad` (`±60°–90°` post-insertion CW/CCW
-    twist headroom inside `[-3.1, 3.1]`);
+    within `±1.57 rad` (`>= 1.52 rad` / `~87.6°` bidirectional headroom,
+    guaranteeing `±85°` both ways inside `[-3.1, 3.1]`; or `>= 3.05 rad` /
+    `~175°` in a known CW/CCW twist direction by biasing `joint6` opposite the
+    turn, covering full `90°` twists);
     (4) **Donor `+z` release/retreat, coaxial `pitch=90°` tilt,
     `robo.align_feature`, guarded `nudge` & twist**: donor opens
     (`set_gripper(donor, OPEN)`), withdraws straight up (`+z`, bounded `~4–5 cm`

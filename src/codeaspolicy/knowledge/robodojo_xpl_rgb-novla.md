@@ -688,7 +688,7 @@ once the views show the held part or the fingers pre-aligned near the goal.
   `handoff -> hover -> seat -> twist` via `robo.ik()`; (a) donor grasps the
   narrower straight **stem/neck ~1.5–2.5 cm below the flat-faced proximal head**
   at `pitch=90` (not the round head itself), lifts to clear central mid-air
-  (`z ≈ 0.90–0.92 m`, `y ≈ -0.28..-0.22 m`), and orients `yaw` while keeping
+  (`z ≈ 0.89–0.91 m`, `y ≈ -0.28..-0.22 m`), and orients `yaw` while keeping
   `pitch=90` (donor crossbar `>= 7 cm` above `+z`) so the entire flat-faced
   proximal head projects unobstructed horizontally along the **receiver arm's
   horizontal radial approach heading** from its base (`(±0.30, -0.45) ->
@@ -699,8 +699,10 @@ once the views show the held part or the fingers pre-aligned near the goal.
   firmly onto the head's **top and bottom parallel flat faces** (`area contact`,
   zero slip), choosing `roll=+90°` vs `-90°` from the pre-localised receptor
   asymmetry so the lateral shaft feature (`+z_link6` vs `-z_link6`) maps to the
-  receptor with seated `joint6` within `±1.57 rad` (`>= 1.54 rad` / `±60°–90°`
-  post-insertion twist headroom inside `[-3.1, 3.1]`); (c) donor opens
+  receptor with seated `joint6` within `±1.57 rad` (`>= 1.52 rad` / `~87.6°`
+  bidirectional headroom, guaranteeing `±85°` both ways inside `[-3.1, 3.1]`; or
+  `>= 3.05 rad` / `~175°` in a known CW/CCW twist direction by biasing `joint6`
+  opposite the turn, covering full `90°` twists); (c) donor opens
   (`set_gripper(donor, OPEN)`), withdraws straight up (`+z`, bounded `~4–5 cm`
   below the `pitch=90` ceiling `z ≈ 0.95–0.97 m`, prechecked via `robo.ik()`),
   and clears/homes; and (d) receiver tilts smoothly from `pitch=0` to `pitch=90`

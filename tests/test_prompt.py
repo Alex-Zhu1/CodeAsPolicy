@@ -73,6 +73,7 @@ def test_generated_motion_policy_declares_intents_without_controller_tuning(robo
     assert "fixed jaw-rail crossbar" in text and "±4.5–5.0 cm" in text
     assert "tangent-line contact" in text and "z = z_support + h" in text
     assert "orthogonal 90° in-air flat-face head handoff" in text.lower()
+    assert "pre-staged receiver & minimal-hang ordering" in text.lower()
     assert "z_support + 0.018" not in text
     for forbidden in ("insert_key", "keyhole", "make_kong", "mahjong"):
         assert forbidden not in text
@@ -280,6 +281,7 @@ def test_no_sam_prompt_exposes_geometry_without_sam3_and_keeps_intent_invariants
     assert "fixed jaw-rail crossbar" in prompt_text and "±4.5–5.0 cm" in prompt_text
     assert "tangent-line contact" in prompt_text and "z = z_support + h" in prompt_text
     assert "orthogonal 90° in-air flat-face head handoff" in prompt_text.lower()
+    assert "pre-staged receiver & minimal-hang ordering" in prompt_text.lower()
     assert "z_support + 0.018" not in prompt_text
     for forbidden in ("insert_key", "keyhole", "make_kong", "mahjong"):
         assert forbidden not in prompt_text
@@ -343,6 +345,10 @@ def test_robodojo_knowledge_encodes_crowded_contact_and_regrasp_polarity(filenam
     assert "z_support + 0.018" not in doc
     assert "lets gravity pivot" not in doc.lower()
     assert "orthogonal 90° in-air flat-face head handoff" in doc.lower()
+    assert "pre-staged receiver & minimal-hang ordering" in doc.lower()
+    assert "opening <= 0.03" in doc and "4–6 cm" in doc and "-pointing" in doc
+    assert "~8–12" in doc and "~25–30" in doc and "< 1.2 s" in doc
+    assert "one direct c2 move" in " ".join(doc.split()).lower()
     assert "stem/neck ~1.5–2.5 cm below the flat-faced proximal head" in doc
     assert "horizontal radial approach heading" in doc and "joint5 ≈ 0" in doc and "±1.52 rad" in doc
     assert "top and bottom parallel flat faces" in doc and "`roll=+90°`" in doc

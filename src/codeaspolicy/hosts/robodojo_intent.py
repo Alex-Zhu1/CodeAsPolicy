@@ -187,9 +187,9 @@ class IntentController:
         far_profile = (
             MotionProfile(velocity=3.0, acceleration=24.0, jerk=950.0, phase="transit")
             if empty
-            else MotionProfile(velocity=1.1, acceleration=6.0, jerk=800.0, phase="carry")
+            else MotionProfile(velocity=2.0, acceleration=16.0, jerk=900.0, phase="carry")
             if thin_retain
-            else MotionProfile(velocity=1.8, acceleration=18.0, jerk=900.0, phase="carry")
+            else MotionProfile(velocity=2.2, acceleration=20.0, jerk=950.0, phase="carry")
         )
         precise = record["position_m"] < .004 or record["orientation_deg"] < 2.
         near = "precision" if precise else "approach"
@@ -205,7 +205,7 @@ class IntentController:
         elif mode in ("free", "approach"):
             # Region scales with the requested accuracy, not an object's label.
             near_profile = MotionProfile(
-                velocity=min(far_profile.velocity, 0.9 if precise else 1.4),
+                velocity=min(far_profile.velocity, 0.9 if precise else 1.6),
                 acceleration=min(far_profile.acceleration, 18.0 if precise else 20.0),
                 jerk=min(far_profile.jerk, 800.0 if precise else 900.0),
                 phase=near,
@@ -561,7 +561,7 @@ class IntentController:
             grippers={a: "keep" for a in kin.ARMS},
             keep_relative=record["contract"]["keep_relative"],
             max_steps=available, timeout_s=3600., position_tolerance_m=record["position_m"],
-            orientation_tolerance_deg=record["orientation_deg"], checkpoint_steps=4,
+            orientation_tolerance_deg=record["orientation_deg"], checkpoint_steps=8,
             require_inter_arm_clearance=False,
             allow_joint_fallback=allow_joint_fallback, **record["policy"],
         )

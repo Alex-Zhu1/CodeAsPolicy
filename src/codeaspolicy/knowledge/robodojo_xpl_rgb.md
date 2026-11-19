@@ -689,7 +689,11 @@ once the views show the held part or the fingers pre-aligned near the goal.
   proximal head horizontally for an orthogonal `pitch=0, roll=±90°` receiver
   side clamp (90°-orthogonal donor-above / receiver-horizontal wrist axes
   separate wrist housings by `~22 cm` and crossbars by `~9.7 cm`, with the
-  donor crossbar `>= 7 cm` above TCP, avoiding housing collisions); (5) for
+  donor crossbar `>= 7 cm` above TCP, avoiding housing collisions; pre-stage
+  the empty open receiver arm at its horizontal pre-handoff pose `4–6 cm` back
+  along `-pointing` from `P_head`, clear of the donor lift column, *before*
+  the donor grasps/lifts a narrow stem so airborne hang stays under `~25–30`
+  steps / `< 1.2 s`); (5) for
   **held-object lower-extremity clearance (`object_bottom_z` vs `tcp_z`)**,
   because `tcp_pos` is the pad centre rather than the object's lowest point,
   `tcp_z > z_obs` alone is insufficient when part of the held object hangs or
@@ -712,32 +716,48 @@ once the views show the held part or the fingers pre-aligned near the goal.
   **tangent-line contact** that drops in mid-air or rolls/pops out under axial
   load or twist (and never pinch a narrow distal tip near ARX-X5's `~2.3 mm`
   minimum closed-jaw gap `GRIP_ZERO_M` to pitch-flip a heavier head upward).
-  Instead use **orthogonal 90° in-air flat-face head handoff**: first localise
-  the receptor and **two points** along any asymmetric directional feature
-  (`crop_grid` + `triangulate`/`ray_at_z`, passing `z = z_support + h` on
-  top-face pixels) and preflight the full IK chain
-  `handoff -> hover -> seat -> twist` via `robo.ik()`; (a) donor grasps the
-  narrower straight **stem/neck ~1.5–2.5 cm below the flat-faced proximal head**
-  at `pitch=90` (not the round head itself), lifts to clear central mid-air
-  (`z ≈ 0.89–0.91 m`, `y ≈ -0.28..-0.22 m`), and orients `yaw` while keeping
-  `pitch=90` (donor crossbar `>= 7 cm` above `+z`) so the entire flat-faced
-  proximal head projects unobstructed horizontally along the **receiver arm's
-  horizontal radial approach heading** from its base (`(±0.30, -0.45) ->
-  P_head`, keeping receiver `joint5 ≈ 0` with full `±1.52 rad` margin); (b)
-  with the donor parked stationary, receiver approaches horizontally (`pitch=0`,
-  `yaw` coaxial from exposed head through shaft toward distal tip, `roll=+90°`
-  or `-90°` so `close_dir` is vertical `±z`) and clamps its flat finger pads
-  firmly onto the head's **top and bottom parallel flat faces** (`area contact`,
-  zero slip), choosing `roll=+90°` vs `-90°` from the pre-localised receptor
-  asymmetry so the lateral shaft feature (`+z_link6` vs `-z_link6`) maps to the
-  receptor with seated `joint6` within `±1.57 rad` (`>= 1.52 rad` / `~87.6°`
-  bidirectional headroom, guaranteeing `±85°` both ways inside `[-3.1, 3.1]`; or
-  `>= 3.05 rad` / `~175°` in a known CW/CCW twist direction by biasing `joint6`
-  opposite the turn, covering full `90°` twists); (c) donor opens
-  (`set_gripper(donor, OPEN)`), withdraws straight up (`+z`, bounded `~4–5 cm`
-  below the `pitch=90` ceiling `z ≈ 0.95–0.97 m`, prechecked via `robo.ik()`),
-  and clears/homes; and (d) receiver tilts smoothly from `pitch=0` to `pitch=90`
-  over the receptor (pointing the shaft rigidly straight down `-z` coaxial with
-  `+x_link6`), stages a `1–2 cm` hover, runs `robo.align_feature`, seats via
-  guarded `robo.nudge(..., stop_on_stall=True)`, and executes the axial `yaw`
-  twist.
+  Instead use **orthogonal 90° in-air flat-face head handoff** with
+  **pre-staged receiver & minimal-hang ordering** (a narrow smooth stem with
+  `opening <= 0.03` held vertically at `pitch=90` resists `-z` gravity purely
+  by fingertip friction and creeps downward over prolonged `>= 60`-step
+  airborne suspension): first localise the receptor and **two points** along
+  any asymmetric directional feature (`crop_grid` + `triangulate`/`ray_at_z`,
+  passing `z = z_support + h` on top-face pixels) and preflight the full IK
+  chain `handoff -> hover -> seat -> twist` plus the receiver pre-handoff pose
+  (`4–6 cm` back along `-pointing` from `P_head`, clear of the donor's vertical
+  lift column) via `robo.ik()`; (a) **pre-stage the empty receiver arm FIRST**
+  (before grasping the stem) to its open horizontal `pitch=0, roll=±90°`
+  pre-handoff pose (`4–6 cm` back along `-pointing` from `P_head`, clear of the
+  donor's vertical lift column) and park it stationary—if a close-up wrist view
+  of the target receptor is needed, capture it with the receiver arm first and
+  move directly to pre-handoff rather than homing in between; (b) **direct
+  single-intent donor lift/present**: donor grasps the narrower straight
+  **stem/neck ~1.5–2.5 cm below the flat-faced proximal head** at `pitch=90`
+  (not the round head itself) and lifts in **one direct C2 move** to `P_head`
+  (`z ≈ 0.89–0.91 m`, `y ≈ -0.28..-0.22 m`—preferring minimal horizontal/yaw
+  travel, or a pure straight-up `+z` lift above the pickup XY whenever receiver
+  horizontal radial IK and `4–6 cm` pre-handoff clearance already hold there,
+  verified via `robo.ik()`), keeping `pitch=90` (donor crossbar `>= 7 cm` above
+  `+z`) so the entire flat-faced proximal head projects unobstructed
+  horizontally along the **receiver arm's horizontal radial approach heading**
+  from its base (`(±0.30, -0.45) -> P_head`, keeping receiver `joint5 ≈ 0` with
+  full `±1.52 rad` margin); (c) **immediate short-stroke receiver clamp**: with
+  the donor parked stationary and the exposed head sitting directly `4–6 cm` in
+  front of the open pre-staged receiver jaws, receiver executes only the short
+  final `align` + `close` (`~8–12` steps, keeping total donor stem hang time
+  under `~25–30` steps / `< 1.2 s`) horizontally (`pitch=0`, `yaw` coaxial from
+  exposed head through shaft toward distal tip, `roll=+90°` or `-90°` so
+  `close_dir` is vertical `±z`) onto the head's
+  **top and bottom parallel flat faces** (`area contact`, zero slip), choosing `roll=+90°` vs `-90°` from the
+  pre-localised receptor asymmetry so the lateral shaft feature (`+z_link6` vs
+  `-z_link6`) maps to the receptor with seated `joint6` within `±1.57 rad`
+  (`>= 1.52 rad` / `~87.6°` bidirectional headroom, guaranteeing `±85°` both
+  ways inside `[-3.1, 3.1]`; or `>= 3.05 rad` / `~175°` in a known CW/CCW twist
+  direction by biasing `joint6` opposite the turn, covering full `90°` twists);
+  (d) donor opens (`set_gripper(donor, OPEN)`), withdraws straight up (`+z`,
+  bounded `~4–5 cm` below the `pitch=90` ceiling `z ≈ 0.95–0.97 m`, prechecked
+  via `robo.ik()`), and clears/homes; and (e) receiver tilts smoothly from
+  `pitch=0` to `pitch=90` over the receptor (pointing the shaft rigidly
+  straight down `-z` coaxial with `+x_link6`), stages a `1–2 cm` hover, runs
+  `robo.align_feature`, seats via guarded `robo.nudge(..., stop_on_stall=True)`,
+  and executes the axial `yaw` twist.

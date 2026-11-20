@@ -168,7 +168,7 @@ class Gripper:
     """Outcome of ``set_gripper``.
 
     opening: 1.0 open, 0.0 closed. holding: opening > 0.01 after close (verify visually).
-    width_m: estimated held width (m) after close, else None.
+    width_m: estimated held width (m) after close, else None. ``arms`` holds per-arm dicts.
     """
 
     arm: str
@@ -180,6 +180,7 @@ class Gripper:
     step: int | None
     step_limit: int | None
     truncated: bool
+    arms: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -271,6 +272,7 @@ class FeatureAlignment:
     truncated: bool
     rim_contact_suspected: bool = False
     suggested_backoff_dxyz: tuple[float, float, float] | None = None
+    arms: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -322,6 +324,7 @@ class DeltaGrasp:
     ik_error: str | None
     note: str | None
     truncated: bool
+    arms: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -435,6 +438,19 @@ class IKSolution:
     max_delta_rad: float
     flipped_jaw: bool = False
     reason: str | None = None
+
+
+@dataclass(frozen=True)
+class DualIKSolution:
+    """Outcome of ``ik_both``: joint bimanual URDF kinematics and envelope check (0 steps)."""
+
+    ok: bool
+    collides: bool
+    clearance_m: float
+    violations: tuple[str, ...]
+    left: IKSolution
+    right: IKSolution
+    reason: str | None
 
 
 @dataclass(frozen=True, repr=False)
@@ -750,6 +766,7 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         TriangulatedPoint,
         PixelPoint,
         IKSolution,
+        DualIKSolution,
     )
     NAME: ClassVar[str] = "robodojo"
     #: No success flag while the episode runs (RPent keeps it from its planner
@@ -1043,7 +1060,7 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         return result
 
     def show(self, camera: str = "cam_head") -> None:
-        """Attach current image of ``camera`` to this turn's feedback (use only when a decision depends on it)."""
+        """Attach current image of ``camera`` (or ``"all"`` for all three views) to this turn's feedback."""
         super().show(camera)
 
     def artifact(self, name: str, *, step: int = -1) -> bytes:
@@ -1795,6 +1812,7 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         left: dict | None = None,
         right: dict | None = None,
         stop_on_stall: bool = True,
+        independent_stall: bool = False,
         stall_steps: int = 2,
         max_steps: int | None = None,
         reserve_steps: int = 0,
@@ -1803,25 +1821,22 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         max_angular_deg: float = 20.0,
         allow_table_contact: bool = False,
     ) -> Nudge:
-        """Guarded short relative TCP move for last-mile contact (<= ``max_linear_m`` <= 0.12 m, <= ``max_angular_deg`` <= 45 deg).
+        """Guarded short relative TCP move (<= ``max_linear_m`` <= 0.12 m, <= ``max_angular_deg`` <= 45 deg; 0 steps if rejected).
 
-        ``frame="world"`` adds to world xyz and pitch/yaw/roll; ``frame="tcp"`` moves along TCP
-        (+x pointing, +y jaw-closing, +z normal). ``arm="both"`` takes ``left={...}``/``right={...}``.
-        ``compact=True`` steps 5 mm/action (3 mm with ``allow_table_contact=True`` or thin hold
-        ``opening <= 0.045``); preflighted (refusal costs 0 steps). ``allow_table_contact=True``
-        relaxes only the fingertip floor to ``TABLE_Z - 0.004`` while arm links stay strictly clear.
-        ``stop_on_stall=True`` returns ``status="stopped", stalled=True, stop_reason="contact_or_stall"``
-        without raising (kinematic progress test, not force; check views).
+        ``frame`` is ``"world"`` or ``"tcp"`` (+x pointing, +y jaw-closing). ``arm="both"`` takes
+        ``left``/``right`` dicts (``independent_stall=True`` holds a stalled arm while the other finishes).
+        ``compact=True`` steps 5 mm (3 mm with ``allow_table_contact=True`` or ``opening <= 0.045``);
+        ``stop_on_stall=True`` stops on kinematic stall (not force).
         """
         kwargs = self._nudge_kwargs(dxyz, arm, dpitch, dyaw, droll, gripper, frame, left,
                                     right, stop_on_stall, stall_steps, max_steps,
                                     reserve_steps, compact, max_linear_m, max_angular_deg,
-                                    allow_table_contact)
+                                    allow_table_contact, independent_stall)
         return self._stateful("nudge", kwargs, lambda p: self._nudge_result(kwargs, p))
 
     def delta_grasp(
         self,
-        target: Any,
+        target: Any = None,
         arm: str = "right",
         *,
         axis: Sequence[float] = (0.0, 0.0, -1.0),
@@ -1830,6 +1845,8 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         opening: float | None = None,
         contact_table: bool = False,
         lift_dxyz: Sequence[float] | None = None,
+        left: Any = None,
+        right: Any = None,
         align_tol_m: float = 0.0025,
         max_linear_m: float = 0.06,
         max_steps: int = 36,
@@ -1837,26 +1854,24 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         require_current_target: bool = False,
         preview: bool = False,
     ) -> DeltaGrasp:
-        """Compact close-range grasp or in-air handoff clamp from a staged ~2-5 cm hover.
+        """Compact close-range grasp or in-air handoff clamp from a staged ~2-5 cm hover (single or ``arm="both"``).
 
-        Runs: (1) optional pre-open to ``opening`` (0 steps if within 0.05), (2) transverse
-        alignment perpendicular to ``axis`` (gated by ``align_tol_m``), (3) guarded axial approach
-        to ``target - standoff_m * axis + overdrive_m * axis``, (4) close, and (5) optional guarded
-        ``lift_dxyz`` (3 mm micro-steps when ``closed_opening <= 0.045``).
-        ``target`` accepts ``[x, y, z]``, ``Pose``, or any perception result with ``xyz``.
-        ``contact_table=True`` uses 3 mm steps with ``allow_table_contact=True`` and treats tabletop
-        stall as expected seating before close. ``preview=True`` runs 0-step preflight.
+        Runs pre-open -> transverse align -> guarded axial approach to ``target - standoff_m*axis + overdrive_m*axis``
+        -> close -> optional ``lift_dxyz`` (3 mm micro-steps for ``closed_opening <= 0.045``). ``target`` (or
+        ``left``/``right`` targets/spec dicts when ``arm="both"``) accepts ``[x,y,z]``, ``Pose``, or perception
+        results with ``xyz``. ``contact_table=True`` seats on table in 3 mm steps. ``preview=True`` runs 0-step preflight.
         """
         if type(preview) is not bool:
             raise ValueError("preview must be bool")
         if type(require_current_target) is not bool:
             raise ValueError("require_current_target must be bool")
-        kwargs = self._delta_grasp_kwargs(
+        kwargs, targets_to_check = self._delta_grasp_kwargs(
             target, arm, axis, standoff_m, overdrive_m, opening, contact_table,
-            lift_dxyz, align_tol_m, max_linear_m, max_steps, reserve_steps,
+            lift_dxyz, left, right, align_tol_m, max_linear_m, max_steps, reserve_steps,
         )
         if require_current_target:
-            self.require_current(target)
+            for item in targets_to_check:
+                self.require_current(item)
         if preview:
             payload = self._readonly("preview_delta_grasp", kwargs)
             return self._delta_grasp_result(kwargs, payload, preview=True)
@@ -1866,14 +1881,17 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
 
     def align_feature(
         self,
-        feature: Any,
-        target: Any,
+        feature: Any = None,
+        target: Any = None,
         arm: str = "right",
         *,
         axis: Sequence[float] = (0.0, 0.0, -1.0),
         standoff_m: float | None = None,
         stroke_m: float | None = None,
         stroke_dxyz: Sequence[float] | None = None,
+        left: Mapping[str, Any] | None = None,
+        right: Mapping[str, Any] | None = None,
+        independent_stall: bool = True,
         align_tol_m: float = 0.0025,
         max_linear_m: float = 0.06,
         max_steps: int = 15,
@@ -1885,26 +1903,29 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         require_current_feature: bool = True,
         require_current_target: bool = False,
     ) -> FeatureAlignment:
-        """Align a held distal working ``feature`` to ``target`` perpendicular to ``axis``, with optional guarded stroke.
+        """Align held distal ``feature`` to ``target`` perpendicular to ``axis`` with optional guarded stroke (single or ``arm="both"``).
 
-        Accepts ``[x, y, z]``, ``Pose``, or perception results with ``xyz`` (requires current
-        provenance on ``feature`` by default). Optional ``standoff_m`` positions upstream along
-        ``-axis``; optional ``stroke_m`` (along ``+axis``) or ``stroke_dxyz`` runs only if aligned
-        within ``align_tol_m``. ``preview=True`` runs 0-step preflight.
+        Accepts ``[x,y,z]``, ``Pose``, or perception results with ``xyz`` (current provenance on ``feature`` by default).
+        For ``arm="both"``, pass ``left``/``right`` dicts with ``feature`` & ``target`` (``independent_stall=False`` for
+        coupled rigid bodies). Optional ``standoff_m`` / ``stroke_m`` / ``stroke_dxyz``. ``preview=True`` runs 0-step preflight.
         """
         if type(preview) is not bool:
             raise ValueError("preview must be bool")
         if type(require_current_feature) is not bool or type(require_current_target) is not bool:
             raise ValueError("require_current_feature and require_current_target must be bool")
-        kwargs = self._align_feature_kwargs(
+        kwargs, features_to_check, targets_to_check = self._align_feature_kwargs(
             feature, target, arm, axis, standoff_m, stroke_m, stroke_dxyz,
+            left, right, independent_stall,
             align_tol_m, max_linear_m, max_steps, reserve_steps,
             stop_on_stall, stall_steps, allow_table_contact,
         )
-        if require_current_feature and _has_provenance(feature):
-            self.require_current(feature)
+        if require_current_feature:
+            for item in features_to_check:
+                if _has_provenance(item):
+                    self.require_current(item)
         if require_current_target:
-            self.require_current(target)
+            for item in targets_to_check:
+                self.require_current(item)
         if preview:
             payload = self._readonly("preview_align_feature", kwargs)
             return self._align_feature_result(kwargs, payload, preview=True)
@@ -2007,32 +2028,111 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
                     raise
         return self._align_result(payload)
 
-    def set_gripper(self, arm: str, gripper: int, opening: float | None = None) -> Gripper:
-        """Close (``robo.CLOSE=1``) or open (``robo.OPEN=-1``) one gripper without moving arms (2-10 actions).
+    @staticmethod
+    def _grip_opening(command: int, opening: Any) -> float:
+        if isinstance(opening, bool):
+            raise ValueError(f"opening must be a number in (0, 1], got {opening!r}")
+        try:
+            fraction = float(opening)
+        except (TypeError, ValueError) as exc:
+            raise ValueError(f"opening must be a number in (0, 1], got {opening!r}") from exc
+        if not math.isfinite(fraction) or command != -1 or not 0.0 < fraction <= 1.0:
+            raise ValueError("opening goes with robo.OPEN and must be in (0, 1]")
+        return fraction
+
+    def _parse_grip_spec(self, spec: Any, name: str) -> Any:
+        if isinstance(spec, Mapping):
+            extra = sorted(set(spec) - {"gripper", "opening"})
+            if extra:
+                raise ValueError(f"{name} has unknown keys {extra}")
+            if "gripper" not in spec:
+                raise ValueError(f"{name} mapping must contain 'gripper'")
+            cmd = _command(spec["gripper"], allow_keep=True)
+            out: dict[str, Any] = {"gripper": cmd}
+            if spec.get("opening") is not None:
+                out["opening"] = self._grip_opening(cmd, spec["opening"])
+            return out
+        if isinstance(spec, (tuple, list)) and not isinstance(spec, (str, bytes)):
+            if len(spec) != 2:
+                raise ValueError(f"{name} tuple must be (gripper, opening), got {spec!r}")
+            cmd = _command(spec[0], allow_keep=True)
+            if spec[1] is not None:
+                return {"gripper": cmd, "opening": self._grip_opening(cmd, spec[1])}
+            return {"gripper": cmd}
+        return _command(spec, allow_keep=True)
+
+    def set_gripper(
+        self,
+        arm: str,
+        gripper: int | None = None,
+        opening: float | None = None,
+        *,
+        left: Any = None,
+        right: Any = None,
+    ) -> Gripper:
+        """Close (``robo.CLOSE=1``) or open (``robo.OPEN=-1``) one or ``"both"`` grippers without moving arms (2-10 actions).
 
         Optional ``opening`` in ``(0, 1]`` goes with ``robo.OPEN`` (jaw gap ~= ``0.002 + 0.109 * opening`` m).
+        For ``arm="both"``, pass uniform ``gripper``/``opening`` or per-arm ``left``/``right`` (cmd, ``(cmd, opening)``, or dict).
         ``holding`` is not proof of identity: confirm lift in wrist view or ``locate``.
         """
-        arm = _arm(arm)
-        command = _command(gripper, allow_keep=False)
-        kwargs: dict[str, Any] = {"arm": arm, "gripper": command}
-        if opening is not None:
-            try:
-                fraction = float(opening)
-            except (TypeError, ValueError) as exc:
-                raise ValueError(f"opening must be a number in (0, 1], got {opening!r}") from exc
-            if command != -1 or not 0.0 < fraction <= 1.0:
-                raise ValueError("opening goes with robo.OPEN and must be in (0, 1]")
-            kwargs["opening"] = fraction
+        if arm not in (*self.ARMS, "both"):
+            raise ValueError(f"arm must be 'left', 'right' or 'both', got {arm!r}")
+        which = str(arm)
+        default_cmd: str
+        if which in self.ARMS:
+            if left is not None or right is not None:
+                raise ValueError("left= / right= go with arm='both'")
+            if gripper is None:
+                raise ValueError("gripper must be 1 (close) or -1 (open)")
+            command = _command(gripper, allow_keep=False)
+            kwargs: dict[str, Any] = {"arm": which, "gripper": command}
+            if opening is not None:
+                kwargs["opening"] = self._grip_opening(command, opening)
+            default_cmd = "closed" if command > 0 else "open"
+        else:
+            if left is not None or right is not None:
+                if gripper is not None or opening is not None:
+                    raise ValueError("pass either gripper/opening or left=/right= for arm='both'")
+                kwargs = {"arm": "both"}
+                cmds: list[int] = []
+                for side, spec in (("left", left), ("right", right)):
+                    if spec is not None:
+                        parsed = self._parse_grip_spec(spec, side)
+                        kwargs[side] = parsed
+                        cmd_val = parsed["gripper"] if isinstance(parsed, dict) else int(parsed)
+                        if cmd_val != 0:
+                            cmds.append(cmd_val)
+                if not cmds:
+                    default_cmd = "keep"
+                elif all(c > 0 for c in cmds):
+                    default_cmd = "closed"
+                elif all(c < 0 for c in cmds):
+                    default_cmd = "open"
+                else:
+                    default_cmd = "mixed"
+            else:
+                if gripper is None:
+                    raise ValueError("arm='both' requires gripper or left=/right=")
+                command = _command(gripper, allow_keep=False)
+                kwargs = {"arm": "both", "gripper": command}
+                if opening is not None:
+                    kwargs["opening"] = self._grip_opening(command, opening)
+                default_cmd = "closed" if command > 0 else "open"
 
         def build(p: dict[str, Any]) -> Gripper:
             status = p.get("status") or {}
             state = self._latest_state()
             width = p.get("width_m")
+            fallback_open = (
+                state.arm(which).gripper
+                if which in self.ARMS
+                else min(state.left.gripper, state.right.gripper)
+            )
             return Gripper(
-                arm=arm,
-                commanded=str(p.get("gripper") or ("closed" if command > 0 else "open")),
-                opening=float(p.get("opening", state.arm(arm).gripper)),
+                arm=which,
+                commanded=str(p.get("gripper") or default_cmd),
+                opening=float(p.get("opening", fallback_open)),
                 holding=bool(p.get("holding")),
                 width_m=float(width) if width is not None else None,
                 steps_used=int(p.get("steps_used", 0)),
@@ -2041,6 +2141,7 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
                     int(status["step_limit"]) if status.get("step_limit") is not None else None
                 ),
                 truncated=state.truncated,
+                arms=dict(p.get("arms") or {}),
             )
 
         return self._stateful("grip", kwargs, build)
@@ -2068,6 +2169,25 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
             )
 
         return self._stateful("home", {"arm": which}, build)
+
+    def home_pose(self, arm: str = "both") -> Pose | dict[str, Pose]:
+        """Return initial step-0 world TCP ``Pose`` for ``"left"``, ``"right"``, or ``"both"`` (dict; 0 steps)."""
+        if arm not in (*self.ARMS, "both"):
+            raise ValueError(f"arm must be 'left', 'right' or 'both', got {arm!r}")
+        cache: dict[str, Pose] | None = getattr(self, "_home_poses_cache", None)
+        if cache is None:
+            st0 = self.state(0)
+            cache = {}
+            for name in self.ARMS:
+                arm_state = st0.arm(name)
+                if len(arm_state.joints) == 6:
+                    cache[name] = self.fk(name, arm_state.joints)
+                else:
+                    cache[name] = Pose(arm_state.tcp_pos, arm_state.eef_quat)
+            self._home_poses_cache = cache
+        if arm == "both":
+            return dict(cache)
+        return cache[arm]
 
     def pose_from_axes(
         self,
@@ -2143,14 +2263,11 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         opening: float | None = None,
         twist_rad: float = 0.0,
     ) -> IKSolution:
-        """Solve local URDF IK (0 steps) with table, inter-arm envelope, camera-housing, and twist checks.
+        """Solve local URDF IK (0 steps) with table, inter-arm, camera-housing, and twist checks.
 
-        ``target`` takes ``Pose``, ``{"xyz": ..., "angles": [p, y, r]}``, ``{"xyz": ..., "quat": ...}``,
-        or ``xyz``. ``jaw_symmetry=True`` evaluates 0/180 deg empty-jaw roll, preferring camera-housing
-        away from the other arm and ``twist_rad`` headroom on ``joint6``. ``continuous=True`` checks
-        straight-line SLERP from ``seed``. ``check_other_arm=True`` rejects inter-arm collisions against
-        ``other_joints`` (or the other arm's recorded state). Loop over candidate poses/axes in Python
-        (chaining ``seed=prev.joints`` and ranking by ``min_margin_rad``) instead of guessing one pose.
+        ``target`` accepts ``Pose``, ``{"xyz", "angles"}``, ``{"xyz", "quat"}``, or ``xyz``.
+        ``jaw_symmetry=True`` evaluates 0/180 deg jaw roll (housing away, ``twist_rad`` headroom);
+        ``continuous=True`` checks SLERP line from ``seed``; ``check_other_arm=True`` checks ``other_joints``.
         """
         import inspect
 
@@ -2400,6 +2517,495 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
             )
         return min(evaluated, key=lambda item: item[0])[1]
 
+    @staticmethod
+    def _ik_goal_matrix(kin: Any, target: Any, start_t: Any) -> Any:
+        import numpy as np
+
+        goal = np.eye(4, dtype=float)
+        if isinstance(target, Pose):
+            goal[:3, 3] = target.xyz
+            goal[:3, :3] = kin.rot_from_quat(target.quat)
+        elif isinstance(target, dict):
+            if "angles" in target:
+                if set(target) != {"xyz", "angles"}:
+                    raise ValueError("angle target needs only xyz and angles")
+                goal[:3, 3] = _floats(target["xyz"], 3, "target xyz")
+                goal[:3, :3] = kin.orientation(*_floats(target["angles"], 3, "target angles"))
+            elif "xyz" in target and "quat" in target:
+                p = Pose(target["xyz"], target["quat"])
+                goal[:3, 3] = p.xyz
+                goal[:3, :3] = kin.rot_from_quat(p.quat)
+            else:
+                raise ValueError("dict target must provide (xyz, angles) or (xyz, quat)")
+        else:
+            goal[:3, 3] = _floats(target, 3, "target xyz")
+            goal[:3, :3] = start_t[:3, :3]
+        return goal
+
+    def ik_both(
+        self,
+        left: Any = None,
+        right: Any = None,
+        *,
+        left_seed: Sequence[float] | None = None,
+        right_seed: Sequence[float] | None = None,
+        jaw_symmetry: bool = False,
+        continuous: bool = False,
+        pos_tol_m: float = 0.002,
+        rot_tol_deg: float = 1.0,
+        left_opening: float | None = None,
+        right_opening: float | None = None,
+        left_twist_rad: float = 0.0,
+        right_twist_rad: float = 0.0,
+    ) -> DualIKSolution:
+        """Solve joint bimanual URDF IK (0 steps) with table, inter-arm envelope, camera-housing, and line checks.
+
+        Omitted ``left`` or ``right`` holds its seed/current joints. ``jaw_symmetry=True`` jointly evaluates
+        0/180 deg jaw rolls across both arms to maximize ``clearance_m``, turn both ``+z_link6`` camera
+        housings away from each other, and satisfy ``left_twist_rad``/``right_twist_rad``. ``continuous=True``
+        checks synchronized straight-line SLERP trajectories for table and inter-arm clearance.
+        """
+        import numpy as np
+
+        from .hosts import robodojo_kinematics as kin
+
+        if type(jaw_symmetry) is not bool or type(continuous) is not bool:
+            raise ValueError("jaw_symmetry and continuous must be bool")
+        if isinstance(pos_tol_m, bool) or isinstance(rot_tol_deg, bool):
+            raise ValueError("pos_tol_m and rot_tol_deg must be positive finite numbers")
+        tol_m, tol_deg = float(pos_tol_m), float(rot_tol_deg)
+        if not (math.isfinite(tol_m) and tol_m > 0.0 and math.isfinite(tol_deg) and tol_deg > 0.0):
+            raise ValueError("pos_tol_m and rot_tol_deg must be positive finite numbers")
+        if isinstance(left_twist_rad, bool) or isinstance(right_twist_rad, bool):
+            raise ValueError("left_twist_rad and right_twist_rad must be finite numbers")
+        twists = {
+            "left": _floats((left_twist_rad,), 1, "left_twist_rad")[0],
+            "right": _floats((right_twist_rad,), 1, "right_twist_rad")[0],
+        }
+        explicit_openings: dict[str, float | None] = {}
+        for side, raw_op in (("left", left_opening), ("right", right_opening)):
+            if raw_op is None:
+                explicit_openings[side] = None
+            else:
+                if isinstance(raw_op, bool):
+                    raise ValueError(f"{side}_opening must be in [0, 1], got {raw_op!r}")
+                op_v = _floats((raw_op,), 1, f"{side}_opening")[0]
+                if not 0.0 <= op_v <= 1.0:
+                    raise ValueError(f"{side}_opening must be in [0, 1], got {raw_op!r}")
+                explicit_openings[side] = op_v
+
+        need_seed = left_seed is None or right_seed is None
+        need_opening = left_opening is None or right_opening is None
+        state_obj: State | None = None
+        if need_seed:
+            state_obj = self._latest_state()
+        elif need_opening:
+            state_obj = self._last_state
+            if state_obj is None:
+                try:
+                    state_obj = self._latest_state()
+                except Exception:  # noqa: BLE001
+                    state_obj = None
+
+        cur_joints: dict[str, tuple[float, ...]] = {}
+        openings: dict[str, float] = {}
+        for side, raw_seed in (("left", left_seed), ("right", right_seed)):
+            if raw_seed is not None:
+                cur_joints[side] = _floats(raw_seed, 6, f"{side}_seed")
+            else:
+                assert state_obj is not None
+                cur_joints[side] = _floats(state_obj.arm(side).joints, 6, f"{side}_seed")
+            if explicit_openings[side] is not None:
+                openings[side] = float(explicit_openings[side])
+            elif state_obj is not None and math.isfinite(state_obj.arm(side).gripper):
+                openings[side] = max(0.0, min(1.0, float(state_obj.arm(side).gripper)))
+            else:
+                openings[side] = 0.5
+
+        weights = np.array([2.0, 2.0, 1.5, 1.0, 1.0, 0.5], dtype=float)
+        inter_fn = getattr(kin, "inter_arm_violations", None)
+        min_dist_fn = getattr(
+            kin, "inter_arm_min_distance", getattr(kin, "_inter_arm_min_distance", None)
+        )
+        housing_fn = getattr(kin, "housing_exposure_penalty", None)
+        twist_fn = getattr(kin, "twist_margin_rad", None)
+
+        def _twist_margin(q_arm: Sequence[float], twist_f: float) -> float:
+            if callable(twist_fn):
+                return float(twist_fn(q_arm, twist_rad=twist_f))
+            lo5, hi5 = kin.JOINT_LIMITS[5]
+            q5 = float(q_arm[5])
+            return min(q5 - lo5, hi5 - q5, (q5 + twist_f) - lo5, hi5 - (q5 + twist_f))
+
+        def _arm_candidates(side: str, target: Any) -> list[dict[str, Any]]:
+            cur = cur_joints[side]
+            cur_arr = np.asarray(cur, dtype=float)
+            twist_f = twists[side]
+            if target is None:
+                table_bad = bool(kin.clearance_violations(side, cur))
+                return [
+                    {
+                        "q": cur,
+                        "pos_err": 0.0,
+                        "rot_err": 0.0,
+                        "table_collides": table_bad,
+                        "geom_ok": not table_bad,
+                        "is_flipped": False,
+                        "ways": [cur] if continuous else None,
+                        "geom_reason": "collides_with_table" if table_bad else None,
+                    }
+                ]
+            start_t = kin.fk(side, cur)
+            goal = self._ik_goal_matrix(kin, target, start_t)
+            orientations = [(goal, False)]
+            if jaw_symmetry:
+                flipped = goal.copy()
+                flipped[:3, :3] = goal[:3, :3] @ kin._rot_x(math.pi)
+                orientations.append((flipped, True))
+
+            if continuous:
+                out_c: list[dict[str, Any]] = []
+                for cand_goal, is_flipped in orientations:
+                    ways, why = kin.line_path(
+                        side, cur, cand_goal, pos_tol=tol_m, rot_tol_deg=tol_deg
+                    )
+                    if why is None:
+                        q_sol = tuple(float(v) for v in (ways[-1] if ways else cur))
+                        end = kin.fk(side, q_sol)
+                        pos_err = float(np.linalg.norm(cand_goal[:3, 3] - kin.tcp(end)))
+                        rot_err = kin.rotation_error(cand_goal[:3, :3], end[:3, :3])
+                        table_bad = bool(kin.clearance_violations(side, q_sol))
+                        geom_ok = pos_err <= tol_m and rot_err <= tol_deg and not table_bad
+                        geom_reason = (
+                            None
+                            if geom_ok
+                            else ("collides_with_table" if table_bad else "ik_tolerance")
+                        )
+                        cand_ways = list(ways) if ways else [q_sol]
+                    else:
+                        last_q = ways[-1] if ways else cur
+                        res = kin.solve(side, cand_goal, last_q, pos_tol=tol_m, rot_tol_deg=tol_deg)
+                        q_sol = res.q
+                        pos_err, rot_err = res.pos_err_m, res.rot_err_deg
+                        table_bad = bool(res.collides or "into the table" in why)
+                        geom_ok = False
+                        geom_reason = why
+                        cand_ways = list(ways) if ways else [q_sol]
+                    out_c.append(
+                        {
+                            "q": q_sol,
+                            "pos_err": pos_err,
+                            "rot_err": rot_err,
+                            "table_collides": table_bad,
+                            "geom_ok": geom_ok,
+                            "is_flipped": is_flipped,
+                            "ways": cand_ways,
+                            "geom_reason": geom_reason,
+                        }
+                    )
+                return out_c
+
+            # Multi-seed solve matching kin.best_solution seed coverage
+            seeds: list[Any] = [cur_arr]
+            for d in (math.pi, -math.pi):
+                s = cur_arr.copy()
+                s[5] = s[5] + d
+                if kin.JOINT_LIMITS[5][0] <= s[5] <= kin.JOINT_LIMITS[5][1]:
+                    seeds.append(s)
+            if jaw_symmetry or twist_f != 0.0:
+                for q6_seed in (-2.5, 0.0, 2.5):
+                    if abs(q6_seed - cur_arr[5]) > 0.4:
+                        s = cur_arr.copy()
+                        s[5] = q6_seed
+                        seeds.append(s)
+            seeds.append(np.zeros(6, dtype=float))
+            rng = np.random.default_rng(0)
+            seeds.extend(cur_arr + rng.normal(0.0, 0.6, size=6) for _ in range(6))
+
+            out_s: list[dict[str, Any]] = []
+            for cand_goal, is_flipped in orientations:
+                valid: list[tuple[tuple[bool, float], Any]] = []
+                misses: list[Any] = []
+                for s in seeds:
+                    res = kin.solve(side, cand_goal, s, pos_tol=tol_m, rot_tol_deg=tol_deg)
+                    if res.ok and not res.collides:
+                        t_bad = twist_f != 0.0 and _twist_margin(res.q, twist_f) < 0.0
+                        travel = float(np.sum(weights * np.abs(np.asarray(res.q, dtype=float) - cur_arr)))
+                        valid.append(((t_bad, travel), res))
+                    else:
+                        misses.append(res)
+                if valid:
+                    valid.sort(key=lambda item: item[0])
+                    kept: list[Any] = []
+                    for _, res in valid:
+                        if any(
+                            max(abs(a - b) for a, b in zip(res.q, prev.q, strict=True)) <= 1e-2
+                            for prev in kept
+                        ):
+                            continue
+                        kept.append(res)
+                        if len(kept) >= 3:
+                            break
+                    for res in kept:
+                        out_s.append(
+                            {
+                                "q": res.q,
+                                "pos_err": res.pos_err_m,
+                                "rot_err": res.rot_err_deg,
+                                "table_collides": False,
+                                "geom_ok": True,
+                                "is_flipped": is_flipped,
+                                "ways": None,
+                                "geom_reason": None,
+                            }
+                        )
+                else:
+                    best_miss = min(
+                        misses,
+                        key=lambda r: (
+                            not r.ok,
+                            r.collides,
+                            r.pos_err_m + 0.1 * math.radians(r.rot_err_deg),
+                        ),
+                    )
+                    out_s.append(
+                        {
+                            "q": best_miss.q,
+                            "pos_err": best_miss.pos_err_m,
+                            "rot_err": best_miss.rot_err_deg,
+                            "table_collides": bool(best_miss.collides),
+                            "geom_ok": False,
+                            "is_flipped": is_flipped,
+                            "ways": None,
+                            "geom_reason": "collides_with_table" if best_miss.collides else "unreachable",
+                        }
+                    )
+            return out_s
+
+        left_cands = _arm_candidates("left", left)
+        right_cands = _arm_candidates("right", right)
+
+        def _precompute_arm(side: str, cand: dict[str, Any]) -> dict[str, Any]:
+            q_sol = cand["q"]
+            end_fk = kin.fk(side, q_sol)
+            end_tcp = kin.tcp(end_fk)
+            sol_pose = Pose(
+                (float(end_tcp[0]), float(end_tcp[1]), float(end_tcp[2])),
+                kin.quat_wxyz(end_fk[:3, :3]),
+            )
+            margins = tuple(
+                float(min(qv - lo, hi - qv))
+                for qv, (lo, hi) in zip(q_sol, kin.JOINT_LIMITS, strict=True)
+            )
+            min_margin = min(margins)
+            twist_f = twists[side]
+            t_margin = _twist_margin(q_sol, twist_f)
+            q_arr = np.asarray(q_sol, dtype=float)
+            cur_arr = np.asarray(cur_joints[side], dtype=float)
+            return {
+                **cand,
+                "pose": sol_pose,
+                "margins": margins,
+                "min_margin": min_margin,
+                "t_margin": t_margin,
+                "twist_bad": twist_f != 0.0 and t_margin < 0.0,
+                "twist_tight": twist_f != 0.0 and t_margin < 0.25,
+                "max_delta": float(np.max(np.abs(q_arr - cur_arr))),
+                "weighted": float(np.sum(weights * np.abs(q_arr - cur_arr))),
+            }
+
+        left_pre = [_precompute_arm("left", c) for c in left_cands]
+        right_pre = [_precompute_arm("right", c) for c in right_cands]
+
+        lo_op, ro_op = openings["left"], openings["right"]
+        start_viols: list[str] = []
+        start_dist: float | None = None
+        if continuous and callable(inter_fn):
+            start_viols = list(
+                inter_fn(cur_joints["left"], cur_joints["right"], left_opening=lo_op, right_opening=ro_op)
+            )
+            if start_viols and callable(min_dist_fn):
+                start_dist = float(
+                    min_dist_fn(
+                        cur_joints["left"], cur_joints["right"], left_opening=lo_op, right_opening=ro_op
+                    )
+                )
+
+        evaluated: list[tuple[tuple[Any, ...], DualIKSolution]] = []
+        for cL in left_pre:
+            qL = cL["q"]
+            for cR in right_pre:
+                qR = cR["q"]
+                end_viols = (
+                    list(inter_fn(qL, qR, left_opening=lo_op, right_opening=ro_op))
+                    if callable(inter_fn)
+                    else []
+                )
+                end_clear = (
+                    float(min_dist_fn(qL, qR, left_opening=lo_op, right_opening=ro_op))
+                    if callable(min_dist_fn)
+                    else math.inf
+                )
+                if continuous and callable(inter_fn):
+                    waysL = cL["ways"] or [qL]
+                    waysR = cR["ways"] or [qR]
+                    n_steps = max(len(waysL), len(waysR))
+                    pairs = [
+                        (waysL[min(i, len(waysL) - 1)], waysR[min(i, len(waysR) - 1)])
+                        for i in range(n_steps)
+                    ]
+                    traj_viols: list[str] = []
+                    min_way_clear = end_clear
+                    if start_viols and start_dist is not None and callable(min_dist_fn):
+                        finL, finR = pairs[-1]
+                        fin_bad = list(inter_fn(finL, finR, left_opening=lo_op, right_opening=ro_op))
+                        if fin_bad:
+                            fin_d = float(
+                                min_dist_fn(finL, finR, left_opening=lo_op, right_opening=ro_op)
+                            )
+                            if fin_d <= start_dist + 0.002:
+                                traj_viols = fin_bad
+                        if not traj_viols:
+                            for wqL, wqR in pairs:
+                                bad = list(
+                                    inter_fn(wqL, wqR, left_opening=lo_op, right_opening=ro_op)
+                                )
+                                if bad:
+                                    d = float(
+                                        min_dist_fn(wqL, wqR, left_opening=lo_op, right_opening=ro_op)
+                                    )
+                                    if d < start_dist - 0.001:
+                                        traj_viols = bad
+                                        min_way_clear = min(min_way_clear, d)
+                                        break
+                        pair_viols = traj_viols
+                        pair_clear = end_clear if not pair_viols else min_way_clear
+                    else:
+                        for wqL, wqR in pairs:
+                            bad = list(inter_fn(wqL, wqR, left_opening=lo_op, right_opening=ro_op))
+                            if callable(min_dist_fn):
+                                d = float(
+                                    min_dist_fn(wqL, wqR, left_opening=lo_op, right_opening=ro_op)
+                                )
+                                if d < min_way_clear:
+                                    min_way_clear = d
+                            if bad and not traj_viols:
+                                traj_viols = bad
+                        pair_viols = traj_viols or end_viols
+                        pair_clear = min_way_clear
+                else:
+                    pair_viols = end_viols
+                    pair_clear = end_clear
+
+                violations = tuple(dict.fromkeys(str(v) for v in pair_viols))
+                inter_collides = bool(violations)
+                l_collides = bool(cL["table_collides"] or inter_collides)
+                r_collides = bool(cR["table_collides"] or inter_collides)
+                l_ok = bool(cL["geom_ok"] and not inter_collides and not cL["twist_bad"])
+                r_ok = bool(cR["geom_ok"] and not inter_collides and not cR["twist_bad"])
+
+                def _arm_reason(c_arm: dict[str, Any], arm_ok: bool) -> str | None:
+                    if arm_ok:
+                        return None
+                    if not c_arm["geom_ok"]:
+                        return c_arm["geom_reason"] or (
+                            "collides_with_table" if c_arm["table_collides"] else "unreachable"
+                        )
+                    if inter_collides:
+                        return f"inter_arm_collision:{','.join(violations)}"
+                    return "insufficient_twist_margin"
+
+                l_reason = _arm_reason(cL, l_ok)
+                r_reason = _arm_reason(cR, r_ok)
+                sol_l = IKSolution(
+                    ok=l_ok,
+                    collides=l_collides,
+                    joints=qL,
+                    pose=cL["pose"],
+                    pos_err_m=cL["pos_err"],
+                    rot_err_deg=cL["rot_err"],
+                    min_margin_rad=cL["min_margin"],
+                    joint_margins_rad=cL["margins"],
+                    max_delta_rad=cL["max_delta"],
+                    flipped_jaw=cL["is_flipped"],
+                    reason=l_reason,
+                )
+                sol_r = IKSolution(
+                    ok=r_ok,
+                    collides=r_collides,
+                    joints=qR,
+                    pose=cR["pose"],
+                    pos_err_m=cR["pos_err"],
+                    rot_err_deg=cR["rot_err"],
+                    min_margin_rad=cR["min_margin"],
+                    joint_margins_rad=cR["margins"],
+                    max_delta_rad=cR["max_delta"],
+                    flipped_jaw=cR["is_flipped"],
+                    reason=r_reason,
+                )
+                dual_collides = bool(cL["table_collides"] or cR["table_collides"] or inter_collides)
+                dual_ok = l_ok and r_ok
+                if dual_ok:
+                    dual_reason: str | None = None
+                elif inter_collides:
+                    dual_reason = f"inter_arm_collision:{','.join(violations)}"
+                elif not l_ok and not r_ok:
+                    dual_reason = f"left:{l_reason}; right:{r_reason}"
+                elif not l_ok:
+                    dual_reason = f"left:{l_reason}"
+                else:
+                    dual_reason = f"right:{r_reason}"
+
+                housing_pen = (
+                    float(housing_fn("left", qL, qR)) + float(housing_fn("right", qR, qL))
+                    if callable(housing_fn)
+                    else 0.0
+                )
+                geom_both_ok = bool(cL["geom_ok"] and cR["geom_ok"] and not inter_collides)
+                twist_bad = bool(cL["twist_bad"] or cR["twist_bad"])
+                twist_tight = bool(cL["twist_tight"] or cR["twist_tight"])
+                min_joint_margin = min(cL["min_margin"], cR["min_margin"])
+                clear_term = min(max(pair_clear, 0.0), 0.15) if math.isfinite(pair_clear) else 0.15
+                score = (
+                    not dual_ok,
+                    not geom_both_ok,
+                    dual_collides,
+                    twist_bad,
+                    twist_tight,
+                    min_joint_margin < 0.35,
+                    (
+                        cL["weighted"]
+                        + cR["weighted"]
+                        + 10.0 * housing_pen
+                        - 4.0 * clear_term
+                        - 0.5 * min(min_joint_margin, 1.0)
+                        - (0.3 * min(max(cL["t_margin"], 0.0), 1.0) if twists["left"] != 0.0 else 0.0)
+                        - (0.3 * min(max(cR["t_margin"], 0.0), 1.0) if twists["right"] != 0.0 else 0.0)
+                    )
+                    if geom_both_ok
+                    else (
+                        (cL["pos_err"] + cR["pos_err"])
+                        + 0.1 * math.radians(cL["rot_err"] + cR["rot_err"])
+                        - (pair_clear if math.isfinite(pair_clear) else 0.0)
+                    ),
+                    int(cL["is_flipped"]) + int(cR["is_flipped"]),
+                )
+                evaluated.append(
+                    (
+                        score,
+                        DualIKSolution(
+                            ok=dual_ok,
+                            collides=dual_collides,
+                            clearance_m=pair_clear,
+                            violations=violations,
+                            left=sol_l,
+                            right=sol_r,
+                            reason=dual_reason,
+                        ),
+                    )
+                )
+        return min(evaluated, key=lambda item: item[0])[1]
+
     # -- internals ----------------------------------------------------------
 
     def _latest_state(self) -> State:
@@ -2476,14 +3082,18 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
     def _nudge_kwargs(self, dxyz, arm, dpitch, dyaw, droll, gripper, frame, left, right,
                       stop_on_stall, stall_steps, max_steps, reserve_steps, compact,
                       max_linear_m, max_angular_deg,
-                      allow_table_contact: bool = False) -> dict[str, Any]:
+                      allow_table_contact: bool = False,
+                      independent_stall: bool = False) -> dict[str, Any]:
         if arm not in (*self.ARMS, "both"):
             raise ValueError(f"arm must be 'left', 'right' or 'both', got {arm!r}")
         if frame not in ("world", "tcp"):
             raise ValueError(f"frame must be 'world' or 'tcp', got {frame!r}")
         if (type(stop_on_stall) is not bool or type(compact) is not bool
-                or type(allow_table_contact) is not bool):
-            raise ValueError("stop_on_stall, compact and allow_table_contact must be bool")
+                or type(allow_table_contact) is not bool
+                or type(independent_stall) is not bool):
+            raise ValueError(
+                "stop_on_stall, independent_stall, compact and allow_table_contact must be bool"
+            )
         if allow_table_contact and not compact:
             raise ValueError("allow_table_contact=True requires compact=True")
         kwargs: dict[str, Any] = dict(
@@ -2493,6 +3103,8 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
             reserve_steps=self._count(reserve_steps, "reserve_steps", 0),
             max_linear_m=self._bounded(max_linear_m, "max_linear_m", 0.12),
             max_angular_deg=self._bounded(max_angular_deg, "max_angular_deg", 45.0))
+        if independent_stall:
+            kwargs["independent_stall"] = True
         if max_steps is not None:
             kwargs["max_steps"] = self._count(max_steps, "max_steps", 1)
         single = self._delta_spec(dict(dxyz=dxyz, dpitch=dpitch, dyaw=dyaw, droll=droll,
@@ -2543,55 +3155,143 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
             arms=arms,
         )
 
-    def _delta_grasp_kwargs(
-        self, target, arm, axis, standoff_m, overdrive_m, opening, contact_table,
-        lift_dxyz, align_tol_m, max_linear_m, max_steps, reserve_steps,
-    ) -> dict[str, Any]:
-        which = _arm(arm)
-        t_xyz = _extract_xyz(target, "target")
-        ax = _floats(axis, 3, "axis")
+    def _validate_delta_grasp_arm_opts(
+        self, axis, standoff_m, overdrive_m, opening, contact_table, lift_dxyz, align_tol_m, prefix: str = "",
+    ) -> tuple[tuple[float, ...], float, float, float | None, bool, tuple[float, ...] | None, float]:
+        ax = _floats(axis, 3, f"{prefix}axis")
         if math.sqrt(ax[0] * ax[0] + ax[1] * ax[1] + ax[2] * ax[2]) <= 1e-9:
-            raise ValueError("axis must be non-zero")
+            raise ValueError(f"{prefix}axis must be non-zero")
         if type(contact_table) is not bool:
-            raise ValueError("contact_table must be bool")
+            raise ValueError(f"{prefix}contact_table must be bool")
         if isinstance(standoff_m, bool):
-            raise ValueError(f"standoff_m must be >= 0, got {standoff_m!r}")
-        s_val = _floats((standoff_m,), 1, "standoff_m")[0]
+            raise ValueError(f"{prefix}standoff_m must be >= 0, got {standoff_m!r}")
+        s_val = _floats((standoff_m,), 1, f"{prefix}standoff_m")[0]
         if s_val < 0.0:
-            raise ValueError(f"standoff_m must be >= 0, got {standoff_m!r}")
+            raise ValueError(f"{prefix}standoff_m must be >= 0, got {standoff_m!r}")
         if isinstance(overdrive_m, bool):
-            raise ValueError(f"overdrive_m must be >= 0, got {overdrive_m!r}")
-        o_val = _floats((overdrive_m,), 1, "overdrive_m")[0]
+            raise ValueError(f"{prefix}overdrive_m must be >= 0, got {overdrive_m!r}")
+        o_val = _floats((overdrive_m,), 1, f"{prefix}overdrive_m")[0]
         if o_val < 0.0:
-            raise ValueError(f"overdrive_m must be >= 0, got {overdrive_m!r}")
-        tol = self._bounded(align_tol_m, "align_tol_m", 0.02)
+            raise ValueError(f"{prefix}overdrive_m must be >= 0, got {overdrive_m!r}")
+        tol = self._bounded(align_tol_m, f"{prefix}align_tol_m", 0.02)
         if tol < 0.0005:
-            raise ValueError(f"align_tol_m must be in [0.0005, 0.02], got {align_tol_m!r}")
-        kwargs: dict[str, Any] = {
-            "target_xyz": list(t_xyz),
-            "arm": which,
-            "axis": list(ax),
-            "standoff_m": s_val,
-            "overdrive_m": o_val,
-            "contact_table": contact_table,
-            "align_tol_m": tol,
-            "max_linear_m": self._bounded(max_linear_m, "max_linear_m", 0.12),
-            "max_steps": self._count(max_steps, "max_steps", 1),
-            "reserve_steps": self._count(reserve_steps, "reserve_steps", 0),
-        }
+            raise ValueError(f"{prefix}align_tol_m must be in [0.0005, 0.02], got {align_tol_m!r}")
+        op_val: float | None = None
         if opening is not None:
             if isinstance(opening, bool):
-                raise ValueError(f"opening must be in (0, 1], got {opening!r}")
-            op_val = _floats((opening,), 1, "opening")[0]
+                raise ValueError(f"{prefix}opening must be in (0, 1], got {opening!r}")
+            op_val = _floats((opening,), 1, f"{prefix}opening")[0]
             if not 0.0 < op_val <= 1.0:
-                raise ValueError(f"opening must be in (0, 1], got {opening!r}")
-            kwargs["opening"] = op_val
+                raise ValueError(f"{prefix}opening must be in (0, 1], got {opening!r}")
+        lv: tuple[float, ...] | None = None
         if lift_dxyz is not None:
-            lv = _floats(lift_dxyz, 3, "lift_dxyz")
+            lv = _floats(lift_dxyz, 3, f"{prefix}lift_dxyz")
             if math.sqrt(lv[0] * lv[0] + lv[1] * lv[1] + lv[2] * lv[2]) <= 1e-6:
-                raise ValueError("lift_dxyz must be non-zero")
-            kwargs["lift_dxyz"] = list(lv)
-        return kwargs
+                raise ValueError(f"{prefix}lift_dxyz must be non-zero")
+        return ax, s_val, o_val, op_val, contact_table, lv, tol
+
+    def _delta_grasp_kwargs(
+        self, target, arm, axis, standoff_m, overdrive_m, opening, contact_table,
+        lift_dxyz, left, right, align_tol_m, max_linear_m, max_steps, reserve_steps,
+    ) -> tuple[dict[str, Any], list[Any]]:
+        if arm not in (*self.ARMS, "both"):
+            raise ValueError(f"arm must be 'left', 'right' or 'both', got {arm!r}")
+        which = str(arm)
+        ax, s_val, o_val, op_val, ct_val, lv, tol = self._validate_delta_grasp_arm_opts(
+            axis, standoff_m, overdrive_m, opening, contact_table, lift_dxyz, align_tol_m,
+        )
+        max_lin = self._bounded(max_linear_m, "max_linear_m", 0.12)
+        max_st = self._count(max_steps, "max_steps", 1)
+        res_st = self._count(reserve_steps, "reserve_steps", 0)
+        if which in self.ARMS:
+            if left is not None or right is not None:
+                raise ValueError("left= / right= go with arm='both'")
+            if target is None:
+                raise ValueError("target is required for single-arm delta_grasp")
+            t_xyz = _extract_xyz(target, "target")
+            kwargs: dict[str, Any] = {
+                "target_xyz": list(t_xyz),
+                "arm": which,
+                "axis": list(ax),
+                "standoff_m": s_val,
+                "overdrive_m": o_val,
+                "contact_table": ct_val,
+                "align_tol_m": tol,
+                "max_linear_m": max_lin,
+                "max_steps": max_st,
+                "reserve_steps": res_st,
+            }
+            if op_val is not None:
+                kwargs["opening"] = op_val
+            if lv is not None:
+                kwargs["lift_dxyz"] = list(lv)
+            return kwargs, [target]
+
+        if target is not None:
+            raise ValueError("arm='both' takes targets via left= and right=, not target=")
+        if left is None or right is None:
+            raise ValueError("arm='both' requires both left= and right=")
+        allowed = {
+            "target", "target_xyz", "axis", "standoff_m", "overdrive_m",
+            "opening", "contact_table", "lift_dxyz", "align_tol_m",
+        }
+        arm_kwargs: dict[str, dict[str, Any]] = {}
+        targets_to_check: list[Any] = []
+        for side, spec in (("left", left), ("right", right)):
+            is_config = isinstance(spec, Mapping) and not (
+                any(k in spec for k in ("xyz", "world_xyz", "center_xyz"))
+                and "target" not in spec
+                and "target_xyz" not in spec
+            )
+            if is_config:
+                extra = sorted(set(spec) - allowed)
+                if extra:
+                    raise ValueError(f"{side} has unknown keys {extra}")
+                if "target" in spec and "target_xyz" in spec:
+                    raise ValueError(f"{side} must specify only one of 'target' or 'target_xyz'")
+                arm_target = spec.get("target") if "target" in spec else spec.get("target_xyz")
+                if arm_target is None:
+                    raise ValueError(f"{side} mapping must contain 'target'")
+                a_ax, a_s, a_o, a_op, a_ct, a_lv, a_tol = self._validate_delta_grasp_arm_opts(
+                    spec.get("axis", ax),
+                    spec.get("standoff_m", s_val),
+                    spec.get("overdrive_m", o_val),
+                    spec.get("opening", op_val),
+                    spec.get("contact_table", ct_val),
+                    spec.get("lift_dxyz", lv),
+                    spec.get("align_tol_m", tol),
+                    prefix=f"{side}.",
+                )
+            else:
+                arm_target = spec
+                a_ax, a_s, a_o, a_op, a_ct, a_lv, a_tol = ax, s_val, o_val, op_val, ct_val, lv, tol
+            t_xyz = _extract_xyz(arm_target, f"{side}.target")
+            targets_to_check.append(arm_target)
+            entry: dict[str, Any] = {
+                "target_xyz": list(t_xyz),
+                "axis": list(a_ax),
+                "standoff_m": a_s,
+                "overdrive_m": a_o,
+                "contact_table": a_ct,
+                "align_tol_m": a_tol,
+            }
+            if a_op is not None:
+                entry["opening"] = a_op
+            if a_lv is not None:
+                entry["lift_dxyz"] = list(a_lv)
+            arm_kwargs[side] = entry
+
+        kwargs = {
+            "target_xyz": None,
+            "arm": "both",
+            "left": arm_kwargs["left"],
+            "right": arm_kwargs["right"],
+            "align_tol_m": tol,
+            "max_linear_m": max_lin,
+            "max_steps": max_st,
+            "reserve_steps": res_st,
+        }
+        return kwargs, targets_to_check
 
     def _delta_grasp_result(
         self, kwargs: dict[str, Any], p: dict[str, Any], *, preview: bool
@@ -2611,11 +3311,11 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
             stalled=bool(p.get("stalled")),
             table_contact_stalled=bool(p.get("table_contact_stalled")),
             stop_reason=p.get("stop_reason"),
-            target_xyz=_tuple3(p.get("target_xyz", kwargs["target_xyz"])),
-            axis=_tuple3(p.get("axis", kwargs["axis"])),
-            standoff_m=float(p.get("standoff_m", kwargs["standoff_m"])),
-            overdrive_m=float(p.get("overdrive_m", kwargs["overdrive_m"])),
-            contact_table=bool(p.get("contact_table", kwargs["contact_table"])),
+            target_xyz=_tuple3(p.get("target_xyz", kwargs.get("target_xyz"))),
+            axis=_tuple3(p.get("axis", kwargs.get("axis", (0.0, 0.0, -1.0)))),
+            standoff_m=float(p.get("standoff_m", kwargs.get("standoff_m", 0.0))),
+            overdrive_m=float(p.get("overdrive_m", kwargs.get("overdrive_m", 0.0))),
+            contact_table=bool(p.get("contact_table", kwargs.get("contact_table", False))),
             transverse_error_before_m=float(p.get("transverse_error_before_m", math.nan)),
             transverse_error_after_m=float(p.get("transverse_error_after_m", math.nan)),
             opening_before=float(p.get("opening_before", math.nan)),
@@ -2642,59 +3342,167 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
             ik_error=str(p["ik_error"]) if p.get("ik_error") else None,
             note=str(p["note"]) if p.get("note") else None,
             truncated=self._latest_state().truncated,
+            arms=dict(p.get("arms") or {}),
         )
+
+    def _validate_align_arm_opts(
+        self, axis, standoff_m, stroke_m, stroke_dxyz, align_tol_m, allow_table_contact, prefix: str = "",
+    ) -> tuple[tuple[float, ...], float | None, float | None, tuple[float, ...] | None, float, bool]:
+        ax = _floats(axis, 3, f"{prefix}axis")
+        if math.sqrt(ax[0] * ax[0] + ax[1] * ax[1] + ax[2] * ax[2]) <= 1e-9:
+            raise ValueError(f"{prefix}axis must be non-zero")
+        if type(allow_table_contact) is not bool:
+            raise ValueError(f"{prefix}allow_table_contact must be bool")
+        tol = self._bounded(align_tol_m, f"{prefix}align_tol_m", 0.02)
+        if tol < 0.0005:
+            raise ValueError(f"{prefix}align_tol_m must be in [0.0005, 0.02], got {align_tol_m!r}")
+        s_val: float | None = None
+        if standoff_m is not None:
+            if isinstance(standoff_m, bool):
+                raise ValueError(f"{prefix}standoff_m must be a number >= 0, got {standoff_m!r}")
+            s_val = _floats((standoff_m,), 1, f"{prefix}standoff_m")[0]
+            if s_val < 0.0:
+                raise ValueError(f"{prefix}standoff_m must be >= 0, got {standoff_m!r}")
+        if stroke_m is not None and stroke_dxyz is not None:
+            raise ValueError("pass at most one of stroke_m or stroke_dxyz")
+        st_val: float | None = None
+        sv: tuple[float, ...] | None = None
+        if stroke_m is not None:
+            if isinstance(stroke_m, bool):
+                raise ValueError(f"{prefix}stroke_m must be > 0, got {stroke_m!r}")
+            st_val = _floats((stroke_m,), 1, f"{prefix}stroke_m")[0]
+            if st_val <= 0.0:
+                raise ValueError(f"{prefix}stroke_m must be > 0, got {stroke_m!r}")
+        elif stroke_dxyz is not None:
+            sv = _floats(stroke_dxyz, 3, f"{prefix}stroke_dxyz")
+            if math.sqrt(sv[0] * sv[0] + sv[1] * sv[1] + sv[2] * sv[2]) <= 1e-6:
+                raise ValueError(f"{prefix}stroke_dxyz must be non-zero")
+        return ax, s_val, st_val, sv, tol, allow_table_contact
 
     def _align_feature_kwargs(
         self, feature, target, arm, axis, standoff_m, stroke_m, stroke_dxyz,
+        left, right, independent_stall,
         align_tol_m, max_linear_m, max_steps, reserve_steps,
         stop_on_stall, stall_steps, allow_table_contact: bool = False,
-    ) -> dict[str, Any]:
-        which = _arm(arm)
-        f_xyz = _extract_xyz(feature, "feature")
-        t_xyz = _extract_xyz(target, "target")
-        ax = _floats(axis, 3, "axis")
-        if math.sqrt(ax[0] * ax[0] + ax[1] * ax[1] + ax[2] * ax[2]) <= 1e-9:
-            raise ValueError("axis must be non-zero")
-        if type(stop_on_stall) is not bool or type(allow_table_contact) is not bool:
-            raise ValueError("stop_on_stall and allow_table_contact must be bool")
-        tol = self._bounded(align_tol_m, "align_tol_m", 0.02)
-        if tol < 0.0005:
-            raise ValueError(f"align_tol_m must be in [0.0005, 0.02], got {align_tol_m!r}")
-        kwargs: dict[str, Any] = {
-            "feature_xyz": list(f_xyz),
-            "target_xyz": list(t_xyz),
-            "arm": which,
-            "axis": list(ax),
-            "align_tol_m": tol,
-            "max_linear_m": self._bounded(max_linear_m, "max_linear_m", 0.12),
-            "max_steps": self._count(max_steps, "max_steps", 1),
-            "reserve_steps": self._count(reserve_steps, "reserve_steps", 0),
-            "stop_on_stall": stop_on_stall,
-            "stall_steps": self._count(stall_steps, "stall_steps", 1, 5),
-            "allow_table_contact": allow_table_contact,
+    ) -> tuple[dict[str, Any], list[Any], list[Any]]:
+        if arm not in (*self.ARMS, "both"):
+            raise ValueError(f"arm must be 'left', 'right' or 'both', got {arm!r}")
+        which = str(arm)
+        if (
+            type(stop_on_stall) is not bool
+            or type(allow_table_contact) is not bool
+            or type(independent_stall) is not bool
+        ):
+            raise ValueError("stop_on_stall, independent_stall and allow_table_contact must be bool")
+        ax, s_val, st_val, sv, tol, atc = self._validate_align_arm_opts(
+            axis, standoff_m, stroke_m, stroke_dxyz, align_tol_m, allow_table_contact,
+        )
+        max_lin = self._bounded(max_linear_m, "max_linear_m", 0.12)
+        max_st = self._count(max_steps, "max_steps", 1)
+        res_st = self._count(reserve_steps, "reserve_steps", 0)
+        stall_st = self._count(stall_steps, "stall_steps", 1, 5)
+
+        if which in self.ARMS:
+            if left is not None or right is not None:
+                raise ValueError("left= / right= go with arm='both'")
+            if feature is None or target is None:
+                raise ValueError("feature and target are required for single-arm align_feature")
+            f_xyz = _extract_xyz(feature, "feature")
+            t_xyz = _extract_xyz(target, "target")
+            kwargs: dict[str, Any] = {
+                "feature_xyz": list(f_xyz),
+                "target_xyz": list(t_xyz),
+                "arm": which,
+                "axis": list(ax),
+                "align_tol_m": tol,
+                "max_linear_m": max_lin,
+                "max_steps": max_st,
+                "reserve_steps": res_st,
+                "stop_on_stall": stop_on_stall,
+                "stall_steps": stall_st,
+                "allow_table_contact": atc,
+            }
+            if s_val is not None:
+                kwargs["standoff_m"] = s_val
+            if st_val is not None:
+                kwargs["stroke_m"] = st_val
+            elif sv is not None:
+                kwargs["stroke_dxyz"] = list(sv)
+            return kwargs, [feature], [target]
+
+        if feature is not None or target is not None:
+            raise ValueError("arm='both' takes feature/target via left= and right=")
+        if not isinstance(left, Mapping) or not isinstance(right, Mapping):
+            raise ValueError("arm='both' requires left={...} and right={...} mappings")
+        allowed = {
+            "feature", "feature_xyz", "target", "target_xyz", "axis",
+            "standoff_m", "stroke_m", "stroke_dxyz", "align_tol_m", "allow_table_contact",
         }
-        if standoff_m is not None:
-            if isinstance(standoff_m, bool):
-                raise ValueError(f"standoff_m must be a number >= 0, got {standoff_m!r}")
-            s_val = _floats((standoff_m,), 1, "standoff_m")[0]
-            if s_val < 0.0:
-                raise ValueError(f"standoff_m must be >= 0, got {standoff_m!r}")
-            kwargs["standoff_m"] = s_val
-        if stroke_m is not None and stroke_dxyz is not None:
-            raise ValueError("pass at most one of stroke_m or stroke_dxyz")
-        if stroke_m is not None:
-            if isinstance(stroke_m, bool):
-                raise ValueError(f"stroke_m must be > 0, got {stroke_m!r}")
-            st_val = _floats((stroke_m,), 1, "stroke_m")[0]
-            if st_val <= 0.0:
-                raise ValueError(f"stroke_m must be > 0, got {stroke_m!r}")
-            kwargs["stroke_m"] = st_val
-        elif stroke_dxyz is not None:
-            sv = _floats(stroke_dxyz, 3, "stroke_dxyz")
-            if math.sqrt(sv[0] * sv[0] + sv[1] * sv[1] + sv[2] * sv[2]) <= 1e-6:
-                raise ValueError("stroke_dxyz must be non-zero")
-            kwargs["stroke_dxyz"] = list(sv)
-        return kwargs
+        arm_kwargs: dict[str, dict[str, Any]] = {}
+        features_to_check: list[Any] = []
+        targets_to_check: list[Any] = []
+        for side, spec in (("left", left), ("right", right)):
+            extra = sorted(set(spec) - allowed)
+            if extra:
+                raise ValueError(f"{side} has unknown keys {extra}")
+            if "feature" in spec and "feature_xyz" in spec:
+                raise ValueError(f"{side} must specify only one of 'feature' or 'feature_xyz'")
+            if "target" in spec and "target_xyz" in spec:
+                raise ValueError(f"{side} must specify only one of 'target' or 'target_xyz'")
+            arm_feature = spec.get("feature") if "feature" in spec else spec.get("feature_xyz")
+            arm_target = spec.get("target") if "target" in spec else spec.get("target_xyz")
+            if arm_feature is None or arm_target is None:
+                raise ValueError(f"{side} mapping must contain 'feature' and 'target'")
+            if "stroke_m" in spec or "stroke_dxyz" in spec:
+                raw_st = spec.get("stroke_m")
+                raw_sd = spec.get("stroke_dxyz")
+            else:
+                raw_st = st_val
+                raw_sd = sv
+            a_ax, a_s, a_st, a_sv, a_tol, a_atc = self._validate_align_arm_opts(
+                spec.get("axis", ax),
+                spec.get("standoff_m", s_val),
+                raw_st,
+                raw_sd,
+                spec.get("align_tol_m", tol),
+                spec.get("allow_table_contact", atc),
+                prefix=f"{side}.",
+            )
+            f_xyz = _extract_xyz(arm_feature, f"{side}.feature")
+            t_xyz = _extract_xyz(arm_target, f"{side}.target")
+            features_to_check.append(arm_feature)
+            targets_to_check.append(arm_target)
+            entry: dict[str, Any] = {
+                "feature_xyz": list(f_xyz),
+                "target_xyz": list(t_xyz),
+                "axis": list(a_ax),
+                "align_tol_m": a_tol,
+                "allow_table_contact": a_atc,
+            }
+            if a_s is not None:
+                entry["standoff_m"] = a_s
+            if a_st is not None:
+                entry["stroke_m"] = a_st
+            elif a_sv is not None:
+                entry["stroke_dxyz"] = list(a_sv)
+            arm_kwargs[side] = entry
+
+        kwargs = {
+            "feature_xyz": None,
+            "target_xyz": None,
+            "arm": "both",
+            "independent_stall": independent_stall,
+            "left": arm_kwargs["left"],
+            "right": arm_kwargs["right"],
+            "align_tol_m": tol,
+            "max_linear_m": max_lin,
+            "max_steps": max_st,
+            "reserve_steps": res_st,
+            "stop_on_stall": stop_on_stall,
+            "stall_steps": stall_st,
+            "allow_table_contact": atc,
+        }
+        return kwargs, features_to_check, targets_to_check
 
     def _align_feature_result(
         self, kwargs: dict[str, Any], p: dict[str, Any], *, preview: bool
@@ -2713,9 +3521,9 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
             preview=bool(p.get("preview", preview)),
             stalled=bool(p.get("stalled")),
             stop_reason=p.get("stop_reason"),
-            feature_xyz=_tuple3(p.get("feature_xyz", kwargs["feature_xyz"])),
-            target_xyz=_tuple3(p.get("target_xyz", kwargs["target_xyz"])),
-            axis=_tuple3(p.get("axis", kwargs["axis"])),
+            feature_xyz=_tuple3(p.get("feature_xyz", kwargs.get("feature_xyz"))),
+            target_xyz=_tuple3(p.get("target_xyz", kwargs.get("target_xyz"))),
+            axis=_tuple3(p.get("axis", kwargs.get("axis", (0.0, 0.0, -1.0)))),
             axial_gap_m=float(p.get("axial_gap_m", math.nan)),
             transverse_delta=_tuple3(p.get("transverse_delta")),
             planned_dxyz=_tuple3(p.get("planned_dxyz")),
@@ -2740,6 +3548,7 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
             truncated=self._latest_state().truncated,
             rim_contact_suspected=bool(p.get("rim_contact_suspected")),
             suggested_backoff_dxyz=_tuple3(sb) if sb is not None else None,
+            arms=dict(p.get("arms") or {}),
         )
 
     def _align_kwargs(self, goal, arm, frame, max_rounds, max_steps, reserve_steps,
@@ -2928,6 +3737,7 @@ __all__ = [
     "ArmState",
     "CameraRay",
     "DeltaGrasp",
+    "DualIKSolution",
     "FeatureAlignment",
     "Gripper",
     "HOME_MAX_ACTIONS",

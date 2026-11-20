@@ -480,3 +480,232 @@ def test_robodojo_ik_rejects_insufficient_twist_margin_and_flips_with_jaw_symmet
     assert sol_impossible.reason == "insufficient_twist_margin"
 
 
+def test_robodojo_ik_both_jaw_symmetry_turns_both_camera_housings_away(tmp_path):
+    from codeaspolicy.coordination import Pose
+    from codeaspolicy.robodojo import DualIKSolution
+
+    env = TimedEnvironment()
+    _, robo, _ = station(tmp_path, env)
+
+    # 1. Orthogonal rendezvous: donor (left) camera housing facing receiver collides unless flipped.
+    p_don_toward = Pose(
+        (-0.03, -0.25, 0.90),
+        kin.quat_wxyz(kin.orientation(90.0, -90.0, 0.0)),
+    )
+    p_rec_pre = Pose(
+        (0.05, -0.25, 0.90),
+        kin.quat_wxyz(kin.orientation(0.0, 90.0, 90.0)),
+    )
+    q_don_seed = _solve_pose("left", (-0.03, -0.25, 0.90), 90.0, -90.0, 0.0)
+    q_rec_seed = _solve_pose("right", (0.05, -0.25, 0.90), 0.0, 90.0, 90.0)
+
+    no_sym = robo.ik_both(
+        left=p_don_toward,
+        right=p_rec_pre,
+        left_seed=q_don_seed,
+        right_seed=q_rec_seed,
+        jaw_symmetry=False,
+        left_opening=0.1,
+        right_opening=1.0,
+    )
+    assert isinstance(no_sym, DualIKSolution)
+    assert no_sym.ok is False
+    assert no_sym.collides is True
+    assert "camera_housing_collision" in no_sym.violations
+    assert no_sym.reason is not None and no_sym.reason.startswith("inter_arm_collision:")
+
+    with_sym = robo.ik_both(
+        left=p_don_toward,
+        right=p_rec_pre,
+        left_seed=q_don_seed,
+        right_seed=q_rec_seed,
+        jaw_symmetry=True,
+        left_opening=0.1,
+        right_opening=1.0,
+    )
+    assert with_sym.ok is True
+    assert with_sym.collides is False
+    assert with_sym.violations == ()
+    assert with_sym.reason is None
+    assert with_sym.left.flipped_jaw is True
+    assert kin.fk("left", with_sym.left.joints)[:3, 2][0] < -0.95
+    assert kin.housing_exposure_penalty("left", with_sym.left.joints, with_sym.right.joints) == 0.0
+    assert with_sym.clearance_m > no_sym.clearance_m
+
+    # 2. Symmetric dual-arm mid-range: both arms start with housings facing each other;
+    #    jaw_symmetry=True jointly flips BOTH arms so both +z_link6 housings point outward.
+    p_l_in = Pose((-0.095, -0.22, 0.90), kin.quat_wxyz(kin.orientation(90.0, -90.0, 0.0)))
+    p_r_in = Pose((0.095, -0.22, 0.90), kin.quat_wxyz(kin.orientation(90.0, 90.0, 0.0)))
+    q_l_in = _solve_pose("left", (-0.095, -0.22, 0.90), 90.0, -90.0, 0.0)
+    q_r_in = _solve_pose("right", (0.095, -0.22, 0.90), 90.0, 90.0, 0.0)
+    assert kin.housing_exposure_penalty("left", q_l_in, q_r_in) > 0.2
+    assert kin.housing_exposure_penalty("right", q_r_in, q_l_in) > 0.2
+
+    both_away = robo.ik_both(
+        left=p_l_in,
+        right=p_r_in,
+        left_seed=q_l_in,
+        right_seed=q_r_in,
+        jaw_symmetry=True,
+        left_opening=0.2,
+        right_opening=0.2,
+    )
+    assert both_away.ok is True and both_away.collides is False
+    assert both_away.left.flipped_jaw is True and both_away.right.flipped_jaw is True
+    assert kin.fk("left", both_away.left.joints)[:3, 2][0] < -0.95
+    assert kin.fk("right", both_away.right.joints)[:3, 2][0] > 0.95
+    assert kin.housing_exposure_penalty("left", both_away.left.joints, both_away.right.joints) == 0.0
+    assert kin.housing_exposure_penalty("right", both_away.right.joints, both_away.left.joints) == 0.0
+
+
+def test_robodojo_ik_both_continuous_rejects_crossing_and_allows_separating_retreat(tmp_path):
+    env = TimedEnvironment()
+    _, robo, _ = station(tmp_path, env)
+
+    # 1. Start clear, converge simultaneously into finger collision -> continuous=True rejects!
+    q_l_clear = _solve_pose("left", (-0.08, -0.18, 0.94), 0.0, -90.0, 0.0)
+    q_r_clear = _solve_pose("right", (0.08, -0.18, 0.94), 0.0, 90.0, 0.0)
+    collide = robo.ik_both(
+        left={"xyz": [-0.01, -0.18, 0.94], "angles": [0.0, -90.0, 0.0]},
+        right={"xyz": [0.01, -0.18, 0.94], "angles": [0.0, 90.0, 0.0]},
+        left_seed=q_l_clear,
+        right_seed=q_r_clear,
+        continuous=True,
+        left_opening=0.4,
+        right_opening=0.4,
+    )
+    assert collide.ok is False
+    assert collide.collides is True
+    assert "finger_collision" in collide.violations
+    assert collide.reason is not None and collide.reason.startswith("inter_arm_collision:")
+
+    # 2. Start already tight (~4 mm finger clearance): pushing closer rejects, retreating apart passes!
+    q_l_tight = _solve_pose("left", (-0.015, -0.20, 0.95), 0.0, -90.0, 0.0)
+    q_r_tight = _solve_pose("right", (0.015, -0.20, 0.95), 0.0, 90.0, 0.0)
+    deeper = robo.ik_both(
+        left=None,
+        right={"xyz": [0.005, -0.20, 0.95], "angles": [0.0, 90.0, 0.0]},
+        left_seed=q_l_tight,
+        right_seed=q_r_tight,
+        continuous=True,
+        left_opening=0.2,
+        right_opening=0.2,
+    )
+    assert deeper.ok is False and deeper.collides is True
+
+    retreat = robo.ik_both(
+        left=None,
+        right={"xyz": [0.075, -0.20, 0.95], "angles": [0.0, 90.0, 0.0]},
+        left_seed=q_l_tight,
+        right_seed=q_r_tight,
+        continuous=True,
+        left_opening=0.2,
+        right_opening=0.2,
+    )
+    assert retreat.ok is True
+    assert retreat.collides is False
+    assert retreat.violations == ()
+    assert retreat.clearance_m >= 0.010
+    assert retreat.left.joints == q_l_tight
+    assert retreat.left.pos_err_m == 0.0 and retreat.left.rot_err_deg == 0.0
+
+
+def test_robodojo_ik_both_omitted_arm_hold_twist_and_loose_binding(monkeypatch, tmp_path):
+    from codeaspolicy.coordination import Pose
+
+    env = TimedEnvironment()
+    _, robo, _ = station(tmp_path, env)
+
+    # Explicit seeds + openings should NOT call _latest_state()
+    called = []
+    orig_latest = robo._latest_state
+    monkeypatch.setattr(robo, "_latest_state", lambda: (called.append(1), orig_latest())[1])
+
+    q_l_hold = _solve_pose("left", (-0.20, -0.20, 0.92), 90.0, 0.0, 0.0)
+    q_r_base = list(_solve_pose("right", (0.20, -0.20, 0.95), 90.0, 0.0, 0.0))
+    q_r_base[5] = 2.3  # q6 + 1.57 > 3.1
+    fk_r = kin.fk("right", q_r_base)
+    p_r = Pose(
+        (float(kin.tcp(fk_r)[0]), float(kin.tcp(fk_r)[1]), float(kin.tcp(fk_r)[2])),
+        kin.quat_wxyz(fk_r[:3, :3]),
+    )
+
+    sol_no_sym = robo.ik_both(
+        left=None,
+        right=p_r,
+        left_seed=q_l_hold,
+        right_seed=q_r_base,
+        jaw_symmetry=False,
+        left_opening=0.5,
+        right_opening=0.5,
+        right_twist_rad=1.57,
+    )
+    assert called == []
+    assert sol_no_sym.left.ok is True and sol_no_sym.left.joints == q_l_hold
+    assert sol_no_sym.ok is False and sol_no_sym.right.reason == "insufficient_twist_margin"
+
+    sol_sym = robo.ik_both(
+        left=None,
+        right=p_r,
+        left_seed=q_l_hold,
+        right_seed=q_r_base,
+        jaw_symmetry=True,
+        left_opening=0.5,
+        right_opening=0.5,
+        right_twist_rad=1.57,
+    )
+    assert sol_sym.ok is True and sol_sym.right.flipped_jaw is True
+    assert sol_sym.right.joints[5] + 1.57 <= kin.JOINT_LIMITS[5][1]
+
+    # Loose binding to monkeypatched kin.inter_arm_violations
+    monkeypatch.setattr(
+        kin,
+        "inter_arm_violations",
+        lambda lq, rq, **kw: ["crossbar_collision"],
+        raising=False,
+    )
+    blocked = robo.ik_both(
+        left=None,
+        right=p_r,
+        left_seed=q_l_hold,
+        right_seed=q_r_base,
+        left_opening=0.5,
+        right_opening=0.5,
+    )
+    assert blocked.ok is False and blocked.collides is True
+    assert blocked.violations == ("crossbar_collision",)
+
+
+def test_robodojo_home_pose_and_show_all(tmp_path):
+    from codeaspolicy.coordination import Pose
+
+    env = TimedEnvironment()
+    env, robo, _ = station(tmp_path, env)
+
+    expected_left = robo.fk("left", env.joints["left"])
+    expected_right = robo.fk("right", env.joints["right"])
+
+    both = robo.home_pose("both")
+    assert isinstance(both, dict) and set(both) == {"left", "right"}
+    assert both["left"] == expected_left
+    assert both["right"] == expected_right
+    assert robo.home_pose("left") == expected_left
+    assert robo.home_pose("right") == expected_right
+
+    # Returning "both" gives a fresh dict copy so caller mutation does not corrupt the cache.
+    both["left"] = Pose((0.0, 0.0, 0.0), (1.0, 0.0, 0.0, 0.0))
+    assert robo.home_pose("left") == expected_left
+
+    # Cached across subsequent arm motion (still returns step-0 pose).
+    env.joints["right"] = list(_solve_pose("right", (0.20, -0.20, 0.90), 90.0, 0.0, 0.0))
+    assert robo.home_pose("right") == expected_right
+
+    with pytest.raises(ValueError):
+        robo.home_pose("middle")
+
+    # show("all") queues all three cameras in order.
+    robo.show("all")
+    assert robo._take_show_requests() == ["cam_head", "cam_left_wrist", "cam_right_wrist"]
+
+
+

@@ -730,21 +730,24 @@ class IntentController:
         joint_goal_seed = result.get("goal_joints") if result.get("planned_path") == "joint" else None
         if (not result["accepted"] and "budget" in (result.get("stop_reason") or "")
                 and not record.get("preview_route") and estimate is None):
-            probe = planner.plan(**{**arguments, "max_steps": max(available + 1, 1000)})
-            if probe["accepted"]:
-                probe_plan = planner.plans.get(probe["id"])
-                if probe_plan is not None:
-                    estimate = len(probe_plan["ways"])
-                    if joint_goal_seed is None and probe_plan.get("planned_path") == "joint":
-                        joint_goal_seed = probe_plan.get("goal_joints")
-                planner.discard(probe["id"])
-            else:
-                estimate = (
-                    probe.get("planned_steps")
-                    or (probe.get("trajectory") or {}).get("planned_steps")
+            if available < 10000:
+                probe = planner.plan(
+                    **{**arguments, "max_steps": min(10000, max(available + 1, 1000))}
                 )
-                if joint_goal_seed is None and probe.get("planned_path") == "joint":
-                    joint_goal_seed = probe.get("goal_joints")
+                if probe["accepted"]:
+                    probe_plan = planner.plans.get(probe["id"])
+                    if probe_plan is not None:
+                        estimate = len(probe_plan["ways"])
+                        if joint_goal_seed is None and probe_plan.get("planned_path") == "joint":
+                            joint_goal_seed = probe_plan.get("goal_joints")
+                    planner.discard(probe["id"])
+                else:
+                    estimate = (
+                        probe.get("planned_steps")
+                        or (probe.get("trajectory") or {}).get("planned_steps")
+                    )
+                    if joint_goal_seed is None and probe.get("planned_path") == "joint":
+                        joint_goal_seed = probe.get("goal_joints")
             if estimate is None and fast_estimate is not None:
                 estimate = fast_estimate
         partial_waypoint = False
@@ -875,6 +878,8 @@ class IntentController:
                 # The model may have chosen a cap too small for even one useful
                 # resting segment. Keep the identity extendable, not terminal.
                 record["partial_plan"] = True
+                record["partial_fraction"] = None
+                record["partial_timed"] = False
                 record["full_path_estimate"] = estimate
                 record["compile_spent"] = record["spent"]
                 record["status"] = "paused"

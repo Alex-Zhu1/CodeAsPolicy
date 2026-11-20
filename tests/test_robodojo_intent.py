@@ -963,3 +963,26 @@ def test_bracketed_prefix_search_packs_budget_and_reports_exact_resume_recommend
         assert done_n["reached"] and done_n["status"] == "completed"
         assert done_n["intent_steps_used"] == len(env_n.actions) <= first_n["recommended_max_steps"]
 
+    # 3. Budget rejection when available == 10000 never overflows Controller.plan's max_steps=10000 cap.
+    env_max, robo_max, host_max = station(tmp_path / "max10000")
+    env_max.step_limit = 10000
+    ctrl_max = host_max._primitives._operations.intents.motion
+
+    def budget_reject_at_10000(**kwargs):
+        assert kwargs["max_steps"] <= 10000
+        return dict(
+            accepted=False, status="rejected",
+            stop_reason="planned_path_exceeds_native_step_budget",
+            planned_path="line",
+        )
+
+    ctrl_max.plan = budget_reject_at_10000
+    res_max = robo_max.execute_motion(
+        "budget_at_10000", right=robo_max.observe().right.shifted(dz=0.04),
+        holding="empty", max_steps=10000,
+    )
+    assert res_max["status"] == "paused"
+    assert res_max["stop_reason"] == "allocation_too_small_for_progress"
+    assert not env_max.actions
+
+

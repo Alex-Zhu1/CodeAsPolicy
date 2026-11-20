@@ -726,58 +726,298 @@ def move_pose(
     return result
 
 
+def _parse_grip_spec(
+    raw: Any,
+    where: str,
+    *,
+    allow_keep: bool,
+    opening: float | None = None,
+) -> tuple[float | None, str | None]:
+    """Parse one arm's gripper command (1 close -> 0.0, -1 open -> (0..1], 0/None keep -> None)."""
+
+    op_raw = opening
+    if isinstance(raw, dict):
+        extra = sorted(set(raw) - {"gripper", "opening"})
+        if extra:
+            return None, f"{where} has unknown keys {extra}"
+        if op_raw is not None:
+            return None, f"opening goes with uniform gripper, not {where}"
+        g_raw = raw.get("gripper", 0)
+        op_raw = raw.get("opening")
+    else:
+        g_raw = raw
+    if g_raw is None:
+        if not allow_keep:
+            return None, "gripper must be 1 (close) or -1 (open)"
+        if op_raw is not None:
+            return None, f"{where}.opening requires an open command (-1)"
+        return None, None
+    if isinstance(g_raw, bool):
+        return None, (
+            f"{where}.gripper must be 1 (close), -1 (open) or 0 (keep)"
+            if allow_keep
+            else "gripper must be 1 (close) or -1 (open)"
+        )
+    try:
+        g_val = float(g_raw)
+    except (TypeError, ValueError):
+        return None, (
+            f"{where}.gripper must be 1 (close), -1 (open) or 0 (keep)"
+            if allow_keep
+            else "gripper must be 1 (close) or -1 (open)"
+        )
+    if not math.isfinite(g_val) or (allow_keep and g_val not in (-1.0, 0.0, 1.0)):
+        return None, f"{where}.gripper must be 1 (close), -1 (open) or 0 (keep)"
+    command = _command(g_val)
+    if command is None:
+        if not allow_keep:
+            return None, "gripper must be 1 (close) or -1 (open)"
+        if op_raw is not None:
+            return None, f"{where}.opening requires an open command (-1)"
+        return None, None
+    if op_raw is not None:
+        if isinstance(op_raw, bool):
+            return None, "opening must be a number between 0 and 1"
+        try:
+            op_val = float(op_raw)
+        except (TypeError, ValueError):
+            return None, "opening must be a number between 0 and 1"
+        if command < 0.5 or not (math.isfinite(op_val) and 0.0 < op_val <= 1.0):
+            return None, "opening is for an open command, between 0 (excluded) and 1"
+        command = op_val
+    return command, None
+
+
 def grip(
-    primitives: Any, arm: str = "right", gripper: float = 1, opening: float | None = None
+    primitives: Any,
+    arm: str = "right",
+    gripper: float | None = 1,
+    opening: float | None = None,
+    *,
+    left: dict[str, Any] | float | None = None,
+    right: dict[str, Any] | float | None = None,
 ) -> dict[str, Any]:
-    """Close (1) or open (-1) one gripper: repeat the command until the fingers stop.
+    """Close (1) or open (-1) one or both grippers: repeat the command until the fingers stop.
 
     ``opening`` (0..1, with an open command only) opens to that reading instead of all the
-    way, e.g. to reach between close neighbours.
+    way, e.g. to reach between close neighbours. With ``arm="both"``, pass either a uniform
+    ``gripper`` (+ optional ``opening``) or per-arm ``left`` / ``right`` commands (each ``1``,
+    ``-1``, ``0``/``None`` to keep, or ``{"gripper": cmd, "opening": op}``).
     """
 
-    if arm not in ARMS:
-        return {"error": "arm must be 'left' or 'right'"}
-    command = _command(gripper)
-    if command is None:
-        return {"error": "gripper must be 1 (close) or -1 (open)"}
-    if opening is not None:
-        try:
-            opening = float(opening)
-        except (TypeError, ValueError):
-            return {"error": "opening must be a number between 0 and 1"}
-        if command < 0.5 or not 0.0 < opening <= 1.0:
-            return {"error": "opening is for an open command, between 0 (excluded) and 1"}
-        command = opening
+    if arm not in (*ARMS, "both"):
+        return {"error": "arm must be 'left', 'right' or 'both'"}
+    if arm != "both":
+        if left is not None or right is not None:
+            return {"error": "left= / right= gripper specs go with arm='both'"}
+        command, err = _parse_grip_spec(gripper, arm, allow_keep=False, opening=opening)
+        if err is not None:
+            return {"error": err}
+        assert command is not None
+        state = _obs(primitives)["state"]
+        hold = {a: _joints(state, a) for a in ARMS}  # both arms keep the joints they had
+        before = _opening(state, arm)
+        steps = 0
+        status: dict[str, Any] = {}
+        last = before
+        for _ in range(GRIP_MAX_ACTIONS):
+            primitives._check_cancelled()
+            state, status = _act(primitives, state, hold, {arm: command})
+            steps += 1
+            now = _opening(state, arm)
+            if steps >= 2 and abs(now - last) < GRIP_STILL:
+                break
+            last = now
+            if _spent(status):
+                break
+        measured = _opening(state, arm)
+        closing = command == 0.0
+        holding = bool(closing and measured > HOLD_MIN_OPENING)
+        width = GRIP_ZERO_M + GRIP_SPAN_M * measured if holding else 0.0
+        arm_summary = {
+            "gripper": "closed" if closing else "open",
+            "opening": round(measured, 3),
+            "opening_before": round(before, 3),
+            "holding": holding,
+            "width_m": round(width, 4) if closing else None,
+        }
+        return {
+            "arm": arm,
+            "gripper": arm_summary["gripper"],
+            "opening": arm_summary["opening"],
+            "opening_before": arm_summary["opening_before"],
+            "holding": arm_summary["holding"],
+            "width_m": arm_summary["width_m"],
+            "steps_used": steps,
+            "status": {k: status[k] for k in ("step", "step_limit") if k in status},
+            "arms": {arm: arm_summary},
+        }
+
+    # Bimanual grip (arm == "both")
+    active_commands: dict[str, float] = {}
+    if left is not None or right is not None:
+        if opening is not None:
+            return {"error": "opening goes with uniform gripper, not left/right"}
+        for name, raw in (("left", left), ("right", right)):
+            cmd, err = _parse_grip_spec(raw, name, allow_keep=True)
+            if err is not None:
+                return {"error": err}
+            if cmd is not None:
+                active_commands[name] = cmd
+    else:
+        cmd, err = _parse_grip_spec(gripper, "both", allow_keep=False, opening=opening)
+        if err is not None:
+            return {"error": err}
+        assert cmd is not None
+        active_commands = {a: cmd for a in ARMS}
+
     state = _obs(primitives)["state"]
-    hold = {a: _joints(state, a) for a in ARMS}  # both arms keep the joints they had
-    before = _opening(state, arm)
+    hold = {a: _joints(state, a) for a in ARMS}
+    before_all = {a: _opening(state, a) for a in ARMS}
     steps = 0
-    status: dict[str, Any] = {}
-    last = before
-    for _ in range(GRIP_MAX_ACTIONS):
-        primitives._check_cancelled()
-        state, status = _act(primitives, state, hold, {arm: command})
-        steps += 1
-        now = _opening(state, arm)
-        if steps >= 2 and abs(now - last) < GRIP_STILL:
-            break
-        last = now
-        if _spent(status):
-            break
-    measured = _opening(state, arm)
-    closing = command == 0.0
-    holding = bool(closing and measured > HOLD_MIN_OPENING)
-    width = GRIP_ZERO_M + GRIP_SPAN_M * measured if holding else 0.0
+    getter = getattr(primitives.env, "get_status", None)
+    status = getter() if callable(getter) else {}
+    status = status if isinstance(status, dict) else {}
+    if active_commands:
+        last_all = {a: before_all[a] for a in active_commands}
+        for _ in range(GRIP_MAX_ACTIONS):
+            primitives._check_cancelled()
+            state, status = _act(primitives, state, hold, active_commands)
+            steps += 1
+            now_all = {a: _opening(state, a) for a in active_commands}
+            if steps >= 2 and all(
+                abs(now_all[a] - last_all[a]) < GRIP_STILL for a in active_commands
+            ):
+                break
+            last_all = now_all
+            if _spent(status):
+                break
+
+    per_arm: dict[str, dict[str, Any]] = {}
+    for name in ARMS:
+        measured = _opening(state, name)
+        cmd = active_commands.get(name)
+        if cmd is None:
+            last_cmd = (getattr(primitives, "_grip_commands", None) or {}).get(name)
+            was_closed = last_cmd is not None and last_cmd <= 0.05
+            a_holding = bool(was_closed and measured > HOLD_MIN_OPENING)
+            a_width = round(GRIP_ZERO_M + GRIP_SPAN_M * measured, 4) if a_holding else None
+            per_arm[name] = {
+                "gripper": "keep",
+                "opening": round(measured, 3),
+                "opening_before": round(before_all[name], 3),
+                "holding": a_holding,
+                "width_m": a_width,
+            }
+        else:
+            closing = cmd == 0.0
+            a_holding = bool(closing and measured > HOLD_MIN_OPENING)
+            a_width = (
+                round(GRIP_ZERO_M + GRIP_SPAN_M * measured if a_holding else 0.0, 4)
+                if closing
+                else None
+            )
+            per_arm[name] = {
+                "gripper": "closed" if closing else "open",
+                "opening": round(measured, 3),
+                "opening_before": round(before_all[name], 3),
+                "holding": a_holding,
+                "width_m": a_width,
+            }
+
+    closing_arms = [a for a in ARMS if active_commands.get(a) == 0.0]
+    opening_arms = [a for a in ARMS if active_commands.get(a, 0.0) > 0.0]
+    if not active_commands:
+        top_gripper = "keep"
+    elif len(closing_arms) == len(active_commands):
+        top_gripper = "closed"
+    elif len(opening_arms) == len(active_commands):
+        top_gripper = "open"
+    else:
+        top_gripper = "mixed"
+    closing_widths = [
+        per_arm[a]["width_m"]
+        for a in closing_arms
+        if per_arm[a]["holding"] and per_arm[a]["width_m"] is not None
+    ]
+    top_width = (
+        round(min(closing_widths), 4)
+        if closing_widths
+        else (0.0 if closing_arms else None)
+    )
     return {
-        "arm": arm,
-        "gripper": "closed" if closing else "open",
-        "opening": round(measured, 3),
-        "opening_before": round(before, 3),
-        "holding": holding,
-        "width_m": round(width, 4) if closing else None,
+        "arm": "both",
+        "gripper": top_gripper,
+        "opening": round(min(per_arm[a]["opening"] for a in ARMS), 3),
+        "opening_before": round(min(per_arm[a]["opening_before"] for a in ARMS), 3),
+        "holding": bool(all(per_arm[a]["holding"] for a in closing_arms))
+        if closing_arms
+        else False,
+        "width_m": top_width,
         "steps_used": steps,
         "status": {k: status[k] for k in ("step", "step_limit") if k in status},
+        "arms": {"left": per_arm["left"], "right": per_arm["right"]},
     }
+
+
+def _check_home_inter_arm(
+    start_left: Sequence[float],
+    start_right: Sequence[float],
+    pairs: Sequence[tuple[Sequence[float], Sequence[float]]],
+    *,
+    left_opening: float,
+    right_opening: float,
+) -> str | None:
+    """Inter-arm envelope check for synchronized ``home('both')`` phases, allowing separating retreats."""
+
+    inter_fn = getattr(kin, "inter_arm_violations", None)
+    if not callable(inter_fn) or not pairs:
+        return None
+    lo, ro = float(left_opening), float(right_opening)
+    start_violations = list(inter_fn(start_left, start_right, left_opening=lo, right_opening=ro))
+    min_dist_fn = getattr(
+        kin, "inter_arm_min_distance", getattr(kin, "_inter_arm_min_distance", None)
+    )
+    start_dist: float | None = None
+    if start_violations and callable(min_dist_fn):
+        start_dist = float(min_dist_fn(start_left, start_right, left_opening=lo, right_opening=ro))
+        final_left, final_right = pairs[-1]
+        final_violations = list(
+            inter_fn(final_left, final_right, left_opening=lo, right_opening=ro)
+        )
+        if final_violations:
+            final_dist = float(
+                min_dist_fn(final_left, final_right, left_opening=lo, right_opening=ro)
+            )
+            if final_dist <= start_dist + 0.002:
+                return f"inter-arm collision ({', '.join(str(v) for v in final_violations)})"
+    for lq, rq in pairs:
+        bad = list(inter_fn(lq, rq, left_opening=lo, right_opening=ro))
+        if not bad:
+            continue
+        if start_dist is None:
+            return f"inter-arm collision ({', '.join(str(v) for v in bad)})"
+        dist = float(min_dist_fn(lq, rq, left_opening=lo, right_opening=ro))
+        if dist < start_dist - 0.001:
+            return f"inter-arm collision ({', '.join(str(v) for v in bad)})"
+    return None
+
+
+def _sync_home_pairs(
+    q_start: dict[str, list[float]], phase_ways: dict[str, list[list[float]]]
+) -> list[tuple[Sequence[float], Sequence[float]]]:
+    if not phase_ways:
+        return []
+    n = max(len(w) for w in phase_ways.values())
+    l_ways = phase_ways.get("left")
+    r_ways = phase_ways.get("right")
+    return [
+        (
+            l_ways[min(idx, len(l_ways) - 1)] if l_ways else q_start["left"],
+            r_ways[min(idx, len(r_ways) - 1)] if r_ways else q_start["right"],
+        )
+        for idx in range(n)
+    ]
 
 
 def home(
@@ -817,131 +1057,401 @@ def home(
     status: dict[str, Any] = {}
     lifted: dict[str, float] = {}
     retreated: dict[str, float] = {}
-    for name in arms if error > tol else ():
-        release = (getattr(primitives, "_release_poses", None) or {}).get(name)
-        if release is None:
-            continue
-        q = _joints(state, name)
-        pose = _pose_of(name, q)
-        withdrawal = -release[:3, 0]
-        offset = pose[:3, 3] - release[:3, 3]
-        can_clear_up = float(release[2, 0]) <= 0.25
-        lifted_up = float(offset[2])
-        missing = RELEASE_WITHDRAW_M - float(np.dot(offset, withdrawal))
-        if (np.linalg.norm(offset) >= RELEASE_NEAR_M
-                or missing <= .001
-                or (can_clear_up and lifted_up >= RELEASE_WITHDRAW_M - .001)):
-            continue
-        target = pose.copy()
-        target[:3, 3] += withdrawal * missing
-        ways, why = kin.line_path(name, q, target)
-        used_up_fallback = False
-        if why is not None and can_clear_up:
-            missing_up = RELEASE_WITHDRAW_M - max(0.0, lifted_up)
-            if missing_up > .001:
-                up_target = pose.copy()
-                up_target[2, 3] += missing_up
-                ways_up, why_up = kin.line_path(name, q, up_target)
-                if why_up is None:
-                    ways, why = ways_up, None
-                    used_up_fallback = True
-        if why is not None:
-            return dict(arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
-                        steps_used=steps_used, stop_reason="release_clearance_required",
-                        status="partial" if steps_used else "rejected",
-                        note=f"{name}: cannot withdraw from the last release before homing: {why}")
-        for way in _followable(q, ways):
-            primitives._check_cancelled()
-            state, status = _act(primitives, state, {name: way}, {})
-            steps_used += 1
-            if _spent(status):
-                break
-        for _ in range(SETTLE_ACTIONS):
-            if _spent(status) or max(abs(a - b) for a, b in
-                    zip(_joints(state, name), ways[-1], strict=True)) < tol:
-                break
-            primitives._check_cancelled()
-            state, status = _act(primitives, state, {name: ways[-1]}, {})
-            steps_used += 1
-        actual = _pose_of(name, _joints(state, name))
-        if used_up_fallback:
-            retreated[name] = round(float(actual[2, 3] - pose[2, 3]), 4)
-        else:
-            retreated[name] = round(float(np.dot(actual[:3, 3] - pose[:3, 3], withdrawal)), 4)
-        axial_done = (
-            float(np.dot(actual[:3, 3] - release[:3, 3], withdrawal))
-            >= RELEASE_WITHDRAW_M - .005
-        )
-        up_done = can_clear_up and float(actual[2, 3] - release[2, 3]) >= RELEASE_WITHDRAW_M - .005
-        if _spent(status) or not (axial_done or up_done):
-            return dict(arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
-                        steps_used=steps_used, clearance_retreat_m=retreated,
-                        status="partial",
-                        stop_reason=_episode_stop_reason(status) if _spent(status)
-                                    else "release_clearance_incomplete")
-    for name in arms if lift and error > tol else ():
-        q = _joints(state, name)
-        if max(abs(a - b) for a, b in zip(q, start_joints[name], strict=True)) <= tol:
-            continue
-        pose = _pose_of(name, q)
-        if pose[2, 3] >= HOME_LIFT_BELOW:
-            continue
-        for dz in (HOME_LIFT_M, HOME_LIFT_M * 2 / 3, HOME_LIFT_M / 3):
-            up = pose.copy()
-            up[2, 3] += dz
-            ways, why = kin.line_path(name, q, up)
-            if why is None:
-                for way in _followable(q, ways):
+    staged: dict[str, float] = {}
+
+    if arm == "both":
+        # Phase 1: synchronized release_clearance for all arms that need withdrawal
+        release_plans: dict[str, dict[str, Any]] = {}
+        for name in arms if error > tol else ():
+            release = (getattr(primitives, "_release_poses", None) or {}).get(name)
+            if release is None:
+                continue
+            q = _joints(state, name)
+            pose = _pose_of(name, q)
+            withdrawal = -release[:3, 0]
+            offset = pose[:3, 3] - release[:3, 3]
+            can_clear_up = float(release[2, 0]) <= 0.25
+            lifted_up = float(offset[2])
+            missing = RELEASE_WITHDRAW_M - float(np.dot(offset, withdrawal))
+            if (np.linalg.norm(offset) >= RELEASE_NEAR_M
+                    or missing <= .001
+                    or (can_clear_up and lifted_up >= RELEASE_WITHDRAW_M - .001)):
+                continue
+            target = pose.copy()
+            target[:3, 3] += withdrawal * missing
+            ways, why = kin.line_path(name, q, target)
+            used_up_fallback = False
+            if why is not None and can_clear_up:
+                missing_up = RELEASE_WITHDRAW_M - max(0.0, lifted_up)
+                if missing_up > .001:
+                    up_target = pose.copy()
+                    up_target[2, 3] += missing_up
+                    ways_up, why_up = kin.line_path(name, q, up_target)
+                    if why_up is None:
+                        ways, why = ways_up, None
+                        used_up_fallback = True
+            if why is not None:
+                return dict(arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
+                            steps_used=steps_used, stop_reason="release_clearance_required",
+                            status="partial" if steps_used else "rejected",
+                            note=f"{name}: cannot withdraw from the last release before homing: {why}")
+            release_plans[name] = {
+                "pose": pose,
+                "release": release,
+                "withdrawal": withdrawal,
+                "can_clear_up": can_clear_up,
+                "used_up_fallback": used_up_fallback,
+                "follow": _followable(q, ways),
+                "end_q": ways[-1],
+            }
+        if release_plans:
+            q_start = {a: _joints(state, a) for a in ARMS}
+            phase_ways = {name: p["follow"] for name, p in release_plans.items()}
+            inter_why = _check_home_inter_arm(
+                q_start["left"],
+                q_start["right"],
+                _sync_home_pairs(q_start, phase_ways),
+                left_opening=_opening(state, "left"),
+                right_opening=_opening(state, "right"),
+            )
+            if inter_why is not None:
+                return dict(arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
+                            steps_used=steps_used, stop_reason="release_clearance_required",
+                            status="partial" if steps_used else "rejected",
+                            note=f"both: cannot withdraw from the last release before homing: {inter_why}")
+            max_len = max(len(w) for w in phase_ways.values())
+            for idx in range(max_len):
+                primitives._check_cancelled()
+                cmd = {
+                    name: phase_ways[name][min(idx, len(phase_ways[name]) - 1)]
+                    for name in phase_ways
+                }
+                state, status = _act(primitives, state, cmd, {})
+                steps_used += 1
+                if _spent(status):
+                    break
+            for _ in range(SETTLE_ACTIONS):
+                if _spent(status) or all(
+                    max(
+                        abs(a - b)
+                        for a, b in zip(_joints(state, name), p["end_q"], strict=True)
+                    ) < tol
+                    for name, p in release_plans.items()
+                ):
+                    break
+                primitives._check_cancelled()
+                state, status = _act(
+                    primitives, state, {name: p["end_q"] for name, p in release_plans.items()}, {}
+                )
+                steps_used += 1
+            all_clear = True
+            for name, p in release_plans.items():
+                actual = _pose_of(name, _joints(state, name))
+                if p["used_up_fallback"]:
+                    retreated[name] = round(float(actual[2, 3] - p["pose"][2, 3]), 4)
+                else:
+                    retreated[name] = round(
+                        float(np.dot(actual[:3, 3] - p["pose"][:3, 3], p["withdrawal"])), 4
+                    )
+                axial_done = (
+                    float(np.dot(actual[:3, 3] - p["release"][:3, 3], p["withdrawal"]))
+                    >= RELEASE_WITHDRAW_M - .005
+                )
+                up_done = (
+                    p["can_clear_up"]
+                    and float(actual[2, 3] - p["release"][2, 3]) >= RELEASE_WITHDRAW_M - .005
+                )
+                if not (axial_done or up_done):
+                    all_clear = False
+            if _spent(status) or not all_clear:
+                return dict(arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
+                            steps_used=steps_used, clearance_retreat_m=retreated,
+                            status="partial",
+                            stop_reason=_episode_stop_reason(status) if _spent(status)
+                                        else "release_clearance_incomplete")
+
+        # Phase 2: synchronized lift for all arms below HOME_LIFT_BELOW
+        if lift and error > tol and not _spent(status):
+            lift_cands: dict[str, list[tuple[float, list[list[float]]]]] = {}
+            q_start = {a: _joints(state, a) for a in ARMS}
+            for name in arms:
+                q = q_start[name]
+                if max(abs(a - b) for a, b in zip(q, start_joints[name], strict=True)) <= tol:
+                    continue
+                pose = _pose_of(name, q)
+                if pose[2, 3] >= HOME_LIFT_BELOW:
+                    continue
+                cands: list[tuple[float, list[list[float]]]] = []
+                for dz in (HOME_LIFT_M, HOME_LIFT_M * 2 / 3, HOME_LIFT_M / 3):
+                    up = pose.copy()
+                    up[2, 3] += dz
+                    ways, why = kin.line_path(name, q, up)
+                    if why is None:
+                        cands.append((dz, _followable(q, ways)))
+                if cands:
+                    lift_cands[name] = cands
+            chosen_lift: dict[str, tuple[float, list[list[float]]]] = {}
+            lo, ro = _opening(state, "left"), _opening(state, "right")
+            if len(lift_cands) == 2:
+                found = False
+                for dz_l, w_l in lift_cands["left"]:
+                    for dz_r, w_r in lift_cands["right"]:
+                        if _check_home_inter_arm(
+                            q_start["left"],
+                            q_start["right"],
+                            _sync_home_pairs(q_start, {"left": w_l, "right": w_r}),
+                            left_opening=lo,
+                            right_opening=ro,
+                        ) is None:
+                            chosen_lift = {"left": (dz_l, w_l), "right": (dz_r, w_r)}
+                            found = True
+                            break
+                    if found:
+                        break
+                if not found:
+                    for name in ARMS:
+                        for dz, w in lift_cands[name]:
+                            if _check_home_inter_arm(
+                                q_start["left"],
+                                q_start["right"],
+                                _sync_home_pairs(q_start, {name: w}),
+                                left_opening=lo,
+                                right_opening=ro,
+                            ) is None:
+                                chosen_lift[name] = (dz, w)
+                                break
+                        if chosen_lift:
+                            break
+            elif len(lift_cands) == 1:
+                (only_name,) = lift_cands.keys()
+                for dz, w in lift_cands[only_name]:
+                    if _check_home_inter_arm(
+                        q_start["left"],
+                        q_start["right"],
+                        _sync_home_pairs(q_start, {only_name: w}),
+                        left_opening=lo,
+                        right_opening=ro,
+                    ) is None:
+                        chosen_lift[only_name] = (dz, w)
+                        break
+            if chosen_lift:
+                lift_ways = {name: item[1] for name, item in chosen_lift.items()}
+                max_len = max(len(w) for w in lift_ways.values())
+                for idx in range(max_len):
                     primitives._check_cancelled()
-                    state, status = _act(primitives, state, {name: way}, {})
+                    cmd = {
+                        name: lift_ways[name][min(idx, len(lift_ways[name]) - 1)]
+                        for name in lift_ways
+                    }
+                    state, status = _act(primitives, state, cmd, {})
                     steps_used += 1
                     if _spent(status):
                         break
-                lifted[name] = round(dz, 3)
-                break
-        if _spent(status):
-            break
-    # After placing an object, a joint return can dip through it even after
-    # finger withdrawal. Stage that arm above the origin first. Ordinary home
-    # keeps its original lift/joint route: changing every return perturbs later
-    # contact motions even when all Cartesian endpoints remain within tolerance.
-    staged: dict[str, float] = {}
-    for name in arms if lift and not _spent(status) else ():
-        if name not in (getattr(primitives, "_home_after_release", None) or ()):
-            continue
-        q = _joints(state, name)
-        if max(abs(a - b) for a, b in zip(q, start_joints[name], strict=True)) <= tol:
-            continue
-        pose = _pose_of(name, q)
-        above = _pose_of(name, start_joints[name])
-        above[2, 3] = max(above[2, 3], pose[2, 3])
-        ways, why = kin.line_path(name, q, above)
-        if why is not None:
-            return dict(arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
-                        steps_used=steps_used, status="partial" if steps_used else "rejected",
-                        stop_reason="home_staging_required",
-                        note=f"{name}: cannot return above the origin at the cleared height: {why}")
-        for way in _followable(q, ways):
-            primitives._check_cancelled()
-            state, status = _act(primitives, state, {name: way}, {})
-            steps_used += 1
+                for name, (dz, _w) in chosen_lift.items():
+                    lifted[name] = round(dz, 3)
+
+        # Phase 3: synchronized home_staging above origin after release
+        if lift and not _spent(status):
+            staging_plans: dict[str, dict[str, Any]] = {}
+            for name in arms:
+                if name not in (getattr(primitives, "_home_after_release", None) or ()):
+                    continue
+                q = _joints(state, name)
+                if max(abs(a - b) for a, b in zip(q, start_joints[name], strict=True)) <= tol:
+                    continue
+                pose = _pose_of(name, q)
+                above = _pose_of(name, start_joints[name])
+                above[2, 3] = max(above[2, 3], pose[2, 3])
+                ways, why = kin.line_path(name, q, above)
+                if why is not None:
+                    return dict(arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
+                                steps_used=steps_used, status="partial" if steps_used else "rejected",
+                                stop_reason="home_staging_required",
+                                note=f"{name}: cannot return above the origin at the cleared height: {why}")
+                staging_plans[name] = {
+                    "above": above,
+                    "follow": _followable(q, ways),
+                    "end_q": ways[-1],
+                }
+            if staging_plans:
+                q_start = {a: _joints(state, a) for a in ARMS}
+                phase_ways = {name: p["follow"] for name, p in staging_plans.items()}
+                inter_why = _check_home_inter_arm(
+                    q_start["left"],
+                    q_start["right"],
+                    _sync_home_pairs(q_start, phase_ways),
+                    left_opening=_opening(state, "left"),
+                    right_opening=_opening(state, "right"),
+                )
+                if inter_why is not None:
+                    return dict(arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
+                                steps_used=steps_used, status="partial" if steps_used else "rejected",
+                                stop_reason="home_staging_required",
+                                note=f"both: cannot return above the origin at the cleared height: {inter_why}")
+                max_len = max(len(w) for w in phase_ways.values())
+                for idx in range(max_len):
+                    primitives._check_cancelled()
+                    cmd = {
+                        name: phase_ways[name][min(idx, len(phase_ways[name]) - 1)]
+                        for name in phase_ways
+                    }
+                    state, status = _act(primitives, state, cmd, {})
+                    steps_used += 1
+                    if _spent(status):
+                        break
+                for _ in range(SETTLE_ACTIONS):
+                    if _spent(status) or all(
+                        max(
+                            abs(a - b)
+                            for a, b in zip(_joints(state, name), p["end_q"], strict=True)
+                        ) < tol
+                        for name, p in staging_plans.items()
+                    ):
+                        break
+                    primitives._check_cancelled()
+                    state, status = _act(
+                        primitives, state, {name: p["end_q"] for name, p in staging_plans.items()}, {}
+                    )
+                    steps_used += 1
+                all_staged = True
+                for name, p in staging_plans.items():
+                    actual = _pose_of(name, _joints(state, name))
+                    above = p["above"]
+                    if (np.linalg.norm(actual[:3, 3] - above[:3, 3]) > ARRIVE_M
+                            or kin.rotation_error(actual[:3, :3], above[:3, :3]) > ARRIVE_DEG):
+                        all_staged = False
+                    else:
+                        staged[name] = round(float(above[2, 3]), 4)
+                if _spent(status) or not all_staged:
+                    return dict(arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
+                                steps_used=steps_used, status="partial",
+                                stop_reason=_episode_stop_reason(status) if _spent(status)
+                                            else "home_staging_incomplete")
+    else:
+        for name in arms if error > tol else ():
+            release = (getattr(primitives, "_release_poses", None) or {}).get(name)
+            if release is None:
+                continue
+            q = _joints(state, name)
+            pose = _pose_of(name, q)
+            withdrawal = -release[:3, 0]
+            offset = pose[:3, 3] - release[:3, 3]
+            can_clear_up = float(release[2, 0]) <= 0.25
+            lifted_up = float(offset[2])
+            missing = RELEASE_WITHDRAW_M - float(np.dot(offset, withdrawal))
+            if (np.linalg.norm(offset) >= RELEASE_NEAR_M
+                    or missing <= .001
+                    or (can_clear_up and lifted_up >= RELEASE_WITHDRAW_M - .001)):
+                continue
+            target = pose.copy()
+            target[:3, 3] += withdrawal * missing
+            ways, why = kin.line_path(name, q, target)
+            used_up_fallback = False
+            if why is not None and can_clear_up:
+                missing_up = RELEASE_WITHDRAW_M - max(0.0, lifted_up)
+                if missing_up > .001:
+                    up_target = pose.copy()
+                    up_target[2, 3] += missing_up
+                    ways_up, why_up = kin.line_path(name, q, up_target)
+                    if why_up is None:
+                        ways, why = ways_up, None
+                        used_up_fallback = True
+            if why is not None:
+                return dict(arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
+                            steps_used=steps_used, stop_reason="release_clearance_required",
+                            status="partial" if steps_used else "rejected",
+                            note=f"{name}: cannot withdraw from the last release before homing: {why}")
+            for way in _followable(q, ways):
+                primitives._check_cancelled()
+                state, status = _act(primitives, state, {name: way}, {})
+                steps_used += 1
+                if _spent(status):
+                    break
+            for _ in range(SETTLE_ACTIONS):
+                if _spent(status) or max(abs(a - b) for a, b in
+                        zip(_joints(state, name), ways[-1], strict=True)) < tol:
+                    break
+                primitives._check_cancelled()
+                state, status = _act(primitives, state, {name: ways[-1]}, {})
+                steps_used += 1
+            actual = _pose_of(name, _joints(state, name))
+            if used_up_fallback:
+                retreated[name] = round(float(actual[2, 3] - pose[2, 3]), 4)
+            else:
+                retreated[name] = round(float(np.dot(actual[:3, 3] - pose[:3, 3], withdrawal)), 4)
+            axial_done = (
+                float(np.dot(actual[:3, 3] - release[:3, 3], withdrawal))
+                >= RELEASE_WITHDRAW_M - .005
+            )
+            up_done = can_clear_up and float(actual[2, 3] - release[2, 3]) >= RELEASE_WITHDRAW_M - .005
+            if _spent(status) or not (axial_done or up_done):
+                return dict(arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
+                            steps_used=steps_used, clearance_retreat_m=retreated,
+                            status="partial",
+                            stop_reason=_episode_stop_reason(status) if _spent(status)
+                                        else "release_clearance_incomplete")
+        for name in arms if lift and error > tol else ():
+            q = _joints(state, name)
+            if max(abs(a - b) for a, b in zip(q, start_joints[name], strict=True)) <= tol:
+                continue
+            pose = _pose_of(name, q)
+            if pose[2, 3] >= HOME_LIFT_BELOW:
+                continue
+            for dz in (HOME_LIFT_M, HOME_LIFT_M * 2 / 3, HOME_LIFT_M / 3):
+                up = pose.copy()
+                up[2, 3] += dz
+                ways, why = kin.line_path(name, q, up)
+                if why is None:
+                    for way in _followable(q, ways):
+                        primitives._check_cancelled()
+                        state, status = _act(primitives, state, {name: way}, {})
+                        steps_used += 1
+                        if _spent(status):
+                            break
+                    lifted[name] = round(dz, 3)
+                    break
             if _spent(status):
                 break
-        for _ in range(SETTLE_ACTIONS):
-            if _spent(status) or max(abs(a - b) for a, b in
-                    zip(_joints(state, name), ways[-1], strict=True)) < tol:
-                break
-            primitives._check_cancelled()
-            state, status = _act(primitives, state, {name: ways[-1]}, {})
-            steps_used += 1
-        actual = _pose_of(name, _joints(state, name))
-        if (_spent(status) or np.linalg.norm(actual[:3, 3] - above[:3, 3]) > ARRIVE_M
-                or kin.rotation_error(actual[:3, :3], above[:3, :3]) > ARRIVE_DEG):
-            return dict(arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
-                        steps_used=steps_used, status="partial",
-                        stop_reason=_episode_stop_reason(status) if _spent(status)
-                                    else "home_staging_incomplete")
-        staged[name] = round(float(above[2, 3]), 4)
+        # After placing an object, a joint return can dip through it even after
+        # finger withdrawal. Stage that arm above the origin first. Ordinary home
+        # keeps its original lift/joint route: changing every return perturbs later
+        # contact motions even when all Cartesian endpoints remain within tolerance.
+        for name in arms if lift and not _spent(status) else ():
+            if name not in (getattr(primitives, "_home_after_release", None) or ()):
+                continue
+            q = _joints(state, name)
+            if max(abs(a - b) for a, b in zip(q, start_joints[name], strict=True)) <= tol:
+                continue
+            pose = _pose_of(name, q)
+            above = _pose_of(name, start_joints[name])
+            above[2, 3] = max(above[2, 3], pose[2, 3])
+            ways, why = kin.line_path(name, q, above)
+            if why is not None:
+                return dict(arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
+                            steps_used=steps_used, status="partial" if steps_used else "rejected",
+                            stop_reason="home_staging_required",
+                            note=f"{name}: cannot return above the origin at the cleared height: {why}")
+            for way in _followable(q, ways):
+                primitives._check_cancelled()
+                state, status = _act(primitives, state, {name: way}, {})
+                steps_used += 1
+                if _spent(status):
+                    break
+            for _ in range(SETTLE_ACTIONS):
+                if _spent(status) or max(abs(a - b) for a, b in
+                        zip(_joints(state, name), ways[-1], strict=True)) < tol:
+                    break
+                primitives._check_cancelled()
+                state, status = _act(primitives, state, {name: ways[-1]}, {})
+                steps_used += 1
+            actual = _pose_of(name, _joints(state, name))
+            if (_spent(status) or np.linalg.norm(actual[:3, 3] - above[:3, 3]) > ARRIVE_M
+                    or kin.rotation_error(actual[:3, :3], above[:3, :3]) > ARRIVE_DEG):
+                return dict(arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
+                            steps_used=steps_used, status="partial",
+                            stop_reason=_episode_stop_reason(status) if _spent(status)
+                                        else "home_staging_incomplete")
+            staged[name] = round(float(above[2, 3]), 4)
     error = error_of(state)
     swing = 0
     while error > tol and swing < max_steps and not _spent(status):
@@ -1819,15 +2329,17 @@ SPECS: dict[str, dict[str, Any]] = {
     },
     "grip": {
         "name": "grip",
-        "description": "Close (1) or open (-1) a gripper fully and report what it holds.",
+        "description": "Close (1) or open (-1) one or both grippers and report what they hold.",
         "input_schema": {
             "type": "object",
             "properties": {
-                "arm": _ARM,
-                "gripper": {"type": "number"},
-                "opening": {"type": "number"},
+                "arm": {"type": "string", "enum": [*ARMS, "both"]},
+                "gripper": {"type": ["number", "null"]},
+                "opening": {"type": ["number", "null"]},
+                "left": {"type": ["object", "number", "null"]},
+                "right": {"type": ["object", "number", "null"]},
             },
-            "required": ["gripper"],
+            "required": [],
         },
     },
     "locate": {

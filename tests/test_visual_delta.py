@@ -1535,4 +1535,274 @@ def test_align_feature_ik_rejection_reports_wrist_relief_hint_in_zero_steps(tmp_
     assert "wrist relief" in res.note and "robo.ik()" in res.note
 
 
+# -- bimanual independent_stall, delta_grasp & align_feature ---------------------
+
+
+class DualFloorGripEnvironment(JointEnvironment):
+    """Per-arm floor, wall, and close-stop environment for bimanual tests."""
+
+    def __init__(
+        self,
+        *,
+        initial_opening: dict[str, float] | float = 1.0,
+        close_stop: dict[str, float] | float = 0.025,
+        floors: dict[str, float] | None = None,
+        x_walls: dict[str, float] | None = None,
+    ):
+        super().__init__()
+        if isinstance(initial_opening, dict):
+            self.grips = {a: float(initial_opening.get(a, 1.0)) for a in kin.ARMS}
+        else:
+            self.grips = {a: float(initial_opening) for a in kin.ARMS}
+        if isinstance(close_stop, dict):
+            self.close_stop = {a: float(close_stop.get(a, 0.025)) for a in kin.ARMS}
+        else:
+            self.close_stop = {a: float(close_stop) for a in kin.ARMS}
+        self.floors = dict(floors or {})
+        self.x_walls = dict(x_walls or {})
+
+    def step(self, action):
+        before = copy.deepcopy(self.joints)
+        self.actions.append(copy.deepcopy(action))
+        self.captures += 1
+        for a in kin.ARMS:
+            if a != self.frozen:
+                self.joints[a] = list(action[f"{a}_arm_joint_state"])
+            goal = float(action[f"{a}_ee_joint_state"][0])
+            target_open = self.close_stop[a] if goal <= 0.05 else goal
+            self.grips[a] = self.grips[a] + float(
+                np.clip(target_open - self.grips[a], -0.35, 0.35)
+            )
+            tcp_a = kin.tcp(kin.fk(a, self.joints[a]))
+            if a in self.floors and tcp_a[2] < self.floors[a]:
+                self.joints[a] = before[a]
+            if a in self.x_walls and tcp_a[0] < self.x_walls[a]:
+                self.joints[a] = before[a]
+        return self.get_obs(), 0.0, False, {"status": self.get_status()}
+
+
+def test_nudge_independent_stall_freezes_stalled_arm_while_other_finishes(tmp_path):
+    # Left hits floor at z=0.848; right has no floor and targets z=0.830 (-3 cm).
+    env_ind = _place(DualFloorGripEnvironment(floors={"left": 0.848}), z=0.86)
+    host_ind = NativeToolkit(env_ind, None, tmp_path / "indep")
+    sj_ind = {a: list(env_ind.joints[a]) for a in kin.ARMS}
+
+    res_ind = rvd.nudge(
+        host_ind._primitives,
+        sj_ind,
+        "both",
+        left={"dxyz": [0.0, 0.0, -0.03]},
+        right={"dxyz": [0.0, 0.0, -0.03]},
+        independent_stall=True,
+        stall_steps=2,
+    )
+    assert res_ind["status"] == "stopped" and res_ind["stalled"] is True
+    assert res_ind["stop_reason"] == "contact_or_stall"
+    assert res_ind["stalled_arm"] == "left"
+    assert res_ind["arms"]["left"]["stalled"] is True
+    assert res_ind["arms"]["left"]["reached"] is False
+    assert res_ind["arms"]["right"]["stalled"] is False
+    assert res_ind["arms"]["right"]["reached"] is True
+    assert tcp(env_ind, "left")[2] == pytest.approx(0.848, abs=0.004)
+    assert tcp(env_ind, "right")[2] == pytest.approx(0.830, abs=0.0025)
+    # Left stayed frozen on its measured joints for the remaining ticks while right descended.
+    assert env_ind.actions[-1]["left_arm_joint_state"] == env_ind.actions[-2]["left_arm_joint_state"]
+
+    # Contrast with coupled independent_stall=False: right stops early as soon as left stalls!
+    env_cpl = _place(DualFloorGripEnvironment(floors={"left": 0.848}), z=0.86)
+    host_cpl = NativeToolkit(env_cpl, None, tmp_path / "coupled")
+    sj_cpl = {a: list(env_cpl.joints[a]) for a in kin.ARMS}
+    res_cpl = rvd.nudge(
+        host_cpl._primitives,
+        sj_cpl,
+        "both",
+        left={"dxyz": [0.0, 0.0, -0.03]},
+        right={"dxyz": [0.0, 0.0, -0.03]},
+        independent_stall=False,
+        stall_steps=2,
+    )
+    assert res_cpl["status"] == "stopped" and res_cpl["stalled"] is True
+    assert res_cpl["arms"]["right"]["reached"] is False
+    assert tcp(env_cpl, "right")[2] > 0.835
+
+    # Both arms stalling on uneven floors early-exit once both stall.
+    env_both = _place(DualFloorGripEnvironment(floors={"left": 0.848, "right": 0.838}), z=0.86)
+    host_both = NativeToolkit(env_both, None, tmp_path / "both_stall")
+    sj_both = {a: list(env_both.joints[a]) for a in kin.ARMS}
+    res_both = rvd.nudge(
+        host_both._primitives,
+        sj_both,
+        "both",
+        left={"dxyz": [0.0, 0.0, -0.05]},
+        right={"dxyz": [0.0, 0.0, -0.05]},
+        independent_stall=True,
+        stall_steps=2,
+    )
+    assert res_both["arms"]["left"]["stalled"] is True
+    assert res_both["arms"]["right"]["stalled"] is True
+    assert res_both["steps_used"] < res_both["planned_steps"]
+    assert tcp(env_both, "left")[2] == pytest.approx(0.848, abs=0.004)
+    assert tcp(env_both, "right")[2] == pytest.approx(0.838, abs=0.004)
+
+
+def test_delta_grasp_bimanual_uneven_tabletop_preview_and_collision(tmp_path, monkeypatch):
+    # Left rests on a 6 mm higher support (floor 0.784), right rests on the table (floor 0.778).
+    env = _place(
+        DualFloorGripEnvironment(
+            initial_opening=1.0,
+            close_stop={"left": 0.035, "right": 0.025},
+            floors={"left": 0.784, "right": 0.778},
+        ),
+        z=0.805,
+    )
+    host = NativeToolkit(env, None, tmp_path / "dg_both")
+    sj = {a: list(env.joints[a]) for a in kin.ARMS}
+
+    # 1. Preview costs 0 steps and plans synchronized stages.
+    plan = rvd.delta_grasp(
+        host._primitives,
+        sj,
+        arm="both",
+        left={"target_xyz": [-0.256, -0.146, 0.776], "opening": 0.35},
+        right={"target_xyz": [0.256, -0.146, 0.770], "opening": 0.40},
+        contact_table=True,
+        overdrive_m=0.005,
+        lift_dxyz=(0.0, 0.0, 0.024),
+        preview=True,
+    )
+    assert plan["status"] == "planned" and plan["accepted"] is True and plan["preview"] is True
+    assert plan["steps_used"] == 0 and plan["planned_steps"] > 0 and not env.actions
+    assert set(plan["arms"]) == {"left", "right"}
+
+    # 2. Live bimanual execution seats both unevenly, closes simultaneously, lifts in 3 mm steps.
+    res = rvd.delta_grasp(
+        host._primitives,
+        sj,
+        arm="both",
+        left={"target_xyz": [-0.256, -0.146, 0.776], "opening": 0.35},
+        right={"target_xyz": [0.256, -0.146, 0.770], "opening": 0.40},
+        contact_table=True,
+        overdrive_m=0.005,
+        lift_dxyz=(0.0, 0.0, 0.024),
+    )
+    assert res["arm"] == "both" and res["status"] == "completed" and res["reached"] is True
+    assert res["aligned"] is True and res["closed"] is True
+    assert res["table_contact_stalled"] is True
+    assert res["retained_closure"] is True and res["holding"] is True
+    assert res["preopen_steps_used"] > 0 and res["align_steps_used"] > 0
+    assert res["approach_steps_used"] > 0 and res["close_steps_used"] > 0
+    assert res["lift_steps_used"] >= 8
+    assert res["steps_used"] == len(env.actions)
+    assert res["arms"]["left"]["table_contact_stalled"] is True
+    assert res["arms"]["right"]["table_contact_stalled"] is True
+    assert res["arms"]["left"]["closed_opening"] == pytest.approx(0.035, abs=0.002)
+    assert res["arms"]["right"]["closed_opening"] == pytest.approx(0.025, abs=0.002)
+    assert tcp(env, "left")[2] == pytest.approx(0.784 + 0.024, abs=0.004)
+    assert tcp(env, "right")[2] == pytest.approx(0.778 + 0.024, abs=0.004)
+
+    # 3. 0-step inter-arm collision rejection in bimanual delta_grasp.
+    env_col = _place(DualFloorGripEnvironment(initial_opening=1.0), z=0.86)
+    host_col = NativeToolkit(env_col, None, tmp_path / "dg_col")
+    sj_col = {a: list(env_col.joints[a]) for a in kin.ARMS}
+    monkeypatch.setattr(
+        kin,
+        "inter_arm_violations",
+        lambda lq, rq, **kw: ["camera_housing_collision"]
+        if float(np.linalg.norm(kin.tcp(kin.fk("right", rq)) - kin.tcp(kin.fk("left", lq)))) < 0.49
+        else [],
+        raising=False,
+    )
+    rejected = rvd.delta_grasp(
+        host_col._primitives,
+        sj_col,
+        arm="both",
+        left=[-0.23, -0.15, 0.85],
+        right=[0.23, -0.15, 0.85],
+    )
+    assert rejected["status"] == "rejected" and rejected["stop_reason"] == "ik_path_rejected"
+    assert "camera_housing_collision" in rejected["ik_error"]
+    assert rejected["steps_used"] == 0 and not env_col.actions
+
+
+def test_align_feature_bimanual_independent_and_coupled_stall(tmp_path, monkeypatch):
+    # Uneven floors: left blocks at 0.848 (~12 mm of 30 mm stroke -> rim_contact_suspected),
+    # right is unobstructed and completes full 30 mm stroke when independent_stall=True.
+    env_ind = _place(DualFloorGripEnvironment(floors={"left": 0.848}), z=0.86)
+    host_ind = NativeToolkit(env_ind, None, tmp_path / "af_ind")
+    sj_ind = {a: list(env_ind.joints[a]) for a in kin.ARMS}
+    tl, tr = tcp(env_ind, "left"), tcp(env_ind, "right")
+
+    # Preview succeeds in 0 steps
+    prev = rvd.align_feature(
+        host_ind._primitives,
+        sj_ind,
+        arm="both",
+        left={"feature_xyz": tl.tolist(), "target_xyz": (tl + np.array([0.006, 0.0, -0.02])).tolist()},
+        right={"feature_xyz": tr.tolist(), "target_xyz": (tr + np.array([-0.006, 0.0, -0.02])).tolist()},
+        stroke_m=0.030,
+        max_steps=25,
+        preview=True,
+    )
+    assert prev["status"] == "planned" and prev["accepted"] is True
+    assert prev["steps_used"] == 0 and prev["planned_steps"] > 0 and not env_ind.actions
+
+    # Live with independent_stall=True
+    res_ind = rvd.align_feature(
+        host_ind._primitives,
+        sj_ind,
+        arm="both",
+        left={"feature_xyz": tl.tolist(), "target_xyz": (tl + np.array([0.006, 0.0, -0.02])).tolist()},
+        right={"feature_xyz": tr.tolist(), "target_xyz": (tr + np.array([-0.006, 0.0, -0.02])).tolist()},
+        stroke_m=0.030,
+        independent_stall=True,
+        max_steps=25,
+    )
+    assert res_ind["aligned"] is True and res_ind["stalled"] is True
+    assert res_ind["status"] == "stopped" and res_ind["stop_reason"] == "contact_or_stall"
+    assert res_ind["arms"]["left"]["stalled"] is True
+    assert res_ind["arms"]["left"]["reached"] is False
+    assert res_ind["arms"]["left"]["rim_contact_suspected"] is True
+    assert res_ind["arms"]["left"]["suggested_backoff_dxyz"] == pytest.approx([0.0, 0.0, 0.004], abs=1e-5)
+    assert res_ind["arms"]["right"]["stalled"] is False
+    assert res_ind["arms"]["right"]["reached"] is True
+    assert res_ind["arms"]["right"]["achieved_stroke_m"] == pytest.approx(0.030, abs=0.003)
+    assert res_ind["arms"]["right"]["rim_contact_suspected"] is False
+
+    # Live with independent_stall=False (coupled): right stops early when left stalls!
+    env_cpl = _place(DualFloorGripEnvironment(floors={"left": 0.848}), z=0.86)
+    host_cpl = NativeToolkit(env_cpl, None, tmp_path / "af_cpl")
+    sj_cpl = {a: list(env_cpl.joints[a]) for a in kin.ARMS}
+    tl2, tr2 = tcp(env_cpl, "left"), tcp(env_cpl, "right")
+    res_cpl = rvd.align_feature(
+        host_cpl._primitives,
+        sj_cpl,
+        arm="both",
+        left={"feature_xyz": tl2.tolist(), "target_xyz": (tl2 + np.array([0.006, 0.0, -0.02])).tolist()},
+        right={"feature_xyz": tr2.tolist(), "target_xyz": (tr2 + np.array([-0.006, 0.0, -0.02])).tolist()},
+        stroke_m=0.030,
+        independent_stall=False,
+        max_steps=25,
+    )
+    assert res_cpl["status"] == "stopped" and res_cpl["stalled"] is True
+    assert res_cpl["arms"]["right"]["reached"] is False
+    assert res_cpl["arms"]["right"]["achieved_stroke_m"] < 0.025
+
+    # 0-step IK rejection emits wrist-relief hint
+    env_ik = _place(DualFloorGripEnvironment(), z=0.86)
+    host_ik = NativeToolkit(env_ik, None, tmp_path / "af_ik")
+    sj_ik = {a: list(env_ik.joints[a]) for a in kin.ARMS}
+    tl3, tr3 = tcp(env_ik, "left"), tcp(env_ik, "right")
+    monkeypatch.setattr(kin, "line_path", lambda *args, **kwargs: ([], "joint_limit"))
+    rej = rvd.align_feature(
+        host_ik._primitives,
+        sj_ik,
+        arm="both",
+        left={"feature_xyz": tl3.tolist(), "target_xyz": (tl3 + np.array([0.015, 0.0, -0.02])).tolist()},
+        right={"feature_xyz": tr3.tolist(), "target_xyz": (tr3 + np.array([-0.015, 0.0, -0.02])).tolist()},
+    )
+    assert rej["status"] == "rejected" and rej["stop_reason"] == "ik_path_rejected"
+    assert rej["steps_used"] == 0 and not env_ik.actions
+    assert rej["note"] is not None and "wrist relief" in rej["note"]
+
+
 

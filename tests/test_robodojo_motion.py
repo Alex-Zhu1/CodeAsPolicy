@@ -375,6 +375,137 @@ def test_grip_runs_a_full_stroke_and_reports_what_it_holds(sim):
     thin = tools.grip(prims, "right", 1)
     assert thin["holding"] and thin["width_m"] == pytest.approx(0.0056, abs=0.0005)
     assert "error" in tools.grip(prims, "right", 0)
+    assert "arms" in thin and "right" in thin["arms"]
+    assert thin["arms"]["right"]["holding"] is True
+
+
+def test_grip_bimanual_uniform_mixed_and_keep(sim):
+    env, prims, _start = sim
+    # Uniform close on two differently sized objects in one synchronized stroke
+    env.block["left"] = 0.25
+    env.block["right"] = 0.40
+    before = len(env.actions)
+    closed = tools.grip(prims, "both", 1)
+    assert closed["arm"] == "both" and closed["gripper"] == "closed"
+    assert closed["holding"] is True
+    assert closed["opening"] == pytest.approx(0.25, abs=0.01)
+    assert closed["opening_before"] == pytest.approx(1.0, abs=0.01)
+    assert closed["arms"]["left"]["holding"] is True
+    assert closed["arms"]["right"]["holding"] is True
+    assert closed["arms"]["left"]["opening"] == pytest.approx(0.25, abs=0.01)
+    assert closed["arms"]["right"]["opening"] == pytest.approx(0.40, abs=0.01)
+    assert closed["width_m"] == pytest.approx(closed["arms"]["left"]["width_m"])
+    assert closed["steps_used"] == len(env.actions) - before <= 6
+    assert all(
+        a["left_ee_joint_state"] == [0.0] and a["right_ee_joint_state"] == [0.0]
+        for a in env.actions[before:]
+    )
+
+    # Uniform partial open
+    env.block.clear()
+    opened = tools.grip(prims, "both", -1, opening=0.45)
+    assert opened["arm"] == "both" and opened["gripper"] == "open"
+    assert opened["holding"] is False and opened["width_m"] is None
+    assert opened["arms"]["left"]["opening"] == pytest.approx(0.45, abs=0.01)
+    assert opened["arms"]["right"]["opening"] == pytest.approx(0.45, abs=0.01)
+
+    # Mixed per-arm: close left on an object, open right to 0.85 simultaneously
+    env.block["left"] = 0.30
+    before_mixed = len(env.actions)
+    mixed = tools.grip(prims, "both", left=1, right={"gripper": -1, "opening": 0.85})
+    assert mixed["arm"] == "both" and mixed["gripper"] == "mixed"
+    assert mixed["holding"] is True
+    assert mixed["arms"]["left"]["gripper"] == "closed"
+    assert mixed["arms"]["left"]["holding"] is True
+    assert mixed["arms"]["left"]["opening"] == pytest.approx(0.30, abs=0.01)
+    assert mixed["arms"]["right"]["gripper"] == "open"
+    assert mixed["arms"]["right"]["opening"] == pytest.approx(0.85, abs=0.01)
+    assert mixed["steps_used"] == len(env.actions) - before_mixed <= 6
+
+    # One arm keep, one arm open
+    one_keep = tools.grip(prims, "both", left=0, right=-1)
+    assert one_keep["gripper"] == "open"
+    assert one_keep["arms"]["left"]["gripper"] == "keep"
+    assert one_keep["arms"]["left"]["holding"] is True
+    assert one_keep["arms"]["right"]["opening"] == pytest.approx(1.0, abs=0.01)
+
+    # Both keep -> 0 steps
+    before_noop = len(env.actions)
+    noop = tools.grip(prims, "both", left=0, right=0)
+    assert noop["gripper"] == "keep" and noop["steps_used"] == 0
+    assert len(env.actions) == before_noop
+
+    # Validation checks
+    assert "error" in tools.grip(prims, "right", left=1)
+    assert "error" in tools.grip(prims, "both", opening=0.5, left=1)
+    assert "error" in tools.grip(prims, "middle", 1)
+    assert tools.SPECS["grip"]["input_schema"]["required"] == []
+    assert "both" in tools.SPECS["grip"]["input_schema"]["properties"]["arm"]["enum"]
+
+
+def test_home_both_synchronizes_release_lift_and_staging_phases(monkeypatch):
+    def _setup():
+        env = _SimArms()
+        prims = _Primitives(env)
+        start = {arm: [0.0] * 6 for arm in kin.ARMS}
+        assert tools.move_pose(prims, start, [-0.25, -0.15, 0.92], arm="left", pitch=0)["reached"]
+        assert tools.move_pose(prims, start, [0.25, -0.15, 0.92], arm="right", pitch=0)["reached"]
+        env.block["left"] = 0.4
+        env.block["right"] = 0.4
+        assert tools.grip(prims, "both", 1)["holding"]
+        tools.grip(prims, "both", -1)
+        assert "left" in prims._release_poses and "right" in prims._release_poses
+        assert "left" in prims._home_after_release and "right" in prims._home_after_release
+        return env, prims, start
+
+    # Synchronized home("both")
+    env_both, prims_both, start_both = _setup()
+    before_both = len(env_both.actions)
+    res_both = tools.home(prims_both, start_both, arm="both")
+    assert res_both["reached"] is True
+    assert set(res_both["clearance_retreat_m"]) == {"left", "right"}
+    assert set(res_both["lifted_m"]) == {"left", "right"}
+    assert set(res_both["staging_height_m"]) == {"left", "right"}
+    assert not prims_both._home_after_release
+
+    # Sequential home("left") then home("right")
+    env_seq, prims_seq, start_seq = _setup()
+    r_l = tools.home(prims_seq, start_seq, arm="left")
+    r_r = tools.home(prims_seq, start_seq, arm="right")
+    assert r_l["reached"] and r_r["reached"]
+    seq_steps = r_l["steps_used"] + r_r["steps_used"]
+
+    # Synchronized bimanual home takes roughly half the steps of sequential homing!
+    assert res_both["steps_used"] < int(0.65 * seq_steps)
+    # Confirm simultaneous actuation on pre-swing ticks (both arms change joints together)
+    both_actions = env_both.actions[before_both:]
+    simultaneous_ticks = sum(
+        1
+        for a, b in zip(both_actions, both_actions[1:], strict=False)
+        if a["left_arm_joint_state"] != b["left_arm_joint_state"]
+        and a["right_arm_joint_state"] != b["right_arm_joint_state"]
+    )
+    assert simultaneous_ticks >= 4
+
+    # Inter-arm collision during synchronized release_clearance rejects in 0 steps
+    env_col, prims_col, start_col = _setup()
+    before_col = len(env_col.actions)
+    monkeypatch.setattr(
+        kin,
+        "inter_arm_violations",
+        lambda lq, rq, **kw: ["finger_collision"],
+        raising=False,
+    )
+    monkeypatch.setattr(
+        kin,
+        "inter_arm_min_distance",
+        lambda lq, rq, **kw: 0.005,
+        raising=False,
+    )
+    blocked = tools.home(prims_col, start_col, arm="both")
+    assert blocked["reached"] is False
+    assert blocked["stop_reason"] == "release_clearance_required"
+    assert blocked["steps_used"] == 0 and len(env_col.actions) == before_col
 
 
 def test_home_lifts_first_then_brings_both_arms_back(sim):

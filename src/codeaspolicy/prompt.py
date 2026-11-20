@@ -287,12 +287,12 @@ def api_reference(
             )
         )
         sections.append(
-            "Coarse + Delta execution protocol: use `execute_motion` for coarse C2 transport "
-            "and `delta_grasp`, `align_feature`, `nudge` directly (no `once()` wrapper) for "
-            "close-range (<= 4 cm) contact. Never abandon useful work from a cost forecast, "
-            "never infer held-object 3D pose from table-height geometry (`image_consistent` "
-            "is 2D wrist evidence; `unknown` is not empty), and do not catch "
-            "`CoordinationPause`, `SupervisionPause`, or `ActionContractPause`."
+            "Coarse + Delta bimanual protocol: use `execute_motion` (one/both arms, verified via "
+            "`ik`/`ik_both`) for C2 transport and `delta_grasp`, `align_feature`, `nudge` (`arm='both'` "
+            "supported) directly (no `once()` wrapper) for <= 4 cm contact. Call `show('all')` on "
+            "decision turns, never abandon useful work from cost forecasts, never infer held-object "
+            "3D pose from table-height geometry (`image_consistent` is 2D; `unknown` != empty), and "
+            "do not catch `CoordinationPause`, `SupervisionPause`, or `ActionContractPause`."
         )
     # A robot without ``done`` never ends an episode as "terminated".
     absent = frozenset(getattr(robot_cls, "ABSENT_MEMBERS", ()))

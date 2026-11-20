@@ -294,6 +294,11 @@ class RobotBase(InteractionMixin, PerceptionMixin):
         *you* (the author) need to look at the scene before writing the next
         turn.  Costs tokens: look only when a decision depends on it.
         """
+        if camera == "all" and self.CAMERAS:
+            for cam in self.CAMERAS:
+                if cam not in self._show_requests:
+                    self._show_requests.append(cam)
+            return
         if camera not in self.CAMERAS:
             raise ValueError(f"camera must be one of {self.CAMERAS}")
         if camera not in self._show_requests:

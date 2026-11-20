@@ -136,10 +136,12 @@ def test_orthogonal_coarse_delta_api_prunes_ceremony_while_preserving_runtime(
         "motion_status",
         "set_gripper",
         "home",
+        "home_pose",
         "delta_grasp",
         "align_feature",
         "nudge",
         "ik",
+        "ik_both",
         "fk",
         "pose_from_axes",
         "crop_grid",
@@ -640,11 +642,20 @@ def test_no_sam_prompt_exposes_geometry_without_sam3_and_keeps_core_knowledge(mo
             "pose_from_axes",
             "fk",
             "ik",
+            "ik_both",
+            "home_pose",
         ):
             assert f"robo.{geom_fn}(" in doc
         for pose_fn in ("shifted", "axes", "rotated"):
             assert f"pose.{pose_fn}(" in doc
-        for geom_cls in ("CameraRay", "PlanePoint", "TriangulatedPoint", "PixelPoint", "IKSolution"):
+        for geom_cls in (
+            "CameraRay",
+            "PlanePoint",
+            "TriangulatedPoint",
+            "PixelPoint",
+            "IKSolution",
+            "DualIKSolution",
+        ):
             assert f"class {geom_cls}(" in doc
         for hidden_fn in ("locate", "segment", "back_project", "pi0_pick"):
             assert f"robo.{hidden_fn}(" not in doc
@@ -704,3 +715,272 @@ def test_all_robodojo_knowledge_files_are_lean_deduplicated_and_task_agnostic(fi
     if filename.endswith("-nosam.md") or filename == "robodojo-intent.md":
         assert not re.search(r"pi0|lingbot|rldx|vla|sam3", doc, re.IGNORECASE)
         assert not re.search(r"\brobo\.(locate|segment|back_project)\b", doc)
+
+
+def test_bimanual_guidance_markers_in_robodojo_intent_and_prompt():
+    from codeaspolicy.play import build_prompt
+
+    card = TaskCard(
+        suite="arx_x5",
+        task="dual_task",
+        seed=0,
+        task_language="Organize both zones",
+        object_names=[],
+        robot="robodojo_xpl_rgb",
+    )
+    prompt_text = build_prompt("cells", card, budget_s=900, max_programs=None, primitives="no-sam")
+    for marker in (
+        'robo.show("all")',
+        "robo.ik_both(",
+        'robo.home_pose("left")',
+        "Parallel half-zones",
+        "Pipelined retreat",
+        "Joint rendezvous",
+        "active stereo view",
+        'robo.set_gripper("both", robo.OPEN)',
+        'robo.delta_grasp(arm="both"',
+        'robo.align_feature(arm="both"',
+        'robo.nudge(arm="both"',
+    ):
+        assert marker in prompt_text, f"missing bimanual marker {marker!r}"
+
+
+def test_show_all_and_bimanual_policy_wrappers_dispatch_on_fake_backend():
+    from codeaspolicy._robot import RobotBase
+    from codeaspolicy.coordination import Pose
+    from codeaspolicy.robodojo import (
+        DeltaGrasp,
+        FeatureAlignment,
+        Gripper,
+        Nudge,
+        RobodojoRobot,
+    )
+
+    class _FakeBackend:
+        def __init__(self):
+            self.calls = []
+            self.steps = 0
+
+        def execute_tool(self, name, kwargs):
+            self.calls.append((name, kwargs))
+            if name == "view_env_state":
+                return {
+                    "step": 0,
+                    "task_language": "test",
+                    "truncated": False,
+                    "state": {
+                        "state": {
+                            "left_ee_pose": [-0.3, -0.3, 0.9, 1, 0, 0, 0],
+                            "right_ee_pose": [0.3, -0.3, 0.9, 1, 0, 0, 0],
+                            "left_ee_joint_state": [1.0],
+                            "right_ee_joint_state": [1.0],
+                            "left_arm_joint_state": [0.0] * 6,
+                            "right_arm_joint_state": [0.0] * 6,
+                        }
+                    },
+                }
+            if name == "grip":
+                self.steps += 2
+                return {
+                    "arm": kwargs["arm"],
+                    "gripper": "open" if kwargs.get("gripper") == -1 else "mixed",
+                    "opening": 0.6,
+                    "holding": False,
+                    "width_m": None,
+                    "steps_used": 2,
+                    "status": {"step": self.steps, "step_limit": 400},
+                    "arms": {
+                        "left": {"gripper": "open", "opening": 0.6, "holding": False},
+                        "right": {"gripper": "closed", "opening": 0.2, "holding": True},
+                    },
+                }
+            if name == "nudge":
+                self.steps += 3
+                return {
+                    "arm": kwargs["arm"],
+                    "frame": kwargs["frame"],
+                    "status": "completed",
+                    "reached": True,
+                    "stalled": False,
+                    "steps_used": 3,
+                    "planned_steps": 3,
+                    "final_xyz": [0.3, -0.2, 0.9],
+                    "arms": {"left": {"reached": True}, "right": {"reached": True}},
+                }
+            if name in ("delta_grasp", "preview_delta_grasp"):
+                return {
+                    "arm": kwargs["arm"],
+                    "status": "planned" if name.startswith("preview_") else "completed",
+                    "aligned": True,
+                    "reached": True,
+                    "accepted": True,
+                    "preview": name.startswith("preview_"),
+                    "closed": not name.startswith("preview_"),
+                    "holding": not name.startswith("preview_"),
+                    "opening": 0.2,
+                    "steps_used": 0 if name.startswith("preview_") else 10,
+                    "planned_steps": 10,
+                    "arms": {
+                        "left": {"reached": True, "holding": True},
+                        "right": {"reached": True, "holding": True},
+                    },
+                }
+            if name in ("align_feature", "preview_align_feature"):
+                return {
+                    "arm": kwargs["arm"],
+                    "status": "planned" if name.startswith("preview_") else "completed",
+                    "aligned": True,
+                    "reached": True,
+                    "accepted": True,
+                    "preview": name.startswith("preview_"),
+                    "steps_used": 0 if name.startswith("preview_") else 6,
+                    "planned_steps": 6,
+                    "arms": {
+                        "left": {"aligned": True, "reached": True},
+                        "right": {"aligned": True, "reached": True},
+                    },
+                }
+            raise AssertionError(f"unexpected tool {name}")
+
+        def solved(self):
+            return False
+
+        def artifact(self, name, step=-1):
+            return b""
+
+        def env_steps(self):
+            return self.steps
+
+        def cancel(self):
+            pass
+
+    backend = _FakeBackend()
+    robo = RobodojoRobot(backend)
+
+    # 1. show("all") queues all 3 views in order without duplicates; invalid still raises.
+    robo.show("cam_left_wrist")
+    robo.show("all")
+    assert robo._take_show_requests() == ["cam_left_wrist", "cam_head", "cam_right_wrist"]
+    robo.show("all")
+    assert robo._take_show_requests() == ["cam_head", "cam_left_wrist", "cam_right_wrist"]
+    with pytest.raises(ValueError):
+        robo.show("bad_cam")
+
+    class _NoCamRobot(RobotBase):
+        CAMERAS = ()
+
+    with pytest.raises(ValueError):
+        _NoCamRobot(backend).show("all")
+
+    # 2. set_gripper: legacy single-arm kwargs preserved + bimanual uniform & per-arm modes.
+    robo.state()  # prime _last_state so stateful calls don't append a trailing view_env_state
+    g_single = robo.set_gripper("right", robo.CLOSE)
+    assert isinstance(g_single, Gripper)
+    assert backend.calls[-1] == ("grip", {"arm": "right", "gripper": 1})
+
+    g_unif = robo.set_gripper("both", robo.OPEN, opening=0.7)
+    assert g_unif.arm == "both" and g_unif.arms["right"]["holding"] is True
+    assert backend.calls[-1] == ("grip", {"arm": "both", "gripper": -1, "opening": 0.7})
+
+    g_mixed = robo.set_gripper("both", left=(robo.OPEN, 0.5), right={"gripper": robo.CLOSE})
+    assert g_mixed.arm == "both" and "left" in g_mixed.arms
+    assert backend.calls[-1] == (
+        "grip",
+        {"arm": "both", "left": {"gripper": -1, "opening": 0.5}, "right": {"gripper": 1}},
+    )
+
+    g_int_keep = robo.set_gripper("both", left=robo.CLOSE, right=robo.KEEP)
+    assert backend.calls[-1] == ("grip", {"arm": "both", "left": 1, "right": 0})
+    assert g_int_keep.arm == "both"
+
+    with pytest.raises(ValueError):
+        robo.set_gripper("left", robo.OPEN, left=robo.OPEN)
+    with pytest.raises(ValueError):
+        robo.set_gripper("both")
+    with pytest.raises(ValueError):
+        robo.set_gripper("both", robo.OPEN, left=robo.CLOSE)
+
+    # 3. nudge: default independent_stall=False omits key; True includes it.
+    n_default = robo.nudge((0.0, 0.0, -0.01), arm="right")
+    assert isinstance(n_default, Nudge)
+    assert "independent_stall" not in backend.calls[-1][1]
+
+    n_indep = robo.nudge(
+        arm="both",
+        left={"dxyz": (0.0, 0.0, -0.01)},
+        right={"dxyz": (0.0, 0.0, -0.02)},
+        independent_stall=True,
+    )
+    assert n_indep.arm == "both" and backend.calls[-1][1]["independent_stall"] is True
+    with pytest.raises(ValueError):
+        robo.nudge((0.0, 0.0, -0.01), independent_stall=1)  # type: ignore[arg-type]
+
+    # 4. delta_grasp: single-arm legacy kwargs exact; bimanual direct + per-arm mapping + preview.
+    dg_single = robo.delta_grasp([0.2, -0.1, 0.78], arm="right", contact_table=True)
+    assert isinstance(dg_single, DeltaGrasp)
+    assert backend.calls[-1][0] == "delta_grasp"
+    assert "left" not in backend.calls[-1][1] and "right" not in backend.calls[-1][1]
+    assert backend.calls[-1][1]["target_xyz"] == [0.2, -0.1, 0.78]
+
+    dg_both = robo.delta_grasp(
+        arm="both",
+        left=Pose((-0.2, -0.1, 0.78), (1.0, 0.0, 0.0, 0.0)),
+        right={"target": [0.2, -0.1, 0.79], "opening": 0.5, "contact_table": True},
+        overdrive_m=0.005,
+        lift_dxyz=(0.0, 0.0, 0.04),
+    )
+    assert dg_both.arm == "both" and dg_both.arms["left"]["holding"] is True
+    tool_name, dg_kw = backend.calls[-1]
+    assert tool_name == "delta_grasp"
+    assert dg_kw["target_xyz"] is None and dg_kw["arm"] == "both"
+    assert dg_kw["left"]["target_xyz"] == [-0.2, -0.1, 0.78]
+    assert dg_kw["left"]["overdrive_m"] == 0.005
+    assert dg_kw["left"]["contact_table"] is False
+    assert dg_kw["left"]["lift_dxyz"] == [0.0, 0.0, 0.04]
+    assert dg_kw["right"]["target_xyz"] == [0.2, -0.1, 0.79]
+    assert dg_kw["right"]["opening"] == 0.5 and dg_kw["right"]["contact_table"] is True
+
+    dg_prev = robo.delta_grasp(
+        arm="both", left=[-0.2, -0.1, 0.78], right=[0.2, -0.1, 0.78], preview=True
+    )
+    assert dg_prev.preview is True and backend.calls[-1][0] == "preview_delta_grasp"
+
+    with pytest.raises(ValueError):
+        robo.delta_grasp([0.2, -0.1, 0.78], arm="both", left=[-0.2, -0.1, 0.78], right=[0.2, -0.1, 0.78])
+    with pytest.raises(ValueError):
+        robo.delta_grasp(arm="both", left=[-0.2, -0.1, 0.78])
+
+    # 5. align_feature: single-arm legacy kwargs exact; bimanual mappings + independent_stall + preview.
+    af_single = robo.align_feature([0.2, -0.1, 0.80], [0.2, -0.1, 0.78], arm="right")
+    assert isinstance(af_single, FeatureAlignment)
+    assert backend.calls[-1][0] == "align_feature"
+    assert "independent_stall" not in backend.calls[-1][1]
+    assert backend.calls[-1][1]["feature_xyz"] == [0.2, -0.1, 0.80]
+
+    af_both = robo.align_feature(
+        arm="both",
+        left={"feature": [-0.2, -0.1, 0.80], "target": [-0.2, -0.1, 0.78], "stroke_m": 0.02},
+        right={"feature_xyz": [0.2, -0.1, 0.80], "target_xyz": [0.2, -0.1, 0.78]},
+        independent_stall=False,
+        stroke_dxyz=(0.0, 0.0, -0.015),
+    )
+    assert af_both.arm == "both" and af_both.arms["right"]["aligned"] is True
+    tool_name, af_kw = backend.calls[-1]
+    assert tool_name == "align_feature"
+    assert af_kw["feature_xyz"] is None and af_kw["target_xyz"] is None
+    assert af_kw["independent_stall"] is False
+    assert af_kw["left"]["stroke_m"] == 0.02 and "stroke_dxyz" not in af_kw["left"]
+    assert af_kw["right"]["stroke_dxyz"] == [0.0, 0.0, -0.015]
+
+    af_prev = robo.align_feature(
+        arm="both",
+        left={"feature": [-0.2, -0.1, 0.80], "target": [-0.2, -0.1, 0.78]},
+        right={"feature": [0.2, -0.1, 0.80], "target": [0.2, -0.1, 0.78]},
+        preview=True,
+    )
+    assert af_prev.preview is True and backend.calls[-1][0] == "preview_align_feature"
+
+    with pytest.raises(ValueError):
+        robo.align_feature([0, 0, 0], [0, 0, 0], arm="both", left={}, right={})
+    with pytest.raises(ValueError):
+        robo.align_feature(arm="both", left={"feature": [0, 0, 0]}, right={"feature": [0, 0, 0], "target": [0, 0, 0]})

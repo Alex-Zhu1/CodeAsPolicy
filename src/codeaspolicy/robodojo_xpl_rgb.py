@@ -35,6 +35,7 @@ from .robodojo import (
     ArmState,
     CameraRay,
     DeltaGrasp,
+    DualIKSolution,
     FeatureAlignment,
     Gripper,
     Home,
@@ -148,6 +149,7 @@ class RobodojoOfficialColourRobot(RobodojoRobot):
         TriangulatedPoint,
         PixelPoint,
         IKSolution,
+        DualIKSolution,
     )
     SAM_REFERENCE_EDITS: ClassVar[tuple[tuple[str, str], ...]] = (
         RobodojoRobot.SAM_REFERENCE_EDITS[0],
@@ -329,6 +331,7 @@ __all__ = [
     "ADAPTER",
     "CameraRay",
     "DeltaGrasp",
+    "DualIKSolution",
     "FeatureAlignment",
     "IKSolution",
     "ObjectSight",

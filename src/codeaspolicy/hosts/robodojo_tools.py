@@ -280,8 +280,12 @@ def _act(
         observer(obs)  # Read-only; the native host isolates perception failures.
     for arm, release in list((getattr(primitives, "_release_poses", None) or {}).items()):
         offset = _pose_of(arm, _joints(obs["state"], arm))[:3, 3] - release[:3, 3]
+        lifted_clear = (
+            float(release[2, 0]) <= 0.25 and float(offset[2]) >= RELEASE_WITHDRAW_M - .001
+        )
         if (np.linalg.norm(offset) >= RELEASE_NEAR_M
-                or float(np.dot(offset, -release[:3, 0])) >= RELEASE_WITHDRAW_M - .001):
+                or float(np.dot(offset, -release[:3, 0])) >= RELEASE_WITHDRAW_M - .001
+                or lifted_clear):
             primitives._release_poses.pop(arm, None)
     return obs["state"], (info.get("status") or {}) if isinstance(info, dict) else {}
 
@@ -821,12 +825,26 @@ def home(
         pose = _pose_of(name, q)
         withdrawal = -release[:3, 0]
         offset = pose[:3, 3] - release[:3, 3]
+        can_clear_up = float(release[2, 0]) <= 0.25
+        lifted_up = float(offset[2])
         missing = RELEASE_WITHDRAW_M - float(np.dot(offset, withdrawal))
-        if np.linalg.norm(offset) >= RELEASE_NEAR_M or missing <= .001:
+        if (np.linalg.norm(offset) >= RELEASE_NEAR_M
+                or missing <= .001
+                or (can_clear_up and lifted_up >= RELEASE_WITHDRAW_M - .001)):
             continue
         target = pose.copy()
         target[:3, 3] += withdrawal * missing
         ways, why = kin.line_path(name, q, target)
+        used_up_fallback = False
+        if why is not None and can_clear_up:
+            missing_up = RELEASE_WITHDRAW_M - max(0.0, lifted_up)
+            if missing_up > .001:
+                up_target = pose.copy()
+                up_target[2, 3] += missing_up
+                ways_up, why_up = kin.line_path(name, q, up_target)
+                if why_up is None:
+                    ways, why = ways_up, None
+                    used_up_fallback = True
         if why is not None:
             return dict(arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
                         steps_used=steps_used, stop_reason="release_clearance_required",
@@ -846,9 +864,16 @@ def home(
             state, status = _act(primitives, state, {name: ways[-1]}, {})
             steps_used += 1
         actual = _pose_of(name, _joints(state, name))
-        retreated[name] = round(float(np.dot(actual[:3, 3] - pose[:3, 3], withdrawal)), 4)
-        if (_spent(status) or float(np.dot(actual[:3, 3] - release[:3, 3], withdrawal))
-                < RELEASE_WITHDRAW_M - .005):
+        if used_up_fallback:
+            retreated[name] = round(float(actual[2, 3] - pose[2, 3]), 4)
+        else:
+            retreated[name] = round(float(np.dot(actual[:3, 3] - pose[:3, 3], withdrawal)), 4)
+        axial_done = (
+            float(np.dot(actual[:3, 3] - release[:3, 3], withdrawal))
+            >= RELEASE_WITHDRAW_M - .005
+        )
+        up_done = can_clear_up and float(actual[2, 3] - release[2, 3]) >= RELEASE_WITHDRAW_M - .005
+        if _spent(status) or not (axial_done or up_done):
             return dict(arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
                         steps_used=steps_used, clearance_retreat_m=retreated,
                         status="partial",

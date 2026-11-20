@@ -1961,50 +1961,31 @@ BUDGET_MODES = tuple(ENDING_NOTES)
 RECOVERY_NOTE = """\
 # Execution, verification and recovery
 
-Give each code/finish request a unique `request_id`. Reuse that ID with exactly
-the same arguments only when retrieving a lost reply; it never reruns the code.
-After a failure/pause, inspect feedback, then copy the latest `execution.resume_token`
-into subsequent tool requests and use a new request_id for remaining work.
-Previously queued dependent requests are invalidated. Replayed results and images
-are historical; use fresh observations for new decisions.
+Give each tool call a unique `request_id` (reuse with identical arguments only to
+retrieve a lost reply). After a failure/pause, inspect feedback and pass the latest
+`execution.resume_token` with a new `request_id`. Nothing rolls back on runtime error:
+earlier variables persist, and an interrupted assignment can retain an old value.
+`resume_state()` reads recovery state after a host restart (rebuild helpers without
+motion and take fresh observations).
 
-Wrap non-repeatable robot operations in `once(step_id, robo.method, *args, **kwargs)`.
-Keep the same step_id for the same logical operation when repairing code; use
-distinct IDs for intentional repetitions (e.g. press_red_1 and press_red_2).
-It returns JSON data with status, action_ids and value (dataclass fields, including
-reached). `status="returned"` means the method returned, not task success. Check
-value.reached/outcomes as dictionary fields before dependent work. Calling it
-again returns the recorded value without movement. `once(step_id)` reads its record.
-An interrupted operation never automatically retries: inspect its receipts,
-reconcile unknown actions, and submit only the necessary continuation with a new
-step ID. A completed logical operation must not get a replacement ID.
-`resume_state()` reads recovery state. Host restart restores execution records and
-budgets, not Python variables or visual evidence; never rerun old cells to rebuild
-them. Recreate helpers without movement and obtain current observations.
+Call primitives directly for their typed results (`DeltaGrasp`, `FeatureAlignment`,
+`Nudge`, `Gripper`, `Home`). Never wrap `execute_motion` in `once()` (it owns its
+`intent_id`; use `resume_motion(intent_id)` to continue). Do not wrap standalone calls
+or `delta_grasp` / `align_feature` / `nudge` in `once()`; `once(step_id, fn, *args,
+**kwargs)` (returns a dict `{"status", "action_ids", "value"}`) is optional only when
+guarding an earlier `set_gripper` or `home` inside a multi-step cell you may re-run.
 
-Check outcomes such as `reached`, `found` and geometric error before dependent
-actions. Use ordinary `if` branches and bounded corrections for results your
-program can handle, continuing useful steps in the same cell. Skip dependent
-actions when their condition is false; use assertions for genuinely unexpected
-conditions. Source freshness does not establish object detection or task success.
+Check `reached`, `found`, nonempty coordinates, and geometric error with ordinary `if`
+branches and bounded local corrections in the same cell; reserve `assert` for genuinely
+unexpected bugs so assertions do not skip planned observations. `require_current`
+verifies capture currency only, not detection quality or task completion.
 
-When a new model judgment is needed, print the relevant result, request
-`robo.show()` and end the cell. show queues images for feedback at cell end;
-placing it before a move does not let Astra inspect the scene before that move.
-After a motion failure/pause, feedback includes requested images or available
-recorded camera evidence (unless images are disabled). Inspect provenance before
-treating images as current.
-
-`failure` identifies the error and source location; `recovery` reports execution
-state and the remaining budget, including with pure feedback. Rejected syntax
-does not execute; runtime failures can follow actions already executed. Nothing
-rolls back. Earlier variables persist, and an interrupted assignment can retain
-an old value. Inspect feedback and repair only the remaining work; do not replay
-the whole cell. Submit dependent code-tool calls one at a time. Inspect host
-pauses before continuing; reconcile unknown action outcomes before motion. Repeated
-failure with no progress calls for a changed approach or finishing stuck.
-If `retry_allowed` is false, call `finish`. Verify the scene before claiming
-task success; a clean tool execution is not the benchmark's verdict.
+`robo.show()` queues images for cell end (calling it before a move does not let you see
+before that move); motion failures/pauses attach requested or recorded camera evidence
+automatically unless `images="none"`. Reconcile `unknown` action receipts via
+`robo.reconcile()` before new motion. Submit dependent tool calls one at a time; on
+repeated failure with no progress, change approach or call `finish` (mandatory when
+`retry_allowed` is false). Verify the final scene before claiming success.
 """
 #: The same notes for a robot whose benchmark judges the final scene: a limit
 #: ends the episode, and what the scene shows then is what counts.
@@ -2059,6 +2040,7 @@ def arm_contract(
     guides: bool = False,
     budget_mode: str = "wall",
     robot: dict[str, str] | None = None,
+    include_strategies: bool = False,
 ) -> str:
     """Render the arm's contract; ``guides=True`` appends :data:`GUIDES_NOTE`.
 
@@ -2067,6 +2049,8 @@ def arm_contract(
     tool-calling arm's own prompt does not state either).  ``robot`` names
     the robot for the contract (keys of :data:`LIBERO_ROBOT`; default LIBERO);
     its ``scoring`` key picks the scoring bullets (:data:`SCORING_NOTES`).
+    ``include_strategies=True`` appends the optional ``strategy.*`` callback
+    reference (the ``strategy`` module remains bound at runtime either way).
     """
 
     if budget_mode not in BUDGET_MODES:
@@ -2082,12 +2066,11 @@ def arm_contract(
         robot=robot,
     )
     text = text.rstrip() + "\n\n" + RECOVERY_NOTE
-    text += "\n\n" + strategies.PROMPT
+    if include_strategies:
+        text += "\n" + strategies.PROMPT
     text += (
-        "\nFeedback identifies observations and action receipts. Observation state_version "
-        "counts motion attempts, including failures; image provenance identifies the actual "
-        "capture. Explicit display images have unknown provenance; "
-        "do not assume they are current.\n"
+        "\nObservation `state_version` counts motion attempts (including failures); "
+        "`display()` images carry no capture provenance.\n"
     )
     if guides:
         text = text.rstrip() + "\n\n" + GUIDES_NOTE + "\n"

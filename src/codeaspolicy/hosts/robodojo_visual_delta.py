@@ -571,8 +571,16 @@ def nudge(
     if not compact:
         return _legacy(primitives, start_joints, arm, specs, frame, result, finish, state)
     thin_held = any(_is_thin_held(primitives, state, a) and _moves(specs[a]) for a in specs)
-    effective_step_m = min(step_m, FINE_STEP_M) if (allow_table_contact or thin_held) else step_m
-    step_deg = LINE_STEP_DEG * effective_step_m / LINE_STEP_M
+    has_linear = any(float(np.linalg.norm(specs[a]["dxyz"])) > 1e-6 for a in specs)
+    effective_step_m = (
+        min(step_m, FINE_STEP_M) if (allow_table_contact or (thin_held and has_linear)) else step_m
+    )
+    if allow_table_contact:
+        step_deg = LINE_STEP_DEG * effective_step_m / LINE_STEP_M
+    elif not has_linear:
+        step_deg = 6.0
+    else:
+        step_deg = LINE_STEP_DEG * min(step_m, LINE_STEP_M) / LINE_STEP_M
     q_all = {a: _safe_joints(state, a) for a in ARMS}
     open_all = {a: _safe_opening(state, a) for a in ARMS}
     effective_open = {
@@ -1002,6 +1010,52 @@ def _vec3(raw: Any, where: str) -> np.ndarray:
     return np.asarray(vals, dtype=float)
 
 
+def _wrist_relief_hint(
+    arm: str,
+    desired_pose: np.ndarray,
+    q_seed: Sequence[float],
+    *,
+    allow_table_contact: bool = False,
+    other_q: Sequence[float] | None = None,
+    opening: float = 0.5,
+    other_opening: float = 0.5,
+) -> str | None:
+    """Probe small wrist pitch/yaw reliefs at ``desired_pose`` (0 sim steps) for IK hints."""
+
+    pitch0, yaw0, roll0 = kin.angles(desired_pose[:3, :3])
+    candidates = (
+        *(("dpitch", dp, 0.0) for dp in (8.0, -8.0, 15.0, -15.0)),
+        *(("dyaw", 0.0, dy) for dy in (15.0, -15.0)),
+    )
+    feasible: list[str] = []
+    for label, dp, dy in candidates:
+        cand = desired_pose.copy()
+        cand[:3, :3] = kin.orientation(pitch0 + dp, yaw0 + dy, roll0)
+        try:
+            sol = kin.best_solution(
+                arm,
+                cand,
+                q_seed,
+                allow_table_touch=allow_table_contact,
+                other_arm_q=other_q,
+                opening=opening,
+                other_opening=other_opening,
+            )
+        except Exception:  # noqa: BLE001 - best-effort diagnostic hint
+            continue
+        if sol.ok and not sol.collides:
+            delta = dp if label == "dpitch" else dy
+            feasible.append(f"{label}={delta:+.0f}°")
+            if len(feasible) >= 2:
+                break
+    if not feasible:
+        return None
+    return (
+        f"{arm}: target TCP is reachable with wrist relief ({', '.join(feasible)}); "
+        "re-stage hover orientation/height with robo.ik() before calling align_feature."
+    )
+
+
 def align_feature(
     primitives: Any,
     start_joints: dict[str, list[float]],
@@ -1163,7 +1217,9 @@ def align_feature(
         FINE_STEP_M if (allow_table_contact or _is_thin_held(primitives, state0, arm))
         else LINE_STEP_M
     )
-    plan_step_deg = LINE_STEP_DEG * plan_step_m / LINE_STEP_M
+    plan_step_deg = (
+        LINE_STEP_DEG * plan_step_m / LINE_STEP_M if allow_table_contact else LINE_STEP_DEG
+    )
     other_arm = _other_arm(arm)
     other_q0 = _safe_joints(state0, other_arm)
     opening_arm0 = _safe_opening(state0, arm)
@@ -1174,7 +1230,7 @@ def align_feature(
         q_after_align_plan = q0
     else:
         align_spec = _spec({"dxyz": planned_dxyz.tolist()}, arm)
-        _, align_ways, align_why = _plan_arm(
+        align_target, align_ways, align_why = _plan_arm(
             arm, q0, align_spec, "world", plan_step_m, plan_step_deg,
             allow_table_contact=allow_table_contact,
             other_q=other_q0,
@@ -1182,17 +1238,24 @@ def align_feature(
             other_opening=opening_other0,
         )
         if align_why is not None:
+            hint = _wrist_relief_hint(
+                arm, align_target, q0,
+                allow_table_contact=allow_table_contact,
+                other_q=other_q0, opening=opening_arm0, other_opening=opening_other0,
+            )
             result.update(
                 stop_reason="ik_path_rejected",
                 ik_error=f"{arm}: {align_why}",
                 stroke_status="rejected" if stroke_vec is not None else None,
             )
+            if hint:
+                result["note"] = f"{result['note']} {hint}" if result.get("note") else hint
             return finish(state0)
         q_after_align_plan = align_ways[-1] if align_ways else q0
 
     if stroke_vec is not None:
         stroke_spec = _spec({"dxyz": stroke_vec.tolist()}, arm)
-        _, stroke_ways, stroke_why = _plan_arm(
+        stroke_target, stroke_ways, stroke_why = _plan_arm(
             arm, q_after_align_plan, stroke_spec, "world", plan_step_m, plan_step_deg,
             allow_table_contact=allow_table_contact,
             other_q=other_q0,
@@ -1200,11 +1263,18 @@ def align_feature(
             other_opening=opening_other0,
         )
         if stroke_why is not None:
+            hint = _wrist_relief_hint(
+                arm, stroke_target, q_after_align_plan,
+                allow_table_contact=allow_table_contact,
+                other_q=other_q0, opening=opening_arm0, other_opening=opening_other0,
+            )
             result.update(
                 stop_reason="ik_path_rejected",
                 ik_error=f"{arm} stroke: {stroke_why}",
                 stroke_status="rejected",
             )
+            if hint:
+                result["note"] = f"{result['note']} {hint}" if result.get("note") else hint
             return finish(state0)
     else:
         stroke_ways = []

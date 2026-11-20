@@ -1501,4 +1501,38 @@ def test_delta_grasp_contact_table_seats_on_end_of_stroke_table_arrest(tmp_path)
     assert raw_stack["holding"] is True and raw_stack["closed_opening"] == pytest.approx(0.22, abs=0.01)
 
 
+def test_nudge_pure_rotation_on_thin_held_avoids_step_inflation(tmp_path):
+    env = _place(FlexibleGripEnvironment(initial_opening=1.0, close_stop=0.025), z=0.85)
+    host = NativeToolkit(env, None, tmp_path / "thin_rot")
+    robo = RobodojoOfficialColourRobot(NativeBackend(host))
+    robo.set_gripper("right", robo.CLOSE)
+
+    # Pure in-place 45-degree turn on a thin held part must NOT inflate to 19 steps (2.4 deg/step).
+    turned = robo.nudge(dyaw=45.0, arm="right", max_angular_deg=45.0)
+    assert turned.reached is True
+    assert turned.planned_steps <= 10
+    assert turned.achieved["dyaw"] == pytest.approx(45.0, abs=2.0)
+
+    # Linear lift on the same thin held part still uses 3 mm micro-steps (24 mm -> >= 8 steps).
+    lifted = robo.nudge((0.0, 0.0, 0.024), arm="right")
+    assert lifted.reached is True
+    assert lifted.planned_steps >= 8
+
+
+def test_align_feature_ik_rejection_reports_wrist_relief_hint_in_zero_steps(tmp_path, monkeypatch):
+    env, robo, _ = station(tmp_path / "relief_hint")
+    start_tcp = tcp(env)
+    monkeypatch.setattr(kin, "line_path", lambda *args, **kwargs: ([], "joint_limit"))
+
+    res = robo.align_feature(
+        start_tcp.tolist(),
+        (start_tcp + np.array([0.015, 0.0, -0.02])).tolist(),
+        arm="right",
+    )
+    assert res.status == "rejected" and res.stop_reason == "ik_path_rejected"
+    assert res.steps_used == 0 and not env.actions
+    assert res.note is not None
+    assert "wrist relief" in res.note and "robo.ik()" in res.note
+
+
 

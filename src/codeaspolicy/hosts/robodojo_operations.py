@@ -51,6 +51,17 @@ class RobotOperations(OperationRegistry):
     def motion_resume(self, operation_id, allowance):
         if allowance is not None:
             self.intents.extend(operation_id, allowance)
+        else:
+            record = self.intents.records.get(operation_id)
+            if (record is not None
+                    and record.get("status") == "paused"
+                    and (record.get("result") or {}).get("stop_reason") == "segment_complete"
+                    and record.get("spent", 0) > 0):
+                status_dict = self.intents.status(operation_id)
+                rec = status_dict.get("recommended_max_steps")
+                if (isinstance(rec, int) and not isinstance(rec, bool)
+                        and rec > record.get("step_limit", 0)):
+                    self.intents.extend(operation_id, rec)
         return self.intents.execute(operation_id)
 
     def grasp_status(self, operation_id, result=None):

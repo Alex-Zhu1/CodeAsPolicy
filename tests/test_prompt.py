@@ -91,8 +91,8 @@ def test_robodojo_prompts_stay_within_52kb_budget_and_have_no_duplicates_or_reci
     ref = api_reference(cls, primitives=primitives)
     know = knowledge_text(robot, primitives=primitives)
 
-    assert len(cells_prompt) <= 52_000, f"{robot}/{primitives} cells={len(cells_prompt)}"
-    assert len(sys_prompt) <= 52_000, f"{robot}/{primitives} sys={len(sys_prompt)}"
+    assert len(cells_prompt) <= 44_000, f"{robot}/{primitives} cells={len(cells_prompt)}"
+    assert len(sys_prompt) <= 44_000, f"{robot}/{primitives} sys={len(sys_prompt)}"
     assert len(know) <= 20_000, f"{robot}/{primitives} knowledge={len(know)}"
     if primitives == "no-sam":
         assert len(ref) <= 28_000, f"{robot}/no-sam api={len(ref)}"
@@ -150,6 +150,8 @@ def test_orthogonal_coarse_delta_api_prunes_ceremony_while_preserving_runtime(
         "observe_hold",
     )
     hidden_ceremony = (
+        "artifact",
+        "observe",
         "begin_grasp",
         "grasp_step",
         "grasp_status",
@@ -540,10 +542,57 @@ def test_code_prompt_only_describes_visual_apis_when_enabled(mode):
     assert ("watch(phase, facts" in text) is (mode == "pause")
     assert "All callbacks still need watch contracts" not in text
     assert "Only verified permits dependent work" not in text
-    assert "strategy.verify_grasp" in text
+    assert ("strategy.verify_grasp" in text) is (mode == "pause")
     if mode == "pause":
         assert "explicit HARD visual prerequisites" in text
         assert "unresolved execution receipts remain enforced" in text
+
+
+def test_arm_contract_omits_strategies_dead_weight_by_default_and_clarifies_once_boundary():
+    from codeaspolicy.arms import arm_contract, robot_words
+    from codeaspolicy.play import build_prompt
+    from codeaspolicy.robots import get_adapter
+
+    adapter = get_adapter("robodojo_xpl_rgb")
+    default_contract = arm_contract(
+        "cells",
+        budget_s=900,
+        max_env_steps=600,
+        max_programs=None,
+        images="on-demand",
+        feedback="pure",
+        robot=robot_words(adapter, "no-sam"),
+    )
+    assert "strategy.verify_grasp" not in default_contract
+    assert "strategy.relocalize" not in default_contract
+    assert "Do not wrap standalone calls" in default_contract
+    assert "delta_grasp" in default_contract and "align_feature" in default_contract
+
+    opt_in_contract = arm_contract(
+        "cells",
+        budget_s=900,
+        max_env_steps=600,
+        max_programs=None,
+        images="on-demand",
+        feedback="pure",
+        robot=robot_words(adapter, "no-sam"),
+        include_strategies=True,
+    )
+    assert "strategy.verify_grasp" in opt_in_contract
+    assert "All callbacks still need watch contracts" not in opt_in_contract
+
+    card = TaskCard(
+        suite="arx_x5",
+        task="test",
+        seed=0,
+        task_language="Reorient and place the part",
+        object_names=[],
+        robot="robodojo_xpl_rgb",
+    )
+    prompt_text = build_prompt("cells", card, budget_s=900, max_programs=None, primitives="no-sam")
+    assert "R_delta = R_obj_goal @ R_obj_start.T" in prompt_text
+    assert "min_margin_rad" in prompt_text
+    assert "no `once()` wrapper" in prompt_text
 
 
 @pytest.mark.parametrize("robot", ["robodojo", "robodojo_xpl", "robodojo_xpl_rgb"])

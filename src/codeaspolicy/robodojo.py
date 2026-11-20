@@ -775,8 +775,10 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
     VLA_PRIMITIVES: ClassVar[tuple[str, ...]] = ("pi0_pick",)
     #: External visual-delta VLM primitives (hidden in prompt unless configured).
     DELTA_VLA_PRIMITIVES: ClassVar[tuple[str, ...]] = ("visual_align_and_insert", "visual_servo")
-    #: Redundant multi-turn grasp ceremony / preview helpers hidden in default prompt.
+    #: Redundant multi-turn grasp ceremony / preview / low-level helpers hidden in default prompt.
     INTENT_HIDDEN_METHODS: ClassVar[frozenset[str]] = frozenset({
+        "artifact",
+        "observe",
         "begin_grasp",
         "grasp_step",
         "grasp_status",
@@ -859,18 +861,10 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
             "    Accept a snapshot-bound geometry or object-evidence result from this session.\n",
         ),
         (
-            "    Omit landmarks to acquire distinctive material features inside text\n"
-            "    masks, with mutual descriptor matching across views. Once an anchor\n"
-            "    exists, recover its SAME features by distinctive descriptor/template\n"
-            "    matching against that frozen keyframe, even after empty intermediate\n"
-            "    observations. Failed/ambiguous matches are omitted, never substituted\n"
-            "    with old pixels or a predicted rigid-grasp pose. Masks nominate object\n"
-            "    regions; neither their centres nor silhouettes are triangulated.\n",
-            "    Supply landmarks on the initial capture to seed the frozen keyframe.\n"
-            "    Once an anchor exists, recover its SAME features by distinctive\n"
-            "    descriptor/template matching against that frozen keyframe, even after\n"
-            "    empty intermediate observations. Failed/ambiguous matches are omitted,\n"
-            "    never substituted with old pixels or a predicted rigid-grasp pose.\n",
+            "    Omit landmarks to acquire distinctive material features inside text masks and match\n"
+            "    against the frozen keyframe.",
+            "    Supply ``landmarks`` on the initial capture to seed the frozen keyframe, then match\n"
+            "    against that keyframe.",
         ),
         (
             "    Pair ``step`` with ``observation_id`` in ``segment`` / ``back_project``.",
@@ -1406,6 +1400,8 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
 
         crop = arr[r0:r1, c0:c1]
         crop_h, crop_w = r1 - r0, c1 - c0
+        if scale_i > 1 and max(crop_h * scale_i, crop_w * scale_i) > 640:
+            scale_i = max(1, min(scale_i, 640 // max(crop_h, crop_w)))
         scaled_h, scaled_w = crop_h * scale_i, crop_w * scale_i
         pil_crop = Image.fromarray(crop)
         if scale_i > 1:
@@ -2153,7 +2149,8 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         or ``xyz``. ``jaw_symmetry=True`` evaluates 0/180 deg empty-jaw roll, preferring camera-housing
         away from the other arm and ``twist_rad`` headroom on ``joint6``. ``continuous=True`` checks
         straight-line SLERP from ``seed``. ``check_other_arm=True`` rejects inter-arm collisions against
-        ``other_joints`` (or the other arm's recorded state).
+        ``other_joints`` (or the other arm's recorded state). Loop over candidate poses/axes in Python
+        (chaining ``seed=prev.joints`` and ranking by ``min_margin_rad``) instead of guessing one pose.
         """
         import inspect
 

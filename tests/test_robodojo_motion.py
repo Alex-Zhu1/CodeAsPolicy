@@ -425,6 +425,58 @@ def test_home_does_not_swing_when_release_retreat_is_unreachable(sim, monkeypatc
     assert result["steps_used"] == 0 and len(env.actions) == before
 
 
+def test_home_accepts_vertical_lift_clearance_after_horizontal_release(sim, monkeypatch):
+    env, prims, start = sim
+    assert tools.move_pose(prims, start, [.25, -.15, .92], arm="right", pitch=0)["reached"]
+    env.block["right"] = .4
+    assert tools.grip(prims, "right", 1)["holding"]
+    tools.grip(prims, "right", -1)
+    release = prims._release_poses["right"].copy()
+    assert release[2, 0] <= 0.25
+    # Lifting +7 cm vertically clears a horizontal release in _act.
+    assert tools.move_pose(prims, start, [.25, -.15, .99], arm="right")["reached"]
+    assert "right" not in prims._release_poses
+    # Even if _release_poses still holds the release pose at z=.92, home() accepts the +7 cm lift
+    # without demanding a -y axial retreat.
+    prims._release_poses["right"] = release
+    real_line_path = kin.line_path
+
+    def block_horizontal_retreat(name, q, target, *args, **kwargs):
+        cur = tools._pose_of(name, q)
+        if np.linalg.norm(target[:2, 3] - cur[:2, 3]) > 1e-4:
+            return [], "chest_blocked"
+        return real_line_path(name, q, target, *args, **kwargs)
+
+    monkeypatch.setattr(kin, "line_path", block_horizontal_retreat)
+    done = tools.home(prims, start, arm="right", lift=False)
+    assert done["reached"] and "clearance_retreat_m" not in done
+    assert env.joints["right"] == pytest.approx(start["right"], abs=tools.HOME_TOL_RAD)
+
+
+def test_home_uses_vertical_fallback_when_axial_retreat_is_unreachable(sim, monkeypatch):
+    env, prims, start = sim
+    assert tools.move_pose(prims, start, [.25, -.15, .92], arm="right", pitch=0)["reached"]
+    env.block["right"] = .4
+    assert tools.grip(prims, "right", 1)["holding"]
+    tools.grip(prims, "right", -1)
+    assert "right" in prims._release_poses
+    real_line_path = kin.line_path
+
+    def block_axial_only(name, q, target, *args, **kwargs):
+        cur = tools._pose_of(name, q)
+        if np.linalg.norm(target[:2, 3] - cur[:2, 3]) > 1e-4:
+            return [], "unreachable_axial"
+        return real_line_path(name, q, target, *args, **kwargs)
+
+    monkeypatch.setattr(kin, "line_path", block_axial_only)
+    done = tools.home(prims, start, arm="right", lift=False)
+    assert done["reached"]
+    assert done["clearance_retreat_m"]["right"] == pytest.approx(
+        tools.RELEASE_WITHDRAW_M, abs=0.005
+    )
+    assert env.joints["right"] == pytest.approx(start["right"], abs=tools.HOME_TOL_RAD)
+
+
 def test_home_after_release_returns_above_origin_before_swinging_joints(sim):
     env, prims, start = sim
     assert tools.move_pose(prims, start, [-.45, .07, 1.055], arm="left", pitch=0)["reached"]

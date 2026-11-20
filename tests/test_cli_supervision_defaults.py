@@ -204,3 +204,28 @@ def test_negative_turn_budget_is_rejected_before_launch(tmp_path, monkeypatch, e
     with pytest.raises(SystemExit) as error:
         cli.main(["play", *args]) if entry == "outer" else play.main(args)
     assert error.value.code == 2 and not captured
+
+
+def test_generate_default_reasoning_effort_is_high(tmp_path, monkeypatch):
+    import inspect
+
+    from codeaspolicy import generate
+
+    default_effort = (
+        inspect.signature(generate.generate_with_codex).parameters["reasoning_effort"].default
+    )
+    assert default_effort == "high"
+    captured: list[dict] = []
+
+    def fake_generate(card, out_dir, **kwargs):
+        captured.append(kwargs)
+        return {"reasoning_effort": kwargs["reasoning_effort"]}
+
+    monkeypatch.setattr(generate, "generate_with_codex", fake_generate)
+    card_path = tmp_path / "card.json"
+    card_path.write_text(json.dumps({
+        "suite": "arx_x5", "task": "test", "seed": 0,
+        "task_language": "Move the object", "object_names": [],
+    }))
+    assert cli.main(["generate", "--card", str(card_path), "--out", str(tmp_path / "out")]) == 0
+    assert captured and captured[0]["reasoning_effort"] == "high"

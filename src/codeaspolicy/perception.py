@@ -204,13 +204,10 @@ class PerceptionMixin:
             return False
 
     def perception_is_current(self, result) -> bool:
-        """Check whether this perception result still describes the current source.
+        """Return True if ``result`` still matches the current undisturbed capture.
 
         Accept a locate/segment/back_project or object-evidence result from this session.
-        Recheck immediately before depending on its coordinates: a source change,
-        motion attempt, unresolved action or missing provenance makes it false.
-        This checks applicability, not detection quality, collision safety or task success.
-        Extracted xyz tuples carry no provenance; keep the original result too.
+        Any motion attempt, source change, or pending action invalidates currency.
         """
         provenance = (result.get("provenance") if isinstance(result, dict)
                       else getattr(result, "provenance", None))
@@ -222,14 +219,7 @@ class PerceptionMixin:
         return self._perception_source_is_current(saved["source"])
 
     def require_current(self, result):
-        """Return a perception result only if its source is still current; otherwise raise.
-
-        Check found, nonempty coordinates and note/geometry before using a
-        detection; require_current(target) checks only its source, not whether
-        the intended object was found or the geometry is suitable.
-        Historical analysis is permitted, but its coordinates are not current targets.
-        This does not pin the physical world or grant permission for a later action.
-        """
+        """Return ``result`` if its capture is still current, else raise ``ToolError`` (checks source currency only, not ``found`` or geometry quality)."""
         if not self.perception_is_current(result):
             raise ToolError("require_current", "Perception is stale, unverified, unresolved, "
                             "or from another session; observe and locate again")

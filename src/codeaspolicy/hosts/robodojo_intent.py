@@ -440,6 +440,13 @@ class IntentController:
             if requirement == "retain" and not tools.retained_closure(
                 command, opening, initial_openings.get(arm)
             ):
+                note = (
+                    f"{arm}: holding='retain' stopped on gripper closure change "
+                    f"(opening={opening:.4f}); if fresh images confirm a thin/stepped part is "
+                    "still held after reorientation settling, continue with holding='keep'."
+                )
+                record.setdefault("result", {})["note"] = note
+                record["_guard_note"] = note
                 return f"{arm}: holding_requirement"
             obstructed_closure = command <= .05 and tools.HOLD_MIN_OPENING < opening < .95
             if requirement == "empty" and obstructed_closure:
@@ -488,6 +495,25 @@ class IntentController:
             else:
                 remaining_estimate = max(1, estimate - steps_done)
             raw["recommended_max_steps"] = record["spent"] + remaining_estimate + 2
+        if (status == "paused"
+                and raw.get("stop_reason") in (
+                    "segment_complete", "allocation_too_small_for_progress"
+                )
+                and raw.get("recommended_max_steps") is not None):
+            rec = raw["recommended_max_steps"]
+            if raw.get("stop_reason") == "segment_complete":
+                raw["note"] = (
+                    f"effect_known=True (no reconcile() needed): spent "
+                    f"{record['spent']}/{record['step_limit']}; call "
+                    f"resume_motion({record['id']!r}, max_steps={rec}) (cumulative total cap) "
+                    f"or resume_motion({record['id']!r})."
+                )
+            else:
+                raw["note"] = (
+                    f"effect_known=True (no reconcile() needed): spent "
+                    f"{record['spent']}/{record['step_limit']}; call "
+                    f"resume_motion({record['id']!r}, max_steps={rec}) (cumulative total cap)."
+                )
         if record.get("preview_sequence") is not None:
             raw.update(
                 preview=True, sequence=record["preview_sequence"],
@@ -1189,6 +1215,7 @@ class IntentController:
         if plan is None:
             return self._stop(record, "superseded_motion_plan")
         before = record["spent"]
+        record.pop("_guard_note", None)
         try:
             result = self.motion.execute(plan["id"])
         except BaseException:
@@ -1199,9 +1226,12 @@ class IntentController:
         # The live guard writes its metric report into the intent record;
         # Controller's motion report contains only the resulting stop reason.
         violation = record.get("result", {}).get("constraint_violation")
+        guard_note = record.pop("_guard_note", None)
         record["result"] = result
         if violation is not None:
             record["result"]["constraint_violation"] = violation
+        if guard_note is not None:
+            record["result"]["note"] = guard_note
         record["expected"] = self.motion._snapshot()
         if record["spent"] > before:
             for arm in record.get("active_arms") or record["contract"]["targets"]:

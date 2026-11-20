@@ -197,30 +197,13 @@ class ObjectEvidenceMixin:
         return copy.deepcopy(ref)
 
     def observe_object(self, reference: dict, *, landmarks=None, observation_id=None) -> dict:
-        """Observe the SAME object's visible features without assuming it is on a table.
+        """Observe ``reference`` features across calibrated views without table-height assumptions (0 steps).
 
-        landmarks maps physical feature names to matching [row, col] pixels:
-        {'corner': {'cam_head': [r,c], 'cam_right_wrist': [r,c]}}.
-        Select the SAME physical point in each view and keep feature names
-        consistent across time. At least two calibrated views are needed for
-        3D; poor parallax or inconsistent matches return xyz=None. No RGB
-        table-plane depth or full 6D pose is invented for a held object.
-
-        Omit landmarks to acquire distinctive material features inside text
-        masks, with mutual descriptor matching across views. Once an anchor
-        exists, recover its SAME features by distinctive descriptor/template
-        matching against that frozen keyframe, even after empty intermediate
-        observations. Failed/ambiguous matches are omitted, never substituted
-        with old pixels or a predicted rigid-grasp pose. Masks nominate object
-        regions; neither their centres nor silhouettes are triangulated.
-        Explicit landmarks={} clears this observation, not a grasp's anchor.
-
-        Returns reference, source provenance, per-view candidates, named 3D
-        points with diagnostic uncertainty, robot pose and recorded gripper
-        commands. Identity/association remains declared or estimated. Preserve
-        this result for observe_hold; require_current(result) before using its
-        geometry. Historical reads do not advance the live tracking baseline.
-        Read-only: zero native actions, including refresh/analysis.
+        ``landmarks`` maps feature names to matching ``{camera: [row, col]}`` pixels (>=2 views
+        for 3D ``xyz``; ``landmarks={}`` clears this observation).
+        Omit landmarks to acquire distinctive material features inside text masks and match
+        against the frozen keyframe. Preserve the returned dict for ``observe_hold`` and call
+        ``require_current(result)`` before acting on its geometry.
         """
         return self._observe_object(reference, landmarks=landmarks, observation_id=observation_id)
 

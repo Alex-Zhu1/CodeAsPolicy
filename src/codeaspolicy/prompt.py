@@ -270,9 +270,12 @@ def api_reference(
         from .coordination import RESULT_TYPES as MOTION_TYPES
         from .coordination import Pose
 
+        visible_coord_types = (
+            {"Pose"} if (intent_only and "observe" in all_hidden) else {"Pose", "Observation"}
+        )
         sections.append("Coordination types:\n\n" + "\n\n".join(
             _render_result_type(cls) for cls in MOTION_TYPES
-            if not intent_only or cls.__name__ in {"Pose", "Observation"}
+            if not intent_only or cls.__name__ in visible_coord_types
         ))
         sections.append(
             "\n\n".join(
@@ -284,17 +287,11 @@ def api_reference(
             )
         )
         sections.append(
-            "Coarse + Delta execution protocol: use `execute_motion(id, ...)` for coarse "
-            "C2 transport and `delta_grasp`, `align_feature`, `nudge` for close-range "
-            "(<= 4 cm) contact. Completed intent IDs never move again; after reconciling an "
-            "interruption, `resume_motion(id)` continues only known remaining work (raise a "
-            "cap cumulatively with `max_steps`). Do not wrap `execute_motion` in `once()`; "
-            "keep `once()` for `set_gripper` and `home`. `reached` means motion finished, "
-            "never verified grasp or task success—inspect fresh views before dependent "
-            "actions. Never abandon useful work solely from a cost forecast. For hold "
-            "tracking, use `object_ref`/`observe_object`/`observe_hold`: `unknown` is not "
-            "empty, `image_consistent` is 2D wrist evidence (not 3D retention), and never "
-            "infer a held object's pose from table-height geometry. Do not catch "
+            "Coarse + Delta execution protocol: use `execute_motion` for coarse C2 transport "
+            "and `delta_grasp`, `align_feature`, `nudge` directly (no `once()` wrapper) for "
+            "close-range (<= 4 cm) contact. Never abandon useful work from a cost forecast, "
+            "never infer held-object 3D pose from table-height geometry (`image_consistent` "
+            "is 2D wrist evidence; `unknown` is not empty), and do not catch "
             "`CoordinationPause`, `SupervisionPause`, or `ActionContractPause`."
         )
     # A robot without ``done`` never ends an episode as "terminated".

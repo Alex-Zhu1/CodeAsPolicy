@@ -313,6 +313,17 @@ def test_crop_grid_renders_without_cv2_and_validates_bounds(monkeypatch):
     with pytest.raises(ValueError, match="step_px"):
         robo.crop_grid("cam_head", step_px=4)
 
+    # Large scale factors smoothly clamp to <= 640 px crop dimension without raising ValueError,
+    # keeping tick and crosshair coordinates aligned with the clamped scale.
+    clamped = robo.crop_grid(
+        "cam_head", box=(0, 0, 200, 200), step_px=50, points=[(100.0, 100.0)], scale=8
+    )
+    assert clamped.shape == (26 + 200 * 3, 36 + 200 * 3, 3)
+    tick_rows_clamped = np.where(clamped[26:, 33, 0] == 210)[0].tolist()
+    assert tick_rows_clamped == [r * 3 + 1 for r in (0, 50, 100, 150)]
+    full_clamped = robo.crop_grid("cam_head", step_px=40, scale=6)
+    assert full_clamped.shape == (26 + 480, 36 + 640, 3)
+
 
 def test_no_sam_primitive_set_refusal_and_host_sam3_bypass(monkeypatch, tmp_path):
     assert PRIMITIVE_SETS == ("full", "no-vla", "no-sam")

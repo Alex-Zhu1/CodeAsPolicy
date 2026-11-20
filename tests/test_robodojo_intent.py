@@ -1006,4 +1006,59 @@ def test_bracketed_prefix_search_packs_budget_and_reports_exact_resume_recommend
     assert prev_held["policy"]["motion"]["phase"] == "carry"
 
 
+def test_segment_complete_note_and_zero_arg_resume_auto_extends(tmp_path):
+    env, robo, _ = station(tmp_path / "auto_ext")
+    goal = robo.observe().right.shifted(dz=0.06)
+    first = robo.execute_motion(
+        "auto_ext", right=goal, interaction="contact", holding="empty",
+        completion={"position_m": 0.0025}, max_steps=20,
+    )
+    assert first["status"] == "paused" and first["stop_reason"] == "segment_complete"
+    assert first["recommended_max_steps"] is not None and first["recommended_max_steps"] > 20
+    note = first.get("note") or ""
+    assert "effect_known=True" in note
+    assert f"{first['intent_steps_used']}/20" in note
+    assert str(first["recommended_max_steps"]) in note
+
+    # Calling resume_motion(id) without max_steps auto-extends to recommended_max_steps.
+    done = robo.resume_motion("auto_ext")
+    assert done["reached"] and done["status"] == "completed"
+    assert done["step_limit"] == first["recommended_max_steps"]
+    assert done["intent_steps_used"] == len(env.actions) <= first["recommended_max_steps"]
+    assert robo.resume_motion("auto_ext")["steps_used"] == 0
+
+    # allocation_too_small_for_progress (spent == 0) emits diagnostic note and does not auto-extend.
+    env2, robo2, _ = station(tmp_path / "tiny_alloc")
+    tiny = robo2.execute_motion(
+        "tiny", right=robo2.observe().right.shifted(dz=0.06),
+        interaction="contact", holding="empty", completion={"position_m": 0.0025}, max_steps=1,
+    )
+    assert tiny["status"] == "paused" and tiny["stop_reason"] == "allocation_too_small_for_progress"
+    assert tiny["intent_steps_used"] == 0 and tiny["recommended_max_steps"] is not None
+    assert "effect_known=True" in (tiny.get("note") or "")
+    still_paused = robo2.resume_motion("tiny")
+    assert still_paused["status"] == "paused"
+    assert still_paused["stop_reason"] == "allocation_too_small_for_progress"
+    assert not env2.actions
+
+
+def test_retain_holding_stop_attaches_thin_part_keep_note(tmp_path):
+    env, robo, host = station(tmp_path / "retain_note")
+    host._primitives._grip_commands = {"right": 0.0}
+    step = env.step
+
+    def drop(action):
+        value = step(action)
+        env.grips["right"] = 0.0
+        return value
+
+    env.step = drop
+    result = robo.execute_motion(
+        "carry_thin", right=robo.observe().right.shifted(dz=0.06),
+        holding={"right": "retain"}, max_steps=100,
+    )
+    assert result["stop_reason"] == "right: holding_requirement"
+    assert "holding='keep'" in (result.get("note") or "")
+
+
 

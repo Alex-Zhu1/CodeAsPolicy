@@ -146,7 +146,7 @@ def generate_with_codex(
     out_dir: Path,
     *,
     model: str = "gpt-6-astra",
-    reasoning_effort: str = "xhigh",
+    reasoning_effort: str = "high",
     budget_s: int = 1200,
     codex_bin: str = "codex",
     timeout_s: float = 3600.0,

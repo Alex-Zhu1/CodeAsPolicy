@@ -369,7 +369,7 @@ def main(argv: list[str] | None = None) -> int:
     gen.add_argument("--card", type=Path, required=True)
     gen.add_argument("--out", type=Path, required=True)
     gen.add_argument("--model", default="gpt-6-astra")
-    gen.add_argument("--reasoning", default="xhigh")
+    gen.add_argument("--reasoning", default="high")
     gen.add_argument("--budget-s", type=int, default=1200)
     gen.add_argument("--codex-bin", default="codex")
     gen.add_argument("--timeout-s", type=float, default=3600.0)

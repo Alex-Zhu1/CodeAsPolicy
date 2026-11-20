@@ -73,15 +73,14 @@ class ExecutionPlan:
 PLAN_PROMPT = """\
 # Execution plan
 
-Keep a short current-goal note with the predefined Python helper:
-`plan(goal="...", next_action="...", done_when="...", evidence="", status="in_progress")`.
-Call it alongside useful work when the goal, evidence, or approach changes (no planning-only turn needed). Track primary execution budget (~60–70%) vs contingency/cleanup reserve (~30–40% for alignment fixes, release verification, and homing). Each update replaces the note; `plan()` reads it across turns. Status is `pending`/`in_progress`/`done`/`blocked` (`done` covers your stated goal only). Use `action_history(limit=10, stateful_only=True, since_plan=False)` to inspect recent actions and outcomes. Plan text is a planner note, never benchmark fact or motion permission. Before finishing, review the task instruction and acceptance criteria, account for all task-relevant objects visible at step 0, and cite fresh observation evidence. Keep fields brief (<= 1000 chars); notes survive code errors.
+Maintain a brief goal note alongside work (no planning-only turns):
+`plan(goal="...", next_action="...", done_when="...", evidence="", status="in_progress")` (`plan()` reads it; fields <= 1000 chars; status: `pending`/`in_progress`/`done`/`blocked`). Budget ~60–70% for primary execution and ~30–40% reserve for fixes, release verification, and homing. Before finishing, account for all step-0 task objects against acceptance criteria with fresh visual evidence.
 
 ## Executable action contracts
 
-`plan(..., contract={...})` enforces zero-argument read-only callbacks returning `bool` or `monitor.ConstraintCheck` (`requires` before actions, `preserves` before/after, `ensures` at `status="done"`/finish; unknown/errors block; static checks expire on motion). Bind all public invariant IDs in `preserves`. New contracts replace `requires`/`ensures`/`constraints` and merge `preserves`. `constraints` inherits `execute_motion` bounds.
+Optional `plan(..., contract={...})` binds zero-argument read-only callbacks returning `bool` or `monitor.ConstraintCheck` (`requires` before actions, `preserves` before/after, `ensures` at `done`/`finish`; unknown/errors block; static checks expire on motion). When public invariant IDs are supplied on the card, bind all of them in `preserves`.
 
 ## Local work groups
 
-When nearby objects share a setup, reuse one approach, compact local actions with feedback, and one departure. Prefer in-place actions (tip, flip, slide, press) over pick-carry-place when relocation is unnecessary, and do not vacate existing group members to open an interior gap. After a low contact stroke, lift straight up or reverse along the contact axis before any lateral sweep, and verify neighbours remain undisturbed (if a neighbour shifts while budget remains, recover it rather than stopping early). Record member states and active intent IDs in `plan()`; inspect effects after contact, reconcile interrupted actions before resuming, and do not abandon useful remaining work solely from cost estimates.
+Batch nearby items sharing one setup into one approach, compact in-place actions (tip, flip, slide, press) with local checks, and one clean vertical/axial retreat—do not relocate items unnecessarily or vacate existing members to open an interior gap. If a neighbour shifts while budget remains, re-stand or re-align it rather than stopping early.
 """

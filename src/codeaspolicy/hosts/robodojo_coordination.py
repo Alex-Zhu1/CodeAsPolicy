@@ -161,10 +161,12 @@ class Controller:
         tracking_position_tolerance_m=None,
         tracking_orientation_tolerance_deg=None,
         allow_joint_fallback=False,
+        simplify_tolerance=1e-4,
     ):
         started = time.monotonic()
         if type(preview) is not bool or type(allow_joint_fallback) is not bool:
             raise ValueError("preview and allow_joint_fallback must be bool")
+        _positive(simplify_tolerance, "simplify_tolerance", 0.5)
         _positive(max_steps, "max_steps", 10000, integer=True)
         _positive(timeout_s, "timeout_s", 3600)
         _positive(checkpoint_steps, "checkpoint_steps", 8, integer=True)
@@ -260,19 +262,26 @@ class Controller:
                 distance, angle = _errors(begin[a], leg_goals[a])
                 counts.extend((math.ceil(distance / max_step_m), math.ceil(angle / max_step_deg)))
             count = max(counts)
-            if count > min(1000, max_steps) and not can_joint_fallback:
+            raw_count_limit = 1000 if clock is not None else min(1000, max_steps)
+            raw_ways_limit = 2000 if clock is not None else max_steps
+            if count > raw_count_limit and not can_joint_fallback:
+                plan["planned_path"] = "joint" if used_joint_fallback else "line"
                 return reject("planned_path_exceeds_native_step_budget")
             q_leg = {a: q[a].copy() for a in kin.ARMS}
             poses_leg = {a: poses[a].copy() for a in kin.ARMS}
             leg_ways = []
             line_error = None
-            budget_error = count > min(1000, max_steps)
+            budget_error = count > raw_count_limit
             if not budget_error:
+                knots_q = [{a: q_leg[a].copy() for a in kin.ARMS}]
+                knot_poses = [{a: poses_leg[a].copy() for a in kin.ARMS}]
                 for i in range(1, count + 1):
                     if time.monotonic() >= plan["deadline"]:
                         return reject("motion_timeout", recoverable=False)
                     self.primitives._check_cancelled()
-                    solved = {a: q_leg[a].copy() for a in kin.ARMS}
+                    prev_q = knots_q[-1]
+                    solved = {a: prev_q[a].copy() for a in kin.ARMS}
+                    solved_poses = {}
                     for a in arms:
                         desired = np.eye(4)
                         desired[:3, 3] = (begin[a][:3, 3]
@@ -280,59 +289,185 @@ class Controller:
                         desired[:3, :3] = kin.slerp(
                             begin[a][:3, :3], leg_goals[a][:3, :3], i / count
                         )
-                        res = kin.solve(a, desired, q_leg[a])
+                        res = kin.solve(a, desired, prev_q[a])
                         if not res.ok or res.collides:
                             line_error = (
                                 f"{a}: unreachable or table collision at path fraction {i / count}"
                             )
                             break
-                        err_m, err_deg = _errors(tools._pose_of(a, res.q), desired)
+                        pose_res = tools._pose_of(a, res.q)
+                        err_m, err_deg = _errors(pose_res, desired)
                         if err_m > position_tolerance_m or err_deg > orientation_tolerance_deg:
                             line_error = f"{a}: IK cannot meet requested tolerance"
                             break
-                        if max(abs(np.asarray(res.q) - q_leg[a])) > 0.6:
+                        if max(abs(np.asarray(res.q) - prev_q[a])) > 0.6:
                             line_error = f"{a}: singularity/IK branch jump"
                             break
-                        solved[a] = np.asarray(res.q)
+                        solved[a] = np.asarray(res.q, float)
+                        solved_poses[a] = pose_res
                     if line_error is not None:
                         break
-                    subdivisions = max(
-                        1,
-                        math.ceil(
-                            max(float(np.max(np.abs(solved[a] - q_leg[a]))) for a in kin.ARMS)
-                            / tools.JOINT_STEP_RAD
-                        ),
-                    )
-                    for j in range(1, subdivisions + 1):
-                        point = {
-                            a: (q_leg[a] + (solved[a] - q_leg[a]) * j / subdivisions).tolist()
+                    knots_q.append(solved)
+                    knot_poses.append(solved_poses)
+                if line_error is None:
+                    all_single_subdiv = all(
+                        max(
+                            float(np.max(np.abs(knots_q[i][a] - knots_q[i - 1][a])))
                             for a in kin.ARMS
-                        }
-                        now = {a: tools._pose_of(a, point[a]) for a in kin.ARMS}
-                        for a in kin.ARMS:
-                            if kin.clearance_violations(a, point[a]):
-                                line_error = f"{a}: interpolated path intersects table"
+                        )
+                        <= tools.JOINT_STEP_RAD
+                        for i in range(1, count + 1)
+                    )
+                    if all_single_subdiv:
+                        for i in range(1, count + 1):
+                            point = {a: knots_q[i][a].tolist() for a in kin.ARMS}
+                            now = knot_poses[i]
+                            for a in kin.ARMS:
+                                if kin.clearance_violations(a, point[a]):
+                                    line_error = f"{a}: interpolated path intersects table"
+                                    break
+                                dist, angle = _errors(now[a], poses_leg[a])
+                                # IK tolerance can perturb an ideal Cartesian sample slightly.
+                                if dist > max_step_m + 0.001 or angle > max_step_deg + 0.5:
+                                    line_error = f"{a}: interpolated path exceeds TCP step limit"
+                                    break
+                            if line_error is not None:
                                 break
-                            dist, angle = _errors(now[a], poses_leg[a])
-                            # IK tolerance can perturb an ideal Cartesian sample slightly.
-                            if dist > max_step_m + 0.001 or angle > max_step_deg + 0.5:
-                                line_error = f"{a}: interpolated path exceeds TCP step limit"
+                            if keep_relative and self._relative_error(now, rel, limits):
+                                line_error = (
+                                    "relative_pose_constraint: sampled path changes arm relationship"
+                                )
                                 break
-                        if line_error is not None:
-                            break
-                        if keep_relative and self._relative_error(now, rel, limits):
-                            line_error = (
-                                "relative_pose_constraint: sampled path changes arm relationship"
+                            leg_ways.append(dict(joints=point, grippers=dict(commands)))
+                            if len(ways) + len(leg_ways) > raw_ways_limit:
+                                budget_error = True
+                                break
+                            poses_leg = now
+                        if line_error is None and not budget_error:
+                            q_leg = knots_q[count]
+                    else:
+                        def _eval_q(t):
+                            if t >= count:
+                                return {a: knots_q[count][a].copy() for a in kin.ARMS}
+                            idx = int(math.floor(t))
+                            alpha = t - idx
+                            return {
+                                a: knots_q[idx][a] + alpha * (knots_q[idx + 1][a] - knots_q[idx][a])
+                                for a in kin.ARMS
+                            }
+
+                        def _check_cand(t, cur_q, cur_poses):
+                            cand_q = _eval_q(t)
+                            if (max(float(np.max(np.abs(cand_q[a] - cur_q[a]))) for a in kin.ARMS)
+                                    > tools.JOINT_STEP_RAD + 1e-9):
+                                return None, None, "joint_step"
+                            cand_poses = (
+                                knot_poses[count]
+                                if t >= count
+                                else {a: tools._pose_of(a, cand_q[a]) for a in kin.ARMS}
                             )
-                            break
-                        leg_ways.append(dict(joints=point, grippers=dict(commands)))
-                        if len(ways) + len(leg_ways) > max_steps:
-                            budget_error = True
-                            break
-                        poses_leg = now
-                    if line_error is not None or budget_error:
-                        break
-                    q_leg = solved
+                            for a in kin.ARMS:
+                                if kin.clearance_violations(a, cand_q[a]):
+                                    return None, None, f"{a}: interpolated path intersects table"
+                                dist, angle = _errors(cand_poses[a], cur_poses[a])
+                                if dist > max_step_m + 0.001 or angle > max_step_deg + 0.5:
+                                    return None, None, f"{a}: interpolated path exceeds TCP step limit"
+                            if keep_relative and self._relative_error(cand_poses, rel, limits):
+                                return (
+                                    None,
+                                    None,
+                                    "relative_pose_constraint: sampled path changes arm relationship",
+                                )
+                            return cand_q, cand_poses, None
+
+                        s = 0.0
+                        q_cur = knots_q[0]
+                        poses_cur = poses_leg
+                        r_lim = tools.JOINT_STEP_RAD - 1e-9
+                        while s < count - 1e-9:
+                            base_seg = min(count - 1, int(math.floor(s)))
+                            seg = base_seg
+                            s_cap = s
+                            while seg < count:
+                                p0 = q_cur if seg == base_seg else knots_q[seg]
+                                t0 = s if seg == base_seg else float(seg)
+                                p1 = knots_q[seg + 1]
+                                t1 = float(seg + 1)
+                                dq_end = max(
+                                    float(np.max(np.abs(p1[a] - q_cur[a]))) for a in kin.ARMS
+                                )
+                                if dq_end > r_lim:
+                                    lam_max = 1.0
+                                    for a in kin.ARMS:
+                                        d0 = p0[a] - q_cur[a]
+                                        dv = p1[a] - p0[a]
+                                        for k in range(6):
+                                            if dv[k] > 1e-12:
+                                                lam_max = min(lam_max, (r_lim - d0[k]) / dv[k])
+                                            elif dv[k] < -1e-12:
+                                                lam_max = min(lam_max, (-r_lim - d0[k]) / dv[k])
+                                    lam_max = max(0.0, min(1.0, lam_max))
+                                    s_cap = t0 + lam_max * (t1 - t0)
+                                    break
+                                tcp_over = False
+                                for a in kin.ARMS:
+                                    d_k, ang_k = _errors(knot_poses[seg + 1][a], poses_cur[a])
+                                    if d_k > max_step_m + 0.001 or ang_k > max_step_deg + 0.5:
+                                        tcp_over = True
+                                        break
+                                s_cap = t1
+                                if tcp_over:
+                                    break
+                                seg += 1
+                            if s_cap >= count - 1e-9:
+                                s_cap = float(count)
+                            if s_cap <= s + 1e-9:
+                                line_error = "interpolated path stalled on joint step limit"
+                                break
+                            cand_q, cand_poses, err = _check_cand(s_cap, q_cur, poses_cur)
+                            chosen_s = s_cap
+                            if err is not None:
+                                if "exceeds TCP step limit" in err:
+                                    lo_s, hi_s = s, s_cap
+                                    best = None
+                                    for _ in range(10):
+                                        mid_s = 0.5 * (lo_s + hi_s)
+                                        mq, mp, merr = _check_cand(mid_s, q_cur, poses_cur)
+                                        if merr is None:
+                                            best = (mid_s, mq, mp)
+                                            lo_s = mid_s
+                                        else:
+                                            hi_s = mid_s
+                                            err = merr
+                                    if best is None or (best[0] < count and best[0] - s < 1e-3):
+                                        line_error = err
+                                        break
+                                    chosen_s, cand_q, cand_poses = best
+                                else:
+                                    next_knot = float(math.floor(s) + 1)
+                                    if s_cap > next_knot and next_knot > s + 1e-9:
+                                        kq, kp, kerr = _check_cand(next_knot, q_cur, poses_cur)
+                                        if kerr is None:
+                                            chosen_s, cand_q, cand_poses = next_knot, kq, kp
+                                        else:
+                                            line_error = kerr
+                                            break
+                                    else:
+                                        line_error = err
+                                        break
+                            leg_ways.append(dict(
+                                joints={a: cand_q[a].tolist() for a in kin.ARMS},
+                                grippers=dict(commands),
+                            ))
+                            if len(ways) + len(leg_ways) > raw_ways_limit:
+                                budget_error = True
+                                break
+                            s = chosen_s
+                            q_cur = cand_q
+                            poses_cur = cand_poses
+                        if line_error is None and not budget_error:
+                            q_leg = knots_q[count]
+                            poses_leg = poses_cur
             if budget_error and line_error is None:
                 plan["planned_path"] = "joint" if used_joint_fallback else "line"
                 return reject("planned_path_exceeds_native_step_budget")
@@ -444,6 +579,7 @@ class Controller:
                     snap["joints"], [w["joints"] for w in ways], clock, motion,
                     max_actions=available - grip_steps, check=check,
                     line_tolerance_m=None if used_joint_fallback else 0.003,
+                    _simplify_tolerance=simplify_tolerance,
                 )
                 previous = snap["poses"]
                 for way in ways:

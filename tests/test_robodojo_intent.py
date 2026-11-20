@@ -771,3 +771,218 @@ def test_thin_retain_carry_timing_and_checkpoint_steps_8_cut_steps_and_chunks(tm
     )
     assert app_normal["policy"]["motion"]["window"]["near"]["velocity"] == pytest.approx(1.6)
     assert app_precise["policy"]["motion"]["window"]["near"]["velocity"] == pytest.approx(0.9)
+
+
+def test_holding_string_shorthand_and_open_gripper_empty_inference_keep_free_moves_compact(tmp_path):
+    def open_station(name):
+        env, robo, host = station(tmp_path / name)
+        env.grips = {"left": 1.0, "right": 1.0}
+        host._primitives._grip_commands = {"left": 1.0, "right": 1.0}
+        return env, robo, host
+
+    # 1. Invalid holding values still reject cleanly before any dispatch.
+    env_bad, robo_bad, _ = open_station("bad_holding")
+    for bad in ("bogus", 123, []):
+        rej = robo_bad.execute_motion(
+            f"bad_{type(bad).__name__}", right=robo_bad.observe().right.shifted(dz=0.04),
+            holding=bad,
+        )
+        assert rej["status"] == "rejected" and not env_bad.actions
+
+    # 2. String shorthand "empty" and omitted holding={} on physically open gripper both
+    #    select fast native free-space motion without mutating contract["holding"].
+    env_l, robo_l, _ = open_station("left_hover")
+    left_target = {"xyz": [-0.14, -0.15, 0.85], "angles": [90.0, 0.0, 0.0]}
+    prev_str = robo_l.execute_motion(
+        "left_key_hover_str", left=left_target, holding="empty", max_steps=30, preview=True,
+    )
+    assert prev_str["accepted"] and prev_str["partial_plan"] is False
+    assert prev_str["policy"]["motion"] == {"mode": "native"}
+    assert prev_str["planned_steps"] <= 22
+
+    exec_omitted = robo_l.execute_motion("left_key_hover_v2", left=left_target, max_steps=30)
+    assert exec_omitted["reached"] and exec_omitted.get("partial_plan") is not True
+    assert exec_omitted["policy"]["motion"] == {"mode": "native"}
+    assert exec_omitted["intent_steps_used"] <= 22
+    assert robo_l.motion_status("left_key_hover_v2")["intent"]["holding"] == {}
+
+    # 3. right_key_hover (~35 cm + >100 deg) and right_view_handoff finish in 1 call <= 30 steps.
+    _, robo_r, _ = open_station("right_hover")
+    right_target = {"xyz": [0.02, -0.02, 0.84], "angles": [70.0, 80.0, 0.0]}
+    res_r = robo_r.execute_motion("right_key_hover", right=right_target, max_steps=30)
+    assert res_r["reached"] and res_r.get("partial_plan") is not True
+    assert res_r["intent_steps_used"] <= 25
+
+    _, robo_vh, _ = open_station("right_handoff")
+    handoff_target = {"xyz": [0.06, -0.08, 0.90], "angles": [45.0, 90.0, 0.0]}
+    res_vh = robo_vh.execute_motion(
+        "right_view_handoff", right=handoff_target, holding="empty", max_steps=30,
+    )
+    assert res_vh["reached"] and res_vh.get("partial_plan") is not True
+    assert res_vh["intent_steps_used"] <= 26
+
+    # 4. Omitted holding={} on a closed/holding gripper safely stays in carry phase,
+    #    and holding="retain" shorthand expands to active arms and enforces retention.
+    env_c, robo_c, host_c = station(tmp_path / "closed")
+    host_c._primitives._grip_commands = {"right": 0.0}
+    env_c.grips["right"] = 0.08
+    carry_omitted = robo_c.execute_motion(
+        "carry_closed_omitted", right=robo_c.observe().right.shifted(dz=0.05), preview=True,
+    )
+    assert carry_omitted["accepted"]
+    assert carry_omitted["policy"]["motion"]["phase"] == "carry"
+    retain_str = robo_c.execute_motion(
+        "carry_retain_str", right=robo_c.observe().right.shifted(dz=0.05), holding="retain",
+    )
+    assert retain_str["reached"]
+    assert robo_c.motion_status("carry_retain_str")["intent"]["holding"] == {"right": "retain"}
+
+
+def test_continuous_line_chord_coalescing_eliminates_per_chord_ceil_inflation(tmp_path):
+    import math
+
+    env, robo, host = station(tmp_path)
+    env.grips = {"left": 1.0, "right": 1.0}
+    host._primitives._grip_commands = {"left": 1.0, "right": 1.0}
+
+    target = {"xyz": [0.02, -0.02, 0.84], "angles": [70.0, 80.0, 0.0]}
+    t_mat = np.eye(4)
+    t_mat[:3, 3] = target["xyz"]
+    t_mat[:3, :3] = kin.orientation(*target["angles"])
+    p0 = motion._pose_of("right", env.joints["right"])
+    d = float(np.linalg.norm(t_mat[:3, 3] - p0[:3, 3]))
+    rot = kin.rotation_error(p0[:3, :3], t_mat[:3, :3])
+    count = max(1, math.ceil(d / 0.02), math.ceil(rot / 8.0))
+
+    # Measure what legacy per-chord ceil(dq / JOINT_STEP_RAD) would have emitted on these knots.
+    q_cur = np.asarray(env.joints["right"], float)
+    naive_steps = 0
+    for i in range(1, count + 1):
+        des = np.eye(4)
+        des[:3, 3] = p0[:3, 3] + (t_mat[:3, 3] - p0[:3, 3]) * i / count
+        des[:3, :3] = kin.slerp(p0[:3, :3], t_mat[:3, :3], i / count)
+        sol = kin.solve("right", des, q_cur)
+        assert sol.ok and not sol.collides
+        dq = float(np.max(np.abs(np.asarray(sol.q, float) - q_cur)))
+        naive_steps += max(1, math.ceil(dq / motion.JOINT_STEP_RAD))
+        q_cur = np.asarray(sol.q, float)
+    assert naive_steps > count + 4
+
+    start_q = np.asarray(env.joints["right"], float)
+    res = robo.execute_motion("coalesced_line", right=target, holding="empty", max_steps=30)
+    assert res["reached"] and res["planned_path"] == "line"
+    assert res["intent_steps_used"] < naive_steps - 4
+    assert res["intent_steps_used"] <= 25
+
+    prev_q = start_q
+    prev_pose = motion._pose_of("right", prev_q)
+    for act in env.actions:
+        cur_q = np.asarray(act["right_arm_joint_state"], float)
+        assert float(np.max(np.abs(cur_q - prev_q))) <= motion.JOINT_STEP_RAD + 1e-6
+        assert not kin.clearance_violations("right", cur_q)
+        cur_pose = motion._pose_of("right", cur_q)
+        step_m = float(np.linalg.norm(cur_pose[:3, 3] - prev_pose[:3, 3]))
+        step_deg = kin.rotation_error(prev_pose[:3, :3], cur_pose[:3, :3])
+        assert step_m <= 0.02 + 0.001 + 1e-6
+        assert step_deg <= 8.0 + 0.5 + 1e-6
+        prev_q, prev_pose = cur_q, cur_pose
+
+
+def test_pre_budget_simplify_tolerance_compresses_c2_carry_before_budget_error(tmp_path):
+    env, robo, host = station(tmp_path)
+    p_start = np.eye(4)
+    p_start[:3, 3] = [-0.18, -0.15, 0.86]
+    p_start[:3, :3] = kin.orientation(75.0, 0.0, 0.0)
+    s_start = kin.solve("left", p_start, env.joints["left"])
+    assert s_start.ok
+    env.joints["left"] = list(s_start.q)
+    host._primitives._grip_commands = {"left": 0.0, "right": 1.0}
+    env.grips = {"left": 0.08, "right": 1.0}
+
+    target = {"xyz": [0.00, -0.12, 0.90], "angles": [60.0, -45.0, 0.0]}
+    # Without pre-budget simplify_tolerance=0.015, default 1e-4 C2 timing requires far more steps.
+    ctrl = host._primitives._operations.intents.motion
+    obs = ctrl.observe()
+    t_mat = np.eye(4)
+    t_mat[:3, 3] = target["xyz"]
+    t_mat[:3, :3] = kin.orientation(*target["angles"])
+    unsimplified = ctrl.plan(
+        observation_id=obs["id"],
+        targets={"left": {"xyz": t_mat[:3, 3].tolist(), "quat": list(kin.quat_wxyz(t_mat[:3, :3]))}},
+        grippers={"left": "keep", "right": "keep"},
+        keep_relative=False, max_steps=16, timeout_s=60.0,
+        position_tolerance_m=0.01, orientation_tolerance_deg=5.0,
+        max_step_m=0.02, max_step_deg=8.0, checkpoint_steps=8,
+        require_inter_arm_clearance=False,
+        motion={"velocity": 2.2, "acceleration": 20.0, "jerk": 950.0, "phase": "carry"},
+        preview=True, simplify_tolerance=1e-4,
+    )
+    assert not unsimplified["accepted"] and "budget" in unsimplified["stop_reason"]
+    assert unsimplified["trajectory"]["planned_steps"] > 16
+
+    # With pre-budget simplify_tolerance=0.015, execute_motion succeeds cleanly in 1 call <= 16 steps.
+    res = robo.execute_motion(
+        "supported_transfer_hover", left=target, holding={"left": "retain"}, max_steps=16,
+    )
+    assert res["reached"] and res.get("partial_plan") is not True
+    assert res["intent_steps_used"] <= 16
+    assert res["trajectory"]["joint_path_simplification_tolerance_rad"] == pytest.approx(0.015)
+
+
+def test_bracketed_prefix_search_packs_budget_and_reports_exact_resume_recommendation(tmp_path):
+    # 1. C2 contact precision move with tight max_steps=20
+    env_c2, robo_c2, _ = station(tmp_path / "c2")
+    goal_c2 = robo_c2.observe().right.shifted(dz=0.06)
+    first_c2 = robo_c2.execute_motion(
+        "prefix_c2", right=goal_c2, interaction="contact", holding="empty",
+        completion={"position_m": 0.0025}, max_steps=20,
+    )
+    assert first_c2["status"] == "paused" and first_c2["stop_reason"] == "segment_complete"
+    assert 16 <= first_c2["intent_steps_used"] <= 20  # >= 80% packed, never > max_steps
+    assert first_c2["full_path_estimate"] is not None and first_c2["full_path_estimate"] > 20
+    assert first_c2["recommended_max_steps"] is not None
+    assert first_c2["recommended_max_steps"] > first_c2["intent_steps_used"]
+    assert robo_c2.motion_status("prefix_c2")["recommended_max_steps"] == first_c2["recommended_max_steps"]
+
+    done_c2 = robo_c2.resume_motion("prefix_c2", max_steps=first_c2["recommended_max_steps"])
+    assert done_c2["reached"] and done_c2["status"] == "completed"
+    assert done_c2["intent_steps_used"] == len(env_c2.actions) <= first_c2["recommended_max_steps"]
+
+    # 2. Native free-space move with tight max_steps=12 and max_steps=18 on a ~21-step move
+    target_r = {"xyz": [0.02, -0.02, 0.84], "angles": [70.0, 80.0, 0.0]}
+    for cap in (12, 18):
+        env_n, robo_n, host_n = station(tmp_path / f"nat_{cap}")
+        env_n.grips = {"left": 1.0, "right": 1.0}
+        host_n._primitives._grip_commands = {"left": 1.0, "right": 1.0}
+        first_n = robo_n.execute_motion(f"prefix_nat_{cap}", right=target_r, max_steps=cap)
+        assert first_n["status"] == "paused" and first_n["stop_reason"] == "segment_complete"
+        assert int(0.8 * cap) <= first_n["intent_steps_used"] <= cap
+        assert first_n["full_path_estimate"] is not None and first_n["full_path_estimate"] > cap
+        assert first_n["recommended_max_steps"] is not None
+        done_n = robo_n.resume_motion(f"prefix_nat_{cap}", max_steps=first_n["recommended_max_steps"])
+        assert done_n["reached"] and done_n["status"] == "completed"
+        assert done_n["intent_steps_used"] == len(env_n.actions) <= first_n["recommended_max_steps"]
+
+    # 3. Budget rejection when available == 10000 never overflows Controller.plan's max_steps=10000 cap.
+    env_max, robo_max, host_max = station(tmp_path / "max10000")
+    env_max.step_limit = 10000
+    ctrl_max = host_max._primitives._operations.intents.motion
+
+    def budget_reject_at_10000(**kwargs):
+        assert kwargs["max_steps"] <= 10000
+        return dict(
+            accepted=False, status="rejected",
+            stop_reason="planned_path_exceeds_native_step_budget",
+            planned_path="line",
+        )
+
+    ctrl_max.plan = budget_reject_at_10000
+    res_max = robo_max.execute_motion(
+        "budget_at_10000", right=robo_max.observe().right.shifted(dz=0.04),
+        holding="empty", max_steps=10000,
+    )
+    assert res_max["status"] == "paused"
+    assert res_max["stop_reason"] == "allocation_too_small_for_progress"
+    assert not env_max.actions
+
+

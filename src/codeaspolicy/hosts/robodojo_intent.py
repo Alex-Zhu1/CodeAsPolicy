@@ -177,8 +177,22 @@ class IntentController:
         contract = record["contract"]
         mode = contract["interaction"]
         active_arms = record.get("active_arms") or tuple(contract["targets"])
-        empty = all(contract["holding"].get(a) == "empty" for a in active_arms)
-        initial_openings = (record.get("initial") or {}).get("opening") or {}
+        initial = record.get("initial") or {}
+        initial_openings = initial.get("opening") or {}
+        initial_commands = initial.get("commands") or {}
+
+        def _effectively_empty(arm):
+            h = contract["holding"].get(arm)
+            if h == "empty":
+                return True
+            if h in (None, "keep"):
+                return (
+                    initial_openings.get(arm, 0.0) >= 0.95
+                    and initial_commands.get(arm, 0.0) >= 0.95
+                )
+            return False
+
+        empty = all(_effectively_empty(a) for a in active_arms)
         thin_retain = any(
             contract["holding"].get(a) == "retain"
             and initial_openings.get(a, 1.0) <= .04
@@ -451,6 +465,25 @@ class IntentController:
             holding_check="commanded_closure_and_collapse_guard", process_restart_resume=False,
             geometry_coverage=geometry_coverage(record["contract"].get("constraints") or {}),
         )
+        estimate = record.get("full_path_estimate")
+        if estimate is not None:
+            raw["full_path_estimate"] = estimate
+        if record.get("partial_plan") and estimate is not None and status in ("paused", "checkpoint"):
+            steps_done = max(0, record["spent"] - record.get("compile_spent", 0))
+            frac = record.get("partial_fraction")
+            if (record.get("partial_timed") and frac is not None
+                    and 0.0 < frac < 0.99 and steps_done > 0):
+                ramp = min(
+                    float(steps_done),
+                    max(0.0, (steps_done - frac * estimate) / max(0.25, 1.0 - frac)),
+                )
+                remaining_estimate = min(
+                    estimate,
+                    max(1, math.ceil((1.0 - frac) * estimate + frac * ramp)),
+                )
+            else:
+                remaining_estimate = max(1, estimate - steps_done)
+            raw["recommended_max_steps"] = record["spent"] + remaining_estimate + 2
         if record.get("preview_sequence") is not None:
             raw.update(
                 preview=True, sequence=record["preview_sequence"],
@@ -656,6 +689,11 @@ class IntentController:
         )
         remaining_legs = waypoints[record["waypoint_index"]:] if waypoints else None
         active_goal_matrix = remaining_legs[-1] if remaining_legs else record["goals"]
+        use_line_simplify = (
+            record["contract"]["interaction"] in ("free", "approach")
+            and not waypoints
+            and not record.get("preview_route")
+        )
         arguments = dict(
             observation_id=obs["id"],
             targets={a: self._pose(g) for a, g in active_goal_matrix.items()},
@@ -664,7 +702,9 @@ class IntentController:
             max_steps=available, timeout_s=3600., position_tolerance_m=record["position_m"],
             orientation_tolerance_deg=record["orientation_deg"], checkpoint_steps=8,
             require_inter_arm_clearance=False,
-            allow_joint_fallback=allow_joint_fallback, **record["policy"],
+            allow_joint_fallback=allow_joint_fallback,
+            simplify_tolerance=0.015 if use_line_simplify else 1e-4,
+            **record["policy"],
         )
         if record.get("preview_route"):
             arguments["via"] = record["preview_route"][:-1]
@@ -673,16 +713,43 @@ class IntentController:
                 {a: self._pose(g) for a, g in leg.items()} for leg in remaining_legs[:-1]
             ]
         result = planner.plan(**arguments)
+        fast_estimate = None
         if (not result["accepted"] and "budget" in (result.get("stop_reason") or "")
-                and result.get("planned_path") == "joint"
-                and record["policy"]["motion"] == {"mode": "native"}):
-            fast_window = MotionWindow(
-                MotionProfile(velocity=3.45, acceleration=40.0, jerk=1500.0, phase="transit"),
-                MotionProfile(velocity=3.44, acceleration=40.0, jerk=1500.0, phase="approach"),
-                distance_m=.04, at="start",
+                and result.get("planned_path") in ("joint", "line")
+                and record["policy"]["motion"] == {"mode": "native"}
+                and trajectory.backend(self.motion.primitives) is not None):
+            fast_motion = MotionProfile(
+                velocity=3.45, acceleration=60.0, jerk=3000.0, phase="transit",
             ).payload()
-            result = planner.plan(**{**arguments, "motion": fast_window})
-        estimate = (result.get("trajectory") or {}).get("planned_steps")
+            fast_result = planner.plan(**{**arguments, "motion": fast_motion})
+            if fast_result["accepted"]:
+                result = fast_result
+            elif "budget" in (fast_result.get("stop_reason") or ""):
+                fast_estimate = (fast_result.get("trajectory") or {}).get("planned_steps")
+        estimate = (result.get("trajectory") or {}).get("planned_steps") or result.get("planned_steps")
+        joint_goal_seed = result.get("goal_joints") if result.get("planned_path") == "joint" else None
+        if (not result["accepted"] and "budget" in (result.get("stop_reason") or "")
+                and not record.get("preview_route") and estimate is None):
+            if available < 10000:
+                probe = planner.plan(
+                    **{**arguments, "max_steps": min(10000, max(available + 1, 1000))}
+                )
+                if probe["accepted"]:
+                    probe_plan = planner.plans.get(probe["id"])
+                    if probe_plan is not None:
+                        estimate = len(probe_plan["ways"])
+                        if joint_goal_seed is None and probe_plan.get("planned_path") == "joint":
+                            joint_goal_seed = probe_plan.get("goal_joints")
+                    planner.discard(probe["id"])
+                else:
+                    estimate = (
+                        probe.get("planned_steps")
+                        or (probe.get("trajectory") or {}).get("planned_steps")
+                    )
+                    if joint_goal_seed is None and probe.get("planned_path") == "joint":
+                        joint_goal_seed = probe.get("goal_joints")
+            if estimate is None and fast_estimate is not None:
+                estimate = fast_estimate
         partial_waypoint = False
         planned_waypoint_end = None
         if (not result["accepted"] and "budget" in (result.get("stop_reason") or "")
@@ -704,31 +771,103 @@ class IntentController:
                 arguments["via"] = None
                 partial_waypoint = True
         fraction = 1.
-        joint_goal_seed = result.get("goal_joints") if result.get("planned_path") == "joint" else None
-        # A timing estimate is not a reason to do nothing. Fit a shorter part
-        # of the same Cartesian route, with a newly timed RESTING endpoint.
+        if joint_goal_seed is None and result.get("planned_path") == "joint":
+            joint_goal_seed = result.get("goal_joints")
+        # A timing estimate is not a reason to do nothing. Fit a maximal resting
+        # prefix of the same route within `available` via bracketed search.
         # Do not truncate a moving spline or loosen any physical constraint.
-        while (not result["accepted"] and "budget" in (result.get("stop_reason") or "")
-               and not record.get("preview_route")
-               and fraction > 1 / 128):
-            fraction /= 2
-            goals = {}
-            for arm, goal in active_goal_matrix.items():
-                if joint_goal_seed is not None:
-                    q0 = np.asarray(snap["joints"][arm], float)
-                    q1 = np.asarray(joint_goal_seed[arm], float)
-                    goals[arm] = tools._pose_of(arm, q0 + fraction * (q1 - q0))
-                else:
-                    start = snap["poses"][arm]
-                    part = np.eye(4)
-                    part[:3, 3] = start[:3, 3] + fraction * (goal[:3, 3] - start[:3, 3])
-                    part[:3, :3] = kin.slerp(start[:3, :3], goal[:3, :3], fraction)
-                    goals[arm] = part
-            if all(d <= record["position_m"] and angle <= record["orientation_deg"]
-                   for d, angle in (_errors(snap["poses"][a], g) for a, g in goals.items())):
-                break  # No useful resting progress fits this allocation.
-            arguments["targets"] = {a: self._pose(g) for a, g in goals.items()}
-            result = planner.plan(**arguments)
+        if (not result["accepted"] and "budget" in (result.get("stop_reason") or "")
+                and not record.get("preview_route")):
+            def _prefix_goals(frac):
+                goals = {}
+                for arm, goal in active_goal_matrix.items():
+                    if joint_goal_seed is not None:
+                        q0 = np.asarray(snap["joints"][arm], float)
+                        q1 = np.asarray(joint_goal_seed[arm], float)
+                        goals[arm] = tools._pose_of(arm, q0 + frac * (q1 - q0))
+                    else:
+                        start = snap["poses"][arm]
+                        part = np.eye(4)
+                        part[:3, 3] = start[:3, 3] + frac * (goal[:3, 3] - start[:3, 3])
+                        part[:3, :3] = kin.slerp(start[:3, :3], goal[:3, :3], frac)
+                        goals[arm] = part
+                return goals
+
+            def _within_arrival(goals):
+                return all(
+                    d <= record["position_m"] and angle <= record["orientation_deg"]
+                    for d, angle in (_errors(snap["poses"][a], g) for a, g in goals.items())
+                )
+
+            leg_estimate = (
+                (result.get("trajectory") or {}).get("planned_steps")
+                or result.get("planned_steps")
+                or estimate
+            )
+            f = (
+                min(0.95, max(1.0 / 128.0, 0.92 * available / leg_estimate))
+                if (leg_estimate is not None and leg_estimate > available)
+                else 0.5
+            )
+            lo, hi = 0.0, 1.0
+            best_result = None
+            best_plan = None
+            best_targets = None
+            best_steps = 0
+            best_fraction = 1.0
+            last_result = result
+            while f > 1.0 / 128.0:
+                goals = _prefix_goals(f)
+                if _within_arrival(goals):
+                    break  # No useful resting progress fits this allocation.
+                cand_targets = {a: self._pose(g) for a, g in goals.items()}
+                cand = planner.plan(**{**arguments, "targets": cand_targets})
+                if cand["accepted"]:
+                    best_result = cand
+                    best_plan = planner.plans[cand["id"]]
+                    best_targets = cand_targets
+                    best_steps = len(best_plan["ways"])
+                    best_fraction = f
+                    lo = f
+                    break
+                last_result = cand
+                if "budget" not in (cand.get("stop_reason") or ""):
+                    break
+                hi = f
+                f *= 0.5
+            if best_result is not None:
+                for _ in range(4):
+                    if best_steps >= available - 1 or (hi - lo) <= 0.04:
+                        break
+                    mid = 0.5 * (lo + hi)
+                    goals = _prefix_goals(mid)
+                    cand_targets = {a: self._pose(g) for a, g in goals.items()}
+                    cand = planner.plan(**{**arguments, "targets": cand_targets})
+                    if cand["accepted"]:
+                        cand_plan = planner.plans[cand["id"]]
+                        cand_steps = len(cand_plan["ways"])
+                        if cand_steps <= available:
+                            if best_plan is not None and best_plan["id"] != cand_plan["id"]:
+                                planner.discard(best_plan["id"])
+                            best_result = cand
+                            best_plan = cand_plan
+                            best_targets = cand_targets
+                            best_steps = cand_steps
+                            best_fraction = mid
+                            lo = mid
+                        else:
+                            planner.discard(cand["id"])
+                            hi = mid
+                    else:
+                        hi = mid
+                if best_plan is not None and planner.plans.get(best_plan["id"]) is not best_plan:
+                    planner.plans.clear()
+                    planner.plans[best_plan["id"]] = best_plan
+                result = best_result
+                fraction = best_fraction
+                arguments["targets"] = best_targets
+            else:
+                result = last_result
         if not result["accepted"]:
             record["result"] = result
             if record.get("preview_route"):
@@ -738,6 +877,11 @@ class IntentController:
             if "budget" in (result.get("stop_reason") or "") and not tools._spent(status):
                 # The model may have chosen a cap too small for even one useful
                 # resting segment. Keep the identity extendable, not terminal.
+                record["partial_plan"] = True
+                record["partial_fraction"] = None
+                record["partial_timed"] = False
+                record["full_path_estimate"] = estimate
+                record["compile_spent"] = record["spent"]
                 record["status"] = "paused"
                 record["result"]["stop_reason"] = "allocation_too_small_for_progress"
                 answer = self._result(record)
@@ -780,7 +924,8 @@ class IntentController:
         elif (plan.get("planned_path") == "line" and plan.get("clock") is not None
               and record["contract"]["interaction"] in ("free", "approach")
               and not record.get("waypoints") and not record.get("preview_route")
-              and len(plan["ways"]) > 4):
+              and len(plan["ways"]) > 4
+              and (plan.get("trajectory") or {}).get("joint_path_simplification_tolerance_rad", 0.0) < 0.015):
             try:
                 orig_input_segs = (plan.get("trajectory") or {}).get("input_segments")
                 fast_ways, fast_traj = trajectory.parameterize(
@@ -804,7 +949,10 @@ class IntentController:
             except ValueError:
                 pass
         record["partial_plan"] = is_partial
+        record["partial_fraction"] = fraction if is_partial and not partial_waypoint else None
+        record["partial_timed"] = plan.get("clock") is not None
         record["full_path_estimate"] = estimate
+        record["compile_spent"] = record["spent"]
         # Keep the ORIGINAL relationship and correction allowance on continuation.
         plan["relative"] = record["relative"]
         plan["tracker"] = record["tracker"]
@@ -857,6 +1005,17 @@ class IntentController:
         return self._result(record)
 
     def prepare(self, intent_id, *, preview=False, following=None, **contract):
+        raw_holding = contract.get("holding")
+        if isinstance(raw_holding, str) and raw_holding in ("keep", "empty", "retain"):
+            active_target_arms = set()
+            if isinstance(contract.get("targets"), dict):
+                active_target_arms.update(a for a in contract["targets"] if a in kin.ARMS)
+            for seq in (contract.get("waypoints"), following):
+                if isinstance(seq, list):
+                    for leg in seq:
+                        if isinstance(leg, dict):
+                            active_target_arms.update(a for a in leg if a in kin.ARMS)
+            contract["holding"] = {a: raw_holding for a in kin.ARMS if a in active_target_arms}
         self._validate(intent_id, contract)
         if type(preview) is not bool:
             raise ValueError("preview must be bool")

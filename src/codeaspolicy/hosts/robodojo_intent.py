@@ -186,10 +186,14 @@ class IntentController:
             if h == "empty":
                 return True
             if h in (None, "keep"):
-                return (
-                    initial_openings.get(arm, 0.0) >= 0.95
-                    and initial_commands.get(arm, 0.0) >= 0.95
-                )
+                op = initial_openings.get(arm, 0.0)
+                cmd = initial_commands.get(arm, 0.0)
+                if op >= 0.95 and cmd >= 0.95:
+                    return True
+                # A gripper explicitly commanded to a non-closed pre-open aperture
+                # (cmd > 0.05) that settled near its commanded opening is empty.
+                if cmd > 0.05 and op >= 0.05 and abs(op - cmd) <= 0.08:
+                    return True
             return False
 
         empty = all(_effectively_empty(a) for a in active_arms)

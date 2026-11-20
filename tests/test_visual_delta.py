@@ -1456,3 +1456,28 @@ def test_visual_servo_registered_stateful_and_dispatches_on_native_toolkit(tmp_p
     assert len(host.state.records) == steps_recorded_before + 1
     assert host.state.records[-1]["observation"]["action_id"] == record.receipt["action_id"]
 
+
+def test_delta_grasp_contact_table_seats_on_end_of_stroke_table_arrest(tmp_path):
+    # Tabletop floor sits just 3 mm above desired_tcp (overdrive_m=0.0), so the last
+    # waypoint touches the table without accumulating stall_steps=3 ticks
+    # (nudge returns stop_reason="final_target_not_reached", stalled=False).
+    # With contact_table=True, delta_grasp must treat this tabletop arrest as seated,
+    # close the gripper, and lift cleanly instead of aborting before closing.
+    env = _place(FlexibleGripEnvironment(initial_opening=1.0, close_stop=0.015, floor=0.7788), z=0.805)
+    host = NativeToolkit(env, None, tmp_path / "end_seat")
+    robo = RobodojoOfficialColourRobot(NativeBackend(host))
+
+    res = robo.delta_grasp(
+        [0.250, -0.150, 0.776],
+        arm="right",
+        contact_table=True,
+        overdrive_m=0.0,
+        opening=0.28,
+        lift_dxyz=(0.0, 0.0, 0.025),
+    )
+    assert res.status == "completed" and res.reached is True
+    assert res.table_contact_stalled is True
+    assert res.closed is True and res.closed_opening == pytest.approx(0.015, abs=0.002)
+    assert res.lift_status == "completed" and res.retained_closure is True
+
+

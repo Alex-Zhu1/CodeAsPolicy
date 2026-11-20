@@ -985,4 +985,25 @@ def test_bracketed_prefix_search_packs_budget_and_reports_exact_resume_recommend
     assert res_max["stop_reason"] == "allocation_too_small_for_progress"
     assert not env_max.actions
 
+    # 4. Pre-opened narrow empty aperture (command=0.30, opening=0.30) selects empty fast motion,
+    # whereas obstructed closure (command=0.0, opening=0.30) keeps safe carry profile.
+    env_pre, robo_pre, host_pre = station(tmp_path / "preopen_empty")
+    env_pre.grips = {"left": 0.30, "right": 1.0}
+    host_pre._primitives._grip_commands = {"left": 0.30, "right": 1.0}
+    prev_pre = robo_pre.execute_motion(
+        "preopen_hover", left=robo_pre.observe().left.shifted(dz=0.05),
+        interaction="free", preview=True,
+    )
+    assert prev_pre["policy"]["motion"] == {"mode": "native"}
+
+    env_held, robo_held, host_held = station(tmp_path / "closed_held")
+    env_held.grips = {"left": 0.30, "right": 1.0}
+    host_held._primitives._grip_commands = {"left": 0.0, "right": 1.0}
+    prev_held = robo_held.execute_motion(
+        "held_hover", left=robo_held.observe().left.shifted(dz=0.05),
+        interaction="free", preview=True,
+    )
+    assert prev_held["policy"]["motion"]["phase"] == "carry"
+
+
 

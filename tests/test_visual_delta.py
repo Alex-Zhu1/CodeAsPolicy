@@ -1805,4 +1805,100 @@ def test_align_feature_bimanual_independent_and_coupled_stall(tmp_path, monkeypa
     assert rej["note"] is not None and "wrist relief" in rej["note"]
 
 
+def test_bimanual_e2e_robot_surface_to_native_host(tmp_path):
+    """End-to-end cross-layer verification from RobodojoOfficialColourRobot through NativeToolkit."""
+    from codeaspolicy.robodojo_xpl_rgb import DualIKSolution
+
+    env = _place(
+        DualFloorGripEnvironment(
+            initial_opening=1.0,
+            close_stop={"left": 0.14, "right": 0.18},
+            floors={"left": 0.783, "right": 0.779},
+        ),
+        z=0.82,
+    )
+    host = NativeToolkit(env, None, tmp_path / "e2e_bimanual")
+    robo = RobodojoOfficialColourRobot(NativeBackend(host))
+
+    # 1. show("all") queues all 3 calibrated views in canonical order.
+    robo.show("all")
+    assert robo._take_show_requests() == ["cam_head", "cam_left_wrist", "cam_right_wrist"]
+
+    # 2. home_pose returns 0-step initial TCP poses matching step-0 FK.
+    hp_both = robo.home_pose("both")
+    assert set(hp_both) == {"left", "right"}
+    assert robo.home_pose("left") == hp_both["left"]
+    assert robo.home_pose("right") == hp_both["right"]
+    assert not env.actions
+
+    # 3. ik_both solves joint bimanual poses and trajectory clearance in 0 steps.
+    pose_l = robo.pose_from_axes((-0.245, -0.15, 0.82), (0, 0, -1), (1, 0, 0))
+    pose_r = robo.pose_from_axes((0.245, -0.15, 0.82), (0, 0, -1), (1, 0, 0))
+    dik = robo.ik_both(left=pose_l, right=pose_r, jaw_symmetry=True, continuous=True)
+    assert isinstance(dik, DualIKSolution)
+    assert dik.ok and not dik.collides and dik.clearance_m > 0.15
+    assert not env.actions
+
+    # 4. Bimanual delta_grasp preview (0 steps) + execution across uneven tabletop floors.
+    prev_dg = robo.delta_grasp(
+        arm="both",
+        left=[-0.245, -0.15, 0.782],
+        right=[0.245, -0.15, 0.778],
+        contact_table=True,
+        overdrive_m=0.004,
+        preview=True,
+    )
+    assert prev_dg.preview and prev_dg.accepted and prev_dg.steps_used == 0
+    assert not env.actions
+
+    res_dg = robo.delta_grasp(
+        arm="both",
+        left={"target": [-0.245, -0.15, 0.782], "opening": 0.55, "lift_dxyz": [0, 0, 0.025]},
+        right={"target": [0.245, -0.15, 0.778], "opening": 0.55, "lift_dxyz": [0, 0, 0.025]},
+        contact_table=True,
+        overdrive_m=0.004,
+    )
+    assert res_dg.status == "completed" and res_dg.reached and res_dg.holding
+    assert res_dg.arms["left"]["holding"] and res_dg.arms["right"]["holding"]
+    assert res_dg.arms["left"]["closed_opening"] == pytest.approx(0.14, abs=0.01)
+    assert res_dg.arms["right"]["closed_opening"] == pytest.approx(0.18, abs=0.01)
+
+    # 5. Bimanual align_feature through policy wrapper -> native host.
+    st = robo.state()
+    res_af = robo.align_feature(
+        arm="both",
+        left={
+            "feature": st.left.tcp_pos,
+            "target": [st.left.tcp_pos[0] + 0.006, st.left.tcp_pos[1], st.left.tcp_pos[2] + 0.012],
+            "axis": [0, 0, 1],
+            "stroke_m": 0.012,
+        },
+        right={
+            "feature": st.right.tcp_pos,
+            "target": [st.right.tcp_pos[0] - 0.006, st.right.tcp_pos[1], st.right.tcp_pos[2] + 0.012],
+            "axis": [0, 0, 1],
+            "stroke_m": 0.012,
+        },
+    )
+    assert res_af.status == "completed" and res_af.reached and res_af.aligned
+    assert set(res_af.arms) == {"left", "right"}
+
+    # 6. Bimanual nudge(independent_stall=True) + set_gripper("both") + home("both").
+    res_nudge = robo.nudge(
+        arm="both",
+        left={"dxyz": [0, 0, 0.01]},
+        right={"dxyz": [0, 0, 0.01]},
+        independent_stall=True,
+    )
+    assert res_nudge.reached
+
+    res_grip = robo.set_gripper("both", robo.OPEN)
+    assert res_grip.arm == "both" and not res_grip.holding
+    assert res_grip.arms["left"]["opening"] > 0.95 and res_grip.arms["right"]["opening"] > 0.95
+
+    res_home = robo.home("both")
+    assert res_home.reached
+
+
+
 

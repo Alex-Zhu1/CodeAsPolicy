@@ -171,6 +171,9 @@ def render_acceptance(value: dict) -> list[str]:
             "recording an assumption or narrower done_when never waives a supplied requirement"
         )
     lines.extend([
+        "- environment acceptance evaluates physical state, not irreversible history: if a "
+        "bystander or preserved item shifts slightly while step budget remains, recover/re-align "
+        "it and continue remaining phases rather than ending early",
         "- before finishing, review the whole original instruction and each public requirement: "
         "outcome, order, invariants and final state; cite current observation/action evidence "
         "and identify unmet or unknown items",

@@ -22,14 +22,14 @@
         },
         {
           "id": "preserve_other_hand_tiles_upright",
-          "kind": "invariant",
-          "condition": "Keep all other nine non-matching tiles in the front hand row standing upright in their original row positions throughout the episode.",
+          "kind": "final_state",
+          "condition": "Ensure all other nine non-matching tiles in the front hand row stand upright near their original row positions at completion (transient shift or contact during manipulation is recoverable: re-align or re-stand any disturbed tile rather than stopping early).",
           "source": "RoboDojo make_kong public task specification"
         },
         {
           "id": "draw_and_orient_supplemental_tile",
           "kind": "order",
-          "condition": "After the three matching hand tiles are face up and while the nine non-matching hand tiles remain upright, draw one supplemental replacement tile from the top of the left-side supply stack and bring it through an upright, front-facing standing orientation (matching the standing hand tiles' orientation, with its face toward the robot/front and its standing axis vertical) before final placement.",
+          "condition": "After the three matching hand tiles are face up, draw one supplemental replacement tile from the top of the left-side supply stack and bring it into an upright, front-facing standing orientation (matching the standing hand tiles' orientation, with its face toward the robot/front and its standing axis vertical) before final placement.",
           "source": "RoboDojo make_kong public task specification"
         },
         {

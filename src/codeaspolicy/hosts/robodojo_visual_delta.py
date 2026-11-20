@@ -1885,13 +1885,12 @@ def delta_grasp(
         state_cur = motion._obs(primitives)["state"]
 
     result["approach_steps_used"] = approach_steps
+    end_of_stroke_seated = False
     end_of_stroke_table_seated = False
     if (
-        contact_table
-        and not approach_reached
+        not approach_reached
         and not approach_stalled
         and approach_stop_reason == "final_target_not_reached"
-        and u_axis[2] < -0.3
     ):
         q_after_app = motion._joints(state_cur, arm)
         fr_after_app = kin.frames(arm, q_after_app)
@@ -1902,15 +1901,20 @@ def delta_grasp(
         rem_after_app = desired_tcp - tcp_after_app
         axial_err_after = abs(float(np.dot(rem_after_app, u_axis)))
         perp_err_after = float(np.linalg.norm(rem_after_app - float(np.dot(rem_after_app, u_axis)) * u_axis))
-        end_of_stroke_table_seated = (
-            tip_after_z <= kin.TABLE_Z + 0.020
-            and axial_err_after <= max(0.012, overdrive_f + 0.010)
+        end_of_stroke_seated = (
+            axial_err_after <= max(0.012, overdrive_f + 0.010)
             and perp_err_after <= tol_f + 0.002
+        )
+        end_of_stroke_table_seated = (
+            contact_table
+            and u_axis[2] < -0.3
+            and tip_after_z <= kin.TABLE_Z + 0.020
+            and end_of_stroke_seated
         )
     table_contact_stalled = bool(contact_table and (approach_stalled or end_of_stroke_table_seated))
     result["table_contact_stalled"] = table_contact_stalled
 
-    if not approach_reached and not table_contact_stalled:
+    if not approach_reached and not table_contact_stalled and not end_of_stroke_seated:
         result.update(
             steps_used=steps_used,
             stalled=approach_stalled,

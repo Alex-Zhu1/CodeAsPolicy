@@ -1480,4 +1480,25 @@ def test_delta_grasp_contact_table_seats_on_end_of_stroke_table_arrest(tmp_path)
     assert res.closed is True and res.closed_opening == pytest.approx(0.015, abs=0.002)
     assert res.lift_status == "completed" and res.retained_closure is True
 
+    # Elevated stacked-object support arrest (contact_table=False, floor=0.820, target=0.817):
+    # final_target_not_reached within 10 mm on the final step also closes cleanly instead of aborting.
+    env_stack = _place(
+        FlexibleGripEnvironment(initial_opening=1.0, close_stop=0.22, floor=0.820), z=0.855
+    )
+    host_stack = NativeToolkit(env_stack, None, tmp_path / "stack_seat")
+    raw_stack = rvd.delta_grasp(
+        host_stack._primitives,
+        {a: list(env_stack.joints[a]) for a in kin.ARMS},
+        [0.250, -0.150, 0.817],
+        arm="right",
+        contact_table=False,
+        opening=0.60,
+        stall_steps=4,
+        max_steps=30,
+    )
+    assert raw_stack["status"] == "completed" and raw_stack["closed"] is True
+    assert raw_stack["table_contact_stalled"] is False
+    assert raw_stack["holding"] is True and raw_stack["closed_opening"] == pytest.approx(0.22, abs=0.01)
+
+
 

@@ -79,8 +79,8 @@ class IntentMixin:
         an obstacle. Missing links, same-arm collisions and unsampled servo motion
         are not certified. Inspect geometry_coverage; unknown geometry is not clear.
 
-        holding maps arms to 'keep', 'empty', or 'retain'. All retain the current
-        gripper command: this method never opens, closes or regrips. 'empty' is
+        holding is 'keep'/'empty'/'retain' or {arm: ...} (never opens, closes
+        or regrips). 'empty' is
         your observed empty-hand assertion; 'retain' additionally requires a
         recorded close command and obstructed closure before/after each action.
         This check cannot prove object identity, stability or detect all slips.
@@ -139,20 +139,35 @@ class IntentMixin:
                 return [target(v) for v in value]
             return value
 
+        targets_map = {a: target(v) for a, v in (("left", left), ("right", right)) if v is not None}
+        following_norm = target(following) if following is not None else None
+        waypoints_norm = target(waypoints) if waypoints is not None else None
+        if holding is None:
+            holding_norm = {}
+        elif isinstance(holding, str) and holding in ("keep", "empty", "retain"):
+            active_target_arms = set(targets_map)
+            for seq in (waypoints_norm, following_norm):
+                if isinstance(seq, list):
+                    for leg in seq:
+                        if isinstance(leg, dict):
+                            active_target_arms.update(a for a in leg if a in ("left", "right"))
+            holding_norm = {a: holding for a in ("left", "right") if a in active_target_arms}
+        else:
+            holding_norm = holding
         request = dict(
             intent_id=intent_id,
-            targets={a: target(v) for a, v in (("left", left), ("right", right)) if v is not None},
+            targets=targets_map,
             interaction=interaction, directions={} if directions is None else target(directions),
-            holding={} if holding is None else holding,
+            holding=holding_norm,
             completion={} if completion is None else completion,
             max_steps=max_steps, reserve_steps=reserve_steps,
             keep_relative=keep_relative, preview=preview,
             constraints=_constraints(constraints),
         )
-        if following is not None:
-            request["following"] = target(following)
-        if waypoints is not None:
-            request["waypoints"] = target(waypoints)
+        if following_norm is not None:
+            request["following"] = following_norm
+        if waypoints_norm is not None:
+            request["waypoints"] = waypoints_norm
         raw = self._readonly("intent_prepare", request)
         if raw.get("interrupted"):
             from .coordination import CoordinationPause

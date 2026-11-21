@@ -788,6 +788,24 @@ def _parse_grip_spec(
     return command, None
 
 
+def _grip_already_at(primitives: Any, state: dict[str, Any], arm: str, cmd: float) -> bool:
+    cmds = getattr(primitives, "_grip_commands", None) or {}
+    last = cmds.get(arm)
+    return (
+        last is not None
+        and abs(float(last) - cmd) < 1e-6
+        and abs(_opening(state, arm) - cmd) < GRIP_STILL
+    )
+
+
+def _arm_grip_done(now: float, last: float, cmd: float, steps: int) -> bool:
+    if steps < 2:
+        return False
+    if abs(now - last) < GRIP_STILL or abs(now - cmd) < GRIP_STILL:
+        return True
+    return cmd == 1.0 and now >= 0.985 and abs(now - last) < 0.015
+
+
 def grip(
     primitives: Any,
     arm: str = "right",
@@ -818,18 +836,21 @@ def grip(
         hold = {a: _joints(state, a) for a in ARMS}  # both arms keep the joints they had
         before = _opening(state, arm)
         steps = 0
-        status: dict[str, Any] = {}
-        last = before
-        for _ in range(GRIP_MAX_ACTIONS):
-            primitives._check_cancelled()
-            state, status = _act(primitives, state, hold, {arm: command})
-            steps += 1
-            now = _opening(state, arm)
-            if steps >= 2 and abs(now - last) < GRIP_STILL:
-                break
-            last = now
-            if _spent(status):
-                break
+        getter = getattr(primitives.env, "get_status", None)
+        status = getter() if callable(getter) else {}
+        status = status if isinstance(status, dict) else {}
+        if not _grip_already_at(primitives, state, arm, command):
+            last = before
+            for _ in range(GRIP_MAX_ACTIONS):
+                primitives._check_cancelled()
+                state, status = _act(primitives, state, hold, {arm: command})
+                steps += 1
+                now = _opening(state, arm)
+                if _arm_grip_done(now, last, command, steps):
+                    break
+                last = now
+                if _spent(status):
+                    break
         measured = _opening(state, arm)
         closing = command == 0.0
         holding = bool(closing and measured > HOLD_MIN_OPENING)
@@ -878,15 +899,18 @@ def grip(
     getter = getattr(primitives.env, "get_status", None)
     status = getter() if callable(getter) else {}
     status = status if isinstance(status, dict) else {}
-    if active_commands:
+    if active_commands and not all(
+        _grip_already_at(primitives, state, a, cmd) for a, cmd in active_commands.items()
+    ):
         last_all = {a: before_all[a] for a in active_commands}
         for _ in range(GRIP_MAX_ACTIONS):
             primitives._check_cancelled()
             state, status = _act(primitives, state, hold, active_commands)
             steps += 1
             now_all = {a: _opening(state, a) for a in active_commands}
-            if steps >= 2 and all(
-                abs(now_all[a] - last_all[a]) < GRIP_STILL for a in active_commands
+            if all(
+                _arm_grip_done(now_all[a], last_all[a], active_commands[a], steps)
+                for a in active_commands
             ):
                 break
             last_all = now_all
@@ -960,6 +984,202 @@ def grip(
     }
 
 
+def wait(
+    primitives: Any,
+    steps: int = 10,
+    *,
+    until_scene_still: bool = False,
+    min_steps: int = 1,
+    still_steps: int = 12,
+    pixel_tol: float = 3.0,
+    roi: Sequence[int] | None = None,
+    camera: str = "cam_head",
+    reserve_steps: int = 0,
+) -> dict[str, Any]:
+    """Hold current arm poses and grippers for up to ``steps`` native actions in one call.
+
+    When ``until_scene_still=True``, watches ``camera`` (optionally cropped to ``roi``
+    ``(r0, c0, r1, c1)``) and exits early after ``steps_used >= min_steps`` and
+    ``still_steps`` consecutive still frames.
+    """
+
+    if isinstance(steps, bool) or not isinstance(steps, int) or steps < 0:
+        return {"error": "steps must be a non-negative integer"}
+    if not isinstance(until_scene_still, bool):
+        return {"error": "until_scene_still must be a boolean"}
+    if isinstance(min_steps, bool) or not isinstance(min_steps, int) or min_steps < 0:
+        return {"error": "min_steps must be a non-negative integer"}
+    if isinstance(still_steps, bool) or not isinstance(still_steps, int) or still_steps < 1:
+        return {"error": "still_steps must be an integer >= 1"}
+    if isinstance(reserve_steps, bool) or not isinstance(reserve_steps, int) or reserve_steps < 0:
+        return {"error": "reserve_steps must be a non-negative integer"}
+    if isinstance(pixel_tol, bool):
+        return {"error": "pixel_tol must be a positive finite number"}
+    try:
+        tol_val = float(pixel_tol)
+    except (TypeError, ValueError):
+        return {"error": "pixel_tol must be a positive finite number"}
+    if not math.isfinite(tol_val) or tol_val <= 0.0:
+        return {"error": "pixel_tol must be a positive finite number"}
+    if not isinstance(camera, str) or not camera.strip():
+        return {"error": "camera must be a non-empty string"}
+
+    roi_box: tuple[int, int, int, int] | None = None
+    if roi is not None:
+        if isinstance(roi, (str, bytes)):
+            return {"error": "roi must be a 4-element integer sequence (r0, c0, r1, c1)"}
+        try:
+            roi_raw = list(roi)
+        except TypeError:
+            return {"error": "roi must be a 4-element integer sequence (r0, c0, r1, c1)"}
+        if len(roi_raw) != 4 or any(
+            isinstance(v, bool) or not isinstance(v, (int, np.integer)) for v in roi_raw
+        ):
+            return {"error": "roi must be 4 integers (r0, c0, r1, c1)"}
+        r0, c0, r1, c1 = (int(v) for v in roi_raw)
+        if not (0 <= r0 < r1 and 0 <= c0 < c1):
+            return {"error": "roi must satisfy 0 <= r0 < r1 and 0 <= c0 < c1"}
+        roi_box = (r0, c0, r1, c1)
+
+    obs = _obs(primitives)
+    state = obs["state"]
+
+    def _extract_frame(obs_dict: dict[str, Any]) -> tuple[np.ndarray | None, str | None]:
+        cam = _camera(obs_dict, camera)
+        color = cam.get("color") if cam else None
+        if color is None:
+            return None, f"camera {camera!r} color image not in observation"
+        arr = np.asarray(color, dtype=np.int16)
+        if arr.ndim < 2:
+            return None, f"camera {camera!r} color image has invalid shape {arr.shape!r}"
+        if roi_box is not None:
+            r0, c0, r1, c1 = roi_box
+            if r1 > arr.shape[0] or c1 > arr.shape[1]:
+                return None, (
+                    f"roi {roi_box!r} exceeds image shape {arr.shape[:2]!r} for {camera!r}"
+                )
+            arr = arr[r0:r1, c0:c1]
+        return arr, None
+
+    prev_rgb: np.ndarray | None = None
+    if until_scene_still:
+        prev_rgb, err = _extract_frame(obs)
+        if err is not None:
+            return {"error": err}
+
+    getter = getattr(primitives.env, "get_status", None)
+    status = getter() if callable(getter) else {}
+    status = status if isinstance(status, dict) else {}
+
+    def _remaining_of(st: dict[str, Any]) -> int | None:
+        s_step, s_limit = st.get("step"), st.get("step_limit")
+        if (
+            isinstance(s_step, int)
+            and not isinstance(s_step, bool)
+            and isinstance(s_limit, int)
+            and not isinstance(s_limit, bool)
+        ):
+            return max(0, int(s_limit) - int(s_step))
+        return None
+
+    remaining = _remaining_of(status)
+    if steps == 0:
+        return {
+            "steps_used": 0,
+            "still": not until_scene_still,
+            "motion_detected": False,
+            "still_streak": 0,
+            "peak_pixel_diff": 0.0,
+            "camera": camera,
+            "status": "completed",
+            "stop_reason": "zero_steps",
+            "step": status.get("step"),
+            "step_limit": status.get("step_limit"),
+            "remaining_episode_steps": remaining,
+        }
+    if remaining is not None and remaining <= reserve_steps:
+        return {
+            "steps_used": 0,
+            "still": False,
+            "motion_detected": False,
+            "still_streak": 0,
+            "peak_pixel_diff": 0.0,
+            "camera": camera,
+            "status": "rejected",
+            "stop_reason": "reserve_steps_exhausted",
+            "step": status.get("step"),
+            "step_limit": status.get("step_limit"),
+            "remaining_episode_steps": remaining,
+        }
+
+    allowance = steps if remaining is None else min(steps, max(0, remaining - reserve_steps))
+    hold = {a: _joints(state, a) for a in ARMS}
+    steps_used = 0
+    still = False
+    motion_detected = False
+    still_streak = 0
+    peak_pixel_diff = 0.0
+
+    for _ in range(allowance):
+        if _spent(status):
+            break
+        primitives._check_cancelled()
+        state, status = _act(primitives, state, hold, {})
+        steps_used += 1
+        if until_scene_still:
+            curr_obs = getattr(primitives, "_last_obs", None) or _obs(primitives)
+            curr_rgb, err = _extract_frame(curr_obs)
+            if err is not None:
+                return {"error": err}
+            assert prev_rgb is not None and curr_rgb is not None
+            diff = np.abs(curr_rgb - prev_rgb)
+            if diff.ndim == 3:
+                diff = diff.max(axis=-1)
+            p995 = float(np.percentile(diff, 99.5))
+            changed_px = int((diff > max(tol_val * 3.0, 10.0)).sum())
+            px_cap = max(8, int(0.0001 * diff.size))
+            frame_still = (p995 <= tol_val) and (changed_px <= px_cap)
+            peak_pixel_diff = max(peak_pixel_diff, p995)
+            if not frame_still:
+                motion_detected = True
+                still_streak = 0
+            else:
+                still_streak += 1
+            prev_rgb = curr_rgb
+            if steps_used >= min_steps and still_streak >= still_steps:
+                still = True
+                break
+        if _spent(status):
+            break
+
+    if _spent(status) and not still and (until_scene_still or steps_used < steps):
+        out_status = "partial"
+        stop_reason = _episode_stop_reason(status) or "episode_ended"
+    elif still:
+        out_status = "completed"
+        stop_reason = "scene_still"
+    elif allowance < steps and steps_used == allowance:
+        out_status = "completed"
+        stop_reason = "reserve_steps_reached"
+    else:
+        out_status = "completed"
+        stop_reason = "max_steps" if until_scene_still else "completed"
+
+    return {
+        "steps_used": steps_used,
+        "still": bool(still),
+        "motion_detected": bool(motion_detected),
+        "still_streak": int(still_streak),
+        "peak_pixel_diff": round(peak_pixel_diff, 3),
+        "camera": camera,
+        "status": out_status,
+        "stop_reason": stop_reason,
+        "step": status.get("step"),
+        "step_limit": status.get("step_limit"),
+        "remaining_episode_steps": _remaining_of(status),
+    }
+
+
 def _check_home_inter_arm(
     start_left: Sequence[float],
     start_right: Sequence[float],
@@ -1020,6 +1240,156 @@ def _sync_home_pairs(
     ]
 
 
+def _with_episode_note(out: dict[str, Any]) -> dict[str, Any]:
+    if out.get("stop_reason") == "episode_ended" and not out.get("note"):
+        out["note"] = "environment ended the episode before step_limit during home"
+    return out
+
+
+def _plan_release_clearance(
+    name: str,
+    q: Sequence[float],
+    pose: np.ndarray,
+    release: np.ndarray,
+) -> dict[str, Any] | None:
+    withdrawal = -release[:3, 0]
+    offset = pose[:3, 3] - release[:3, 3]
+    can_clear_up = float(release[2, 0]) <= 0.25
+    lifted_up = float(offset[2])
+    missing = RELEASE_WITHDRAW_M - float(np.dot(offset, withdrawal))
+    if (
+        np.linalg.norm(offset) >= RELEASE_NEAR_M
+        or missing <= 0.001
+        or (can_clear_up and lifted_up >= RELEASE_WITHDRAW_M - 0.001)
+    ):
+        return None
+    target = pose.copy()
+    target[:3, 3] += withdrawal * missing
+    ways, why = kin.line_path(name, q, target)
+    used_up_fallback = False
+    min_axial = RELEASE_WITHDRAW_M - 0.005
+    if why is not None and can_clear_up:
+        missing_up = RELEASE_WITHDRAW_M - max(0.0, lifted_up)
+        if missing_up > 0.001:
+            up_target = pose.copy()
+            up_target[2, 3] += missing_up
+            ways_up, why_up = kin.line_path(name, q, up_target)
+            if why_up is None:
+                ways, why = ways_up, None
+                used_up_fallback = True
+    if why is not None:
+        diag = pose.copy()
+        diag[:3, 3] += withdrawal * (0.65 * missing)
+        diag[2, 3] += 0.04
+        ways_d, why_d = kin.line_path(name, q, diag)
+        if why_d is None:
+            ways, why = ways_d, None
+            min_axial = (
+                min(
+                    RELEASE_WITHDRAW_M,
+                    float(np.dot(diag[:3, 3] - release[:3, 3], withdrawal)),
+                )
+                - 0.005
+            )
+    if why is not None:
+        req_m = max(0.035, 0.6 * missing)
+        short = pose.copy()
+        short[:3, 3] += withdrawal * req_m
+        ways_s, why_s = kin.line_path(name, q, short)
+        if why_s is None:
+            ways, why = ways_s, None
+            min_axial = (
+                min(
+                    RELEASE_WITHDRAW_M,
+                    float(np.dot(short[:3, 3] - release[:3, 3], withdrawal)),
+                )
+                - 0.005
+            )
+    return {
+        "pose": pose,
+        "release": release,
+        "withdrawal": withdrawal,
+        "can_clear_up": can_clear_up,
+        "used_up_fallback": used_up_fallback,
+        "min_axial": min_axial,
+        "ways": ways,
+        "why": why,
+        "follow": _followable(q, ways) if why is None else [],
+        "end_q": ways[-1] if why is None and ways else list(q),
+    }
+
+
+def _plan_home_staging(
+    name: str,
+    q: Sequence[float],
+    start_joints: dict[str, list[float]],
+) -> tuple[np.ndarray, list[list[float]], str | None]:
+    pose = _pose_of(name, q)
+    origin = _pose_of(name, start_joints[name])
+    origin_z = float(origin[2, 3])
+    above = origin.copy()
+    above[2, 3] = max(origin_z, float(pose[2, 3]))
+    ways, why = kin.line_path(name, q, above)
+    if why is None:
+        return above, ways, None
+    for z_cap in (1.00, 0.96, origin_z):
+        cand = above.copy()
+        cand[2, 3] = max(origin_z, min(float(pose[2, 3]), z_cap))
+        ways_c, why_c = kin.line_path(name, q, cand)
+        if why_c is None:
+            return cand, ways_c, None
+    return above, ways, why
+
+
+def _emergency_direct_swing_ok(
+    primitives: Any,
+    state: dict[str, Any],
+    status: dict[str, Any],
+    start_joints: dict[str, list[float]],
+    arm: str,
+    arms: tuple[str, ...],
+) -> bool:
+    st = status or (
+        primitives.env.get_status()
+        if callable(getattr(primitives.env, "get_status", None))
+        else {}
+    )
+    if not isinstance(st, dict):
+        return False
+    s_step, s_limit = st.get("step"), st.get("step_limit")
+    if (
+        isinstance(s_step, bool)
+        or not isinstance(s_step, int)
+        or isinstance(s_limit, bool)
+        or not isinstance(s_limit, int)
+        or int(s_limit) <= 5
+    ):
+        return False
+    rem = int(s_limit) - int(s_step)
+    if not (0 < rem <= 18):
+        return False
+    q_cur = {a: _joints(state, a) for a in ARMS}
+    if not all(_joint_path_clear(n, q_cur[n], start_joints[n]) for n in arms):
+        return False
+    if arm == "both":
+        pairs = _sync_home_pairs(
+            q_cur,
+            {n: _followable(q_cur[n], [start_joints[n]]) for n in arms},
+        )
+        if (
+            _check_home_inter_arm(
+                q_cur["left"],
+                q_cur["right"],
+                pairs,
+                left_opening=_opening(state, "left"),
+                right_opening=_opening(state, "right"),
+            )
+            is not None
+        ):
+            return False
+    return True
+
+
 def home(
     primitives: Any,
     start_joints: dict[str, list[float]],
@@ -1027,11 +1397,15 @@ def home(
     tol: float = HOME_TOL_RAD,
     max_steps: int = HOME_MAX_ACTIONS,
     lift: bool = True,
+    *,
+    open_gripper: bool = False,
 ) -> dict[str, Any]:
     """Drive one arm or both back to ``start_joints``: the tool behind ``robo.home``.
 
     With ``lift``, an arm away from its start whose grasp point is below HOME_LIFT_BELOW first
     goes straight up by HOME_LIFT_M (or less, where the line ends sooner), orientation kept.
+    With ``open_gripper=True``, opens any non-open or closed-commanded grippers first so
+    opening, release clearance, and homing run in one call.
 
     The same joint action as ``move_pose``, the other arm held where it is and each gripper
     retaining its last command, with the joint target given instead of solved for. The
@@ -1041,6 +1415,8 @@ def home(
 
     if arm not in (*ARMS, "both"):
         return {"error": "arm must be 'left', 'right' or 'both'"}
+    if not isinstance(open_gripper, bool):
+        return {"error": "open_gripper must be a boolean"}
     arms = ARMS if arm == "both" else (arm,)
 
     def error_of(state: dict[str, Any]) -> float:
@@ -1059,6 +1435,44 @@ def home(
     retreated: dict[str, float] = {}
     staged: dict[str, float] = {}
 
+    if open_gripper:
+        grip_cmds = getattr(primitives, "_grip_commands", None) or {}
+        if not all(_opening(state, a) >= 0.985 and grip_cmds.get(a, 1.0) >= 0.95 for a in arms):
+            hold = {a: _joints(state, a) for a in ARMS}
+            open_cmd = {a: 1.0 for a in arms}
+            last_open = {a: _opening(state, a) for a in arms}
+            open_steps = 0
+            for _ in range(GRIP_MAX_ACTIONS):
+                if _spent(status):
+                    break
+                primitives._check_cancelled()
+                state, status = _act(primitives, state, hold, open_cmd)
+                steps_used += 1
+                open_steps += 1
+                now_open = {a: _opening(state, a) for a in arms}
+                if _spent(status) or (
+                    open_steps >= 2
+                    and (
+                        all(abs(now_open[a] - last_open[a]) < GRIP_STILL for a in arms)
+                        or all(now_open[a] >= 0.96 for a in arms)
+                    )
+                ):
+                    break
+                last_open = now_open
+            error = error_of(state)
+            if _spent(status):
+                out_open = {
+                    "arm": arm,
+                    "reached": error <= tol,
+                    "max_joint_error_rad": round(error, 4),
+                    "steps_used": steps_used,
+                }
+                if error > tol:
+                    out_open["status"] = "partial"
+                    out_open["stop_reason"] = _episode_stop_reason(status) or "episode_ended"
+                    return _with_episode_note(out_open)
+                return out_open
+
     if arm == "both":
         # Phase 1: synchronized release_clearance for all arms that need withdrawal
         release_plans: dict[str, dict[str, Any]] = {}
@@ -1067,43 +1481,17 @@ def home(
             if release is None:
                 continue
             q = _joints(state, name)
-            pose = _pose_of(name, q)
-            withdrawal = -release[:3, 0]
-            offset = pose[:3, 3] - release[:3, 3]
-            can_clear_up = float(release[2, 0]) <= 0.25
-            lifted_up = float(offset[2])
-            missing = RELEASE_WITHDRAW_M - float(np.dot(offset, withdrawal))
-            if (np.linalg.norm(offset) >= RELEASE_NEAR_M
-                    or missing <= .001
-                    or (can_clear_up and lifted_up >= RELEASE_WITHDRAW_M - .001)):
+            plan = _plan_release_clearance(name, q, _pose_of(name, q), release)
+            if plan is None:
                 continue
-            target = pose.copy()
-            target[:3, 3] += withdrawal * missing
-            ways, why = kin.line_path(name, q, target)
-            used_up_fallback = False
-            if why is not None and can_clear_up:
-                missing_up = RELEASE_WITHDRAW_M - max(0.0, lifted_up)
-                if missing_up > .001:
-                    up_target = pose.copy()
-                    up_target[2, 3] += missing_up
-                    ways_up, why_up = kin.line_path(name, q, up_target)
-                    if why_up is None:
-                        ways, why = ways_up, None
-                        used_up_fallback = True
-            if why is not None:
-                return dict(arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
-                            steps_used=steps_used, stop_reason="release_clearance_required",
-                            status="partial" if steps_used else "rejected",
-                            note=f"{name}: cannot withdraw from the last release before homing: {why}")
-            release_plans[name] = {
-                "pose": pose,
-                "release": release,
-                "withdrawal": withdrawal,
-                "can_clear_up": can_clear_up,
-                "used_up_fallback": used_up_fallback,
-                "follow": _followable(q, ways),
-                "end_q": ways[-1],
-            }
+            if plan["why"] is not None:
+                return _with_episode_note(dict(
+                    arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
+                    steps_used=steps_used, stop_reason="release_clearance_required",
+                    status="partial" if steps_used else "rejected",
+                    note=f"{name}: cannot withdraw from the last release before homing: {plan['why']}",
+                ))
+            release_plans[name] = plan
         if release_plans:
             q_start = {a: _joints(state, a) for a in ARMS}
             phase_ways = {name: p["follow"] for name, p in release_plans.items()}
@@ -1115,10 +1503,12 @@ def home(
                 right_opening=_opening(state, "right"),
             )
             if inter_why is not None:
-                return dict(arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
-                            steps_used=steps_used, stop_reason="release_clearance_required",
-                            status="partial" if steps_used else "rejected",
-                            note=f"both: cannot withdraw from the last release before homing: {inter_why}")
+                return _with_episode_note(dict(
+                    arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
+                    steps_used=steps_used, stop_reason="release_clearance_required",
+                    status="partial" if steps_used else "rejected",
+                    note=f"both: cannot withdraw from the last release before homing: {inter_why}",
+                ))
             max_len = max(len(w) for w in phase_ways.values())
             for idx in range(max_len):
                 primitives._check_cancelled()
@@ -1155,7 +1545,7 @@ def home(
                     )
                 axial_done = (
                     float(np.dot(actual[:3, 3] - p["release"][:3, 3], p["withdrawal"]))
-                    >= RELEASE_WITHDRAW_M - .005
+                    >= p["min_axial"]
                 )
                 up_done = (
                     p["can_clear_up"]
@@ -1164,14 +1554,27 @@ def home(
                 if not (axial_done or up_done):
                     all_clear = False
             if _spent(status) or not all_clear:
-                return dict(arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
-                            steps_used=steps_used, clearance_retreat_m=retreated,
-                            status="partial",
-                            stop_reason=_episode_stop_reason(status) if _spent(status)
-                                        else "release_clearance_incomplete")
+                return _with_episode_note(dict(
+                    arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
+                    steps_used=steps_used, clearance_retreat_m=retreated,
+                    status="partial",
+                    stop_reason=_episode_stop_reason(status) if _spent(status)
+                                else "release_clearance_incomplete",
+                ))
+
+        emergency_direct = False
+        if lift and error_of(state) > tol and not _spent(status):
+            emergency_direct = _emergency_direct_swing_ok(
+                primitives, state, status, start_joints, arm, arms
+            )
+            if emergency_direct:
+                pending_rel = getattr(primitives, "_home_after_release", None)
+                if pending_rel is not None:
+                    for n in arms:
+                        pending_rel.discard(n)
 
         # Phase 2: synchronized lift for all arms below HOME_LIFT_BELOW
-        if lift and error > tol and not _spent(status):
+        if lift and not emergency_direct and error_of(state) > tol and not _spent(status):
             lift_cands: dict[str, list[tuple[float, list[list[float]]]]] = {}
             q_start = {a: _joints(state, a) for a in ARMS}
             for name in arms:
@@ -1251,7 +1654,7 @@ def home(
                     lifted[name] = round(dz, 3)
 
         # Phase 3: synchronized home_staging above origin after release
-        if lift and not _spent(status):
+        if lift and not emergency_direct and not _spent(status):
             staging_plans: dict[str, dict[str, Any]] = {}
             for name in arms:
                 if name not in (getattr(primitives, "_home_after_release", None) or ()):
@@ -1259,15 +1662,33 @@ def home(
                 q = _joints(state, name)
                 if max(abs(a - b) for a, b in zip(q, start_joints[name], strict=True)) <= tol:
                     continue
-                pose = _pose_of(name, q)
-                above = _pose_of(name, start_joints[name])
-                above[2, 3] = max(above[2, 3], pose[2, 3])
-                ways, why = kin.line_path(name, q, above)
+                above, ways, why = _plan_home_staging(name, q, start_joints)
                 if why is not None:
-                    return dict(arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
-                                steps_used=steps_used, status="partial" if steps_used else "rejected",
-                                stop_reason="home_staging_required",
-                                note=f"{name}: cannot return above the origin at the cleared height: {why}")
+                    q_cur = {a: _joints(state, a) for a in ARMS}
+                    table_ok = _joint_path_clear(name, q, start_joints[name])
+                    inter_ok = (
+                        _check_home_inter_arm(
+                            q_cur["left"],
+                            q_cur["right"],
+                            _sync_home_pairs(
+                                q_cur, {name: _followable(q, [start_joints[name]])}
+                            ),
+                            left_opening=_opening(state, "left"),
+                            right_opening=_opening(state, "right"),
+                        )
+                        is None
+                    )
+                    if table_ok and inter_ok:
+                        pending_rel = getattr(primitives, "_home_after_release", None)
+                        if pending_rel is not None:
+                            pending_rel.discard(name)
+                        continue
+                    return _with_episode_note(dict(
+                        arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
+                        steps_used=steps_used, status="partial" if steps_used else "rejected",
+                        stop_reason="home_staging_required",
+                        note=f"{name}: cannot return above the origin at the cleared height: {why}",
+                    ))
                 staging_plans[name] = {
                     "above": above,
                     "follow": _followable(q, ways),
@@ -1284,10 +1705,12 @@ def home(
                     right_opening=_opening(state, "right"),
                 )
                 if inter_why is not None:
-                    return dict(arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
-                                steps_used=steps_used, status="partial" if steps_used else "rejected",
-                                stop_reason="home_staging_required",
-                                note=f"both: cannot return above the origin at the cleared height: {inter_why}")
+                    return _with_episode_note(dict(
+                        arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
+                        steps_used=steps_used, status="partial" if steps_used else "rejected",
+                        stop_reason="home_staging_required",
+                        note=f"both: cannot return above the origin at the cleared height: {inter_why}",
+                    ))
                 max_len = max(len(w) for w in phase_ways.values())
                 for idx in range(max_len):
                     primitives._check_cancelled()
@@ -1323,45 +1746,30 @@ def home(
                     else:
                         staged[name] = round(float(above[2, 3]), 4)
                 if _spent(status) or not all_staged:
-                    return dict(arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
-                                steps_used=steps_used, status="partial",
-                                stop_reason=_episode_stop_reason(status) if _spent(status)
-                                            else "home_staging_incomplete")
+                    return _with_episode_note(dict(
+                        arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
+                        steps_used=steps_used, status="partial",
+                        stop_reason=_episode_stop_reason(status) if _spent(status)
+                                    else "home_staging_incomplete",
+                    ))
     else:
         for name in arms if error > tol else ():
             release = (getattr(primitives, "_release_poses", None) or {}).get(name)
             if release is None:
                 continue
             q = _joints(state, name)
-            pose = _pose_of(name, q)
-            withdrawal = -release[:3, 0]
-            offset = pose[:3, 3] - release[:3, 3]
-            can_clear_up = float(release[2, 0]) <= 0.25
-            lifted_up = float(offset[2])
-            missing = RELEASE_WITHDRAW_M - float(np.dot(offset, withdrawal))
-            if (np.linalg.norm(offset) >= RELEASE_NEAR_M
-                    or missing <= .001
-                    or (can_clear_up and lifted_up >= RELEASE_WITHDRAW_M - .001)):
+            plan = _plan_release_clearance(name, q, _pose_of(name, q), release)
+            if plan is None:
                 continue
-            target = pose.copy()
-            target[:3, 3] += withdrawal * missing
-            ways, why = kin.line_path(name, q, target)
-            used_up_fallback = False
-            if why is not None and can_clear_up:
-                missing_up = RELEASE_WITHDRAW_M - max(0.0, lifted_up)
-                if missing_up > .001:
-                    up_target = pose.copy()
-                    up_target[2, 3] += missing_up
-                    ways_up, why_up = kin.line_path(name, q, up_target)
-                    if why_up is None:
-                        ways, why = ways_up, None
-                        used_up_fallback = True
-            if why is not None:
-                return dict(arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
-                            steps_used=steps_used, stop_reason="release_clearance_required",
-                            status="partial" if steps_used else "rejected",
-                            note=f"{name}: cannot withdraw from the last release before homing: {why}")
-            for way in _followable(q, ways):
+            if plan["why"] is not None:
+                return _with_episode_note(dict(
+                    arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
+                    steps_used=steps_used, stop_reason="release_clearance_required",
+                    status="partial" if steps_used else "rejected",
+                    note=f"{name}: cannot withdraw from the last release before homing: {plan['why']}",
+                ))
+            ways = plan["ways"]
+            for way in plan["follow"]:
                 primitives._check_cancelled()
                 state, status = _act(primitives, state, {name: way}, {})
                 steps_used += 1
@@ -1375,22 +1783,40 @@ def home(
                 state, status = _act(primitives, state, {name: ways[-1]}, {})
                 steps_used += 1
             actual = _pose_of(name, _joints(state, name))
-            if used_up_fallback:
-                retreated[name] = round(float(actual[2, 3] - pose[2, 3]), 4)
+            if plan["used_up_fallback"]:
+                retreated[name] = round(float(actual[2, 3] - plan["pose"][2, 3]), 4)
             else:
-                retreated[name] = round(float(np.dot(actual[:3, 3] - pose[:3, 3], withdrawal)), 4)
+                retreated[name] = round(
+                    float(np.dot(actual[:3, 3] - plan["pose"][:3, 3], plan["withdrawal"])), 4
+                )
             axial_done = (
-                float(np.dot(actual[:3, 3] - release[:3, 3], withdrawal))
-                >= RELEASE_WITHDRAW_M - .005
+                float(np.dot(actual[:3, 3] - release[:3, 3], plan["withdrawal"]))
+                >= plan["min_axial"]
             )
-            up_done = can_clear_up and float(actual[2, 3] - release[2, 3]) >= RELEASE_WITHDRAW_M - .005
+            up_done = (
+                plan["can_clear_up"]
+                and float(actual[2, 3] - release[2, 3]) >= RELEASE_WITHDRAW_M - .005
+            )
             if _spent(status) or not (axial_done or up_done):
-                return dict(arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
-                            steps_used=steps_used, clearance_retreat_m=retreated,
-                            status="partial",
-                            stop_reason=_episode_stop_reason(status) if _spent(status)
-                                        else "release_clearance_incomplete")
-        for name in arms if lift and error > tol else ():
+                return _with_episode_note(dict(
+                    arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
+                    steps_used=steps_used, clearance_retreat_m=retreated,
+                    status="partial",
+                    stop_reason=_episode_stop_reason(status) if _spent(status)
+                                else "release_clearance_incomplete",
+                ))
+        emergency_direct = False
+        if lift and error_of(state) > tol and not _spent(status):
+            emergency_direct = _emergency_direct_swing_ok(
+                primitives, state, status, start_joints, arm, arms
+            )
+            if emergency_direct:
+                pending_rel = getattr(primitives, "_home_after_release", None)
+                if pending_rel is not None:
+                    for n in arms:
+                        pending_rel.discard(n)
+
+        for name in arms if lift and not emergency_direct and error_of(state) > tol and not _spent(status) else ():
             q = _joints(state, name)
             if max(abs(a - b) for a, b in zip(q, start_joints[name], strict=True)) <= tol:
                 continue
@@ -1416,21 +1842,25 @@ def home(
         # finger withdrawal. Stage that arm above the origin first. Ordinary home
         # keeps its original lift/joint route: changing every return perturbs later
         # contact motions even when all Cartesian endpoints remain within tolerance.
-        for name in arms if lift and not _spent(status) else ():
+        for name in arms if lift and not emergency_direct and not _spent(status) else ():
             if name not in (getattr(primitives, "_home_after_release", None) or ()):
                 continue
             q = _joints(state, name)
             if max(abs(a - b) for a, b in zip(q, start_joints[name], strict=True)) <= tol:
                 continue
-            pose = _pose_of(name, q)
-            above = _pose_of(name, start_joints[name])
-            above[2, 3] = max(above[2, 3], pose[2, 3])
-            ways, why = kin.line_path(name, q, above)
+            above, ways, why = _plan_home_staging(name, q, start_joints)
             if why is not None:
-                return dict(arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
-                            steps_used=steps_used, status="partial" if steps_used else "rejected",
-                            stop_reason="home_staging_required",
-                            note=f"{name}: cannot return above the origin at the cleared height: {why}")
+                if _joint_path_clear(name, q, start_joints[name]):
+                    pending_rel = getattr(primitives, "_home_after_release", None)
+                    if pending_rel is not None:
+                        pending_rel.discard(name)
+                    continue
+                return _with_episode_note(dict(
+                    arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
+                    steps_used=steps_used, status="partial" if steps_used else "rejected",
+                    stop_reason="home_staging_required",
+                    note=f"{name}: cannot return above the origin at the cleared height: {why}",
+                ))
             for way in _followable(q, ways):
                 primitives._check_cancelled()
                 state, status = _act(primitives, state, {name: way}, {})
@@ -1447,10 +1877,12 @@ def home(
             actual = _pose_of(name, _joints(state, name))
             if (_spent(status) or np.linalg.norm(actual[:3, 3] - above[:3, 3]) > ARRIVE_M
                     or kin.rotation_error(actual[:3, :3], above[:3, :3]) > ARRIVE_DEG):
-                return dict(arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
-                            steps_used=steps_used, status="partial",
-                            stop_reason=_episode_stop_reason(status) if _spent(status)
-                                        else "home_staging_incomplete")
+                return _with_episode_note(dict(
+                    arm=arm, reached=False, max_joint_error_rad=round(error_of(state), 4),
+                    steps_used=steps_used, status="partial",
+                    stop_reason=_episode_stop_reason(status) if _spent(status)
+                                else "home_staging_incomplete",
+                ))
             staged[name] = round(float(above[2, 3]), 4)
     error = error_of(state)
     swing = 0
@@ -1468,6 +1900,7 @@ def home(
     }
     if error > tol:
         out["stop_reason"] = _episode_stop_reason(status) or "home_action_limit"
+        _with_episode_note(out)
     if lifted:
         out["lifted_m"] = lifted
     if retreated:
@@ -2371,10 +2804,32 @@ SPECS: dict[str, dict[str, Any]] = {
     "home": {
         "name": "home",
         "description": "Return one arm or both to the joint angles the episode started with; "
-        "gripper openings are kept.",
+        "optionally opens grippers first when open_gripper=True.",
         "input_schema": {
             "type": "object",
-            "properties": {"arm": {"type": "string", "enum": [*ARMS, "both"]}},
+            "properties": {
+                "arm": {"type": "string", "enum": [*ARMS, "both"]},
+                "open_gripper": {"type": "boolean"},
+            },
+            "required": [],
+        },
+    },
+    "wait": {
+        "name": "wait",
+        "description": "Hold current arm poses and grippers for up to steps native actions, "
+        "optionally stopping early once camera stays still for still_steps.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "steps": {"type": "integer"},
+                "until_scene_still": {"type": "boolean"},
+                "min_steps": {"type": "integer"},
+                "still_steps": {"type": "integer"},
+                "pixel_tol": {"type": "number"},
+                "roi": {"type": ["array", "null"], "items": {"type": "integer"}},
+                "camera": {"type": "string"},
+                "reserve_steps": {"type": "integer"},
+            },
             "required": [],
         },
     },
@@ -2402,6 +2857,7 @@ def register(toolkit: Any) -> None:
         "grip": partial(grip, primitives),
         "locate": partial(locate, primitives),
         "home": partial(home, primitives, start),
+        "wait": partial(wait, primitives),
     }
     for name, handler in handlers.items():
         toolkit.add_tool(name, SPECS[name], handler)
@@ -2441,5 +2897,6 @@ __all__ = [
     "probe",
     "register",
     "retained_closure",
+    "wait",
     "world_points",
 ]

@@ -1003,7 +1003,7 @@ def test_register_adds_motion_and_coordination_tools_with_readonly_planning(sim)
     from codeaspolicy.hosts.robodojo_visual_delta import SPECS as delta_specs
 
     assert set(added) == (
-        {"move_pose", "preview_move_pose", "grip", "locate", "home"}
+        {"move_pose", "preview_move_pose", "grip", "locate", "home", "wait"}
         | coordination | intents | staged | set(grasp_specs) | set(delta_specs))
     assert added["preview_move_pose"][1].func._readonly is True
     assert added["preview_align_feature"][1].func._readonly is True
@@ -1026,3 +1026,220 @@ def test_register_adds_motion_and_coordination_tools_with_readonly_planning(sim)
     env.joints["left"] = [0.5, 0.5, 0.0, 0.0, 0.0, 0.0]
     assert added["home"][1](arm="left")["reached"]
     assert env.joints["left"] == pytest.approx([0.0, 0.3, 0.0, 0.0, 0.0, 0.0], abs=0.01)
+
+
+def test_wait_batches_steps_and_detects_localized_third_arm_stillness(tmp_path):
+    from codeaspolicy.hosts.robodojo_native import NativeToolkit
+
+    class _DynamicSceneEnv:
+        def __init__(self, step_limit: int = 100) -> None:
+            self.joints = {arm: [0.0] * 6 for arm in kin.ARMS}
+            self.grip = {arm: 1.0 for arm in kin.ARMS}
+            self.step_count = 0
+            self.step_limit = step_limit
+            self.over = False
+            self.actions: list[dict[str, Any]] = []
+
+        def _frame(self) -> np.ndarray:
+            img = np.full((480, 640, 3), 80, dtype=np.uint8)
+            t = self.step_count
+            # Small 20x20 patch (~0.13% of pixels): moves steps 1..8, pauses 9..10,
+            # retracts 11..15, then stays completely still from step 15 onward.
+            if 1 <= t <= 8:
+                col0 = 200 + t * 12
+                img[100:120, col0 : col0 + 20] = 220
+            elif 9 <= t <= 10:
+                col0 = 200 + 8 * 12
+                img[100:120, col0 : col0 + 20] = 220
+            elif 11 <= t <= 15:
+                col0 = 200 + (15 - t) * 18
+                img[100:120, col0 : col0 + 20] = 220
+            else:
+                img[100:120, 200:220] = 220
+            return img
+
+        def get_obs(self) -> dict[str, Any]:
+            state: dict[str, Any] = {}
+            for arm in kin.ARMS:
+                state[f"{arm}_arm_joint_state"] = tuple(self.joints[arm])
+                state[f"{arm}_ee_joint_state"] = [self.grip[arm]]
+            return {"state": state, "vision": {"cam_head": {"color": self._frame()}}}
+
+        def get_status(self) -> dict[str, Any]:
+            return {"step": self.step_count, "step_limit": self.step_limit, "over": self.over}
+
+        def step(self, action: dict[str, Any]):
+            self.actions.append(action)
+            self.step_count += 1
+            return self.get_obs(), 0.0, self.over, {"status": self.get_status()}
+
+    env = _DynamicSceneEnv(step_limit=100)
+    prims = _Primitives(env)
+    # 1..8 moving, 9..10 still (2 frames < still_steps=6), 11..15 retracting, 16..21 still (6 frames).
+    res = tools.wait(prims, steps=40, until_scene_still=True, min_steps=5, still_steps=6)
+    assert res["still"] is True
+    assert res["motion_detected"] is True
+    assert res["still_streak"] == 6
+    assert res["stop_reason"] == "scene_still"
+    assert res["status"] == "completed"
+    assert res["steps_used"] == 21
+    assert "reached" not in res
+    assert res["remaining_episode_steps"] == 79
+
+    # reserve_steps caps wait and then rejects when exhausted.
+    env2 = _DynamicSceneEnv(step_limit=10)
+    prims2 = _Primitives(env2)
+    capped = tools.wait(prims2, steps=10, reserve_steps=4)
+    assert capped["steps_used"] == 6
+    assert capped["status"] == "completed"
+    assert capped["stop_reason"] == "reserve_steps_reached"
+    assert capped["remaining_episode_steps"] == 4
+    rejected = tools.wait(prims2, steps=5, reserve_steps=4)
+    assert rejected["steps_used"] == 0
+    assert rejected["status"] == "rejected"
+    assert rejected["stop_reason"] == "reserve_steps_exhausted"
+
+    # NativeToolkit records only 1 observation snapshot while advancing 8 native steps.
+    env3 = _DynamicSceneEnv(step_limit=50)
+    toolkit = NativeToolkit(env3, sam3_client=None, out_dir=tmp_path / "native")
+    assert len(toolkit.state.records) == 1
+    out = toolkit.execute_tool("wait", {"steps": 8})
+    assert out["log"]["result"]["steps_used"] == 8
+    assert env3.step_count == 8
+    assert len(toolkit.state.records) == 2
+
+
+def test_grip_is_zero_step_when_already_commanded_and_settled_and_caps_open_tail():
+    class _AsymptoticGripEnv(_SimArms):
+        def step(self, action):
+            self.actions.append(action)
+            self.step_count += 1
+            for arm in kin.ARMS:
+                goal = action[f"{arm}_arm_joint_state"]
+                self.joints[arm] = [
+                    now + max(-0.2, min(0.2, g - now))
+                    for now, g in zip(self.joints[arm], goal, strict=True)
+                ]
+                want = action[f"{arm}_ee_joint_state"][0]
+                now = self.grip[arm]
+                if want == 1.0 and now >= 0.985:
+                    # Simulate slow asymptotic PD tail creep above 0.985 (0.002/step -> > GRIP_STILL? no, 0.005/step)
+                    self.grip[arm] = min(1.0, now + 0.005)
+                else:
+                    nxt = now + max(-0.4, min(0.4, want - now))
+                    if want < now and arm in self.block:
+                        nxt = max(nxt, self.block[arm])
+                    self.grip[arm] = nxt
+            status = {"step": self.step_count, "step_limit": self.step_limit}
+            return self.get_obs(), 0.0, False, {"status": status}
+
+    env = _AsymptoticGripEnv()
+    prims = _Primitives(env)
+    # Initial grip(both, OPEN) still steps and records _grip_commands.
+    first = tools.grip(prims, "both", -1)
+    assert first["steps_used"] >= 2
+    assert prims._grip_commands == {"left": 1.0, "right": 1.0}
+    # Second grip(both, OPEN) when already commanded and settled at 1.0 takes 0 steps.
+    before = len(env.actions)
+    repeat = tools.grip(prims, "both", -1)
+    assert repeat["steps_used"] == 0
+    assert len(env.actions) == before
+
+    # Single-arm close then asymptotic open tail above 0.985 stops without burning GRIP_MAX_ACTIONS.
+    env.grip = {"left": 0.96, "right": 0.96}
+    prims._grip_commands = {"left": 0.0, "right": 0.0}
+    opened = tools.grip(prims, "both", -1)
+    assert opened["steps_used"] < tools.GRIP_MAX_ACTIONS
+    assert opened["steps_used"] <= 3
+
+
+def test_home_open_gripper_staging_fallback_low_budget_and_episode_ended_note(monkeypatch):
+    class _StatusEnv(_SimArms):
+        def __init__(self, step_limit: int = 500) -> None:
+            super().__init__(step_limit=step_limit)
+            self.over = False
+
+        def get_status(self) -> dict[str, Any]:
+            return {"step": self.step_count, "step_limit": self.step_limit, "over": self.over}
+
+        def step(self, action):
+            obs, reward, _done, info = super().step(action)
+            info["status"] = self.get_status()
+            return obs, reward, self.over, info
+
+    # 1. home(..., open_gripper=True) opens holding grippers, withdraws, and homes in one call.
+    env = _StatusEnv()
+    prims = _Primitives(env)
+    start = {arm: [0.0] * 6 for arm in kin.ARMS}
+    assert tools.move_pose(prims, start, [-0.25, -0.15, 0.92], arm="left", pitch=0)["reached"]
+    assert tools.move_pose(prims, start, [0.25, -0.15, 0.92], arm="right", pitch=0)["reached"]
+    env.block["left"] = 0.4
+    env.block["right"] = 0.4
+    assert tools.grip(prims, "both", 1)["holding"]
+    env.block.clear()
+    res = tools.home(prims, start, arm="both", open_gripper=True)
+    assert res["reached"] is True
+    assert set(res["clearance_retreat_m"]) == {"left", "right"}
+    assert env.grip["left"] >= 0.96 and env.grip["right"] >= 0.96
+
+    # 2. Phase 3 home_staging fallback succeeds when high-Z line_path fails at z > 1.0.
+    env_st = _StatusEnv()
+    prims_st = _Primitives(env_st)
+    assert tools.move_pose(prims_st, start, [-0.45, 0.07, 1.055], arm="left", pitch=0)["reached"]
+    env_st.block["left"] = 0.4
+    tools.grip(prims_st, "left", 1)
+    env_st.block.clear()
+    tools.grip(prims_st, "left", -1)
+    release = prims_st._release_poses["left"].copy()
+    withdrawn = release[:3, 3] - 0.065 * release[:3, 0]
+    assert tools.move_pose(prims_st, start, withdrawn, arm="left", path="line")["reached"]
+    real_line_path = kin.line_path
+
+    def reject_high_z_staging(name, q, target, *args, **kwargs):
+        if float(target[2, 3]) > 1.005:
+            return [], "unreachable_high_z"
+        return real_line_path(name, q, target, *args, **kwargs)
+
+    monkeypatch.setattr(kin, "line_path", reject_high_z_staging)
+    res_st = tools.home(prims_st, start, arm="left")
+    assert res_st["reached"] is True
+    assert res_st.get("staging_height_m", {}).get("left", 0.0) <= 1.005
+    monkeypatch.undo()
+
+    # 3. Emergency low-budget (rem <= 18) skips Phase 2/3 staging after Phase 1 withdrawal.
+    env_low = _StatusEnv(step_limit=500)
+    prims_low = _Primitives(env_low)
+    assert tools.move_pose(prims_low, start, [-0.45, 0.07, 0.85], arm="left", pitch=0)["reached"]
+    env_low.block["left"] = 0.4
+    tools.grip(prims_low, "left", 1)
+    env_low.block.clear()
+    tools.grip(prims_low, "left", -1)
+    release_low = prims_low._release_poses["left"].copy()
+    withdrawn_low = release_low[:3, 3] - 0.065 * release_low[:3, 0]
+    assert tools.move_pose(prims_low, start, withdrawn_low, arm="left", path="line")["reached"]
+    assert "left" in prims_low._home_after_release
+    env_low.step_limit = env_low.step_count + 14  # <= 18 remaining
+    res_low = tools.home(prims_low, start, arm="left")
+    assert res_low["reached"] is True
+    assert "lifted_m" not in res_low and "staging_height_m" not in res_low
+    assert "left" not in prims_low._home_after_release
+
+    # 4. episode_ended sets clear note when env ends before step_limit during home.
+    env_end = _StatusEnv(step_limit=500)
+    prims_end = _Primitives(env_end)
+    assert tools.move_pose(prims_end, start, [0.25, -0.15, 0.90], arm="right", pitch=90)["reached"]
+    orig_step = env_end.step
+    calls = 0
+
+    def end_on_second_step(action):
+        nonlocal calls
+        calls += 1
+        if calls >= 2:
+            env_end.over = True
+        return orig_step(action)
+
+    env_end.step = end_on_second_step
+    res_end = tools.home(prims_end, start, arm="right", lift=False)
+    assert res_end["reached"] is False
+    assert res_end["stop_reason"] == "episode_ended"
+    assert res_end["note"] == "environment ended the episode before step_limit during home"

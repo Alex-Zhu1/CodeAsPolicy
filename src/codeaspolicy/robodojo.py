@@ -164,6 +164,22 @@ class Home:
 
 
 @dataclass(frozen=True)
+class Wait:
+    """Outcome of ``wait``: holds pose for ``steps_used`` native actions (``still`` when ``until_scene_still`` settled)."""
+
+    steps_used: int
+    still: bool
+    motion_detected: bool
+    still_streak: int
+    peak_pixel_diff: float
+    stop_reason: str | None
+    step: int | None
+    step_limit: int | None
+    remaining_steps: int | None
+    truncated: bool
+
+
+@dataclass(frozen=True)
 class Gripper:
     """Outcome of ``set_gripper``.
 
@@ -473,9 +489,9 @@ class ObjectPose(PerceptionResult):
     provenance: dict[str, Any] | None = field(default=None, kw_only=True)
 
 
-STATEFUL_TOOLS = frozenset({"move_pose", "grip", "home", "pi0_pick", "motion_execute", "try_grasp",
-                            "intent_execute", "grasp_step", "operation_resume", "nudge",
-                            "visual_align_and_insert", "visual_servo", "align_feature",
+STATEFUL_TOOLS = frozenset({"move_pose", "grip", "home", "wait", "pi0_pick", "motion_execute",
+                            "try_grasp", "intent_execute", "grasp_step", "operation_resume",
+                            "nudge", "visual_align_and_insert", "visual_servo", "align_feature",
                             "delta_grasp"})
 
 
@@ -753,6 +769,7 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         Move,
         Gripper,
         Home,
+        Wait,
         ObjectPose,
         Pick,
         Nudge,
@@ -967,6 +984,12 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
         "approach_steps_used",
         "close_steps_used",
         "lift_steps_used",
+        "still",
+        "motion_detected",
+        "still_streak",
+        "peak_pixel_diff",
+        "remaining_episode_steps",
+        "remaining_steps",
     )
 
     # -- observation --------------------------------------------------------
@@ -2146,15 +2169,19 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
 
         return self._stateful("grip", kwargs, build)
 
-    def home(self, arm: str = "both") -> Home:
-        """Return ``"left"``, ``"right"``, or ``"both"`` to start joints (<=25 swing actions; retains gripper command).
+    def home(self, arm: str = "both", *, open_gripper: bool = False) -> Home:
+        """Return ``"left"``, ``"right"``, or ``"both"`` to start joints (pass ``open_gripper=True`` to open grippers and withdraw/home in one call).
 
-        Near a recorded release, withdraws 6 cm along ``-x_tcp`` and lifts clear before swinging
-        (no scene collision checking; clear tall obstacles first). Check ``reached``.
+        Near a recorded release, withdraws and clears before swinging (no scene collision checking; clear tall obstacles first). Check ``reached``.
         """
         if arm not in (*self.ARMS, "both"):
             raise ValueError(f"arm must be 'left', 'right' or 'both', got {arm!r}")
+        if not isinstance(open_gripper, bool):
+            raise ValueError("open_gripper must be a bool")
         which = str(arm)
+        kwargs: dict[str, Any] = {"arm": which}
+        if open_gripper:
+            kwargs["open_gripper"] = True
 
         def build(p: dict[str, Any]) -> Home:
             return Home(
@@ -2168,7 +2195,86 @@ class RobodojoRobot(ObjectEvidenceMixin, IntentMixin, CoordinationMixin, RobotBa
                 clearance_retreat_m=dict(p.get("clearance_retreat_m") or {}),
             )
 
-        return self._stateful("home", {"arm": which}, build)
+        return self._stateful("home", kwargs, build)
+
+    def wait(
+        self,
+        steps: int = 10,
+        *,
+        until_scene_still: bool = False,
+        min_steps: int = 1,
+        still_steps: int = 12,
+        pixel_tol: float = 3.0,
+        roi: Sequence[int] | None = None,
+        camera: str = "cam_head",
+        reserve_steps: int = 0,
+    ) -> Wait:
+        """Hold current arm poses and grippers for up to ``steps`` native actions in one call (or early-stop once ``camera`` stays still for ``still_steps``)."""
+        if isinstance(steps, bool) or not isinstance(steps, int) or steps < 0:
+            raise ValueError(f"steps must be a non-negative int, got {steps!r}")
+        if type(until_scene_still) is not bool:
+            raise ValueError(f"until_scene_still must be a bool, got {until_scene_still!r}")
+        if isinstance(min_steps, bool) or not isinstance(min_steps, int) or min_steps < 0:
+            raise ValueError(f"min_steps must be a non-negative int, got {min_steps!r}")
+        if isinstance(still_steps, bool) or not isinstance(still_steps, int) or still_steps < 1:
+            raise ValueError(f"still_steps must be an int >= 1, got {still_steps!r}")
+        if isinstance(reserve_steps, bool) or not isinstance(reserve_steps, int) or reserve_steps < 0:
+            raise ValueError(f"reserve_steps must be a non-negative int, got {reserve_steps!r}")
+        if isinstance(pixel_tol, bool):
+            raise ValueError(f"pixel_tol must be a positive finite number, got {pixel_tol!r}")
+        tol_val = _floats((pixel_tol,), 1, "pixel_tol")[0]
+        if tol_val <= 0.0:
+            raise ValueError(f"pixel_tol must be > 0, got {pixel_tol!r}")
+        cam = _camera(camera, self.CAMERAS)
+        roi_list: list[int] | None = None
+        if roi is not None:
+            if isinstance(roi, (str, bytes)):
+                raise ValueError(f"roi must be (r0, c0, r1, c1), got {roi!r}")
+            vals = _floats(roi, 4, "roi")
+            if any(isinstance(v, bool) or int(f) != f for v, f in zip(roi, vals)):
+                raise ValueError(f"roi bounds must be integers, got {roi!r}")
+            r0, c0, r1, c1 = (int(f) for f in vals)
+            if not (0 <= r0 < r1 and 0 <= c0 < c1):
+                raise ValueError(f"roi must satisfy 0 <= r0 < r1 and 0 <= c0 < c1, got {roi!r}")
+            roi_list = [r0, c0, r1, c1]
+
+        kwargs: dict[str, Any] = {"steps": int(steps)}
+        if until_scene_still:
+            kwargs["until_scene_still"] = True
+        if min_steps != 1:
+            kwargs["min_steps"] = int(min_steps)
+        if still_steps != 12:
+            kwargs["still_steps"] = int(still_steps)
+        if tol_val != 3.0:
+            kwargs["pixel_tol"] = tol_val
+        if roi_list is not None:
+            kwargs["roi"] = roi_list
+        if cam != "cam_head":
+            kwargs["camera"] = cam
+        if reserve_steps != 0:
+            kwargs["reserve_steps"] = int(reserve_steps)
+
+        def build(p: dict[str, Any]) -> Wait:
+            state = self._latest_state()
+            step_val = p.get("step")
+            limit_val = p.get("step_limit")
+            rem_val = p.get("remaining_episode_steps")
+            if rem_val is None and step_val is not None and limit_val is not None:
+                rem_val = max(0, int(limit_val) - int(step_val))
+            return Wait(
+                steps_used=int(p.get("steps_used", 0)),
+                still=bool(p.get("still")),
+                motion_detected=bool(p.get("motion_detected")),
+                still_streak=int(p.get("still_streak", 0)),
+                peak_pixel_diff=float(p.get("peak_pixel_diff", 0.0)),
+                stop_reason=p.get("stop_reason"),
+                step=int(step_val) if step_val is not None else None,
+                step_limit=int(limit_val) if limit_val is not None else None,
+                remaining_steps=int(rem_val) if rem_val is not None else None,
+                truncated=state.truncated,
+            )
+
+        return self._stateful("wait", kwargs, build)
 
     def home_pose(self, arm: str = "both") -> Pose | dict[str, Pose]:
         """Return initial step-0 world TCP ``Pose`` for ``"left"``, ``"right"``, or ``"both"`` (dict; 0 steps)."""
@@ -3760,6 +3866,7 @@ __all__ = [
     "TriangulatedPoint",
     "VLA_CHUNK_ACTIONS",
     "VisualAlign",
+    "Wait",
     "WorldPoint",
     "gripper_angles",
 ]

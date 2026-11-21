@@ -37,6 +37,7 @@ from codeaspolicy.robodojo import (
     RobodojoRobot,
     Segment,
     State,
+    Wait,
     WorldPoint,
 )
 
@@ -438,16 +439,20 @@ class FakeRobodojoBackend:
             "status": {"step": self.step_count, "step_limit": self.STEP_LIMIT},
         }
 
-    def _do_home(self, arm: str = "both") -> dict[str, Any]:
+    def _do_home(self, arm: str = "both", open_gripper: bool = False) -> dict[str, Any]:
         """Half of the way back per native action (joint-space in the real tool)."""
         if arm not in ("left", "right", "both"):
             return {"error": "arm must be 'left', 'right' or 'both'"}
         names = ("left", "right") if arm == "both" else (arm,)
+        steps_used = 0
+        if open_gripper and any(self.arms[n]["grip"] < 0.985 for n in names):
+            steps_used += self._tick(2)
+            for n in names:
+                self._gripper(n, -1)
 
         def error() -> float:
             return max(math.dist(self.arms[n]["tcp"], self.start[n][0]) for n in names)
 
-        steps_used = 0
         while error() > 0.01 and steps_used < 25 and self._tick():
             steps_used += 1
             for n in names:
@@ -467,6 +472,64 @@ class FakeRobodojoBackend:
             "reached": error() <= 0.01,
             "max_joint_error_rad": round(error(), 4),
             "steps_used": steps_used,
+        }
+
+    def _do_wait(
+        self,
+        steps: int = 10,
+        until_scene_still: bool = False,
+        min_steps: int = 1,
+        still_steps: int = 12,
+        pixel_tol: float = 3.0,
+        roi: list[int] | None = None,
+        camera: str = "cam_head",
+        reserve_steps: int = 0,
+    ) -> dict[str, Any]:
+        remaining = max(0, self.STEP_LIMIT - self.step_count)
+        if steps == 0:
+            return {
+                "steps_used": 0,
+                "still": not until_scene_still,
+                "motion_detected": False,
+                "still_streak": 0,
+                "peak_pixel_diff": 0.0,
+                "camera": camera,
+                "status": "completed",
+                "stop_reason": "zero_steps",
+                "step": self.step_count,
+                "step_limit": self.STEP_LIMIT,
+                "remaining_episode_steps": remaining,
+            }
+        if remaining <= reserve_steps:
+            return {
+                "steps_used": 0,
+                "still": False,
+                "motion_detected": False,
+                "still_streak": 0,
+                "peak_pixel_diff": 0.0,
+                "camera": camera,
+                "status": "rejected",
+                "stop_reason": "reserve_steps_exhausted",
+                "step": self.step_count,
+                "step_limit": self.STEP_LIMIT,
+                "remaining_episode_steps": remaining,
+            }
+        allowance = min(int(steps), max(0, remaining - int(reserve_steps)))
+        used = self._tick(allowance)
+        still = bool(until_scene_still and used >= still_steps)
+        rem_after = max(0, self.STEP_LIMIT - self.step_count)
+        return {
+            "steps_used": used,
+            "still": still,
+            "motion_detected": False,
+            "still_streak": used if until_scene_still else 0,
+            "peak_pixel_diff": 0.0,
+            "camera": camera,
+            "status": "completed",
+            "stop_reason": "scene_still" if still else ("max_steps" if until_scene_still else "completed"),
+            "step": self.step_count,
+            "step_limit": self.STEP_LIMIT,
+            "remaining_episode_steps": rem_after,
         }
 
 
@@ -881,6 +944,7 @@ def test_ledger_marks_stateful_calls_and_counts_native_actions(rd, rd_backend):
         "move_pose",
         "grip",
         "home",
+        "wait",
         "pi0_pick",
         "motion_execute",
         "try_grasp",
@@ -928,7 +992,9 @@ def test_api_reference_lists_every_public_method_and_result_type():
     assert "    pitch: float | None = None,\n    yaw: float | None = None,\n" in text
     assert ("    path: str = 'auto',\n    *,\n"
             "    motion: MotionProfile | MotionWindow | str | None = None,") in text
-    assert "robo.home(arm: str = 'both') -> Home" in text
+    assert "robo.home(arm: str = 'both', *, open_gripper: bool = False) -> Home" in text
+    assert "robo.wait(" in text
+    assert "class Wait(" in text
     assert (
         "robo.pi0_pick(\n    prompt: str | None = None,\n    arm: str = 'right',\n"
         "    max_chunks: int = 8,\n) -> Pick"
@@ -1525,3 +1591,64 @@ def test_env_server_entry_runs_rpents_script_with_its_arguments(monkeypatch, tmp
     assert out.getvalue().strip() == f'["{script}", "--task", "make_kong"]'
     with pytest.raises(SystemExit):
         support_arm.main([])
+
+
+def test_wait_and_home_open_gripper_on_robodojo_robot(rd, rd_backend):
+    w0 = rd.wait(0)
+    assert isinstance(w0, Wait) and w0.steps_used == 0 and w0.still is True
+    assert w0.stop_reason == "zero_steps"
+    assert rd_backend.calls[-1] == ("wait", {"steps": 0})
+
+    w1 = rd.wait(5)
+    assert isinstance(w1, Wait) and w1.steps_used == 5 and w1.still is False
+    assert w1.stop_reason == "completed" and w1.step == 5
+    assert w1.remaining_steps == rd_backend.STEP_LIMIT - 5 and not w1.truncated
+
+    w2 = rd.wait(
+        10,
+        until_scene_still=True,
+        min_steps=2,
+        still_steps=3,
+        pixel_tol=4.5,
+        roi=(10, 20, 100, 120),
+        camera="cam_left_wrist",
+        reserve_steps=5,
+    )
+    assert w2.still is True and w2.stop_reason == "scene_still"
+    assert rd_backend.calls[-1] == (
+        "wait",
+        {
+            "steps": 10,
+            "until_scene_still": True,
+            "min_steps": 2,
+            "still_steps": 3,
+            "pixel_tol": 4.5,
+            "roi": [10, 20, 100, 120],
+            "camera": "cam_left_wrist",
+            "reserve_steps": 5,
+        },
+    )
+
+    before_calls = len(rd_backend.calls)
+    for bad in (
+        {"steps": -1},
+        {"steps": True},
+        {"until_scene_still": "yes"},
+        {"min_steps": -1},
+        {"still_steps": 0},
+        {"pixel_tol": 0.0},
+        {"roi": (10, 10, 5, 20)},
+        {"camera": "head"},
+        {"reserve_steps": -1},
+    ):
+        with pytest.raises(ValueError):
+            rd.wait(**bad)
+    with pytest.raises(ValueError, match="open_gripper"):
+        rd.home("both", open_gripper="yes")  # type: ignore[arg-type]
+    assert len(rd_backend.calls) == before_calls
+
+    rd.move_to([-0.10, 0.05, 0.85], arm="left", gripper=rd.CLOSE)
+    assert rd.state().left.gripper == 0.0
+    back = rd.home("both", open_gripper=True)
+    assert back.reached and rd.state().left.gripper == 1.0
+    assert rd_backend.calls[-2] == ("home", {"arm": "both", "open_gripper": True})

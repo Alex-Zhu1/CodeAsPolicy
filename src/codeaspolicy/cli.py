@@ -34,6 +34,7 @@ from .evaluation.valen import add_arguments as add_valen_eval_arguments
 from .evaluation.valen import run as run_valen_eval
 from .execution import add_execution_arguments, execution_limits
 from .prompt import TaskCard, api_reference, render_prompt
+from .robots import ROBOTS, get_adapter
 from .runner import run_host
 from .stuck_recovery import add_stuck_recovery_arguments
 from .supervision import add_monitor_arguments, monitor_config
@@ -347,6 +348,7 @@ def main(argv: list[str] | None = None) -> int:
     sub = parser.add_subparsers(dest="command", required=True)
 
     api = sub.add_parser("api", help="print the generated API reference")
+    api.add_argument("--robot", choices=ROBOTS, default="libero")
     api.add_argument("--primitives", choices=PRIMITIVE_SETS, default="full")
 
     prompt = sub.add_parser("prompt", help="print the full generation prompt")
@@ -465,7 +467,8 @@ def main(argv: list[str] | None = None) -> int:
 
     args = parser.parse_args(argv)
     if args.command == "api":
-        print(api_reference(primitives=args.primitives))
+        robot_cls = get_adapter(args.robot).robot_cls
+        print(api_reference(robot_cls, primitives=args.primitives))
         return 0
     if args.command == "prompt":
         card_obj = TaskCard.from_json(args.card) if args.card else None

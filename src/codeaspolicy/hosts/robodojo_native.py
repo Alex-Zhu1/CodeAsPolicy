@@ -42,7 +42,7 @@ import numpy as np
 from . import robodojo_tools as tools
 
 CAMERAS = ("cam_head", "cam_left_wrist", "cam_right_wrist")
-STATEFUL = frozenset({"move_pose", "grip", "home", "motion_execute", "try_grasp", "intent_execute",
+STATEFUL = frozenset({"move_pose", "grip", "home", "wait", "motion_execute", "try_grasp", "intent_execute",
                       "grasp_step", "operation_resume", "nudge", "visual_align_and_insert",
                       "visual_servo", "align_feature", "delta_grasp"})
 PERCEPTION = frozenset({"locate", "back_project", "segment", "object_observe"})
@@ -385,6 +385,7 @@ class NativeToolkit:
             "preview_move_pose": partial(tools.preview_move_pose, self._primitives, start),
             "grip": partial(tools.grip, self._primitives),
             "home": partial(tools.home, self._primitives, start),
+            "wait": partial(tools.wait, self._primitives),
             "locate": partial(tools.locate, self._primitives),
             "back_project": partial(tools.back_project, self._primitives),
             "segment": partial(segment, self._primitives),

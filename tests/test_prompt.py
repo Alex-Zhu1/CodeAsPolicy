@@ -136,6 +136,7 @@ def test_orthogonal_coarse_delta_api_prunes_ceremony_while_preserving_runtime(
         "motion_status",
         "set_gripper",
         "home",
+        "wait",
         "home_pose",
         "delta_grasp",
         "align_feature",

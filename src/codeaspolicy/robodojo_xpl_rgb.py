@@ -51,6 +51,7 @@ from .robodojo import (
     State,
     TriangulatedPoint,
     VisualAlign,
+    Wait,
     WorldPoint,
     _arm_state,
     _calibration_provenance,
@@ -136,6 +137,7 @@ class RobodojoOfficialColourRobot(RobodojoRobot):
         Move,
         Gripper,
         Home,
+        Wait,
         ObjectSight,
         Pick,
         Nudge,
@@ -340,4 +342,5 @@ __all__ = [
     "RobodojoOfficialColourRobot",
     "SeenPoint",
     "TriangulatedPoint",
+    "Wait",
 ]
